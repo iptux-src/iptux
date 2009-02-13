@@ -1,0 +1,4 @@
+1、好友头像图标来自于Fedora8 KDE桌面环境附带的用户头像
+2、tcp、udp服务的2425端口应该被打开，iptux将使用此端口通信
+3、更多信息请参看项目主页:http://code.google.com/p/iptux/
+4、题外话，请时刻关心项目主页，iptux更新得很快哦
