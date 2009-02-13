@@ -58,14 +58,14 @@ void DialogPeer::DialogEntry(gpointer data)
 
 void DialogPeer::CreateDialog()
 {
-	GdkColor color = { 8, 39321, 41634, 65535 };
+//	GdkColor color = { 8, 39321, 41634, 65535 };
 	GtkTargetEntry target = { "text/plain", 0, 0 };
 	gchar *title;
 
 	title = g_strdup_printf(_("Communicate with %s"), pal->NameQuote());
 	dialog = create_window(title, 162, 111);
 	g_free(title);
-	gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &color);
+//	gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &color);
 	gtk_drag_dest_set(dialog, GTK_DEST_DEFAULT_ALL,
 				    &target, 1, GDK_ACTION_MOVE);
 	g_signal_connect_swapped(dialog, "drag-data-received",
@@ -173,7 +173,7 @@ GtkWidget *DialogPeer::CreateMenuBar()
 	GtkWidget *menu_bar;
 
 	menu_bar = gtk_menu_bar_new();
-	update_widget_bg(menu_bar, __BACK_DIR "/title.png");
+//	update_widget_bg(menu_bar, __BACK_DIR "/title.png");
 	gtk_widget_show(menu_bar);
 	CreateFileMenu(menu_bar);
 	CreateToolMenu(menu_bar);

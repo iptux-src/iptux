@@ -49,7 +49,9 @@ class MainWindow {
 	GtkTreeModel *tree_model;
 	GtkAccelGroup *accel;
 	GtkTreeIter opt_iter;
+
  public:
+    void        UpdateStyle();
 	static void UpdateTips();
  private:
 	 GtkWidget * CreatePopupPalMenu(gpointer data);	//
