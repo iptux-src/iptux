@@ -75,25 +75,21 @@ pthread_t thread_create(ThreadFunc func, pointer data, bool joinable)
 
 char *my_getline(const char *str)
 {
-	char *ptr, *dst;
+	const char *ptr;
+	char *dst;
 	size_t len;
 
 	while (*str == '\x20' || *str == '\t')
 		str++;
 
-	ptr = strpbrk(str, "\r\n");
-	if (ptr)
-		len = ptr - str;
-	else
-		len = strlen(str);
-
-	if (len) {
+	if (len = (ptr = strpbrk(str, "\r\n")) ? (ptr - str) : strlen(str)) {
 		dst = (char *)Malloc(len + 1);
 		memcpy(dst, str, len);
 		*(dst + len) = '\0';
 		return dst;
-	} else
-		return NULL;
+	}
+
+	return NULL;
 }
 
 int strnchr(const char *str, char chr)
@@ -131,9 +127,10 @@ void remove_foreach(pointer data, enum INFO_TYPE type)
 	}
 }
 
+/*  为什么不能直接返回 src==dst ?  */
 bool compare_foreach(uint32_t src, uint32_t dst)
 {
-	bool flag;	//TODO 为什么不能直接返回 src==dst ?
+	bool flag;
 
 	flag = (src == dst);
 	return flag;

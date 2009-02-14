@@ -130,8 +130,7 @@ void MainWindow::CreatePanel()
 			   GDK_HINT_USER_SIZE);
 	GdkPixbuf *pixbuf;
 
-	inter.window = this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-//	update_widget_bg(window, __BACK_DIR "/back.png");
+	inter.window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
 	pixbuf = gdk_pixbuf_new_from_file_at_size(__LOGO_DIR "/ip-tux.png",
 							25, 25, NULL);
@@ -158,20 +157,16 @@ void MainWindow::CreateAllArea()
 	GtkWidget *menu_bar;
 	GtkWidget *box, *sw;
 
-	this->client_paned = create_paned();
-	gtk_container_add(GTK_CONTAINER(window), this->client_paned);
-
+	client_paned = create_paned();
+	gtk_container_add(GTK_CONTAINER(window), client_paned);
 	box = create_box();
 	gtk_paned_pack1(GTK_PANED(client_paned), box, true, true);
-
 	menu_bar = CreateMenuBar();
 	gtk_box_pack_start(GTK_BOX(box), menu_bar, FALSE, FALSE, 0);
-
-	this->tips = create_label(_("pals online: 0"));
-	gtk_box_pack_start(GTK_BOX(box), this->tips, FALSE, FALSE, 0);
-
+	tips = create_label(_("pals online: 0"));
+	gtk_box_pack_start(GTK_BOX(box), tips, FALSE, FALSE, 0);
 	sw = create_scrolled_window();
-//	gtk_container_set_border_width(GTK_CONTAINER(sw), 4);
+	gtk_container_set_border_width(GTK_CONTAINER(sw), 4);
 	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
 	pal_tree = CreatePalTree();
 	gtk_container_add(GTK_CONTAINER(sw), pal_tree);
@@ -182,8 +177,6 @@ GtkWidget *MainWindow::CreateMenuBar()
 	GtkWidget *menu_bar;
 
 	menu_bar = gtk_menu_bar_new();
-//	this->menu_bar = menu_bar;
-//	update_widget_bg(menu_bar, __BACK_DIR "/title.png");
 	gtk_widget_show(menu_bar);
 	CreateFileMenu(menu_bar);
 	CreateToolMenu(menu_bar);
@@ -194,7 +187,6 @@ GtkWidget *MainWindow::CreateMenuBar()
 
 GtkWidget *MainWindow::CreatePalTree()
 {
-//	GdkColor color = { 8, 65535, 65535, 55000 };
 	GtkTargetEntry target = { "text/plain", 0, 0 };
 	GtkTreeSelection *selection;
 	GtkTreeViewColumn *column;
@@ -202,7 +194,6 @@ GtkWidget *MainWindow::CreatePalTree()
 	GtkWidget *view;
 
 	view = gtk_tree_view_new_with_model(tree_model);
-//	gtk_widget_modify_base(view, GTK_STATE_NORMAL, &color);
 	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_ALL,
 				  &target, 1, GDK_ACTION_MOVE);
 	gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(view), 10);
@@ -225,16 +216,16 @@ GtkWidget *MainWindow::CreatePalTree()
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
 							renderer, TRUE);
 	g_object_set(renderer, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD,
-                            NULL);
-					//     "foreground", "#52B838", NULL);
+					   //  "foreground", "#52B838", NULL);
+					   NULL);
 	gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column),
 			    renderer, "text", 2, "font", 3, "visible", 4, NULL);
 	renderer = gtk_cell_renderer_text_new();	//
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
 							renderer, TRUE);
 	g_object_set(renderer, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD,
-                            NULL);
 					    // "foreground", "#52B838", NULL);
+					    NULL);
 	gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column),
 				    renderer, "markup", 5, "visible", 6, NULL);
 
@@ -283,7 +274,7 @@ void MainWindow::InitPalTreeModel()
 		else
 			snprintf(ipstr, 32, "%s", localip[count << 1]);
 		snprintf(buf, MAX_BUF,
-			 "<span>%s</span>",
+			 "%s",
 			 ipstr);
 		gtk_tree_store_append(GTK_TREE_STORE(tree_model), &iter, NULL);
 		gtk_tree_store_set(GTK_TREE_STORE(tree_model), &iter, 0, pixbuf,
@@ -433,6 +424,12 @@ void MainWindow::CreateHelpMenu(GtkWidget * menu_bar)
 			 G_CALLBACK(AboutIptux::AboutEntry), NULL);
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_More"));
+	g_signal_connect(menu_item, "activate",
+			 G_CALLBACK(AboutIptux::MoreEntry), NULL);
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 }
 
 void MainWindow::UpdateTips()
@@ -573,7 +570,6 @@ GtkTreeModel *MainWindow::CreatePalListModel()
 
 GtkWidget *MainWindow::CreatePalListView()
 {
-//	GdkColor color = { 8, 65535, 65535, 55000 };
 	GtkTargetEntry target = { "text/plain", 0, 0 };
 	GtkWidget *view;
 	GtkTreeModel *model;
@@ -583,7 +579,6 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	model = CreatePalListModel();
 	view = gtk_tree_view_new_with_model(model);
-//	gtk_widget_modify_base(view, GTK_STATE_NORMAL, &color);
 	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_ALL,
 			  &target, 1, GDK_ACTION_MOVE);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
@@ -1168,10 +1163,4 @@ void MainWindow::ListDragDataReceived(GtkWidget * view,
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(model, &iter, 6, &data, -1);
 	DialogPeer::DragDataReceived(data, context, x, y, select, info, time);
-}
-
-void MainWindow::UpdateStyle()
-{
-//    update_widget_bg(this->window, __BACK_DIR "/back.png");
-
 }

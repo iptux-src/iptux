@@ -13,6 +13,7 @@
 #include "baling.h"
 
 GtkWidget *AboutIptux::about = NULL;
+GtkWidget *AboutIptux::more = NULL;
 AboutIptux::AboutIptux()
 {
 }
@@ -25,10 +26,20 @@ void AboutIptux::AboutEntry()
 {
 	AboutIptux ai;
 
-	if (AboutIptux::CheckExist())
+	if (AboutIptux::CheckExist(about))
 		return;
 	ai.CreateAbout();
-	ai.RunAbout();
+	ai.RunDialog(&about);
+}
+
+void AboutIptux::MoreEntry()
+{
+	AboutIptux ai;
+
+	if (AboutIptux::CheckExist(more))
+		return;
+	ai.CreateMore();
+	ai.RunDialog(&more);
 }
 
 void AboutIptux::CreateAbout()
@@ -38,7 +49,9 @@ void AboutIptux::CreateAbout()
 		NULL
 	};
 	const char *artists[] = {
-		"Jally\tjallyx@163.com",
+		"\t\tweijian_li88＠qq.com",
+		"ManPT\tpentie@gmail.com",
+		"Jally\t\tjallyx@163.com",
 		NULL
 	};
 	const char *translators = _("LiJinhui\nLiuTao");
@@ -62,30 +75,61 @@ void AboutIptux::CreateAbout()
 	gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
 	gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about),
 								translators);
-	pixbuf = gdk_pixbuf_new_from_file(__LOGO_DIR "/tux.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file(__LOGO_DIR "/ip-tux.png", NULL);
 	if (pixbuf) {
 		gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), pixbuf);
 		g_object_unref(pixbuf);
 	}
 }
 
-void AboutIptux::RunAbout()
+
+/**
+ * 请添加更多内容，诸如相关帮助文档的URL，程序的热心帮助者等
+ * 具体说来，应该出现但是关于对话框中却没有写出来的内容，都应该会出现在此处
+ * 为什么要这样做？原因很简单，iptux并不仅仅是程序开发组的劳动成果
+ */
+void AboutIptux::CreateMore()
 {
-	gtk_window_set_skip_taskbar_hint(GTK_WINDOW(about), TRUE);
-	g_signal_connect(about, "response", G_CALLBACK(gtk_widget_destroy), NULL);
-	g_signal_connect(about, "destroy", G_CALLBACK(AboutDestroy), NULL);
-	gtk_widget_show(about);
+	GtkWidget *frame, *label;
+
+	more = gtk_dialog_new_with_buttons(_("More information about iptux"),
+					   NULL, GTK_DIALOG_NO_SEPARATOR,
+					   GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+					   NULL);
+	gtk_window_set_resizable(GTK_WINDOW(more), FALSE);
+	gtk_widget_set_size_request(more, 400, 300);
+
+	frame = create_frame(NULL);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(more)->vbox), frame,
+							   TRUE, TRUE, 0);
+	label = create_label("liangsuilong@gmail.com\n"
+			"lidaobing@gmail.com\n"
+			"mdjhu@sina.com");
+	gtk_container_add(GTK_CONTAINER(frame), label);
+	/*以上代码内容无效，请自行编码*/
 }
 
-bool AboutIptux::CheckExist()
+void AboutIptux::RunDialog(GtkWidget **dialog)
 {
-	if (!about)
+	gtk_window_set_skip_taskbar_hint(GTK_WINDOW(*dialog), TRUE);
+	g_signal_connect(*dialog, "close",
+			  G_CALLBACK(gtk_widget_destroy), NULL);
+	g_signal_connect(*dialog, "response",
+			  G_CALLBACK(gtk_widget_destroy), NULL);
+	g_signal_connect_swapped(*dialog, "destroy",
+			  G_CALLBACK(DialogDestroy), dialog);
+	gtk_widget_show(*dialog);
+}
+
+bool AboutIptux::CheckExist(GtkWidget *dialog)
+{
+	if (!dialog)
 		return false;
-	gtk_window_present(GTK_WINDOW(about));
+	gtk_window_present(GTK_WINDOW(dialog));
 	return true;
 }
 
-void AboutIptux::AboutDestroy()
+void AboutIptux::DialogDestroy(GtkWidget **dialog)
 {
-	about = NULL;
+	*dialog = NULL;
 }

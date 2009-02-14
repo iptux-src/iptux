@@ -14,7 +14,6 @@ INCLUDES= $(all_includes) \
 	-DGETTEXT_PACKAGE=\""@GETTEXT_PACKAGE@"\" \
 	-D__LOCALE_DIR=\""$(datadir)/locale"\" \
 	-D__LOGO_DIR=\""$(datadir)/pixmaps"\" \
-	-D__BACK_DIR=\""$(datadir)/pixmaps/iptux/back"\" \
 	-D__ICON_DIR=\""$(datadir)/pixmaps/iptux/icon"\" \
 	-D__TIP_DIR=\""$(datadir)/pixmaps/iptux/tip"\"
 

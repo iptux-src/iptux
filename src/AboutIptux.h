@@ -20,15 +20,18 @@ class AboutIptux {
 	~AboutIptux();
 
 	static void AboutEntry();
+	static void MoreEntry();
  private:
 	void CreateAbout();
-	void RunAbout();
-	static bool CheckExist();
+	void CreateMore();
+	void RunDialog(GtkWidget **dialog);
+	static bool CheckExist(GtkWidget *dialog);
 
 	static GtkWidget *about;
+	static GtkWidget *more;
 //回调处理部分
  private:
-	static void AboutDestroy();
+	 static void DialogDestroy(GtkWidget **dialog);
 };
 
 #endif

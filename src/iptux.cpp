@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
 	icon.CreateStatusIcon();
 	thread_create(ThreadFunc(CoreThread::CoreThreadEntry), NULL, false);
 	window.CreateWindow();
-	window.UpdateStyle();
 
 	gtk_main();
 	gdk_threads_leave();

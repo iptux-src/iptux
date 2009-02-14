@@ -60,31 +60,6 @@ void iptux_quit()
 	exit(0);
 }
 
-void update_widget_bg(GtkWidget * widget, const gchar * file)
-{
-	GtkStyle *style;
-	GdkPixbuf *pixbuf;
-	GdkPixmap *pixmap;
-	gint width, height;
-
-	pixbuf = gdk_pixbuf_new_from_file(file, NULL);
-	if (!pixbuf)
-		return;
-
-	width = gdk_pixbuf_get_width(pixbuf);
-	height = gdk_pixbuf_get_height(pixbuf);
-	pixmap = gdk_pixmap_new(NULL, width, height, 8);
-	gdk_pixbuf_render_pixmap_and_mask(pixbuf, &pixmap, NULL, 255);
-	g_object_unref(pixbuf);
-
-	style = gtk_style_copy(GTK_WIDGET(widget)->style);
-	if (style->bg_pixmap[GTK_STATE_NORMAL])
-		g_object_unref(style->bg_pixmap[GTK_STATE_NORMAL]);
-	style->bg_pixmap[GTK_STATE_NORMAL] = pixmap;
-	gtk_widget_set_style(GTK_WIDGET(widget), style);
-	g_object_unref(style);
-}
-
 void pixbuf_shrink_scale_1(GdkPixbuf ** pixbuf, int width, int height)
 {
 	gdouble scale_x, scale_y, scale;
@@ -114,8 +89,8 @@ GdkPixbuf *obtain_pixbuf_from_stock(const gchar * stock_id)
 	GdkPixbuf *pixbuf;
 
 	widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	pixbuf = gtk_widget_render_icon(widget, stock_id, GTK_ICON_SIZE_MENU,
-									NULL);
+	pixbuf = gtk_widget_render_icon(widget, stock_id,
+					GTK_ICON_SIZE_MENU, NULL);
 	gtk_widget_destroy(widget);
 
 	return pixbuf;

@@ -167,12 +167,12 @@ void StatusIcon::SwitchWindowMode()
 	if (GTK_WIDGET_VISIBLE(inter.window)) {
 		gtk_widget_hide(inter.window);
 		pixbuf = gdk_pixbuf_new_from_file_at_size(
-				__LOGO_DIR"/ip-penguin.png", 20, 20, NULL);
+				__LOGO_DIR"/i-tux.png", 20, 20, NULL);
 		if (pixbuf) {
 			gtk_status_icon_set_from_pixbuf(inter.status_icon, pixbuf);
 			g_object_unref(pixbuf);
 		} else
-			pwarning(Fail, "%s \"" __LOGO_DIR "/ip-penguin.png\" %s",
+			pwarning(Fail, "%s \"" __LOGO_DIR "/i-tux.png\" %s",
 				 _("The notify icon"), _("is lost!"));
 	} else {
 		gtk_widget_show(inter.window);

@@ -21,7 +21,6 @@
 #include "utils.h"
 
 GtkWidget *DialogGroup::dialog = NULL;
-
  DialogGroup::DialogGroup():pal_view(NULL), record(NULL),
 input(NULL), accel(NULL), group_model(NULL)
 {
@@ -53,12 +52,10 @@ void DialogGroup::InitDialog()
 void DialogGroup::CreateDialog()
 {
 	extern Control ctr;
-//	GdkColor color = { 8, 39321, 41634, 65535 };
 	GtkWidget *hpaned, *vpaned;
 	GtkWidget *vbox;
 
 	dialog = create_window(_("Group message"), 141, 138);
-//	gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &color);
 	accel = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(dialog), accel);
 	g_signal_connect_swapped(dialog, "destroy",
@@ -85,7 +82,6 @@ GtkWidget *DialogGroup::CreateMenuBar()
 	GtkWidget *menu_bar;
 
 	menu_bar = gtk_menu_bar_new();
-//	update_widget_bg(menu_bar, __BACK_DIR "/title.png");
 	gtk_widget_show(menu_bar);
 	CreateFileMenu(menu_bar);
 	CreateHelpMenu(menu_bar);
@@ -269,6 +265,12 @@ void DialogGroup::CreateHelpMenu(GtkWidget * menu_bar)
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(AboutIptux::AboutEntry), NULL);
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_More"));
+	g_signal_connect(menu_item, "activate",
+			 G_CALLBACK(AboutIptux::MoreEntry), NULL);
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 }

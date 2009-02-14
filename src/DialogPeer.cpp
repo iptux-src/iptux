@@ -58,14 +58,12 @@ void DialogPeer::DialogEntry(gpointer data)
 
 void DialogPeer::CreateDialog()
 {
-//	GdkColor color = { 8, 39321, 41634, 65535 };
 	GtkTargetEntry target = { "text/plain", 0, 0 };
 	gchar *title;
 
 	title = g_strdup_printf(_("Communicate with %s"), pal->NameQuote());
 	dialog = create_window(title, 162, 111);
 	g_free(title);
-//	gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &color);
 	gtk_drag_dest_set(dialog, GTK_DEST_DEFAULT_ALL,
 				    &target, 1, GDK_ACTION_MOVE);
 	g_signal_connect_swapped(dialog, "drag-data-received",
@@ -99,12 +97,10 @@ void DialogPeer::CreateAllArea()
 
 void DialogPeer::CreateInfoArea(GtkWidget * paned)
 {
-	GdkColor color = { 8, 65535, 65535, 55000 };
 	GtkWidget *view, *frame, *sw;
 
 	view = create_text_view();
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(view), infobuf);
-	gtk_widget_modify_base(view, GTK_STATE_NORMAL, &color);
 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(view), GTK_WRAP_NONE);
@@ -173,7 +169,6 @@ GtkWidget *DialogPeer::CreateMenuBar()
 	GtkWidget *menu_bar;
 
 	menu_bar = gtk_menu_bar_new();
-//	update_widget_bg(menu_bar, __BACK_DIR "/title.png");
 	gtk_widget_show(menu_bar);
 	CreateFileMenu(menu_bar);
 	CreateToolMenu(menu_bar);
@@ -267,6 +262,12 @@ void DialogPeer::CreateHelpMenu(GtkWidget * menu_bar)
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(AboutIptux::AboutEntry), NULL);
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_More"));
+	g_signal_connect(menu_item, "activate",
+			 G_CALLBACK(AboutIptux::MoreEntry), NULL);
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 }

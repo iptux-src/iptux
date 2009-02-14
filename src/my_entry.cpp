@@ -23,11 +23,9 @@ my_entry::~my_entry()
 GtkWidget *my_entry::create_entry(const char *text, const char *tip,
 				  bool digital)
 {
-	GdkColor color = { 8, 65535, 65535, 55000 };
 	GtkWidget *entry;
 
 	entry = gtk_entry_new();
-	gtk_widget_modify_base(entry, GTK_STATE_NORMAL, &color);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 	if (text)
 		gtk_entry_set_text(GTK_ENTRY(entry), text);
