@@ -22,16 +22,21 @@ class AboutIptux {
 	static void AboutEntry();
 	static void MoreEntry();
  private:
-	void CreateAbout();
+	static void CreateAbout();
 	void CreateMore();
 	void RunDialog(GtkWidget **dialog);
 	static bool CheckExist(GtkWidget *dialog);
+
+    static void show_help_page(GtkTextBuffer *buffer, const char * str);
 
 	static GtkWidget *about;
 	static GtkWidget *more;
 //回调处理部分
  private:
 	 static void DialogDestroy(GtkWidget **dialog);
+     static void activate_url (GtkAboutDialog *about,
+	      const gchar    *link,
+	      gpointer        data);
 };
 
 #endif
