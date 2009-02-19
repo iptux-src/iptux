@@ -36,7 +36,7 @@ class Control {
 	char *path;		//文件存放路径
 	char *font;		//字体
 	char *sign;		//个性签名
-	uint8_t flags;		//5 内存:4 enter:3 清除历史:2 日志记录:1 黑名单:0 共享过滤
+	uint8_t flags;		//6 声音:5 内存:4 enter:3 清除历史:2 日志记录:1 黑名单:0 共享过滤
 	bool dirty;		//重写标记
 
 	GtkTextTagTable *table;

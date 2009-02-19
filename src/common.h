@@ -18,6 +18,7 @@
 #include "SendFile.h"
 #include "Transport.h"
 #include "Log.h"
+#include "Sound.h"
 #include "MainWindow.h"
 
 Control ctr;
@@ -25,6 +26,7 @@ UdpData udt;
 SendFile sfl;
 Transport trans;
 Log mylog;
+Sound sound;
 struct interactive inter;
 MainWindow *mwp;	//主窗口类指针
 

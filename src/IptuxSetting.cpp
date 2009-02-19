@@ -25,8 +25,8 @@ GtkWidget *IptuxSetting::setting = NULL;
  IptuxSetting::IptuxSetting():icon_model(NULL), ip_model(NULL),
 myname(NULL), mygroup(NULL), myicon(NULL), save_path(NULL),
 ad(NULL), sign(NULL), encode(NULL), palicon(NULL), font(NULL),
-memory(NULL), etrkey(NULL), tidy(NULL), log(NULL), black(NULL),
-proof(NULL), entry1(NULL), entry2(NULL), ipseg_view(NULL)
+sound(NULL), memory(NULL), etrkey(NULL), tidy(NULL), log(NULL),
+black(NULL), proof(NULL), entry1(NULL), entry2(NULL), ipseg_view(NULL)
 {
 }
 
@@ -194,6 +194,15 @@ void IptuxSetting::CreateSystem(GtkWidget * note)
 	gtk_box_pack_start(GTK_BOX(hbox), font, FALSE, FALSE, 0);
 	font = CreateFontChooser();
 	gtk_box_pack_start(GTK_BOX(hbox), font, TRUE, TRUE, 0);
+
+#ifdef HAVE_GST
+	sound = gtk_check_button_new_with_label(
+			_("Don't provide the support of sound"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(sound),
+				     FLAG_ISSET(ctr.flags, 6));
+	gtk_widget_show(sound);
+	gtk_box_pack_start(GTK_BOX(box), sound, FALSE, FALSE, 0);
+#endif
 
 	memory = gtk_check_button_new_with_label(
 			_("Minimise memory usage(not recommended)"));
@@ -569,6 +578,13 @@ void IptuxSetting::ObtainSystem()
 	text = gtk_font_button_get_font_name(GTK_FONT_BUTTON(font));
 	free(ctr.font);
 	ctr.font = Strdup(text);
+
+#ifdef HAVE_GST
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sound)))
+		FLAG_SET(ctr.flags, 6);
+	else
+		FLAG_CLR(ctr.flags, 6);
+#endif
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(memory)))
 		FLAG_SET(ctr.flags, 5);

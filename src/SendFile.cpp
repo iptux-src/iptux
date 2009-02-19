@@ -14,18 +14,20 @@
 #include "UdpData.h"
 #include "Transport.h"
 #include "DialogPeer.h"
+#include "Log.h"
 #include "my_file.h"
 #include "baling.h"
 #include "utils.h"
 
- SendFile::SendFile():dirty(false), pbn(0),
-prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL)
+ SendFile::SendFile():dirty(false), pbn(0), pblist(NULL), passwd(NULL),
+prn(MAX_SHAREDFILE), prlist(NULL)
 {
 	pthread_mutex_init(&mutex, NULL);
 }
 
 SendFile::~SendFile()
 {
+	free(passwd);
 	pthread_mutex_lock(&mutex);
 	g_slist_foreach(pblist, GFunc(remove_foreach),
 			GINT_TO_POINTER(FILEINFO));
@@ -48,7 +50,11 @@ void SendFile::InitSelf()
 	client = gconf_client_get_default();
 	filelist = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
 					 GCONF_VALUE_STRING, NULL);
+	if (!(passwd =
+	      gconf_client_get_string(client, GCONF_PATH "/shared_passwd", NULL)))
+		passwd = Strdup("");
 	g_object_unref(client);
+
 	pthread_mutex_lock(&mutex);
 	pblist = NULL, tmp = filelist;
 	while (tmp) {
@@ -85,6 +91,8 @@ void SendFile::WriteShared()
 	client = gconf_client_get_default();
 	gconf_client_set_list(client, GCONF_PATH "/shared_file_list",
 				      GCONF_VALUE_STRING, filelist, NULL);
+	gconf_client_set_string(client, GCONF_PATH "/shared_passwd",
+						    passwd, NULL);
 	g_object_unref(client);
 	pthread_mutex_unlock(&mutex);
 	g_slist_free(filelist);
@@ -154,6 +162,7 @@ void SendFile::RequestData(int sock, uint32_t fileattr, char *buf)
 void SendFile::SendFileInfo(GSList * list, gpointer data)
 {
 	extern struct interactive inter;
+	extern Log mylog;
 	my_file mf(false);
 	char buf[MAX_UDPBUF], *ptr, *filename;
 	struct stat64 st;
@@ -188,12 +197,14 @@ void SendFile::SendFileInfo(GSList * list, gpointer data)
 	pthread_mutex_unlock(&mutex);
 
 	cmd.SendFileInfo(inter.udpsock, data, 0, buf);
+	mylog.SystemLog(_("Send some files' information to a pal!"));
 }
 
 void SendFile::SendSharedInfo(gpointer data)
 {
 	extern struct interactive inter;
 	extern SendFile sfl;
+	extern Log mylog;
 	char buf[MAX_UDPBUF], *ptr, *filename;
 	GSList *tmp, *tmp1;
 	Command cmd;
@@ -225,6 +236,7 @@ void SendFile::SendSharedInfo(gpointer data)
 	pthread_mutex_unlock(&sfl.mutex);
 
 	cmd.SendFileInfo(inter.udpsock, data, IPTUX_SHAREDOPT, buf);
+	mylog.SystemLog(_("Send some shared files' information to a pal!"));
 }
 
 void SendFile::PickFile(uint32_t fileattr, gpointer data)

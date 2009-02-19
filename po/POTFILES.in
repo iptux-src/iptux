@@ -21,6 +21,7 @@ src/RecvFile.cpp
 src/RevisePal.cpp
 src/SendFile.cpp
 src/ShareFile.cpp
+src/Sound.cpp
 src/StatusIcon.cpp
 src/support.cpp
 src/TcpData.cpp

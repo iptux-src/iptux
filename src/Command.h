@@ -34,7 +34,8 @@ class Command {
 			 uint32_t fileid, uint64_t offset);
 	bool SendAskFiles(int sock, pointer data, uint32_t packetno,
 			  uint32_t fileid);
-	void SendAskShared(int sock, pointer data);
+	void SendAskShared(int sock, pointer data, uint32_t opttype,
+			  const char *extra);
 	void SendFileInfo(int sock, pointer data, uint32_t opttype,
 			  const char *extra);
 	void SendMyIcon(int sock, pointer data);

@@ -654,6 +654,10 @@ MSGFMT_OPTS
 MSGFMT
 USE_NLS
 GETTEXT_PACKAGE
+PACKAGE_LIBS
+PACKAGE_CFLAGS
+GST_LIBS
+GST_CFLAGS
 GCONF_LIBS
 GCONF_CFLAGS
 GTHREAD_LIBS
@@ -661,6 +665,12 @@ GTHREAD_CFLAGS
 GTK_LIBS
 GTK_CFLAGS
 PKG_CONFIG
+sounddir
+menudir
+tipdir
+icondir
+logodir
+desktopdir
 LIBOBJS
 EGREP
 GREP
@@ -775,7 +785,9 @@ GTK_LIBS
 GTHREAD_CFLAGS
 GTHREAD_LIBS
 GCONF_CFLAGS
-GCONF_LIBS'
+GCONF_LIBS
+GST_CFLAGS
+GST_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1427,6 +1439,8 @@ Some influential environment variables:
   GCONF_CFLAGS
               C compiler flags for GCONF, overriding pkg-config
   GCONF_LIBS  linker flags for GCONF, overriding pkg-config
+  GST_CFLAGS  C compiler flags for GST, overriding pkg-config
+  GST_LIBS    linker flags for GST, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4492,10 +4506,6 @@ fi
 { $as_echo "$as_me:$LINENO: result: $MKDIR_P" >&5
 $as_echo "$MKDIR_P" >&6; }
 
-#CXXFLAGS=-O3
-#AC_SUBST(CXXFLAGS)
-#CFLAGS=-O3
-#AC_SUBST(CFLAGS)
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lcairo':
@@ -7234,7 +7244,7 @@ else
   enable_message=yes
 fi
 
-if test "$enable_message" = yes ; then
+if test "${enable_message}" = yes ; then
 cat >>confdefs.h <<\_ACEOF
 #define MESSAGE 1
 _ACEOF
@@ -7247,7 +7257,7 @@ else
   enable_warning=yes
 fi
 
-if test "$enable_warning" = yes ; then
+if test "${enable_warning}" = yes ; then
 cat >>confdefs.h <<\_ACEOF
 #define WARNING 1
 _ACEOF
@@ -7260,12 +7270,53 @@ else
   enable_trace=no
 fi
 
-if test "$enable_trace" = yes ; then
+if test "${enable_trace}" = yes ; then
 cat >>confdefs.h <<\_ACEOF
 #define TRACE 1
 _ACEOF
 
 fi
+
+test "${prefix}" = NONE && prefix="${ac_default_prefix}"
+defdir=`eval echo ${datadir}`
+defdir=`eval echo ${defdir}`
+localedir="${defdir}/locale"
+desktopdir="${defdir}/applications"
+logodir="${defdir}/pixmaps"
+icondir="${defdir}/iptux/pixmaps/icon"
+tipdir="${defdir}/iptux/pixmaps/tip"
+menudir="${defdir}/iptux/pixmaps/menu"
+sounddir="${defdir}/iptux/sound"
+cat >>confdefs.h <<_ACEOF
+#define __LOCALE_DIR "${localedir}"
+_ACEOF
+
+cat >>confdefs.h <<_ACEOF
+#define __LOGO_DIR "${logodir}"
+_ACEOF
+
+cat >>confdefs.h <<_ACEOF
+#define __ICON_DIR "${icondir}"
+_ACEOF
+
+cat >>confdefs.h <<_ACEOF
+#define __TIP_DIR "${tipdir}"
+_ACEOF
+
+cat >>confdefs.h <<_ACEOF
+#define __MENU_DIR "${menudir}"
+_ACEOF
+
+cat >>confdefs.h <<_ACEOF
+#define __SOUND_DIR "${sounddir}"
+_ACEOF
+
+
+
+
+
+
+
 
 gtk_modules="gtk+-2.0 >= 2.0.0"
 
@@ -7497,8 +7548,6 @@ else
 $as_echo "yes" >&6; }
 	:
 fi
-
-
 gthread_modules="gthread-2.0 >= 2.0.0"
 
 pkg_failed=no
@@ -7613,8 +7662,6 @@ else
 $as_echo "yes" >&6; }
 	:
 fi
-
-
 gconf_modules="gconf-2.0 >= 2.0.0"
 
 pkg_failed=no
@@ -7729,9 +7776,97 @@ else
 $as_echo "yes" >&6; }
 	:
 fi
+gst_modules="gstreamer-0.10 >= 0.10.0"
+
+pkg_failed=no
+{ $as_echo "$as_me:$LINENO: checking for GST" >&5
+$as_echo_n "checking for GST... " >&6; }
+
+if test -n "$PKG_CONFIG"; then
+    if test -n "$GST_CFLAGS"; then
+        pkg_cv_GST_CFLAGS="$GST_CFLAGS"
+    else
+        if test -n "$PKG_CONFIG" && \
+    { ($as_echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"\$gst_modules\"") >&5
+  ($PKG_CONFIG --exists --print-errors "$gst_modules") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  pkg_cv_GST_CFLAGS=`$PKG_CONFIG --cflags "$gst_modules" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+    fi
+else
+	pkg_failed=untried
+fi
+if test -n "$PKG_CONFIG"; then
+    if test -n "$GST_LIBS"; then
+        pkg_cv_GST_LIBS="$GST_LIBS"
+    else
+        if test -n "$PKG_CONFIG" && \
+    { ($as_echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"\$gst_modules\"") >&5
+  ($PKG_CONFIG --exists --print-errors "$gst_modules") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  pkg_cv_GST_LIBS=`$PKG_CONFIG --libs "$gst_modules" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+    fi
+else
+	pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        GST_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "$gst_modules"`
+        else
+	        GST_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "$gst_modules"`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$GST_PKG_ERRORS" >&5
+
+	{ $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+                have_gst=no
+elif test $pkg_failed = untried; then
+	have_gst=no
+else
+	GST_CFLAGS=$pkg_cv_GST_CFLAGS
+	GST_LIBS=$pkg_cv_GST_LIBS
+        { $as_echo "$as_me:$LINENO: result: yes" >&5
+$as_echo "yes" >&6; }
+	have_gst=yes
+fi
+if test "${have_gst}" = yes ; then
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_GST 1
+_ACEOF
+
+else
+{ $as_echo "$as_me:$LINENO: WARNING: You need GStreamer-0.10 or later installed if you need sound relevant functions" >&5
+$as_echo "$as_me: WARNING: You need GStreamer-0.10 or later installed if you need sound relevant functions" >&2;}
+fi
+PACKAGE_CFLAGS="${GTK_CFLAGS} ${GTHREAD_CFLAGS} ${GCONF_CFLAGS} ${GST_CFLAGS}"
+PACKAGE_LIBS="${GTK_LIBS} ${GTHREAD_LIBS} ${GCONF_LIBS} ${GST_LIBS}"
+
 
 
 GETTEXT_PACKAGE=iptux
+
+cat >>confdefs.h <<_ACEOF
+#define GETTEXT_PACKAGE "${GETTEXT_PACKAGE}"
+_ACEOF
 
 
 ALL_LINGUAS="zh_CN"
@@ -9321,7 +9456,7 @@ $as_echo "$LINGUAS" >&6; }
 	< $srcdir/po/POTFILES.in > po/POTFILES
 
 
-ac_config_files="$ac_config_files Makefile desktop/Makefile pixmaps/Makefile src/Makefile po/Makefile.in"
+ac_config_files="$ac_config_files Makefile src/Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -9954,10 +10089,11 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "default-1") CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "desktop/Makefile") CONFIG_FILES="$CONFIG_FILES desktop/Makefile" ;;
     "pixmaps/Makefile") CONFIG_FILES="$CONFIG_FILES pixmaps/Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
+    "sound/Makefile") CONFIG_FILES="$CONFIG_FILES sound/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

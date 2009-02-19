@@ -47,6 +47,9 @@ class ShareFile {
 	static void DragDataReceived(gpointer data, GdkDragContext * context,
 				     gint x, gint y, GtkSelectionData * select,
 				     guint info, guint time);	//
+
+	static void SetPasswd();
+	static void ClearPasswd();
 };
 
 #endif

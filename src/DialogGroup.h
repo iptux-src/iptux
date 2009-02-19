@@ -51,6 +51,10 @@ class DialogGroup {
 	static gboolean PopupPickMenu(GtkTreeModel * model,
 					      GdkEventButton * event);
  private:
+	 static void ViewItemActivated(GtkWidget * view, GtkTreePath * path,
+				      GtkTreeViewColumn * column,
+				      GtkTreeModel * model);
+
 	static void SendMessage(gpointer data);	//DialogGroup
 	static void UpdatePalList(gpointer data);	//
 	static void DialogDestroy(gpointer data);	//

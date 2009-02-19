@@ -210,7 +210,7 @@ void Pal::BufferInsertData(GSList * chiplist, enum BELONG_TYPE type)
 		break;
 	case ERROR:
 		gdk_threads_enter();
-		BufferInsertError();
+		BufferInsertError(chiplist);
 		gdk_threads_leave();
 		break;
 	default:
@@ -314,9 +314,10 @@ void Pal::RecvReply(const char *msg)
 
 void Pal::RecvFile(const char *msg, size_t size)
 {
+	extern Log mylog;
 	struct recvfile_para *para;
-	const char *ptr;
 	uint32_t commandno;
+	const char *ptr;
 
 	commandno = iptux_get_dec_number(msg, 4);
 	if ((!(ptr = iptux_skip_string(msg, size, 1)) || *ptr == '\0')
@@ -328,6 +329,7 @@ void Pal::RecvFile(const char *msg, size_t size)
 	para->commandn = commandno;
 	para->packetn = iptux_get_dec_number(msg, 1);
 	thread_create(ThreadFunc(RecvFile::RecvEntry), para, false);
+	mylog.SystemLog(_("Received a number of document information!"));
 }
 
 void Pal::RecvSign(const char *msg)
@@ -547,25 +549,30 @@ void Pal::BufferInsertSelf(GSList * chiplist)
 	ViewScroll();
 }
 
-void Pal::BufferInsertError()
+//暂且不支持图片
+void Pal::BufferInsertError(GSList * chiplist)
 {
-	static char *tips[2] = {
-		_("<tips>"),
-		_("It isn't online,or not receive the data packet!\n")
-	};
 	extern Log mylog;
 	GtkTextIter iter;
-	char *ptr;
+	GSList *tmp;
+	gchar *ptr;
 
 	gtk_text_buffer_get_end_iter(record, &iter);
-	ptr = getformattime("%s", tips[0]);
+	ptr = getformattime(_("<tips>"));
 	gtk_text_buffer_insert_with_tags_by_name(record, &iter,
 						ptr, -1, "red", NULL);
 	g_free(ptr);
-	gtk_text_buffer_insert_with_tags_by_name(record, &iter,
-						tips[1], -1, "red", NULL);
-	mylog.SystemLog(_("send data packet fail!"));
 
+	tmp = chiplist;
+	while (tmp) {
+		if (((ChipData *) tmp->data)->type == STRING)
+			gtk_text_buffer_insert_with_tags_by_name(record, &iter,
+			      ((ChipData *) tmp->data)->data, -1, "red", NULL);
+		tmp = tmp->next;
+	}
+	gtk_text_buffer_insert(record, &iter, "\n", -1);
+
+	mylog.SystemLog(_("Send a message failed!"));
 	ViewScroll();
 }
 

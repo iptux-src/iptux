@@ -121,8 +121,8 @@ GtkWidget *StatusIcon::CreatePopupMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 
 	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Public"));
-// 	image = gtk_image_new_from_file(__TIP_DIR "/share.png");
-// 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
+	image = gtk_image_new_from_file(__MENU_DIR "/share.png");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(ShareFile::ShareEntry), NULL);
 	gtk_widget_show(menu_item);

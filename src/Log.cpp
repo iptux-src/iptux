@@ -17,6 +17,9 @@
 #include "utils.h"
 #include "udt.h"
 
+#define LOG_START_HEADER "====================================="
+#define LOG_END_HEADER   "-------------------------------------"
+
  Log::Log():communicate(NULL), system(NULL)
 {
 }
@@ -58,7 +61,8 @@ void Log::CommunicateLog(pointer data, const char *fmt, ...)
 	va_start(ap, fmt);
 	msg = g_strdup_vprintf(fmt, ap);
 	va_end(ap);
-	fprintf(communicate, "%s%s\n", ptr, msg);
+	fprintf(communicate, "%s\n%s%s\n%s\n\n", LOG_START_HEADER,
+					    ptr, msg, LOG_END_HEADER);
 	g_free(ptr), g_free(msg);
 }
 
@@ -75,6 +79,7 @@ void Log::SystemLog(const char *fmt, ...)
 	va_start(ap, fmt);
 	msg = g_strdup_vprintf(fmt, ap);
 	va_end(ap);
-	fprintf(system, "%s%s\n\n", ptr, msg);
+	fprintf(system, "%s\n%s%s\n%s\n\n", LOG_START_HEADER, ptr,
+					    msg, LOG_END_HEADER);
 	g_free(ptr), g_free(msg);
 }

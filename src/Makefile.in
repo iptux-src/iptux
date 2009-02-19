@@ -50,11 +50,12 @@ am_iptux_OBJECTS = AboutIptux.$(OBJEXT) Command.$(OBJEXT) \
 	DialogGroup.$(OBJEXT) DialogPeer.$(OBJEXT) \
 	IptuxSetting.$(OBJEXT) Log.$(OBJEXT) MainWindow.$(OBJEXT) \
 	Pal.$(OBJEXT) RecvFile.$(OBJEXT) RevisePal.$(OBJEXT) \
-	SendFile.$(OBJEXT) ShareFile.$(OBJEXT) StatusIcon.$(OBJEXT) \
-	TcpData.$(OBJEXT) Transport.$(OBJEXT) UdpData.$(OBJEXT) \
-	baling.$(OBJEXT) dialog.$(OBJEXT) iptux.$(OBJEXT) \
-	my_chooser.$(OBJEXT) my_entry.$(OBJEXT) my_file.$(OBJEXT) \
-	output.$(OBJEXT) support.$(OBJEXT) utils.$(OBJEXT)
+	SendFile.$(OBJEXT) ShareFile.$(OBJEXT) Sound.$(OBJEXT) \
+	StatusIcon.$(OBJEXT) TcpData.$(OBJEXT) Transport.$(OBJEXT) \
+	UdpData.$(OBJEXT) baling.$(OBJEXT) dialog.$(OBJEXT) \
+	iptux.$(OBJEXT) my_chooser.$(OBJEXT) my_entry.$(OBJEXT) \
+	my_file.$(OBJEXT) output.$(OBJEXT) support.$(OBJEXT) \
+	utils.$(OBJEXT)
 iptux_OBJECTS = $(am_iptux_OBJECTS)
 am__DEPENDENCIES_1 =
 iptux_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -105,6 +106,8 @@ GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
 GREP = @GREP@
+GST_CFLAGS = @GST_CFLAGS@
+GST_LIBS = @GST_LIBS@
 GTHREAD_CFLAGS = @GTHREAD_CFLAGS@
 GTHREAD_LIBS = @GTHREAD_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -129,6 +132,8 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+PACKAGE_CFLAGS = @PACKAGE_CFLAGS@
+PACKAGE_LIBS = @PACKAGE_LIBS@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -162,11 +167,13 @@ build_alias = @build_alias@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
+desktopdir = @desktopdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host_alias = @host_alias@
 htmldir = @htmldir@
+icondir = @icondir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -174,7 +181,9 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+logodir = @logodir@
 mandir = @mandir@
+menudir = @menudir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
@@ -183,40 +192,32 @@ program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
+sounddir = @sounddir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+tipdir = @tipdir@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 iptux_SOURCES = AboutIptux.cpp Command.cpp Control.cpp CoreThread.cpp \
 	DetectPal.cpp DialogGroup.cpp DialogPeer.cpp IptuxSetting.cpp Log.cpp MainWindow.cpp \
-	Pal.cpp RecvFile.cpp RevisePal.cpp SendFile.cpp ShareFile.cpp StatusIcon.cpp \
-	TcpData.cpp Transport.cpp UdpData.cpp baling.cpp dialog.cpp iptux.cpp \
+	Pal.cpp RecvFile.cpp RevisePal.cpp SendFile.cpp ShareFile.cpp Sound.cpp \
+	StatusIcon.cpp TcpData.cpp Transport.cpp UdpData.cpp baling.cpp dialog.cpp iptux.cpp \
 	my_chooser.cpp my_entry.cpp my_file.cpp output.cpp support.cpp utils.cpp
 
 
 # set the include path found by configure
-# set the include path found by configure
-INCLUDES = $(all_includes) \
-	@GTK_CFLAGS@ \
-	@GTHREAD_CFLAGS@ \
-	@GCONF_CFLAGS@ \
-	-DGETTEXT_PACKAGE=\""@GETTEXT_PACKAGE@"\" \
-	-D__LOCALE_DIR=\""$(datadir)/locale"\" \
-	-D__LOGO_DIR=\""$(datadir)/pixmaps"\" \
-	-D__ICON_DIR=\""$(datadir)/pixmaps/iptux/icon"\" \
-	-D__TIP_DIR=\""$(datadir)/pixmaps/iptux/tip"\"
-
+INCLUDES = $(all_includes) @PACKAGE_CFLAGS@
 
 # the library search path.
-iptux_LDADD = @GTK_LIBS@ @GTHREAD_LIBS@ @GCONF_LIBS@ $(INTLLIBS)
+iptux_LDADD = $(INTLLIBS) @PACKAGE_LIBS@
 iptux_LDFLAGS = $(all_libraries)
 noinst_HEADERS = AboutIptux.h Command.h Control.h CoreThread.h DetectPal.h \
 	DialogGroup.h DialogPeer.h IptuxSetting.h Log.h MainWindow.h Pal.h RecvFile.h \
-	RevisePal.h SendFile.h ShareFile.h StatusIcon.h TcpData.h Transport.h UdpData.h \
-	baling.h common.h dialog.h face.h ipmsg.h my_chooser.h my_entry.h my_file.h \
-	net.h output.h support.h sys.h udt.h utils.h
+	RevisePal.h SendFile.h ShareFile.h Sound.h StatusIcon.h TcpData.h Transport.h \
+	UdpData.h baling.h common.h dialog.h face.h ipmsg.h my_chooser.h my_entry.h \
+	my_file.h net.h output.h support.h sys.h udt.h utils.h
 
 all: all-am
 
@@ -231,9 +232,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/Makefile
+	  $(AUTOMAKE) --foreign  src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -299,6 +300,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RevisePal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SendFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShareFile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Sound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StatusIcon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TcpData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Transport.Po@am__quote@

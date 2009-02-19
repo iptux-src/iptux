@@ -35,8 +35,8 @@ class IptuxSetting {
 
 	GtkTreeModel *icon_model, *ip_model;
 	GtkWidget *myname, *mygroup, *myicon, *save_path, *ad, *sign;
-	GtkWidget *encode, *palicon, *font, *memory, *etrkey, *tidy,
-			 *log, *black, *proof;
+	GtkWidget *encode, *palicon, *font, *sound, *memory, *etrkey,
+					 *tidy, *log, *black, *proof;
 	GtkWidget *entry1, *entry2, *ipseg_view;
 	static GtkWidget *setting;
  public:

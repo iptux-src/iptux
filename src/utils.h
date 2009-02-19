@@ -41,6 +41,7 @@ char *transfer_encode(const char *instr, const char *encode, bool direc);
 
 typedef void *(*ThreadFunc) (void *);
 pthread_t thread_create(ThreadFunc func, pointer data, bool joinable);
+void get_file_system_info(const char *path, uint64_t *avail, uint64_t *total);
 char *my_getline(const char *str);
 int strnchr(const char *str, char chr);
 void remove_foreach(pointer data, enum INFO_TYPE type);

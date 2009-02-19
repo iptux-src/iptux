@@ -169,6 +169,7 @@ void Command::SendMessage(int sock, pointer data, const char *msg)
 {
 	uint32_t packetno;
 	uint8_t count;
+	GSList *chiplist;
 	Pal *pal;
 	SI addr;
 
@@ -188,8 +189,14 @@ void Command::SendMessage(int sock, pointer data, const char *msg)
 		my_delay(1, 0);
 		count++;
 	} while (!pal->CheckReply(packetno, false) && count < MAX_RETRYTIMES);
-	if (count >= MAX_RETRYTIMES)
-		pal->BufferInsertData(NULL, ERROR);
+	if (count >= MAX_RETRYTIMES) {
+		chiplist = g_slist_append(NULL, new ChipData(STRING,
+			  _("It's offline, or not receive the data packet!")));
+		pal->BufferInsertData(chiplist, ERROR);
+		g_slist_foreach(chiplist, GFunc(remove_foreach),
+				GINT_TO_POINTER(UNKNOWN));	//静态内存，不需析构释放
+		g_slist_free(chiplist);
+	}
 }
 
 //回复消息
@@ -284,13 +291,14 @@ bool Command::SendAskFiles(int sock, pointer data, uint32_t packetno,
 	return true;
 }
 
-void Command::SendAskShared(int sock, pointer data)
+void Command::SendAskShared(int sock, pointer data, uint32_t opttype,
+			    const char *extra)
 {
 	Pal *pal;
 	SI addr;
 
 	pal = (Pal *) data;
-	CreateCommand(IPTUX_ASKSHARED, NULL);
+	CreateCommand(opttype | IPTUX_ASKSHARED, extra);
 	TransferEncode(pal->EncodeQuote());
 
 	bzero(&addr, sizeof(addr));

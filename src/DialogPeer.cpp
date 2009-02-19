@@ -58,14 +58,12 @@ void DialogPeer::DialogEntry(gpointer data)
 
 void DialogPeer::CreateDialog()
 {
-	GtkTargetEntry target = { "text/plain", 0, 0 };
 	gchar *title;
 
 	title = g_strdup_printf(_("Communicate with %s"), pal->NameQuote());
 	dialog = create_window(title, 162, 111);
 	g_free(title);
-	gtk_drag_dest_set(dialog, GTK_DEST_DEFAULT_ALL,
-				    &target, 1, GDK_ACTION_MOVE);
+	widget_enable_dnd_uri(dialog);
 	g_signal_connect_swapped(dialog, "drag-data-received",
 				    G_CALLBACK(DragDataReceived), pal);
 	accel = gtk_accel_group_new();
@@ -140,6 +138,7 @@ void DialogPeer::CreateInputArea(GtkWidget * paned)
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	focus = create_text_view();
+	gtk_drag_dest_add_uri_targets(focus);
 	g_signal_connect(focus, "drag-data-received",
 			 G_CALLBACK(DragPicReceived),
 			 gtk_text_view_get_buffer(GTK_TEXT_VIEW(focus)));
@@ -357,24 +356,17 @@ void DialogPeer::DragDataReceived(gpointer data, GdkDragContext * context,
 {
 	extern SendFile sfl;
 	extern struct interactive inter;
-	const char *prl = "file://";
-	char ipstr[INET_ADDRSTRLEN], *tmp, *file;
+	char ipstr[INET_ADDRSTRLEN];
 	GSList *list;
 	Pal *pal;
 
-	if (select->length <= 0 || select->format != 8
-		   || strcasestr((char *)select->data, prl) == NULL) {
+	if (select->length <= 0 || select->format != 8) {
 		gtk_drag_finish(context, FALSE, FALSE, time);
 		return;
 	}
 
-	list = NULL, tmp = (char *)select->data;
-	while (tmp = strcasestr(tmp, prl)) {
-		file = my_getline(tmp + strlen(prl));
-		list = g_slist_append(list, file);
-		tmp += strlen(prl) + strlen(file);
-	}
 	pal = (Pal *) data;
+	list = selection_data_get_path(select);
 	sfl.SendFileInfo(list, pal);
 	g_slist_free(list);	//他处释放
 
@@ -392,44 +384,42 @@ void DialogPeer::AskSharedFiles(gpointer data)
 	extern struct interactive inter;
 	Command cmd;
 
-	cmd.SendAskShared(inter.udpsock, data);
+	cmd.SendAskShared(inter.udpsock, data, 0, NULL);
 }
 
 void DialogPeer::DragPicReceived(GtkWidget * view, GdkDragContext * context,
 				 gint x, gint y, GtkSelectionData * select,
 				 guint info, guint time, GtkTextBuffer * buffer)
 {
-	const char *prl = "file://";
 	GdkPixbuf *pixbuf;
 	GtkTextIter iter;
-	char *tmp, *file;
-	gboolean flag;
+	GSList *list, *tmp;
 	gint position;
 
-	if (select->length <= 0 || select->format != 8
-		   || strcasestr((char *)select->data, prl) == NULL) {
+	if (select->length <= 0 || select->format != 8) {
 		gtk_drag_finish(context, FALSE, FALSE, time);
 		return;
 	}
 
-	flag = FALSE, tmp = (char *)select->data;
-	while (tmp = strcasestr(tmp, prl)) {
-		file = my_getline(tmp + strlen(prl));
-		pixbuf = gdk_pixbuf_new_from_file(file, NULL);
-		if (pixbuf) {
-			g_object_get(buffer, "cursor-position", &position, NULL);
-			gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
-			gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
+	tmp = list = selection_data_get_path(select);
+	while (tmp) {
+		if (pixbuf = gdk_pixbuf_new_from_file(
+				    (char *) tmp->data, NULL)) {
+			g_object_get(buffer, "cursor-position",
+						     &position, NULL);
+			gtk_text_buffer_get_iter_at_offset(buffer,
+						     &iter, position);
+			gtk_text_buffer_insert_pixbuf(buffer,
+						     &iter, pixbuf);
 			g_object_unref(pixbuf);
-			flag = TRUE;
 		}
-		tmp += strlen(prl) + strlen(file);
-		free(file);
+		tmp = tmp->next;
 	}
+	g_slist_foreach(list, GFunc(remove_foreach),
+				GINT_TO_POINTER(UNKNOWN));
+	g_slist_free(list);
 
-	gtk_drag_finish(context, flag, FALSE, time);
-	if (flag)
-		g_signal_stop_emission_by_name(view, "drag-data-received");
+	gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
 void DialogPeer::DialogDestroy(gpointer data)

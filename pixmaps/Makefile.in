@@ -47,12 +47,12 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(backdir)" "$(DESTDIR)$(icondir)" \
+am__installdirs = "$(DESTDIR)$(icondir)" "$(DESTDIR)$(menudir)" \
 	"$(DESTDIR)$(tipdir)"
-backDATA_INSTALL = $(INSTALL_DATA)
 iconDATA_INSTALL = $(INSTALL_DATA)
+menuDATA_INSTALL = $(INSTALL_DATA)
 tipDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(back_DATA) $(icon_DATA) $(tip_DATA)
+DATA = $(icon_DATA) $(menu_DATA) $(tip_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -85,6 +85,8 @@ GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
 GREP = @GREP@
+GST_CFLAGS = @GST_CFLAGS@
+GST_LIBS = @GST_LIBS@
 GTHREAD_CFLAGS = @GTHREAD_CFLAGS@
 GTHREAD_LIBS = @GTHREAD_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -109,6 +111,8 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+PACKAGE_CFLAGS = @PACKAGE_CFLAGS@
+PACKAGE_LIBS = @PACKAGE_LIBS@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -142,11 +146,13 @@ build_alias = @build_alias@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
+desktopdir = @desktopdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host_alias = @host_alias@
 htmldir = @htmldir@
+icondir = @icondir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -154,7 +160,9 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+logodir = @logodir@
 mandir = @mandir@
+menudir = @menudir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
@@ -163,25 +171,24 @@ program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
+sounddir = @sounddir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+tipdir = @tipdir@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-back = back.png title.png
 icon = Blowfish.png Bug.png Cow.png Daemon.png Dog.png Elephant.png Frog.png \
 	Ghost.png Konqui.png Lion.png Monkey.png Penguin.png Pig.png qq.png \
 	Rabbit.png Scream.png Teddybear.png Turtle.png tux.png
 
 tip = error.png finish.png hide.png  recv.png send.png show.png
-EXTRA_DIST = $(back) $(tip) $(icon)
-backdir = $(datadir)/pixmaps/iptux/back
-back_DATA = $(back)
-icondir = $(datadir)/pixmaps/iptux/icon
+menu = share.png
+EXTRA_DIST = $(tip) $(icon) $(menu)
 icon_DATA = $(icon)
-tipdir = $(datadir)/pixmaps/iptux/tip
 tip_DATA = $(tip)
+menu_DATA = $(menu)
 all: all-am
 
 .SUFFIXES:
@@ -194,9 +201,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  pixmaps/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  pixmaps/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  pixmaps/Makefile
+	  $(AUTOMAKE) --foreign  pixmaps/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -214,23 +221,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-backDATA: $(back_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(backdir)" || $(MKDIR_P) "$(DESTDIR)$(backdir)"
-	@list='$(back_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(backDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(backdir)/$$f'"; \
-	  $(backDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(backdir)/$$f"; \
-	done
-
-uninstall-backDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(back_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(backdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(backdir)/$$f"; \
-	done
 install-iconDATA: $(icon_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(icondir)" || $(MKDIR_P) "$(DESTDIR)$(icondir)"
@@ -247,6 +237,23 @@ uninstall-iconDATA:
 	  f=$(am__strip_dir) \
 	  echo " rm -f '$(DESTDIR)$(icondir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(icondir)/$$f"; \
+	done
+install-menuDATA: $(menu_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(menudir)" || $(MKDIR_P) "$(DESTDIR)$(menudir)"
+	@list='$(menu_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(menuDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(menudir)/$$f'"; \
+	  $(menuDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(menudir)/$$f"; \
+	done
+
+uninstall-menuDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(menu_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(menudir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(menudir)/$$f"; \
 	done
 install-tipDATA: $(tip_DATA)
 	@$(NORMAL_INSTALL)
@@ -302,7 +309,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(backdir)" "$(DESTDIR)$(icondir)" "$(DESTDIR)$(tipdir)"; do \
+	for dir in "$(DESTDIR)$(icondir)" "$(DESTDIR)$(menudir)" "$(DESTDIR)$(tipdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -347,7 +354,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-backDATA install-iconDATA install-tipDATA
+install-data-am: install-iconDATA install-menuDATA install-tipDATA
 
 install-dvi: install-dvi-am
 
@@ -381,21 +388,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-backDATA uninstall-iconDATA uninstall-tipDATA
+uninstall-am: uninstall-iconDATA uninstall-menuDATA uninstall-tipDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-backDATA install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-iconDATA \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	install-tipDATA installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-backDATA uninstall-iconDATA uninstall-tipDATA
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-iconDATA install-info install-info-am \
+	install-man install-menuDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip install-tipDATA \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am uninstall-iconDATA \
+	uninstall-menuDATA uninstall-tipDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -20,6 +20,8 @@ void iptux_quit();		//底层退出
 
 void pixbuf_shrink_scale_1(GdkPixbuf ** pixbuf, int width, int height);
 GdkPixbuf *obtain_pixbuf_from_stock(const gchar * stock_id);
+void widget_enable_dnd_uri(GtkWidget *widget);
+GSList *selection_data_get_path(GtkSelectionData *data);
 
 void init_iptux_environment();
 void bind_iptux_port();

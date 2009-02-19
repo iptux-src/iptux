@@ -187,15 +187,13 @@ GtkWidget *MainWindow::CreateMenuBar()
 
 GtkWidget *MainWindow::CreatePalTree()
 {
-	GtkTargetEntry target = { "text/plain", 0, 0 };
 	GtkTreeSelection *selection;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
 	GtkWidget *view;
 
 	view = gtk_tree_view_new_with_model(tree_model);
-	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_ALL,
-				  &target, 1, GDK_ACTION_MOVE);
+	widget_enable_dnd_uri(view);
 	gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(view), 10);
 	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(view), FALSE);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
@@ -216,16 +214,14 @@ GtkWidget *MainWindow::CreatePalTree()
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
 							renderer, TRUE);
 	g_object_set(renderer, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD,
-					   //  "foreground", "#52B838", NULL);
-					   NULL);
+					     "foreground", "#52B838", NULL);
 	gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column),
 			    renderer, "text", 2, "font", 3, "visible", 4, NULL);
 	renderer = gtk_cell_renderer_text_new();	//
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
 							renderer, TRUE);
 	g_object_set(renderer, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD,
-					    // "foreground", "#52B838", NULL);
-					    NULL);
+					     "foreground", "#52B838", NULL);
 	gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column),
 				    renderer, "markup", 5, "visible", 6, NULL);
 
@@ -274,7 +270,8 @@ void MainWindow::InitPalTreeModel()
 		else
 			snprintf(ipstr, 32, "%s", localip[count << 1]);
 		snprintf(buf, MAX_BUF,
-			 "%s",
+			 "<span style=\"italic\" underline=\"single\" size=\"small\" "
+			 "foreground=\"#52B838\" weight=\"bold\">%s</span>",
 			 ipstr);
 		gtk_tree_store_append(GTK_TREE_STORE(tree_model), &iter, NULL);
 		gtk_tree_store_set(GTK_TREE_STORE(tree_model), &iter, 0, pixbuf,
@@ -382,8 +379,8 @@ void MainWindow::CreateToolMenu(GtkWidget * menu_bar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 
 	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Public"));
-// 	image = gtk_image_new_from_file(__TIP_DIR "/share.png");
-// 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
+	image = gtk_image_new_from_file(__MENU_DIR "/share.png");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(ShareFile::ShareEntry), NULL);
 	gtk_widget_show(menu_item);
@@ -570,7 +567,6 @@ GtkTreeModel *MainWindow::CreatePalListModel()
 
 GtkWidget *MainWindow::CreatePalListView()
 {
-	GtkTargetEntry target = { "text/plain", 0, 0 };
 	GtkWidget *view;
 	GtkTreeModel *model;
 	GtkTreeViewColumn *column;
@@ -579,8 +575,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	model = CreatePalListModel();
 	view = gtk_tree_view_new_with_model(model);
-	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_ALL,
-			  &target, 1, GDK_ACTION_MOVE);
+	widget_enable_dnd_uri(view);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	gtk_tree_selection_set_mode(GTK_TREE_SELECTION(selection),
 				    GTK_SELECTION_NONE);

@@ -13,6 +13,8 @@
 #include "MainWindow.h"
 #include "SendFile.h"
 #include "Control.h"
+#include "Sound.h"
+#include "Command.h"
 #include "Pal.h"
 #include "dialog.h"
 #include "baling.h"
@@ -299,6 +301,10 @@ void UdpData::SomeoneAbsence(in_addr_t ipv4, char *msg, size_t size)
 
 void UdpData::SomeoneSendmsg(in_addr_t ipv4, char *msg, size_t size)
 {
+	extern struct interactive inter;
+	extern Sound sound;
+	Command cmd;
+	char *passwd, *text;
 	uint32_t commandno;
 	bool flag;
 	Pal *pal;
@@ -311,12 +317,26 @@ void UdpData::SomeoneSendmsg(in_addr_t ipv4, char *msg, size_t size)
 	}
 
 	flag = pal->RecvMessage(msg);
-
 	commandno = iptux_get_dec_number(msg, 4);
 	if (commandno & IPMSG_SENDCHECKOPT)
 		pal->SendReply(msg);
-	if (flag && (commandno & IPMSG_FILEATTACHOPT))
-		pal->RecvFile(msg, size);
+	if (flag && !(commandno & IPMSG_FILEATTACHOPT))
+		sound.PlayTip(__SOUND_DIR "/msg.ogg");
+	if (flag && (commandno & IPMSG_FILEATTACHOPT)) {
+		if ((commandno & IPTUX_SHAREDOPT)
+			     && (commandno & IPTUX_PASSWDOPT)) {
+			passwd = pop_obtain_passwd();
+			if (passwd && *passwd != '\0') {
+				text = g_base64_encode((guchar *)passwd,
+							strlen(passwd));
+				cmd.SendAskShared(inter.udpsock, pal,
+						IPTUX_PASSWDOPT, text);
+				free(text);
+			}
+			free(passwd);
+		} else
+			pal->RecvFile(msg, size);
+	}
 }
 
 void UdpData::SomeoneRecvmsg(in_addr_t ipv4, char *msg, size_t size)
@@ -332,15 +352,27 @@ void UdpData::SomeoneRecvmsg(in_addr_t ipv4, char *msg, size_t size)
 
 void UdpData::SomeoneAskShared(in_addr_t ipv4, char *msg, size_t size)
 {
+	extern struct interactive inter;
+	extern SendFile sfl;
+	Command cmd;
+	char *passwd;
 	Pal *pal;
 
 	pal = (Pal *) Ipv4GetPal(ipv4);
-	if (!pal)
+	if (!pal || !pal->RecvAskShared(msg))
 		return;
 
-	if (!pal->RecvAskShared(msg))
-		return;
-	thread_create(ThreadFunc(ThreadAskShared), pal, false);
+	if (*sfl.PasswdQuote() == '\0')
+		thread_create(ThreadFunc(ThreadAskShared), pal, false);
+	else if (!(iptux_get_dec_number(msg, 4) & IPTUX_PASSWDOPT))
+		cmd.SendFileInfo(inter.udpsock, pal,
+				 IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
+	else {
+		if ((passwd = ipmsg_get_attach(msg, 5))
+		    && (strcmp(passwd, sfl.PasswdQuote()) == 0))
+			thread_create(ThreadFunc(ThreadAskShared), pal, false);
+		free(passwd);
+	}
 }
 
 void UdpData::SomeoneSendIcon(in_addr_t ipv4, char *msg, size_t size)

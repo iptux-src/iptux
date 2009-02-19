@@ -10,11 +10,13 @@
 //
 //
 #include "DialogGroup.h"
+#include "DialogPeer.h"
 #include "AboutIptux.h"
 #include "UdpData.h"
 #include "Control.h"
 #include "Command.h"
 #include "Pal.h"
+#include "Log.h"
 #include "support.h"
 #include "baling.h"
 #include "output.h"
@@ -194,6 +196,8 @@ GtkWidget *DialogGroup::CreateGroupView()
 
 	view = gtk_tree_view_new_with_model(group_model);
 	gtk_widget_show(view);
+	g_signal_connect(view, "row-activated",
+			 G_CALLBACK(ViewItemActivated), group_model);
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
@@ -385,8 +389,21 @@ gboolean DialogGroup::PopupPickMenu(GtkTreeModel * model,
 	return TRUE;
 }
 
+void DialogGroup::ViewItemActivated(GtkWidget * view, GtkTreePath * path,
+				      GtkTreeViewColumn * column,
+				      GtkTreeModel * model)
+{
+	GtkTreeIter iter;
+	gpointer data;
+
+	gtk_tree_model_get_iter(model, &iter, path);
+	gtk_tree_model_get(model, &iter, 3, &data, -1);
+	DialogPeer::DialogEntry(data);
+}
+
 void DialogGroup::SendMessage(gpointer data)
 {
+	extern Log mylog;
 	GtkTextBuffer *buffer;
 	GtkTextIter start, end;
 	DialogGroup *dg;
@@ -405,6 +422,7 @@ void DialogGroup::SendMessage(gpointer data)
 	gtk_text_buffer_delete(buffer, &start, &end);
 
 	dg->BufferInsertText(msg);
+	mylog.CommunicateLog(NULL, msg);
 	dg->SendGroupMsg(msg);
 	dg->ViewScroll();
 

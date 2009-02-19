@@ -40,11 +40,9 @@ void DetectPal::CreateDetect()
 	GtkWidget *frame;
 
 	detect = gtk_dialog_new_with_buttons(_("Detect the pals"),
-					     GTK_WINDOW(inter.window),
-					     GTK_DIALOG_MODAL,
-					     _("Cancel"), GTK_RESPONSE_CANCEL,
-					     _("Detect"), GTK_RESPONSE_ACCEPT,
-					     NULL);
+				    GTK_WINDOW(inter.window), GTK_DIALOG_MODAL,
+				    _("Cancel"), GTK_RESPONSE_CANCEL,
+				    _("Detect"), GTK_RESPONSE_ACCEPT, NULL);
 	g_signal_connect(detect, "destroy", G_CALLBACK(DetectDestroy), NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(detect), GTK_RESPONSE_ACCEPT);
 

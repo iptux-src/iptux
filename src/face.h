@@ -12,6 +12,10 @@
 #ifndef FACE_H
 #define FACE_H
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>

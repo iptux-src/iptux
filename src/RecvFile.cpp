@@ -13,6 +13,7 @@
 #include "DialogGroup.h"
 #include "Transport.h"
 #include "Control.h"
+#include "Log.h"
 #include "utils.h"
 #include "output.h"
 #include "baling.h"
@@ -56,14 +57,15 @@ void RecvFile::ParseExtra()
 
 void RecvFile::CreateRecvWindow()
 {
+	extern Control ctr;
 	GtkWidget *window, *sw, *view;
-	GtkWidget *box, *hbb, *button;
+	GtkWidget *box, *hbb, *hbox, *button, *label;
 
 	file_model = CreateRecvModel();
 	if (commandn & IPTUX_SHAREDOPT)
-		window = create_window(_("Shared file from pal"), 132, 79);
+		window = create_window(_("Pal's shared files"), 135, 85);
 	else
-		window = create_window(_("File receive management"), 132, 79);
+		window = create_window(_("File receive management"), 135, 85);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 	g_signal_connect_swapped(window, "destroy",
 				 G_CALLBACK(g_object_unref), file_model);
@@ -75,6 +77,29 @@ void RecvFile::CreateRecvWindow()
 	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
+	hbox = create_box(FALSE);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	label = create_label(_("Save To: "));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	button = gtk_file_chooser_button_new(_("Save file to"),
+				 GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(button), ctr.path);
+	gtk_widget_show(button);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	label = create_label("");
+	gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	ChooserResetLabel(button, label);
+	g_signal_connect(view, "cursor-changed",
+				 G_CALLBACK(CursorItemChanged), button);
+	g_signal_connect(button, "current-folder-changed",
+				 G_CALLBACK(ChooserResetLabel), label);
+	g_signal_connect(button, "current-folder-changed",
+				 G_CALLBACK(ChooserResetView), view);
+
+	label = gtk_hseparator_new();
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
+
 	hbb = create_button_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbb, FALSE, FALSE, 0);
 	button = create_button(_("Receive"));
@@ -82,11 +107,11 @@ void RecvFile::CreateRecvWindow()
 				 G_CALLBACK(AdditionRecvFile), file_model);
 	g_signal_connect_swapped(button, "clicked",
 				 G_CALLBACK(gtk_widget_destroy), window);
-	gtk_box_pack_end(GTK_BOX(hbb), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbb), button, FALSE, FALSE, 0);
 	button = create_button(_("Refuse"));
 	g_signal_connect_swapped(button, "clicked",
 				 G_CALLBACK(gtk_widget_destroy), window);
-	gtk_box_pack_end(GTK_BOX(hbb), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbb), button, FALSE, FALSE, 0);
 }
 
 gpointer RecvFile::DivideFileinfo(char **ptr)
@@ -106,16 +131,17 @@ gpointer RecvFile::DivideFileinfo(char **ptr)
 	return file;
 }
 
-//10,0 bool,1 filename,2 owner,3 size,4 type,5 packetn, 6 fileid,7 size,8 type 9 data
+//11,0 bool,1 filename,2 owner,3 size,4 type,5 path,6 packetn,7 fileid,8 size,9 type,10 data
 GtkTreeModel *RecvFile::CreateRecvModel()
 {
+	extern Control ctr;
 	GtkListStore *model;
 	GtkTreeIter iter;
 	FileInfo *file;
 	GSList *tmp;
 	char *ptr;
 
-	model = gtk_list_store_new(10, G_TYPE_BOOLEAN,
+	model = gtk_list_store_new(11, G_TYPE_BOOLEAN, G_TYPE_STRING,
 				   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 				   G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
 				   G_TYPE_UINT64, G_TYPE_UINT, G_TYPE_POINTER);
@@ -125,9 +151,9 @@ GtkTreeModel *RecvFile::CreateRecvModel()
 		ptr = number_to_string_size(file->filesize);
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter, 0, TRUE, 1, file->filename,
-				   2, pal->NameQuote(), 3, ptr, 5, packetn,
-				   6, file->fileid, 7, file->filesize,
-				   8, file->fileattr, 9, pal, -1);
+				   2, pal->NameQuote(), 3, ptr, 5, ctr.path,
+				   6, packetn, 7, file->fileid, 8, file->filesize,
+				   9, file->fileattr, 10, pal, -1);
 		free(ptr);
 		if (GET_MODE(file->fileattr) == IPMSG_FILE_REGULAR)
 			gtk_list_store_set(model, &iter, 4, _("regular"), -1);
@@ -212,13 +238,66 @@ void RecvFile::CellEditText(GtkCellRendererText * renderer, gchar * path,
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, new_text, -1);
 }
 
+void RecvFile::CursorItemChanged(GtkWidget *view, GtkWidget *chooser)
+{
+	GtkTreeModel *model;
+	GtkTreePath *treepath;
+	GtkTreeIter iter;
+	gchar *path;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
+	gtk_tree_model_get_iter(model, &iter, treepath);
+	gtk_tree_path_free(treepath);
+	gtk_tree_model_get(model, &iter, 5, &path, -1);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), path);
+	g_free(path);
+}
+
+void RecvFile::ChooserResetLabel(GtkWidget *chooser, GtkWidget *label)
+{
+	uint64_t avail, total;
+	char buf[MAX_BUF], *path, *str_avail, *str_total;
+
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+	get_file_system_info(path, &avail, &total);
+	g_free(path);
+	str_avail = number_to_string_size(avail);
+	str_total = number_to_string_size(total);
+	snprintf(buf, MAX_BUF, _("Free:%s|Total:%s"), str_avail, str_total);
+	free(str_avail), free(str_total);
+	gtk_label_set_label(GTK_LABEL(label), buf);
+}
+
+void RecvFile::ChooserResetView(GtkWidget *chooser, GtkWidget *view)
+{
+	GtkTreeModel *model;
+	GtkTreePath *treepath;
+	GtkTreeIter iter;
+	gchar *path;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
+	if (treepath) {
+		gtk_tree_model_get_iter(model, &iter, treepath);
+		gtk_tree_path_free(treepath);
+		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 5, path, -1);
+	} else if (gtk_tree_model_get_iter_first(model, &iter)) {
+		do {
+			gtk_list_store_set(GTK_LIST_STORE(model), &iter, 5, path, -1);
+		}  while (gtk_tree_model_iter_next(model, &iter));
+	}
+	g_free(path);
+}
+
 void RecvFile::AdditionRecvFile(GtkTreeModel * model)
 {
-	extern Control ctr;
+	extern Log mylog;
 	extern Transport trans;
 	uint64_t filesize;
 	uint32_t packetn, fileid, fileattr;
-	gchar *filename, *filestr;
+	gchar *filename, *filestr, *path;
 	GtkTreeIter iter1, iter2, *iter;
 	GdkPixbuf *pixbuf;
 	gboolean active;
@@ -229,10 +308,10 @@ void RecvFile::AdditionRecvFile(GtkTreeModel * model)
 	pixbuf = gdk_pixbuf_new_from_file(__TIP_DIR "/recv.png", NULL);
 	do {
 		gtk_tree_model_get(model, &iter1, 0, &active, 1, &filename,
-				   3, &filestr, 5, &packetn, 6, &fileid, 7,
-				   &filesize, 8, &fileattr, 9, &pal, -1);
+				3, &filestr, 5, &path, 6, &packetn, 7, &fileid,
+				8, &filesize, 9, &fileattr, 10, &pal, -1);
 		if (!active) {
-			g_free(filename), g_free(filestr);
+			g_free(filename), g_free(filestr), g_free(path);
 			continue;
 		}
 
@@ -243,12 +322,13 @@ void RecvFile::AdditionRecvFile(GtkTreeModel * model)
 				   2, filename, 3, pal->NameQuote(), 4, "0B",
 				   5, filestr, 6, "0B/s", 7, 0, 8, 0,
 				   9, packetn, 10, fileid, 11, filesize,
-				   12, fileattr, 13, ctr.path, 14, pal, -1);
-		g_free(filename), g_free(filestr);
+				   12, fileattr, 13, path, 14, pal, -1);
+		g_free(filename), g_free(filestr), g_free(path);
 
 		iter = gtk_tree_iter_copy(&iter2);
 		thread_create(ThreadFunc(Transport::RecvFileEntry), iter, false);
 	} while (gtk_tree_model_iter_next(model, &iter1));
 	if (pixbuf)
 		g_object_unref(pixbuf);
+	mylog.SystemLog(_("Begin receiving paper!"));
 }

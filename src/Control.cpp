@@ -70,6 +70,8 @@ void Control::WriteControl()
 	gconf_client_set_string(client, GCONF_PATH "/panel_font", font, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign,
 				NULL);
+	gconf_client_set_bool(client, GCONF_PATH "/not_sound_support",
+			      FLAG_ISSET(flags, 6) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/min_memory_usage",
 			      FLAG_ISSET(flags, 5) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/use_enter_key",
@@ -188,6 +190,8 @@ void Control::ReadControl()
 	if (!(sign =
 	      gconf_client_get_string(client, GCONF_PATH "/personal_sign", NULL)))
 		sign = Strdup("");
+	if (gconf_client_get_bool(client, GCONF_PATH "/not_sound_support", NULL))
+		FLAG_SET(flags, 6);
 	if (gconf_client_get_bool(client, GCONF_PATH "/min_memory_usage", NULL))
 		FLAG_SET(flags, 5);
 	if (gconf_client_get_bool(client, GCONF_PATH "/use_enter_key", NULL))
@@ -244,6 +248,11 @@ void Control::GetSysIcon()
 			  new SysIcon(Strdup(path), NULL));		//延迟到守护线程完成所有工作
 	}
 	closedir(dir);
+
+	/* 当使用好友自定义头像时，进一步节俭内存 */
+	if (strncmp(palicon, __ICON_DIR, strlen(__ICON_DIR)) != 0)
+		iconlist = g_slist_prepend(iconlist,
+			   new SysIcon(Strdup(palicon), NULL));
 }
 
 void Control::GetRatio_PixMm()

@@ -15,6 +15,7 @@
 #include "SendFile.h"
 #include "Transport.h"
 #include "Log.h"
+#include "Sound.h"
 #include "baling.h"
 #include "output.h"
 #include "dialog.h"
@@ -27,6 +28,7 @@ void iptux_init()
 	extern SendFile sfl;
 	extern Transport trans;
 	extern Log mylog;
+	extern Sound sound;
 
 	bind_iptux_port();
 	init_iptux_environment();
@@ -36,12 +38,14 @@ void iptux_init()
 	sfl.InitSelf();
 	trans.InitSelf();
 	mylog.InitSelf();
+	sound.InitSelf();
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGHUP, (sighandler_t) iptux_quit);
 	signal(SIGINT, (sighandler_t) iptux_quit);
 	signal(SIGQUIT, (sighandler_t) iptux_quit);
 	signal(SIGTERM, (sighandler_t) iptux_quit);
+	mylog.SystemLog(_("Loading process to succeed!"));
 }
 
 void iptux_gui_quit()
@@ -56,7 +60,9 @@ void iptux_gui_quit()
 
 void iptux_quit()
 {
-	pmessage(_("The messenger is quit!\n"));
+	extern Log mylog;
+
+	mylog.SystemLog(_("Process is about to quit!"));
 	exit(0);
 }
 
@@ -94,6 +100,38 @@ GdkPixbuf *obtain_pixbuf_from_stock(const gchar * stock_id)
 	gtk_widget_destroy(widget);
 
 	return pixbuf;
+}
+
+void widget_enable_dnd_uri(GtkWidget *widget)
+{
+	static const GtkTargetEntry target = {"text/uri-list", 0, 0};
+
+	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL,
+				  &target, 1, GDK_ACTION_MOVE);
+}
+
+GSList *selection_data_get_path(GtkSelectionData *data)
+{
+	const char *prl = "file://";
+	gchar **uris, **ptr, *uri;
+	GSList *filelist;
+
+	if (!(uris = gtk_selection_data_get_uris(data)))
+		return NULL;
+
+	ptr = uris, filelist = NULL;
+	while (*ptr) {
+		uri = g_uri_unescape_string(*ptr, NULL);
+		if (strncasecmp(uri, prl, strlen(prl)) == 0)
+			filelist = g_slist_append(filelist, Strdup(uri + strlen(prl)));
+		else
+			filelist = g_slist_append(filelist, Strdup(uri));
+		g_free(uri);
+		ptr++;
+	}
+	g_strfreev(uris);
+
+	return filelist;
 }
 
 /**

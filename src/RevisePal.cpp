@@ -48,10 +48,9 @@ void RevisePal::CreateRevise()
 	GtkWidget *box, *button;
 
 	revise = gtk_dialog_new_with_buttons(_("Change pal's information"),
-					     GTK_WINDOW(inter.window),
-					     GTK_DIALOG_MODAL,
-					     _("Cancel"), GTK_RESPONSE_CANCEL,
-					     _("OK"), GTK_RESPONSE_OK, NULL);
+				    GTK_WINDOW(inter.window), GTK_DIALOG_MODAL,
+				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(revise), GTK_RESPONSE_OK);
 
 	box = create_box(FALSE);

@@ -73,6 +73,22 @@ pthread_t thread_create(ThreadFunc func, pointer data, bool joinable)
 	return pid;
 }
 
+void get_file_system_info(const char *path, uint64_t *avail, uint64_t *total)
+{
+	struct statfs64 st;
+	int result;
+
+mark:	result = statfs64(path, &st);
+	if (result == -1) {
+		if (errno == EINTR)
+			goto mark;
+		*avail = *total = 0;
+	} else {
+		*avail = (uint64_t)st.f_bsize * st.f_bavail;
+		*total = (uint64_t)st.f_bsize * st.f_blocks;
+	}
+}
+
 char *my_getline(const char *str)
 {
 	const char *ptr;

@@ -36,8 +36,9 @@ class SendFile {
 	pointer FindFileinfo(uint32_t fileid);
 
 	uint32_t pbn;
-	uint32_t prn;
 	GSList *pblist;
+	char *passwd;	//共享文件密码, passwd != NULL
+	uint32_t prn;
 	GSList *prlist;
 	pthread_mutex_t mutex;
  public:
@@ -45,6 +46,8 @@ class SendFile {
 		return ++pbn;
 	} inline GSList *&PblistQuote() {
 		return pblist;
+	} inline char *&PasswdQuote() {
+		return passwd;
 	}
 
 	inline pthread_mutex_t *MutexQuote() {

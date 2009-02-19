@@ -12,6 +12,10 @@
 #ifndef SYS_H
 #define SYS_H
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -31,6 +35,11 @@
 #include <dirent.h>
 #include <ftw.h>
 #include <signal.h>
+#include <sys/vfs.h>
 typedef void *pointer;
+
+#ifdef HAVE_GST
+#include <gst/gst.h>
+#endif
 
 #endif

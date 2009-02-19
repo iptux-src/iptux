@@ -17,10 +17,6 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_MKDIR_P
-#CXXFLAGS=-O3
-#AC_SUBST(CXXFLAGS)
-#CFLAGS=-O3
-#AC_SUBST(CFLAGS)
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lcairo':
@@ -60,43 +56,75 @@ AC_DEFINE(__IP_TUX__)
 AC_ARG_ENABLE(message,
 		[  --disable-message       disable print message], ,
 		enable_message=yes)
-if test "$enable_message" = yes ; then
+if test "${enable_message}" = yes ; then
 AC_DEFINE(MESSAGE)
 fi
 AC_ARG_ENABLE(warning,
 		[  --disable-warning       disable print warning], ,
 		enable_warning=yes)
-if test "$enable_warning" = yes ; then
+if test "${enable_warning}" = yes ; then
 AC_DEFINE(WARNING)
 fi
 AC_ARG_ENABLE(trace,
 		[  --enable-trace          enable print trace], ,
 		enable_trace=no)
-if test "$enable_trace" = yes ; then
+if test "${enable_trace}" = yes ; then
 AC_DEFINE(TRACE)
 fi
 
+dnl In Autoconf 2.61, ${datadir} --> ${datarootdir} --> ${prefix}
+test "${prefix}" = NONE && prefix="${ac_default_prefix}"
+defdir=`eval echo ${datadir}`
+defdir=`eval echo ${defdir}`
+localedir="${defdir}/locale"
+desktopdir="${defdir}/applications"
+logodir="${defdir}/pixmaps"
+icondir="${defdir}/iptux/pixmaps/icon"
+tipdir="${defdir}/iptux/pixmaps/tip"
+menudir="${defdir}/iptux/pixmaps/menu"
+sounddir="${defdir}/iptux/sound"
+AC_DEFINE_UNQUOTED(__LOCALE_DIR, "${localedir}")
+AC_DEFINE_UNQUOTED(__LOGO_DIR, "${logodir}")
+AC_DEFINE_UNQUOTED(__ICON_DIR, "${icondir}")
+AC_DEFINE_UNQUOTED(__TIP_DIR, "${tipdir}")
+AC_DEFINE_UNQUOTED(__MENU_DIR, "${menudir}")
+AC_DEFINE_UNQUOTED(__SOUND_DIR, "${sounddir}")
+AC_SUBST(desktopdir)
+AC_SUBST(logodir)
+AC_SUBST(icondir)
+AC_SUBST(tipdir)
+AC_SUBST(menudir)
+AC_SUBST(sounddir)
+
 gtk_modules="gtk+-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GTK, [$gtk_modules])
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
 gthread_modules="gthread-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GTHREAD, [$gthread_modules])
-AC_SUBST(GTHREAD_CFLAGS)
-AC_SUBST(GTHREAD_LIBS)
 gconf_modules="gconf-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GCONF, [$gconf_modules])
-AC_SUBST(GCONF_CFLAGS)
-AC_SUBST(GCONF_LIBS)
+gst_modules="gstreamer-0.10 >= 0.10.0"
+PKG_CHECK_MODULES(GST, [$gst_modules], have_gst=yes, have_gst=no)
+if test "${have_gst}" = yes ; then
+AC_DEFINE(HAVE_GST)
+else
+AC_MSG_WARN(You need GStreamer-0.10 or later installed if you need sound relevant functions)
+fi
+PACKAGE_CFLAGS="${GTK_CFLAGS} ${GTHREAD_CFLAGS} ${GCONF_CFLAGS} ${GST_CFLAGS}"
+PACKAGE_LIBS="${GTK_LIBS} ${GTHREAD_LIBS} ${GCONF_LIBS} ${GST_LIBS}"
+AC_SUBST(PACKAGE_CFLAGS)
+AC_SUBST(PACKAGE_LIBS)
+
 GETTEXT_PACKAGE=iptux
 AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "${GETTEXT_PACKAGE}")
 
 dnl Add the languages which your application supports here.
 ALL_LINGUAS="zh_CN"
 AM_GLIB_GNU_GETTEXT
 
 AC_OUTPUT(Makefile \
+	src/Makefile \
 	desktop/Makefile \
 	pixmaps/Makefile \
-	src/Makefile \
-	po/Makefile.in)
+	po/Makefile.in \
+	sound/Makefile)

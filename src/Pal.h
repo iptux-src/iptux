@@ -47,7 +47,7 @@ class Pal {
 	bool IptuxGetEncode(const char *msg, size_t size);
 	void BufferInsertPal(GSList * chiplist);
 	void BufferInsertSelf(GSList * chiplist);
-	void BufferInsertError();
+	void BufferInsertError(GSList * chiplist);
 
 	in_addr_t ipv4;		//用户IP
 	char *segment;		//所在网段，segment != NULL

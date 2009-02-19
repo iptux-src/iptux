@@ -1,8 +1,8 @@
 desktop = iptux.desktop
-logo = ip-penguin.png ip-tux.png
+logo = ip-tux.png i-tux.png
 EXTRA_DIST = $(desktop) $(logo)
 
-desktopdir = $(datadir)/applications
+desktopdir = @desktopdir@
 desktop_DATA = $(desktop)
-logodir = $(datadir)/pixmaps
+logodir = @logodir@
 logo_DATA = $(logo)

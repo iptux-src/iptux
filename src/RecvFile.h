@@ -37,6 +37,9 @@ class RecvFile {
  private:
 	static void CellEditText(GtkCellRendererText * renderer, gchar * path,
 				 gchar * new_text, GtkTreeModel * model);
+	static void CursorItemChanged(GtkWidget *view, GtkWidget *chooser);
+	static void ChooserResetLabel(GtkWidget *chooser, GtkWidget *label);
+	static void ChooserResetView(GtkWidget *chooser, GtkWidget *view);
 	static void AdditionRecvFile(GtkTreeModel * model);
 };
 
