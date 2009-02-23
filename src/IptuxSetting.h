@@ -25,21 +25,26 @@ class IptuxSetting {
 	void CreateSetting();
 	void CreatePerson(GtkWidget * note);
 	void CreateSystem(GtkWidget * note);
+	void CreateSound(GtkWidget * note);
 	void CreateIpseg(GtkWidget * note);
 	void CreateFuncButton(GtkWidget * hbb);
+	GtkTreeModel *CreateSndModel();
 	GtkTreeModel *CreateIpModel();
-	GtkWidget *CreateFolderChooser();
 	GtkWidget *CreateFontChooser();
+	GtkWidget *CreateSndChooser();
+	GtkWidget *CreateSndView();
 	GtkWidget *CreateIpsegView();
 	static bool CheckExist();
 
-	GtkTreeModel *icon_model, *ip_model;
+	GtkTreeModel *icon_model, *snd_model, *ip_model;
 	GtkWidget *myname, *mygroup, *myicon, *save_path, *ad, *sign;
-	GtkWidget *encode, *palicon, *font, *sound, *memory, *etrkey,
-					 *tidy, *log, *black, *proof;
+	GtkWidget *encode, *palicon, *font, *memory, *etrkey, *tidy,
+						 *log, *black, *proof;
+	GtkWidget *sound;
 	GtkWidget *entry1, *entry2, *ipseg_view;
 	static GtkWidget *setting;
  public:
+	static GtkWidget *CreateArchiveChooser();
 	static GtkTreeModel *CreateIconModel();
 	static GtkWidget *CreateComboBoxWithModel(GtkTreeModel * model,
 						  gchar * iconfile);
@@ -47,6 +52,7 @@ class IptuxSetting {
  private:
 	void ObtainPerson();
 	void ObtainSystem();
+	void ObtainSound();
 	void ObtainIpseg();
 	void UpdateMyInfo();
 	void UpdateNetSegment(const char *filename, GSList ** list, bool dirc);
@@ -54,17 +60,23 @@ class IptuxSetting {
  public:
 	static void AddPalIcon(GtkWidget * combo);
  private:
+	 static void ChoosePortrait(GtkWidget * image);
+
+	static void CursorItemChanged(GtkWidget *view, GtkWidget *chooser);
+	static void ChooserResetView(GtkWidget *chooser, GtkWidget *view);
+	static void PlayTesting(GtkWidget *chooser);
+	static void StopTesting();
+
 	static void ClickAddIpseg(gpointer data);	//IptuxSetting
 	static void ClickDelIpseg(gpointer data);	//
-	static void ClickOk(gpointer data);	//
-	static void ClickApply(gpointer data);	//
-	static void SettingDestroy(gpointer data);	//
-
-	static void ChoosePortrait(GtkWidget * image);
 	static void CellEditText(GtkCellRendererText * renderer, gchar * path,
 				 gchar * new_text, GtkTreeModel * model);
 	static void ImportNetSegment(gpointer data);	//
 	static void ExportNetSegment(gpointer data);	//
+
+	static void ClickOk(gpointer data);	//
+	static void ClickApply(gpointer data);	//
+	static void SettingDestroy(gpointer data);	//
 };
 
 #endif

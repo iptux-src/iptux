@@ -15,15 +15,15 @@
 #include "UdpData.h"
 #include "Control.h"
 #include "Command.h"
+#include "MainWindow.h"
 #include "my_chooser.h"
 #include "baling.h"
 #include "support.h"
 #include "output.h"
 #include "utils.h"
 
- DialogPeer::DialogPeer(gpointer data):pal((Pal *) data),
-dialog(NULL), focus(NULL), scroll(NULL),
-accel(NULL)
+ DialogPeer::DialogPeer(gpointer data): dialog(NULL), focus(NULL),
+scroll(NULL), accel(NULL), pal((Pal *) data)
 {
 	extern Control ctr;
 
@@ -220,7 +220,6 @@ void DialogPeer::CreateFileMenu(GtkWidget * menu_bar)
 
 void DialogPeer::CreateToolMenu(GtkWidget * menu_bar)
 {
-	GtkWidget *image;
 	GtkWidget *menu;
 	GtkWidget *menu_item;
 
@@ -274,19 +273,23 @@ void DialogPeer::CreateHelpMenu(GtkWidget * menu_bar)
 bool DialogPeer::CheckExist(gpointer data)
 {
 	extern UdpData udt;
+	extern MainWindow *mwp;
+	GtkTreeIter iter;
 	GList *tmp;
 	Pal *pal;
+
+	if (tmp = (GList *) udt.PalGetMsgPos(data)) {
+		pthread_mutex_lock(udt.MutexQuote());
+		g_queue_delete_link(udt.MsgqueueQuote(), tmp);
+		pthread_mutex_unlock(udt.MutexQuote());
+	}
+	if (mwp->PalGetModelIter(data, &iter))
+		mwp->MakeItemBlinking(&iter, false);
 
 	pal = (Pal *) data;
 	if (pal->DialogQuote()) {
 		gtk_window_present(GTK_WINDOW(pal->DialogQuote()->dialog));
 		return true;
-	}
-	tmp = (GList *) udt.PalGetMsgPos(data);
-	if (tmp) {
-		pthread_mutex_lock(udt.MutexQuote());
-		g_queue_delete_link(udt.MsgqueueQuote(), tmp);
-		pthread_mutex_unlock(udt.MutexQuote());
 	}
 
 	return false;
@@ -492,7 +495,7 @@ void DialogPeer::SendMessage(gpointer data)
 						 "%s%c", ptr, OCCUPY_OBJECT);
 			free(ptr);
 			piter = iter;		//移动 piter 到新位置
-			ptr = g_strdup_printf("%s/iptux/%x",
+			ptr = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
 					    g_get_user_config_dir(), count++);
 			gdk_pixbuf_save(pixbuf, ptr, "bmp", NULL, NULL);
 			chiplist = g_slist_append(chiplist,

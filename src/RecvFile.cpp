@@ -12,10 +12,10 @@
 #include "RecvFile.h"
 #include "DialogGroup.h"
 #include "Transport.h"
+#include "IptuxSetting.h"
 #include "Control.h"
 #include "Log.h"
 #include "utils.h"
-#include "output.h"
 #include "baling.h"
 
  RecvFile::RecvFile(gpointer data):filelist(NULL), file_model(NULL)
@@ -57,9 +57,8 @@ void RecvFile::ParseExtra()
 
 void RecvFile::CreateRecvWindow()
 {
-	extern Control ctr;
-	GtkWidget *window, *sw, *view;
-	GtkWidget *box, *hbb, *hbox, *button, *label;
+	GtkWidget *window, *box, *sw, *view;
+	GtkWidget *hbox, *chooser, *label, *hbb, *button;
 
 	file_model = CreateRecvModel();
 	if (commandn & IPTUX_SHAREDOPT)
@@ -72,28 +71,25 @@ void RecvFile::CreateRecvWindow()
 	box = create_box();
 	gtk_container_add(GTK_CONTAINER(window), box);
 
-	view = CreateRecvView();
 	sw = create_scrolled_window();
 	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+	view = CreateRecvView();
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	label = create_label(_("Save To: "));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	button = gtk_file_chooser_button_new(_("Save file to"),
-				 GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(button), ctr.path);
-	gtk_widget_show(button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	chooser = IptuxSetting::CreateArchiveChooser();
+	gtk_box_pack_start(GTK_BOX(hbox), chooser, FALSE, FALSE, 0);
 	label = create_label("");
 	gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	ChooserResetLabel(button, label);
+	ChooserResetLabel(chooser, label);
 	g_signal_connect(view, "cursor-changed",
-				 G_CALLBACK(CursorItemChanged), button);
-	g_signal_connect(button, "current-folder-changed",
+				 G_CALLBACK(CursorItemChanged), chooser);
+	g_signal_connect(chooser, "current-folder-changed",
 				 G_CALLBACK(ChooserResetLabel), label);
-	g_signal_connect(button, "current-folder-changed",
+	g_signal_connect(chooser, "current-folder-changed",
 				 G_CALLBACK(ChooserResetView), view);
 
 	label = gtk_hseparator_new();
@@ -175,8 +171,7 @@ GtkWidget *RecvFile::CreateRecvView()
 
 	view = gtk_tree_view_new_with_model(file_model);
 	g_signal_connect_swapped(view, "button-press-event",
-				 G_CALLBACK(DialogGroup::PopupPickMenu),
-				 file_model);
+			 G_CALLBACK(DialogGroup::PopupPickMenu), file_model);
 	gtk_widget_show(view);
 
 	column = gtk_tree_view_column_new();
@@ -187,8 +182,7 @@ GtkWidget *RecvFile::CreateRecvView()
 	gtk_tree_view_column_set_attributes(column, renderer,
 					    "active", 0, NULL);
 	g_signal_connect_swapped(renderer, "toggled",
-				 G_CALLBACK(DialogGroup::ViewToggleChange),
-				 file_model);
+			 G_CALLBACK(DialogGroup::ViewToggleChange), file_model);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
 	column = gtk_tree_view_column_new();
@@ -198,8 +192,8 @@ GtkWidget *RecvFile::CreateRecvView()
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 1, NULL);
 	g_object_set(renderer, "editable", TRUE, NULL);
-	g_signal_connect(renderer, "edited", G_CALLBACK(CellEditText),
-							 file_model);
+	g_signal_connect(renderer, "edited",
+			 G_CALLBACK(CellEditText), file_model);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
 	column = gtk_tree_view_column_new();
@@ -264,7 +258,7 @@ void RecvFile::ChooserResetLabel(GtkWidget *chooser, GtkWidget *label)
 	g_free(path);
 	str_avail = number_to_string_size(avail);
 	str_total = number_to_string_size(total);
-	snprintf(buf, MAX_BUF, _("Free:%s|Total:%s"), str_avail, str_total);
+	snprintf(buf, MAX_BUF, _("Free:%s Total:%s"), str_avail, str_total);
 	free(str_avail), free(str_total);
 	gtk_label_set_label(GTK_LABEL(label), buf);
 }
@@ -305,7 +299,7 @@ void RecvFile::AdditionRecvFile(GtkTreeModel * model)
 
 	if (!gtk_tree_model_get_iter_first(model, &iter1))
 		return;
-	pixbuf = gdk_pixbuf_new_from_file(__TIP_DIR "/recv.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file(__TIP_PATH "/recv.png", NULL);
 	do {
 		gtk_tree_model_get(model, &iter1, 0, &active, 1, &filename,
 				3, &filestr, 5, &path, 6, &packetn, 7, &fileid,

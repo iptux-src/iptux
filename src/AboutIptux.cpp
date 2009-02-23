@@ -71,7 +71,7 @@ void AboutIptux::CreateAbout()
 	gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
 	gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about),
 								translators);
-	pixbuf = gdk_pixbuf_new_from_file(__LOGO_DIR "/ip-tux.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file(__LOGO_PATH "/ip-tux.png", NULL);
 	if (pixbuf) {
 		gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), pixbuf);
 		g_object_unref(pixbuf);
@@ -121,12 +121,10 @@ void AboutIptux::CreateMore()
 	page = 0;
 	while (labels[page]) {
 		sw = create_scrolled_window();
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-			  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		view = create_text_view();
-		gtk_container_add(GTK_CONTAINER(sw), view);
 		label = create_label(labels[page]);
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), sw, label);
+		view = create_text_view();
+		gtk_container_add(GTK_CONTAINER(sw), view);
 
 		gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
 		gtk_text_view_set_indent(GTK_TEXT_VIEW(view), 20);

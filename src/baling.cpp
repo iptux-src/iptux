@@ -33,8 +33,8 @@ void *Malloc(size_t size)
 
 	dst = malloc(size);
 	if (!dst)
-		pwarning(Quit, _("act: allocate memory [%u],warning: %s\n"),
-			 size, strerror(errno));
+		pwarning(Quit, _("act: allocate memory [%" PRIu32 "],"
+				   "warning: %s\n"), size, strerror(errno));
 
 	return dst;
 }
@@ -137,9 +137,8 @@ ssize_t Read(int fd, void *buf, size_t count)
 		if (size == -1) {
 			if (errno == EINTR)
 				continue;
-			pwarning(Fail,
-				 _("act: read data (%d)[%u],warning: %s\n"),
-				 fd, count, strerror(errno));
+			pwarning(Fail, _("act: read data (%d)[%" PRIu32 "],"
+				 "warning: %s\n"), fd, count, strerror(errno));
 			return -1;
 		}
 		len += size;
@@ -160,9 +159,8 @@ ssize_t Write(int fd, const void *buf, size_t count)
 		if (size == -1) {
 			if (errno == EINTR)
 				continue;
-			pwarning(Fail,
-				 _("act: write data (%d)[%u],warning: %s\n"),
-				 fd, count, strerror(errno));
+			pwarning(Fail, _("act: write data (%d)[%" PRIu32 "],"
+				 "warning: %s\n"), fd, count, strerror(errno));
 			return -1;
 		}
 		len += size;
@@ -205,7 +203,7 @@ ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset)
 	if (offset < count)
 		((char *)buf)[offset] = '\0';
 	while (!offset || !strchr((char *)buf, ':')
-		       || sscanf((char *)buf, "%x", &headsize) != 1
+		       || sscanf((char *)buf, "%" SCNx32, &headsize) != 1
 		       || headsize > offset) {
 		size = read(fd, (char *)buf + offset, count - offset);
 		if (size == -1) {

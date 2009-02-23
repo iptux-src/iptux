@@ -73,6 +73,28 @@ void UdpData::AdjustMemory()
 	g_slist_free(list);
 }
 
+void UdpData::MsgBlinking()
+{
+	extern MainWindow *mwp;
+	GtkTreeIter iter;
+	GList *tmp;
+	guint count, length;
+
+	gdk_threads_enter();
+	pthread_mutex_lock(&mutex);
+	count = 0;
+	length = msgqueue->length;
+	tmp = msgqueue->head;
+	while (count < length) {
+		if (mwp->PalGetModelIter(tmp->data, &iter))
+			mwp->MakeItemBlinking(&iter, true);
+		tmp = tmp->next;
+		count++;
+	}
+	pthread_mutex_unlock(&mutex);
+	gdk_threads_leave();
+}
+
 void UdpData::UdpDataEntry(in_addr_t ipv4, char *msg, size_t size)
 {
 	extern Control ctr;
@@ -178,9 +200,9 @@ gpointer UdpData::PalGetMsgPos(pointer data)
 	guint count, length;
 
 	pthread_mutex_lock(&udt.mutex);
-	tmp = udt.msgqueue->head;
-	length = udt.msgqueue->length;
 	count = 0;
+	length = udt.msgqueue->length;
+	tmp = udt.msgqueue->head;
 	while (count < length) {
 		if (tmp->data == data)
 			break;
@@ -278,7 +300,7 @@ void UdpData::SomeoneAnsentry(in_addr_t ipv4, char *msg, size_t size)
 void UdpData::SomeoneAbsence(in_addr_t ipv4, char *msg, size_t size)
 {
 	extern MainWindow *mwp;
-	GtkTreeIter iter, parent;
+	GtkTreeIter iter;
 	Pal *pal;
 
 	pal = (Pal *) Ipv4GetPal(ipv4);
@@ -302,6 +324,7 @@ void UdpData::SomeoneAbsence(in_addr_t ipv4, char *msg, size_t size)
 void UdpData::SomeoneSendmsg(in_addr_t ipv4, char *msg, size_t size)
 {
 	extern struct interactive inter;
+	extern Control ctr;
 	extern Sound sound;
 	Command cmd;
 	char *passwd, *text;
@@ -320,8 +343,9 @@ void UdpData::SomeoneSendmsg(in_addr_t ipv4, char *msg, size_t size)
 	commandno = iptux_get_dec_number(msg, 4);
 	if (commandno & IPMSG_SENDCHECKOPT)
 		pal->SendReply(msg);
-	if (flag && !(commandno & IPMSG_FILEATTACHOPT))
-		sound.PlayTip(__SOUND_DIR "/msg.ogg");
+	if (flag && FLAG_ISSET(ctr.sndfgs, 1)
+		   && !(commandno & IPMSG_FILEATTACHOPT))
+		sound.Playing(ctr.msgtip);
 	if (flag && (commandno & IPMSG_FILEATTACHOPT)) {
 		if ((commandno & IPTUX_SHAREDOPT)
 			     && (commandno & IPTUX_PASSWDOPT)) {
@@ -378,7 +402,7 @@ void UdpData::SomeoneAskShared(in_addr_t ipv4, char *msg, size_t size)
 void UdpData::SomeoneSendIcon(in_addr_t ipv4, char *msg, size_t size)
 {
 	extern MainWindow *mwp;
-	GtkTreeIter iter, parent;
+	GtkTreeIter iter;
 	Pal *pal;
 	bool flag;
 

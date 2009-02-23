@@ -59,7 +59,7 @@ void SendFile::InitSelf()
 	pblist = NULL, tmp = filelist;
 	while (tmp) {
 		if (Stat((const char *)tmp->data, &st) == -1
-			  || !S_ISREG(st.st_mode) && !S_ISDIR(st.st_mode)) {
+			  || (!S_ISREG(st.st_mode) && !S_ISDIR(st.st_mode))) {
 			free(tmp->data), tmp = tmp->next;
 			continue;
 		}
@@ -141,7 +141,7 @@ void SendFile::RequestData(int sock, uint32_t fileattr, char *buf)
 	ptr = number_to_string_size(file->filesize);
 	filename = ipmsg_set_filename_self(file->filename);
 	gdk_threads_enter();
-	pixbuf = gdk_pixbuf_new_from_file(__TIP_DIR "/send.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file(__TIP_PATH "/send.png", NULL);
 	gtk_list_store_append(GTK_LIST_STORE(trans.TransModelQuote()), &iter);
 	gtk_list_store_set(GTK_LIST_STORE(trans.TransModelQuote()), &iter,
 			   0, pixbuf, 1, _("send"), 2, filename,
@@ -180,14 +180,10 @@ void SendFile::SendFileInfo(GSList * list, gpointer data)
 		if (S_ISDIR(st.st_mode))
 			st.st_size = mf.ftw((const char *)list->data);
 		filename = ipmsg_set_filename_pal((char *)list->data);
-# if __WORDSIZE == 64
-		snprintf(ptr, MAX_UDPBUF - len, "%u:%s:%lx:%x:%x\a:",
-# else
-		snprintf(ptr, MAX_UDPBUF - len, "%u:%s:%llx:%x:%x\a:",
-# endif
-			 prn, filename, st.st_size, st.st_mtime,
-			 S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR :
-			 IPMSG_FILE_DIR);
+		snprintf(ptr, MAX_UDPBUF - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
+		    PRIx32 ":%" PRIx32 "\a:",
+		    prn, filename, st.st_size, st.st_mtime,
+		    S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR);
 		free(filename), len += strlen(ptr), ptr = buf + len;
 		file = new FileInfo(prn, (char *)list->data, st.st_size,
 		    S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR);
@@ -223,13 +219,9 @@ void SendFile::SendSharedInfo(gpointer data)
 			continue;
 		}
 		filename = ipmsg_set_filename_pal(file->filename);
-# if __WORDSIZE == 64
-		snprintf(ptr, MAX_UDPBUF - len, "%u:%s:%lx:%x:%x\a:",
-# else
-		snprintf(ptr, MAX_UDPBUF - len, "%u:%s:%llx:%x:%x\a:",
-#endif
-			 file->fileid, filename, file->filesize, 0,
-			 file->fileattr);
+		snprintf(ptr, MAX_UDPBUF - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
+			    PRIx32 ":%" PRIx32 "\a:", file->fileid, filename,
+			    file->filesize, 0, file->fileattr);
 		free(filename), len += strlen(ptr), ptr = buf + len;
 		tmp = tmp->next;
 	}
@@ -258,10 +250,8 @@ void SendFile::PickFile(uint32_t fileattr, gpointer data)
 		    GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
 
 	dialog = gtk_file_chooser_dialog_new(title, GTK_WINDOW(parent), action,
-					     GTK_STOCK_CANCEL,
-					     GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OPEN,
-					     GTK_RESPONSE_ACCEPT, NULL);
+				     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog),
 					GTK_RESPONSE_ACCEPT);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);

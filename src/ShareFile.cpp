@@ -106,7 +106,6 @@ void ShareFile::AddSharedFiles(GSList * list)
 {
 	my_file mf(false);
 	GdkPixbuf *pixbuf1, *pixbuf2;
-	GdkPixbuf *pixbuf;
 	GtkTreeIter iter;
 	struct stat64 st;
 	char *ptr;
@@ -153,11 +152,12 @@ void ShareFile::FindInsertPosition(const gchar * path, uint32_t fileattr,
 	}
 	do {
 		gtk_tree_model_get(share_model, iter, 1, &tmp, 5, &attr, -1);
-		if (GET_MODE(fileattr) == IPMSG_FILE_DIR && GET_MODE(attr) != IPMSG_FILE_DIR
-			  || GET_MODE(fileattr) == attr && strcmp(tmp, path) > 0) {
+		if ((GET_MODE(fileattr) == IPMSG_FILE_DIR
+				  && GET_MODE(attr) != IPMSG_FILE_DIR)
+		     || (GET_MODE(fileattr) == attr && strcmp(tmp, path) > 0)) {
 			g_free(tmp), sibling = *iter;
 			gtk_list_store_insert_before(GTK_LIST_STORE (share_model),
-							iter, &sibling);
+								iter, &sibling);
 			return;
 		}
 		g_free(tmp);
@@ -272,10 +272,8 @@ void ShareFile::PickFile(uint32_t fileattr)
 	    GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
 
 	dialog = gtk_file_chooser_dialog_new(title, GTK_WINDOW(share), action,
-					     GTK_STOCK_CANCEL,
-					     GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OPEN,
-					     GTK_RESPONSE_ACCEPT, NULL);
+			     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog),
 					GTK_RESPONSE_ACCEPT);
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);

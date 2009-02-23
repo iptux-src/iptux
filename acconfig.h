@@ -2,23 +2,32 @@
 /* Gettext Package. */
 #undef GETTEXT_PACKAGE
 
+/* System Execute Directory */
+#undef __EXEC_PATH
+
+/* System Data Directory */
+#undef __DATA_PATH
+
 /* System Locale Directory */
-#undef __LOCALE_DIR
+#undef __LOCALE_PATH
+
+/* System Applications Directory */
+#undef __DESKTOP_PATH
 
 /* Iptux Logo Directory */
-#undef __LOGO_DIR
+#undef __LOGO_PATH
 
 /* Iptux Icon Directory */
-#undef __ICON_DIR
+#undef __ICON_PATH
 
 /* Iptux Tip Directory */
-#undef __TIP_DIR
+#undef __TIP_PATH
 
 /* Iptux Menu Directory */
-#undef __MENU_DIR
+#undef __MENU_PATH
 
 /* Iptux Sound Directory */
-#undef __SOUND_DIR
+#undef __SOUND_PATH
 
 /* Define if you want to use defined macros for iptux */
 #undef __IP_TUX__

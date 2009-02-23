@@ -23,6 +23,17 @@ void my_delay(time_t sec, long nsec)
 	nanosleep(&delay, NULL);
 }
 
+void ipv4_order(uint32_t *ip1, uint32_t *ip2)
+{
+	uint32_t ip;
+
+	if (*ip1 > *ip2) {
+		ip = *ip1;
+		*ip1 = *ip2;
+		*ip2 = ip;
+	}
+}
+
 //只转换有效字符段
 char *_iconv(const char *instr, const char *tocode, const char *fromcode)
 {
@@ -183,11 +194,7 @@ char *number_to_string_size(uint64_t number, bool rate)
 		buf =
 		    g_strdup_printf("%.1fK\x20\x20", (float)number / (1 << 10));
 	else
-# if __WORDSIZE == 64
-		buf = g_strdup_printf("%luB\x20\x20", number);
-# else
-		buf = g_strdup_printf("%lluB\x20\x20", number);
-# endif
+		buf = g_strdup_printf("%" PRIu64 "B\x20\x20", number);
 
 	if (rate)
 		strcpy(buf + strlen(buf) - 2, "/s");
@@ -240,11 +247,7 @@ uint64_t iptux_get_hex64_number(const char *msg, uint8_t times)
 
 	if (!(ptr = iptux_skip_section(msg, times)))
 		return 0;
-# if __WORDSIZE == 64
-	result = sscanf(ptr, "%lx", &number);
-# else
-	result = sscanf(ptr, "%llx", &number);
-# endif
+	result = sscanf(ptr, "%" SCNx64, &number);
 	if (result == 1)
 		return number;
 	return 0;
@@ -258,7 +261,7 @@ uint32_t iptux_get_dec_number(const char *msg, uint8_t times)
 
 	if (!(ptr = iptux_skip_section(msg, times)))
 		return 0;
-	result = sscanf(ptr, "%u", &number);
+	result = sscanf(ptr, "%" SCNu32, &number);
 	if (result == 1)
 		return number;
 	return 0;
@@ -272,7 +275,7 @@ uint32_t iptux_get_hex_number(const char *msg, uint8_t times)
 
 	if (!(ptr = iptux_skip_section(msg, times)))
 		return 0;
-	result = sscanf(ptr, "%x", &number);
+	result = sscanf(ptr, "%" SCNx32, &number);
 	if (result == 1)
 		return number;
 	return 0;
@@ -305,7 +308,7 @@ char *ipmsg_get_filename(const char *msg, uint8_t times)
 	size_t len;
 
 	if (!(ptr = iptux_skip_section(msg, times))) {
-		snprintf(filename, 256, "iptux%u", serial++);
+		snprintf(filename, 256, "iptux%" PRIu32, serial++);
 		return Strdup(filename);
 	}
 

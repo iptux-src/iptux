@@ -292,7 +292,7 @@ bool Pal::RecvIcon(const char *msg, size_t size)
 
 	if (FLAG_ISSET(flags, 2) || (len = strlen(msg) + 1) >= size)
 		return false;
-	snprintf(file, MAX_PATHBUF, "%s/iptux/icon/%x",
+	snprintf(file, MAX_PATHBUF, "%s" ICON_PATH "/%" PRIx32,
 				 g_get_user_cache_dir(), ipv4);
 	if ((fd = Open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
 		return false;
@@ -415,7 +415,7 @@ bool Pal::IptuxGetIcon(const char *msg, size_t size)
 
 	if (!(ptr = iptux_skip_string(msg, size, 2)) || *ptr == '\0')
 		return false;
-	snprintf(path, MAX_PATHBUF, __ICON_DIR "/%s", ptr);
+	snprintf(path, MAX_PATHBUF, __ICON_PATH "/%s", ptr);
 	if (access(path, F_OK) != 0)
 		return false;
 	iconfile = Strdup(path);
@@ -584,11 +584,11 @@ void Pal::SendFeature(gpointer data)
 	Command cmd;
 	int sock;
 
-	if (strncmp(ctr.myicon, __ICON_DIR, strlen(__ICON_DIR)))
+	if (strncmp(ctr.myicon, __ICON_PATH, strlen(__ICON_PATH)))
 		cmd.SendMyIcon(inter.udpsock, data);
 	if (ctr.sign && *ctr.sign != '\0')
 		cmd.SendMySign(inter.udpsock, data);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/complex/ad",
+	snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH "/ad",
 					 g_get_user_config_dir());
 	if (access(path, F_OK) == 0) {
 		sock = Socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);

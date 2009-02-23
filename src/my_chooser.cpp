@@ -13,12 +13,12 @@
 #include "support.h"
 #include "udt.h"
 
-my_chooser::my_chooser(const gchar * t, GtkWidget * p):title(t), parent(p),
-chooser(NULL)
+ my_chooser::my_chooser(const gchar * t, GtkWidget * p): chooser(NULL),
+parent(p), title(t)
 {
 }
 
-my_chooser::~my_chooser()
+ my_chooser::~my_chooser()
 {
 }
 

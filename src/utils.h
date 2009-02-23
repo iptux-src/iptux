@@ -14,17 +14,6 @@
 
 #include "udt.h"
 
-#define ipv4_order(digit1,digit2) { \
-	asm("cmpl %%eax,%%ebx; \
-	jge mark; \
-	movl %%eax,%%edx; \
-	movl %%ebx,%%eax; \
-	movl %%edx,%%ebx; \
-	mark: nop"\
-	:"=a" (digit1),"=b" (digit2)\
-	:"a" (digit1),"b" (digit2) \
-	); \
-}
 #define difftimeval(val2,val1) \
 	((((val2).tv_sec-(val1).tv_sec)*1000000 \
 	+ (val2).tv_usec-(val1).tv_usec) \
@@ -36,6 +25,7 @@
 #define FLAG_CLR(num,bit) ((num)&=(~(1<<(bit))))
 
 void my_delay(time_t sec, long nsec);
+void ipv4_order(uint32_t *ip1, uint32_t *ip2);
 char *_iconv(const char *instr, const char *tocode, const char *fromcode);
 char *transfer_encode(const char *instr, const char *encode, bool direc);
 

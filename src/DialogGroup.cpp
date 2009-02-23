@@ -96,8 +96,6 @@ void DialogGroup::CreateChooseArea(GtkWidget * paned)
 	GtkWidget *frame, *sw;
 
 	pal_view = CreateGroupView();
-	g_signal_connect_swapped(pal_view, "button-press-event",
-				 G_CALLBACK(PopupPickMenu), group_model);
 	frame = create_frame(_("Choose Pals"));
 	gtk_paned_pack1(GTK_PANED(paned), frame, FALSE, TRUE);
 	sw = create_scrolled_window();
@@ -195,9 +193,11 @@ GtkWidget *DialogGroup::CreateGroupView()
 	GtkTreeViewColumn *column;
 
 	view = gtk_tree_view_new_with_model(group_model);
-	gtk_widget_show(view);
+	g_signal_connect_swapped(view, "button-press-event",
+			 G_CALLBACK(PopupPickMenu), group_model);
 	g_signal_connect(view, "row-activated",
 			 G_CALLBACK(ViewItemActivated), group_model);
+	gtk_widget_show(view);
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);

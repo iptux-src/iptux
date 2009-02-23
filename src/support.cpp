@@ -146,29 +146,29 @@ void init_iptux_environment()
 	env = g_get_user_cache_dir();
 	if (access(env, F_OK) != 0)
 		Mkdir(env, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux", env);
+	snprintf(path, MAX_PATHBUF, "%s" IPTUX_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/ads", env);
+	snprintf(path, MAX_PATHBUF, "%s" ADS_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/icon", env);
+	snprintf(path, MAX_PATHBUF, "%s" ICON_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/pic", env);
+	snprintf(path, MAX_PATHBUF, "%s" PIC_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
 
 	env = g_get_user_config_dir();
 	if (access(env, F_OK) != 0)
 		Mkdir(env, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux", env);
+	snprintf(path, MAX_PATHBUF, "%s" IPTUX_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/log", env);
+	snprintf(path, MAX_PATHBUF, "%s" LOG_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/complex", env);
+	snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH, env);
 	if (access(path, F_OK) != 0)
 		Mkdir(path, 0777);
 }

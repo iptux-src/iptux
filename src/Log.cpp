@@ -36,9 +36,9 @@ void Log::InitSelf()
 	char path[MAX_PATHBUF];
 
 	env = g_get_user_config_dir();
-	snprintf(path, MAX_PATHBUF, "%s/iptux/log/communicate.log", env);
+	snprintf(path, MAX_PATHBUF, "%s" LOG_PATH "/communicate.log", env);
 	communicate = Fopen(path, "a");
-	snprintf(path, MAX_PATHBUF, "%s/iptux/log/system.log", env);
+	snprintf(path, MAX_PATHBUF, "%s" LOG_PATH "/system.log", env);
 	system = Fopen(path, "a");
 }
 

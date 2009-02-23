@@ -17,9 +17,9 @@
 #include "baling.h"
 #include "utils.h"
 
- RevisePal::RevisePal(gpointer data):pal((Pal *) data),
-revise(NULL), icon_model(NULL), name(NULL), group(NULL),
-encode(NULL), icon(NULL), compatible(NULL)
+ RevisePal::RevisePal(gpointer data): revise(NULL), icon_model(NULL),
+name(NULL), group(NULL), encode(NULL), icon(NULL),
+compatible(NULL), pal((Pal *) data)
 {
 }
 

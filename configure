@@ -5167,7 +5167,8 @@ done
 
 
 
-for ac_header in arpa/inet.h fcntl.h netinet/in.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/socket.h sys/time.h unistd.h
+
+for ac_header in arpa/inet.h fcntl.h netinet/in.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/socket.h sys/time.h sys/vfs.h unistd.h
 do
 as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -5543,6 +5544,76 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
+{ $as_echo "$as_me:$LINENO: checking for inline" >&5
+$as_echo_n "checking for inline... " >&6; }
+if test "${ac_cv_c_inline+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_cv_c_inline=no
+for ac_kw in inline __inline__ __inline; do
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#ifndef __cplusplus
+typedef int foo_t;
+static $ac_kw foo_t static_foo () {return 0; }
+$ac_kw foo_t foo () {return 0; }
+#endif
+
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_c_inline=$ac_kw
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  test "$ac_cv_c_inline" != no && break
+done
+
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_c_inline" >&5
+$as_echo "$ac_cv_c_inline" >&6; }
+
+
+case $ac_cv_c_inline in
+  inline | yes) ;;
+  *)
+    case $ac_cv_c_inline in
+      no) ac_val=;;
+      *) ac_val=$ac_cv_c_inline;;
+    esac
+    cat >>confdefs.h <<_ACEOF
+#ifndef __cplusplus
+#define inline $ac_val
+#endif
+_ACEOF
+    ;;
+esac
 
 { $as_echo "$as_me:$LINENO: checking for an ANSI C-conforming const" >&5
 $as_echo_n "checking for an ANSI C-conforming const... " >&6; }
@@ -7132,7 +7203,8 @@ done
 
 
 
-for ac_func in bzero getcwd gettimeofday inet_ntoa memmove mkdir socket strcasecmp strchr strerror strncasecmp strpbrk strrchr strstr
+
+for ac_func in bzero getcwd gettimeofday inet_ntoa memmove mkdir rmdir socket strcasecmp strchr strerror strncasecmp strpbrk strrchr strstr
 do
 as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 { $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -7278,43 +7350,57 @@ _ACEOF
 fi
 
 test "${prefix}" = NONE && prefix="${ac_default_prefix}"
+test "${exec_prefix}" = NONE && exec_prefix="${prefix}"
+defdir=`eval echo ${bindir}`
+cat >>confdefs.h <<_ACEOF
+#define __EXEC_PATH "${defdir}"
+_ACEOF
+
 defdir=`eval echo ${datadir}`
 defdir=`eval echo ${defdir}`
+cat >>confdefs.h <<_ACEOF
+#define __DATA_PATH "${defdir}"
+_ACEOF
+
 localedir="${defdir}/locale"
+cat >>confdefs.h <<_ACEOF
+#define __LOCALE_PATH "${localedir}"
+_ACEOF
+
 desktopdir="${defdir}/applications"
+cat >>confdefs.h <<_ACEOF
+#define __DESKTOP_PATH "${desktopdir}"
+_ACEOF
+
+
 logodir="${defdir}/pixmaps"
+cat >>confdefs.h <<_ACEOF
+#define __LOGO_PATH "${logodir}"
+_ACEOF
+
+
 icondir="${defdir}/iptux/pixmaps/icon"
+cat >>confdefs.h <<_ACEOF
+#define __ICON_PATH "${icondir}"
+_ACEOF
+
+
 tipdir="${defdir}/iptux/pixmaps/tip"
+cat >>confdefs.h <<_ACEOF
+#define __TIP_PATH "${tipdir}"
+_ACEOF
+
+
 menudir="${defdir}/iptux/pixmaps/menu"
+cat >>confdefs.h <<_ACEOF
+#define __MENU_PATH "${menudir}"
+_ACEOF
+
+
 sounddir="${defdir}/iptux/sound"
 cat >>confdefs.h <<_ACEOF
-#define __LOCALE_DIR "${localedir}"
+#define __SOUND_PATH "${sounddir}"
 _ACEOF
-
-cat >>confdefs.h <<_ACEOF
-#define __LOGO_DIR "${logodir}"
-_ACEOF
-
-cat >>confdefs.h <<_ACEOF
-#define __ICON_DIR "${icondir}"
-_ACEOF
-
-cat >>confdefs.h <<_ACEOF
-#define __TIP_DIR "${tipdir}"
-_ACEOF
-
-cat >>confdefs.h <<_ACEOF
-#define __MENU_DIR "${menudir}"
-_ACEOF
-
-cat >>confdefs.h <<_ACEOF
-#define __SOUND_DIR "${sounddir}"
-_ACEOF
-
-
-
-
-
 
 
 
@@ -9456,7 +9542,7 @@ $as_echo "$LINGUAS" >&6; }
 	< $srcdir/po/POTFILES.in > po/POTFILES
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile"
+ac_config_files="$ac_config_files Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile src/Makefile src/uninstall/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -10089,11 +10175,12 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "default-1") CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "desktop/Makefile") CONFIG_FILES="$CONFIG_FILES desktop/Makefile" ;;
     "pixmaps/Makefile") CONFIG_FILES="$CONFIG_FILES pixmaps/Makefile" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
     "sound/Makefile") CONFIG_FILES="$CONFIG_FILES sound/Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "src/uninstall/Makefile") CONFIG_FILES="$CONFIG_FILES src/uninstall/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

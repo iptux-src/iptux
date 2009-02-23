@@ -13,9 +13,9 @@
 
 void pwarning(enum STATE_TYPE state, const char *format, ...)
 {
+#ifdef WARNING
 	va_list ap;
 
-#ifdef WARNING
 	va_start(ap, format);
 	vwarnx(format, ap);
 	va_end(ap);
@@ -31,9 +31,9 @@ void pwarning(enum STATE_TYPE state, const char *format, ...)
 
 void pmessage(const char *format, ...)
 {
+#ifdef MESSAGE
 	va_list ap;
 
-#ifdef MESSAGE
 	va_start(ap, format);
 	vprintf(format, ap);
 	va_end(ap);
@@ -42,9 +42,9 @@ void pmessage(const char *format, ...)
 
 void ptrace(const char *format, ...)
 {
+#ifdef TRACE
 	va_list ap;
 
-#ifdef TRACE
 	va_start(ap, format);
 	vprintf(format, ap);
 	va_end(ap);

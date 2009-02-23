@@ -36,10 +36,10 @@ void StatusIcon::CreateStatusIcon()
 	GdkPixbuf *pixbuf;
 	GdkScreen *screen;
 
-	pixbuf = gdk_pixbuf_new_from_file_at_size(__LOGO_DIR "/ip-tux.png",
+	pixbuf = gdk_pixbuf_new_from_file_at_size(__LOGO_PATH "/ip-tux.png",
 						  20, 20, NULL);
 	if (!pixbuf) {
-		pop_error("\n%s \"" __LOGO_DIR "/ip-tux.png\" %s",
+		pop_error("\n%s \"" __LOGO_PATH "/ip-tux.png\" %s",
 			  _("The notify icon"), _("is lost!"));
 		exit(1);
 	}
@@ -67,7 +67,7 @@ void StatusIcon::UpdateTips()
 	pthread_mutex_lock(udt.MutexQuote());
 	if (len = g_queue_get_length(udt.MsgqueueQuote())) {
 		gtk_status_icon_set_blinking(inter.status_icon, TRUE);
-		ipstr = g_strdup_printf(_("Undealt: %u messages"), len);
+		ipstr = g_strdup_printf(_("Undealt: %" PRIu32 " messages"), len);
 		gtk_status_icon_set_tooltip(inter.status_icon, ipstr);
 	} else {
 		gtk_status_icon_set_blinking(inter.status_icon, FALSE);
@@ -92,8 +92,8 @@ GtkWidget *StatusIcon::CreatePopupMenu()
 		menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Hide"));
 	else
 		menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Show"));
-// 	image = gtk_image_new_from_file(__TIP_DIR "/desk.png");
-// 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
+	image = gtk_image_new_from_file(__MENU_PATH "/board.png");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(SwitchWindowMode), NULL);
 	gtk_widget_show(menu_item);
@@ -121,7 +121,7 @@ GtkWidget *StatusIcon::CreatePopupMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 
 	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Public"));
-	image = gtk_image_new_from_file(__MENU_DIR "/share.png");
+	image = gtk_image_new_from_file(__MENU_PATH "/share.png");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(ShareFile::ShareEntry), NULL);
@@ -129,8 +129,8 @@ GtkWidget *StatusIcon::CreatePopupMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 
 	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Group"));
-// 	image = gtk_image_new_from_file(__TIP_DIR "/net.png");
-// 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
+	image = gtk_image_new_from_file(__MENU_PATH "/group.png");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(DialogGroup::DialogEntry), NULL);
 	gtk_widget_show(menu_item);
@@ -141,8 +141,8 @@ GtkWidget *StatusIcon::CreatePopupMenu()
 	gtk_widget_show(menu_item);
 
 	menu_item = gtk_image_menu_item_new_with_mnemonic(_("_Detect"));
-// 	image = gtk_image_new_from_file(__TIP_DIR "/detect.png");
-// 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
+	image = gtk_image_new_from_file(__MENU_PATH "/detect.png");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item), image);
 	g_signal_connect(menu_item, "activate",
 			 G_CALLBACK(DetectPal::DetectEntry), NULL);
 	gtk_widget_show(menu_item);
@@ -167,22 +167,22 @@ void StatusIcon::SwitchWindowMode()
 	if (GTK_WIDGET_VISIBLE(inter.window)) {
 		gtk_widget_hide(inter.window);
 		pixbuf = gdk_pixbuf_new_from_file_at_size(
-				__LOGO_DIR"/i-tux.png", 20, 20, NULL);
+				__LOGO_PATH "/i-tux.png", 20, 20, NULL);
 		if (pixbuf) {
 			gtk_status_icon_set_from_pixbuf(inter.status_icon, pixbuf);
 			g_object_unref(pixbuf);
 		} else
-			pwarning(Fail, "%s \"" __LOGO_DIR "/i-tux.png\" %s",
+			pwarning(Fail, "%s \"" __LOGO_PATH "/i-tux.png\" %s",
 				 _("The notify icon"), _("is lost!"));
 	} else {
 		gtk_widget_show(inter.window);
 		pixbuf = gdk_pixbuf_new_from_file_at_size(
-				__LOGO_DIR "/ip-tux.png", 20, 20, NULL);
+				__LOGO_PATH "/ip-tux.png", 20, 20, NULL);
 		if (pixbuf) {
 			gtk_status_icon_set_from_pixbuf(inter.status_icon, pixbuf);
 			g_object_unref(pixbuf);
 		} else
-			pwarning(Fail, "%s \"" __LOGO_DIR "/ip-tux.png\" %s",
+			pwarning(Fail, "%s \"" __LOGO_PATH "/ip-tux.png\" %s",
 				 _("The notify icon"), _("is lost!"));
 	}
 }

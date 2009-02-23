@@ -73,7 +73,7 @@ void Command::DialUp(int sock)
 		inet_pton(AF_INET, ns->startip, &ip1);
 		inet_pton(AF_INET, ns->endip, &ip2);
 		ip1 = ntohl(ip1), ip2 = ntohl(ip2);
-		ipv4_order(ip1, ip2);
+		ipv4_order(&ip1, &ip2);
 		ip = ip1;
 		while (ip <= ip2) {
 			addr.sin_addr.s_addr = htonl(ip++);
@@ -207,7 +207,7 @@ void Command::SendReply(int sock, pointer data, uint32_t packetno)
 	SI addr;
 
 	pal = (Pal *) data;
-	snprintf(packetstr, 11, "%u", packetno);
+	snprintf(packetstr, 11, "%" PRIu32, packetno);
 	CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_RECVMSG, packetstr);
 	TransferEncode(pal->EncodeQuote());
 
@@ -245,11 +245,8 @@ bool Command::SendAskData(int sock, pointer data, uint32_t packetno,
 	SI addr;
 
 	pal = (Pal *) data;
-# if __WORDSIZE == 64
-	snprintf(attrstr, 43, "%x:%x:%lx", packetno, fileid, offset);
-# else
-	snprintf(attrstr, 43, "%x:%x:%llx", packetno, fileid, offset);
-# endif
+	snprintf(attrstr, 43, "%" PRIx32 ":%" PRIx32 ":%" PRIx64,
+						 packetno, fileid, offset);
 	CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
 	TransferEncode(pal->EncodeQuote());
 
@@ -274,7 +271,7 @@ bool Command::SendAskFiles(int sock, pointer data, uint32_t packetno,
 	SI addr;
 
 	pal = (Pal *) data;
-	snprintf(attrstr, 24, "%x:%x:0", packetno, fileid);	//兼容 LanQQ 软件
+	snprintf(attrstr, 24, "%" PRIx32 ":%" PRIx32 ":0", packetno, fileid);	//兼容 LanQQ 软件
 	CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
 	TransferEncode(pal->EncodeQuote());
 
@@ -415,7 +412,7 @@ void Command::CreateCommand(uint32_t command, const char *attach)
 	size = strlen(buf);
 	ptr = buf + size;
 
-	snprintf(ptr, MAX_UDPBUF - size, ":%u", packetn++);
+	snprintf(ptr, MAX_UDPBUF - size, ":%" PRIu32, packetn++);
 	size += strlen(ptr);
 	ptr = buf + size;
 
@@ -429,7 +426,7 @@ void Command::CreateCommand(uint32_t command, const char *attach)
 	size += strlen(ptr);
 	ptr = buf + size;
 
-	snprintf(ptr, MAX_UDPBUF - size, ":%u", command);
+	snprintf(ptr, MAX_UDPBUF - size, ":%" PRIu32, command);
 	size += strlen(ptr);
 	ptr = buf + size;
 
@@ -481,14 +478,13 @@ void Command::CreateIpmsgExtra(const char *extra)
 
 void Command::CreateIconExtra()
 {
-	extern Control ctr;
 	const gchar *env;
 	char path[MAX_PATHBUF];
 	ssize_t len;
 	int fd;
 
 	env = g_get_user_config_dir();
-	snprintf(path, MAX_PATHBUF, "%s/iptux/complex/icon", env);
+	snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH "/icon", env);
 	if ((fd = Open(path, O_RDONLY)) == -1)
 		return;
 	len = Read(fd, buf + size, MAX_UDPBUF - size);

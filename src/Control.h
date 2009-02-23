@@ -27,16 +27,22 @@ class Control {
 	GSList *CopyNetSegment();
 	char *FindNetSegDescribe(in_addr_t ipv4);
 
-	GSList *netseg;		//通知登录IP段，netseg.describe != NULL
-	char *palicon;		//默认头像
-	char *myicon;		//自身头像
 	char *myname;		//昵称
 	char *mygroup;	//组，mygroup != NULL
-	char *encode;		//默认网络编码
+	char *myicon;		//自身头像
 	char *path;		//文件存放路径
-	char *font;		//字体
 	char *sign;		//个性签名
-	uint8_t flags;		//6 声音:5 内存:4 enter:3 清除历史:2 日志记录:1 黑名单:0 共享过滤
+
+	char *encode;		//默认网络编码
+	char *palicon;		//默认头像
+	char *font;		//字体
+	uint8_t flags;		//5 内存:4 enter:3 清除历史:2 日志记录:1 黑名单:0 共享过滤
+
+	char *msgtip;
+	char *transtip;
+	uint8_t sndfgs;		//2 传输:1 消息:0 声音
+
+	GSList *netseg;		//通知登录IP段，netseg.describe != NULL
 	bool dirty;		//重写标记
 
 	GtkTextTagTable *table;

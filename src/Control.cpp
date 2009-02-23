@@ -14,10 +14,10 @@
 #include "utils.h"
 #include "baling.h"
 
- Control::Control():netseg(NULL), palicon(NULL), myicon(NULL),
-myname(NULL), mygroup(NULL), encode(NULL), path(NULL),
-font(NULL), sign(NULL), flags(0), dirty(false), table(NULL),
-iconlist(NULL), pix(3.4)
+ Control::Control(): myname(NULL), mygroup(NULL), myicon(NULL),
+path(NULL),  sign(NULL), encode(NULL), palicon(NULL),font(NULL),
+flags(0), msgtip(NULL), transtip(NULL), sndfgs(~0), netseg(NULL),
+dirty(false), table(NULL), iconlist(NULL), pix(3.4)
 {
 	pthread_mutex_init(&mutex, NULL);
 }
@@ -34,14 +34,16 @@ Control::~Control()
 	pthread_mutex_unlock(&mutex);
 	pthread_mutex_destroy(&mutex);
 
-	free(palicon);
-	free(myicon);
 	free(myname);
 	free(mygroup);
-	free(encode);
+	free(myicon);
 	free(path);
-	free(font);
 	free(sign);
+	free(encode);
+	free(palicon);
+	free(font);
+	free(msgtip);
+	free(transtip);
 
 	g_object_unref(table);
 }
@@ -59,19 +61,15 @@ void Control::WriteControl()
 	GConfClient *client;
 
 	client = gconf_client_get_default();
-	UpdateNetSegment(client, true);
-	gconf_client_set_string(client, GCONF_PATH "/pal_icon", palicon, NULL);
-	gconf_client_set_string(client, GCONF_PATH "/self_icon", myicon, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/nick_name", myname, NULL);
-	gconf_client_set_string(client, GCONF_PATH "/belong_group", mygroup,
-				NULL);
-	gconf_client_set_string(client, GCONF_PATH "/net_encode", encode, NULL);
+	gconf_client_set_string(client, GCONF_PATH "/belong_group", mygroup, NULL);
+	gconf_client_set_string(client, GCONF_PATH "/self_icon", myicon, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/save_path", path, NULL);
+	gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign, NULL);
+
+	gconf_client_set_string(client, GCONF_PATH "/net_encode", encode, NULL);
+	gconf_client_set_string(client, GCONF_PATH "/pal_icon", palicon, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/panel_font", font, NULL);
-	gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign,
-				NULL);
-	gconf_client_set_bool(client, GCONF_PATH "/not_sound_support",
-			      FLAG_ISSET(flags, 6) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/min_memory_usage",
 			      FLAG_ISSET(flags, 5) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/use_enter_key",
@@ -84,6 +82,17 @@ void Control::WriteControl()
 			      FLAG_ISSET(flags, 1) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/proof_shared",
 			      FLAG_ISSET(flags, 0) ? TRUE : FALSE, NULL);
+
+	gconf_client_set_string(client, GCONF_PATH "/msg_tip", msgtip, NULL);
+	gconf_client_set_string(client, GCONF_PATH "/trans_tip", transtip, NULL);
+	gconf_client_set_bool(client, GCONF_PATH "/msgsnd_support",
+			      FLAG_ISSET(sndfgs, 2) ? TRUE : FALSE, NULL);
+	gconf_client_set_bool(client, GCONF_PATH "/transnd_support",
+			      FLAG_ISSET(sndfgs, 1) ? TRUE : FALSE, NULL);
+	gconf_client_set_bool(client, GCONF_PATH "/sound_support",
+			      FLAG_ISSET(sndfgs, 0) ? TRUE : FALSE, NULL);
+
+	UpdateNetSegment(client, true);
 	g_object_unref(client);
 
 	dirty = false;
@@ -148,7 +157,7 @@ char *Control::FindNetSegDescribe(in_addr_t ipv4)
 		inet_pton(AF_INET, ns->startip, &ip1);
 		inet_pton(AF_INET, ns->endip, &ip2);
 		ip1 = ntohl(ip1), ip2 = ntohl(ip2);
-		ipv4_order(ip1, ip2);
+		ipv4_order(&ip1, &ip2);
 		if (ipv4 >= ip1 && ipv4 <= ip2) {
 			describe = Strdup(ns->describe);
 			break;
@@ -165,33 +174,31 @@ void Control::ReadControl()
 	GConfClient *client;
 
 	client = gconf_client_get_default();
-	UpdateNetSegment(client, false);
-	if (!(palicon =
-	      gconf_client_get_string(client, GCONF_PATH "/pal_icon", NULL)))
-		palicon = Strdup(__ICON_DIR "/qq.png");
-	if (!(myicon =
-	      gconf_client_get_string(client, GCONF_PATH "/self_icon", NULL)))
-		myicon = Strdup(__ICON_DIR "/tux.png");
 	if (!(myname =
 	      gconf_client_get_string(client, GCONF_PATH "/nick_name", NULL)))
 		myname = Strdup(g_get_user_name());
 	if (!(mygroup =
 	      gconf_client_get_string(client, GCONF_PATH "/belong_group", NULL)))
 		mygroup = Strdup("");
-	if (!(encode =
-	      gconf_client_get_string(client, GCONF_PATH "/net_encode", NULL)))
-		encode = Strdup(_("UTF-8"));
+	if (!(myicon =
+	      gconf_client_get_string(client, GCONF_PATH "/self_icon", NULL)))
+		myicon = Strdup(__ICON_PATH "/tux.png");
 	if (!(path =
 	      gconf_client_get_string(client, GCONF_PATH "/save_path", NULL)))
 		path = Strdup(g_get_home_dir());
-	if (!(font =
-	      gconf_client_get_string(client, GCONF_PATH "/panel_font", NULL)))
-		font = Strdup("Sans Italic 10");
 	if (!(sign =
 	      gconf_client_get_string(client, GCONF_PATH "/personal_sign", NULL)))
 		sign = Strdup("");
-	if (gconf_client_get_bool(client, GCONF_PATH "/not_sound_support", NULL))
-		FLAG_SET(flags, 6);
+
+	if (!(encode =
+	      gconf_client_get_string(client, GCONF_PATH "/net_encode", NULL)))
+		encode = Strdup(_("UTF-8"));
+	if (!(palicon =
+	      gconf_client_get_string(client, GCONF_PATH "/pal_icon", NULL)))
+		palicon = Strdup(__ICON_PATH "/qq.png");
+	if (!(font =
+	      gconf_client_get_string(client, GCONF_PATH "/panel_font", NULL)))
+		font = Strdup("Sans Italic 10");
 	if (gconf_client_get_bool(client, GCONF_PATH "/min_memory_usage", NULL))
 		FLAG_SET(flags, 5);
 	if (gconf_client_get_bool(client, GCONF_PATH "/use_enter_key", NULL))
@@ -204,6 +211,21 @@ void Control::ReadControl()
 		FLAG_SET(flags, 1);
 	if (gconf_client_get_bool(client, GCONF_PATH "/proof_shared", NULL))
 		FLAG_SET(flags, 0);
+
+	if (!(msgtip =
+	      gconf_client_get_string(client, GCONF_PATH "/msg_tip", NULL)))
+		msgtip = Strdup(__SOUND_PATH "/msg.ogg");
+	if (!(transtip =
+	      gconf_client_get_string(client, GCONF_PATH "/trans_tip", NULL)))
+		transtip = Strdup(__SOUND_PATH "/trans.ogg");
+	if (gconf_client_get_bool(client, GCONF_PATH "/transnd_support", NULL))
+		FLAG_SET(sndfgs, 2);
+	if (gconf_client_get_bool(client, GCONF_PATH "/msgsnd_support", NULL))
+		FLAG_SET(sndfgs, 1);
+	if (gconf_client_get_bool(client, GCONF_PATH "/sound_support", NULL))
+		FLAG_SET(sndfgs, 0);
+
+	UpdateNetSegment(client, false);
 	g_object_unref(client);
 
 	dirty = true;
@@ -236,21 +258,21 @@ void Control::GetSysIcon()
 	char path[MAX_PATHBUF];
 	DIR *dir;
 
-	mf.chdir(__ICON_DIR);
+	mf.chdir(__ICON_PATH);
 	if (!(dir = mf.opendir()))
 		return;
 	while (dirt = readdir(dir)) {
 		if (strcmp(dirt->d_name, ".") == 0
 		    || strcmp(dirt->d_name, "..") == 0)
 			continue;
-		snprintf(path, MAX_PATHBUF, __ICON_DIR "/%s", dirt->d_name);
+		snprintf(path, MAX_PATHBUF, __ICON_PATH "/%s", dirt->d_name);
 		iconlist = g_slist_append(iconlist,
 			  new SysIcon(Strdup(path), NULL));		//延迟到守护线程完成所有工作
 	}
 	closedir(dir);
 
 	/* 当使用好友自定义头像时，进一步节俭内存 */
-	if (strncmp(palicon, __ICON_DIR, strlen(__ICON_DIR)) != 0)
+	if (strncmp(palicon, __ICON_PATH, strlen(__ICON_PATH)) != 0)
 		iconlist = g_slist_prepend(iconlist,
 			   new SysIcon(Strdup(palicon), NULL));
 }

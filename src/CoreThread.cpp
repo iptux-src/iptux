@@ -102,6 +102,7 @@ void CoreThread::WatchIptux()
 		gdk_threads_leave();
 		ctr.AdjustMemory();
 		udt.AdjustMemory();
+		udt.MsgBlinking();
 		if (ctr.dirty)
 			ctr.WriteControl();
 		if (sfl.dirty)

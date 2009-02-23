@@ -23,6 +23,7 @@ class UdpData {
 
 	void InitSelf();
 	void AdjustMemory();
+	void MsgBlinking();
 	void UdpDataEntry(in_addr_t ipv4, char *msg, size_t size);
 	void SublayerEntry(gpointer data, uint32_t command, const char *path);	//Pal
 

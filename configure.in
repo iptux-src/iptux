@@ -29,10 +29,11 @@ AC_PROG_MKDIR_P
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/socket.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/socket.h sys/time.h sys/vfs.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
+AC_C_INLINE
 AC_C_CONST
 AC_TYPE_MODE_T
 AC_TYPE_SIZE_T
@@ -50,7 +51,7 @@ AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([bzero getcwd gettimeofday inet_ntoa memmove mkdir socket strcasecmp strchr strerror strncasecmp strpbrk strrchr strstr])
+AC_CHECK_FUNCS([bzero getcwd gettimeofday inet_ntoa memmove mkdir rmdir socket strcasecmp strchr strerror strncasecmp strpbrk strrchr strstr])
 
 AC_DEFINE(__IP_TUX__)
 AC_ARG_ENABLE(message,
@@ -72,28 +73,34 @@ if test "${enable_trace}" = yes ; then
 AC_DEFINE(TRACE)
 fi
 
+dnl In Autoconf 2.61, ${bindir} -> ${exec_prefix}
 dnl In Autoconf 2.61, ${datadir} --> ${datarootdir} --> ${prefix}
 test "${prefix}" = NONE && prefix="${ac_default_prefix}"
+test "${exec_prefix}" = NONE && exec_prefix="${prefix}"
+defdir=`eval echo ${bindir}`
+AC_DEFINE_UNQUOTED(__EXEC_PATH, "${defdir}")
 defdir=`eval echo ${datadir}`
 defdir=`eval echo ${defdir}`
+AC_DEFINE_UNQUOTED(__DATA_PATH, "${defdir}")
 localedir="${defdir}/locale"
+AC_DEFINE_UNQUOTED(__LOCALE_PATH, "${localedir}")
 desktopdir="${defdir}/applications"
-logodir="${defdir}/pixmaps"
-icondir="${defdir}/iptux/pixmaps/icon"
-tipdir="${defdir}/iptux/pixmaps/tip"
-menudir="${defdir}/iptux/pixmaps/menu"
-sounddir="${defdir}/iptux/sound"
-AC_DEFINE_UNQUOTED(__LOCALE_DIR, "${localedir}")
-AC_DEFINE_UNQUOTED(__LOGO_DIR, "${logodir}")
-AC_DEFINE_UNQUOTED(__ICON_DIR, "${icondir}")
-AC_DEFINE_UNQUOTED(__TIP_DIR, "${tipdir}")
-AC_DEFINE_UNQUOTED(__MENU_DIR, "${menudir}")
-AC_DEFINE_UNQUOTED(__SOUND_DIR, "${sounddir}")
+AC_DEFINE_UNQUOTED(__DESKTOP_PATH, "${desktopdir}")
 AC_SUBST(desktopdir)
+logodir="${defdir}/pixmaps"
+AC_DEFINE_UNQUOTED(__LOGO_PATH, "${logodir}")
 AC_SUBST(logodir)
+icondir="${defdir}/iptux/pixmaps/icon"
+AC_DEFINE_UNQUOTED(__ICON_PATH, "${icondir}")
 AC_SUBST(icondir)
+tipdir="${defdir}/iptux/pixmaps/tip"
+AC_DEFINE_UNQUOTED(__TIP_PATH, "${tipdir}")
 AC_SUBST(tipdir)
+menudir="${defdir}/iptux/pixmaps/menu"
+AC_DEFINE_UNQUOTED(__MENU_PATH, "${menudir}")
 AC_SUBST(menudir)
+sounddir="${defdir}/iptux/sound"
+AC_DEFINE_UNQUOTED(__SOUND_PATH, "${sounddir}")
 AC_SUBST(sounddir)
 
 gtk_modules="gtk+-2.0 >= 2.0.0"
@@ -122,9 +129,5 @@ dnl Add the languages which your application supports here.
 ALL_LINGUAS="zh_CN"
 AM_GLIB_GNU_GETTEXT
 
-AC_OUTPUT(Makefile \
-	src/Makefile \
-	desktop/Makefile \
-	pixmaps/Makefile \
-	po/Makefile.in \
-	sound/Makefile)
+AC_OUTPUT(Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile \
+	src/Makefile src/uninstall/Makefile)

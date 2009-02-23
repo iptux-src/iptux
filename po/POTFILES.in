@@ -28,3 +28,5 @@ src/TcpData.cpp
 src/Transport.cpp
 src/UdpData.cpp
 src/utils.cpp
+src/uninstall/ihateiptux.cpp
+src/uninstall/utils.cpp

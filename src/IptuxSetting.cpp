@@ -14,7 +14,9 @@
 #include "my_entry.h"
 #include "my_chooser.h"
 #include "UdpData.h"
+#include "DialogGroup.h"
 #include "Command.h"
+#include "Sound.h"
 #include "Pal.h"
 #include "support.h"
 #include "output.h"
@@ -22,17 +24,21 @@
 #include "utils.h"
 
 GtkWidget *IptuxSetting::setting = NULL;
- IptuxSetting::IptuxSetting():icon_model(NULL), ip_model(NULL),
-myname(NULL), mygroup(NULL), myicon(NULL), save_path(NULL),
-ad(NULL), sign(NULL), encode(NULL), palicon(NULL), font(NULL),
-sound(NULL), memory(NULL), etrkey(NULL), tidy(NULL), log(NULL),
-black(NULL), proof(NULL), entry1(NULL), entry2(NULL), ipseg_view(NULL)
+ IptuxSetting::IptuxSetting():icon_model(NULL), snd_model(NULL),
+ip_model(NULL), myname(NULL), mygroup(NULL), myicon(NULL),
+save_path(NULL), ad(NULL), sign(NULL), encode(NULL),
+palicon(NULL), font(NULL), memory(NULL), etrkey(NULL),
+tidy(NULL), log(NULL), black(NULL), proof(NULL), sound(NULL),
+entry1(NULL), entry2(NULL), ipseg_view(NULL)
 {
 }
 
 IptuxSetting::~IptuxSetting()
 {
 	g_object_unref(icon_model);
+#ifdef HAVE_GST
+	g_object_unref(snd_model);
+#endif
 	g_object_unref(ip_model);
 }
 
@@ -50,6 +56,9 @@ void IptuxSetting::SettingEntry()
 void IptuxSetting::InitSetting()
 {
 	icon_model = CreateIconModel();
+#ifdef HAVE_GST
+	snd_model = CreateSndModel();
+#endif
 	ip_model = CreateIpModel();
 }
 
@@ -58,7 +67,7 @@ void IptuxSetting::CreateSetting()
 	GtkWidget *box;
 	GtkWidget *notebook, *hbb;
 
-	setting = create_window(_("Iptux setting"), 132, 100);
+	setting = create_window(_("Iptux settings"), 132, 100);
 	gtk_container_set_border_width(GTK_CONTAINER(setting), 5);
 	g_signal_connect_swapped(setting, "destroy",
 				 G_CALLBACK(SettingDestroy), this);
@@ -71,6 +80,9 @@ void IptuxSetting::CreateSetting()
 	gtk_box_pack_start(GTK_BOX(box), notebook, TRUE, TRUE, 0);
 	CreatePerson(notebook);
 	CreateSystem(notebook);
+#ifdef HAVE_GST
+	CreateSound(notebook);
+#endif
 	CreateIpseg(notebook);
 
 	hbb = create_button_box(FALSE);
@@ -87,7 +99,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	GdkPixbuf *pixbuf;
 
 	box = create_box();
-	label = create_label(_("Personal Setting"));
+	label = create_label(_("Personal"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
 
 	hbox = create_box(FALSE);
@@ -121,7 +133,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	save_path = create_label(_("Save file to:"));
 	gtk_box_pack_start(GTK_BOX(hbox), save_path, FALSE, FALSE, 0);
-	save_path = CreateFolderChooser();
+	save_path = CreateArchiveChooser();
 	gtk_box_pack_start(GTK_BOX(hbox), save_path, TRUE, TRUE, 0);
 
 	/***************************/
@@ -137,7 +149,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	ad = gtk_image_new();
 	gtk_widget_show(ad);
 	gtk_container_add(GTK_CONTAINER(button), ad);
-	snprintf(path, MAX_PATHBUF, "%s/iptux/complex/ad",
+	snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH "/ad",
 					    g_get_user_config_dir());
 	if (pixbuf = gdk_pixbuf_new_from_file(path, NULL)) {
 		pixbuf_shrink_scale_1(&pixbuf, MAX_PREVIEWSIZE, MAX_PREVIEWSIZE);
@@ -164,7 +176,7 @@ void IptuxSetting::CreateSystem(GtkWidget * note)
 	GtkWidget *box, *hbox;
 
 	box = create_box();
-	label = create_label(_("System Setting"));
+	label = create_label(_("System"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
 
 	hbox = create_box(FALSE);
@@ -194,15 +206,6 @@ void IptuxSetting::CreateSystem(GtkWidget * note)
 	gtk_box_pack_start(GTK_BOX(hbox), font, FALSE, FALSE, 0);
 	font = CreateFontChooser();
 	gtk_box_pack_start(GTK_BOX(hbox), font, TRUE, TRUE, 0);
-
-#ifdef HAVE_GST
-	sound = gtk_check_button_new_with_label(
-			_("Don't provide the support of sound"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(sound),
-				     FLAG_ISSET(ctr.flags, 6));
-	gtk_widget_show(sound);
-	gtk_box_pack_start(GTK_BOX(box), sound, FALSE, FALSE, 0);
-#endif
 
 	memory = gtk_check_button_new_with_label(
 			_("Minimise memory usage(not recommended)"));
@@ -247,16 +250,61 @@ void IptuxSetting::CreateSystem(GtkWidget * note)
 	gtk_box_pack_start(GTK_BOX(box), proof, FALSE, FALSE, 0);
 }
 
-void IptuxSetting::CreateIpseg(GtkWidget * note)
+void IptuxSetting::CreateSound(GtkWidget * note)
 {
 	extern Control ctr;
+	GtkWidget *box, *label;
+	GtkWidget *frame, *vbox, *sw, *view;
+	GtkWidget *hbox, *chooser, *button;
+
+	box = create_box();
+	label = create_label(_("Sound"));
+	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
+
+	sound = gtk_check_button_new_with_label(
+			_("Supporting the provision of voice services"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(sound),
+				     FLAG_ISSET(ctr.sndfgs, 0));
+	gtk_widget_show(sound);
+	gtk_box_pack_start(GTK_BOX(box), sound, FALSE, FALSE, 3);
+
+	frame = create_frame(_("Sound Event"));
+	gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 3);
+	vbox = create_box();
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+
+	sw = create_scrolled_window();
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	view = CreateSndView();
+	gtk_container_add(GTK_CONTAINER(sw), view);
+
+	hbox = create_box(FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	chooser = CreateSndChooser();
+	gtk_box_pack_start(GTK_BOX(hbox), chooser, TRUE, TRUE, 5);
+	button = create_button(_("Testing"));
+	g_signal_connect_swapped(button, "clicked",
+				 G_CALLBACK(PlayTesting), chooser);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	button = create_button(_("Stop"));
+	g_signal_connect(button, "clicked", G_CALLBACK(StopTesting), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	g_signal_connect(view, "cursor-changed",
+			 G_CALLBACK(CursorItemChanged), chooser);
+	g_signal_connect(chooser, "current-folder-changed",
+			 G_CALLBACK(ChooserResetView), view);
+}
+
+void IptuxSetting::CreateIpseg(GtkWidget * note)
+{
 	char buf[MAX_BUF];
 	GtkWidget *box, *label;
 	GtkWidget *hbox, *vbox, *button;
 	GtkWidget *frame, *sw;
 
 	box = create_box();
-	label = create_label(_("IP Section Setting"));
+	label = create_label(_("IP Section"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
 
 	hbox = create_box(FALSE);
@@ -325,6 +373,25 @@ void IptuxSetting::CreateFuncButton(GtkWidget * hbb)
 	gtk_box_pack_end(GTK_BOX(hbb), button, FALSE, FALSE, 1);
 }
 
+//sound,0 play,1 note,2 path
+GtkTreeModel *IptuxSetting::CreateSndModel()
+{
+	extern Control ctr;
+	GtkListStore *model;
+	GtkTreeIter iter;
+
+	model = gtk_list_store_new(3, G_TYPE_BOOLEAN,
+				   G_TYPE_STRING, G_TYPE_STRING);
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter, 0, FLAG_ISSET(ctr.sndfgs, 1),
+			   1, _("message come"), 2, ctr.msgtip, -1);
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter, 0, FLAG_ISSET(ctr.sndfgs, 2),
+			   1, _("transport finished"), 2, ctr.transtip, -1);
+
+	return GTK_TREE_MODEL(model);
+}
+
 //IP 3,0 ip,1 ip,2 describe
 GtkTreeModel *IptuxSetting::CreateIpModel()
 {
@@ -350,22 +417,6 @@ GtkTreeModel *IptuxSetting::CreateIpModel()
 	return GTK_TREE_MODEL(model);
 }
 
-GtkWidget *IptuxSetting::CreateFolderChooser()
-{
-	extern Control ctr;
-	GtkWidget *chooser;
-
-	chooser = gtk_file_chooser_button_new(_("Save file to"),
-				      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	gtk_file_chooser_set_do_overwrite_confirmation(
-				      GTK_FILE_CHOOSER(chooser), TRUE);
-	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
-	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), ctr.path);
-	gtk_widget_show(chooser);
-
-	return chooser;
-}
-
 GtkWidget *IptuxSetting::CreateFontChooser()
 {
 	extern Control ctr;
@@ -381,6 +432,60 @@ GtkWidget *IptuxSetting::CreateFontChooser()
 	gtk_widget_show(chooser);
 
 	return chooser;
+}
+
+GtkWidget *IptuxSetting::CreateSndChooser()
+{
+	extern Control ctr;
+	GtkWidget *chooser;
+
+	chooser = gtk_file_chooser_button_new(_("Please choose a sound file"),
+					      GTK_FILE_CHOOSER_ACTION_OPEN);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(chooser), ctr.msgtip);
+	gtk_widget_show(chooser);
+
+	return chooser;
+}
+
+GtkWidget *IptuxSetting::CreateSndView()
+{
+	GtkWidget *view;
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+	GtkTreeSelection *selection;
+	GtkTreePath *path;
+
+	view = gtk_tree_view_new_with_model(snd_model);
+	g_signal_connect_swapped(view, "button-press-event",
+			 G_CALLBACK(DialogGroup::PopupPickMenu), snd_model);
+	gtk_widget_show(view);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_title(column, _("Play"));
+	renderer = gtk_cell_renderer_toggle_new();
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_set_attributes(column, renderer, "active", 0, NULL);
+	g_signal_connect_swapped(renderer, "toggled",
+			 G_CALLBACK(DialogGroup::ViewToggleChange), snd_model);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_title(column, _("Event"));
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_set_attributes(column, renderer, "text", 1, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
+	/* 函数ChooserResetView()要求必须选择一项 */
+	path = gtk_tree_path_new_from_string("0");
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	gtk_tree_selection_select_path(selection, path);
+	gtk_tree_path_free(path);
+
+	return view;
 }
 
 GtkWidget *IptuxSetting::CreateIpsegView()
@@ -432,6 +537,22 @@ bool IptuxSetting::CheckExist()
 		return false;
 	gtk_window_present(GTK_WINDOW(setting));
 	return true;
+}
+
+GtkWidget *IptuxSetting::CreateArchiveChooser()
+{
+	extern Control ctr;
+	GtkWidget *chooser;
+
+	chooser = gtk_file_chooser_button_new(_("Save file to"),
+				      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	gtk_file_chooser_set_do_overwrite_confirmation(
+				      GTK_FILE_CHOOSER(chooser), TRUE);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), ctr.path);
+	gtk_widget_show(chooser);
+
+	return chooser;
 }
 
 //头像 2,0 pixbuf,1 iconfile
@@ -538,8 +659,8 @@ void IptuxSetting::ObtainPerson()
 	gtk_tree_model_get_iter_from_string(icon_model, &iter, buf);
 	free(ctr.myicon);
 	gtk_tree_model_get(icon_model, &iter, 1, &ctr.myicon, -1);
-	if (strncmp(ctr.myicon, __ICON_DIR, strlen(__ICON_DIR))) {
-		snprintf(buf, MAX_PATHBUF, "%s/iptux/complex/icon",
+	if (strncmp(ctr.myicon, __ICON_PATH, strlen(__ICON_PATH))) {
+		snprintf(buf, MAX_PATHBUF, "%s" COMPLEX_PATH "/icon",
 						 g_get_user_config_dir());
 		pixbuf = gdk_pixbuf_new_from_file_at_size(ctr.myicon,
 					  MAX_ICONSIZE, MAX_ICONSIZE, NULL);
@@ -579,13 +700,6 @@ void IptuxSetting::ObtainSystem()
 	free(ctr.font);
 	ctr.font = Strdup(text);
 
-#ifdef HAVE_GST
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sound)))
-		FLAG_SET(ctr.flags, 6);
-	else
-		FLAG_CLR(ctr.flags, 6);
-#endif
-
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(memory)))
 		FLAG_SET(ctr.flags, 5);
 	else
@@ -615,6 +729,38 @@ void IptuxSetting::ObtainSystem()
 		FLAG_SET(ctr.flags, 0);
 	else
 		FLAG_CLR(ctr.flags, 0);
+}
+
+void IptuxSetting::ObtainSound()
+{
+	extern Control ctr;
+	GtkTreeIter iter;
+	gboolean active;
+	gchar *path;
+
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sound)))
+		FLAG_SET(ctr.sndfgs, 0);
+	else
+		FLAG_CLR(ctr.sndfgs, 0);
+
+	/* 注意与 Control 中成员变量联合检查 */
+	gtk_tree_model_get_iter_from_string(snd_model, &iter, "0");
+	gtk_tree_model_get(snd_model, &iter, 0, &active, 2, &path, -1);
+	if (active)
+		FLAG_SET(ctr.sndfgs, 1);
+	else
+		FLAG_CLR(ctr.sndfgs, 1);
+	free(ctr.msgtip);
+	ctr.msgtip = path;
+
+	gtk_tree_model_get_iter_from_string(snd_model, &iter, "1");
+	gtk_tree_model_get(snd_model, &iter, 0, &active, 2, &path, -1);
+	if (active)
+		FLAG_SET(ctr.sndfgs, 2);
+	else
+		FLAG_CLR(ctr.sndfgs, 2);
+	free(ctr.transtip);
+	ctr.transtip = path;
 }
 
 void IptuxSetting::ObtainIpseg()
@@ -714,6 +860,80 @@ void IptuxSetting::AddPalIcon(GtkWidget * combo)
 	g_free(filename);
 }
 
+void IptuxSetting::ChoosePortrait(GtkWidget * image)
+{
+	gchar path[MAX_PATHBUF], *filename;
+	GdkPixbuf *pixbuf;
+
+	if (!(filename = my_chooser::choose_file(
+		      _("Please choose a personal portrait"), setting)))
+		return;
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+	if (pixbuf) {
+		snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH "/ad",
+						 g_get_user_config_dir());
+		pixbuf_shrink_scale_1(&pixbuf, MAX_ADSIZE, MAX_ADSIZE);
+		gdk_pixbuf_save(pixbuf, path, "bmp", NULL, NULL);	//命中率极高，不妨直接保存
+		pixbuf_shrink_scale_1(&pixbuf, MAX_PREVIEWSIZE,
+						      MAX_PREVIEWSIZE);
+		gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+		g_object_unref(pixbuf);
+	}
+}
+
+void IptuxSetting::CursorItemChanged(GtkWidget *view, GtkWidget *chooser)
+{
+	GtkTreeModel *model;
+	GtkTreePath *treepath;
+	GtkTreeIter iter;
+	gchar *path;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
+	gtk_tree_model_get_iter(model, &iter, treepath);
+	gtk_tree_path_free(treepath);
+	gtk_tree_model_get(model, &iter, 2, &path, -1);
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(chooser), path);
+	g_free(path);
+}
+
+void IptuxSetting::ChooserResetView(GtkWidget *chooser, GtkWidget *view)
+{
+	GtkTreeModel *model;
+	GtkTreePath *treepath;
+	GtkTreeIter iter;
+	gchar *path;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
+	if (!treepath)
+		return;
+
+	gtk_tree_model_get_iter(model, &iter, treepath);
+	gtk_tree_path_free(treepath);
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 2, path, -1);
+	g_free(path);
+}
+
+void IptuxSetting::PlayTesting(GtkWidget *chooser)
+{
+	extern Sound sound;
+	gchar *path;
+
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+	sound.Playing(path);
+	g_free(path);
+}
+
+void IptuxSetting::StopTesting()
+{
+	extern Sound sound;
+
+	sound.Stop();
+}
+
 void IptuxSetting::ClickAddIpseg(gpointer data)
 {
 	const gchar *text1, *text2, *text;
@@ -784,53 +1004,6 @@ void IptuxSetting::ClickDelIpseg(gpointer data)
 	g_free(ipstr1), g_free(ipstr2);
 }
 
-void IptuxSetting::ClickOk(gpointer data)
-{
-	IptuxSetting::ClickApply(data);
-	gtk_widget_destroy(setting);
-}
-
-void IptuxSetting::ClickApply(gpointer data)
-{
-	extern Control ctr;
-	IptuxSetting *ipst;
-
-	ipst = (IptuxSetting *) data;
-	ipst->ObtainPerson();
-	ipst->ObtainSystem();
-	ipst->ObtainIpseg();
-	ctr.dirty = true;
-	ipst->UpdateMyInfo();
-}
-
-void IptuxSetting::SettingDestroy(gpointer data)
-{
-	setting = NULL;
-	delete(IptuxSetting *) data;
-}
-
-void IptuxSetting::ChoosePortrait(GtkWidget * image)
-{
-	gchar path[MAX_PATHBUF], *filename;
-	GdkPixbuf *pixbuf;
-
-	if (!(filename = my_chooser::choose_file(
-		      _("Please choose a personal portrait"), setting)))
-		return;
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-	if (pixbuf) {
-		snprintf(path, MAX_PATHBUF, "%s/iptux/complex/ad",
-						 g_get_user_config_dir());
-		pixbuf_shrink_scale_1(&pixbuf, MAX_ADSIZE, MAX_ADSIZE);
-		gdk_pixbuf_save(pixbuf, path, "bmp", NULL, NULL);	//命中率极高，不妨直接保存
-		pixbuf_shrink_scale_1(&pixbuf, MAX_PREVIEWSIZE,
-						      MAX_PREVIEWSIZE);
-		gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
-		g_object_unref(pixbuf);
-	}
-}
-
 void IptuxSetting::CellEditText(GtkCellRendererText * renderer, gchar * path,
 				gchar * new_text, GtkTreeModel * model)
 {
@@ -852,12 +1025,9 @@ void IptuxSetting::ImportNetSegment(gpointer data)
 	ipst = (IptuxSetting *) data, list = NULL;
 	gtk_list_store_clear(GTK_LIST_STORE(ipst->ip_model));
 	dialog = gtk_file_chooser_dialog_new(_("Please choose the import file"),
-					     GTK_WINDOW(setting),
-					     GTK_FILE_CHOOSER_ACTION_OPEN,
-					     GTK_STOCK_CANCEL,
-					     GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OPEN,
-					     GTK_RESPONSE_ACCEPT, NULL);
+		     GTK_WINDOW(setting), GTK_FILE_CHOOSER_ACTION_OPEN,
+		     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog),
 					     GTK_RESPONSE_ACCEPT);
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
@@ -893,12 +1063,9 @@ void IptuxSetting::ExportNetSegment(gpointer data)
 
 	ipst = (IptuxSetting *) data, list = NULL;
 	dialog = gtk_file_chooser_dialog_new(_("Save the export file"),
-					     GTK_WINDOW(setting),
-					     GTK_FILE_CHOOSER_ACTION_SAVE,
-					     GTK_STOCK_CANCEL,
-					     GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_SAVE,
-					     GTK_RESPONSE_ACCEPT, NULL);
+		     GTK_WINDOW(setting), GTK_FILE_CHOOSER_ACTION_SAVE,
+		     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog),
 					GTK_RESPONSE_ACCEPT);
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
@@ -921,4 +1088,32 @@ void IptuxSetting::ExportNetSegment(gpointer data)
 		g_free(filename), g_slist_free(list);
 	}
 	gtk_widget_destroy(dialog);
+}
+
+void IptuxSetting::ClickOk(gpointer data)
+{
+	IptuxSetting::ClickApply(data);
+	gtk_widget_destroy(setting);
+}
+
+void IptuxSetting::ClickApply(gpointer data)
+{
+	extern Control ctr;
+	IptuxSetting *ipst;
+
+	ipst = (IptuxSetting *) data;
+	ipst->ObtainPerson();
+	ipst->ObtainSystem();
+#ifdef HAVE_GST
+	ipst->ObtainSound();
+#endif
+	ipst->ObtainIpseg();
+	ctr.dirty = true;
+	ipst->UpdateMyInfo();
+}
+
+void IptuxSetting::SettingDestroy(gpointer data)
+{
+	setting = NULL;
+	delete(IptuxSetting *) data;
 }

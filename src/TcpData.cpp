@@ -74,18 +74,18 @@ void TcpData::RecvSublayer(int sock, uint32_t command, char *buf, ssize_t size)
 	packetno = iptux_get_dec_number(buf, 1);
 	switch (GET_OPT(command)) {
 	case IPTUX_ADPICOPT:
-		snprintf(path, MAX_PATHBUF, "%s/iptux/ads/%x",
+		snprintf(path, MAX_PATHBUF, "%s" ADS_PATH "/%" PRIx32,
 			 g_get_user_cache_dir(), pal->Ipv4Quote());
 		break;
 	case IPTUX_MSGPICOPT:
-		snprintf(path, MAX_PATHBUF, "%s/iptux/pic/%x-%x-%x",
-			 g_get_user_cache_dir(), pal->Ipv4Quote(),
-			 packetno, time(NULL));
+		snprintf(path, MAX_PATHBUF, "%s" PIC_PATH "/%" PRIx32
+			 "-%" PRIx32 "-%" PRIx32, g_get_user_cache_dir(),
+			 pal->Ipv4Quote(), packetno, time(NULL));
 		break;
 	default:
-		snprintf(path, MAX_PATHBUF, "%s/iptux/%x-%x-%x",
-			 g_get_user_cache_dir(), pal->Ipv4Quote(),
-			 packetno, time(NULL));
+		snprintf(path, MAX_PATHBUF, "%s" IPTUX_PATH "/%" PRIx32 "-%"
+			 PRIx32 "-%" PRIx32, g_get_user_cache_dir(),
+			 pal->Ipv4Quote(), packetno, time(NULL));
 		break;
 	}
 	if ((fd = Open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)

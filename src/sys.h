@@ -16,8 +16,14 @@
 #  include <config.h>
 #endif
 
+/* <stdint.h> */
+#define __STDC_LIMIT_MACROS
+/* <inttypes.h> */
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
@@ -36,10 +42,13 @@
 #include <ftw.h>
 #include <signal.h>
 #include <sys/vfs.h>
+#include <pwd.h>
+#include <locale.h>
+#include <libintl.h>
 typedef void *pointer;
 
-#ifdef HAVE_GST
-#include <gst/gst.h>
+#ifndef _
+#define _(string) gettext(string)
 #endif
 
 #endif
