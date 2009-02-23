@@ -150,7 +150,7 @@ void MainWindow::CreatePanel()
 		g_object_unref(pixbuf);
 	} else
 		pwarning(Fail, "%s \"" __LOGO_PATH "/ip-tux.png\" %s",
-			 _("Icon file"), _("is lost!"));
+			 _("Icon file"), _("NOT found!"));
 	gtk_window_set_geometry_hints(GTK_WINDOW(window), window,
 						      &geometry, hints);
 	gtk_window_set_default_size(GTK_WINDOW(window), GINT(ctr.pix * 70),
@@ -170,15 +170,21 @@ void MainWindow::CreateAllArea()
 
 	client_paned = create_paned();
 	gtk_container_add(GTK_CONTAINER(window), client_paned);
+
 	box = create_box();
 	gtk_paned_pack1(GTK_PANED(client_paned), box, true, true);
+
 	menu_bar = CreateMenuBar();
 	gtk_box_pack_start(GTK_BOX(box), menu_bar, FALSE, FALSE, 0);
-	tips = create_label(_("pals online: 0"));
+
+	tips = create_label(_("Pals Online: 0"));
+    gtk_misc_set_padding (GTK_MISC (tips), 0, 5);
 	gtk_box_pack_start(GTK_BOX(box), tips, FALSE, FALSE, 0);
+
 	sw = create_scrolled_window();
-	gtk_container_set_border_width(GTK_CONTAINER(sw), 4);
+	gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+
 	pal_tree = CreatePalTree();
 	gtk_container_add(GTK_CONTAINER(sw), pal_tree);
 }
@@ -225,18 +231,19 @@ GtkWidget *MainWindow::CreatePalTree()
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
 							renderer, TRUE);
 	g_object_set(renderer, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD,
-					     "foreground", "#52B838", NULL);
+					     "foreground", "#047101", NULL);
 	gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column),
 			    renderer, "text", 2, "font", 3, "visible", 4, NULL);
 	renderer = gtk_cell_renderer_text_new();	//
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
 							renderer, TRUE);
 	g_object_set(renderer, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD,
-					     "foreground", "#52B838", NULL);
+					     "foreground", "#047101", NULL);
 	gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column),
 				    renderer, "markup", 5, "visible", 6, NULL);
 
 	g_object_set(view, "has-tooltip", TRUE, NULL);
+
 	g_signal_connect(view, "query-tooltip",
 			 G_CALLBACK(TreeQueryTooltip), tree_model);
 	g_signal_connect(view, "row-activated",
@@ -280,10 +287,10 @@ void MainWindow::InitPalTreeModel()
 		else
 			snprintf(ipstr, 32, "%s", localip[count << 1]);
 		snprintf(buf, MAX_BUF,
-			 "<span style=\"italic\" underline=\"single\" size=\"small\" "
-			 "foreground=\"#52B838\" weight=\"bold\">%s</span>",
+			 "<span size=\"small\" "
+			 "weight=\"bold\">%s</span>",
 			 ipstr);
-		gtk_tree_store_append(GTK_TREE_STORE(tree_model), &iter, NULL);
+        gtk_tree_store_append(GTK_TREE_STORE(tree_model), &iter, NULL);
 		gtk_tree_store_set(GTK_TREE_STORE(tree_model), &iter, 0, pixbuf,
 				   1, NULL, 4, FALSE, 5, buf, 6, TRUE, 7, NULL,
 				   8, FALSE, -1);
@@ -455,7 +462,7 @@ void MainWindow::UpdateTips()
 		tmp = tmp->next;
 	}
 	pthread_mutex_unlock(udt.MutexQuote());
-	snprintf(buf, MAX_BUF, _("pals online: %" PRIu32), sum);
+	snprintf(buf, MAX_BUF, _("Pals Online: %" PRIu32), sum);
 	gtk_label_set_text(GTK_LABEL(mwp->tips), buf);
 }
 
@@ -585,6 +592,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	model = CreatePalListModel();
 	view = gtk_tree_view_new_with_model(model);
+
 	widget_enable_dnd_uri(view);
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	gtk_tree_selection_set_mode(GTK_TREE_SELECTION(selection),

@@ -234,17 +234,25 @@ void Control::ReadControl()
 void Control::CreateTagTable()
 {
 	GtkTextTag *tag;
+    GdkColor color;
 
 	table = gtk_text_tag_table_new();
+
 	tag = gtk_text_tag_new("blue");
-	g_object_set(tag, "foreground", "blue", NULL);
+    gdk_color_parse("#00138A", &color);
+	g_object_set(tag, "foreground-gdk", &color, NULL);
 	gtk_text_tag_table_add(table, tag);
+
 	tag = gtk_text_tag_new("green");
-	g_object_set(tag, "foreground", "green", NULL);
+    gdk_color_parse("#047101", &color);
+	g_object_set(tag, "foreground-gdk", &color, NULL);
 	gtk_text_tag_table_add(table, tag);
+
 	tag = gtk_text_tag_new("red");
-	g_object_set(tag, "foreground", "red", NULL);
+    gdk_color_parse("#A30000", &color);
+	g_object_set(tag, "foreground-gdk", &color, NULL);
 	gtk_text_tag_table_add(table, tag);
+
 	tag = gtk_text_tag_new("sign");
 	g_object_set(tag, "indent", 10, "foreground", "#1005F0",
 				     "font", "Sans Italic 8", NULL);
