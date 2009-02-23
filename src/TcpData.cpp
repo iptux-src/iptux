@@ -98,7 +98,7 @@ void TcpData::RecvSublayer(int sock, uint32_t command, char *buf, ssize_t size)
 
 void TcpData::RecvSublayerData(int sock, int fd, char *buf, ssize_t size)
 {
-	size_t len;
+	ssize_t len;
 
 	len = strlen(buf) + 1;
 	if (size != len)

@@ -261,7 +261,7 @@ void Control::GetSysIcon()
 	mf.chdir(__ICON_PATH);
 	if (!(dir = mf.opendir()))
 		return;
-	while (dirt = readdir(dir)) {
+	while ( (dirt = readdir(dir)) ) {
 		if (strcmp(dirt->d_name, ".") == 0
 		    || strcmp(dirt->d_name, "..") == 0)
 			continue;

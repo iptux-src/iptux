@@ -151,7 +151,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	gtk_container_add(GTK_CONTAINER(button), ad);
 	snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH "/ad",
 					    g_get_user_config_dir());
-	if (pixbuf = gdk_pixbuf_new_from_file(path, NULL)) {
+	if ( (pixbuf = gdk_pixbuf_new_from_file(path, NULL)) ) {
 		pixbuf_shrink_scale_1(&pixbuf, MAX_PREVIEWSIZE, MAX_PREVIEWSIZE);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(ad), pixbuf);
 		g_object_unref(pixbuf);
@@ -829,7 +829,7 @@ void IptuxSetting::UpdateNetSegment(const char *filename, GSList ** list,
 	} else {
 		lineptr = NULL, n = 0;
 		while (getline(&lineptr, &n, stream) != -1) {
-			if (ptr = strchr(lineptr, '#'))
+			if ( (ptr = strchr(lineptr, '#') ))
 				*ptr = '\0';
 			buf[2][0] = '\0';
 			if (sscanf(lineptr, "%s - %s //%s", buf[0], buf[1], buf[2]) < 2

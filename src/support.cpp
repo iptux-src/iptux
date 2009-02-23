@@ -104,7 +104,7 @@ GdkPixbuf *obtain_pixbuf_from_stock(const gchar * stock_id)
 
 void widget_enable_dnd_uri(GtkWidget *widget)
 {
-	static const GtkTargetEntry target = {"text/uri-list", 0, 0};
+	static const GtkTargetEntry target = {(gchar*)"text/uri-list", 0, 0};
 
 	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL,
 				  &target, 1, GDK_ACTION_MOVE);

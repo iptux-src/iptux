@@ -63,7 +63,8 @@ void pop_info(GtkWidget * parent, GtkWidget * fw, const gchar * format, ...)
 	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(parent),
 						    GTK_DIALOG_MODAL,
 						    GTK_MESSAGE_INFO,
-						    GTK_BUTTONS_OK, msg);
+						    GTK_BUTTONS_OK,
+                            "%s",msg);
 	g_free(msg);
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Infomation"));
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -85,7 +86,8 @@ void pop_warning(GtkWidget * parent, GtkWidget * fw, const gchar * format, ...)
 	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(parent),
 						    GTK_DIALOG_MODAL,
 						    GTK_MESSAGE_WARNING,
-						    GTK_BUTTONS_OK, msg);
+						    GTK_BUTTONS_OK,
+                            "%s", msg);
 	g_free(msg);
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Warning"));
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -107,7 +109,8 @@ void pop_error(const gchar * format, ...)
 	dialog = gtk_message_dialog_new_with_markup(NULL,
 						    GTK_DIALOG_MODAL,
 						    GTK_MESSAGE_ERROR,
-						    GTK_BUTTONS_OK, msg);
+						    GTK_BUTTONS_OK,
+                            "%s",msg);
 	g_free(msg);
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Error"));
 	gtk_dialog_run(GTK_DIALOG(dialog));

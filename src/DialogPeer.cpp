@@ -278,7 +278,7 @@ bool DialogPeer::CheckExist(gpointer data)
 	GList *tmp;
 	Pal *pal;
 
-	if (tmp = (GList *) udt.PalGetMsgPos(data)) {
+	if ( (tmp = (GList *) udt.PalGetMsgPos(data)) ) {
 		pthread_mutex_lock(udt.MutexQuote());
 		g_queue_delete_link(udt.MsgqueueQuote(), tmp);
 		pthread_mutex_unlock(udt.MutexQuote());
@@ -406,8 +406,8 @@ void DialogPeer::DragPicReceived(GtkWidget * view, GdkDragContext * context,
 
 	tmp = list = selection_data_get_path(select);
 	while (tmp) {
-		if (pixbuf = gdk_pixbuf_new_from_file(
-				    (char *) tmp->data, NULL)) {
+		if( (pixbuf = gdk_pixbuf_new_from_file(
+				    (char *) tmp->data, NULL)) ) {
 			g_object_get(buffer, "cursor-position",
 						     &position, NULL);
 			gtk_text_buffer_get_iter_at_offset(buffer,
@@ -488,7 +488,7 @@ void DialogPeer::SendMessage(gpointer data)
 
 	buf[0] = '\0', chiplist = NULL, iter = piter = start;
 	do {
-		if (pixbuf = gtk_text_iter_get_pixbuf(&iter)) {
+		if ( (pixbuf = gtk_text_iter_get_pixbuf(&iter)) ) {
 			ptr = gtk_text_buffer_get_text(buffer, &piter,
 								&iter, FALSE);
 			snprintf(buf + strlen(buf), MAX_UDPBUF - strlen(buf),
