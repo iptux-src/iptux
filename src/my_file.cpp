@@ -12,6 +12,7 @@
 #include "my_file.h"
 #include "output.h"
 #include "baling.h"
+#include "support.h"
 
 uint64_t my_file::sumsize = 0;
 my_file::my_file(bool fg)
@@ -52,12 +53,18 @@ int my_file::open(const char *filename, int flags, ...)
 {
 	int fd;
 	bool tmp;
+	char *tpath;
 	va_list ap;
 
 	tmp = flag, flag = false;
 	chdir(filename);
 	va_start(ap, flags);
-	fd = Open(path, flags, va_arg(ap, mode_t));
+	if ((flags & O_ACCMODE) == O_WRONLY) {
+		tpath = assert_file_inexistent(path);
+		fd = Open(tpath, flags, va_arg(ap, mode_t));
+		free(tpath);
+	} else
+		fd = Open(path, flags, va_arg(ap, mode_t));
 	va_end(ap);
 	chdir("..");
 	flag = tmp;

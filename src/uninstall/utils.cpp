@@ -36,7 +36,7 @@ void remove_folder(const char *path)
 		return;
 	}
 
-	while (dirt = readdir(dir)) {
+	while ( (dirt = readdir(dir))) {
 		if ((strcmp(dirt->d_name, ".") == 0)
 			   || (strcmp(dirt->d_name, "..") == 0))
 			continue;

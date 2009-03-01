@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 
 	remove_folder(__DATA_PATH "/iptux");
 	remove_file(__LOCALE_PATH "/zh_CN/LC_MESSAGES/iptux.mo");
+	remove_file(__LOCALE_PATH "/en_GB/LC_MESSAGES/iptux.mo");
 
 	return 0;
 }

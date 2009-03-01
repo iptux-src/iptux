@@ -59,7 +59,7 @@ gboolean my_entry::QueryTooltip(GtkWidget * widget, gint x, gint y,
 void my_entry::InsertText(GtkEditable * editable, gchar * text, gint length,
 			  gint * position, gpointer data)
 {
-	ssize_t count;
+	gint count;
 
 	if (length == -1)
 		length = strlen(text);

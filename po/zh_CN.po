@@ -10,13 +10,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-22 14:17+0800\n"
-"PO-Revision-Date: 2009-02-24 23:45+0800\n"
+"POT-Creation-Date: 2009-02-26 22:34+0800\n"
+"PO-Revision-Date: 2009-02-26 14:20+0800\n"
 "Last-Translator: iptux <jallyx@163.com>\n"
 "Language-Team: Chinese <zh@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: src/AboutIptux.cpp:57
 msgid ""
@@ -26,14 +27,14 @@ msgstr ""
 "李金辉\n"
 "刘涛"
 
-#: src/AboutIptux.cpp:61 src/MainWindow.cpp:145 src/StatusIcon.cpp:52
+#: src/AboutIptux.cpp:61 src/MainWindow.cpp:144 src/StatusIcon.cpp:52
 #: src/StatusIcon.cpp:76
 msgid "iptux"
 msgstr "信使(iptux)"
 
 #: src/AboutIptux.cpp:66
 msgid "A GTK+ based LAN Messenger."
-msgstr "一个GTK界面的局域网文件传送器"
+msgstr ""
 
 #: src/AboutIptux.cpp:83
 msgid "Help"
@@ -41,11 +42,11 @@ msgstr "帮助"
 
 #: src/AboutIptux.cpp:83
 msgid "Contributers"
-msgstr "贡献者"
+msgstr ""
 
-#: src/AboutIptux.cpp:83 src/AboutIptux.cpp:99
+#: src/AboutIptux.cpp:83 src/AboutIptux.cpp:101
 msgid "..."
-msgstr "..."
+msgstr ""
 
 #: src/AboutIptux.cpp:85
 msgid ""
@@ -60,16 +61,7 @@ msgid ""
 "If you find no solutions in any of the existed documents, feel free to drop "
 "a email at iptux@googlegroups.com, lots of users and developers would be "
 "glade to help about your problems."
-msgstr "项目主页:·\n"
-"http://code.google.com/p/iptux/\n"
-"\n"
-"用户和开发者论:\n"
-"https://groups.google.com/group/iptux/\n"
-"\n"
-"记住你可以从项目的维基页面得到帮助。\n"
-"\n"
-"如果你在已知文档找不到解决方法，你可以在iptux@googlegroup.com留下你的邮件，"
-"很多用户和开发者会很乐意帮助你解决问题。"
+msgstr ""
 
 #: src/AboutIptux.cpp:91
 msgid ""
@@ -82,21 +74,14 @@ msgid ""
 "<liangsuilong@gmail.com>\n"
 "<lidaobing@gmail.com>\n"
 "<mdjhu@sina.com>\n"
+"<omegao.hu@gmail.com>\n"
+"<syranosun@gmail.com>\n"
 "<weijian_li88@qq.com>"
-msgstr "这是属于众多无私的贡献者的一份荣誉。"
-"没有你们的帮助，没有可能会有信使的。\n"
-"\n"
-"特别地，我们应该感谢他们更多:\n"
-"\n"
-"<ChenGang>\n"
-"<liangsuilong@gmail.com>\n"
-"<lidaobing@gmail.com>\n"
-"<mdjhu@sina.com>\n"
-"<weijian_li88@qq.com>"
+msgstr ""
 
-#: src/AboutIptux.cpp:105
+#: src/AboutIptux.cpp:107
 msgid "More about iptux"
-msgstr "更多关于信使的信息"
+msgstr ""
 
 #: src/baling.cpp:36
 #, c-format
@@ -162,20 +147,20 @@ msgstr "行为: 创建目录'%s',警告: %s\n"
 msgid "It's offline, or not receive the data packet!"
 msgstr "好友不在线，或未能收到数据包！"
 
-#: src/Control.cpp:195
+#: src/Control.cpp:197
 msgid "UTF-8"
 msgstr "GB18030"
 
 #: src/CoreThread.cpp:73
 #, c-format
 msgid "accept %s> %s\n"
-msgstr "接收·%s>·%s\n"
+msgstr ""
 
 #: src/DetectPal.cpp:42
 msgid "Detect the pals"
 msgstr "探测好友"
 
-#: src/DetectPal.cpp:44 src/IptuxSetting.cpp:370 src/ShareFile.cpp:99
+#: src/DetectPal.cpp:44 src/IptuxSetting.cpp:385 src/ShareFile.cpp:99
 msgid "Cancel"
 msgstr "取消"
 
@@ -191,7 +176,7 @@ msgstr "请输入一个合法的IPv4地址:"
 msgid "Please input a legal address of IPv4!"
 msgstr "请输入一个合法的IPv4地址！"
 
-#: src/DetectPal.cpp:80 src/IptuxSetting.cpp:950 src/IptuxSetting.cpp:957
+#: src/DetectPal.cpp:80 src/IptuxSetting.cpp:984 src/IptuxSetting.cpp:991
 #, c-format
 msgid ""
 "\n"
@@ -225,7 +210,7 @@ msgstr "确认关闭"
 msgid "Request for shared resources"
 msgstr "请求共享资源"
 
-#: src/dialog.cpp:50 src/RecvFile.cpp:107
+#: src/dialog.cpp:50 src/RecvFile.cpp:106
 msgid "Refuse"
 msgstr "拒绝"
 
@@ -313,7 +298,7 @@ msgstr "发送"
 msgid "pals"
 msgstr "好友"
 
-#: src/DialogGroup.cpp:231 src/DialogPeer.cpp:184 src/MainWindow.cpp:323
+#: src/DialogGroup.cpp:231 src/DialogPeer.cpp:184 src/MainWindow.cpp:322
 msgid "_File"
 msgstr "文件(_F)"
 
@@ -321,11 +306,11 @@ msgstr "文件(_F)"
 msgid "Update List"
 msgstr "刷新列表"
 
-#: src/DialogGroup.cpp:261 src/DialogPeer.cpp:252 src/MainWindow.cpp:421
+#: src/DialogGroup.cpp:261 src/DialogPeer.cpp:252 src/MainWindow.cpp:420
 msgid "_Help"
 msgstr "帮助(_H)"
 
-#: src/DialogGroup.cpp:275 src/DialogPeer.cpp:266 src/MainWindow.cpp:435
+#: src/DialogGroup.cpp:275 src/DialogPeer.cpp:266 src/MainWindow.cpp:434
 msgid "_More"
 msgstr "更多(_M)"
 
@@ -362,19 +347,19 @@ msgstr "好友信息"
 msgid "Chat History"
 msgstr "聊天记录"
 
-#: src/DialogPeer.cpp:192 src/MainWindow.cpp:475
+#: src/DialogPeer.cpp:192 src/MainWindow.cpp:474
 msgid "Send File"
 msgstr "发送文件"
 
-#: src/DialogPeer.cpp:198 src/MainWindow.cpp:481
+#: src/DialogPeer.cpp:198 src/MainWindow.cpp:480
 msgid "Send Folder"
 msgstr "发送目录"
 
-#: src/DialogPeer.cpp:204 src/MainWindow.cpp:487
+#: src/DialogPeer.cpp:204 src/MainWindow.cpp:486
 msgid "Ask For Shared Files"
 msgstr "获取共享"
 
-#: src/DialogPeer.cpp:226 src/MainWindow.cpp:366
+#: src/DialogPeer.cpp:226 src/MainWindow.cpp:365
 msgid "_Tools"
 msgstr "工具(_T)"
 
@@ -556,123 +541,127 @@ msgstr "声音"
 msgid "Supporting the provision of voice services"
 msgstr "支持提供声音服务"
 
-#: src/IptuxSetting.cpp:271
+#: src/IptuxSetting.cpp:275
+msgid "Volume Control: "
+msgstr "音量控制: "
+
+#: src/IptuxSetting.cpp:284
 msgid "Sound Event"
 msgstr "声音事件"
 
-#: src/IptuxSetting.cpp:285
+#: src/IptuxSetting.cpp:300
 msgid "Testing"
 msgstr "测试"
 
-#: src/IptuxSetting.cpp:289
+#: src/IptuxSetting.cpp:304
 msgid "Stop"
 msgstr "停止"
 
-#: src/IptuxSetting.cpp:307
+#: src/IptuxSetting.cpp:322
 msgid "IP Section"
 msgstr "IP段"
 
-#: src/IptuxSetting.cpp:312
+#: src/IptuxSetting.cpp:327
 msgid "Begin:"
 msgstr "起始:"
 
-#: src/IptuxSetting.cpp:314
+#: src/IptuxSetting.cpp:329
 msgid "begin IPv4"
 msgstr "起始IP"
 
-#: src/IptuxSetting.cpp:316
+#: src/IptuxSetting.cpp:331
 msgid "End:"
 msgstr "终止:"
 
-#: src/IptuxSetting.cpp:318
+#: src/IptuxSetting.cpp:333
 msgid "end IPv4"
 msgstr "终止IP"
 
-#: src/IptuxSetting.cpp:324
+#: src/IptuxSetting.cpp:339
 msgid "Add"
 msgstr "增添"
 
-#: src/IptuxSetting.cpp:329
+#: src/IptuxSetting.cpp:344
 msgid "Delete"
 msgstr "删除"
 
-#: src/IptuxSetting.cpp:335
+#: src/IptuxSetting.cpp:350
 msgid "Added IPv4 section:"
 msgstr "已添加 IP 段:"
 
-#: src/IptuxSetting.cpp:345
+#: src/IptuxSetting.cpp:360
 msgid "Import"
 msgstr "导入"
 
-#: src/IptuxSetting.cpp:349
+#: src/IptuxSetting.cpp:364
 msgid "Export"
 msgstr "导出"
 
-#: src/IptuxSetting.cpp:353
+#: src/IptuxSetting.cpp:368
 msgid "Clear"
 msgstr "清空"
 
-#: src/IptuxSetting.cpp:363 src/ShareFile.cpp:92
+#: src/IptuxSetting.cpp:378 src/ShareFile.cpp:92
 msgid "OK"
 msgstr "确定"
 
-#: src/IptuxSetting.cpp:366 src/ShareFile.cpp:95
+#: src/IptuxSetting.cpp:381 src/ShareFile.cpp:95
 msgid "Apply"
 msgstr "应用"
 
-#: src/IptuxSetting.cpp:387
+#: src/IptuxSetting.cpp:402
 msgid "message come"
 msgstr "消息来了"
 
-#: src/IptuxSetting.cpp:390
+#: src/IptuxSetting.cpp:405
 msgid "transport finished"
 msgstr "传输完成"
 
-#: src/IptuxSetting.cpp:431
+#: src/IptuxSetting.cpp:446
 msgid "Please choose a font"
 msgstr "请选择一种字体"
 
-#: src/IptuxSetting.cpp:442
+#: src/IptuxSetting.cpp:457
 msgid "Please choose a sound file"
 msgstr "请选择一个声音文件"
 
-#: src/IptuxSetting.cpp:466
+#: src/IptuxSetting.cpp:481
 msgid "Play"
 msgstr "播放"
 
-#: src/IptuxSetting.cpp:476
+#: src/IptuxSetting.cpp:491
 msgid "Event"
 msgstr "事件"
 
-#: src/IptuxSetting.cpp:506
+#: src/IptuxSetting.cpp:521
 msgid "Begin IPv4"
 msgstr "起始IP"
 
-#: src/IptuxSetting.cpp:514
+#: src/IptuxSetting.cpp:529
 msgid "End IPv4"
 msgstr "终止IP"
 
-#: src/IptuxSetting.cpp:523
+#: src/IptuxSetting.cpp:538
 msgid "Describe"
 msgstr "描述"
 
-#: src/IptuxSetting.cpp:547
+#: src/IptuxSetting.cpp:562
 msgid "Save file to"
 msgstr "文件存档"
 
-#: src/IptuxSetting.cpp:855
+#: src/IptuxSetting.cpp:872
 msgid "Please choose a head portrait"
 msgstr "请选择头像"
 
-#: src/IptuxSetting.cpp:869
+#: src/IptuxSetting.cpp:886
 msgid "Please choose a personal portrait"
 msgstr "请选择个人形象照片"
 
-#: src/IptuxSetting.cpp:1027
+#: src/IptuxSetting.cpp:1061
 msgid "Please choose the import file"
 msgstr "请选择导入文件"
 
-#: src/IptuxSetting.cpp:1065
+#: src/IptuxSetting.cpp:1099
 msgid "Save the export file"
 msgstr "保存导出文件"
 
@@ -690,135 +679,135 @@ msgstr "我"
 msgid "Name: %s\tHost: %s"
 msgstr "名称: %s\t主机: %s"
 
-#: src/MainWindow.cpp:153
+#: src/MainWindow.cpp:152
 msgid "Icon file"
 msgstr "图标文件"
 
-#: src/MainWindow.cpp:153 src/StatusIcon.cpp:43 src/StatusIcon.cpp:176
+#: src/MainWindow.cpp:152 src/StatusIcon.cpp:43 src/StatusIcon.cpp:176
 #: src/StatusIcon.cpp:186
 msgid "is lost!"
 msgstr "丢失！"
 
-#: src/MainWindow.cpp:177
+#: src/MainWindow.cpp:176
 msgid "pals online: 0"
 msgstr "在线好友: 0"
 
-#: src/MainWindow.cpp:331 src/StatusIcon.cpp:143
+#: src/MainWindow.cpp:330 src/StatusIcon.cpp:143
 msgid "_Detect"
 msgstr "探测(_D)"
 
-#: src/MainWindow.cpp:339
+#: src/MainWindow.cpp:338
 msgid "_Find"
 msgstr "查找(_F)"
 
-#: src/MainWindow.cpp:351 src/StatusIcon.cpp:151
+#: src/MainWindow.cpp:350 src/StatusIcon.cpp:151
 msgid "_Quit"
 msgstr "退出(_Q)"
 
-#: src/MainWindow.cpp:374 src/StatusIcon.cpp:106
+#: src/MainWindow.cpp:373 src/StatusIcon.cpp:106
 msgid "_Transport"
 msgstr "传输(_T)"
 
-#: src/MainWindow.cpp:382 src/StatusIcon.cpp:114
+#: src/MainWindow.cpp:381 src/StatusIcon.cpp:114
 msgid "_Settings"
 msgstr "设置(_S)"
 
-#: src/MainWindow.cpp:391 src/StatusIcon.cpp:123
+#: src/MainWindow.cpp:390 src/StatusIcon.cpp:123
 msgid "_Public"
 msgstr "共享(_P)"
 
-#: src/MainWindow.cpp:399 src/StatusIcon.cpp:131
+#: src/MainWindow.cpp:398 src/StatusIcon.cpp:131
 msgid "_Group"
 msgstr "群发(_G)"
 
-#: src/MainWindow.cpp:407
+#: src/MainWindow.cpp:406
 msgid "_Update"
 msgstr "刷新(_U)"
 
-#: src/MainWindow.cpp:458
+#: src/MainWindow.cpp:457
 #, c-format
 msgid "pals online: %<PRIu32>"
 msgstr "在线好友: %<PRIu32>"
 
-#: src/MainWindow.cpp:469
+#: src/MainWindow.cpp:468
 msgid "Send Message"
 msgstr "发送消息"
 
-#: src/MainWindow.cpp:493
+#: src/MainWindow.cpp:492
 msgid "Change Information"
 msgstr "更改信息"
 
-#: src/MainWindow.cpp:499
+#: src/MainWindow.cpp:498
 msgid "Delete Pal"
 msgstr "删除好友"
 
 #. **********************************
-#: src/MainWindow.cpp:518
+#: src/MainWindow.cpp:517
 msgid "Sort"
 msgstr "排序"
 
-#: src/MainWindow.cpp:526
+#: src/MainWindow.cpp:525
 msgid "By IP"
 msgstr "按 IP"
 
-#: src/MainWindow.cpp:532
+#: src/MainWindow.cpp:531
 msgid "By Nickname"
 msgstr "按昵称"
 
-#: src/MainWindow.cpp:538
+#: src/MainWindow.cpp:537
 msgid "By Group"
 msgstr "按组名"
 
-#: src/MainWindow.cpp:544
+#: src/MainWindow.cpp:543
 msgid "By Communication"
 msgstr "按交流"
 
-#: src/MainWindow.cpp:554
+#: src/MainWindow.cpp:553
 msgid "Collapse"
 msgstr "折叠"
 
-#: src/MainWindow.cpp:556
+#: src/MainWindow.cpp:555
 msgid "Expand"
 msgstr "展开"
 
-#: src/MainWindow.cpp:596
+#: src/MainWindow.cpp:595
 msgid "nickname"
 msgstr "昵称"
 
-#: src/MainWindow.cpp:608
+#: src/MainWindow.cpp:607
 msgid "group"
 msgstr "组名"
 
-#: src/MainWindow.cpp:616
+#: src/MainWindow.cpp:615
 msgid "IPv4"
-msgstr "IPv4"
+msgstr ""
 
-#: src/MainWindow.cpp:624
+#: src/MainWindow.cpp:623
 msgid "user"
 msgstr "用户"
 
-#: src/MainWindow.cpp:632
+#: src/MainWindow.cpp:631
 msgid "host"
 msgstr "主机"
 
-#: src/MainWindow.cpp:1057
+#: src/MainWindow.cpp:1056
 msgid "search pals"
 msgstr "搜索好友"
 
-#: src/my_file.cpp:97 src/uninstall/utils.cpp:34
+#: src/my_file.cpp:104 src/uninstall/utils.cpp:34
 #, c-format
 msgid "act: open directory '%s',warning: %s\n"
 msgstr "行为: 打开目录'%s',警告: %s\n"
 
-#: src/output.cpp:68
+#: src/output.cpp:67
 msgid "Infomation"
 msgstr "消息"
 
-#: src/output.cpp:90
+#: src/output.cpp:88
 msgid "Warning"
 msgstr "警告"
 
-#: src/output.cpp:112
+#: src/output.cpp:109
 msgid "Error"
 msgstr "错误"
 
@@ -846,48 +835,48 @@ msgstr "文件接收管理器"
 msgid "Save To: "
 msgstr "保存到: "
 
-#: src/RecvFile.cpp:101
+#: src/RecvFile.cpp:100
 msgid "Receive"
 msgstr "接收"
 
-#: src/RecvFile.cpp:155 src/ShareFile.cpp:129 src/ShareFile.cpp:194
+#: src/RecvFile.cpp:156 src/ShareFile.cpp:129 src/ShareFile.cpp:194
 msgid "regular"
 msgstr "常规文件"
 
-#: src/RecvFile.cpp:157 src/ShareFile.cpp:132 src/ShareFile.cpp:197
+#: src/RecvFile.cpp:158 src/ShareFile.cpp:132 src/ShareFile.cpp:197
 msgid "directory"
 msgstr "文件夹"
 
-#: src/RecvFile.cpp:159
+#: src/RecvFile.cpp:160
 msgid "unknown"
 msgstr "未知类型"
 
-#: src/RecvFile.cpp:179 src/RecvFile.cpp:315
+#: src/RecvFile.cpp:180 src/RecvFile.cpp:316
 msgid "receive"
 msgstr "接收"
 
-#: src/RecvFile.cpp:190 src/Transport.cpp:170
+#: src/RecvFile.cpp:191 src/Transport.cpp:170
 msgid "filename"
 msgstr "文件名"
 
-#: src/RecvFile.cpp:201
+#: src/RecvFile.cpp:202
 msgid "belong"
 msgstr "所属"
 
-#: src/RecvFile.cpp:209 src/ShareFile.cpp:236 src/Transport.cpp:194
+#: src/RecvFile.cpp:210 src/ShareFile.cpp:236 src/Transport.cpp:194
 msgid "length"
 msgstr "长度"
 
-#: src/RecvFile.cpp:217 src/ShareFile.cpp:244
+#: src/RecvFile.cpp:218 src/ShareFile.cpp:244
 msgid "type"
 msgstr "类型"
 
-#: src/RecvFile.cpp:261
+#: src/RecvFile.cpp:262
 #, c-format
 msgid "Free:%s Total:%s"
 msgstr "空闲:%s 总计:%s"
 
-#: src/RecvFile.cpp:327
+#: src/RecvFile.cpp:328
 msgid "Begin receiving paper!"
 msgstr "开始接收文件！"
 
@@ -979,7 +968,7 @@ msgstr "选择共享文件"
 msgid "Choose shared folders"
 msgstr "选择共享文件夹"
 
-#: src/Sound.cpp:99
+#: src/Sound.cpp:108
 #, c-format
 msgid "act: play the prompt tone, warning: %s\n"
 msgstr "行为: 播放提示音,警告: %s\n"
@@ -1001,15 +990,15 @@ msgstr "隐藏(_H)"
 msgid "_Show"
 msgstr "显示(_S)"
 
-#: src/support.cpp:48
+#: src/support.cpp:51
 msgid "Loading process to succeed!"
 msgstr "进程加载成功！"
 
-#: src/support.cpp:65
+#: src/support.cpp:68
 msgid "Process is about to quit!"
 msgstr "进程即将退出！"
 
-#: src/support.cpp:195
+#: src/support.cpp:218
 #, c-format
 msgid ""
 "act: bind the TCP/UDP port(2425) !\n"
@@ -1101,4 +1090,3 @@ msgstr "行为: 删除文件'%s',警告: %s\n"
 #, c-format
 msgid "act: rmdir directory '%s',warning: %s\n"
 msgstr "行为: 删除目录'%s',警告: %s\n"
-

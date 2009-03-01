@@ -22,15 +22,16 @@ class Sound
 	~Sound();
 
 	void InitSelf();
+	void AdjustVolume(double value);
 	void Playing(const char *file);
 	void Stop();
 #ifdef HAVE_GST
  private:
-	GstElement *pipeline,*filesrc, *decode, *convert;
+	GstElement *pipeline,*filesrc, *decode, *volume;
 	struct timeval timestamp;	//时间间隔过短则忽略后一个要求
 	bool persist;
  private:
-	 static void NewDecodedPad(GstElement *convert, GstPad* pad);
+	 static void NewDecodedPad(GstElement *volume, GstPad* pad);
 	static void ErrorMessageOccur(pointer data, GstMessage *message);	//Sound
 	static void EosMessageOccur(pointer data);	//
 #endif

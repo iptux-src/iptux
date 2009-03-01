@@ -471,7 +471,7 @@ void Command::CreateIpmsgExtra(const char *extra)
 
 	ptr = buf + size;
 	snprintf(ptr, MAX_UDPBUF - size, "%s", extra);
-	if ( (tmp = strrchr(ptr, '\a')) )
+	if ( (tmp = strrchr(ptr, '\a')))
 		*(tmp + 1) = '\0';
 	size += strlen(ptr) + 1;
 }

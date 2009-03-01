@@ -126,7 +126,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "${GETTEXT_PACKAGE}")
 
 dnl Add the languages which your application supports here.
-ALL_LINGUAS="zh_CN"
+ALL_LINGUAS="en_GB zh_CN"
 AM_GLIB_GNU_GETTEXT
 
 AC_OUTPUT(Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile \

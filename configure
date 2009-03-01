@@ -7955,7 +7955,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-ALL_LINGUAS="zh_CN"
+ALL_LINGUAS="en_GB zh_CN"
 
 
 for ac_header in locale.h

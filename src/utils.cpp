@@ -109,8 +109,8 @@ char *my_getline(const char *str)
 	while (*str == '\x20' || *str == '\t')
 		str++;
 
-	if ( (len = (ptr = strpbrk(str, "\r\n")) ? 
-                    (ptr - str) : strlen(str)) ) {
+	if ( (len = (ptr = strpbrk(str, "\r\n")) ?
+		     (ptr - str) : strlen(str))) {
 		dst = (char *)Malloc(len + 1);
 		memcpy(dst, str, len);
 		*(dst + len) = '\0';
@@ -125,7 +125,7 @@ int strnchr(const char *str, char chr)
 	int count;
 
 	count = 0;
-	while ( (str = strchr(str, chr)) )
+	while ( (str = strchr(str, chr)))
 		str++, count++;
 
 	return count;
@@ -213,7 +213,7 @@ const char *iptux_skip_string(const char *msg, size_t size, uint8_t times)
 	ptr = msg, count = 0;
 	while (count < times) {
 		ptr += strlen(ptr) + 1;
-		if (ptr - msg < (ssize_t)size)
+		if ((size_t)(ptr - msg) < size)
 			count++;
 		else
 			return NULL;
@@ -290,7 +290,7 @@ char *iptux_get_section_string(const char *msg, uint8_t times)
 
 	if (!(ptr = iptux_skip_section(msg, times)))
 		return NULL;
-	if ( (pptr = strchr(ptr, ':')) )
+	if ( (pptr = strchr(ptr, ':')))
 		len = pptr - ptr;
 	else
 		len = strlen(ptr);

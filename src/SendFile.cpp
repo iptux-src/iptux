@@ -181,7 +181,7 @@ void SendFile::SendFileInfo(GSList * list, gpointer data)
 			st.st_size = mf.ftw((const char *)list->data);
 		filename = ipmsg_set_filename_pal((char *)list->data);
 		snprintf(ptr, MAX_UDPBUF - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
-		    PRIx32 ":%" PRIx32 "\a:",
+		    PRIx32 ":%" PRIx32 ":\a:",
 		    prn, filename, st.st_size, st.st_mtime,
 		    S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR);
 		free(filename), len += strlen(ptr), ptr = buf + len;
@@ -220,7 +220,7 @@ void SendFile::SendSharedInfo(gpointer data)
 		}
 		filename = ipmsg_set_filename_pal(file->filename);
 		snprintf(ptr, MAX_UDPBUF - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
-			    PRIx32 ":%" PRIx32 "\a:", file->fileid, filename,
+			    PRIx32 ":%" PRIx32 ":\a:", file->fileid, filename,
 			    file->filesize, 0, file->fileattr);
 		free(filename), len += strlen(ptr), ptr = buf + len;
 		tmp = tmp->next;

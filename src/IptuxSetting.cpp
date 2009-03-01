@@ -29,7 +29,7 @@ ip_model(NULL), myname(NULL), mygroup(NULL), myicon(NULL),
 save_path(NULL), ad(NULL), sign(NULL), encode(NULL),
 palicon(NULL), font(NULL), memory(NULL), etrkey(NULL),
 tidy(NULL), log(NULL), black(NULL), proof(NULL), sound(NULL),
-entry1(NULL), entry2(NULL), ipseg_view(NULL)
+volume(NULL), entry1(NULL), entry2(NULL), ipseg_view(NULL)
 {
 }
 
@@ -151,7 +151,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	gtk_container_add(GTK_CONTAINER(button), ad);
 	snprintf(path, MAX_PATHBUF, "%s" COMPLEX_PATH "/ad",
 					    g_get_user_config_dir());
-	if ( (pixbuf = gdk_pixbuf_new_from_file(path, NULL)) ) {
+	if ( (pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
 		pixbuf_shrink_scale_1(&pixbuf, MAX_PREVIEWSIZE, MAX_PREVIEWSIZE);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(ad), pixbuf);
 		g_object_unref(pixbuf);
@@ -268,7 +268,22 @@ void IptuxSetting::CreateSound(GtkWidget * note)
 	gtk_widget_show(sound);
 	gtk_box_pack_start(GTK_BOX(box), sound, FALSE, FALSE, 3);
 
+	hbox = create_box(FALSE);
+	AdjustSensitive(sound, hbox);
+	g_signal_connect(sound, "toggled", G_CALLBACK(AdjustSensitive), hbox);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	label = create_label(_("Volume Control: "));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	volume = gtk_hscale_new_with_range(0.0, 1.0, 0.01);
+	g_signal_connect(volume, "value-changed", G_CALLBACK(AdjustVolume), NULL);
+	gtk_range_set_value(GTK_RANGE(volume), ctr.volume);
+	gtk_scale_set_draw_value(GTK_SCALE(volume), FALSE);
+	gtk_widget_show(volume);
+	gtk_box_pack_start(GTK_BOX(hbox), volume, TRUE, TRUE, 0);
+
 	frame = create_frame(_("Sound Event"));
+	AdjustSensitive(sound, frame);
+	g_signal_connect(sound, "toggled", G_CALLBACK(AdjustSensitive), frame);
 	gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 3);
 	vbox = create_box();
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
@@ -292,7 +307,7 @@ void IptuxSetting::CreateSound(GtkWidget * note)
 
 	g_signal_connect(view, "cursor-changed",
 			 G_CALLBACK(CursorItemChanged), chooser);
-	g_signal_connect(chooser, "current-folder-changed",
+	g_signal_connect(chooser, "file-set",
 			 G_CALLBACK(ChooserResetView), view);
 }
 
@@ -743,6 +758,8 @@ void IptuxSetting::ObtainSound()
 	else
 		FLAG_CLR(ctr.sndfgs, 0);
 
+	ctr.volume = gtk_range_get_value(GTK_RANGE(volume));
+
 	/* 注意与 Control 中成员变量联合检查 */
 	gtk_tree_model_get_iter_from_string(snd_model, &iter, "0");
 	gtk_tree_model_get(snd_model, &iter, 0, &active, 2, &path, -1);
@@ -829,7 +846,7 @@ void IptuxSetting::UpdateNetSegment(const char *filename, GSList ** list,
 	} else {
 		lineptr = NULL, n = 0;
 		while (getline(&lineptr, &n, stream) != -1) {
-			if ( (ptr = strchr(lineptr, '#') ))
+			if ( (ptr = strchr(lineptr, '#')))
 				*ptr = '\0';
 			buf[2][0] = '\0';
 			if (sscanf(lineptr, "%s - %s //%s", buf[0], buf[1], buf[2]) < 2
@@ -880,6 +897,23 @@ void IptuxSetting::ChoosePortrait(GtkWidget * image)
 		gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
 		g_object_unref(pixbuf);
 	}
+}
+
+void IptuxSetting::AdjustSensitive(GtkWidget *sound, GtkWidget *widget)
+{
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sound)))
+		gtk_widget_set_sensitive(widget, TRUE);
+	else
+		gtk_widget_set_sensitive(widget, FALSE);
+}
+
+void IptuxSetting::AdjustVolume(GtkWidget *volume)
+{
+	extern Sound sound;
+	gdouble value;
+
+	value = gtk_range_get_value(GTK_RANGE(volume));
+	sound.AdjustVolume(value);
 }
 
 void IptuxSetting::CursorItemChanged(GtkWidget *view, GtkWidget *chooser)
@@ -1114,6 +1148,10 @@ void IptuxSetting::ClickApply(gpointer data)
 
 void IptuxSetting::SettingDestroy(gpointer data)
 {
+	extern Sound sound;
+	extern Control ctr;
+
 	setting = NULL;
 	delete(IptuxSetting *) data;
+	sound.AdjustVolume(ctr.volume);
 }

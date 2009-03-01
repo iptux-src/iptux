@@ -22,6 +22,7 @@ class MainWindow {
 	MainWindow();
 	~MainWindow();
 
+	void InitSelf();
 	void CreateWindow();
 
 	bool PalGetModelIter(gpointer data, GtkTreeIter * iter);	//Pal
@@ -30,10 +31,9 @@ class MainWindow {
 	void MakeItemBlinking(GtkTreeIter * iter, bool blink);
 	void DelItemFromModel(gpointer data);	//
  private:
-	 void InitPanel();
-	 void CreatePanel();
-	 void CreateAllArea();
-	 GtkWidget * CreateMenuBar();
+	void CreatePanel();
+	void CreateAllArea();
+	GtkWidget * CreateMenuBar();
 	GtkWidget *CreatePalTree();
 	GtkTreeModel * CreatePalTreeModel();
 	void InitPalTreeModel();

@@ -16,6 +16,7 @@
 #include "Transport.h"
 #include "Log.h"
 #include "Sound.h"
+#include "MainWindow.h"
 #include "baling.h"
 #include "output.h"
 #include "dialog.h"
@@ -29,6 +30,7 @@ void iptux_init()
 	extern Transport trans;
 	extern Log mylog;
 	extern Sound sound;
+	extern MainWindow *mwp;
 
 	bind_iptux_port();
 	init_iptux_environment();
@@ -39,6 +41,7 @@ void iptux_init()
 	trans.InitSelf();
 	mylog.InitSelf();
 	sound.InitSelf();
+	mwp->InitSelf();
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGHUP, (sighandler_t) iptux_quit);
@@ -104,7 +107,7 @@ GdkPixbuf *obtain_pixbuf_from_stock(const gchar * stock_id)
 
 void widget_enable_dnd_uri(GtkWidget *widget)
 {
-	static const GtkTargetEntry target = {(gchar*)"text/uri-list", 0, 0};
+	static const GtkTargetEntry target = {(gchar *)"text/uri-list", 0, 0};
 
 	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL,
 				  &target, 1, GDK_ACTION_MOVE);
@@ -132,6 +135,26 @@ GSList *selection_data_get_path(GtkSelectionData *data)
 	g_strfreev(uris);
 
 	return filelist;
+}
+
+char *assert_file_inexistent(const char *path)
+{
+	uint16_t count;
+	char buf[MAX_PATHBUF];
+
+	if (access(path, F_OK) != 0)
+		return Strdup(path);
+
+	count = 1;
+	while (count) {
+		snprintf(buf, MAX_PATHBUF, "%s(%" PRIu16 ")", path, count);
+		if (access(buf, F_OK) != 0)
+			break;
+		count++;
+	}
+
+	//概率极低，不妨忽略错误情形
+	return Strdup(buf);
 }
 
 /**

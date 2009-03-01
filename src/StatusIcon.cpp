@@ -65,7 +65,7 @@ void StatusIcon::UpdateTips()
 	guint len;
 
 	pthread_mutex_lock(udt.MutexQuote());
-	if ( (len = g_queue_get_length(udt.MsgqueueQuote()) )) {
+	if ( (len = g_queue_get_length(udt.MsgqueueQuote()))) {
 		gtk_status_icon_set_blinking(inter.status_icon, TRUE);
 		ipstr = g_strdup_printf(_("Undealt: %" PRIu32 " messages"), len);
 		gtk_status_icon_set_tooltip(inter.status_icon, ipstr);

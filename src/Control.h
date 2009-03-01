@@ -40,6 +40,7 @@ class Control {
 
 	char *msgtip;
 	char *transtip;
+	double volume;
 	uint8_t sndfgs;		//2 传输:1 消息:0 声音
 
 	GSList *netseg;		//通知登录IP段，netseg.describe != NULL

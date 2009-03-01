@@ -16,8 +16,8 @@
 
  Control::Control(): myname(NULL), mygroup(NULL), myicon(NULL),
 path(NULL),  sign(NULL), encode(NULL), palicon(NULL),font(NULL),
-flags(0), msgtip(NULL), transtip(NULL), sndfgs(~0), netseg(NULL),
-dirty(false), table(NULL), iconlist(NULL), pix(3.4)
+flags(0), msgtip(NULL), transtip(NULL), volume(1.0), sndfgs(~0),
+netseg(NULL), dirty(false), table(NULL), iconlist(NULL), pix(3.4)
 {
 	pthread_mutex_init(&mutex, NULL);
 }
@@ -85,6 +85,7 @@ void Control::WriteControl()
 
 	gconf_client_set_string(client, GCONF_PATH "/msg_tip", msgtip, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/trans_tip", transtip, NULL);
+	gconf_client_set_float(client, GCONF_PATH "/volume_degree", volume, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/msgsnd_support",
 			      FLAG_ISSET(sndfgs, 2) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/transnd_support",
@@ -172,6 +173,7 @@ char *Control::FindNetSegDescribe(in_addr_t ipv4)
 void Control::ReadControl()
 {
 	GConfClient *client;
+	GConfValue *value;
 
 	client = gconf_client_get_default();
 	if (!(myname =
@@ -218,12 +220,25 @@ void Control::ReadControl()
 	if (!(transtip =
 	      gconf_client_get_string(client, GCONF_PATH "/trans_tip", NULL)))
 		transtip = Strdup(__SOUND_PATH "/trans.ogg");
-	if (gconf_client_get_bool(client, GCONF_PATH "/transnd_support", NULL))
-		FLAG_SET(sndfgs, 2);
-	if (gconf_client_get_bool(client, GCONF_PATH "/msgsnd_support", NULL))
-		FLAG_SET(sndfgs, 1);
-	if (gconf_client_get_bool(client, GCONF_PATH "/sound_support", NULL))
-		FLAG_SET(sndfgs, 0);
+	if ( (value = gconf_client_get(client, GCONF_PATH "/volume_degree", NULL))) {
+		volume = gconf_value_get_float(value);
+		gconf_value_free(value);
+	}
+	if ( (value = gconf_client_get(client, GCONF_PATH "/transnd_support", NULL))) {
+		if (!gconf_value_get_bool(value))
+			FLAG_CLR(sndfgs, 2);
+		gconf_value_free(value);
+	}
+	if ( (value = gconf_client_get(client, GCONF_PATH "/msgsnd_support", NULL))) {
+		if (!gconf_value_get_bool(value))
+			FLAG_CLR(sndfgs, 1);
+		gconf_value_free(value);
+	}
+	if ( (value = gconf_client_get(client, GCONF_PATH "/sound_support", NULL))) {
+		if (!gconf_value_get_bool(value))
+			FLAG_CLR(sndfgs, 0);
+		gconf_value_free(value);
+	}
 
 	UpdateNetSegment(client, false);
 	g_object_unref(client);
@@ -234,25 +249,17 @@ void Control::ReadControl()
 void Control::CreateTagTable()
 {
 	GtkTextTag *tag;
-    GdkColor color;
 
 	table = gtk_text_tag_table_new();
-
 	tag = gtk_text_tag_new("blue");
-    gdk_color_parse("#00138A", &color);
-	g_object_set(tag, "foreground-gdk", &color, NULL);
+	g_object_set(tag, "foreground", "blue", NULL);
 	gtk_text_tag_table_add(table, tag);
-
 	tag = gtk_text_tag_new("green");
-    gdk_color_parse("#047101", &color);
-	g_object_set(tag, "foreground-gdk", &color, NULL);
+	g_object_set(tag, "foreground", "green", NULL);
 	gtk_text_tag_table_add(table, tag);
-
 	tag = gtk_text_tag_new("red");
-    gdk_color_parse("#A30000", &color);
-	g_object_set(tag, "foreground-gdk", &color, NULL);
+	g_object_set(tag, "foreground", "red", NULL);
 	gtk_text_tag_table_add(table, tag);
-
 	tag = gtk_text_tag_new("sign");
 	g_object_set(tag, "indent", 10, "foreground", "#1005F0",
 				     "font", "Sans Italic 8", NULL);
@@ -269,7 +276,7 @@ void Control::GetSysIcon()
 	mf.chdir(__ICON_PATH);
 	if (!(dir = mf.opendir()))
 		return;
-	while ( (dirt = readdir(dir)) ) {
+	while ( (dirt = readdir(dir))) {
 		if (strcmp(dirt->d_name, ".") == 0
 		    || strcmp(dirt->d_name, "..") == 0)
 			continue;

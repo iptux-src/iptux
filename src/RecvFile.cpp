@@ -84,7 +84,6 @@ void RecvFile::CreateRecvWindow()
 	gtk_box_pack_start(GTK_BOX(hbox), chooser, FALSE, FALSE, 0);
 	label = create_label("");
 	gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	ChooserResetLabel(chooser, label);
 	g_signal_connect(view, "cursor-changed",
 				 G_CALLBACK(CursorItemChanged), chooser);
 	g_signal_connect(chooser, "current-folder-changed",
@@ -119,10 +118,12 @@ gpointer RecvFile::DivideFileinfo(char **ptr)
 			    iptux_get_hex64_number(*ptr, 2),
 			    iptux_get_hex_number(*ptr, 4));
 
-	//格式1 ... ;格式2 ...\a ;格式3 ...\a:
-	*ptr = strstr(*ptr, "\a:");
+	//分割，格式1 (\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
+	*ptr = strchr(*ptr, '\a');
 	if (*ptr)
-		*ptr += 2;
+		(*ptr)++;
+	if (*ptr && (**ptr == ':'))
+		(*ptr)++;
 
 	return file;
 }

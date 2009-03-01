@@ -31,7 +31,7 @@ class AboutIptux {
 	static GtkWidget *more;
 //回调处理部分
  private:
-	 static void DialogDestroy(GtkWidget **dialog);
+	static void DialogDestroy(GtkWidget **dialog);
 };
 
 #endif

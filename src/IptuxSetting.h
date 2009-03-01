@@ -40,7 +40,7 @@ class IptuxSetting {
 	GtkWidget *myname, *mygroup, *myicon, *save_path, *ad, *sign;
 	GtkWidget *encode, *palicon, *font, *memory, *etrkey, *tidy,
 						 *log, *black, *proof;
-	GtkWidget *sound;
+	GtkWidget *sound, *volume;
 	GtkWidget *entry1, *entry2, *ipseg_view;
 	static GtkWidget *setting;
  public:
@@ -62,6 +62,8 @@ class IptuxSetting {
  private:
 	 static void ChoosePortrait(GtkWidget * image);
 
+	static void AdjustSensitive(GtkWidget *sound, GtkWidget *widget);
+	static void AdjustVolume(GtkWidget *volume);
 	static void CursorItemChanged(GtkWidget *view, GtkWidget *chooser);
 	static void ChooserResetView(GtkWidget *chooser, GtkWidget *view);
 	static void PlayTesting(GtkWidget *chooser);

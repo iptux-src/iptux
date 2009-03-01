@@ -47,7 +47,7 @@ void DialogGroup::DialogEntry()
 
 void DialogGroup::InitDialog()
 {
-	group_model = CreateGroupModel();//Pal tree model
+	group_model = CreateGroupModel();
 	InitGroupModel();
 }
 
@@ -57,14 +57,13 @@ void DialogGroup::CreateDialog()
 	GtkWidget *hpaned, *vpaned;
 	GtkWidget *vbox;
 
-	dialog = create_window(_("Group Message"), 141, 138);
+	dialog = create_window(_("Group message"), 141, 138);
 	accel = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(dialog), accel);
 	g_signal_connect_swapped(dialog, "destroy",
 				 G_CALLBACK(DialogDestroy), this);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-    gtk_widget_show(vbox);
+	vbox = create_box();
 	gtk_container_add(GTK_CONTAINER(dialog), vbox);
 	gtk_box_pack_start(GTK_BOX(vbox), CreateMenuBar(), FALSE, FALSE, 0);
 
@@ -109,23 +108,11 @@ void DialogGroup::CreateRecordArea(GtkWidget * paned)
 	GtkWidget *frame, *sw;
 
 	record = create_text_view();
-    gtk_text_view_set_pixels_above_lines (GTK_TEXT_VIEW (record), 2);
-	gtk_text_view_set_pixels_below_lines (GTK_TEXT_VIEW (record), 2);
-	gtk_text_view_set_left_margin (GTK_TEXT_VIEW (record), 5);
-	gtk_text_view_set_right_margin (GTK_TEXT_VIEW (record), 5);
 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(record), FALSE);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(record), FALSE);
-
-	frame = create_frame(NULL);
-    gtk_container_set_border_width(GTK_CONTAINER(frame), 5);  
+	frame = create_frame(_("Send History"));
 	gtk_paned_pack1(GTK_PANED(paned), frame, TRUE, TRUE);
-
 	sw = create_scrolled_window();
-	gtk_scrolled_window_set_policy (
-				GTK_SCROLLED_WINDOW (sw), 
-				GTK_POLICY_NEVER, 
-				GTK_POLICY_ALWAYS);
-
 	gtk_container_add(GTK_CONTAINER(frame), sw);
 	gtk_container_add(GTK_CONTAINER(sw), record);
 }
@@ -136,18 +123,12 @@ void DialogGroup::CreateInputArea(GtkWidget * paned)
 	GtkWidget *box, *frame, *sw;
 	GtkWidget *hbb, *button;
 
-	frame = create_frame(NULL);
+	frame = create_frame(_("Input Your Message"));
 	gtk_paned_pack2(GTK_PANED(paned), frame, FALSE, TRUE);
-
 	box = create_box();
 	gtk_container_add(GTK_CONTAINER(frame), box);
 
 	input = create_text_view();
-    gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (input), GTK_WRAP_CHAR);
-	gtk_text_view_set_pixels_below_lines (GTK_TEXT_VIEW (input), 2);
-	gtk_text_view_set_left_margin (GTK_TEXT_VIEW (input), 5);
-	gtk_text_view_set_right_margin (GTK_TEXT_VIEW (input), 5);
-
 	sw = create_scrolled_window();
 	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), input);
@@ -220,7 +201,7 @@ GtkWidget *DialogGroup::CreateGroupView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("Send"));
+	gtk_tree_view_column_set_title(column, _("send"));
 	renderer = gtk_cell_renderer_toggle_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "active", 0, NULL);
@@ -230,7 +211,7 @@ GtkWidget *DialogGroup::CreateGroupView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("Pals"));
+	gtk_tree_view_column_set_title(column, _("pals"));
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "pixbuf", 1, NULL);
@@ -432,12 +413,9 @@ void DialogGroup::SendMessage(gpointer data)
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(dg->input));
 	gtk_text_buffer_get_bounds(buffer, &start, &end);
 	if (gtk_text_iter_equal(&start, &end)) {
-        /*
-		//既然空消息，不发送就是，不用大惊小怪的
-        pop_warning(dialog, dg->input,
+		pop_warning(dialog, dg->input,
 			    _("<span weight=\"heavy\" underline=\"error\">"
 			      "\nCan't send an empty message!!</span>"));
-        */
 		return;
 	}
 	msg = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);

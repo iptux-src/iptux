@@ -440,56 +440,56 @@ void Pal::BufferInsertPal(GSList * chiplist)
 	extern Log mylog;
 	GtkTextIter start, end;
 	GdkPixbuf *pixbuf;
-	gchar *ptr, *pptr, *header;
+	char *ptr, *pptr, *header;
 	GSList *tmp;
 
 	tmp = chiplist;
 	while (tmp) {
 		ptr = ((ChipData *) tmp->data)->data;
-        switch (((ChipData *) tmp->data)->type) {
-            case STRING:
-                header = getformattime("%s", name);
-                gtk_text_buffer_get_end_iter(record, &end);
-                gtk_text_buffer_insert_with_tags_by_name(record, &end,
-                            header, -1, "blue", NULL);
-                g_free(header);
-                if (!FLAG_ISSET(flags, 0))
-                  pptr = transfer_encode(ptr, encode, false);
-                else
-                  pptr = Strdup(ptr);
-                gtk_text_buffer_insert(record, &end, pptr, -1);
-                gtk_text_buffer_insert(record, &end, "\n", -1);
-                mylog.CommunicateLog(this, pptr);
-                free(pptr);
-                break;
-            case PICTURE:
-                gtk_text_buffer_get_start_iter(record, &start);
-                if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT
-                            || gtk_text_iter_forward_find_char(&start,
-                                GtkTextCharPredicate(compare_foreach),
-                                GUINT_TO_POINTER(OCCUPY_OBJECT),
-                                NULL)) {
-                    end = start;
-                    gtk_text_iter_forward_char(&end);
-                    gtk_text_buffer_delete(record, &start, &end);
-                } else {
-                    header = getformattime("%s", name);
-                    gtk_text_buffer_insert_with_tags_by_name(
-                                record, &start, header, -1, "blue", NULL);
-                    gtk_text_buffer_insert(record, &start, "\n", -1);
-                    gtk_text_iter_backward_char(&start);
-                    g_free(header);
-                }
-                pixbuf = gdk_pixbuf_new_from_file(ptr, NULL);
-                if (pixbuf) {
-                    gtk_text_buffer_insert_pixbuf(record,
-                                &start, pixbuf);
-                    g_object_unref(pixbuf);
-                }
-                break;
-            default:
-                break;
-        }
+		switch (((ChipData *) tmp->data)->type) {
+		case STRING:
+			header = getformattime("%s", name);
+			gtk_text_buffer_get_end_iter(record, &end);
+			gtk_text_buffer_insert_with_tags_by_name(record, &end,
+						    header, -1, "blue", NULL);
+			g_free(header);
+			if (!FLAG_ISSET(flags, 0))
+				pptr = transfer_encode(ptr, encode, false);
+			else
+				pptr = Strdup(ptr);
+			gtk_text_buffer_insert(record, &end, pptr, -1);
+			gtk_text_buffer_insert(record, &end, "\n", -1);
+			mylog.CommunicateLog(this, pptr);
+			free(pptr);
+			break;
+		case PICTURE:
+			gtk_text_buffer_get_start_iter(record, &start);
+			if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT
+				|| gtk_text_iter_forward_find_char(&start,
+					GtkTextCharPredicate(compare_foreach),
+					GUINT_TO_POINTER(OCCUPY_OBJECT),
+					NULL)) {
+				end = start;
+				gtk_text_iter_forward_char(&end);
+				gtk_text_buffer_delete(record, &start, &end);
+			} else {
+				header = getformattime("%s", name);
+				gtk_text_buffer_insert_with_tags_by_name(
+				    record, &start, header, -1, "blue", NULL);
+				gtk_text_buffer_insert(record, &start, "\n", -1);
+				gtk_text_iter_backward_char(&start);
+				g_free(header);
+			}
+			pixbuf = gdk_pixbuf_new_from_file(ptr, NULL);
+			if (pixbuf) {
+				gtk_text_buffer_insert_pixbuf(record,
+							  &start, pixbuf);
+				g_object_unref(pixbuf);
+			}
+			break;
+		default:
+			break;
+		}
 		tmp = tmp->next;
 	}
 
@@ -503,7 +503,7 @@ void Pal::BufferInsertSelf(GSList * chiplist)
 	GtkTextIter start, end;
 	GdkPixbuf *pixbuf;
 	GSList *tmp;
-	gchar *ptr;
+	char *ptr;
 
 	ptr = getformattime("%s", ctr.myname);
 	gtk_text_buffer_get_end_iter(record, &end);
