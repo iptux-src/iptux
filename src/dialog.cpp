@@ -25,9 +25,9 @@ bool pop_request_quit()
 					GTK_DIALOG_MODAL,
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_OK_CANCEL,
-					_("The file transfer is running!"
-					  "\nAre you sure you want to quit?"));
-	gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm close"));
+					_("There's File Still in Transfering!\n"
+					  "\nAre you sure to SOPT and QUIT ?"));
+	gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm Exit"));
 
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
@@ -45,7 +45,7 @@ bool pop_request_shared(gpointer data)
 	bool result;
 
 	gdk_threads_enter();
-	dialog = gtk_dialog_new_with_buttons(_("Request for shared resources"),
+	dialog = gtk_dialog_new_with_buttons(_("Request for Shared Resources"),
 				    GTK_WINDOW(inter.window), GTK_DIALOG_MODAL,
 				    _("Refuse"), GTK_RESPONSE_CANCEL,
 				    _("Agree"), GTK_RESPONSE_ACCEPT, NULL);
@@ -66,8 +66,9 @@ bool pop_request_shared(gpointer data)
 
 	inet_ntop(AF_INET, &((Pal *) data)->Ipv4Quote(), ipstr,
 					  INET_ADDRSTRLEN);
-	ptr = g_strdup_printf(_("The pal (%s)[%s]\nis requesting for "
-				"your shared resources,\nagree or not?"),
+	ptr = g_strdup_printf(_("Pal (%s)[%s]\n"
+"Requesting Access to Your Shared Resource(s),\n"
+"Agree or Not?"),
 			        ((Pal *) data)->NameQuote(), ipstr);
 	label = create_label(ptr);
 	free(ptr);
@@ -91,13 +92,12 @@ char *pop_obtain_passwd()
 	gint result;
 
 	gdk_threads_enter();
-	dialog = gtk_dialog_new_with_buttons(_("Access password"),
+	dialog = gtk_dialog_new_with_buttons(_("Access Password"),
 		    GTK_WINDOW(inter.window), GTK_DIALOG_MODAL,
 		    GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
-	frame = create_frame(_("Please enter the password for "
-					"access to shared files"));
+	frame = create_frame(_("Please Enter the Password for the Protected shared file(s)."));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame,
 						   FALSE, FALSE, 0);
 	box = create_box(FALSE);
@@ -124,7 +124,7 @@ mark:	if ((result = gtk_dialog_run(GTK_DIALOG(dialog))) == GTK_RESPONSE_OK) {
 		text = gtk_editable_get_chars(GTK_EDITABLE(passwd), 0, -1);
 		if (*text == '\0') {
 			g_free(text);
-			pop_warning(dialog, passwd, _("\nPassword is blank!"));
+			pop_warning(dialog, passwd, _("\nEmpty Password!"));
 			goto mark;
 		}
 	}
@@ -140,7 +140,7 @@ char *pop_passwd_setting(GtkWidget *parent)
 	gchar *text1, *text2;
 	gint result;
 
-	dialog = gtk_dialog_new_with_buttons(_("Please enter a new password"),
+	dialog = gtk_dialog_new_with_buttons(_("Enter a New Password"),
 				    GTK_WINDOW(parent), GTK_DIALOG_MODAL,
 				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				    GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
@@ -169,11 +169,11 @@ mark:	if ((result = gtk_dialog_run(GTK_DIALOG(dialog))) == GTK_RESPONSE_OK) {
 		if (strcmp(text1, text2) != 0) {
 			g_free(text1), g_free(text2);
 			pop_warning(dialog, passwd,
-				    _("\nEnter the password twice inconsistent!"));
+				    _("\nPassword Mismatched!"));
 			goto mark;
 		} else if (*text1 == '\0') {
 			g_free(text1), g_free(text2);
-			pop_warning(dialog, passwd, _("\nPassword is blank!"));
+			pop_warning(dialog, passwd, _("\nEmpty Password !"));
 			goto mark;
 		}
 	}

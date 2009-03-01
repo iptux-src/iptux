@@ -88,7 +88,7 @@ void AboutIptux::CreateMore()
 		  "If you find no solutions in any of the existed documents, "
 		  "feel free to drop a email at iptux@googlegroups.com, "
 		  "lots of users and developers would be glade to help about your problems."),
-		_("It's an honer that iptux was contributed voluntarilly by many people. "
+		_("It's an honor that iptux was contributed voluntarilly by many people. "
 		  "Without your help, iptux could never make it.\n\n"
 		  "Especially, Here's some we would like to thank much:\n\n"
 		  "<ChenGang>\n"

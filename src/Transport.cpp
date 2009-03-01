@@ -151,7 +151,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("state"));
+	gtk_tree_view_column_set_title(column, _("State"));
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "pixbuf", 0, NULL);
@@ -159,7 +159,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("task"));
+	gtk_tree_view_column_set_title(column, _("Task"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 1, NULL);
@@ -167,7 +167,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("filename"));
+	gtk_tree_view_column_set_title(column, _("File"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 2, NULL);
@@ -175,7 +175,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("pal"));
+	gtk_tree_view_column_set_title(column, _("Pal"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 3, NULL);
@@ -183,7 +183,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("finished"));
+	gtk_tree_view_column_set_title(column, _("Done"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 4, NULL);
@@ -191,7 +191,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("length"));
+	gtk_tree_view_column_set_title(column, _("Size"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 5, NULL);
@@ -199,7 +199,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("rate"));
+	gtk_tree_view_column_set_title(column, _("Rate"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 6, NULL);
@@ -207,7 +207,7 @@ void Transport::CreateTransView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("progress"));
+	gtk_tree_view_column_set_title(column, _("Progress"));
 	renderer = gtk_cell_renderer_progress_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_set_attributes(column, renderer, "value", 7, NULL);
@@ -219,7 +219,7 @@ void Transport::CreateTransDialog()
 	GtkWidget *box, *sw;
 	GtkWidget *hbb, *button;
 
-	transport = create_window(_("Transmission management"), 132, 79);
+	transport = create_window(_("Transmission Manager"), 132, 79);
 	gtk_container_set_border_width(GTK_CONTAINER(transport), 5);
 	g_signal_connect(transport, "destroy", G_CALLBACK(DestroyDialog), NULL);
 
@@ -477,10 +477,10 @@ void Transport::SendFileData(int sock, GtkTreeIter * iter)
 	finishsize = SendData(sock, fd, iter, filesize, buf);
 	if (finishsize >= filesize) {
 		EndTransportData(-1, fd, iter, __TIP_PATH "/finish.png");
-		mylog.SystemLog(_("Send the file successfully!"));
+		mylog.SystemLog(_("File Sent Succeed!"));
 	} else {
 		EndTransportData(-1, fd, iter, __TIP_PATH "/error.png");
-		mylog.SystemLog(_("Failure to send the file!"));
+		mylog.SystemLog(_("File Sent Failure!"));
 	}
 }
 
@@ -578,14 +578,14 @@ void Transport::SendDirFiles(int sock, GtkTreeIter * iter)
  end:	if (result) {
 		EndTransportData(-1, -1, iter, __TIP_PATH "/finish.png");
 		EndTransportDirFiles(iter, dirname, sumsize, dirsize);
-		mylog.SystemLog(_("Send the file successfully!"));
+		mylog.SystemLog(_("File Sent Succeed!"));
 	} else {
 		closedir(dir);
 		g_queue_foreach(dir_stack, GFunc(closedir), NULL);
 		g_queue_clear(dir_stack);
 		EndTransportData(-1, -1, iter, __TIP_PATH "/error.png");
 		g_free(dirname);
-		mylog.SystemLog(_("Failure to send the file!"));
+		mylog.SystemLog(_("File Sent Failure!"));
 	}
 	g_queue_free(dir_stack);
 }
@@ -683,7 +683,7 @@ GtkWidget *Transport::CreatePopupMenu()
 	menu = gtk_menu_new();
 	gtk_widget_show(menu);
 
-	menu_item = gtk_menu_item_new_with_label(_("Terminate Job"));
+	menu_item = gtk_menu_item_new_with_label(_("Terminate"));
 	g_signal_connect_swapped(menu_item, "activate",
 				 G_CALLBACK(StopTask), this);
 	gtk_widget_show(menu_item);

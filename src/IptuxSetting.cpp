@@ -67,7 +67,7 @@ void IptuxSetting::CreateSetting()
 	GtkWidget *box;
 	GtkWidget *notebook, *hbb;
 
-	setting = create_window(_("Iptux settings"), 132, 100);
+	setting = create_window(_("Iptux Settings"), 132, 100);
 	gtk_container_set_border_width(GTK_CONTAINER(setting), 5);
 	g_signal_connect_swapped(setting, "destroy",
 				 G_CALLBACK(SettingDestroy), this);
@@ -99,28 +99,28 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	GdkPixbuf *pixbuf;
 
 	box = create_box();
-	label = create_label(_("Personal"));
+	label = create_label(_("User"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	myname = create_label(_("Your nickname:"));
+	myname = create_label(_("Nick:"));
 	gtk_box_pack_start(GTK_BOX(hbox), myname, FALSE, FALSE, 0);
 	myname = my_entry::create_entry(ctr.myname,
-				      _("Please Input your nickname!"), FALSE);
+				      _("Please Input Your Nickname!"), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), myname, TRUE, TRUE, 0);
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	mygroup = create_label(_("Your group name:"));
+	mygroup = create_label(_("Group:"));
 	gtk_box_pack_start(GTK_BOX(hbox), mygroup, FALSE, FALSE, 0);
 	mygroup = my_entry::create_entry(ctr.mygroup,
-				    _("Please Input your group name!"), FALSE);
+				    _("Please Input your Group name!"), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), mygroup, TRUE, TRUE, 0);
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	myicon = create_label(_("Your head portrait:"));
+	myicon = create_label(_("Buddy Icon:"));
 	gtk_box_pack_start(GTK_BOX(hbox), myicon, FALSE, FALSE, 0);
 	myicon = CreateComboBoxWithModel(icon_model, ctr.myicon);
 	gtk_box_pack_start(GTK_BOX(hbox), myicon, TRUE, TRUE, 0);
@@ -131,7 +131,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	save_path = create_label(_("Save file to:"));
+	save_path = create_label(_("Received Files Location:"));
 	gtk_box_pack_start(GTK_BOX(hbox), save_path, FALSE, FALSE, 0);
 	save_path = CreateArchiveChooser();
 	gtk_box_pack_start(GTK_BOX(hbox), save_path, TRUE, TRUE, 0);
@@ -140,7 +140,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	/***************************/
-	frame = create_frame(_("Personal portrait"));
+	frame = create_frame(_("Photo"));
 	gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 3);
 	button = gtk_button_new();
 	gtk_widget_show(button);
@@ -159,7 +159,7 @@ void IptuxSetting::CreatePerson(GtkWidget * note)
 	g_signal_connect_swapped(button, "clicked",
 			    G_CALLBACK(ChoosePortrait), ad);
 
-	frame = create_frame(_("Personal signature"));
+	frame = create_frame(_("Sign Words:"));
 	gtk_box_pack_end(GTK_BOX(hbox), frame, TRUE, TRUE, 3);
 	sw = create_scrolled_window();
 	gtk_container_add(GTK_CONTAINER(frame), sw);
@@ -181,17 +181,17 @@ void IptuxSetting::CreateSystem(GtkWidget * note)
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	encode = create_label(_("Default network encode:"));
+	encode = create_label(_("System Default Encode:"));
 	gtk_box_pack_start(GTK_BOX(hbox), encode, FALSE, FALSE, 0);
 	encode = my_entry::create_entry(ctr.encode,
-			    _("Default network encode(before modify,"
-			    "you must understand what you are doing)"),
+			    _("(Before modified,"
+			    "be SURE to know what you are doing)"),
 			    FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), encode, TRUE, TRUE, 0);
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	palicon = create_label(_("Pal's default head portrait:"));
+	palicon = create_label(_("Default Buddy Icon"));
 	gtk_box_pack_start(GTK_BOX(hbox), palicon, FALSE, FALSE, 0);
 	palicon = CreateComboBoxWithModel(icon_model, ctr.palicon);
 	gtk_box_pack_start(GTK_BOX(hbox), palicon, TRUE, TRUE, 0);
@@ -202,48 +202,48 @@ void IptuxSetting::CreateSystem(GtkWidget * note)
 
 	hbox = create_box(FALSE);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	font = create_label(_("Font to show for panel:"));
+	font = create_label(_("Panel Font:"));
 	gtk_box_pack_start(GTK_BOX(hbox), font, FALSE, FALSE, 0);
 	font = CreateFontChooser();
 	gtk_box_pack_start(GTK_BOX(hbox), font, TRUE, TRUE, 0);
 
 	memory = gtk_check_button_new_with_label(
-			_("Minimise memory usage(not recommended)"));
+			_("Minimise Memory Usage(NOT Recommended)"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memory),
 				     FLAG_ISSET(ctr.flags, 5));
 	gtk_widget_show(memory);
 	gtk_box_pack_start(GTK_BOX(box), memory, FALSE, FALSE, 0);
 
 	etrkey = gtk_check_button_new_with_label(
-			_("Press the 'Enter' key to send a message"));
+			_("Use 'Enter' to Send Message"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(etrkey),
 				     FLAG_ISSET(ctr.flags, 4));
 	gtk_widget_show(etrkey);
 	gtk_box_pack_start(GTK_BOX(box), etrkey, FALSE, FALSE, 0);
 
 	tidy = gtk_check_button_new_with_label(
-		       _("Automatic clear up chat history"));
+		       _("Automaticlly Clean up Chatting History"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(tidy),
 					     FLAG_ISSET(ctr.flags, 3));
 	gtk_widget_show(tidy);
 	gtk_box_pack_start(GTK_BOX(box), tidy, FALSE, FALSE, 0);
 
 	log = gtk_check_button_new_with_label(
-			      _("Run the log of the message record"));
+			      _("Log for the Messages."));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(log),
 				     FLAG_ISSET(ctr.flags, 2));
 	gtk_widget_show(log);
 	gtk_box_pack_start(GTK_BOX(box), log, FALSE, FALSE, 0);
 
 	black = gtk_check_button_new_with_label(
-			     _("Use the blacklist(not recommended)"));
+			     _("Use Blacklist (NOT recommended)"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(black),
 				     FLAG_ISSET(ctr.flags, 1));
 	gtk_widget_show(black);
 	gtk_box_pack_start(GTK_BOX(box), black, FALSE, FALSE, 0);
 
 	proof = gtk_check_button_new_with_label(
-			     _("Filter the request for shared files"));
+			     _("Ignore Requests for Shared Files"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(proof),
 				     FLAG_ISSET(ctr.flags, 0));
 	gtk_widget_show(proof);
@@ -262,7 +262,7 @@ void IptuxSetting::CreateSound(GtkWidget * note)
 	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
 
 	sound = gtk_check_button_new_with_label(
-			_("Supporting the provision of voice services"));
+			_("Sound Supported"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(sound),
 				     FLAG_ISSET(ctr.sndfgs, 0));
 	gtk_widget_show(sound);
@@ -297,7 +297,7 @@ void IptuxSetting::CreateSound(GtkWidget * note)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	chooser = CreateSndChooser();
 	gtk_box_pack_start(GTK_BOX(hbox), chooser, TRUE, TRUE, 5);
-	button = create_button(_("Testing"));
+	button = create_button(_("Play"));
 	g_signal_connect_swapped(button, "clicked",
 				 G_CALLBACK(PlayTesting), chooser);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -319,7 +319,7 @@ void IptuxSetting::CreateIpseg(GtkWidget * note)
 	GtkWidget *frame, *sw;
 
 	box = create_box();
-	label = create_label(_("IP Section"));
+	label = create_label(_("Network"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(note), box, label);
 
 	hbox = create_box(FALSE);
@@ -347,7 +347,7 @@ void IptuxSetting::CreateIpseg(GtkWidget * note)
 				 G_CALLBACK(ClickDelIpseg), this);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	frame = create_frame(_("Added IPv4 section:"));
+	frame = create_frame(_("Prefered IP section:"));
 	gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 5);
 	hbox = create_box(FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), hbox);
@@ -399,10 +399,10 @@ GtkTreeModel *IptuxSetting::CreateSndModel()
 				   G_TYPE_STRING, G_TYPE_STRING);
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter, 0, FLAG_ISSET(ctr.sndfgs, 1),
-			   1, _("message come"), 2, ctr.msgtip, -1);
+			   1, _("Message Received"), 2, ctr.msgtip, -1);
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter, 0, FLAG_ISSET(ctr.sndfgs, 2),
-			   1, _("transport finished"), 2, ctr.transtip, -1);
+			   1, _("Transport Finished"), 2, ctr.transtip, -1);
 
 	return GTK_TREE_MODEL(model);
 }
@@ -518,7 +518,7 @@ GtkWidget *IptuxSetting::CreateIpsegView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("Begin IPv4"));
+	gtk_tree_view_column_set_title(column, _("Begin IP"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 0, NULL);
@@ -526,7 +526,7 @@ GtkWidget *IptuxSetting::CreateIpsegView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("End IPv4"));
+	gtk_tree_view_column_set_title(column, _("End IP"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 1, NULL);
@@ -869,7 +869,7 @@ void IptuxSetting::AddPalIcon(GtkWidget * combo)
 	gint active;
 
 	if (!(filename = my_chooser::choose_file(
-			      _("Please choose a head portrait"), setting)))
+			      _("Choose a Buddy Icon"), setting)))
 		return;
 	model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
 	active = FileGetItemPos(filename, model);
@@ -883,7 +883,7 @@ void IptuxSetting::ChoosePortrait(GtkWidget * image)
 	GdkPixbuf *pixbuf;
 
 	if (!(filename = my_chooser::choose_file(
-		      _("Please choose a personal portrait"), setting)))
+		      _("Choose Your Photo"), setting)))
 		return;
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
@@ -981,14 +981,14 @@ void IptuxSetting::ClickAddIpseg(gpointer data)
 	status = inet_pton(AF_INET, text1, &ip1);
 	if (status <= 0) {
 		pop_warning(setting, NULL,
-			    _("\nThe address %s is illegal!"), text1);
+			    _("\nAddress %s Unacceptable!"), text1);
 		return;
 	}
 	text2 = gtk_entry_get_text(GTK_ENTRY(ipst->entry2));
 	status = inet_pton(AF_INET, text2, &ip2);
 	if (status <= 0) {
 		pop_warning(setting, NULL,
-			    _("\nThe address %s is illegal!"), text2);
+			    _("\nAddress %s Unacceptable!"), text2);
 		return;
 	}
 
@@ -1058,7 +1058,7 @@ void IptuxSetting::ImportNetSegment(gpointer data)
 
 	ipst = (IptuxSetting *) data, list = NULL;
 	gtk_list_store_clear(GTK_LIST_STORE(ipst->ip_model));
-	dialog = gtk_file_chooser_dialog_new(_("Please choose the import file"),
+	dialog = gtk_file_chooser_dialog_new(_("Choose the import file"),
 		     GTK_WINDOW(setting), GTK_FILE_CHOOSER_ACTION_OPEN,
 		     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);

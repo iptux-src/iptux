@@ -149,7 +149,7 @@ void MainWindow::CreatePanel()
 		g_object_unref(pixbuf);
 	} else
 		pwarning(Fail, "%s \"" __LOGO_PATH "/ip-tux.png\" %s",
-			 _("Icon file"), _("is lost!"));
+			 _("Icon file"), _("NOT Found!"));
 	gtk_window_set_geometry_hints(GTK_WINDOW(window), window,
 						      &geometry, hints);
 	gtk_window_set_default_size(GTK_WINDOW(window), GINT(ctr.pix * 70),
@@ -173,7 +173,7 @@ void MainWindow::CreateAllArea()
 	gtk_paned_pack1(GTK_PANED(client_paned), box, true, true);
 	menu_bar = CreateMenuBar();
 	gtk_box_pack_start(GTK_BOX(box), menu_bar, FALSE, FALSE, 0);
-	tips = create_label(_("pals online: 0"));
+	tips = create_label(_("Pals online: 0"));
 	gtk_box_pack_start(GTK_BOX(box), tips, FALSE, FALSE, 0);
 	sw = create_scrolled_window();
 	gtk_container_set_border_width(GTK_CONTAINER(sw), 4);
@@ -454,7 +454,7 @@ void MainWindow::UpdateTips()
 		tmp = tmp->next;
 	}
 	pthread_mutex_unlock(udt.MutexQuote());
-	snprintf(buf, MAX_BUF, _("pals online: %" PRIu32), sum);
+	snprintf(buf, MAX_BUF, _("Pals online: %" PRIu32), sum);
 	gtk_label_set_text(GTK_LABEL(mwp->tips), buf);
 }
 
@@ -592,7 +592,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("nickname"));
+	gtk_tree_view_column_set_title(column, _("Nick"));
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "follow-state", TRUE, NULL);
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
@@ -604,7 +604,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("group"));
+	gtk_tree_view_column_set_title(column, _("Group"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 2, NULL);
@@ -612,7 +612,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("IPv4"));
+	gtk_tree_view_column_set_title(column, _("IP"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 3, NULL);
@@ -620,7 +620,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("user"));
+	gtk_tree_view_column_set_title(column, _("User"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 4, NULL);
@@ -628,7 +628,7 @@ GtkWidget *MainWindow::CreatePalListView()
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("host"));
+	gtk_tree_view_column_set_title(column, _("Host"));
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, renderer, "text", 5, NULL);
