@@ -105,7 +105,7 @@ AC_SUBST(sounddir)
 
 gtk_modules="gtk+-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GTK, [$gtk_modules])
-glib_modules="glib-2.0 >= 2.16.6"
+glib_modules="glib-2.0 >= 2.16.0"
 PKG_CHECK_MODULES(GLIB, [$glib_modules])
 gthread_modules="gthread-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GTHREAD, [$gthread_modules])

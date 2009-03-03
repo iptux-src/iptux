@@ -7290,7 +7290,7 @@ else
 echo "${ECHO_T}yes" >&6; }
 	:
 fi
-glib_modules="glib-2.0 >= 2.16.6"
+glib_modules="glib-2.0 >= 2.16.0"
 
 pkg_failed=no
 { echo "$as_me:$LINENO: checking for GLIB" >&5
