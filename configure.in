@@ -105,6 +105,8 @@ AC_SUBST(sounddir)
 
 gtk_modules="gtk+-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GTK, [$gtk_modules])
+glib_modules="glib-2.0 >= 2.16.6"
+PKG_CHECK_MODULES(GLIB, [$glib_modules])
 gthread_modules="gthread-2.0 >= 2.0.0"
 PKG_CHECK_MODULES(GTHREAD, [$gthread_modules])
 gconf_modules="gconf-2.0 >= 2.0.0"
@@ -117,7 +119,7 @@ else
 AC_MSG_WARN(You need GStreamer-0.10 or later installed if you need sound relevant functions)
 fi
 PACKAGE_CFLAGS="${GTK_CFLAGS} ${GTHREAD_CFLAGS} ${GCONF_CFLAGS} ${GST_CFLAGS}"
-PACKAGE_LIBS="${GTK_LIBS} ${GTHREAD_LIBS} ${GCONF_LIBS} ${GST_LIBS}"
+PACKAGE_LIBS="${GTK_LIBS} ${GLIB_LIBS} ${GTHREAD_LIBS} ${GCONF_LIBS} ${GST_LIBS}"
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
 
