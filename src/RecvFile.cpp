@@ -59,6 +59,7 @@ void RecvFile::CreateRecvWindow()
 {
 	GtkWidget *window, *box, *sw, *view;
 	GtkWidget *hbox, *chooser, *label, *hbb, *button;
+	GtkTreeSelection *selection;
 
 	file_model = CreateRecvModel();
 	if (commandn & IPTUX_SHAREDOPT)
@@ -84,12 +85,13 @@ void RecvFile::CreateRecvWindow()
 	gtk_box_pack_start(GTK_BOX(hbox), chooser, FALSE, FALSE, 0);
 	label = create_label("");
 	gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	g_signal_connect(view, "cursor-changed",
-				 G_CALLBACK(CursorItemChanged), chooser);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	g_signal_connect(selection, "changed",
+				 G_CALLBACK(SelectItemChanged), chooser);
 	g_signal_connect(chooser, "current-folder-changed",
 				 G_CALLBACK(ChooserResetLabel), label);
 	g_signal_connect(chooser, "current-folder-changed",
-				 G_CALLBACK(ChooserResetView), view);
+			 G_CALLBACK(ChooserResetModel), selection);
 
 	label = gtk_hseparator_new();
 	gtk_widget_show(label);
@@ -169,10 +171,13 @@ GtkWidget *RecvFile::CreateRecvView()
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
 	GtkWidget *view;
+	GtkTreeSelection *selection;
 
 	view = gtk_tree_view_new_with_model(file_model);
 	g_signal_connect_swapped(view, "button-press-event",
 			 G_CALLBACK(DialogGroup::PopupPickMenu), file_model);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
 	gtk_widget_show(view);
 
 	column = gtk_tree_view_column_new();
@@ -233,17 +238,13 @@ void RecvFile::CellEditText(GtkCellRendererText * renderer, gchar * path,
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, new_text, -1);
 }
 
-void RecvFile::CursorItemChanged(GtkWidget *view, GtkWidget *chooser)
+void RecvFile::SelectItemChanged(GtkTreeSelection *selection, GtkWidget *chooser)
 {
 	GtkTreeModel *model;
-	GtkTreePath *treepath;
 	GtkTreeIter iter;
 	gchar *path;
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
-	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
-	gtk_tree_model_get_iter(model, &iter, treepath);
-	gtk_tree_path_free(treepath);
+	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(model, &iter, 5, &path, -1);
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), path);
 	g_free(path);
@@ -264,25 +265,22 @@ void RecvFile::ChooserResetLabel(GtkWidget *chooser, GtkWidget *label)
 	gtk_label_set_label(GTK_LABEL(label), buf);
 }
 
-void RecvFile::ChooserResetView(GtkWidget *chooser, GtkWidget *view)
+void RecvFile::ChooserResetModel(GtkWidget *chooser, GtkTreeSelection *selection)
 {
 	GtkTreeModel *model;
-	GtkTreePath *treepath;
 	GtkTreeIter iter;
 	gchar *path;
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
-	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
-	if (treepath) {
-		gtk_tree_model_get_iter(model, &iter, treepath);
-		gtk_tree_path_free(treepath);
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter)) {
+		if (gtk_tree_model_get_iter_first(model, &iter)) {
+			do {
+				gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+								  5, path, -1);
+			}  while (gtk_tree_model_iter_next(model, &iter));
+		}
+	} else
 		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 5, path, -1);
-	} else if (gtk_tree_model_get_iter_first(model, &iter)) {
-		do {
-			gtk_list_store_set(GTK_LIST_STORE(model), &iter, 5, path, -1);
-		}  while (gtk_tree_model_iter_next(model, &iter));
-	}
 	g_free(path);
 }
 

@@ -256,6 +256,7 @@ void IptuxSetting::CreateSound(GtkWidget * note)
 	GtkWidget *box, *label;
 	GtkWidget *frame, *vbox, *sw, *view;
 	GtkWidget *hbox, *chooser, *button;
+	GtkTreeSelection *selection;
 
 	box = create_box();
 	label = create_label(_("Sound"));
@@ -305,10 +306,11 @@ void IptuxSetting::CreateSound(GtkWidget * note)
 	g_signal_connect(button, "clicked", G_CALLBACK(StopTesting), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	g_signal_connect(view, "cursor-changed",
-			 G_CALLBACK(CursorItemChanged), chooser);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	g_signal_connect(selection, "changed",
+			 G_CALLBACK(SelectItemChanged), chooser);
 	g_signal_connect(chooser, "file-set",
-			 G_CALLBACK(ChooserResetView), view);
+			 G_CALLBACK(ChooserResetModel), selection);
 }
 
 void IptuxSetting::CreateIpseg(GtkWidget * note)
@@ -497,6 +499,7 @@ GtkWidget *IptuxSetting::CreateSndView()
 	/* 函数ChooserResetView()要求必须选择一项 */
 	path = gtk_tree_path_new_from_string("0");
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 	gtk_tree_selection_select_path(selection, path);
 	gtk_tree_path_free(path);
 
@@ -916,36 +919,25 @@ void IptuxSetting::AdjustVolume(GtkWidget *volume)
 	sound.AdjustVolume(value);
 }
 
-void IptuxSetting::CursorItemChanged(GtkWidget *view, GtkWidget *chooser)
+void IptuxSetting::SelectItemChanged(GtkTreeSelection *selection, GtkWidget *chooser)
 {
 	GtkTreeModel *model;
-	GtkTreePath *treepath;
 	GtkTreeIter iter;
 	gchar *path;
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
-	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
-	gtk_tree_model_get_iter(model, &iter, treepath);
-	gtk_tree_path_free(treepath);
+	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(model, &iter, 2, &path, -1);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(chooser), path);
 	g_free(path);
 }
 
-void IptuxSetting::ChooserResetView(GtkWidget *chooser, GtkWidget *view)
+void IptuxSetting::ChooserResetModel(GtkWidget *chooser, GtkTreeSelection *selection)
 {
 	GtkTreeModel *model;
-	GtkTreePath *treepath;
 	GtkTreeIter iter;
 	gchar *path;
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
-	gtk_tree_view_get_cursor(GTK_TREE_VIEW(view), &treepath, NULL);
-	if (!treepath)
-		return;
-
-	gtk_tree_model_get_iter(model, &iter, treepath);
-	gtk_tree_path_free(treepath);
+	gtk_tree_selection_get_selected(selection, &model, &iter);
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 2, path, -1);
 	g_free(path);

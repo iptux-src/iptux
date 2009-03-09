@@ -64,8 +64,10 @@ class IptuxSetting {
 
 	static void AdjustSensitive(GtkWidget *sound, GtkWidget *widget);
 	static void AdjustVolume(GtkWidget *volume);
-	static void CursorItemChanged(GtkWidget *view, GtkWidget *chooser);
-	static void ChooserResetView(GtkWidget *chooser, GtkWidget *view);
+	static void SelectItemChanged(GtkTreeSelection *selection,
+				      GtkWidget *chooser);
+	static void ChooserResetModel(GtkWidget *chooser,
+				      GtkTreeSelection *selection);
 	static void PlayTesting(GtkWidget *chooser);
 	static void StopTesting();
 
