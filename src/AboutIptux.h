@@ -32,6 +32,8 @@ class AboutIptux {
 //回调处理部分
  private:
 	static void DialogDestroy(GtkWidget **dialog);
+	static void DialogOpenUrl(GtkAboutDialog *about,
+	 const gchar *link_, gpointer data);
 };
 
 #endif

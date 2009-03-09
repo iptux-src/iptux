@@ -64,6 +64,8 @@ void AboutIptux::CreateAbout()
 				       "Copyright © 2008-2009 by Jally");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				      _("A GTK+ based LAN Messenger."));
+	gtk_about_dialog_set_url_hook(DialogOpenUrl, NULL, NULL);
+
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about),
 				     "http://code.google.com/p/iptux/");
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about), "GPL 2+");
@@ -163,4 +165,11 @@ bool AboutIptux::CheckExist(GtkWidget *dialog)
 void AboutIptux::DialogDestroy(GtkWidget **dialog)
 {
 	*dialog = NULL;
+}
+void AboutIptux::DialogOpenUrl(GtkAboutDialog *about,
+	 const gchar *link_, gpointer data)
+{
+    g_print(link_); //for debug only
+    GdkScreen* screen = gdk_screen_get_default();
+    gtk_show_uri(screen, link_, GDK_CURRENT_TIME, NULL);
 }
