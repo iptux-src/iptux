@@ -42,13 +42,14 @@ class Pal {
 	void SendReply(const char *msg);
 	void SendExit();
  private:
-	 bool IptuxGetGroup(const char *msg, size_t size, bool entry);
+	bool IptuxGetGroup(const char *msg, size_t size, bool entry);
 	bool IptuxGetIcon(const char *msg, size_t size);
 	bool IptuxGetEncode(const char *msg, size_t size);
 	void BufferInsertPal(GSList * chiplist);
 	void BufferInsertSelf(GSList * chiplist);
 	void BufferInsertError(GSList * chiplist);
-
+	void BufferInsertString(gchar *message);
+	
 	in_addr_t ipv4;		//用户IP
 	char *segment;		//所在网段，segment != NULL
 	char *version;		//版本
@@ -70,6 +71,8 @@ class Pal {
 	DialogPeer *dialog;
 	uint32_t mypacketn;
 	bool reply;
+	
+	GRegex *urlregex;
  public:
 	inline in_addr_t &Ipv4Quote() {
 		return ipv4;

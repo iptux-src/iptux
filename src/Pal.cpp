@@ -27,6 +27,7 @@ iconpix(NULL), dialog(NULL), mypacketn(0), reply(true)
 {
 	extern Control ctr;
 	record = gtk_text_buffer_new(ctr.table);
+    urlregex = g_regex_new ("(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", (GRegexCompileFlags)0, (GRegexMatchFlags)0, NULL);
 }
 
 Pal::~Pal()
@@ -50,6 +51,8 @@ Pal::~Pal()
 	if (dialog)
 		gtk_widget_destroy(dialog->DialogQuote());
 	g_object_unref(record);
+
+    g_regex_unref (urlregex);
 }
 
 //entry 是否为通知登录消息,true 必须转换编码;false 情况而定
@@ -435,6 +438,54 @@ bool Pal::IptuxGetEncode(const char *msg, size_t size)
 	return true;
 }
 
+void Pal::BufferInsertString(gchar *message)
+{
+    GMatchInfo *match_info;
+    GtkTextIter viewend;
+    GError *error = NULL;
+    gint start_pos;
+    gint end_pos;
+    gint urlend = 0;
+
+    g_regex_match_full (urlregex, message, -1, 0, (GRegexMatchFlags)0, &match_info, &error);
+    while (g_match_info_matches (match_info))
+    {
+        gchar *word = g_match_info_fetch (match_info, 0);
+        g_print ("Found: %s\n", word);
+
+        GtkTextTag *tag = gtk_text_buffer_create_tag (record, NULL, 
+                                    "foreground", "blue", 
+                                    "underline", PANGO_UNDERLINE_SINGLE, 
+                                    NULL);
+        g_object_set_data (G_OBJECT (tag), "url",  word);
+        g_match_info_fetch_pos(match_info, 0, &start_pos, &end_pos);
+        
+        //插入url前的字段
+        gtk_text_buffer_get_end_iter(record, &viewend);
+        gtk_text_buffer_insert(record, &viewend, message + urlend, start_pos - urlend);
+
+        //插入url
+        gtk_text_buffer_get_end_iter(record, &viewend);
+        gtk_text_buffer_insert_with_tags (record, &viewend, message + start_pos, end_pos - start_pos, tag, NULL);
+
+        urlend = end_pos;
+//        g_print ("beg: %d, end: %d\n", start_pos, end_pos);
+        g_match_info_next (match_info, &error);
+    }
+    g_match_info_free (match_info);
+    if (error != NULL)
+    {
+        g_printerr ("Error while matching: %s\n", error->message);
+        g_error_free (error);
+    }
+
+    //插入剩余字段
+    gtk_text_buffer_get_end_iter(record, &viewend);
+    gtk_text_buffer_insert(record, &viewend, message + urlend, -1);
+    gtk_text_buffer_insert(record, &viewend, "\n", -1);
+}
+
+
 void Pal::BufferInsertPal(GSList * chiplist)
 {
 	extern Log mylog;
@@ -457,9 +508,12 @@ void Pal::BufferInsertPal(GSList * chiplist)
 				pptr = transfer_encode(ptr, encode, false);
 			else
 				pptr = Strdup(ptr);
-			gtk_text_buffer_insert(record, &end, pptr, -1);
-			gtk_text_buffer_insert(record, &end, "\n", -1);
+            // ========================================
+		//	gtk_text_buffer_insert(record, &end, pptr, -1);
+		//	gtk_text_buffer_insert(record, &end, "\n", -1);
+            BufferInsertString(pptr);
 			mylog.CommunicateLog(this, pptr);
+            // ========================================
 			free(pptr);
 			break;
 		case PICTURE:
@@ -516,9 +570,12 @@ void Pal::BufferInsertSelf(GSList * chiplist)
 		ptr = ((ChipData *) tmp->data)->data;
 		switch (((ChipData *) tmp->data)->type) {
 		case STRING:
-			gtk_text_buffer_get_end_iter(record, &end);
-			gtk_text_buffer_insert(record, &end, ptr, -1);
+            // ===============================
+		//	gtk_text_buffer_get_end_iter(record, &end);
+		//	gtk_text_buffer_insert(record, &end, ptr, -1);
+            BufferInsertString(ptr);
 			mylog.CommunicateLog(NULL, ptr);
+            // ===============================
 			break;
 		case PICTURE:
 			gtk_text_buffer_get_start_iter(record, &start);

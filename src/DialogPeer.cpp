@@ -168,6 +168,19 @@ void DialogPeer::CreateRecordArea(GtkWidget * paned)
 	gtk_text_view_set_left_margin (GTK_TEXT_VIEW (scroll), 5);
 	gtk_text_view_set_right_margin (GTK_TEXT_VIEW (scroll), 5);
 
+
+    
+// ======================
+    g_signal_connect (scroll, "event-after", 
+                        G_CALLBACK (Control::event_after), NULL);
+    g_signal_connect (scroll, "motion-notify-event", 
+                        G_CALLBACK (Control::motion_notify_event), NULL);
+    g_signal_connect (scroll, "visibility-notify-event", 
+                        G_CALLBACK (Control::visibility_notify_event), NULL);
+// =====================
+    Control::hand_cursor = gdk_cursor_new ((GdkCursorType)GDK_HAND2);
+    Control::regular_cursor = gdk_cursor_new ((GdkCursorType)GDK_XTERM);
+
 	pal->ViewScroll();
 }
 
@@ -555,6 +568,7 @@ void DialogPeer::SendMessage(gpointer data)
 
 	buf[0] = '\0', chiplist = NULL, iter = piter = start;
 	do {
+        //处理发送的图形
 		if ( (pixbuf = gtk_text_iter_get_pixbuf(&iter)) ) {
 			ptr = gtk_text_buffer_get_text(buffer, &piter,
 								&iter, FALSE);
@@ -571,12 +585,16 @@ void DialogPeer::SendMessage(gpointer data)
 	} while (gtk_text_iter_forward_find_char(&iter,
 					 GtkTextCharPredicate(compare_foreach),
 					 GUINT_TO_POINTER(ATOM_OBJECT), &end));
+
+    //处理文字
 	ptr = gtk_text_buffer_get_text(buffer, &piter, &iter, FALSE);
 	snprintf(buf + strlen(buf), MAX_UDPBUF - strlen(buf), "%s", ptr);
 	free(ptr);
 	chiplist = g_slist_prepend(chiplist, new ChipData(STRING, Strdup(buf)));
 
 	gtk_text_buffer_delete(buffer, &start, &end);
+
+    //插入到记录视图
 	peer->pal->BufferInsertData(chiplist, SELF);
 	gtk_widget_grab_focus(peer->focus);
 

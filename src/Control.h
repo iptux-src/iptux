@@ -51,6 +51,30 @@ class Control {
 	gfloat pix;
 
 	pthread_mutex_t mutex;
+
+public:
+    static gboolean hovering_over_link;
+    static GdkCursor *hand_cursor;
+    static GdkCursor *regular_cursor;
+public:
+    static void 
+    screen_show_url(GtkWidget *text_view, const gchar *url);
+    static void
+    follow_if_link (GtkWidget   *text_view, 
+                    GtkTextIter *iter);
+    static gboolean
+    event_after (GtkWidget *text_view,
+                 GdkEvent  *ev);
+    static void
+    set_cursor_if_appropriate (GtkTextView    *text_view,
+                               gint            x,
+                               gint            y);
+    static gboolean
+    motion_notify_event (GtkWidget      *text_view,
+                         GdkEventMotion *event);
+    static gboolean
+    visibility_notify_event (GtkWidget          *text_view,
+                             GdkEventVisibility *event);
  private:
 	void ReadControl();
 	void CreateTagTable();

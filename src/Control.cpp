@@ -14,12 +14,19 @@
 #include "utils.h"
 #include "baling.h"
 
- Control::Control(): myname(NULL), mygroup(NULL), myicon(NULL),
+gboolean Control::hovering_over_link = false;
+GdkCursor* Control::hand_cursor = NULL;
+GdkCursor* Control::regular_cursor = NULL;
+
+
+Control::Control(): myname(NULL), mygroup(NULL), myicon(NULL),
 path(NULL),  sign(NULL), encode(NULL), palicon(NULL),font(NULL),
 flags(0), msgtip(NULL), transtip(NULL), volume(1.0), sndfgs(~0),
 netseg(NULL), dirty(false), table(NULL), iconlist(NULL), pix(3.4)
 {
 	pthread_mutex_init(&mutex, NULL);
+
+//    hovering_over_link = false;
 }
 
 Control::~Control()
@@ -340,3 +347,178 @@ void Control::UpdateNetSegment(GConfClient * client, bool direc)
 	pthread_mutex_unlock(&mutex);
 	g_slist_free(list);
 }
+
+/*
+ *
+ *
+ *以下为url处理函数
+ *
+ */
+
+
+void 
+Control::screen_show_url(GtkWidget *text_view, const gchar *url)
+{
+    GError *error = NULL;
+    GdkScreen *screen;
+
+    if (gtk_widget_has_screen (text_view))
+        screen = gtk_widget_get_screen (text_view);
+    else
+        screen = gdk_screen_get_default ();
+
+    gtk_show_uri (screen, url,
+               gtk_get_current_event_time (),
+               &error);
+
+    if (error != NULL)
+    {
+        g_printerr ("Error showing url: %s\n", error->message);
+        g_error_free (error);
+    }
+}
+
+void
+Control::follow_if_link (GtkWidget   *text_view, 
+                GtkTextIter *iter)
+{
+    GSList *tags = NULL, *tagp = NULL;
+
+    tags = gtk_text_iter_get_tags (iter);
+    for (tagp = tags;  tagp != NULL;  tagp = tagp->next)
+    {
+        GtkTextTag *tag = (GtkTextTag *)tagp->data;
+        gchar *url = (gchar *)g_object_get_data (G_OBJECT (tag), "url");
+
+        if (url != NULL) 
+        {
+    //        g_print("%s\n", url);
+            screen_show_url(text_view, url);
+            break;
+        }
+    }
+
+    if (tags) 
+        g_slist_free (tags);
+}
+
+
+/* Links can also be activated by clicking.
+ */
+gboolean
+Control::event_after (GtkWidget *text_view,
+             GdkEvent  *ev)
+{
+  GtkTextIter start, end, iter;
+  GtkTextBuffer *buffer;
+  GdkEventButton *event;
+  gint x, y;
+
+  if (ev->type != GDK_BUTTON_RELEASE)
+    return FALSE;
+
+  event = (GdkEventButton *)ev;
+
+  if (event->button != 1)
+    return FALSE;
+
+  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text_view));
+
+  // we shouldn't follow a link if the user has selected something 
+  gtk_text_buffer_get_selection_bounds (buffer, &start, &end);
+  if (gtk_text_iter_get_offset (&start) != gtk_text_iter_get_offset (&end))
+    return FALSE;
+
+  gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (text_view), 
+                                         GTK_TEXT_WINDOW_WIDGET,
+                                         event->x, event->y, &x, &y);
+
+  gtk_text_view_get_iter_at_location (GTK_TEXT_VIEW (text_view), &iter, x, y);
+
+  follow_if_link (text_view, &iter);
+
+  return FALSE;
+}
+
+
+/* Looks at all tags covering the position (x, y) in the text view, 
+ * and if one of them is a link, change the cursor to the "hands" cursor
+ * typically used by web browsers.
+ */
+void
+Control::set_cursor_if_appropriate (GtkTextView    *text_view,
+                           gint            x,
+                           gint            y)
+{
+    GSList *tags = NULL, *tagp = NULL;
+    GtkTextIter iter;
+    gboolean hovering = FALSE;
+
+    gtk_text_view_get_iter_at_location (text_view, &iter, x, y);
+  
+    tags = gtk_text_iter_get_tags (&iter);
+    for (tagp = tags;  tagp != NULL;  tagp = tagp->next)
+    {
+        GtkTextTag *tag = (GtkTextTag *)tagp->data;
+        gchar *url = (gchar *)g_object_get_data (G_OBJECT (tag), "url");
+
+        if (url != NULL) 
+        {
+            hovering = TRUE;
+            break;
+        }
+    }
+
+    if (hovering != hovering_over_link)
+    {
+        hovering_over_link = hovering;
+
+        if (hovering_over_link)
+            gdk_window_set_cursor (gtk_text_view_get_window (text_view, GTK_TEXT_WINDOW_TEXT), hand_cursor);
+        else
+            gdk_window_set_cursor (gtk_text_view_get_window (text_view, GTK_TEXT_WINDOW_TEXT), regular_cursor);
+    }
+
+    if (tags) 
+        g_slist_free (tags);
+}
+
+/* Update the cursor image if the pointer moved. 
+ */
+gboolean
+Control::motion_notify_event (GtkWidget      *text_view,
+                     GdkEventMotion *event)
+{
+  gint x, y;
+
+  gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (text_view), 
+                                         GTK_TEXT_WINDOW_WIDGET,
+                                         event->x, event->y, &x, &y);
+
+  set_cursor_if_appropriate (GTK_TEXT_VIEW (text_view), x, y);
+
+  gdk_window_get_pointer (text_view->window, NULL, NULL, NULL);
+  return FALSE;
+}
+
+/* Also update the cursor image if the window becomes visible
+ * (e.g. when a window covering it got iconified).
+ */
+gboolean
+Control::visibility_notify_event (GtkWidget          *text_view,
+                         GdkEventVisibility *event)
+{
+  gint wx, wy, bx, by;
+  
+  gdk_window_get_pointer (text_view->window, &wx, &wy, NULL);
+  
+  gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (text_view), 
+                                         GTK_TEXT_WINDOW_WIDGET,
+                                         wx, wy, &bx, &by);
+
+  set_cursor_if_appropriate (GTK_TEXT_VIEW (text_view), bx, by);
+
+  return FALSE;
+}
+
+

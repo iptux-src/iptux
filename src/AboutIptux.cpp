@@ -12,6 +12,7 @@
 //
 #include "AboutIptux.h"
 #include "baling.h"
+#include "Control.h"
 
 GtkWidget *AboutIptux::about = NULL;
 GtkWidget *AboutIptux::more = NULL;
@@ -59,7 +60,7 @@ void AboutIptux::CreateAbout()
 
 	about = gtk_about_dialog_new();
 	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), _("iptux"));
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), "0.4.5");
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), "0.4.6");
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
 				       "Copyright © 2008-2009 by Jally");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
@@ -169,7 +170,10 @@ void AboutIptux::DialogDestroy(GtkWidget **dialog)
 void AboutIptux::DialogOpenUrl(GtkAboutDialog *about,
 	 const gchar *link_, gpointer data)
 {
-    g_print(link_); //for debug only
+    Control::screen_show_url((GtkWidget*)about, link_);
+//    g_print(link_); //for debug only
+/*
     GdkScreen* screen = gdk_screen_get_default();
     gtk_show_uri(screen, link_, GDK_CURRENT_TIME, NULL);
+    */
 }

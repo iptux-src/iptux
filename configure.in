@@ -5,7 +5,7 @@ AC_PREREQ(2.61)
 AC_INIT(configure.in)
 AC_CONFIG_SRCDIR(src/iptux.cpp)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(iptux, 0.4.5)
+AM_INIT_AUTOMAKE(iptux, 0.4.6)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -103,7 +103,7 @@ sounddir="${defdir}/iptux/sound"
 AC_DEFINE_UNQUOTED(__SOUND_PATH, "${sounddir}")
 AC_SUBST(sounddir)
 
-gtk_modules="gtk+-2.0 >= 2.0.0"
+gtk_modules="gtk+-2.0 >= 2.14.0"
 PKG_CHECK_MODULES(GTK, [$gtk_modules])
 glib_modules="glib-2.0 >= 2.16.0"
 PKG_CHECK_MODULES(GLIB, [$glib_modules])

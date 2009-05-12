@@ -39,6 +39,7 @@ class DialogGroup {
 	GtkAccelGroup *accel;
 	GtkTreeModel *group_model;
 	static GtkWidget *dialog;
+
  private:
 	void BufferInsertText(const gchar * msg);
 	void SendGroupMsg(const gchar * msg);
