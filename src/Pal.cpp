@@ -482,7 +482,6 @@ void Pal::BufferInsertString(gchar *message)
     //插入剩余字段
     gtk_text_buffer_get_end_iter(record, &viewend);
     gtk_text_buffer_insert(record, &viewend, message + urlend, -1);
-    gtk_text_buffer_insert(record, &viewend, "\n", -1);
 }
 
 
@@ -512,6 +511,8 @@ void Pal::BufferInsertPal(GSList * chiplist)
 		//	gtk_text_buffer_insert(record, &end, pptr, -1);
 		//	gtk_text_buffer_insert(record, &end, "\n", -1);
             BufferInsertString(pptr);
+            gtk_text_buffer_get_end_iter(record, &end);
+            gtk_text_buffer_insert(record, &end, "\n", -1);
 			mylog.CommunicateLog(this, pptr);
             // ========================================
 			free(pptr);

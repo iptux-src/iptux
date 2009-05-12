@@ -262,7 +262,7 @@ void Control::CreateTagTable()
 	g_object_set(tag, "foreground", "blue", NULL);
 	gtk_text_tag_table_add(table, tag);
 	tag = gtk_text_tag_new("green");
-	g_object_set(tag, "foreground", "green", NULL);
+	g_object_set(tag, "foreground", "#007500", NULL);
 	gtk_text_tag_table_add(table, tag);
 	tag = gtk_text_tag_new("red");
 	g_object_set(tag, "foreground", "red", NULL);
