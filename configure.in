@@ -1,10 +1,11 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.61)
-AC_INIT(configure.in)
+AC_PREREQ(2.63)
+AC_INIT
+AC_CONFIG_SRCDIR([configure.in])
 AC_CONFIG_SRCDIR(src/iptux.cpp)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE(iptux, 0.4.6)
 
 # Checks for programs.
@@ -48,7 +49,18 @@ AC_TYPE_UINT8_T
 AC_FUNC_CLOSEDIR_VOID
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MALLOC
-AC_TYPE_SIGNAL
+AC_DIAGNOSE([obsolete],[your code may safely assume C89 semantics that RETSIGTYPE is void.
+Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([bzero getcwd gettimeofday inet_ntoa memmove mkdir rmdir socket strcasecmp strchr strerror strncasecmp strpbrk strrchr strstr])
@@ -131,5 +143,6 @@ dnl Add the languages which your application supports here.
 ALL_LINGUAS="en_GB zh_CN"
 AM_GLIB_GNU_GETTEXT
 
-AC_OUTPUT(Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile \
-	src/Makefile src/uninstall/Makefile)
+AC_CONFIG_FILES([Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile \
+	src/Makefile src/uninstall/Makefile])
+AC_OUTPUT
