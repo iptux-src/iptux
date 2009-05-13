@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include <cassert>
 #include "DialogPeer.h"
 #include "SendFile.h"
 #include "AboutIptux.h"
@@ -316,7 +317,7 @@ void DialogPeer::CreateToolMenu(GtkWidget * menu_bar)
 
 	menu_item = gtk_menu_item_new_with_label(_("Clear Buffer"));
 	g_signal_connect_swapped(menu_item, "activate",
-			 G_CALLBACK(ClearRecordBuffer), pal->RecordQuote());
+			 G_CALLBACK(ClearRecordBuffer), (gpointer)pal);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	gtk_widget_show(menu_item);
 }
@@ -533,13 +534,22 @@ void DialogPeer::InsertPixbuf(gpointer data)
 	g_object_unref(pixbuf);
 }
 
-void DialogPeer::ClearRecordBuffer(GtkTextBuffer * buffer)
+void DialogPeer::ClearRecordBuffer(Pal *palobj)
 {
+    GtkTextBuffer * buffer = palobj->RecordQuote();
 	GtkTextIter start, end;
-
 	gtk_text_buffer_get_bounds(buffer, &start, &end);
 	if (!gtk_text_iter_equal(&start, &end))
 		gtk_text_buffer_delete(buffer, &start, &end);
+        
+    GSList *urlp = palobj->urllist;
+    while(urlp){
+        g_free((gchar*)urlp->data);
+        urlp = urlp->next;
+    }
+    g_slist_free(palobj->urllist);
+    /* ** ......** */
+    palobj->urllist = NULL;
 }
 
 void DialogPeer::SendMessage(gpointer data)

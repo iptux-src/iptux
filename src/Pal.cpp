@@ -23,7 +23,7 @@
  Pal::Pal():ipv4(0), segment(NULL), version(NULL), packetn(0),
 user(NULL), host(NULL), name(NULL), group(NULL), ad(NULL),
 sign(NULL), iconfile(NULL), encode(NULL), flags(0), tpointer(NULL),
-iconpix(NULL), dialog(NULL), mypacketn(0), reply(true)
+iconpix(NULL), dialog(NULL), mypacketn(0), reply(true), urllist(NULL)
 {
 	extern Control ctr;
 	record = gtk_text_buffer_new(ctr.table);
@@ -451,8 +451,10 @@ void Pal::BufferInsertString(gchar *message)
     while (g_match_info_matches (match_info))
     {
         gchar *word = g_match_info_fetch (match_info, 0);
-        g_print ("Found: %s\n", word);
-
+    //    g_print ("Found: %s\n", word);
+        
+        urllist = g_slist_prepend(urllist, (gpointer)word);
+        
         GtkTextTag *tag = gtk_text_buffer_create_tag (record, NULL, 
                                     "foreground", "blue", 
                                     "underline", PANGO_UNDERLINE_SINGLE, 
@@ -462,11 +464,14 @@ void Pal::BufferInsertString(gchar *message)
         
         //插入url前的字段
         gtk_text_buffer_get_end_iter(record, &viewend);
-        gtk_text_buffer_insert(record, &viewend, message + urlend, start_pos - urlend);
+        gtk_text_buffer_insert(record, &viewend, 
+                                message + urlend, start_pos - urlend);
 
         //插入url
         gtk_text_buffer_get_end_iter(record, &viewend);
-        gtk_text_buffer_insert_with_tags (record, &viewend, message + start_pos, end_pos - start_pos, tag, NULL);
+        gtk_text_buffer_insert_with_tags (record, &viewend, 
+                                          message + start_pos, 
+                                          end_pos - start_pos, tag, NULL);
 
         urlend = end_pos;
 //        g_print ("beg: %d, end: %d\n", start_pos, end_pos);
@@ -507,15 +512,9 @@ void Pal::BufferInsertPal(GSList * chiplist)
 				pptr = transfer_encode(ptr, encode, false);
 			else
 				pptr = Strdup(ptr);
-            // ========================================
-		//	gtk_text_buffer_insert(record, &end, pptr, -1);
-		//	gtk_text_buffer_insert(record, &end, "\n", -1);
-            BufferInsertString(pptr);
-            gtk_text_buffer_get_end_iter(record, &end);
-            gtk_text_buffer_insert(record, &end, "\n", -1);
-			mylog.CommunicateLog(this, pptr);
-            // ========================================
-			free(pptr);
+                BufferInsertString(pptr);
+			    mylog.CommunicateLog(this, pptr);
+			    free(pptr);
 			break;
 		case PICTURE:
 			gtk_text_buffer_get_start_iter(record, &start);
@@ -547,7 +546,9 @@ void Pal::BufferInsertPal(GSList * chiplist)
 		}
 		tmp = tmp->next;
 	}
-
+	//消息结尾换行
+    gtk_text_buffer_get_end_iter(record, &end);
+    gtk_text_buffer_insert(record, &end, "\n", -1);
 	ViewScroll();
 }
 
@@ -571,12 +572,8 @@ void Pal::BufferInsertSelf(GSList * chiplist)
 		ptr = ((ChipData *) tmp->data)->data;
 		switch (((ChipData *) tmp->data)->type) {
 		case STRING:
-            // ===============================
-		//	gtk_text_buffer_get_end_iter(record, &end);
-		//	gtk_text_buffer_insert(record, &end, ptr, -1);
             BufferInsertString(ptr);
 			mylog.CommunicateLog(NULL, ptr);
-            // ===============================
 			break;
 		case PICTURE:
 			gtk_text_buffer_get_start_iter(record, &start);
@@ -601,7 +598,7 @@ void Pal::BufferInsertSelf(GSList * chiplist)
 		}
 		tmp = tmp->next;
 	}
-
+	//消息结尾换行
 	gtk_text_buffer_get_end_iter(record, &end);
 	gtk_text_buffer_insert(record, &end, "\n", -1);
 	ViewScroll();

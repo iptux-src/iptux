@@ -73,6 +73,8 @@ class Pal {
 	bool reply;
 	
 	GRegex *urlregex;
+public:
+    GSList *urllist;
  public:
 	inline in_addr_t &Ipv4Quote() {
 		return ipv4;

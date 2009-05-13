@@ -61,7 +61,7 @@ class DialogPeer {
 				    GtkTextBuffer * buffer);
 	static void DialogDestroy(gpointer data);	//DialogPeer
 	static void InsertPixbuf(gpointer data);	//
-	static void ClearRecordBuffer(GtkTextBuffer * buffer);
+    static void ClearRecordBuffer(Pal *palobj);
 	static void SendMessage(gpointer data);	//
 //线程处理
  private:
