@@ -13,6 +13,7 @@
 #include "my_file.h"
 #include "utils.h"
 #include "baling.h"
+#include "output.h"
 
 gboolean Control::hovering_over_link = false;
 GdkCursor* Control::hand_cursor = NULL;
@@ -374,6 +375,8 @@ Control::screen_show_url(GtkWidget *text_view, const gchar *url)
     if (error != NULL)
     {
         g_printerr ("Error showing url: %s\n", error->message);
+        pop_warning(NULL, NULL, _("Getting Default Browser Error. \n%s"),
+                                        error->message);
         g_error_free (error);
     }
 }

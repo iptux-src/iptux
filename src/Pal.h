@@ -72,7 +72,7 @@ class Pal {
 	uint32_t mypacketn;
 	bool reply;
 	
-	GRegex *urlregex;
+	static GRegex *urlregex;
 public:
     GSList *urllist;
  public:

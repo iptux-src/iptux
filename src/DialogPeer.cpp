@@ -541,14 +541,14 @@ void DialogPeer::ClearRecordBuffer(Pal *palobj)
 	gtk_text_buffer_get_bounds(buffer, &start, &end);
 	if (!gtk_text_iter_equal(&start, &end))
 		gtk_text_buffer_delete(buffer, &start, &end);
-        
+    
+    //回收url字符串的空间,清空地址链
     GSList *urlp = palobj->urllist;
     while(urlp){
         g_free((gchar*)urlp->data);
         urlp = urlp->next;
     }
     g_slist_free(palobj->urllist);
-    /* ** ......** */
     palobj->urllist = NULL;
 }
 

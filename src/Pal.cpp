@@ -20,14 +20,17 @@
 #include "baling.h"
 #include "utils.h"
 
- Pal::Pal():ipv4(0), segment(NULL), version(NULL), packetn(0),
+//匹配url的正则式
+GRegex *Pal::urlregex = g_regex_new ("(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", (GRegexCompileFlags)0, (GRegexMatchFlags)0, NULL);
+
+
+Pal::Pal():ipv4(0), segment(NULL), version(NULL), packetn(0),
 user(NULL), host(NULL), name(NULL), group(NULL), ad(NULL),
 sign(NULL), iconfile(NULL), encode(NULL), flags(0), tpointer(NULL),
 iconpix(NULL), dialog(NULL), mypacketn(0), reply(true), urllist(NULL)
 {
 	extern Control ctr;
 	record = gtk_text_buffer_new(ctr.table);
-    urlregex = g_regex_new ("(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", (GRegexCompileFlags)0, (GRegexMatchFlags)0, NULL);
 }
 
 Pal::~Pal()
@@ -52,7 +55,13 @@ Pal::~Pal()
 		gtk_widget_destroy(dialog->DialogQuote());
 	g_object_unref(record);
 
-    g_regex_unref (urlregex);
+    //回收url字符串的内存
+    GSList *urlp = urllist;
+    while(urlp){
+        g_free((gchar*)urlp->data);
+        urlp = urlp->next;
+    }
+    g_slist_free(urllist);
 }
 
 //entry 是否为通知登录消息,true 必须转换编码;false 情况而定
