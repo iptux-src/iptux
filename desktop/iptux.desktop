@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=iptux
+Name[zh_CN]=信使(iptux)
+Name[zh_TW]=信使(iptux)
+Comment=Lan communication software
+Comment[zh_CN]=局域网通讯工具
+Comment[zh_TW]=局域網通訊工具
+Exec=iptux
+Terminal=false
+Type=Application
+Icon=ip-tux
+StartupNotify=true
+Categories=GTK;Network;

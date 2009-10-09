@@ -1,0 +1,48 @@
+一、iptux发送数据编码列表(不全，但很容易推导出其他的)：
+	1、广播		首选编码
+	2、拨号		首选编码
+	3、通知在线	好友编码
+	4、变更信息	好友编码
+	5、未知拨号	首选编码
+	6、发送消息	好友编码
+	7、回应消息	好友编码
+	……		好友编码
+
+二、iptux接收数据编码处理(确认，意指已有一方成功建立了好友数据结构)
+	1、对于iptux尚未确认的好友，发送或接收的编码将一概按照首选编码处理！
+	2、对于iptux已经确认的好友，将要发送的数据必须一概转换成好友编码后才能发送出去；对于接收到的好友数据，如果好友兼容iptux自身协议，数据直接被使用，否则数据必须被转换为本地编码，方可使用！
+
+三、iptux提高功能协议：
+	1、iptux期望所接收到的任何好友的第一个数据包或信息更改数据包(IPMSG_BR_ABSENCE)为如下格式：
+(IPMsg协议标准实现)\0(组名)\0(好友头像名)\0(好友编码)
+注:好友头像名为文件名，而不是全路径
+如果满足如上条件，则认为兼容iptux，iptux将严格使用好友提供的相关数据；否则不兼容，iptux将使用一些软件默认数据来填充好友的数据结构。
+	2、自定义命令字实现相关功能如下：
+/* 命令字 */
+#define IPTUX_ASKSHARED	0x000000FFUL	请求获取共享文件
+#define IPTUX_SENDICON	0x000000FEUL	发送自定义头像数据
+#define IPTUX_SENDSUBLAYER	0x000000FDUL	发送底层数据，必须与选项配合使用
+#define IPTUX_SENDSIGN	0x000000FCUL	发送个人签名
+#define IPTUX_SENDMSG	0x000000FBUL	发送消息，必须与选项配合使用
+/* 命令字选项 */
+/* option for IPTUX_SENDSUBLAYER */
+#define IPTUX_PHOTOPICOPT	0x00000100UL	个人形象图片选项
+#define IPTUX_MSGPICOPT	0x00000200UL	消息图片选项
+/* option for IPMSG_SENDMSG */
+#define IPTUX_SHAREDOPT	0x80000000UL	共享文件选项
+/* option for IPMSG_SENDMSG & IPTUX_ASKSHARED */
+#define IPTUX_PASSWDOPT	0x40000000UL	密码选项
+/* option for IPTUX_SENDMSG */
+#define IPTUX_REGULAROPT	0x00000100UL
+#define IPTUX_SEGMENTOPT	0x00000200UL
+#define IPTUX_GROUPOPT	0x00000300UL
+#define IPTUX_BROADCASTOPT	0x00000400UL
+1)当iptux接收到IPTUX_ASKSHARED命令字的数据包时，就应该直接将软件设置的共享文件提供给请求者或是先向使用者(用户)询问；
+2)当iptux接收到IPTUX_SENDICON命令字的数据包时，应该提取数据包的图像数据，然后将好友头像转换为此图像；此命令格式如下：
+(IPMsg协议标准实现)\0(图像数据)	注:图像数据应为存盘文件中的数据，而不是内存数据；另，图像数据不能超过8096字节
+iptux期望在接收到此命令数据包之前，此好友必须已经被确认，否则数据将被丢弃；此命令应该紧跟在(IPMSG_BR_ENTRY,IPMSG_ANSENTRY,IPMSG_BR_ABSENCE)命令数据包之后，但是不紧跟在其后也无关要紧，iptux知道怎么正确处理它；
+3)IPTUX_SENDSUBLAYER命令字必须配合选项命令字，使用TCP协议发送，命令格式如下：
+(IPMsg协议标准实现)\0(数据)
+4)当iptux接收到IPTUX_SENDSIGN命令字的数据包时，将提取个人签名；
+5)当iptux接收到IPTUX_SENDMSG命令字的数据包时，将按照消息选项分派消息最终去向；此命令字主要用于扩展IPMsg的发送消息命令。
+

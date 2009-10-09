@@ -1,0 +1,1199 @@
+# English (United Kingdom) translation for iptux
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# This file is distributed under the same license as the iptux package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: iptux\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-10-09 11:21+0800\n"
+"PO-Revision-Date: 2009-01-27 14:10+0000\n"
+"Last-Translator: Jen Ockwell <jenfraggleubuntu@googlemail.com>\n"
+"Language-Team: English (United Kingdom) <en_GB@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-02-11 14:36+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: src/AnalogFS.cpp:81 src/AnalogFS.cpp:86
+#, fuzzy, c-format
+msgid "Open() file \"%s\" failed, %s"
+msgstr "act: rmdir directory '%s',warning: %s\n"
+
+#: src/AnalogFS.cpp:108
+#, fuzzy, c-format
+msgid "Stat64() file \"%s\" failed, %s"
+msgstr "act: rmdir directory '%s',warning: %s\n"
+
+#: src/AnalogFS.cpp:129
+#, fuzzy, c-format
+msgid "Mkdir() directory \"%s\" failed, %s"
+msgstr "act: rmdir directory '%s',warning: %s\n"
+
+#: src/AnalogFS.cpp:206
+#, fuzzy, c-format
+msgid "Opendir() directory \"%s\" failed, %s"
+msgstr "act: open directory '%s',warning: %s\n"
+
+#: src/Command.cpp:219
+msgid "Your pal didn't receive the packet. He or she is offline maybe."
+msgstr ""
+
+#: src/CoreThread.cpp:231 src/DialogPeer.cpp:1257 src/RecvFileData.cpp:143
+#: src/RecvFileData.cpp:197 src/support.cpp:110
+#, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to create new socket!\n"
+"%s"
+msgstr ""
+
+#: src/CoreThread.cpp:531 src/CoreThread.cpp:556 src/CoreThread.cpp:1052
+#: src/CoreThread.cpp:1078
+msgid "Others"
+msgstr ""
+
+#: src/CoreThread.cpp:911 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
+#: src/RecvFileData.cpp:245 src/SendFileData.cpp:125 src/SendFileData.cpp:212
+#: src/ShareFile.cpp:228 src/ShareFile.cpp:382
+msgid "unknown"
+msgstr "unknown"
+
+#: src/CoreThread.cpp:925
+msgid "<ERROR>"
+msgstr ""
+
+#: src/CoreThread.cpp:1102
+msgid "Broadcast"
+msgstr ""
+
+#: src/DataSettings.cpp:58
+msgid "Personal"
+msgstr "Personal"
+
+#: src/DataSettings.cpp:60
+msgid "System"
+msgstr "System"
+
+#: src/DataSettings.cpp:63
+msgid "Sound"
+msgstr "Sound"
+
+#: src/DataSettings.cpp:66
+msgid "Network"
+msgstr ""
+
+#: src/DataSettings.cpp:150
+msgid "Preferences"
+msgstr ""
+
+#: src/DataSettings.cpp:180
+#, fuzzy
+msgid "Your nickname:"
+msgstr "Your nickname:"
+
+#: src/DataSettings.cpp:186
+#, fuzzy
+msgid "Please input your nickname!"
+msgstr "Please input your nickname!"
+
+#: src/DataSettings.cpp:191
+#, fuzzy
+msgid "Your group name:"
+msgstr "Your group name:"
+
+#: src/DataSettings.cpp:197
+#, fuzzy
+msgid "Please input your group name!"
+msgstr "Please input your group name!"
+
+#: src/DataSettings.cpp:202
+msgid "Your face picture:"
+msgstr ""
+
+#: src/DataSettings.cpp:215 src/RecvFile.cpp:236
+#, fuzzy
+msgid "Save files to: "
+msgstr "Save file to:"
+
+#: src/DataSettings.cpp:225
+#, fuzzy
+msgid "Photo"
+msgstr "host"
+
+#: src/DataSettings.cpp:237
+#, fuzzy
+msgid "Signature"
+msgstr "Personal Signature:\n"
+
+#: src/DataSettings.cpp:268
+#, fuzzy
+msgid "Candidate network coding:"
+msgstr "Default network encode:"
+
+#: src/DataSettings.cpp:274
+#, fuzzy
+msgid "Candidate network coding"
+msgstr "Default network encode:"
+
+#: src/DataSettings.cpp:279
+#, fuzzy
+msgid "Preference network coding:"
+msgstr "Default network encode:"
+
+#: src/DataSettings.cpp:285
+msgid ""
+"Preference network coding (You should be aware of what you are doing if you "
+"want to modify it.)"
+msgstr ""
+
+#: src/DataSettings.cpp:291
+#, fuzzy
+msgid "Pal's default face picture:"
+msgstr "Pal's default head portrait:"
+
+#: src/DataSettings.cpp:304
+msgid "Panel font:"
+msgstr ""
+
+#: src/DataSettings.cpp:312
+#, fuzzy
+msgid "Automatically hide the panel after login"
+msgstr "Automatic clear up chat history"
+
+#: src/DataSettings.cpp:317
+#, fuzzy
+msgid "Automatically open the File Transmission Management"
+msgstr "Transmission management"
+
+#: src/DataSettings.cpp:322
+#, fuzzy
+msgid "Use the 'Enter' key to send message"
+msgstr "Press the 'Enter' key to send a message"
+
+#: src/DataSettings.cpp:327
+#, fuzzy
+msgid "Automatically clean up the chat history"
+msgstr "Automatic clear up chat history"
+
+#: src/DataSettings.cpp:332
+#, fuzzy
+msgid "Save the chat history"
+msgstr "Chat History"
+
+#: src/DataSettings.cpp:337
+#, fuzzy
+msgid "Use the Blacklist (NOT recommended)"
+msgstr "Use the blacklist(not recommended)"
+
+#: src/DataSettings.cpp:342
+#, fuzzy
+msgid "Filter the request of sharing files"
+msgstr "Filter the request for shared files"
+
+#: src/DataSettings.cpp:364
+msgid "Activate the sound support"
+msgstr ""
+
+#: src/DataSettings.cpp:371
+msgid "Volume Control: "
+msgstr "Volume Control: "
+
+#: src/DataSettings.cpp:380
+msgid "Sound Event"
+msgstr "Sound Event"
+
+#: src/DataSettings.cpp:408
+#, fuzzy
+msgid "Test"
+msgstr "Testing"
+
+#: src/DataSettings.cpp:411
+msgid "Stop"
+msgstr "Stop"
+
+#: src/DataSettings.cpp:434
+msgid "From:"
+msgstr ""
+
+#: src/DataSettings.cpp:440
+msgid "Beginning of the IP(v4) section"
+msgstr ""
+
+#: src/DataSettings.cpp:443
+msgid "To:"
+msgstr ""
+
+#: src/DataSettings.cpp:449
+msgid "End of the IP(v4) section"
+msgstr ""
+
+#: src/DataSettings.cpp:456
+msgid "Add"
+msgstr "Add"
+
+#: src/DataSettings.cpp:460
+msgid "Delete"
+msgstr "Delete"
+
+#: src/DataSettings.cpp:466
+#, fuzzy
+msgid "Added IP(v4) Section:"
+msgstr "Added IPv4 section:"
+
+#: src/DataSettings.cpp:485
+msgid "Import"
+msgstr "Import"
+
+#: src/DataSettings.cpp:488
+msgid "Export"
+msgstr "Export"
+
+#: src/DataSettings.cpp:491
+msgid "Clear"
+msgstr "Clear"
+
+#: src/DataSettings.cpp:703
+#, fuzzy
+msgid "Transfer finished"
+msgstr "transport finished"
+
+#: src/DataSettings.cpp:708
+#, fuzzy
+msgid "Message received"
+msgstr "message come"
+
+#: src/DataSettings.cpp:769
+msgid "Play"
+msgstr "Play"
+
+#: src/DataSettings.cpp:776
+msgid "Event"
+msgstr "Event"
+
+#: src/DataSettings.cpp:810
+msgid "From"
+msgstr ""
+
+#: src/DataSettings.cpp:816
+msgid "To"
+msgstr ""
+
+#: src/DataSettings.cpp:824
+#, fuzzy
+msgid "Description"
+msgstr "Describe"
+
+#: src/DataSettings.cpp:841 src/RecvFile.cpp:389
+#, fuzzy
+msgid "Please select download folder"
+msgstr "Please choose a sound file"
+
+#: src/DataSettings.cpp:863
+msgid "Select Font"
+msgstr ""
+
+#: src/DataSettings.cpp:876
+#, fuzzy
+msgid "Please select a sound file"
+msgstr "Please choose a sound file"
+
+#: src/DataSettings.cpp:1165 src/DataSettings.cpp:1197
+#, fuzzy, c-format
+msgid ""
+"Fopen() file \"%s\" failed!\n"
+"%s"
+msgstr "act: rmdir directory '%s',warning: %s\n"
+
+#: src/DataSettings.cpp:1246 src/DialogGroup.cpp:1131 src/RecvFile.cpp:409
+#, fuzzy
+msgid "Select All"
+msgstr "Delete Pal"
+
+#: src/DataSettings.cpp:1251 src/DialogGroup.cpp:1136 src/RecvFile.cpp:414
+#, fuzzy
+msgid "Reverse Select"
+msgstr "Reverse All"
+
+#: src/DataSettings.cpp:1256 src/DialogGroup.cpp:1141 src/RecvFile.cpp:419
+msgid "Clear Up"
+msgstr "Clear Up"
+
+#: src/DataSettings.cpp:1350 src/RevisePal.cpp:426
+msgid "Please select a face picture"
+msgstr ""
+
+#: src/DataSettings.cpp:1373
+#, fuzzy
+msgid "Please select a personal photo"
+msgstr "Please choose a personal portrait"
+
+#: src/DataSettings.cpp:1517 src/DataSettings.cpp:1524 src/DetectPal.cpp:122
+#, c-format
+msgid ""
+"\n"
+"Illegal IP(v4) address: %s!"
+msgstr ""
+
+#: src/DataSettings.cpp:1622
+#, fuzzy
+msgid "Please select a file to import data"
+msgstr "Please choose a head portrait"
+
+#: src/DataSettings.cpp:1670
+#, fuzzy
+msgid "Save data to file"
+msgstr "Save the export file"
+
+#: src/DetectPal.cpp:70
+#, fuzzy
+msgid "Detect pals"
+msgstr "Detect the pals"
+
+#: src/DetectPal.cpp:72
+msgid "Detect"
+msgstr "Detect"
+
+#: src/DetectPal.cpp:73 src/RecvFile.cpp:264 src/ShareFile.cpp:107
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/DetectPal.cpp:91
+#, fuzzy
+msgid "Please input an IP address (IPv4 only):"
+msgstr "Please input a legal address of IPv4:"
+
+#: src/DetectPal.cpp:99
+#, fuzzy
+msgid "Please input an IP address (IPv4 only)!"
+msgstr "Please input a legal address of IPv4!"
+
+#: src/DetectPal.cpp:127
+#, c-format
+msgid "The notification has been sent to %s."
+msgstr ""
+
+#: src/dialog.cpp:32
+msgid ""
+"File transfer has not been completed.\n"
+"Are you sure to cancel and quit?"
+msgstr ""
+
+#: src/dialog.cpp:35
+#, fuzzy
+msgid "Confirm Exit"
+msgstr "Confirm close"
+
+#: src/dialog.cpp:55 src/DialogPeer.cpp:653 src/MainWindow.cpp:1548
+#, fuzzy
+msgid "Request Shared Resources"
+msgstr "Request for shared resources"
+
+#: src/dialog.cpp:58
+msgid "Agree"
+msgstr "Agree"
+
+#: src/dialog.cpp:59
+msgid "Refuse"
+msgstr "Refuse"
+
+#: src/dialog.cpp:72
+#, fuzzy, c-format
+msgid ""
+"Your pal (%s)[%s]\n"
+"is requesting to get your shared resources,\n"
+"Do you agree?"
+msgstr ""
+"The pal (%s)[%s]\n"
+"is requesting to share your resources,\n"
+"agree or not?"
+
+#: src/dialog.cpp:101
+#, fuzzy
+msgid "Access Password"
+msgstr "Access password"
+
+#: src/dialog.cpp:108
+#, fuzzy
+msgid "Please input the password for the shared files behind"
+msgstr "Please enter the password for access to shared files"
+
+#: src/dialog.cpp:121
+#, fuzzy, c-format
+msgid "(%s)[%s]Password:"
+msgstr "Password: "
+
+#: src/dialog.cpp:138 src/dialog.cpp:198
+#, fuzzy
+msgid ""
+"\n"
+"Empty Password!"
+msgstr "Set Password"
+
+#: src/dialog.cpp:161
+#, fuzzy
+msgid "Enter a New Password"
+msgstr "Please enter a new password"
+
+#: src/dialog.cpp:171
+msgid "Password: "
+msgstr "Password: "
+
+#: src/dialog.cpp:179
+msgid "Repeat: "
+msgstr "Repeat: "
+
+#: src/dialog.cpp:193
+#, fuzzy
+msgid ""
+"\n"
+"Password Mismatched!"
+msgstr ""
+"\n"
+"Password is blank!"
+
+#: src/DialogGroup.cpp:416
+#, fuzzy, c-format
+msgid "Talk with the group %s"
+msgstr "Communicate with %s"
+
+#: src/DialogGroup.cpp:515
+msgid "Member"
+msgstr ""
+
+#: src/DialogGroup.cpp:545 src/DialogPeer.cpp:480
+msgid "Enclosure"
+msgstr ""
+
+#: src/DialogGroup.cpp:572 src/DialogPeer.cpp:507
+msgid "Chat History"
+msgstr "Chat History"
+
+#: src/DialogGroup.cpp:637 src/DialogGroup.cpp:814 src/DialogPeer.cpp:572
+#: src/DialogPeer.cpp:661
+msgid "Close"
+msgstr "Close"
+
+#: src/DialogGroup.cpp:641 src/DialogGroup.cpp:740 src/DialogPeer.cpp:576
+msgid "Send"
+msgstr "Send"
+
+#: src/DialogGroup.cpp:747
+#, fuzzy
+msgid "Pals"
+msgstr "pals"
+
+#: src/DialogGroup.cpp:799 src/DialogPeer.cpp:641 src/MainWindow.cpp:810
+msgid "_File"
+msgstr "_File"
+
+#: src/DialogGroup.cpp:803 src/DialogPeer.cpp:645
+#, fuzzy
+msgid "Attach File"
+msgstr "Add Files"
+
+#: src/DialogGroup.cpp:807 src/DialogPeer.cpp:649
+#, fuzzy
+msgid "Attach Folder"
+msgstr "Add Folders"
+
+#: src/DialogGroup.cpp:833 src/DialogPeer.cpp:678 src/MainWindow.cpp:852
+msgid "_Tools"
+msgstr "_Tools"
+
+#: src/DialogGroup.cpp:839 src/DialogPeer.cpp:686
+msgid "Clear Buffer"
+msgstr "Clear Buffer"
+
+#: src/DialogGroup.cpp:846
+#, fuzzy
+msgid "Sort"
+msgstr "state"
+
+#: src/DialogGroup.cpp:852 src/MainWindow.cpp:891
+msgid "By Nickname"
+msgstr "By Nickname"
+
+#: src/DialogGroup.cpp:859 src/MainWindow.cpp:898
+msgid "By IP"
+msgstr "By IP"
+
+#: src/DialogGroup.cpp:869 src/MainWindow.cpp:908
+#, fuzzy
+msgid "Ascending"
+msgstr "send"
+
+#: src/DialogGroup.cpp:876 src/MainWindow.cpp:915
+msgid "Descending"
+msgstr ""
+
+#: src/DialogGroup.cpp:894 src/DialogPeer.cpp:703 src/MainWindow.cpp:942
+msgid "_Help"
+msgstr "_Help"
+
+#: src/DialogGroup.cpp:919 src/DialogPeer.cpp:788
+#, fuzzy
+msgid "Choose enclosure files"
+msgstr "Choose shared files"
+
+#: src/DialogGroup.cpp:922 src/DialogPeer.cpp:791
+#, fuzzy
+msgid "Choose enclosure folders"
+msgstr "Choose shared folders"
+
+#: src/DialogGroup.cpp:1364 src/DialogPeer.cpp:1187
+msgid ""
+"<span weight=\"heavy\" underline=\"error\">\n"
+"Can't send an empty message!!</span>"
+msgstr ""
+"<span weight=\"heavy\" underline=\"error\">\n"
+"Can't send an empty message!!</span>"
+
+#: src/DialogPeer.cpp:349
+#, c-format
+msgid "Talk with %s"
+msgstr ""
+
+#: src/DialogPeer.cpp:448
+#, fuzzy
+msgid "Info."
+msgstr "Pal's Infomation"
+
+#: src/DialogPeer.cpp:682
+msgid "Insert Picture"
+msgstr "Insert Picture"
+
+#: src/DialogPeer.cpp:727 src/MainWindow.cpp:1604
+#, c-format
+msgid "Version: %s\n"
+msgstr "Version: %s\n"
+
+#: src/DialogPeer.cpp:731 src/MainWindow.cpp:1608
+#, c-format
+msgid "Nickname: %s@%s\n"
+msgstr "Nickname: %s@%s\n"
+
+#: src/DialogPeer.cpp:733 src/MainWindow.cpp:1610
+#, c-format
+msgid "Nickname: %s\n"
+msgstr "Nickname: %s\n"
+
+#: src/DialogPeer.cpp:736 src/MainWindow.cpp:1613
+#, c-format
+msgid "User: %s\n"
+msgstr "User: %s\n"
+
+#: src/DialogPeer.cpp:739 src/MainWindow.cpp:1616
+#, c-format
+msgid "Host: %s\n"
+msgstr "Host: %s\n"
+
+#: src/DialogPeer.cpp:744 src/MainWindow.cpp:1621
+#, c-format
+msgid "Address: %s(%s)\n"
+msgstr "Address: %s(%s)\n"
+
+#: src/DialogPeer.cpp:746 src/MainWindow.cpp:1623
+#, fuzzy, c-format
+msgid "Address: %s\n"
+msgstr "Address: %s(%s)\n"
+
+#: src/DialogPeer.cpp:750 src/MainWindow.cpp:1627
+#, c-format
+msgid "Compatibility: Microsoft\n"
+msgstr "Compatibility: Microsoft\n"
+
+#: src/DialogPeer.cpp:752 src/MainWindow.cpp:1629
+#, c-format
+msgid "Compatibility: GNU/Linux\n"
+msgstr "Compatibility: GNU/Linux\n"
+
+#: src/DialogPeer.cpp:755 src/MainWindow.cpp:1632
+#, fuzzy, c-format
+msgid "System coding: %s\n"
+msgstr "System Encode: %s\n"
+
+#: src/DialogPeer.cpp:759 src/MainWindow.cpp:1636
+#, fuzzy
+msgid "Signature:\n"
+msgstr "Personal Signature:\n"
+
+#: src/DialogPeer.cpp:766
+#, fuzzy
+msgid ""
+"\n"
+"Photo:\n"
+msgstr "host"
+
+#: src/DialogPeer.cpp:1146
+#, fuzzy
+msgid "Please select a picture to insert the buffer"
+msgstr "Please choose a picture to insert the buffer"
+
+#: src/HelpDialog.cpp:61 src/HelpDialog.cpp:66
+msgid "Jally <jallyx@163.com>"
+msgstr ""
+
+#: src/HelpDialog.cpp:62 src/HelpDialog.cpp:68
+#, fuzzy
+msgid "ManPT <pentie@gmail.com>"
+msgstr ""
+"LiJinhui\n"
+"LiuTao\n"
+"Pentie\tpentie@gmail.com"
+
+#: src/HelpDialog.cpp:67
+msgid "LiWeijian <weijian_li88@qq.com>"
+msgstr ""
+
+#: src/HelpDialog.cpp:71
+#, fuzzy
+msgid ""
+"alick <alick9188@163.com>\n"
+"ManPT <pentie@gmail.com>"
+msgstr ""
+"LiJinhui\n"
+"LiuTao\n"
+"Pentie\tpentie@gmail.com"
+
+#: src/HelpDialog.cpp:80 src/MainWindow.cpp:567 src/StatusIcon.cpp:60
+#: src/StatusIcon.cpp:99
+msgid "iptux"
+msgstr "iptux"
+
+#: src/HelpDialog.cpp:85
+msgid "A GTK+ based LAN Messenger."
+msgstr "A GTK+ based LAN Messenger."
+
+#: src/HelpDialog.cpp:102
+msgid "Help"
+msgstr "Help"
+
+#: src/HelpDialog.cpp:102
+msgid "Contributers"
+msgstr "Contributers"
+
+#: src/HelpDialog.cpp:102 src/HelpDialog.cpp:120
+msgid "..."
+msgstr "..."
+
+#: src/HelpDialog.cpp:104
+msgid ""
+"Project Home: \n"
+"http://code.google.com/p/iptux/\n"
+"\n"
+"User and Developer Group: \n"
+"https://groups.google.com/group/iptux/\n"
+"\n"
+"Note that you can get help form the project wiki page.\n"
+"\n"
+"If you find no solutions in any of the existed documents, feel free to drop "
+"a email at iptux@googlegroups.com, lots of users and developers would be "
+"glade to help about your problems."
+msgstr ""
+"Project Home: \n"
+"http://code.google.com/p/iptux/\n"
+"\n"
+"User and Developer Group: \n"
+"https://groups.google.com/group/iptux/\n"
+"\n"
+"Note that you can get help form the project wiki page.\n"
+"\n"
+"If you find no solutions in any of the existed documents, feel free to drop "
+"a email at iptux@googlegroups.com, lots of users and developers would be "
+"glade to help about your problems."
+
+#: src/HelpDialog.cpp:110
+#, fuzzy
+msgid ""
+"It's an honor that iptux was contributed voluntarilly by many people. "
+"Without your help, iptux could never make it.\n"
+"\n"
+"Especially, Here's some we would like to thank much:\n"
+"\n"
+"ChenGang\n"
+"<liangsuilong@gmail.com>\n"
+"<lidaobing@gmail.com>\n"
+"<mdjhu@sina.com>\n"
+"<omegao.hu@gmail.com>\n"
+"<syranosun@gmail.com>\n"
+"..."
+msgstr ""
+"It's an honor that iptux was contributed voluntarilly by many people. "
+"Without your help, iptux could never make it.\n"
+"\n"
+"Especially, Here's some we would like to thank much:\n"
+"\n"
+"ChenGang\n"
+"<liangsuilong@gmail.com>\n"
+"<lidaobing@gmail.com>\n"
+"<mdjhu@sina.com>\n"
+"<omegao.hu@gmail.com>\n"
+"<syranosun@gmail.com>\n"
+"<weijian_li88@qq.com>\n"
+"..."
+
+#: src/HelpDialog.cpp:128
+#, fuzzy
+msgid "More About Iptux"
+msgstr "More about iptux"
+
+#: src/LogSystem.cpp:51
+#, fuzzy, c-format
+msgid "Nickname:%s User:%s Host:%s"
+msgstr "Nickname: %s\tUser: %s\tHost: %s"
+
+#: src/LogSystem.cpp:54
+msgid "Me"
+msgstr "Me"
+
+#: src/LogSystem.cpp:76
+#, fuzzy, c-format
+msgid "User:%s Host:%s"
+msgstr "Name: %s\tHost: %s"
+
+#: src/MainWindow.cpp:594
+#, fuzzy
+msgid "Files Transmission Management"
+msgstr "Transmission management"
+
+#: src/MainWindow.cpp:709
+#, fuzzy
+msgid "Pals Online: 0"
+msgstr "pals online: 0"
+
+#: src/MainWindow.cpp:792
+#, fuzzy
+msgid "Search Pals"
+msgstr "search pals"
+
+#: src/MainWindow.cpp:815 src/StatusIcon.cpp:164
+msgid "_Detect"
+msgstr "_Detect"
+
+#: src/MainWindow.cpp:822
+msgid "_Find"
+msgstr "_Find"
+
+#: src/MainWindow.cpp:832 src/StatusIcon.cpp:173
+msgid "_Quit"
+msgstr "_Quit"
+
+#: src/MainWindow.cpp:858 src/StatusIcon.cpp:143
+msgid "_Preferences"
+msgstr ""
+
+#: src/MainWindow.cpp:867 src/StatusIcon.cpp:135
+#, fuzzy
+msgid "_Transmission"
+msgstr "Transmission management"
+
+#: src/MainWindow.cpp:876 src/StatusIcon.cpp:152
+#, fuzzy
+msgid "_Shared Management"
+msgstr "Shared files management"
+
+#: src/MainWindow.cpp:885
+#, fuzzy
+msgid "_Sort"
+msgstr "state"
+
+#: src/MainWindow.cpp:923
+msgid "_Update"
+msgstr "_Update"
+
+#: src/MainWindow.cpp:938
+#, fuzzy
+msgid "http://code.google.com/p/iptux/wiki/FAQ_EnglishVersion"
+msgstr "Home: http://code.google.com/p/iptux/"
+
+#: src/MainWindow.cpp:950
+msgid "_More"
+msgstr "_More"
+
+#: src/MainWindow.cpp:954
+msgid "_FAQ"
+msgstr ""
+
+#: src/MainWindow.cpp:1104
+#, fuzzy
+msgid "Nickname"
+msgstr "nickname"
+
+#: src/MainWindow.cpp:1115
+#, fuzzy
+msgid "Group"
+msgstr "_Group"
+
+#: src/MainWindow.cpp:1121
+msgid "IPv4"
+msgstr "IPv4"
+
+#: src/MainWindow.cpp:1127
+#, fuzzy
+msgid "User"
+msgstr "user"
+
+#: src/MainWindow.cpp:1133
+#, fuzzy
+msgid "Host"
+msgstr "host"
+
+#: src/MainWindow.cpp:1166
+#, fuzzy
+msgid "State"
+msgstr "state"
+
+#: src/MainWindow.cpp:1172
+#, fuzzy
+msgid "Task"
+msgstr "task"
+
+#: src/MainWindow.cpp:1178
+msgid "Peer"
+msgstr ""
+
+#: src/MainWindow.cpp:1184 src/RecvFile.cpp:360
+#, fuzzy
+msgid "Filename"
+msgstr "filename"
+
+#: src/MainWindow.cpp:1190 src/RecvFile.cpp:367 src/ShareFile.cpp:280
+msgid "Size"
+msgstr ""
+
+#: src/MainWindow.cpp:1196
+msgid "Completed"
+msgstr ""
+
+#: src/MainWindow.cpp:1202
+#, fuzzy
+msgid "Progress"
+msgstr "progress"
+
+#: src/MainWindow.cpp:1208
+#, fuzzy
+msgid "Cost"
+msgstr "host"
+
+#: src/MainWindow.cpp:1214
+#, fuzzy
+msgid "Remaining"
+msgstr "Warning"
+
+#: src/MainWindow.cpp:1220
+#, fuzzy
+msgid "Rate"
+msgstr "rate"
+
+#: src/MainWindow.cpp:1497
+#, fuzzy
+msgid "Terminate Task"
+msgstr "Terminate Job"
+
+#: src/MainWindow.cpp:1502
+msgid "Terminate All"
+msgstr "Terminate All"
+
+#: src/MainWindow.cpp:1507
+msgid "Clear Tasklist"
+msgstr "Clear Tasklist"
+
+#: src/MainWindow.cpp:1528
+msgid "Send Message"
+msgstr "Send Message"
+
+#: src/MainWindow.cpp:1562
+#, fuzzy
+msgid "Change Info."
+msgstr "Change Information"
+
+#: src/MainWindow.cpp:1577
+msgid "Delete Pal"
+msgstr "Delete Pal"
+
+#: src/MainWindow.cpp:1666
+#, fuzzy, c-format
+msgid "Pals Online: %<PRIu32>"
+msgstr "pals online: %<PRIu32>"
+
+#: src/output.cpp:35
+msgid "Infomation"
+msgstr "Infomation"
+
+#: src/output.cpp:60
+msgid "Warning"
+msgstr "Warning"
+
+#: src/output.cpp:83
+msgid "Error"
+msgstr "Error"
+
+#: src/ProgramData.cpp:199
+msgid "utf-16"
+msgstr ""
+
+#: src/ProgramData.cpp:202
+msgid "utf-8"
+msgstr ""
+
+#: src/RecvFile.cpp:186
+#, fuzzy
+msgid "Pal's Shared Resources"
+msgstr "Pal's shared files"
+
+#: src/RecvFile.cpp:188
+#, fuzzy
+msgid "Files Receive Management"
+msgstr "File receive management"
+
+#: src/RecvFile.cpp:258
+msgid "Accept"
+msgstr ""
+
+#: src/RecvFile.cpp:307 src/ShareFile.cpp:220 src/ShareFile.cpp:374
+msgid "regular"
+msgstr "regular"
+
+#: src/RecvFile.cpp:310 src/ShareFile.cpp:224 src/ShareFile.cpp:378
+msgid "directory"
+msgstr "directory"
+
+#: src/RecvFile.cpp:345
+#, fuzzy
+msgid "Recv"
+msgstr "Receive"
+
+#: src/RecvFile.cpp:352
+#, fuzzy
+msgid "Source"
+msgstr "Sort"
+
+#: src/RecvFile.cpp:373 src/ShareFile.cpp:286
+#, fuzzy
+msgid "Type"
+msgstr "type"
+
+#: src/RecvFile.cpp:505
+#, c-format
+msgid "Free:%s Total:%s"
+msgstr "Free:%s Total:%s"
+
+#: src/RecvFileData.cpp:114
+msgid "receive"
+msgstr "receive"
+
+#: src/RecvFileData.cpp:170
+#, fuzzy, c-format
+msgid "Failed to receive the file \"%s\" from %s!"
+msgstr "Failure to receive the file!"
+
+#: src/RecvFileData.cpp:173
+#, fuzzy, c-format
+msgid "Receive the file \"%s\" from %s successfully!"
+msgstr "Receive the file successfully!"
+
+#: src/RecvFileData.cpp:300
+#, fuzzy, c-format
+msgid "Failed to receive the directory \"%s\" from %s!"
+msgstr "Failure to receive the file!"
+
+#: src/RecvFileData.cpp:303
+#, fuzzy, c-format
+msgid "Receive the directory \"%s\" from %s successfully!"
+msgstr "Receive the file successfully!"
+
+#: src/RevisePal.cpp:97
+#, fuzzy
+msgid "Change Pal's Information"
+msgstr "Change pal's information"
+
+#: src/RevisePal.cpp:125
+#, fuzzy
+msgid "Pal's nickname:"
+msgstr "Pal's nickname:"
+
+#: src/RevisePal.cpp:131
+#, fuzzy
+msgid "Please input pal's new nickname!"
+msgstr "Please input pal's new nickname!"
+
+#: src/RevisePal.cpp:137
+#, fuzzy
+msgid "Pal's group name:"
+msgstr "Pal's group name:"
+
+#: src/RevisePal.cpp:143
+#, fuzzy
+msgid "Please input pal's new group name!"
+msgstr "Please input pal's new group name!"
+
+#: src/RevisePal.cpp:149
+#, fuzzy
+msgid "System coding:"
+msgstr "System encode:"
+
+#: src/RevisePal.cpp:155
+#, fuzzy
+msgid "Be SURE to know what you are doing!"
+msgstr "you must understand what you are doing!"
+
+#: src/RevisePal.cpp:161
+#, fuzzy
+msgid "Pal's face picture:"
+msgstr "Pal's default head portrait:"
+
+#: src/RevisePal.cpp:175
+#, fuzzy
+msgid "Be compatible with iptux's protocol (DANGEROUS)"
+msgstr "Be compatible with iptux protocol"
+
+#: src/SendFileData.cpp:113
+msgid "send"
+msgstr "send"
+
+#: src/SendFileData.cpp:153
+#, fuzzy, c-format
+msgid "Failed to send the file \"%s\" to %s!"
+msgstr "Failure to send the file!"
+
+#: src/SendFileData.cpp:156
+#, fuzzy, c-format
+msgid "Send the file \"%s\" to %s successfully!"
+msgstr "Send the file successfully!"
+
+#: src/SendFileData.cpp:280
+#, fuzzy, c-format
+msgid "Failed to send the directory \"%s\" to %s!"
+msgstr "Failure to send the file!"
+
+#: src/SendFileData.cpp:283
+#, fuzzy, c-format
+msgid "Send the directory \"%s\" to %s successfully!"
+msgstr "Send the file successfully!"
+
+#: src/ShareFile.cpp:102
+#, fuzzy
+msgid "Shared Files Management"
+msgstr "Shared files management"
+
+#: src/ShareFile.cpp:105
+msgid "OK"
+msgstr "OK"
+
+#: src/ShareFile.cpp:106
+msgid "Apply"
+msgstr "Apply"
+
+#: src/ShareFile.cpp:150
+msgid "Add Files"
+msgstr "Add Files"
+
+#: src/ShareFile.cpp:153
+msgid "Add Folders"
+msgstr "Add Folders"
+
+#: src/ShareFile.cpp:156
+#, fuzzy
+msgid "Delete Resources"
+msgstr "Delete Shared"
+
+#: src/ShareFile.cpp:159
+msgid "Clear Password"
+msgstr "Clear Password"
+
+#: src/ShareFile.cpp:162
+msgid "Set Password"
+msgstr "Set Password"
+
+#: src/ShareFile.cpp:270
+#, fuzzy
+msgid "File"
+msgstr "_File"
+
+#: src/ShareFile.cpp:418
+#, fuzzy
+msgid "Choose the files to share"
+msgstr "Choose shared files"
+
+#: src/ShareFile.cpp:421
+#, fuzzy
+msgid "Choose the folders to share"
+msgstr "Choose shared folders"
+
+#: src/SoundSystem.cpp:153
+#, fuzzy, c-format
+msgid "Failed to play the prompt tone, %s\n"
+msgstr "act: play the prompt tone, warning: %s\n"
+
+#: src/StatusIcon.cpp:94
+#, fuzzy, c-format
+msgid "To be read: %u messages"
+msgstr "Undealt: %<PRIu32> messages"
+
+#: src/StatusIcon.cpp:122
+msgid "_Hide"
+msgstr "_Hide"
+
+#: src/StatusIcon.cpp:124
+msgid "_Show"
+msgstr "_Show"
+
+#: src/support.cpp:44
+#, fuzzy
+msgid "Loading the process successfully!"
+msgstr "Loading process to succeed!"
+
+#: src/support.cpp:63
+#, fuzzy
+msgid "The process is about to quit!"
+msgstr "Process is about to quit!"
+
+#: src/support.cpp:93
+msgid "Can't find any available web browser!\n"
+msgstr ""
+
+#: src/support.cpp:123
+#, fuzzy, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to bind the TCP/UDP port(2425)!\n"
+"%s"
+msgstr ""
+"act: bind the TCP/UDP port(2425) !\n"
+"error: %s !"
+
+#: src/UdpData.cpp:130 src/UdpData.cpp:131 src/UdpData.cpp:541
+#: src/UdpData.cpp:578
+msgid "mysterious"
+msgstr "mysterious"
+
+#: src/uninstall/utils.cpp:23
+msgid "The user is not privileged!\n"
+msgstr "The user is not privileged!\n"
+
+#: src/uninstall/utils.cpp:34
+#, fuzzy, c-format
+msgid "Opendir() directory \"%s\" failed, %s\n"
+msgstr "act: open directory '%s',warning: %s\n"
+
+#: src/uninstall/utils.cpp:45
+#, fuzzy, c-format
+msgid "Stat() file \"%s\" failed, %s\n"
+msgstr "act: rmdir directory '%s',warning: %s\n"
+
+#: src/uninstall/utils.cpp:51 src/uninstall/utils.cpp:67
+#, fuzzy, c-format
+msgid "Unlink() file \"%s\" failed, %s\n"
+msgstr "act: open directory '%s',warning: %s\n"
+
+#: src/uninstall/utils.cpp:61
+#, fuzzy, c-format
+msgid "Rmdir() directory \"%s\" failed, %s\n"
+msgstr "act: rmdir directory '%s',warning: %s\n"
+
+#, fuzzy
+#~ msgid "Save files to:"
+#~ msgstr "Save file to:"
