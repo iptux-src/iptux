@@ -571,7 +571,7 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode)
 
 	pptr = buf + size;
 	if (encode && strcasecmp(encode, "utf-8") != 0
-		 && (ptr = convert_encode(buf, encode, "utf-8"))) {
+		 && (ptr = convert_encode(extra, encode, "utf-8"))) {
 		snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
 		g_free(ptr);
 	} else
