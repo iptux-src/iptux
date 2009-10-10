@@ -61,7 +61,7 @@ void StatusIcon::CreateStatusIcon()
 
 	g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), NULL);
 	g_signal_connect(statusicon, "popup-menu", G_CALLBACK(PopupWorkMenu), NULL);
-	timerid = gdk_threads_add_timeout_seconds(1, GSourceFunc(UpdateUI), this);
+	timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 }
 
 /**

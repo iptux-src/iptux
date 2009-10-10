@@ -451,7 +451,7 @@ void MainWindow::InitSublayer()
 	g_datalist_init(&mdlset);
 	g_datalist_init(&dtset);
 	accel = gtk_accel_group_new();
-	timerid = gdk_threads_add_timeout_seconds(1, GSourceFunc(UpdateUI), this);
+	timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 
 	model = CreatePaltreeModel();
 	g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,
@@ -1814,7 +1814,7 @@ void MainWindow::ShowTransWindow(GData **widset)
 	gtk_widget_show(widget);
 	gtk_window_present(GTK_WINDOW(widget));
 	widget = GTK_WIDGET(g_datalist_get_data(widset, "trans-treeview-widget"));
-	timerid = gdk_threads_add_timeout_seconds(1, GSourceFunc(UpdateTransUI), widget);
+	timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateTransUI), widget);
 	g_object_set_data(G_OBJECT(widget), "update-timer-id", GUINT_TO_POINTER(timerid));
 }
 
