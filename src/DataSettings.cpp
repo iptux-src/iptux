@@ -670,7 +670,7 @@ void DataSettings::FillIconModel(GtkTreeModel *model)
 	char *file;
 
 	theme = gtk_icon_theme_get_default();
-	if ( (dir = opendir(__ICON_PATH))) {
+	if ( (dir = opendir(__PIXMAPS_PATH "/icon"))) {
 		while ( (dirt = readdir(dir))) {
 			if (strcmp(dirt->d_name, ".") == 0
 				 || strcmp(dirt->d_name, "..") == 0)
@@ -916,7 +916,7 @@ void DataSettings::ObtainPersonalValue()
 	gtk_tree_model_get_iter_from_string(model, &iter, path);
 	gtk_tree_model_get(model, &iter, 1, &file, -1);
 	if (strcmp(progdt.myicon, file) != 0) {
-		snprintf(path, MAX_PATHLEN, __ICON_PATH "/%s", file);
+		snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
 		if (access(path, F_OK) != 0) {
 			g_free(file);
 			g_free(progdt.myicon);
@@ -984,7 +984,7 @@ void DataSettings::ObtainSystemValue()
 	gtk_tree_model_get_iter_from_string(model, &iter, path);
 	gtk_tree_model_get(model, &iter, 1, &file, -1);
 	if (strcmp(progdt.palicon, file) != 0) {
-		snprintf(path, MAX_PATHLEN, __ICON_PATH "/%s", file);
+		snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
 		if (access(path, F_OK) != 0) {
 			g_free(file);
 			g_free(progdt.palicon);

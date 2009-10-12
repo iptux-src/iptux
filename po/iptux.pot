@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-09 11:21+0800\n"
+"POT-Creation-Date: 2009-10-12 11:51+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,22 +49,22 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/CoreThread.cpp:531 src/CoreThread.cpp:556 src/CoreThread.cpp:1052
-#: src/CoreThread.cpp:1078
+#: src/CoreThread.cpp:531 src/CoreThread.cpp:556 src/CoreThread.cpp:1053
+#: src/CoreThread.cpp:1079
 msgid "Others"
 msgstr ""
 
-#: src/CoreThread.cpp:911 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
+#: src/CoreThread.cpp:912 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
 #: src/RecvFileData.cpp:245 src/SendFileData.cpp:125 src/SendFileData.cpp:212
 #: src/ShareFile.cpp:228 src/ShareFile.cpp:382
 msgid "unknown"
 msgstr ""
 
-#: src/CoreThread.cpp:925
+#: src/CoreThread.cpp:926
 msgid "<ERROR>"
 msgstr ""
 
-#: src/CoreThread.cpp:1102
+#: src/CoreThread.cpp:1103
 msgid "Broadcast"
 msgstr ""
 

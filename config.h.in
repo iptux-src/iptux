@@ -18,14 +18,8 @@
 /* Iptux Logo Directory */
 #undef __LOGO_PATH
 
-/* Iptux Icon Directory */
-#undef __ICON_PATH
-
-/* Iptux Tip Directory */
-#undef __TIP_PATH
-
-/* Iptux Menu Directory */
-#undef __MENU_PATH
+/* Iptux Pixmaps Directory */
+#undef __PIXMAPS_PATH
 
 /* Iptux Sound Directory */
 #undef __SOUND_PATH

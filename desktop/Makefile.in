@@ -31,7 +31,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = desktop
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(nobase_dist_logo_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -49,8 +50,8 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(logodir)"
 desktopDATA_INSTALL = $(INSTALL_DATA)
-logoDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(desktop_DATA) $(logo_DATA)
+nobase_dist_logoDATA_INSTALL = $(install_sh_DATA)
+DATA = $(desktop_DATA) $(nobase_dist_logo_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -152,7 +153,6 @@ dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host_alias = @host_alias@
 htmldir = @htmldir@
-icondir = @icondir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -162,10 +162,10 @@ localedir = @localedir@
 localstatedir = @localstatedir@
 logodir = @logodir@
 mandir = @mandir@
-menudir = @menudir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+pixmapsdir = @pixmapsdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -175,15 +175,20 @@ sounddir = @sounddir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-tipdir = @tipdir@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 desktop = iptux.desktop
-logo = ip-tux.png i-tux.png
+logo_64 = hicolor/64x64/apps/ip-tux.png hicolor/64x64/apps/i-tux.png
+logo_48 = hicolor/48x48/apps/ip-tux.png hicolor/48x48/apps/i-tux.png
+logo_32 = hicolor/32x32/apps/ip-tux.png hicolor/32x32/apps/i-tux.png
+logo_24 = hicolor/24x24/apps/ip-tux.png hicolor/24x24/apps/i-tux.png
+logo_22 = hicolor/22x22/apps/ip-tux.png hicolor/22x22/apps/i-tux.png
+logo_16 = hicolor/16x16/apps/ip-tux.png hicolor/16x16/apps/i-tux.png
+logo = $(logo_64) $(logo_48) $(logo_32) $(logo_24) $(logo_22) $(logo_16)
 EXTRA_DIST = $(desktop) $(logo)
 desktop_DATA = $(desktop)
-logo_DATA = $(logo)
+nobase_dist_logo_DATA = $(logo)
 all: all-am
 
 .SUFFIXES:
@@ -196,9 +201,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  desktop/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  desktop/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  desktop/Makefile
+	  $(AUTOMAKE) --gnu  desktop/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -233,20 +238,22 @@ uninstall-desktopDATA:
 	  echo " rm -f '$(DESTDIR)$(desktopdir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(desktopdir)/$$f"; \
 	done
-install-logoDATA: $(logo_DATA)
+install-nobase_dist_logoDATA: $(nobase_dist_logo_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(logodir)" || $(MKDIR_P) "$(DESTDIR)$(logodir)"
-	@list='$(logo_DATA)'; for p in $$list; do \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_dist_logo_DATA)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(logoDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(logodir)/$$f'"; \
-	  $(logoDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(logodir)/$$f"; \
+	  $(am__vpath_adj) \
+	  echo " $(nobase_dist_logoDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(logodir)/$$f'"; \
+	  $(nobase_dist_logoDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(logodir)/$$f"; \
 	done
 
-uninstall-logoDATA:
+uninstall-nobase_dist_logoDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(logo_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_dist_logo_DATA)'; for p in $$list; do \
+	  $(am__vpath_adj) \
 	  echo " rm -f '$(DESTDIR)$(logodir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(logodir)/$$f"; \
 	done
@@ -332,7 +339,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-desktopDATA install-logoDATA
+install-data-am: install-desktopDATA install-nobase_dist_logoDATA
 
 install-dvi: install-dvi-am
 
@@ -366,7 +373,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-desktopDATA uninstall-logoDATA
+uninstall-am: uninstall-desktopDATA uninstall-nobase_dist_logoDATA
 
 .MAKE: install-am install-strip
 
@@ -375,12 +382,12 @@ uninstall-am: uninstall-desktopDATA uninstall-logoDATA
 	install install-am install-data install-data-am \
 	install-desktopDATA install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-logoDATA install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am uninstall uninstall-am uninstall-desktopDATA \
-	uninstall-logoDATA
+	install-info-am install-man install-nobase_dist_logoDATA \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-desktopDATA uninstall-nobase_dist_logoDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -669,9 +669,7 @@ GLIB_LIBS
 GLIB_CFLAGS
 PKG_CONFIG
 sounddir
-menudir
-tipdir
-icondir
+pixmapsdir
 logodir
 desktopdir
 EGREP
@@ -6735,27 +6733,15 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-logodir="${defdir}/icons/hicolor/64x64/apps"
+logodir="${defdir}/icons"
 cat >>confdefs.h <<_ACEOF
 #define __LOGO_PATH "${logodir}"
 _ACEOF
 
 
-icondir="${defdir}/iptux/pixmaps/icon"
+pixmapsdir="${defdir}/iptux/pixmaps"
 cat >>confdefs.h <<_ACEOF
-#define __ICON_PATH "${icondir}"
-_ACEOF
-
-
-tipdir="${defdir}/iptux/pixmaps/tip"
-cat >>confdefs.h <<_ACEOF
-#define __TIP_PATH "${tipdir}"
-_ACEOF
-
-
-menudir="${defdir}/iptux/pixmaps/menu"
-cat >>confdefs.h <<_ACEOF
-#define __MENU_PATH "${menudir}"
+#define __PIXMAPS_PATH "${pixmapsdir}"
 _ACEOF
 
 

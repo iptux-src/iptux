@@ -33,8 +33,18 @@ int main(int argc, char *argv[])
 	check_privileged();
 
 	remove_file(__DESKTOP_PATH "/iptux.desktop");
-	remove_file(__LOGO_PATH "/ip-tux.png");
-	remove_file(__LOGO_PATH "/i-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/64x64/apps/ip-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/64x64/apps/i-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/48x48/apps/ip-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/48x48/apps/i-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/32x32/apps/ip-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/32x32/apps/i-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/24x24/apps/ip-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/24x24/apps/i-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/22x22/apps/ip-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/22x22/apps/i-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/16x16/apps/ip-tux.png");
+	remove_file(__LOGO_PATH "/hicolor/16x16/apps/i-tux.png");
 
 	remove_file(__EXEC_PATH "/iptux");
 	remove_file(__EXEC_PATH "/ihateiptux");

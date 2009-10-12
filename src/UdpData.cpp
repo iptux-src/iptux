@@ -684,7 +684,7 @@ char *UdpData::GetPalIcon()
 	const char *ptr;
 
 	if ((ptr = iptux_skip_string(buf, size, 2)) && *ptr != '\0') {
-		snprintf(path, MAX_PATHLEN, __ICON_PATH "/%s", ptr);
+		snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", ptr);
 		if (access(path, F_OK) == 0)
 			return g_strdup(ptr);
 	}

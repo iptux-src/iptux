@@ -31,7 +31,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = sound
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(nobase_dist_sound_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -48,8 +49,8 @@ am__vpath_adj = case $$p in \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(sounddir)"
-soundDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(sound_DATA)
+nobase_dist_soundDATA_INSTALL = $(install_sh_DATA)
+DATA = $(nobase_dist_sound_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -151,7 +152,6 @@ dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host_alias = @host_alias@
 htmldir = @htmldir@
-icondir = @icondir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -161,10 +161,10 @@ localedir = @localedir@
 localstatedir = @localstatedir@
 logodir = @logodir@
 mandir = @mandir@
-menudir = @menudir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+pixmapsdir = @pixmapsdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -174,13 +174,12 @@ sounddir = @sounddir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-tipdir = @tipdir@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 sound = msg.ogg trans.ogg
 EXTRA_DIST = $(sound)
-sound_DATA = $(sound)
+nobase_dist_sound_DATA = $(sound)
 all: all-am
 
 .SUFFIXES:
@@ -193,9 +192,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  sound/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  sound/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  sound/Makefile
+	  $(AUTOMAKE) --gnu  sound/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -213,20 +212,22 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-soundDATA: $(sound_DATA)
+install-nobase_dist_soundDATA: $(nobase_dist_sound_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(sounddir)" || $(MKDIR_P) "$(DESTDIR)$(sounddir)"
-	@list='$(sound_DATA)'; for p in $$list; do \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_dist_sound_DATA)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(soundDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(sounddir)/$$f'"; \
-	  $(soundDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(sounddir)/$$f"; \
+	  $(am__vpath_adj) \
+	  echo " $(nobase_dist_soundDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(sounddir)/$$f'"; \
+	  $(nobase_dist_soundDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(sounddir)/$$f"; \
 	done
 
-uninstall-soundDATA:
+uninstall-nobase_dist_soundDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(sound_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_dist_sound_DATA)'; for p in $$list; do \
+	  $(am__vpath_adj) \
 	  echo " rm -f '$(DESTDIR)$(sounddir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(sounddir)/$$f"; \
 	done
@@ -312,7 +313,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-soundDATA
+install-data-am: install-nobase_dist_soundDATA
 
 install-dvi: install-dvi-am
 
@@ -346,7 +347,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-soundDATA
+uninstall-am: uninstall-nobase_dist_soundDATA
 
 .MAKE: install-am install-strip
 
@@ -355,11 +356,12 @@ uninstall-am: uninstall-soundDATA
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-soundDATA install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-soundDATA
+	install-nobase_dist_soundDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-nobase_dist_soundDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

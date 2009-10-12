@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-09 11:21+0800\n"
+"POT-Creation-Date: 2009-10-12 11:51+0800\n"
 "PO-Revision-Date: 2009-10-08 16:27+0800\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplify\n"
@@ -53,22 +53,22 @@ msgstr ""
 "创建新的套接口失败！\n"
 "%s"
 
-#: src/CoreThread.cpp:531 src/CoreThread.cpp:556 src/CoreThread.cpp:1052
-#: src/CoreThread.cpp:1078
+#: src/CoreThread.cpp:531 src/CoreThread.cpp:556 src/CoreThread.cpp:1053
+#: src/CoreThread.cpp:1079
 msgid "Others"
 msgstr "其他"
 
-#: src/CoreThread.cpp:911 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
+#: src/CoreThread.cpp:912 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
 #: src/RecvFileData.cpp:245 src/SendFileData.cpp:125 src/SendFileData.cpp:212
 #: src/ShareFile.cpp:228 src/ShareFile.cpp:382
 msgid "unknown"
 msgstr "未知"
 
-#: src/CoreThread.cpp:925
+#: src/CoreThread.cpp:926
 msgid "<ERROR>"
 msgstr "<错误>"
 
-#: src/CoreThread.cpp:1102
+#: src/CoreThread.cpp:1103
 msgid "Broadcast"
 msgstr "广播"
 

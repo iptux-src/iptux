@@ -31,7 +31,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = pixmaps
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(nobase_dist_pixmaps_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -47,12 +48,9 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(icondir)" "$(DESTDIR)$(menudir)" \
-	"$(DESTDIR)$(tipdir)"
-iconDATA_INSTALL = $(INSTALL_DATA)
-menuDATA_INSTALL = $(INSTALL_DATA)
-tipDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(icon_DATA) $(menu_DATA) $(tip_DATA)
+am__installdirs = "$(DESTDIR)$(pixmapsdir)"
+nobase_dist_pixmapsDATA_INSTALL = $(install_sh_DATA)
+DATA = $(nobase_dist_pixmaps_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -154,7 +152,6 @@ dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host_alias = @host_alias@
 htmldir = @htmldir@
-icondir = @icondir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -164,10 +161,10 @@ localedir = @localedir@
 localstatedir = @localstatedir@
 logodir = @logodir@
 mandir = @mandir@
-menudir = @menudir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+pixmapsdir = @pixmapsdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -177,22 +174,24 @@ sounddir = @sounddir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-tipdir = @tipdir@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-icon = icon-blowfish.png icon-bug.png icon-cow.png icon-daemon.png \
-       icon-dog.png icon-elephant.png icon-frog.png icon-ghost.png \
-       icon-konqui.png icon-lion.png icon-monkey.png icon-penguin.png \
-       icon-pig.png icon-qq.png icon-rabbit.png icon-scream.png \
-       icon-teddybear.png icon-turtle.png icon-tux.png
+icon = icon/icon-blowfish.png icon/icon-bug.png icon/icon-cow.png icon/icon-daemon.png \
+       icon/icon-dog.png icon/icon-elephant.png icon/icon-frog.png icon/icon-ghost.png \
+       icon/icon-konqui.png icon/icon-lion.png icon/icon-monkey.png icon/icon-penguin.png \
+       icon/icon-pig.png icon/icon-qq.png icon/icon-rabbit.png icon/icon-scream.png \
+       icon/icon-teddybear.png icon/icon-turtle.png icon/icon-tux.png
 
-tip = tip-error.png tip-finish.png tip-hide.png  tip-recv.png tip-send.png tip-show.png
-menu = menu-board.png menu-detect.png menu-group.png menu-share.png
-EXTRA_DIST = $(tip) $(icon) $(menu)
-icon_DATA = $(icon)
-tip_DATA = $(tip)
-menu_DATA = $(menu)
+tip = tip/tip-error.png tip/tip-finish.png tip/tip-hide.png tip/tip-recv.png tip/tip-send.png \
+     tip/tip-show.png
+
+menu = menu/menu-board.png menu/menu-detect.png menu/menu-group.png \
+        menu/menu-share.png
+
+pixmaps = $(tip) $(icon) $(menu)
+EXTRA_DIST = $(pixmaps)
+nobase_dist_pixmaps_DATA = $(pixmaps)
 all: all-am
 
 .SUFFIXES:
@@ -205,9 +204,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  pixmaps/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  pixmaps/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  pixmaps/Makefile
+	  $(AUTOMAKE) --gnu  pixmaps/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -225,56 +224,24 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-iconDATA: $(icon_DATA)
+install-nobase_dist_pixmapsDATA: $(nobase_dist_pixmaps_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(icondir)" || $(MKDIR_P) "$(DESTDIR)$(icondir)"
-	@list='$(icon_DATA)'; for p in $$list; do \
+	test -z "$(pixmapsdir)" || $(MKDIR_P) "$(DESTDIR)$(pixmapsdir)"
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_dist_pixmaps_DATA)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(iconDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(icondir)/$$f'"; \
-	  $(iconDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(icondir)/$$f"; \
+	  $(am__vpath_adj) \
+	  echo " $(nobase_dist_pixmapsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pixmapsdir)/$$f'"; \
+	  $(nobase_dist_pixmapsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pixmapsdir)/$$f"; \
 	done
 
-uninstall-iconDATA:
+uninstall-nobase_dist_pixmapsDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(icon_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(icondir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(icondir)/$$f"; \
-	done
-install-menuDATA: $(menu_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(menudir)" || $(MKDIR_P) "$(DESTDIR)$(menudir)"
-	@list='$(menu_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(menuDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(menudir)/$$f'"; \
-	  $(menuDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(menudir)/$$f"; \
-	done
-
-uninstall-menuDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(menu_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(menudir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(menudir)/$$f"; \
-	done
-install-tipDATA: $(tip_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(tipdir)" || $(MKDIR_P) "$(DESTDIR)$(tipdir)"
-	@list='$(tip_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(tipDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(tipdir)/$$f'"; \
-	  $(tipDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(tipdir)/$$f"; \
-	done
-
-uninstall-tipDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(tip_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(tipdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(tipdir)/$$f"; \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_dist_pixmaps_DATA)'; for p in $$list; do \
+	  $(am__vpath_adj) \
+	  echo " rm -f '$(DESTDIR)$(pixmapsdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pixmapsdir)/$$f"; \
 	done
 tags: TAGS
 TAGS:
@@ -313,7 +280,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(icondir)" "$(DESTDIR)$(menudir)" "$(DESTDIR)$(tipdir)"; do \
+	for dir in "$(DESTDIR)$(pixmapsdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -358,7 +325,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-iconDATA install-menuDATA install-tipDATA
+install-data-am: install-nobase_dist_pixmapsDATA
 
 install-dvi: install-dvi-am
 
@@ -392,7 +359,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-iconDATA uninstall-menuDATA uninstall-tipDATA
+uninstall-am: uninstall-nobase_dist_pixmapsDATA
 
 .MAKE: install-am install-strip
 
@@ -400,13 +367,13 @@ uninstall-am: uninstall-iconDATA uninstall-menuDATA uninstall-tipDATA
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-iconDATA install-info install-info-am \
-	install-man install-menuDATA install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip install-tipDATA \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-html-am install-info install-info-am install-man \
+	install-nobase_dist_pixmapsDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am uninstall uninstall-am uninstall-iconDATA \
-	uninstall-menuDATA uninstall-tipDATA
+	pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-nobase_dist_pixmapsDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

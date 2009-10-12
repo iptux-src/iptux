@@ -256,7 +256,7 @@ void RevisePal::ApplyReviseData()
 	gtk_tree_model_get_iter_from_string(model, &iter, path);
 	gtk_tree_model_get(model, &iter, 1, &file, -1);
 	if (strcmp(pal->iconfile, file) != 0) {
-		snprintf(path, MAX_PATHLEN, __ICON_PATH "/%s", file);
+		snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
 		if (access(path, F_OK) != 0) {
 			g_free(file);
 			g_free(pal->iconfile);
@@ -321,7 +321,7 @@ void RevisePal::FillIconModel(GtkTreeModel *model)
 	char *file;
 
 	theme = gtk_icon_theme_get_default();
-	if ( (dir = opendir(__ICON_PATH))) {
+	if ( (dir = opendir(__PIXMAPS_PATH "/icon"))) {
 		while ( (dirt = readdir(dir))) {
 			if (strcmp(dirt->d_name, ".") == 0
 				 || strcmp(dirt->d_name, "..") == 0)

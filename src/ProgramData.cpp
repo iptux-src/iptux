@@ -256,7 +256,7 @@ void ProgramData::CheckIconTheme()
 	char pathbuf[MAX_PATHLEN];
 	GdkPixbuf *pixbuf;
 
-	snprintf(pathbuf, MAX_PATHLEN, __ICON_PATH "/%s", myicon);
+	snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", myicon);
 	if (access(pathbuf, F_OK) != 0) {
 		snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
 				 g_get_user_config_dir(), myicon);
@@ -266,7 +266,7 @@ void ProgramData::CheckIconTheme()
 		}
 	}
 
-	snprintf(pathbuf, MAX_PATHLEN, __ICON_PATH "/%s", palicon);
+	snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", palicon);
 	if (access(pathbuf, F_OK) != 0) {
 		snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
 				 g_get_user_config_dir(), palicon);

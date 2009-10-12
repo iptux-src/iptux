@@ -70,18 +70,12 @@ AC_DEFINE_UNQUOTED(__LOCALE_PATH, "${localedir}")
 desktopdir="${defdir}/applications"
 AC_DEFINE_UNQUOTED(__DESKTOP_PATH, "${desktopdir}")
 AC_SUBST(desktopdir)
-logodir="${defdir}/icons/hicolor/64x64/apps"
+logodir="${defdir}/icons"
 AC_DEFINE_UNQUOTED(__LOGO_PATH, "${logodir}")
 AC_SUBST(logodir)
-icondir="${defdir}/iptux/pixmaps/icon"
-AC_DEFINE_UNQUOTED(__ICON_PATH, "${icondir}")
-AC_SUBST(icondir)
-tipdir="${defdir}/iptux/pixmaps/tip"
-AC_DEFINE_UNQUOTED(__TIP_PATH, "${tipdir}")
-AC_SUBST(tipdir)
-menudir="${defdir}/iptux/pixmaps/menu"
-AC_DEFINE_UNQUOTED(__MENU_PATH, "${menudir}")
-AC_SUBST(menudir)
+pixmapsdir="${defdir}/iptux/pixmaps"
+AC_DEFINE_UNQUOTED(__PIXMAPS_PATH, "${pixmapsdir}")
+AC_SUBST(pixmapsdir)
 sounddir="${defdir}/iptux/sound"
 AC_DEFINE_UNQUOTED(__SOUND_PATH, "${sounddir}")
 AC_SUBST(sounddir)
