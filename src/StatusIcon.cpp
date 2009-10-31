@@ -57,10 +57,14 @@ void StatusIcon::CreateStatusIcon()
 	}
 	screen = gdk_screen_get_default();
 	gtk_status_icon_set_screen(statusicon, screen);
-	gtk_status_icon_set_tooltip(statusicon, _("iptux"));
 
 	g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), NULL);
 	g_signal_connect(statusicon, "popup-menu", G_CALLBACK(PopupWorkMenu), NULL);
+#if GTK_CHECK_VERSION(2,16,0)
+	g_object_set(statusicon, "has-tooltip", TRUE, NULL);
+	g_signal_connect(statusicon, "query-tooltip",
+			 G_CALLBACK(StatusIconQueryTooltip), NULL);
+#endif
 	timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 }
 
@@ -85,22 +89,37 @@ void StatusIcon::AlterStatusIconMode()
  */
 gboolean StatusIcon::UpdateUI(StatusIcon *sicon)
 {
-	char *ipstr;
+#if !(GTK_CHECK_VERSION(2,16,0))
+	char *msgstr, *prestr;
 	guint len;
 
+	/* 获取消息串 */
 	pthread_mutex_lock(cthrd.GetMutex());
 	if ( (len = cthrd.GetMsglineItems())) {
 		gtk_status_icon_set_blinking(sicon->statusicon, TRUE);
-		ipstr = g_strdup_printf(_("To be read: %u messages"), len);
-		gtk_status_icon_set_tooltip(sicon->statusicon, ipstr);
+		msgstr = g_strdup_printf(_("To be read: %u messages"), len);
 	} else {
 		gtk_status_icon_set_blinking(sicon->statusicon, FALSE);
-		ipstr = get_sys_host_addr_string(cthrd.UdpSockQuote());
-		ipstr = ipstr ? ipstr : g_strdup(_("iptux"));
-		gtk_status_icon_set_tooltip(sicon->statusicon, ipstr);
+		msgstr = get_sys_host_addr_string(cthrd.UdpSockQuote());
+		msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
 	}
-	g_free(ipstr);
 	pthread_mutex_unlock(cthrd.GetMutex());
+	/* 在必要的条件下更改消息串 */
+	prestr = (char *)g_object_get_data(G_OBJECT(sicon->statusicon), "tooltip-text");
+	if (!prestr || strcmp(prestr, msgstr) != 0) {
+		gtk_status_icon_set_tooltip(sicon->statusicon, msgstr);
+		g_object_set_data_full(G_OBJECT(sicon->statusicon), "tooltip-text",
+						 msgstr, GDestroyNotify(g_free));
+	} else
+		g_free(msgstr);
+#else
+	pthread_mutex_lock(cthrd.GetMutex());
+	if (cthrd.GetMsglineHeadItem())
+		gtk_status_icon_set_blinking(sicon->statusicon, TRUE);
+	else
+		gtk_status_icon_set_blinking(sicon->statusicon, FALSE);
+	pthread_mutex_unlock(cthrd.GetMutex());
+#endif
 
 	return TRUE;
 }
@@ -230,4 +249,35 @@ void StatusIcon::PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint ti
 	menu = CreatePopupMenu(statusicon);
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, time);
+}
+
+/**
+ * 状态图标信息提示查询请求.
+ * @param statusicon the object which received the signal
+ * @param x the x coordinate of the cursor position
+ * @param y the y coordinate of the cursor position
+ * @param key TRUE if the tooltip was trigged using the keyboard
+ * @param tooltip a GtkTooltip
+ * @return Gtk+库所需
+ */
+gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
+						 gboolean key, GtkTooltip *tooltip)
+{
+	char *msgstr;
+	guint len;
+
+	/* 获取消息串 */
+	pthread_mutex_lock(cthrd.GetMutex());
+	if ( (len = cthrd.GetMsglineItems())) {
+		msgstr = g_strdup_printf(_("To be read: %u messages"), len);
+	} else {
+		msgstr = get_sys_host_addr_string(cthrd.UdpSockQuote());
+		msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
+	}
+	pthread_mutex_unlock(cthrd.GetMutex());
+	/* 设置信息提示串 */
+	gtk_tooltip_set_text(tooltip, msgstr);
+	g_free(msgstr);
+
+	return TRUE;
 }

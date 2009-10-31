@@ -32,6 +32,8 @@ private:
 	static void ShowTransWindow();
 	static void StatusIconActivate();
 	static void PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint time);
+	static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
+						 gboolean key, GtkTooltip *tooltip);
 };
 
 #endif
