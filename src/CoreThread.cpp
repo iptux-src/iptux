@@ -249,6 +249,31 @@ void CoreThread::SendBroadcastExit(PalInfo *pal)
 }
 
 /**
+ * 更新本大爷的个人信息.
+ */
+void CoreThread::UpdateMyInfo()
+{
+	Command cmd;
+	pthread_t pid;
+	PalInfo *pal;
+	GSList *tlist;
+
+	pthread_mutex_lock(&cthrd.mutex);
+	tlist = cthrd.pallist;
+	while (tlist) {
+		pal = (PalInfo *)tlist->data;
+		if (FLAG_ISSET(pal->flags, 1))
+			cmd.SendAbsence(cthrd.udpsock, pal);
+		if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
+			pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
+			pthread_detach(pid);
+		}
+		tlist = g_slist_next(tlist);
+	}
+	pthread_mutex_unlock(&cthrd.mutex);
+}
+
+/**
  * 从好友链表中移除所有好友数据(非UI线程安全).
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */

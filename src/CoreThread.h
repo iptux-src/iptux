@@ -38,6 +38,7 @@ public:
 	static void SendNotifyToAll(CoreThread *pcthrd);
 	static void SendFeatureData(PalInfo *pal);
 	static void SendBroadcastExit(PalInfo *pal);
+	static void UpdateMyInfo();
 
 	void ClearAllPalFromList();
 	PalInfo *GetPalFromList(in_addr_t ipv4);

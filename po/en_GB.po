@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-12 11:51+0800\n"
+"POT-Creation-Date: 2009-10-31 21:55+0800\n"
 "PO-Revision-Date: 2009-01-27 14:10+0000\n"
 "Last-Translator: Jen Ockwell <jenfraggleubuntu@googlemail.com>\n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
@@ -50,299 +50,299 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/CoreThread.cpp:531 src/CoreThread.cpp:556 src/CoreThread.cpp:1053
-#: src/CoreThread.cpp:1079
+#: src/CoreThread.cpp:556 src/CoreThread.cpp:581 src/CoreThread.cpp:1078
+#: src/CoreThread.cpp:1104
 msgid "Others"
 msgstr ""
 
-#: src/CoreThread.cpp:912 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
+#: src/CoreThread.cpp:937 src/RecvFile.cpp:313 src/RecvFileData.cpp:126
 #: src/RecvFileData.cpp:245 src/SendFileData.cpp:125 src/SendFileData.cpp:212
 #: src/ShareFile.cpp:228 src/ShareFile.cpp:382
 msgid "unknown"
 msgstr "unknown"
 
-#: src/CoreThread.cpp:926
+#: src/CoreThread.cpp:951
 msgid "<ERROR>"
 msgstr ""
 
-#: src/CoreThread.cpp:1103
+#: src/CoreThread.cpp:1128
 msgid "Broadcast"
 msgstr ""
 
-#: src/DataSettings.cpp:58
+#: src/DataSettings.cpp:56
 msgid "Personal"
 msgstr "Personal"
 
-#: src/DataSettings.cpp:60
+#: src/DataSettings.cpp:58
 msgid "System"
 msgstr "System"
 
-#: src/DataSettings.cpp:63
+#: src/DataSettings.cpp:61
 msgid "Sound"
 msgstr "Sound"
 
-#: src/DataSettings.cpp:66
+#: src/DataSettings.cpp:64
 msgid "Network"
 msgstr ""
 
-#: src/DataSettings.cpp:150
+#: src/DataSettings.cpp:148
 msgid "Preferences"
 msgstr ""
 
-#: src/DataSettings.cpp:180
+#: src/DataSettings.cpp:178
 #, fuzzy
 msgid "Your nickname:"
 msgstr "Your nickname:"
 
-#: src/DataSettings.cpp:186
+#: src/DataSettings.cpp:184
 #, fuzzy
 msgid "Please input your nickname!"
 msgstr "Please input your nickname!"
 
-#: src/DataSettings.cpp:191
+#: src/DataSettings.cpp:189
 #, fuzzy
 msgid "Your group name:"
 msgstr "Your group name:"
 
-#: src/DataSettings.cpp:197
+#: src/DataSettings.cpp:195
 #, fuzzy
 msgid "Please input your group name!"
 msgstr "Please input your group name!"
 
-#: src/DataSettings.cpp:202
+#: src/DataSettings.cpp:200
 msgid "Your face picture:"
 msgstr ""
 
-#: src/DataSettings.cpp:215 src/RecvFile.cpp:236
+#: src/DataSettings.cpp:213 src/RecvFile.cpp:236
 #, fuzzy
 msgid "Save files to: "
 msgstr "Save file to:"
 
-#: src/DataSettings.cpp:225
+#: src/DataSettings.cpp:223
 #, fuzzy
 msgid "Photo"
 msgstr "host"
 
-#: src/DataSettings.cpp:237
+#: src/DataSettings.cpp:235
 #, fuzzy
 msgid "Signature"
 msgstr "Personal Signature:\n"
 
-#: src/DataSettings.cpp:268
+#: src/DataSettings.cpp:266
 #, fuzzy
 msgid "Candidate network coding:"
 msgstr "Default network encode:"
 
-#: src/DataSettings.cpp:274
+#: src/DataSettings.cpp:272
 #, fuzzy
 msgid "Candidate network coding"
 msgstr "Default network encode:"
 
-#: src/DataSettings.cpp:279
+#: src/DataSettings.cpp:277
 #, fuzzy
 msgid "Preference network coding:"
 msgstr "Default network encode:"
 
-#: src/DataSettings.cpp:285
+#: src/DataSettings.cpp:283
 msgid ""
 "Preference network coding (You should be aware of what you are doing if you "
 "want to modify it.)"
 msgstr ""
 
-#: src/DataSettings.cpp:291
+#: src/DataSettings.cpp:289
 #, fuzzy
 msgid "Pal's default face picture:"
 msgstr "Pal's default head portrait:"
 
-#: src/DataSettings.cpp:304
+#: src/DataSettings.cpp:302
 msgid "Panel font:"
 msgstr ""
 
-#: src/DataSettings.cpp:312
+#: src/DataSettings.cpp:310
 #, fuzzy
 msgid "Automatically hide the panel after login"
 msgstr "Automatic clear up chat history"
 
-#: src/DataSettings.cpp:317
+#: src/DataSettings.cpp:315
 #, fuzzy
 msgid "Automatically open the File Transmission Management"
 msgstr "Transmission management"
 
-#: src/DataSettings.cpp:322
+#: src/DataSettings.cpp:320
 #, fuzzy
 msgid "Use the 'Enter' key to send message"
 msgstr "Press the 'Enter' key to send a message"
 
-#: src/DataSettings.cpp:327
+#: src/DataSettings.cpp:325
 #, fuzzy
 msgid "Automatically clean up the chat history"
 msgstr "Automatic clear up chat history"
 
-#: src/DataSettings.cpp:332
+#: src/DataSettings.cpp:330
 #, fuzzy
 msgid "Save the chat history"
 msgstr "Chat History"
 
-#: src/DataSettings.cpp:337
+#: src/DataSettings.cpp:335
 #, fuzzy
 msgid "Use the Blacklist (NOT recommended)"
 msgstr "Use the blacklist(not recommended)"
 
-#: src/DataSettings.cpp:342
+#: src/DataSettings.cpp:340
 #, fuzzy
 msgid "Filter the request of sharing files"
 msgstr "Filter the request for shared files"
 
-#: src/DataSettings.cpp:364
+#: src/DataSettings.cpp:362
 msgid "Activate the sound support"
 msgstr ""
 
-#: src/DataSettings.cpp:371
+#: src/DataSettings.cpp:369
 msgid "Volume Control: "
 msgstr "Volume Control: "
 
-#: src/DataSettings.cpp:380
+#: src/DataSettings.cpp:378
 msgid "Sound Event"
 msgstr "Sound Event"
 
-#: src/DataSettings.cpp:408
+#: src/DataSettings.cpp:406
 #, fuzzy
 msgid "Test"
 msgstr "Testing"
 
-#: src/DataSettings.cpp:411
+#: src/DataSettings.cpp:409
 msgid "Stop"
 msgstr "Stop"
 
-#: src/DataSettings.cpp:434
+#: src/DataSettings.cpp:432
 msgid "From:"
 msgstr ""
 
-#: src/DataSettings.cpp:440
+#: src/DataSettings.cpp:438
 msgid "Beginning of the IP(v4) section"
 msgstr ""
 
-#: src/DataSettings.cpp:443
+#: src/DataSettings.cpp:441
 msgid "To:"
 msgstr ""
 
-#: src/DataSettings.cpp:449
+#: src/DataSettings.cpp:447
 msgid "End of the IP(v4) section"
 msgstr ""
 
-#: src/DataSettings.cpp:456
+#: src/DataSettings.cpp:454
 msgid "Add"
 msgstr "Add"
 
-#: src/DataSettings.cpp:460
+#: src/DataSettings.cpp:458
 msgid "Delete"
 msgstr "Delete"
 
-#: src/DataSettings.cpp:466
+#: src/DataSettings.cpp:464
 #, fuzzy
 msgid "Added IP(v4) Section:"
 msgstr "Added IPv4 section:"
 
-#: src/DataSettings.cpp:485
+#: src/DataSettings.cpp:483
 msgid "Import"
 msgstr "Import"
 
-#: src/DataSettings.cpp:488
+#: src/DataSettings.cpp:486
 msgid "Export"
 msgstr "Export"
 
-#: src/DataSettings.cpp:491
+#: src/DataSettings.cpp:489
 msgid "Clear"
 msgstr "Clear"
 
-#: src/DataSettings.cpp:703
+#: src/DataSettings.cpp:701
 #, fuzzy
 msgid "Transfer finished"
 msgstr "transport finished"
 
-#: src/DataSettings.cpp:708
+#: src/DataSettings.cpp:706
 #, fuzzy
 msgid "Message received"
 msgstr "message come"
 
-#: src/DataSettings.cpp:769
+#: src/DataSettings.cpp:767
 msgid "Play"
 msgstr "Play"
 
-#: src/DataSettings.cpp:776
+#: src/DataSettings.cpp:774
 msgid "Event"
 msgstr "Event"
 
-#: src/DataSettings.cpp:810
+#: src/DataSettings.cpp:808
 msgid "From"
 msgstr ""
 
-#: src/DataSettings.cpp:816
+#: src/DataSettings.cpp:814
 msgid "To"
 msgstr ""
 
-#: src/DataSettings.cpp:824
+#: src/DataSettings.cpp:822
 #, fuzzy
 msgid "Description"
 msgstr "Describe"
 
-#: src/DataSettings.cpp:841 src/RecvFile.cpp:389
+#: src/DataSettings.cpp:839 src/RecvFile.cpp:389
 #, fuzzy
 msgid "Please select download folder"
 msgstr "Please choose a sound file"
 
-#: src/DataSettings.cpp:863
+#: src/DataSettings.cpp:861
 msgid "Select Font"
 msgstr ""
 
-#: src/DataSettings.cpp:876
+#: src/DataSettings.cpp:874
 #, fuzzy
 msgid "Please select a sound file"
 msgstr "Please choose a sound file"
 
-#: src/DataSettings.cpp:1165 src/DataSettings.cpp:1197
+#: src/DataSettings.cpp:1138 src/DataSettings.cpp:1170
 #, fuzzy, c-format
 msgid ""
 "Fopen() file \"%s\" failed!\n"
 "%s"
 msgstr "act: rmdir directory '%s',warning: %s\n"
 
-#: src/DataSettings.cpp:1246 src/DialogGroup.cpp:1131 src/RecvFile.cpp:409
+#: src/DataSettings.cpp:1219 src/DialogGroup.cpp:1131 src/RecvFile.cpp:409
 #, fuzzy
 msgid "Select All"
 msgstr "Delete Pal"
 
-#: src/DataSettings.cpp:1251 src/DialogGroup.cpp:1136 src/RecvFile.cpp:414
+#: src/DataSettings.cpp:1224 src/DialogGroup.cpp:1136 src/RecvFile.cpp:414
 #, fuzzy
 msgid "Reverse Select"
 msgstr "Reverse All"
 
-#: src/DataSettings.cpp:1256 src/DialogGroup.cpp:1141 src/RecvFile.cpp:419
+#: src/DataSettings.cpp:1229 src/DialogGroup.cpp:1141 src/RecvFile.cpp:419
 msgid "Clear Up"
 msgstr "Clear Up"
 
-#: src/DataSettings.cpp:1350 src/RevisePal.cpp:426
+#: src/DataSettings.cpp:1323 src/RevisePal.cpp:426
 msgid "Please select a face picture"
 msgstr ""
 
-#: src/DataSettings.cpp:1373
+#: src/DataSettings.cpp:1346
 #, fuzzy
 msgid "Please select a personal photo"
 msgstr "Please choose a personal portrait"
 
-#: src/DataSettings.cpp:1517 src/DataSettings.cpp:1524 src/DetectPal.cpp:122
+#: src/DataSettings.cpp:1490 src/DataSettings.cpp:1497 src/DetectPal.cpp:122
 #, c-format
 msgid ""
 "\n"
 "Illegal IP(v4) address: %s!"
 msgstr ""
 
-#: src/DataSettings.cpp:1622
+#: src/DataSettings.cpp:1595
 #, fuzzy
 msgid "Please select a file to import data"
 msgstr "Please choose a head portrait"
 
-#: src/DataSettings.cpp:1670
+#: src/DataSettings.cpp:1643
 #, fuzzy
 msgid "Save data to file"
 msgstr "Save the export file"
@@ -658,8 +658,8 @@ msgstr ""
 "LiuTao\n"
 "Pentie\tpentie@gmail.com"
 
-#: src/HelpDialog.cpp:80 src/MainWindow.cpp:567 src/StatusIcon.cpp:60
-#: src/StatusIcon.cpp:99
+#: src/HelpDialog.cpp:80 src/MainWindow.cpp:567 src/StatusIcon.cpp:104
+#: src/StatusIcon.cpp:275
 msgid "iptux"
 msgstr "iptux"
 
@@ -769,7 +769,7 @@ msgstr "pals online: 0"
 msgid "Search Pals"
 msgstr "search pals"
 
-#: src/MainWindow.cpp:815 src/StatusIcon.cpp:164
+#: src/MainWindow.cpp:815 src/StatusIcon.cpp:183
 msgid "_Detect"
 msgstr "_Detect"
 
@@ -777,20 +777,20 @@ msgstr "_Detect"
 msgid "_Find"
 msgstr "_Find"
 
-#: src/MainWindow.cpp:832 src/StatusIcon.cpp:173
+#: src/MainWindow.cpp:832 src/StatusIcon.cpp:192
 msgid "_Quit"
 msgstr "_Quit"
 
-#: src/MainWindow.cpp:858 src/StatusIcon.cpp:143
+#: src/MainWindow.cpp:858 src/StatusIcon.cpp:162
 msgid "_Preferences"
 msgstr ""
 
-#: src/MainWindow.cpp:867 src/StatusIcon.cpp:135
+#: src/MainWindow.cpp:867 src/StatusIcon.cpp:154
 #, fuzzy
 msgid "_Transmission"
 msgstr "Transmission management"
 
-#: src/MainWindow.cpp:876 src/StatusIcon.cpp:152
+#: src/MainWindow.cpp:876 src/StatusIcon.cpp:171
 #, fuzzy
 msgid "_Shared Management"
 msgstr "Shared files management"
@@ -931,11 +931,11 @@ msgstr "Warning"
 msgid "Error"
 msgstr "Error"
 
-#: src/ProgramData.cpp:199
+#: src/ProgramData.cpp:208
 msgid "utf-16"
 msgstr ""
 
-#: src/ProgramData.cpp:202
+#: src/ProgramData.cpp:211
 msgid "utf-8"
 msgstr ""
 
@@ -1128,16 +1128,16 @@ msgstr "Choose shared folders"
 msgid "Failed to play the prompt tone, %s\n"
 msgstr "act: play the prompt tone, warning: %s\n"
 
-#: src/StatusIcon.cpp:94
+#: src/StatusIcon.cpp:100 src/StatusIcon.cpp:272
 #, fuzzy, c-format
 msgid "To be read: %u messages"
 msgstr "Undealt: %<PRIu32> messages"
 
-#: src/StatusIcon.cpp:122
+#: src/StatusIcon.cpp:141
 msgid "_Hide"
 msgstr "_Hide"
 
-#: src/StatusIcon.cpp:124
+#: src/StatusIcon.cpp:143
 msgid "_Show"
 msgstr "_Show"
 

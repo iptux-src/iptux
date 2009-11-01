@@ -10,6 +10,7 @@
 //
 //
 #include "ProgramData.h"
+#include "CoreThread.h"
 #include "utils.h"
 
 /**
@@ -19,8 +20,9 @@ ProgramData::ProgramData():nickname(NULL), mygroup(NULL),
  myicon(NULL), path(NULL),  sign(NULL), codeset(NULL), encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
- lcursor(NULL), table(NULL)
+ lcursor(NULL), table(NULL), cnxnid(0)
 {
+	gettimeofday(&timestamp, NULL);
 	pthread_mutex_init(&mutex, NULL);
 }
 
@@ -29,6 +31,8 @@ ProgramData::ProgramData():nickname(NULL), mygroup(NULL),
  */
 ProgramData::~ProgramData()
 {
+	GConfClient *client;
+
 	g_free(nickname);
 	g_free(mygroup);
 	g_free(myicon);
@@ -52,6 +56,9 @@ ProgramData::~ProgramData()
 	gdk_cursor_unref(lcursor);
 	g_object_unref(table);
 
+	client = gconf_client_get_default();
+	gconf_client_notify_remove(client, cnxnid);
+	g_object_unref(client);
 	pthread_mutex_destroy(&mutex);
 }
 
@@ -61,6 +68,7 @@ ProgramData::~ProgramData()
 void ProgramData::InitSublayer()
 {
 	ReadProgData();
+	AddGconfNotify();
 	CheckIconTheme();
 	CreateRegex();
 	CreateCursor();
@@ -75,6 +83,7 @@ void ProgramData::WriteProgData()
 	GConfClient *client;
 
 	client = gconf_client_get_default();
+	gettimeofday(&timestamp, NULL);	//更新时间戳
 
 	gconf_client_set_string(client, GCONF_PATH "/nick_name", nickname, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/belong_group", mygroup, NULL);
@@ -104,9 +113,9 @@ void ProgramData::WriteProgData()
 	gconf_client_set_string(client, GCONF_PATH "/trans_tip", transtip, NULL);
 	gconf_client_set_string(client, GCONF_PATH "/msg_tip", msgtip, NULL);
 	gconf_client_set_float(client, GCONF_PATH "/volume_degree", volume, NULL);
-	gconf_client_set_bool(client, GCONF_PATH "/msgsnd_support",
-			 FLAG_ISSET(sndfgs, 2) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/transnd_support",
+			 FLAG_ISSET(sndfgs, 2) ? TRUE : FALSE, NULL);
+	gconf_client_set_bool(client, GCONF_PATH "/msgsnd_support",
 			 FLAG_ISSET(sndfgs, 1) ? TRUE : FALSE, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/sound_support",
 			 FLAG_ISSET(sndfgs, 0) ? TRUE : FALSE, NULL);
@@ -245,6 +254,20 @@ void ProgramData::ReadProgData()
 
 	ReadNetSegment(client);
 
+	g_object_unref(client);
+}
+
+/**
+ * 监视程序配置文件信息数据的变更.
+ */
+void ProgramData::AddGconfNotify()
+{
+	GConfClient *client;
+
+	client = gconf_client_get_default();
+	gconf_client_add_dir(client, GCONF_PATH, GCONF_CLIENT_PRELOAD_NONE, NULL);
+	cnxnid = gconf_client_notify_add(client, GCONF_PATH,
+		 GConfClientNotifyFunc(GconfNotifyFunc), this, NULL, NULL);
 	g_object_unref(client);
 }
 
@@ -388,4 +411,149 @@ void ProgramData::ReadNetSegment(GConfClient *client)
 	}
 	pthread_mutex_unlock(&mutex);
 	g_slist_free(list);
+}
+
+/**
+ * 配置文件信息数据变更的响应处理函数.
+ * 当本程序写出数据时，程序会自动更新时间戳，所以若当前时间与时间戳间隔太短，
+ * 便认为是本程序写出数据导致配置文件信息数据发生了变化，在这种情况下，
+ * 响应函数无需理睬数值的变更.\n
+ * @param client the GConfClient notifying us.
+ * @param cnxnid connection ID from gconf_client_notify_add().
+ * @param entry a GConfEntry.
+ * @param progdt 程序数据类
+ */
+void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
+				 GConfEntry *entry, ProgramData *progdt)
+{
+	struct timeval stamp;
+	const char *str;
+	bool update;
+
+	/* 如果没有值则直接跳出 */
+	if (!entry->value)
+		return;
+	/* 如果间隔太短则直接跳出 */
+	gettimeofday(&stamp, NULL);
+	if (difftimeval(stamp, progdt->timestamp) < 1.0)
+		return;
+
+	/* 匹配键值并修正 */
+	update = false;	//预设更新标记为假
+	if (strcmp(entry->key, GCONF_PATH "/nick_name") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->nickname);
+			progdt->nickname = g_strdup(str);
+			update = true;
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/belong_group") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->mygroup);
+			progdt->mygroup = g_strdup(str);
+			update = true;
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/my_icon") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->myicon);
+			progdt->myicon = g_strdup(str);
+			update = true;
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/archive_path") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->path);
+			progdt->path = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/personal_sign") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->sign);
+			progdt->sign = g_strdup(str);
+			update = true;
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/candidacy_encode") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->codeset);
+			progdt->codeset = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/preference_encode") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->encode);
+			progdt->encode = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/pal_icon") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->palicon);
+			progdt->palicon = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/panel_font") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->font);
+			progdt->font = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/hide_startup") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 6);
+		else
+			FLAG_CLR(progdt->flags, 6);
+	} else if (strcmp(entry->key, GCONF_PATH "/open_transmission") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 5);
+		else
+			FLAG_CLR(progdt->flags, 5);
+	} else if (strcmp(entry->key, GCONF_PATH "/use_enter_key") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 4);
+		else
+			FLAG_CLR(progdt->flags, 4);
+	} else if (strcmp(entry->key, GCONF_PATH "/clearup_history") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 3);
+		else
+			FLAG_CLR(progdt->flags, 3);
+	} else if (strcmp(entry->key, GCONF_PATH "/record_log") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 2);
+		else
+			FLAG_CLR(progdt->flags, 2);
+	} else if (strcmp(entry->key, GCONF_PATH "/open_blacklist") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 1);
+		else
+			FLAG_CLR(progdt->flags, 1);
+	} else if (strcmp(entry->key, GCONF_PATH "/proof_shared") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->flags, 0);
+		else
+			FLAG_CLR(progdt->flags, 0);
+	} else if (strcmp(entry->key, GCONF_PATH "/trans_tip") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->transtip);
+			progdt->transtip = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/msg_tip") == 0) {
+		if ( (str = gconf_value_get_string(entry->value))) {
+			g_free(progdt->transtip);
+			progdt->transtip = g_strdup(str);
+		}
+	} else if (strcmp(entry->key, GCONF_PATH "/volume_degree") == 0) {
+		progdt->volume = gconf_value_get_float(entry->value);
+	} else if (strcmp(entry->key, GCONF_PATH "/transnd_support") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->sndfgs, 2);
+		else
+			FLAG_CLR(progdt->sndfgs, 2);
+	} else if (strcmp(entry->key, GCONF_PATH "/msgsnd_support") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->sndfgs, 1);
+		else
+			FLAG_CLR(progdt->sndfgs, 1);
+	} else if (strcmp(entry->key, GCONF_PATH "/sound_support") == 0) {
+		if (gconf_value_get_bool(entry->value))
+			FLAG_SET(progdt->sndfgs, 0);
+		else
+			FLAG_CLR(progdt->sndfgs, 0);
+	}
+
+	/* 如果需要更新则调用更新处理函数 */
+	if (update)
+		CoreThread::UpdateMyInfo();
 }

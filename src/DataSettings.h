@@ -56,7 +56,6 @@ private:
 	void ObtainSystemValue();
 	void ObtainSoundValue();
 	void ObtainNetworkValue();
-	void UpdateMyInfo();
 
 	void WriteNetSegment(const char *filename, GSList *list);
 	void ReadNetSegment(const char *filename, GSList **list);

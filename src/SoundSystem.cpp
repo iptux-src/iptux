@@ -101,7 +101,7 @@ void SoundSystem::Playing(const char *file)
 	struct timeval time;
 
 	gettimeofday(&time, NULL);
-	if (!FLAG_ISSET(progdt.sndfgs, 0) || (difftimeval(time, timestamp) < 0.5))
+	if (!FLAG_ISSET(progdt.sndfgs, 0) || (difftimeval(time, timestamp) < 0.1))
 		return;
 
 	if (persist)

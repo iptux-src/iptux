@@ -13,13 +13,11 @@
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "SoundSystem.h"
-#include "Command.h"
 #include "callback.h"
 #include "output.h"
 #include "support.h"
 #include "utils.h"
 extern ProgramData progdt;
-extern CoreThread cthrd;
 extern SoundSystem sndsys;
 
 /**
@@ -84,8 +82,8 @@ mark:	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 		dset.ObtainSoundValue();
 #endif
 		dset.ObtainNetworkValue();
-		dset.UpdateMyInfo();
 		progdt.WriteProgData();
+		CoreThread::UpdateMyInfo();
 		break;
 	case GTK_RESPONSE_APPLY:
 		dset.ObtainPersonalValue();
@@ -94,8 +92,8 @@ mark:	switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
 		dset.ObtainSoundValue();
 #endif
 		dset.ObtainNetworkValue();
-		dset.UpdateMyInfo();
 		progdt.WriteProgData();
+		CoreThread::UpdateMyInfo();
 		goto mark;
 	default:
 		break;
@@ -1121,31 +1119,6 @@ void DataSettings::ObtainNetworkValue()
 		} while (gtk_tree_model_iter_next(model, &iter));
 	}
 	pthread_mutex_unlock(&progdt.mutex);
-}
-
-/**
- * 更新本大爷的个人信息.
- */
-void DataSettings::UpdateMyInfo()
-{
-	Command cmd;
-	pthread_t pid;
-	GSList *tlist;
-
-	pthread_mutex_lock(cthrd.GetMutex());
-	tlist = cthrd.GetPalList();
-	while (tlist) {
-		if (FLAG_ISSET(((PalInfo *)tlist->data)->flags, 1))
-			cmd.SendAbsence(cthrd.UdpSockQuote(), (PalInfo *)tlist->data);
-		if (FLAG_ISSET(((PalInfo *)tlist->data)->flags, 1)
-			 && FLAG_ISSET(((PalInfo *)tlist->data)->flags, 0)) {
-			pthread_create(&pid, NULL, ThreadFunc(CoreThread::
-					 SendFeatureData), tlist->data);
-			pthread_detach(pid);
-		}
-		tlist = g_slist_next(tlist);
-	}
-	pthread_mutex_unlock(cthrd.GetMutex());
 }
 
 /**

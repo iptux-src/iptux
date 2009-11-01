@@ -62,9 +62,12 @@ public:
 	GdkCursor *xcursor, *lcursor;	//光标
 	GtkTextTagTable *table;	//tag table
 
+	guint cnxnid;		//GConfClient连接ID
+	struct timeval timestamp;	//程序数据时间戳
 	pthread_mutex_t mutex;	//锁
 private:
 	void ReadProgData();
+	void AddGconfNotify();
 	void CheckIconTheme();
 	void CreateRegex();
 	void CreateCursor();
@@ -72,6 +75,9 @@ private:
 
 	void WriteNetSegment(GConfClient *client);
 	void ReadNetSegment(GConfClient *client);
+private:
+	static void GconfNotifyFunc(GConfClient *client, guint cnxnid,
+				 GConfEntry *entry, ProgramData *progdt);
 };
 
 #endif
