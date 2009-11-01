@@ -5,7 +5,7 @@ AC_PREREQ(2.63)
 AC_INIT(configure.in)
 AC_CONFIG_SRCDIR(src/iptux.cpp)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(iptux, 0.5.0)
+AM_INIT_AUTOMAKE(iptux, 0.5.1)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -105,7 +105,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "${GETTEXT_PACKAGE}")
 
 dnl Add the languages which your application supports here.
-ALL_LINGUAS="en_GB zh_CN zh_TW"
+ALL_LINGUAS="de en_GB es zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 AC_OUTPUT(Makefile desktop/Makefile pixmaps/Makefile po/Makefile.in sound/Makefile \
