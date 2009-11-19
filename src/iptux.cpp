@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 	gdk_threads_enter();
 	gtk_init(&argc, &argv);
 
+	analysis_parameter(argc, argv);
 	iptux_init();
 	sicon.CreateStatusIcon();
 	mwin.CreateWindow();

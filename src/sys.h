@@ -44,6 +44,7 @@
 #include <signal.h>
 #include <sys/vfs.h>
 #include <pwd.h>
+#include <getopt.h>
 #include <locale.h>
 #include <libintl.h>
 

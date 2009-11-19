@@ -65,6 +65,62 @@ void iptux_quit()
 }
 
 /**
+ * 程序参数分析.
+ * @param argc 来自于主函数入口
+ * @param argv[] 来自于主函数入口
+ */
+void analysis_parameter(int argc, char *const argv[])
+{
+	const struct option longopts[] = {
+		{"help", 0, NULL, 'h'},
+		{"version", 0, NULL, 'v'},
+		{NULL, 0, NULL, 0}
+	};
+	int opt;
+
+	opterr = 0;
+	while ((opt = getopt_long(argc, argv, "hv", longopts, NULL)) != -1) {
+		switch (opt) {
+		case 'h':
+			print_usage();
+			exit(0);
+		case 'v':
+			print_version();
+			exit(0);
+		default:
+			print_stun();
+			exit(0);
+		}
+	}
+}
+
+/**
+ * 打印用法.
+ */
+void print_usage()
+{
+	printf(_("iptux: A software for sharing in LAN\n"));
+	printf(_("\t-h --help\n\t\tdisplay this help and exit\n"));
+	printf(_("\t-v --version\n\t\toutput version information and exit\n"));
+}
+
+/**
+ * 打印版本号.
+ */
+void print_version()
+{
+	printf("iptux: " VERSION "\n");
+}
+
+/**
+ * 打印....
+ */
+void print_stun()
+{
+	printf(_("What do you want to do?\n"));
+}
+
+/**
  * 打开URL.
  * @param url url
  */
@@ -127,7 +183,7 @@ void bind_iptux_port()
 
 	cthrd.TcpSockQuote() = tcpsock;
 	cthrd.UdpSockQuote() = udpsock;
-	
+
 }
 
 /**
