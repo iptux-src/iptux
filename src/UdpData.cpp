@@ -191,9 +191,6 @@ void UdpData::SomeoneExit()
 	PalInfo *pal;
 
 	/* 从好友链表中删除 */
-	/**
-	 * UI依赖于底层，所以必须先处理UI部分.
-	 */
 	gdk_threads_enter();
 	if (mwin.PaltreeContainItem(ipv4))
 		mwin.DelItemFromPaltree(ipv4);
