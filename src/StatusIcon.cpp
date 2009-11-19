@@ -37,8 +37,10 @@ StatusIcon::StatusIcon():statusicon(NULL), timerid(0)
  */
 StatusIcon::~StatusIcon()
 {
-	g_object_unref(statusicon);
-	g_source_remove(timerid);
+	if (statusicon)
+		g_object_unref(statusicon);
+	if (timerid > 0)
+		g_source_remove(timerid);
 }
 
 /**

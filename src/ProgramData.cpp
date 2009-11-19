@@ -51,14 +51,20 @@ ProgramData::~ProgramData()
 				 GINT_TO_POINTER(NET_SEGMENT));
 	g_slist_free(netseg);
 
-	g_regex_unref(urlregex);
-	gdk_cursor_unref(xcursor);
-	gdk_cursor_unref(lcursor);
-	g_object_unref(table);
+	if (urlregex)
+		g_regex_unref(urlregex);
+	if (xcursor)
+		gdk_cursor_unref(xcursor);
+	if (lcursor)
+		gdk_cursor_unref(lcursor);
+	if (table)
+		g_object_unref(table);
 
-	client = gconf_client_get_default();
-	gconf_client_notify_remove(client, cnxnid);
-	g_object_unref(client);
+	if (cnxnid > 0) {
+		client = gconf_client_get_default();
+		gconf_client_notify_remove(client, cnxnid);
+		g_object_unref(client);
+	}
 	pthread_mutex_destroy(&mutex);
 }
 

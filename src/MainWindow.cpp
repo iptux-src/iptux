@@ -490,8 +490,10 @@ void MainWindow::ClearSublayer()
 	g_datalist_clear(&mdlset);
 	g_datalist_clear(&dtset);
 	g_list_free(tmdllist);
-	g_object_unref(accel);
-	g_source_remove(timerid);
+	if (accel)
+		g_object_unref(accel);
+	if (timerid > 0)
+		g_source_remove(timerid);
 }
 
 /**

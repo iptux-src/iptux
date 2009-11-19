@@ -33,8 +33,8 @@ SoundSystem::~SoundSystem()
 {
 	GstElement *pipeline;
 
-	pipeline = GST_ELEMENT(g_datalist_get_data(&eltset, "pipeline-element"));
-	gst_element_set_state(pipeline, GST_STATE_NULL);
+	if ( (pipeline = GST_ELEMENT(g_datalist_get_data(&eltset, "pipeline-element"))))
+		gst_element_set_state(pipeline, GST_STATE_NULL);
 	g_datalist_clear(&eltset);
 }
 

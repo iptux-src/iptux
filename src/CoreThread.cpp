@@ -842,7 +842,8 @@ void CoreThread::ClearSublayer()
 	g_slist_free(prlist);
 	g_free(passwd);
 
-	g_source_remove(timerid);
+	if (timerid > 0)
+		g_source_remove(timerid);
 	pthread_mutex_destroy(&mutex);
 }
 
