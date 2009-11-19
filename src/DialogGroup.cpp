@@ -289,13 +289,13 @@ void DialogGroup::InitSublayer()
  */
 void DialogGroup::ClearSublayer()
 {
+	if (FLAG_ISSET(progdt.flags, 3))
+		ClearHistoryTextView();
+	grpinf->dialog = NULL;
 	g_datalist_clear(&widset);
 	g_datalist_clear(&mdlset);
 	g_datalist_clear(&dtset);
 	g_object_unref(accel);
-	if (FLAG_ISSET(progdt.flags, 3))
-		ClearHistoryTextView();
-	grpinf->dialog = NULL;
 }
 
 /**
