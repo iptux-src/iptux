@@ -60,23 +60,23 @@ dnl In Autoconf 2.63, ${bindir} -> ${exec_prefix}
 dnl In Autoconf 2.63, ${datadir} --> ${datarootdir} --> ${prefix}
 test "${prefix}" = NONE && prefix="${ac_default_prefix}"
 test "${exec_prefix}" = NONE && exec_prefix="${prefix}"
-defdir=`eval echo ${bindir}`
-AC_DEFINE_UNQUOTED(__EXEC_PATH, "${defdir}")
-defdir=`eval echo ${datadir}`
-defdir=`eval echo ${defdir}`
-AC_DEFINE_UNQUOTED(__DATA_PATH, "${defdir}")
-localedir="${defdir}/locale"
+tmpdir=`eval echo ${bindir}`
+AC_DEFINE_UNQUOTED(__EXEC_PATH, "${tmpdir}")
+tmpdir=`eval echo ${datadir}`
+tmpdir=`eval echo ${tmpdir}`
+AC_DEFINE_UNQUOTED(__DATA_PATH, "${tmpdir}")
+localedir="${tmpdir}/locale"
 AC_DEFINE_UNQUOTED(__LOCALE_PATH, "${localedir}")
-desktopdir="${defdir}/applications"
+desktopdir="${tmpdir}/applications"
 AC_DEFINE_UNQUOTED(__DESKTOP_PATH, "${desktopdir}")
 AC_SUBST(desktopdir)
-logodir="${defdir}/icons"
+logodir="${tmpdir}/icons"
 AC_DEFINE_UNQUOTED(__LOGO_PATH, "${logodir}")
 AC_SUBST(logodir)
-pixmapsdir="${defdir}/iptux/pixmaps"
+pixmapsdir="${tmpdir}/iptux/pixmaps"
 AC_DEFINE_UNQUOTED(__PIXMAPS_PATH, "${pixmapsdir}")
 AC_SUBST(pixmapsdir)
-sounddir="${defdir}/iptux/sound"
+sounddir="${tmpdir}/iptux/sound"
 AC_DEFINE_UNQUOTED(__SOUND_PATH, "${sounddir}")
 AC_SUBST(sounddir)
 

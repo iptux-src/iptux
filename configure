@@ -6782,41 +6782,41 @@ fi
 
 test "${prefix}" = NONE && prefix="${ac_default_prefix}"
 test "${exec_prefix}" = NONE && exec_prefix="${prefix}"
-defdir=`eval echo ${bindir}`
+tmpdir=`eval echo ${bindir}`
 cat >>confdefs.h <<_ACEOF
-#define __EXEC_PATH "${defdir}"
+#define __EXEC_PATH "${tmpdir}"
 _ACEOF
 
-defdir=`eval echo ${datadir}`
-defdir=`eval echo ${defdir}`
+tmpdir=`eval echo ${datadir}`
+tmpdir=`eval echo ${tmpdir}`
 cat >>confdefs.h <<_ACEOF
-#define __DATA_PATH "${defdir}"
+#define __DATA_PATH "${tmpdir}"
 _ACEOF
 
-localedir="${defdir}/locale"
+localedir="${tmpdir}/locale"
 cat >>confdefs.h <<_ACEOF
 #define __LOCALE_PATH "${localedir}"
 _ACEOF
 
-desktopdir="${defdir}/applications"
+desktopdir="${tmpdir}/applications"
 cat >>confdefs.h <<_ACEOF
 #define __DESKTOP_PATH "${desktopdir}"
 _ACEOF
 
 
-logodir="${defdir}/icons"
+logodir="${tmpdir}/icons"
 cat >>confdefs.h <<_ACEOF
 #define __LOGO_PATH "${logodir}"
 _ACEOF
 
 
-pixmapsdir="${defdir}/iptux/pixmaps"
+pixmapsdir="${tmpdir}/iptux/pixmaps"
 cat >>confdefs.h <<_ACEOF
 #define __PIXMAPS_PATH "${pixmapsdir}"
 _ACEOF
 
 
-sounddir="${defdir}/iptux/sound"
+sounddir="${tmpdir}/iptux/sound"
 cat >>confdefs.h <<_ACEOF
 #define __SOUND_PATH "${sounddir}"
 _ACEOF
