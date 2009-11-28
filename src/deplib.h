@@ -1,5 +1,5 @@
 //
-// C++ Interface: face
+// C++ Interface: deplib
 //
 // Description:
 //
@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef FACE_H
-#define FACE_H
+#ifndef DEPLIB_H
+#define DEPLIB_H
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
