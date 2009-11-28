@@ -12,7 +12,7 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
-#include "face.h"
+#include "deplib.h"
 
 /* 警告信息输出 */
 #ifndef WARNING

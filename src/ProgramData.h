@@ -12,9 +12,9 @@
 #ifndef PROGRAMDATA_H
 #define PROGRAMDATA_H
 
-#include "face.h"
 #include "sys.h"
 #include "net.h"
+#include "deplib.h"
 
 /* flags
 // 图标(:6);程序启动后只显示托盘图标而不显示面板

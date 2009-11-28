@@ -13,13 +13,12 @@ AM_CXXFLAGS = -Wall
 INCLUDES= $(all_includes) @PACKAGE_CFLAGS@
 
 # the library search path.
-iptux_LDADD = $(INTLLIBS) @PACKAGE_LIBS@
-iptux_LDFLAGS = $(all_libraries)
+iptux_LDFLAGS = $(all_libraries) @PACKAGE_LIBS@
 
 noinst_HEADERS = AnalogFS.h Command.h CoreThread.h DataSettings.h DetectPal.h \
 	DialogGroup.h DialogPeer.h HelpDialog.h LogSystem.h MainWindow.h ProgramData.h \
 	RecvFile.h RecvFileData.h RevisePal.h SendFile.h SendFileData.h ShareFile.h \
-	SoundSystem.h StatusIcon.h TcpData.h UdpData.h callback.h dialog.h face.h ipmsg.h \
-	mess.h net.h output.h support.h sys.h utils.h wrapper.h
+	SoundSystem.h StatusIcon.h TcpData.h UdpData.h callback.h deplib.h dialog.h \
+	ipmsg.h mess.h net.h output.h support.h sys.h utils.h wrapper.h
 
 SUBDIRS = uninstall

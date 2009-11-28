@@ -12,7 +12,7 @@
 #ifndef HelpDialog_H
 #define HelpDialog_H
 
-#include "face.h"
+#include "deplib.h"
 
 class HelpDialog {
 public:

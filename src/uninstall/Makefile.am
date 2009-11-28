@@ -8,7 +8,6 @@ AM_CXXFLAGS = -Wall
 INCLUDES= $(all_includes)
 
 # the library search path.
-ihateiptux_LDADD = $(INTLLIBS)
 ihateiptux_LDFLAGS = $(all_libraries)
 
 noinst_HEADERS = utils.h

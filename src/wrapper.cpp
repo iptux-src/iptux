@@ -10,7 +10,7 @@
 //
 //
 #include "wrapper.h"
-#include "face.h"
+#include "deplib.h"
 
 /**
  * 保证new运算符申请内存一定成功.

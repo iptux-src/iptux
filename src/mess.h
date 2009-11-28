@@ -14,7 +14,7 @@
 
 #include "sys.h"
 #include "net.h"
-#include "face.h"
+#include "deplib.h"
 #include "ipmsg.h"
 
 /***************偶是可爱的分割线(枚举变量)*****************/

@@ -12,7 +12,7 @@
 #ifndef DETECTPAL_H
 #define DETECTPAL_H
 
-#include "face.h"
+#include "deplib.h"
 
 class DetectPal {
 public:

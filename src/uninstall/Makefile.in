@@ -41,7 +41,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -49,8 +49,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_ihateiptux_OBJECTS = ihateiptux.$(OBJEXT) utils.$(OBJEXT)
 ihateiptux_OBJECTS = $(am_ihateiptux_OBJECTS)
-am__DEPENDENCIES_1 =
-ihateiptux_DEPENDENCIES = $(am__DEPENDENCIES_1)
+ihateiptux_LDADD = $(LDADD)
 ihateiptux_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(ihateiptux_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -200,7 +199,6 @@ AM_CXXFLAGS = -Wall
 INCLUDES = $(all_includes)
 
 # the library search path.
-ihateiptux_LDADD = $(INTLLIBS)
 ihateiptux_LDFLAGS = $(all_libraries)
 noinst_HEADERS = utils.h
 all: all-am
