@@ -216,9 +216,9 @@ char *getformattime(const char *format, ...)
 
 	time(&tt);
 	tm = localtime(&tt);
-	strftime(buf, MAX_BUFLEN, "%c", tm);
+	strftime(buf, MAX_BUFLEN, "%X", tm);
 
-	ptr = g_strdup_printf("<%s> %s", msg, buf);
+	ptr = g_strdup_printf("(%s) %s:", buf, msg);
 	g_free(msg);
 
 	return ptr;
