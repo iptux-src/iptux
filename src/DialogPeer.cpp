@@ -644,25 +644,23 @@ GtkWidget *DialogPeer::CreateFileMenu()
 
 	menuitem = gtk_menu_item_new_with_label(_("Attach File"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	g_signal_connect_swapped(menuitem, "activate",
-                                 G_CALLBACK(AttachRegular), this);
+	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-        
+			 GDK_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
 
 	menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	g_signal_connect_swapped(menuitem, "activate",
-                                 G_CALLBACK(AttachFolder), this);
+	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+			 GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
 	menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(AskSharedFiles), grpinf);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+			 GDK_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
 	menuitem = gtk_tearoff_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -672,7 +670,7 @@ GtkWidget *DialogPeer::CreateFileMenu()
 	g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(gtk_widget_destroy), window);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+			 GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
 	return menushell;
 }
@@ -1187,20 +1185,8 @@ void DialogPeer::ClearHistoryBuffer(DialogPeer *dlgpr)
  */
 void DialogPeer::SendMessage(DialogPeer *dlgpr)
 {
-	bool sem, stm;
-
-	sem = dlgpr->SendEnclosureMsg();
-	stm = dlgpr->SendTextMsg();
-	if (!(sem || stm)) {
-            // 忽略没有正文也没有附件的消息， 弹出菜单不好
-            /*
-		parent = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset,
-						 "window-widget"));
-		pop_warning(parent, _("<span weight=\"heavy\" underline=\"error\">"
-					 "\nCan't send an empty message!!</span>"));
-            */
-		return;
-	}
+	dlgpr->SendEnclosureMsg();
+	dlgpr->SendTextMsg();
 }
 
 /**

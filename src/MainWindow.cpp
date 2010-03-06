@@ -824,7 +824,7 @@ GtkWidget *MainWindow::CreateFileMenu()
 	g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(DetectPal::DetectEntry), window);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_D,GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+			 GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Find"));
@@ -834,7 +834,7 @@ GtkWidget *MainWindow::CreateFileMenu()
 	g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(ShowPallistArea), &widset);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_F,GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+			 GDK_F, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
 	menuitem = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -934,10 +934,9 @@ GtkWidget *MainWindow::CreateToolMenu()
 	image = gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU);
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	g_signal_connect_swapped(menuitem, "activate",
-                                 G_CALLBACK(UpdatePalTree), this);
-        gtk_widget_add_accelerator(menuitem, "activate",accel,
-                                   GDK_F5,(GdkModifierType)0, GTK_ACCEL_VISIBLE);
+	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(UpdatePalTree), this);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+			  GDK_F5, GdkModifierType(0), GTK_ACCEL_VISIBLE);
 
 	return menushell;
 }
