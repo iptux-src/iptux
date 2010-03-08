@@ -29,7 +29,7 @@
 
 #define NO_OPERATION_C while(0);
 
-typedef void *(*ThreadFunc) (void *);
+typedef void *(*ThreadFunc)(void *);
 void ipv4_order(in_addr_t *ip1, in_addr_t *ip2);
 
 char *iptux_string_validate(const char *string, const char *codeset, char **encode);
@@ -43,7 +43,6 @@ char *iptux_string_getline(const char *str);
 char *assert_filename_inexist(const char *path);
 char *getformattime(const char *format, ...);
 
-void glist_delete_foreach(gpointer data, POINTER_TYPE type);
 gboolean giter_compare_foreach(gunichar src, gunichar dst);
 
 char *numeric_to_size(int64_t numeric);

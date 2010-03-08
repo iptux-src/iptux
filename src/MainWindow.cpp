@@ -2217,7 +2217,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
 								 "session-class");
 	list = selection_data_get_path(data);	//获取所有文件
 	session->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	session->ShowEnclosure();
 }
@@ -2495,7 +2495,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
 								 "session-class");
 	list = selection_data_get_path(data);	//获取所有文件
 	session->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	session->ShowEnclosure();
 }

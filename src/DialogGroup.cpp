@@ -1053,8 +1053,7 @@ void DialogGroup::BroadcastEnclosureMsg(GSList *list)
 		 * @note 链表(list)的数据本来应该由(sfile.BcstFileInfoEntry())接手的，
 		 * 既然已经没有那个机会了， 当然就只好在这儿手动释放了.
 		 */
-		g_slist_foreach(list, GFunc(glist_delete_foreach),
-					 GINT_TO_POINTER(UNKNOWN));
+		g_slist_foreach(list, GFunc(g_free), NULL);
 		return;
 	}
 
@@ -1244,7 +1243,7 @@ void DialogGroup::DragDataReceived(DialogGroup *dlggrp, GdkDragContext *context,
 
 	list = selection_data_get_path(data);	//获取所有文件
 	dlggrp->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	widget = GTK_WIDGET(g_datalist_get_data(&dlggrp->widset,
 				 "enclosure-frame-widget"));
@@ -1312,7 +1311,7 @@ void DialogGroup::AttachRegular(DialogGroup *dlggrp)
 	if (!(list = dlggrp->PickEnclosure(IPMSG_FILE_REGULAR)))
 		return;
 	dlggrp->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	widget = GTK_WIDGET(g_datalist_get_data(&dlggrp->widset,
 					 "enclosure-frame-widget"));
@@ -1331,7 +1330,7 @@ void DialogGroup::AttachFolder(DialogGroup *dlggrp)
 	if (!(list = dlggrp->PickEnclosure(IPMSG_FILE_DIR)))
 		return;
 	dlggrp->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	widget = GTK_WIDGET(g_datalist_get_data(&dlggrp->widset,
 					 "enclosure-frame-widget"));
@@ -1353,18 +1352,8 @@ void DialogGroup::ClearHistoryBuffer(DialogGroup *dlggrp)
  */
 void DialogGroup::SendMessage(DialogGroup *dlggrp)
 {
-	GtkWidget *parent;
-	bool sem, stm;
-
-	sem = dlggrp->SendEnclosureMsg();
-	stm = dlggrp->SendTextMsg();
-	if (!(sem || stm)) {
-		parent = GTK_WIDGET(g_datalist_get_data(&dlggrp->widset,
-							 "window-widget"));
-		pop_warning(parent, _("<span weight=\"heavy\" underline=\"error\">"
-					 "\nCan't send an empty message!!</span>"));
-		return;
-	}
+	dlggrp->SendEnclosureMsg();
+	dlggrp->SendTextMsg();
 }
 
 /**

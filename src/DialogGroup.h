@@ -17,7 +17,7 @@
 class DialogGroup: public SessionAbstract {
 public:
 	DialogGroup(GroupInfo *grp);
-	~DialogGroup();
+	virtual ~DialogGroup();
 
 	static void GroupDialogEntry(GroupInfo *grpinf);
 

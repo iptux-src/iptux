@@ -17,7 +17,7 @@
 class DialogPeer: public SessionAbstract {
 public:
 	DialogPeer(GroupInfo *grp);
-	~DialogPeer();
+	virtual ~DialogPeer();
 
 	static void PeerDialogEntry(GroupInfo *grpinf);
 

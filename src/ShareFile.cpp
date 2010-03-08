@@ -454,7 +454,7 @@ void ShareFile::AddRegular(ShareFile *sfile)
 
 	list = sfile->PickSharedFile(IPMSG_FILE_REGULAR);
 	sfile->AttachSharedFiles(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 }
 
@@ -468,7 +468,7 @@ void ShareFile::AddFolder(ShareFile *sfile)
 
 	list = sfile->PickSharedFile(IPMSG_FILE_DIR);
 	sfile->AttachSharedFiles(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 }
 
@@ -543,7 +543,7 @@ void ShareFile::DragDataReceived(ShareFile *sfile, GdkDragContext *context,
 
 	list = selection_data_get_path(data);
 	sfile->AttachSharedFiles(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 
 	gtk_drag_finish(context, TRUE, FALSE, time);

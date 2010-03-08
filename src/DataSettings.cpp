@@ -1102,12 +1102,13 @@ void DataSettings::ObtainNetworkValue()
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	NetSegment *ns;
+	GSList *tlist;
 
 	widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
 	pthread_mutex_lock(&progdt.mutex);
-	g_slist_foreach(progdt.netseg, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(NET_SEGMENT));
+	for (tlist = progdt.netseg; tlist; tlist = g_slist_next(tlist))
+		delete (NetSegment *)tlist->data;
 	g_slist_free(progdt.netseg);
 	progdt.netseg = NULL;
 	if (gtk_tree_model_get_iter_first(model, &iter)) {
@@ -1617,8 +1618,8 @@ void DataSettings::ImportNetSegment(DataSettings *dset)
 					 2, pns->description, -1);
 			tlist = g_slist_next(tlist);
 		}
-		g_slist_foreach(list, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(NET_SEGMENT));
+		for (tlist = list; tlist; tlist = g_slist_next(tlist))
+			delete (NetSegment *)tlist->data;
 		g_slist_free(list);
 	default:
 		break;
@@ -1636,7 +1637,7 @@ void DataSettings::ExportNetSegment(DataSettings *dset)
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	gchar *filename;
-	GSList *list;
+	GSList *list, *tlist;
 	NetSegment *ns;
 
 	parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
@@ -1663,8 +1664,8 @@ void DataSettings::ExportNetSegment(DataSettings *dset)
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 		dset->WriteNetSegment(filename, list);
 		g_free(filename);
-		g_slist_foreach(list, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(NET_SEGMENT));
+		for (tlist = list; tlist; tlist = g_slist_next(tlist))
+			delete (NetSegment *)tlist->data;
 		g_slist_free(list);
 	default:
 		break;

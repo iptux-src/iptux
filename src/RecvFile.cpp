@@ -78,8 +78,8 @@ void RecvFile::ClearSublayer()
 	g_datalist_clear(&widset);
 	g_datalist_clear(&mdlset);
 	g_datalist_clear(&dtset);
-	g_slist_foreach(filelist, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(FILE_INFO));
+	for (GSList *tlist = filelist; tlist; tlist = g_slist_next(tlist))
+		delete (FileInfo *)tlist->data;
 	g_slist_free(filelist);
 }
 

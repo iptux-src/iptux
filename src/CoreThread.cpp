@@ -707,7 +707,8 @@ void CoreThread::DelFileFromPublic(uint32_t fileid)
  */
 void CoreThread::ClearFileFromPublic()
 {
-	g_slist_foreach(pblist, GFunc(glist_delete_foreach), GINT_TO_POINTER(FILE_INFO));
+	for (GSList *tlist = pblist; tlist; tlist = g_slist_next(tlist))
+		delete (FileInfo *)tlist->data;
 	g_slist_free(pblist);
 	pblist = NULL;
 }
@@ -754,7 +755,8 @@ void CoreThread::DelFileFromPrivate(uint32_t fileid)
  */
 void CoreThread::ClearFileFromPrivate()
 {
-	g_slist_foreach(prlist, GFunc(glist_delete_foreach), GINT_TO_POINTER(FILE_INFO));
+	for (GSList *tlist = prlist; tlist; tlist = g_slist_next(tlist))
+		delete (FileInfo *)tlist->data;
 	g_slist_free(prlist);
 	prlist = NULL;
 }
@@ -811,6 +813,8 @@ void CoreThread::InitSublayer()
  */
 void CoreThread::ClearSublayer()
 {
+	GSList *tlist;
+
 	/**
 	 * @note 必须在发送下线信息之后才能关闭套接口.
 	 */
@@ -819,26 +823,29 @@ void CoreThread::ClearSublayer()
 	shutdown(udpsock, SHUT_RDWR);
 	server = false;
 
-	g_slist_foreach(pallist, GFunc(glist_delete_foreach), GINT_TO_POINTER(PAL_INFO));
+	for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
+		delete (PalInfo *)tlist->data;
 	g_slist_free(pallist);
-	g_slist_foreach(rgllist, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(GROUP_INFO));
+	for (tlist = rgllist; tlist; tlist = g_slist_next(tlist))
+		delete (GroupInfo *)tlist->data;
 	g_slist_free(rgllist);
-	g_slist_foreach(sgmlist, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(GROUP_INFO));
+	for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
+		delete (GroupInfo *)tlist->data;
 	g_slist_free(sgmlist);
-	g_slist_foreach(grplist, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(GROUP_INFO));
+	for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
+		delete (GroupInfo *)tlist->data;
 	g_slist_free(grplist);
-	g_slist_foreach(brdlist, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(GROUP_INFO));
+	for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
+		delete (GroupInfo *)tlist->data;
 	g_slist_free(brdlist);
 	g_slist_free(blacklist);
 	g_queue_clear(&msgline);
 
-	g_slist_foreach(pblist, GFunc(glist_delete_foreach), GINT_TO_POINTER(FILE_INFO));
+	for (tlist = pblist; tlist; tlist = g_slist_next(tlist))
+		delete (FileInfo *)tlist->data;
 	g_slist_free(pblist);
-	g_slist_foreach(prlist, GFunc(glist_delete_foreach), GINT_TO_POINTER(FILE_INFO));
+	for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
+		delete (FileInfo *)tlist->data;
 	g_slist_free(prlist);
 	g_free(passwd);
 

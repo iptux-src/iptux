@@ -1010,7 +1010,7 @@ void DialogPeer::DragDataReceived(DialogPeer *dlgpr, GdkDragContext *context,
 
 	list = selection_data_get_path(data);	//获取所有文件
 	dlgpr->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	widget = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset,
 				 "enclosure-frame-widget"));
@@ -1066,13 +1066,12 @@ void DialogPeer::DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
 		tlist = g_slist_next(tlist);
 	}
 	/*/* 释放链表数据 */
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	/* 如果文件链表有文件，那就添加为附件吧 */
 	if (flist) {
 		dlgpr->AttachEnclosure(flist);
-		g_slist_foreach(flist, GFunc(glist_delete_foreach),
-					 GINT_TO_POINTER(UNKNOWN));
+		g_slist_foreach(flist, GFunc(g_free), NULL);
 		g_slist_free(flist);
 		widget = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset,
 					 "enclosure-frame-widget"));
@@ -1094,7 +1093,7 @@ void DialogPeer::AttachRegular(DialogPeer *dlgpr)
 	if (!(list = dlgpr->PickEnclosure(IPMSG_FILE_REGULAR)))
 		return;
 	dlgpr->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	widget = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset,
 					 "enclosure-frame-widget"));
@@ -1113,7 +1112,7 @@ void DialogPeer::AttachFolder(DialogPeer *dlgpr)
 	if (!(list = dlgpr->PickEnclosure(IPMSG_FILE_DIR)))
 		return;
 	dlgpr->AttachEnclosure(list);
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(UNKNOWN));
+	g_slist_foreach(list, GFunc(g_free), NULL);
 	g_slist_free(list);
 	widget = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset,
 					 "enclosure-frame-widget"));

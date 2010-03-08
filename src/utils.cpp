@@ -225,38 +225,6 @@ char *getformattime(const char *format, ...)
 }
 
 /**
- * g_list_foreach()/g_slist_foreach()关联的GFunc回调函数，用于销毁由GList/GSList提供的数据.
- * @param data the data element
- * @param type the POINTER_TYPE of the data element
- */
-void glist_delete_foreach(gpointer data, POINTER_TYPE type)
-{
-	switch (type) {
-	case PAL_INFO:
-		delete (PalInfo *)data;
-		break;
-	case GROUP_INFO:
-		delete (GroupInfo *)data;
-		break;
-	case FILE_INFO:
-		delete (FileInfo *)data;
-		break;
-	case MSG_DATA:
-		delete (MsgPara *)data;
-		break;
-	case CHIP_DATA:
-		delete (ChipData *)data;
-		break;
-	case NET_SEGMENT:
-		delete (NetSegment *)data;
-		break;
-	default:
-		g_free(data);
-		break;
-	}
-}
-
-/**
  * 对GtkTextBuffer的迭代器(GtkTextIter)所指的字符进行比较.
  * @param src 源字符
  * @param dst 目标字符

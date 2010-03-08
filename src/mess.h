@@ -19,16 +19,6 @@
 
 /***************偶是可爱的分割线(枚举变量)*****************/
 
-typedef enum {	//枚举变量，数据指针类型
-	PAL_INFO,
-	GROUP_INFO,
-	FILE_INFO,
-	MSG_DATA,
-	CHIP_DATA,
-	NET_SEGMENT,
-	UNKNOWN
-}POINTER_TYPE;
-
 typedef enum {	//枚举变量，消息来源类型
 	PAL_TYPE,
 	ME_TYPE,

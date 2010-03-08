@@ -52,7 +52,8 @@ MsgPara::MsgPara():pal(NULL), stype(PAL_TYPE), btype(REGULAR_TYPE), dtlist(NULL)
 {}
 MsgPara::~MsgPara()
 {
-	g_slist_foreach(dtlist, GFunc(glist_delete_foreach), GINT_TO_POINTER(CHIP_DATA));
+	for (GSList *tlist = dtlist; tlist; tlist = g_slist_next(tlist))
+		delete (ChipData *)tlist->data;
 	g_slist_free(dtlist);
 }
 

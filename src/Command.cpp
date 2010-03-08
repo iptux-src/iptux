@@ -100,7 +100,8 @@ void Command::DialUp(int sock)
 		}
 		tlist = g_slist_next(tlist);
 	}
-	g_slist_foreach(list, GFunc(glist_delete_foreach), GINT_TO_POINTER(NET_SEGMENT));
+	for (tlist = list; tlist; tlist = g_slist_next(tlist))
+		delete (NetSegment *)tlist->data;
 	g_slist_free(list);
 }
 

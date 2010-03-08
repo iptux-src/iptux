@@ -47,8 +47,8 @@ ProgramData::~ProgramData()
 	g_free(msgtip);
 	g_free(transtip);
 
-	g_slist_foreach(netseg, GFunc(glist_delete_foreach),
-				 GINT_TO_POINTER(NET_SEGMENT));
+	for (GSList *tlist = netseg; tlist; tlist = g_slist_next(tlist))
+		delete (NetSegment *)tlist->data;
 	g_slist_free(netseg);
 
 	if (urlregex)
