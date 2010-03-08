@@ -1,7 +1,7 @@
 # main program
 bin_PROGRAMS = iptux
 iptux_SOURCES = AnalogFS.cpp Command.cpp CoreThread.cpp DataSettings.cpp \
-	DetectPal.cpp DialogGroup.cpp DialogPeer.cpp HelpDialog.cpp LogSystem.cpp \
+	DetectPal.cpp DialogBase.cpp DialogGroup.cpp DialogPeer.cpp HelpDialog.cpp LogSystem.cpp \
 	MainWindow.cpp ProgramData.cpp RecvFile.cpp RecvFileData.cpp RevisePal.cpp \
 	SendFile.cpp SendFileData.cpp ShareFile.cpp SoundSystem.cpp StatusIcon.cpp \
 	TcpData.cpp UdpData.cpp callback.cpp dialog.cpp iptux.cpp mess.cpp output.cpp \

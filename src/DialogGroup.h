@@ -13,8 +13,9 @@
 #define DIALOGGROUP_H
 
 #include "mess.h"
+#include "DialogBase.h"
 
-class DialogGroup: public SessionAbstract {
+class DialogGroup: public DialogBase {
 public:
 	DialogGroup(GroupInfo *grp);
 	virtual ~DialogGroup();
@@ -25,46 +26,26 @@ public:
 	virtual void InsertPalData(PalInfo *pal);
 	virtual void DelPalData(PalInfo *pal);
 	virtual void ClearAllPalData();
-	virtual void ShowEnclosure();
-	virtual void AttachEnclosure(const GSList *list);
-	virtual void ScrollHistoryTextview();
 private:
-	void InitSublayer();
-	void ClearSublayer();
+        virtual void InitSublayerSpecify();
 	void ReadUILayout();
-	void WriteUILayout();
-	void ClearHistoryTextView();
+	void SaveUILayout();
 
 	GtkWidget *CreateMainWindow();
 	GtkWidget *CreateAllArea();
 
 	GtkWidget *CreateMenuBar();
 	GtkWidget *CreateMemberArea();
-	GtkWidget *CreateEnclosureArea();
-	GtkWidget *CreateHistoryArea();
 	GtkWidget *CreateInputArea();
+        GtkWidget *CreateToolMenu();
 
 	GtkTreeModel *CreateMemberModel();
-	GtkTreeModel *CreateEnclosureModel();
 	void FillMemberModel(GtkTreeModel *model);
 	GtkWidget *CreateMemberTree(GtkTreeModel *model);
-	GtkWidget *CreateEnclosureTree(GtkTreeModel *model);
 
-	GtkWidget *CreateFileMenu();
-	GtkWidget *CreateToolMenu();
-	GtkWidget *CreateHelpMenu();
+        bool SendTextMsg();
 
-	GSList *PickEnclosure(uint32_t fileattr);
-
-	GData *widset;		//窗体集
-	GData *mdlset;		//数据model集
-	GData *dtset;		//通用数据集
-	GtkAccelGroup *accel;	//快捷键组
-	GroupInfo *grpinf;	//群组信息
 private:
-	bool SendEnclosureMsg();
-	bool SendTextMsg();
-	void FeedbackMsg(const gchar *msg);
 	void BroadcastEnclosureMsg(GSList *list);
 	void BroadcastTextMsg(const gchar *msg);
 
@@ -83,15 +64,8 @@ private:
 	static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
 	static void MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
 							 GtkTreeViewColumn *column);
-	static void AttachRegular(DialogGroup *dlggrp);
-	static void AttachFolder(DialogGroup *dlggrp);
-	static void ClearHistoryBuffer(DialogGroup *dlggrp);
 	static void SendMessage(DialogGroup *dlggrp);
 
-	static gboolean WindowConfigureEvent(GtkWidget *window,
-				 GdkEventConfigure *event, GData **dtset);
-	static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
-							 GData **dtset);
 	static void DialogGroupDestroy(DialogGroup *dlggrp);
 };
 
