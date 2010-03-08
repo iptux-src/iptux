@@ -35,7 +35,7 @@ private:
 
 	GtkWidget *CreateMenuBar();
 	GtkWidget *CreateInfoArea();
-
+        GtkWidget *CreateFileMenu();
 	GtkWidget *CreateToolMenu();
 
 	void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);

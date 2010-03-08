@@ -320,11 +320,57 @@ GtkWidget *DialogPeer::CreateInfoArea()
 	return frame;
 }
 
+/**
+ * 创建文件菜单.
+ * @return 菜单
+ */
 
+GtkWidget *DialogPeer::CreateFileMenu()
+{
+    	GtkWidget *menushell, *window;
+	GtkWidget *menu, *menuitem;
 
+	window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
+	menushell = gtk_menu_item_new_with_mnemonic(_("_File"));
+	menu = gtk_menu_new();
+        gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
 
+	menuitem = gtk_menu_item_new_with_label(_("Attach File"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular), this);
+        g_signal_connect_swapped(menuitem, "activate",
+                                 G_CALLBACK(AttachRegular), this);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+                                   GDK_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+	menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder), this);
+	g_signal_connect_swapped(menuitem, "activate",
+                                 G_CALLBACK(AttachFolder), this);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+                                   GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+        menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+        g_signal_connect_swapped(menuitem, "activate",
+                             G_CALLBACK(AskSharedFiles), grpinf);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+                                   GDK_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+	menuitem = gtk_tearoff_menu_item_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+        menuitem = gtk_menu_item_new_with_label(_("Close"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	g_signal_connect_swapped(menuitem, "activate",
+                                 G_CALLBACK(gtk_widget_destroy), window);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+                                   GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+	return menushell;
+
+}
 /**
  * 创建工具菜单.
  * @return 菜单
