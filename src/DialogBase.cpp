@@ -1,3 +1,15 @@
+//
+// C++ Implementation: DialogBase
+//
+// Description:
+// 这个类是DialogPeer和DialogGroup的相同部分。尽量把相同的部分放在一起。
+//
+// Author: Jiejing.Zhang <kzjeef@gmail.com>, (C) 2010
+//         Jally <jallyx@163.com>, (C) 2008
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
 
 #include "DialogBase.h"
 #include "DialogPeer.h"
