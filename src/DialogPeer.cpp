@@ -338,16 +338,12 @@ GtkWidget *DialogPeer::CreateFileMenu()
 	menuitem = gtk_menu_item_new_with_label(_("Attach File"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular), this);
-        g_signal_connect_swapped(menuitem, "activate",
-                                 G_CALLBACK(AttachRegular), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
 	menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder), this);
-	g_signal_connect_swapped(menuitem, "activate",
-                                 G_CALLBACK(AttachFolder), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
@@ -457,45 +453,18 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal)
 	}
 }
 
-
 /**
- * 发送附件消息.
- * @return 是否发送数据
+ * 发送附件给好友
  */
-bool DialogPeer::SendEnclosureMsg()
+void DialogPeer::BroadcastEnclosureMsg(GSList *list)
 {
-	SendFile sfile;
-	GtkWidget *frame, *treeview;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	GSList *list;
-	gchar *filepath;
-	PalInfo *pal;
-
-	/* 考察附件区是否存在文件 */
-	frame = GTK_WIDGET(g_datalist_get_data(&widset, "enclosure-frame-widget"));
-	gtk_widget_hide(frame);
-	treeview = GTK_WIDGET(g_datalist_get_data(&widset, "enclosure-treeview-widget"));
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-	if (!gtk_tree_model_get_iter_first(model, &iter))
-		return false;
-
-	/* 获取文件并发送 */
-	list = NULL;
-	do {
-		gtk_tree_model_get(model, &iter, 1, &filepath, -1);
-		list = g_slist_append(list, filepath);
-	} while (gtk_tree_model_iter_next(model, &iter));
-	gtk_list_store_clear(GTK_LIST_STORE(model));
-	if (!(grpinf->member))
-		pal = cthrd.GetPalFromList(grpinf->grpid);
-	else
-		pal = (PalInfo *)grpinf->member->data;
-	sfile.SendFileInfoEntry(pal, list);
-	/* g_slist_foreach(list, GFunc(glist_delete_foreach), UNKNOWN); */
-	g_slist_free(list);
-
-	return true;
+        SendFile sfile;
+        PalInfo *pal;
+        if (!(grpinf->member))
+                pal = cthrd.GetPalFromList(grpinf->grpid);
+        else
+                pal = (PalInfo *)grpinf->member->data;
+        sfile.SendFileInfoEntry(pal, list);
 }
 
 /**

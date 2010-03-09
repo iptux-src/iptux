@@ -41,7 +41,7 @@ private:
 	void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
 
 private:
-	bool SendEnclosureMsg();
+	void BroadcastEnclosureMsg(GSList *list);
 	bool SendTextMsg();
 	void FeedbackMsg(const GSList *dtlist);
 	MsgPara *PackageMsg(GSList *dtlist);

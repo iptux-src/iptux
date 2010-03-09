@@ -45,7 +45,7 @@ protected:
         virtual bool SendTextMsg() = 0;
         /* TODO: Group SendTextMsg need add Picture */
         void FeedbackMsg(const gchar *msg);
-        virtual void BroadcastEnclosureMsg(GSList *list) {}
+        virtual void BroadcastEnclosureMsg(GSList *list) {};
 
         // 回调部分
         static void DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
