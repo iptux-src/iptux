@@ -563,6 +563,7 @@ void DialogBase::SendMessage(DialogBase *dlgpr)
 {
 	dlgpr->SendEnclosureMsg();
 	dlgpr->SendTextMsg();
+        dlgpr->ScrollHistoryTextview();
 }
 
 /**
