@@ -193,10 +193,10 @@ void TcpData::RecvMsgPic(PalInfo *pal, const char *path)
 
 	/* 构建消息封装包 */
 	para.pal = pal;
-	para.stype = PAL_TYPE;
-	para.btype = REGULAR_TYPE;
+	para.stype = MESSAGE_SOURCE_TYPE_PAL;
+	para.btype = GROUP_BELONG_TYPE_REGULAR;
 	chip = new ChipData;
-	chip->type = PICTURE_TYPE;
+	chip->type = MESSAGE_CONTENT_TYPE_PICTURE;
 	chip->data = g_strdup(path);
 	para.dtlist = g_slist_append(NULL, chip);
 

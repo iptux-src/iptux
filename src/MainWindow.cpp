@@ -310,7 +310,7 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking)
 
 	/* 闪烁项 */
 	switch (grpinf->type) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		/* 闪烁常规模式树 */
 		model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
 					 "regular-paltree-model"));
@@ -338,21 +338,21 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking)
 		GroupGetPaltreeItemWithParent(model, &iter, grpinf);
 		BlinkGroupItemToPaltree(model, &iter, blinking);
 		break;
-	case SEGMENT_TYPE:
+	case GROUP_BELONG_TYPE_SEGMENT:
 		/* 闪烁网段模式树 */
 		model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
 					 "segment-paltree-model"));
 		GroupGetPaltreeItem(model, &iter, grpinf);
 		BlinkGroupItemToPaltree(model, &iter, blinking);
 		break;
-	case GROUP_TYPE:
+	case GROUP_BELONG_TYPE_GROUP:
 		/* 闪烁分组模式树 */
 		model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
 					 "group-paltree-model"));
 		GroupGetPaltreeItem(model, &iter, grpinf);
 		BlinkGroupItemToPaltree(model, &iter, blinking);
 		break;
-	case BROADCAST_TYPE:
+		case GROUP_BELONG_TYPE_BROADCAST:
 		/* 闪烁广播模式树 */
 		model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
 					 "broadcast-paltree-model"));
@@ -1341,7 +1341,7 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
 
 	/* 创建图标 */
 	theme = gtk_icon_theme_get_default();
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		pal = (PalInfo *)grpinf->member->data;
 		file = iptux_erase_filename_suffix(pal->iconfile);
 		cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
@@ -1356,7 +1356,7 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
 	}
 
 	/* 创建主信息 */
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		pal = (PalInfo *)grpinf->member->data;
 		inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
 		info = g_strdup_printf("%s\n%s", pal->name, ipstr);
@@ -1364,14 +1364,14 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
 		info = g_strdup(grpinf->name);
 
 	/* 创建扩展信息 */
-	if (grpinf->type == REGULAR_TYPE)
+		if (grpinf->type == GROUP_BELONG_TYPE_REGULAR)
 		extra = NULL;
 	else
 		extra = g_strdup_printf("(%u)", g_slist_length(grpinf->member));
 
 	/* 创建字体风格 */
 	attrs = pango_attr_list_new();
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		dspt = pango_font_description_from_string(progdt.font);
 		attr = pango_attr_font_desc_new(dspt);
 		pango_attr_list_insert(attrs, attr);
@@ -1421,7 +1421,7 @@ void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter
 	/* 创建图标 */
 	cpixbuf = opixbuf = NULL;
 	theme = gtk_icon_theme_get_default();
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		pal = (PalInfo *)grpinf->member->data;
 		file = iptux_erase_filename_suffix(pal->iconfile);
 		cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
@@ -1432,7 +1432,7 @@ void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter
 
 	/* 创建主信息 */
 	info = NULL;
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		pal = (PalInfo *)grpinf->member->data;
 		inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
 		info = g_strdup_printf("%s\n%s", pal->name, ipstr);
@@ -1440,12 +1440,12 @@ void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter
 
 	/* 创建扩展信息 */
 	extra = NULL;
-	if (grpinf->type != REGULAR_TYPE)
+	if (grpinf->type != GROUP_BELONG_TYPE_REGULAR)
 		extra = g_strdup_printf("(%u)", g_slist_length(grpinf->member));
 
 	/* 创建字体风格 */
 	attrs = NULL;
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		attrs = pango_attr_list_new();
 		dspt = pango_font_description_from_string(progdt.font);
 		attr = pango_attr_font_desc_new(dspt);
@@ -1454,7 +1454,7 @@ void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter
 	}
 
 	/* 设置相应的数据 */
-	if (grpinf->type == REGULAR_TYPE)
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR)
 		gtk_tree_store_set(GTK_TREE_STORE(model), iter, 0, cpixbuf,
 					 1, opixbuf, 2, info, 4, attrs, -1);
 	else
@@ -1540,13 +1540,13 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf)
 	menuitem = gtk_menu_item_new_with_label(_("Send Message"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	switch (grpinf->type) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(DialogPeer::PeerDialogEntry), grpinf);
 		break;
-	case SEGMENT_TYPE:
-	case GROUP_TYPE:
-	case BROADCAST_TYPE:
+	case GROUP_BELONG_TYPE_SEGMENT:
+	case GROUP_BELONG_TYPE_GROUP:
+	case GROUP_BELONG_TYPE_BROADCAST:
 		g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(DialogGroup::GroupDialogEntry), grpinf);
 		break;
@@ -1560,7 +1560,7 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf)
 	menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	switch (grpinf->type) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(AskSharedFiles), grpinf);
 		break;
@@ -1574,7 +1574,7 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf)
 	menuitem = gtk_menu_item_new_with_label(_("Change Info."));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	switch (grpinf->type) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(RevisePal::ReviseEntry),
 			 grpinf->member->data);
@@ -1589,7 +1589,7 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf)
 	menuitem = gtk_menu_item_new_with_label(_("Delete Pal"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	switch (grpinf->type) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		g_signal_connect_swapped(menuitem, "activate",
 			 G_CALLBACK(DeletePalItem), grpinf);
 		break;
@@ -2023,7 +2023,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
 	gtk_tree_model_get_iter(model, &iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-	if (grpinf->type != REGULAR_TYPE)
+	if (grpinf->type != GROUP_BELONG_TYPE_REGULAR)
 		return FALSE;
 
 	buffer = gtk_text_buffer_new(progdt.table);
@@ -2065,12 +2065,12 @@ void MainWindow::PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
 
 	/* 根据需求建立对应的对话框 */
 	switch (grpinf->type) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		DialogPeer::PeerDialogEntry(grpinf);
 		break;
-	case SEGMENT_TYPE:
-	case GROUP_TYPE:
-	case BROADCAST_TYPE:
+	case GROUP_BELONG_TYPE_SEGMENT:
+	case GROUP_BELONG_TYPE_GROUP:
+	case GROUP_BELONG_TYPE_BROADCAST:
 		DialogGroup::GroupDialogEntry(grpinf);
 	default:
 		break;
@@ -2139,7 +2139,7 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview, GdkEventButton *ev
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
 	gtk_tree_model_get_iter(model, &iter, path);
 	gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-	if (grpinf->type == REGULAR_TYPE) {
+	if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
 		gtk_tree_path_free(path);
 		return FALSE;
 	}
@@ -2200,12 +2200,12 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
 	/* 如果好友群组对话框尚未创建，则先创建对话框 */
 	if (!(grpinf->dialog)) {
 		switch (grpinf->type) {
-		case REGULAR_TYPE:
+		case GROUP_BELONG_TYPE_REGULAR:
 			DialogPeer::PeerDialogEntry(grpinf);
 			break;
-		case SEGMENT_TYPE:
-		case GROUP_TYPE:
-		case BROADCAST_TYPE:
+		case GROUP_BELONG_TYPE_SEGMENT:
+		case GROUP_BELONG_TYPE_GROUP:
+		case GROUP_BELONG_TYPE_BROADCAST:
 			DialogGroup::GroupDialogEntry(grpinf);
 		default:
 			break;
@@ -2257,7 +2257,8 @@ gint MainWindow::PaltreeCompareByIPFunc(GtkTreeModel *model,
 
 	gtk_tree_model_get(model, a, 6, &agrpinf, -1);
 	gtk_tree_model_get(model, b, 6, &bgrpinf, -1);
-	if (agrpinf->type == REGULAR_TYPE && bgrpinf->type == REGULAR_TYPE)
+	if (agrpinf->type == GROUP_BELONG_TYPE_REGULAR
+		 && bgrpinf->type == GROUP_BELONG_TYPE_REGULAR)
 		result = ntohl(agrpinf->grpid) - ntohl(bgrpinf->grpid);
 	else
 		result = 0;

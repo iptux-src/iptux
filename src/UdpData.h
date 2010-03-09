@@ -38,7 +38,7 @@ private:
 	PalInfo *CreatePalInfo();
 	void UpdatePalInfo(PalInfo *pal);
 
-	void InsertMessage(PalInfo *pal, BELONG_TYPE btype, const char *msg);
+	void InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg);
 	void ConvertEncode(const char *enc);
 	char *GetPalGroup();
 	char *GetPalIcon();

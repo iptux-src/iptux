@@ -312,9 +312,9 @@ void UdpData::SomeoneSendmsg()
 	if (text && *text != '\0') {
 		/*/* 插入消息 */
 		if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
-			InsertMessage(pal, BROADCAST_TYPE, text);
+			InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST, text);
 		else
-			InsertMessage(pal, REGULAR_TYPE, text);
+			InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
 		/*/* 注册消息 */
 		pthread_mutex_lock(cthrd.GetMutex());
 		if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
@@ -476,17 +476,17 @@ void UdpData::SomeoneBcstmsg()
 		/*/* 插入消息 */
 		switch (GET_OPT(commandno)) {
 		case IPTUX_BROADCASTOPT:
-			InsertMessage(pal, BROADCAST_TYPE, text);
+			InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST, text);
 			break;
 		case IPTUX_GROUPOPT:
-			InsertMessage(pal, GROUP_TYPE, text);
+			InsertMessage(pal, GROUP_BELONG_TYPE_GROUP, text);
 			break;
 		case IPTUX_SEGMENTOPT:
-			InsertMessage(pal, SEGMENT_TYPE, text);
+			InsertMessage(pal, GROUP_BELONG_TYPE_SEGMENT, text);
 			break;
 		case IPTUX_REGULAROPT:
 		default:
-			InsertMessage(pal, REGULAR_TYPE, text);
+			InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
 			break;
 		}
 		/*/* 注册消息 */
@@ -596,17 +596,17 @@ void UdpData::UpdatePalInfo(PalInfo *pal)
  * @param btype 消息所属类型
  * @param msg 消息
  */
-void UdpData::InsertMessage(PalInfo *pal, BELONG_TYPE btype, const char *msg)
+void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg)
 {
 	MsgPara para;
 	ChipData *chip;
 
 	/* 构建消息封装包 */
 	para.pal = pal;
-	para.stype = PAL_TYPE;
+	para.stype = MESSAGE_SOURCE_TYPE_PAL;
 	para.btype = btype;
 	chip = new ChipData;
-	chip->type = STRING_TYPE;
+	chip->type = MESSAGE_CONTENT_TYPE_STRING;
 	chip->data = g_strdup(msg);
 	para.dtlist = g_slist_append(NULL, chip);
 

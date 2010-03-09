@@ -619,16 +619,16 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg)
 		if (active) {
 			if (FLAG_ISSET(pal->flags, 0)) {
 				switch (grpinf->type) {
-				case BROADCAST_TYPE:
+				case GROUP_BELONG_TYPE_BROADCAST:
 					opttype = IPTUX_BROADCASTOPT;
 					break;
-				case GROUP_TYPE:
+				case GROUP_BELONG_TYPE_GROUP:
 					opttype = IPTUX_GROUPOPT;
 					break;
-				case SEGMENT_TYPE:
+				case GROUP_BELONG_TYPE_SEGMENT:
 					opttype = IPTUX_SEGMENTOPT;
 					break;
-				case REGULAR_TYPE:
+				case GROUP_BELONG_TYPE_REGULAR:
 				default:
 					opttype = IPTUX_REGULAROPT;
 					break;

@@ -50,7 +50,7 @@ void DialogBase::InitSublayerGeneral()
 	g_datalist_init(&mdlset);
 	g_datalist_init(&dtset);
 	accel = gtk_accel_group_new();
-	
+
         model = CreateEnclosureModel();
         g_datalist_set_data_full(&mdlset, "enclosure-model", model,
 				 GDestroyNotify(g_object_unref));
@@ -130,7 +130,7 @@ void DialogBase::ScrollHistoryTextview()
 void DialogBase::ShowEnclosure()
 {
         GtkWidget *widget;
-    
+
 	widget = GTK_WIDGET(g_datalist_get_data(&widset, "enclosure-frame-widget"));
 	gtk_widget_show(widget);
 }
@@ -335,7 +335,7 @@ GtkWidget *DialogBase::CreateFileMenu()
 			 G_CALLBACK(gtk_widget_destroy), window);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-        
+
 	return menushell;
 }
 
@@ -493,10 +493,10 @@ void DialogBase::FeedbackMsg(const gchar *msg)
 
 	/* 构建消息封装包 */
 	para.pal = NULL;
-	para.stype = ME_TYPE;
+	para.stype = MESSAGE_SOURCE_TYPE_SELF;
 	para.btype = grpinf->type;
 	chip = new ChipData;
-	chip->type = STRING_TYPE;
+	chip->type = MESSAGE_CONTENT_TYPE_STRING;
 	chip->data = g_strdup(msg);
 	para.dtlist = g_slist_append(NULL, chip);
 

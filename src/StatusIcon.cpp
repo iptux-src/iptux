@@ -223,12 +223,12 @@ void StatusIcon::StatusIconActivate()
 	pthread_mutex_unlock(cthrd.GetMutex());
 	if (grpinf) {
 		switch (grpinf->type) {
-		case REGULAR_TYPE:
+		case GROUP_BELONG_TYPE_REGULAR:
 			DialogPeer::PeerDialogEntry(grpinf);
 			break;
-		case SEGMENT_TYPE:
-		case GROUP_TYPE:
-		case BROADCAST_TYPE:
+		case GROUP_BELONG_TYPE_SEGMENT:
+		case GROUP_BELONG_TYPE_GROUP:
+		case GROUP_BELONG_TYPE_BROADCAST:
 			DialogGroup::GroupDialogEntry(grpinf);
 			break;
 		default:

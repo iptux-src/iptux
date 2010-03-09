@@ -217,8 +217,9 @@ void Command::SendMessage(int sock, PalInfo *pal, const char *msg)
 		count++;
 	} while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
 	if (pal->rpacketn == packetno)
-		FeedbackError(pal, REGULAR_TYPE, _("Your pal didn't receive the packet. "
-							 "He or she is offline maybe."));
+		FeedbackError(pal, GROUP_BELONG_TYPE_REGULAR,
+			 _("Your pal didn't receive the packet. "
+			   "He or she is offline maybe."));
 }
 
 /**
@@ -472,17 +473,17 @@ void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype, const char 
  * @param btype 消息归属类型
  * @param error 错误串
  */
-void Command::FeedbackError(PalInfo *pal, BELONG_TYPE btype, const char *error)
+void Command::FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error)
 {
 	MsgPara para;
 	ChipData *chip;
 
 	/* 构建消息封装包 */
 	para.pal = pal;
-	para.stype = ERROR_TYPE;
+	para.stype = MESSAGE_SOURCE_TYPE_ERROR;
 	para.btype = btype;
 	chip = new ChipData;
-	chip->type = STRING_TYPE;
+	chip->type = MESSAGE_CONTENT_TYPE_STRING;
 	chip->data = g_strdup(error);
 	para.dtlist = g_slist_append(NULL, chip);
 

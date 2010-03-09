@@ -129,16 +129,16 @@ void CoreThread::InsertMessage(MsgPara *para)
 
 	/* 获取群组信息 */
 	switch (para->btype) {
-	case REGULAR_TYPE:
+	case GROUP_BELONG_TYPE_REGULAR:
 		grpinf = GetPalRegularItem(para->pal);
 		break;
-	case SEGMENT_TYPE:
+	case GROUP_BELONG_TYPE_SEGMENT:
 		grpinf = GetPalSegmentItem(para->pal);
 		break;
-	case GROUP_TYPE:
+	case GROUP_BELONG_TYPE_GROUP:
 		grpinf = GetPalGroupItem(para->pal);
 		break;
-	case BROADCAST_TYPE:
+	case GROUP_BELONG_TYPE_BROADCAST:
 		grpinf = GetPalBroadcastItem(para->pal);
 		break;
 	default:
@@ -176,7 +176,7 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
 	while (tlist) {
 		data = ((ChipData *)tlist->data)->data;
 		switch (((ChipData *)tlist->data)->type) {
-		case STRING_TYPE:
+		case MESSAGE_CONTENT_TYPE_STRING:
 			InsertHeaderToBuffer(grpinf->buffer, para);
 			gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
 			gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
@@ -185,7 +185,7 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
 			gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
 			lgsys.CommunicateLog(para->pal, "[STRING]%s", data);
 			break;
-		case PICTURE_TYPE:
+		case MESSAGE_CONTENT_TYPE_PICTURE:
 			InsertPixbufToBuffer(grpinf->buffer, data);
 			lgsys.CommunicateLog(para->pal, "[PICTURE]%s", data);
 			break;
@@ -941,21 +941,21 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
 	 * @note (para->pal)可能为null.
 	 */
 	switch (para->stype) {
-	case PAL_TYPE:
+	case MESSAGE_SOURCE_TYPE_PAL:
 		header = getformattime("%s", para->pal ? para->pal->name : _("unknown"));
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
 					 header, -1, "pal-color", NULL);
 		g_free(header);
 		break;
-	case ME_TYPE:
+	case MESSAGE_SOURCE_TYPE_SELF:
 		header = getformattime("%s", progdt.nickname);
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
 					 header, -1, "me-color", NULL);
 		g_free(header);
 		break;
-	case ERROR_TYPE:
+	case MESSAGE_SOURCE_TYPE_ERROR:
 		header = getformattime("%s", _("<ERROR>"));
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
@@ -1061,7 +1061,7 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal)
 
 	grpinf = new GroupInfo;
 	grpinf->grpid = pal->ipv4;
-	grpinf->type = REGULAR_TYPE;
+	grpinf->type = GROUP_BELONG_TYPE_REGULAR;
 	grpinf->name = g_strdup(pal->name);
 	grpinf->member = NULL;
 	grpinf->buffer = gtk_text_buffer_new(progdt.table);
@@ -1087,7 +1087,7 @@ GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal)
 
 	grpinf = new GroupInfo;
 	grpinf->grpid = g_quark_from_static_string(name);
-	grpinf->type = SEGMENT_TYPE;
+	grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
 	grpinf->name = name;
 	grpinf->member = NULL;
 	grpinf->buffer = gtk_text_buffer_new(progdt.table);
@@ -1113,7 +1113,7 @@ GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal)
 
 	grpinf = new GroupInfo;
 	grpinf->grpid = g_quark_from_static_string(name);
-	grpinf->type = GROUP_TYPE;
+	grpinf->type = GROUP_BELONG_TYPE_GROUP;
 	grpinf->name = name;
 	grpinf->member = NULL;
 	grpinf->buffer = gtk_text_buffer_new(progdt.table);
@@ -1137,7 +1137,7 @@ GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal)
 
 	grpinf = new GroupInfo;
 	grpinf->grpid = g_quark_from_static_string(name);
-	grpinf->type = BROADCAST_TYPE;
+	grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
 	grpinf->name = name;
 	grpinf->member = NULL;
 	grpinf->buffer = gtk_text_buffer_new(progdt.table);

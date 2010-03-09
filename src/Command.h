@@ -39,7 +39,7 @@ public:
 	void SendMySign(int sock, PalInfo *pal);
 	void SendSublayer(int sock, PalInfo *pal, uint32_t opttype, const char *path);
 private:
-	void FeedbackError(PalInfo *pal, BELONG_TYPE btype, const char *error);
+	void FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error);
 	void SendSublayerData(int sock, int fd);
 	void ConvertEncode(const char *encode);
 	void CreateCommand(uint32_t command, const char *attach);

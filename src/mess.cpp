@@ -30,7 +30,7 @@ PalInfo::~PalInfo()
 	g_free(encode);
 }
 
-GroupInfo::GroupInfo():grpid(0), type(REGULAR_TYPE), name(NULL),
+GroupInfo::GroupInfo():grpid(0), type(GROUP_BELONG_TYPE_REGULAR), name(NULL),
  member(NULL), buffer(NULL), dialog(NULL)
 {}
 GroupInfo::~GroupInfo()
@@ -48,7 +48,8 @@ FileInfo::~FileInfo()
 	g_free(filepath);
 }
 
-MsgPara::MsgPara():pal(NULL), stype(PAL_TYPE), btype(REGULAR_TYPE), dtlist(NULL)
+MsgPara::MsgPara():pal(NULL), stype(MESSAGE_SOURCE_TYPE_PAL),
+ btype(GROUP_BELONG_TYPE_REGULAR), dtlist(NULL)
 {}
 MsgPara::~MsgPara()
 {
@@ -57,7 +58,7 @@ MsgPara::~MsgPara()
 	g_slist_free(dtlist);
 }
 
-ChipData::ChipData():type(STRING_TYPE), data(NULL)
+ChipData::ChipData():type(MESSAGE_CONTENT_TYPE_STRING), data(NULL)
 {}
 ChipData::~ChipData()
 {

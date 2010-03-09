@@ -520,7 +520,7 @@ bool DialogPeer::SendTextMsg()
 			gdk_pixbuf_save(pixbuf, chipmsg, "bmp", NULL, NULL);
 			/* 新建一个碎片数据(图片)，并加入数据链表 */
 			chip = new ChipData;
-			chip->type = PICTURE_TYPE;
+			chip->type = MESSAGE_CONTENT_TYPE_PICTURE;
 			chip->data = chipmsg;
 			dtlist = g_slist_append(dtlist, chip);
 		}
@@ -533,7 +533,7 @@ bool DialogPeer::SendTextMsg()
 	g_free(chipmsg);
 	/* 新建一个碎片数据(字符串)，并加入数据链表 */
 	chip = new ChipData;
-	chip->type = STRING_TYPE;
+	chip->type = MESSAGE_CONTENT_TYPE_STRING;
 	chip->data = g_strdup(buf);
 	dtlist = g_slist_prepend(dtlist, chip);	//保证字符串先被发送
 
@@ -560,7 +560,7 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist)
 
 	/* 构建消息封装包 */
 	para.pal = NULL;
-	para.stype = ME_TYPE;
+	para.stype = MESSAGE_SOURCE_TYPE_SELF;
 	para.btype = grpinf->type;
 	para.dtlist = (GSList *)dtlist;
 
@@ -583,7 +583,7 @@ MsgPara *DialogPeer::PackageMsg(GSList *dtlist)
 		para->pal = cthrd.GetPalFromList(grpinf->grpid);
 	else
 		para->pal = (PalInfo *)grpinf->member->data;
-	para->stype = ME_TYPE;
+	para->stype = MESSAGE_SOURCE_TYPE_SELF;
 	para->btype = grpinf->type;
 	para->dtlist = dtlist;
 
@@ -728,11 +728,11 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para)
 	while (tlist) {
 		ptr = ((ChipData *)tlist->data)->data;
 		switch (((ChipData *)tlist->data)->type) {
-		case STRING_TYPE:
+		case MESSAGE_CONTENT_TYPE_STRING:
 			/* 文本类型 */
 			cmd.SendMessage(cthrd.UdpSockQuote(), para->pal, ptr);
 			break;
-		case PICTURE_TYPE:
+		case MESSAGE_CONTENT_TYPE_PICTURE:
 			/* 图片类型 */
 			if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
 				pop_error(_("Fatal Error!!\nFailed to create new socket!"
