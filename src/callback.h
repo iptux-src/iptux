@@ -19,7 +19,7 @@ gboolean alter_interface_mode();
 
 /* entry */
 gboolean entry_query_tooltip(GtkWidget *entry, gint x, gint y,
-			 gboolean key, GtkTooltip *tooltip, char *text);
+                         gboolean key, GtkTooltip *tooltip, char *text);
 void entry_insert_numeric(GtkWidget *entry, gchar *text, gint length);
 
 /* file-chooser */

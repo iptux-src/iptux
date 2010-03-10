@@ -17,19 +17,19 @@
 
 class AnalogFS {
 public:
-	AnalogFS();
-	~AnalogFS();
+        AnalogFS();
+        ~AnalogFS();
 
-	int chdir(const char *dir);
-	int open(const char *fn, int flags, ...);
-	int stat(const char *fn, struct stat64 *st);
-	int mkdir(const char *dir, mode_t mode);
-	int64_t ftwsize(const char *dir);
-	DIR *opendir(const char *dir);
+        int chdir(const char *dir);
+        int open(const char *fn, int flags, ...);
+        int stat(const char *fn, struct stat64 *st);
+        int mkdir(const char *dir, mode_t mode);
+        int64_t ftwsize(const char *dir);
+        DIR *opendir(const char *dir);
 private:
-	int mergepath(char tpath[], const char *npath);
+        int mergepath(char tpath[], const char *npath);
 
-	char path[MAX_PATHLEN];	//当前工作路径
+        char path[MAX_PATHLEN]; //当前工作路径
 };
 
 #endif

@@ -39,24 +39,24 @@ Command::~Command()
  */
 void Command::BroadCast(int sock)
 {
-	struct sockaddr_in addr;
-	GSList *list, *tlist;
+        struct sockaddr_in addr;
+        GSList *list, *tlist;
 
-	CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, progdt.nickname);
-	ConvertEncode(progdt.encode);
-	CreateIptuxExtra(progdt.encode);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, progdt.nickname);
+        ConvertEncode(progdt.encode);
+        CreateIptuxExtra(progdt.encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	tlist = list = get_sys_broadcast_addr(sock);
-	while (tlist) {
-		addr.sin_addr.s_addr = GPOINTER_TO_UINT(tlist->data);
-		sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
-		g_usleep(9999);
-		tlist = g_slist_next(tlist);
-	}
-	g_slist_free(list);
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        tlist = list = get_sys_broadcast_addr(sock);
+        while (tlist) {
+                addr.sin_addr.s_addr = GPOINTER_TO_UINT(tlist->data);
+                sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+                g_usleep(9999);
+                tlist = g_slist_next(tlist);
+        }
+        g_slist_free(list);
 }
 
 /**
@@ -65,44 +65,44 @@ void Command::BroadCast(int sock)
  */
 void Command::DialUp(int sock)
 {
-	struct sockaddr_in addr;
-	in_addr_t startip, endip, ipv4;
-	NetSegment *pns;
-	GSList *list, *tlist;
+        struct sockaddr_in addr;
+        in_addr_t startip, endip, ipv4;
+        NetSegment *pns;
+        GSList *list, *tlist;
 
-	CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-							 progdt.nickname);
-	ConvertEncode(progdt.encode);
-	CreateIptuxExtra(progdt.encode);
+        CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
+                                                         progdt.nickname);
+        ConvertEncode(progdt.encode);
+        CreateIptuxExtra(progdt.encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	//与某些代码片段的获取网段描述相冲突，必须复制出来使用
-	pthread_mutex_lock(&progdt.mutex);
-	list = progdt.CopyNetSegment();
-	pthread_mutex_unlock(&progdt.mutex);
-	tlist = list;
-	while (tlist) {
-		pns = (NetSegment *)tlist->data;
-		inet_pton(AF_INET, pns->startip, &startip);
-		startip = ntohl(startip);
-		inet_pton(AF_INET, pns->endip, &endip);
-		endip = ntohl(endip);
-		ipv4_order(&startip, &endip);
-		ipv4 = startip;
-		while (ipv4 <= endip) {
-			addr.sin_addr.s_addr = htonl(ipv4);
-			sendto(sock, buf, size, 0, (struct sockaddr *)&addr,
-								 sizeof(addr));
-			g_usleep(999);
-			ipv4++;
-		}
-		tlist = g_slist_next(tlist);
-	}
-	for (tlist = list; tlist; tlist = g_slist_next(tlist))
-		delete (NetSegment *)tlist->data;
-	g_slist_free(list);
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        //与某些代码片段的获取网段描述相冲突，必须复制出来使用
+        pthread_mutex_lock(&progdt.mutex);
+        list = progdt.CopyNetSegment();
+        pthread_mutex_unlock(&progdt.mutex);
+        tlist = list;
+        while (tlist) {
+                pns = (NetSegment *)tlist->data;
+                inet_pton(AF_INET, pns->startip, &startip);
+                startip = ntohl(startip);
+                inet_pton(AF_INET, pns->endip, &endip);
+                endip = ntohl(endip);
+                ipv4_order(&startip, &endip);
+                ipv4 = startip;
+                while (ipv4 <= endip) {
+                        addr.sin_addr.s_addr = htonl(ipv4);
+                        sendto(sock, buf, size, 0, (struct sockaddr *)&addr,
+                                                                 sizeof(addr));
+                        g_usleep(999);
+                        ipv4++;
+                }
+                tlist = g_slist_next(tlist);
+        }
+        for (tlist = list; tlist; tlist = g_slist_next(tlist))
+                delete (NetSegment *)tlist->data;
+        g_slist_free(list);
 }
 
 /**
@@ -112,18 +112,18 @@ void Command::DialUp(int sock)
  */
 void Command::SendAnsentry(int sock, PalInfo *pal)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, progdt.nickname);
-	ConvertEncode(pal->encode);
-	CreateIptuxExtra(pal->encode);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, progdt.nickname);
+        ConvertEncode(pal->encode);
+        CreateIptuxExtra(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -133,17 +133,17 @@ void Command::SendAnsentry(int sock, PalInfo *pal)
  */
 void Command::SendExit(int sock, PalInfo *pal)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPMSG_DIALUPOPT | IPMSG_BR_EXIT, NULL);
-	ConvertEncode(pal->encode);
+        CreateCommand(IPMSG_DIALUPOPT | IPMSG_BR_EXIT, NULL);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -153,18 +153,18 @@ void Command::SendExit(int sock, PalInfo *pal)
  */
 void Command::SendAbsence(int sock, PalInfo *pal)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE, progdt.nickname);
-	ConvertEncode(pal->encode);
-	CreateIptuxExtra(pal->encode);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE, progdt.nickname);
+        ConvertEncode(pal->encode);
+        CreateIptuxExtra(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -174,19 +174,19 @@ void Command::SendAbsence(int sock, PalInfo *pal)
  */
 void Command::SendDetectPacket(int sock, in_addr_t ipv4)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-							 progdt.nickname);
-	ConvertEncode(progdt.encode);
-	CreateIptuxExtra(progdt.encode);
+        CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
+                                                         progdt.nickname);
+        ConvertEncode(progdt.encode);
+        CreateIptuxExtra(progdt.encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -197,29 +197,29 @@ void Command::SendDetectPacket(int sock, in_addr_t ipv4)
  */
 void Command::SendMessage(int sock, PalInfo *pal, const char *msg)
 {
-	struct sockaddr_in addr;
-	uint32_t packetno;
-	uint8_t count;
+        struct sockaddr_in addr;
+        uint32_t packetno;
+        uint8_t count;
 
-	pal->rpacketn = packetno = packetn;	//此数据包需要检验回复
-	CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_SENDMSG, msg);
-	ConvertEncode(pal->encode);
+        pal->rpacketn = packetno = packetn;     //此数据包需要检验回复
+        CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_SENDMSG, msg);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	count = 0;
-	do {
-		sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
-		g_usleep(1000000);
-		count++;
-	} while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
-	if (pal->rpacketn == packetno)
-		FeedbackError(pal, GROUP_BELONG_TYPE_REGULAR,
-			 _("Your pal didn't receive the packet. "
-			   "He or she is offline maybe."));
+        count = 0;
+        do {
+                sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+                g_usleep(1000000);
+                count++;
+        } while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
+        if (pal->rpacketn == packetno)
+                FeedbackError(pal, GROUP_BELONG_TYPE_REGULAR,
+                         _("Your pal didn't receive the packet. "
+                           "He or she is offline maybe."));
 }
 
 /**
@@ -230,19 +230,19 @@ void Command::SendMessage(int sock, PalInfo *pal, const char *msg)
  */
 void Command::SendReply(int sock, PalInfo *pal, uint32_t packetno)
 {
-	char packetstr[11];	//10 +1	=11
-	struct sockaddr_in addr;
+        char packetstr[11];     //10 +1 =11
+        struct sockaddr_in addr;
 
-	snprintf(packetstr, 11, "%" PRIu32, packetno);
-	CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_RECVMSG, packetstr);
-	ConvertEncode(pal->encode);
+        snprintf(packetstr, 11, "%" PRIu32, packetno);
+        CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_RECVMSG, packetstr);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -253,17 +253,17 @@ void Command::SendReply(int sock, PalInfo *pal, uint32_t packetno)
  */
 void Command::SendGroupMsg(int sock, PalInfo *pal, const char *msg)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPMSG_BROADCASTOPT | IPMSG_SENDMSG, msg);
-	ConvertEncode(pal->encode);
+        CreateCommand(IPMSG_BROADCASTOPT | IPMSG_SENDMSG, msg);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -275,17 +275,17 @@ void Command::SendGroupMsg(int sock, PalInfo *pal, const char *msg)
  */
 void Command::SendUnitMsg(int sock, PalInfo *pal, uint32_t opttype, const char *msg)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(opttype | IPTUX_SENDMSG, msg);
-	ConvertEncode(pal->encode);
+        CreateCommand(opttype | IPTUX_SENDMSG, msg);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -298,27 +298,27 @@ void Command::SendUnitMsg(int sock, PalInfo *pal, uint32_t opttype, const char *
  * @return 消息发送成功与否
  */
 bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
-				 uint32_t fileid, int64_t offset)
+                                 uint32_t fileid, int64_t offset)
 {
-	char attrstr[35];	//8+1+8+1+16 +1	=35
-	struct sockaddr_in addr;
+        char attrstr[35];       //8+1+8+1+16 +1 =35
+        struct sockaddr_in addr;
 
-	snprintf(attrstr, 35, "%" PRIx32 ":%" PRIx32 ":%" PRIx64,
-					 packetno, fileid, offset);
-	CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
-	ConvertEncode(pal->encode);
+        snprintf(attrstr, 35, "%" PRIx32 ":%" PRIx32 ":%" PRIx64,
+                                         packetno, fileid, offset);
+        CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-			 && (errno != EINTR))
-		 || (xwrite(sock, buf, size) == -1))
-		return false;
+        if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+                         && (errno != EINTR))
+                 || (xwrite(sock, buf, size) == -1))
+                return false;
 
-	return true;
+        return true;
 }
 
 /**
@@ -331,24 +331,24 @@ bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
  */
 bool Command::SendAskFiles(int sock, PalInfo *pal, uint32_t packetno, uint32_t fileid)
 {
-	char attrstr[20];	//8+1+8+1+1 +1	=20
-	struct sockaddr_in addr;
+        char attrstr[20];       //8+1+8+1+1 +1  =20
+        struct sockaddr_in addr;
 
-	snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno, fileid);	//兼容LanQQ软件
-	CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
-	ConvertEncode(pal->encode);
+        snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno, fileid);   //兼容LanQQ软件
+        CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-			 && (errno != EINTR))
-		 || (xwrite(sock, buf, size) == -1))
-		return false;
+        if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+                         && (errno != EINTR))
+                 || (xwrite(sock, buf, size) == -1))
+                return false;
 
-	return true;
+        return true;
 }
 
 /**
@@ -360,17 +360,17 @@ bool Command::SendAskFiles(int sock, PalInfo *pal, uint32_t packetno, uint32_t f
  */
 void Command::SendAskShared(int sock, PalInfo *pal, uint32_t opttype, const char *attach)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(opttype | IPTUX_ASKSHARED, attach);
-	ConvertEncode(pal->encode);
+        CreateCommand(opttype | IPTUX_ASKSHARED, attach);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -382,18 +382,18 @@ void Command::SendAskShared(int sock, PalInfo *pal, uint32_t opttype, const char
  */
 void Command::SendFileInfo(int sock, PalInfo *pal, uint32_t opttype, const char *extra)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(opttype | IPMSG_FILEATTACHOPT | IPMSG_SENDMSG, NULL);
-	ConvertEncode(pal->encode);
-	CreateIpmsgExtra(extra, pal->encode);
+        CreateCommand(opttype | IPMSG_FILEATTACHOPT | IPMSG_SENDMSG, NULL);
+        ConvertEncode(pal->encode);
+        CreateIpmsgExtra(extra, pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -403,18 +403,18 @@ void Command::SendFileInfo(int sock, PalInfo *pal, uint32_t opttype, const char 
  */
 void Command::SendMyIcon(int sock, PalInfo *pal)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPTUX_SENDICON, NULL);
-	ConvertEncode(pal->encode);
-	CreateIconExtra();
+        CreateCommand(IPTUX_SENDICON, NULL);
+        ConvertEncode(pal->encode);
+        CreateIconExtra();
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -424,17 +424,17 @@ void Command::SendMyIcon(int sock, PalInfo *pal)
  */
 void Command::SendMySign(int sock, PalInfo *pal)
 {
-	struct sockaddr_in addr;
+        struct sockaddr_in addr;
 
-	CreateCommand(IPTUX_SENDSIGN, progdt.sign);
-	ConvertEncode(pal->encode);
+        CreateCommand(IPTUX_SENDSIGN, progdt.sign);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+        sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
 }
 
 /**
@@ -446,25 +446,25 @@ void Command::SendMySign(int sock, PalInfo *pal)
  */
 void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype, const char *path)
 {
-	struct sockaddr_in addr;
-	int fd;
+        struct sockaddr_in addr;
+        int fd;
 
-	CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
-	ConvertEncode(pal->encode);
+        CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
+        ConvertEncode(pal->encode);
 
-	bzero(&addr, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-	addr.sin_addr.s_addr = pal->ipv4;
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_addr.s_addr = pal->ipv4;
 
-	if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-			 && (errno != EINTR))
-		 || (xwrite(sock, buf, size) == -1)
-		 || ((fd = open(path, O_RDONLY)) == -1))
-		return;
+        if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+                         && (errno != EINTR))
+                 || (xwrite(sock, buf, size) == -1)
+                 || ((fd = open(path, O_RDONLY)) == -1))
+                return;
 
-	SendSublayerData(sock, fd);
-	close(fd);
+        SendSublayerData(sock, fd);
+        close(fd);
 }
 
 /**
@@ -475,20 +475,20 @@ void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype, const char 
  */
 void Command::FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error)
 {
-	MsgPara para;
-	ChipData *chip;
+        MsgPara para;
+        ChipData *chip;
 
-	/* 构建消息封装包 */
-	para.pal = pal;
-	para.stype = MESSAGE_SOURCE_TYPE_ERROR;
-	para.btype = btype;
-	chip = new ChipData;
-	chip->type = MESSAGE_CONTENT_TYPE_STRING;
-	chip->data = g_strdup(error);
-	para.dtlist = g_slist_append(NULL, chip);
+        /* 构建消息封装包 */
+        para.pal = pal;
+        para.stype = MESSAGE_SOURCE_TYPE_ERROR;
+        para.btype = btype;
+        chip = new ChipData;
+        chip->type = MESSAGE_CONTENT_TYPE_STRING;
+        chip->data = g_strdup(error);
+        para.dtlist = g_slist_append(NULL, chip);
 
-	/* 交给某人处理吧 */
-	cthrd.InsertMessage(&para);
+        /* 交给某人处理吧 */
+        cthrd.InsertMessage(&para);
 }
 
 /**
@@ -498,14 +498,14 @@ void Command::FeedbackError(PalInfo *pal, GroupBelongType btype, const char *err
  */
 void Command::SendSublayerData(int sock, int fd)
 {
-	ssize_t len;
+        ssize_t len;
 
-	do {
-		if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
-			break;
-		if ((len = xwrite(sock, buf, len)) <= 0)
-			break;
-	} while (1);
+        do {
+                if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
+                        break;
+                if ((len = xwrite(sock, buf, len)) <= 0)
+                        break;
+        } while (1);
 }
 
 /**
@@ -514,14 +514,14 @@ void Command::SendSublayerData(int sock, int fd)
  */
 void Command::ConvertEncode(const char *encode)
 {
-	char *ptr;
+        char *ptr;
 
-	if (encode && strcasecmp(encode, "utf-8") != 0
-		 && (ptr = convert_encode(buf, encode, "utf-8"))) {
-		size = strlen(ptr) + 1;
-		memcpy(buf, ptr, size);
-		g_free(ptr);
-	}
+        if (encode && strcasecmp(encode, "utf-8") != 0
+                 && (ptr = convert_encode(buf, encode, "utf-8"))) {
+                size = strlen(ptr) + 1;
+                memcpy(buf, ptr, size);
+                g_free(ptr);
+        }
 }
 
 
@@ -532,34 +532,34 @@ void Command::ConvertEncode(const char *encode)
  */
 void Command::CreateCommand(uint32_t command, const char *attach)
 {
-	const gchar *env;
-	char *ptr;
+        const gchar *env;
+        char *ptr;
 
-	snprintf(buf, MAX_UDPLEN, "%s", IPTUX_VERSION);
-	size = strlen(buf);
-	ptr = buf + size;
+        snprintf(buf, MAX_UDPLEN, "%s", IPTUX_VERSION);
+        size = strlen(buf);
+        ptr = buf + size;
 
-	snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, packetn);
-	packetn++;
-	size += strlen(ptr);
-	ptr = buf + size;
+        snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, packetn);
+        packetn++;
+        size += strlen(ptr);
+        ptr = buf + size;
 
-	env = g_get_user_name();
-	snprintf(ptr, MAX_UDPLEN - size, ":%s", env);
-	size += strlen(ptr);
-	ptr = buf + size;
+        env = g_get_user_name();
+        snprintf(ptr, MAX_UDPLEN - size, ":%s", env);
+        size += strlen(ptr);
+        ptr = buf + size;
 
-	env = g_get_host_name();
-	snprintf(ptr, MAX_UDPLEN - size, ":%s", env);
-	size += strlen(ptr);
-	ptr = buf + size;
+        env = g_get_host_name();
+        snprintf(ptr, MAX_UDPLEN - size, ":%s", env);
+        size += strlen(ptr);
+        ptr = buf + size;
 
-	snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, command);
-	size += strlen(ptr);
-	ptr = buf + size;
+        snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, command);
+        size += strlen(ptr);
+        ptr = buf + size;
 
-	snprintf(ptr, MAX_UDPLEN - size, ":%s", attach ? attach : "");
-	size += strlen(ptr) + 1;
+        snprintf(ptr, MAX_UDPLEN - size, ":%s", attach ? attach : "");
+        size += strlen(ptr) + 1;
 }
 
 /**
@@ -569,18 +569,18 @@ void Command::CreateCommand(uint32_t command, const char *attach)
  */
 void Command::CreateIpmsgExtra(const char *extra, const char *encode)
 {
-	char *pptr, *ptr;
+        char *pptr, *ptr;
 
-	pptr = buf + size;
-	if (encode && strcasecmp(encode, "utf-8") != 0
-		 && (ptr = convert_encode(extra, encode, "utf-8"))) {
-		snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
-		g_free(ptr);
-	} else
-		snprintf(pptr, MAX_UDPLEN - size, "%s", extra);
-	if ( (ptr = strrchr(pptr, '\a')))
-		*(ptr + 1) = '\0';
-	size += strlen(pptr) + 1;
+        pptr = buf + size;
+        if (encode && strcasecmp(encode, "utf-8") != 0
+                 && (ptr = convert_encode(extra, encode, "utf-8"))) {
+                snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
+                g_free(ptr);
+        } else
+                snprintf(pptr, MAX_UDPLEN - size, "%s", extra);
+        if ( (ptr = strrchr(pptr, '\a')))
+                *(ptr + 1) = '\0';
+        size += strlen(pptr) + 1;
 }
 
 /**
@@ -589,24 +589,24 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode)
  */
 void Command::CreateIptuxExtra(const char *encode)
 {
-	char *pptr, *ptr;
+        char *pptr, *ptr;
 
-	pptr = buf + size;
-	if (encode && strcasecmp(encode, "utf-8") != 0
-		 && (ptr = convert_encode(progdt.mygroup, encode, "utf-8"))) {
-		snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
-		g_free(ptr);
-	} else
-		snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.mygroup);
-	size += strlen(pptr) + 1;
+        pptr = buf + size;
+        if (encode && strcasecmp(encode, "utf-8") != 0
+                 && (ptr = convert_encode(progdt.mygroup, encode, "utf-8"))) {
+                snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
+                g_free(ptr);
+        } else
+                snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.mygroup);
+        size += strlen(pptr) + 1;
 
-	pptr = buf + size;
-	snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.myicon);
-	size += strlen(pptr) + 1;
+        pptr = buf + size;
+        snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.myicon);
+        size += strlen(pptr) + 1;
 
-	pptr = buf + size;
-	snprintf(pptr, MAX_UDPLEN - size, "utf-8");
-	size += strlen(pptr) + 1;
+        pptr = buf + size;
+        snprintf(pptr, MAX_UDPLEN - size, "utf-8");
+        size += strlen(pptr) + 1;
 }
 
 /**
@@ -614,17 +614,17 @@ void Command::CreateIptuxExtra(const char *encode)
  */
 void Command::CreateIconExtra()
 {
-	const gchar *env;
-	char path[MAX_PATHLEN];
-	ssize_t len;
-	int fd;
+        const gchar *env;
+        char path[MAX_PATHLEN];
+        ssize_t len;
+        int fd;
 
-	env = g_get_user_config_dir();
-	snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon", env);
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return;
-	len = xread(fd, buf + size, MAX_UDPLEN - size);
-	close(fd);
-	if (len != -1)
-		size += len;
+        env = g_get_user_config_dir();
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon", env);
+        if ((fd = open(path, O_RDONLY)) == -1)
+                return;
+        len = xread(fd, buf + size, MAX_UDPLEN - size);
+        close(fd);
+        if (len != -1)
+                size += len;
 }

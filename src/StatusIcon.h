@@ -16,24 +16,24 @@
 
 class StatusIcon {
 public:
-	StatusIcon();
-	~StatusIcon();
+        StatusIcon();
+        ~StatusIcon();
 
-	void CreateStatusIcon();
-	void AlterStatusIconMode();
+        void CreateStatusIcon();
+        void AlterStatusIconMode();
 private:
-	GtkStatusIcon *statusicon;
-	guint timerid;
+        GtkStatusIcon *statusicon;
+        guint timerid;
 private:
-	static gboolean UpdateUI(StatusIcon *sicon);
-	static GtkWidget *CreatePopupMenu(GtkStatusIcon *statusicon);
+        static gboolean UpdateUI(StatusIcon *sicon);
+        static GtkWidget *CreatePopupMenu(GtkStatusIcon *statusicon);
 //回调处理部分
 private:
-	static void ShowTransWindow();
-	static void StatusIconActivate();
-	static void PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint time);
-	static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
-						 gboolean key, GtkTooltip *tooltip);
+        static void ShowTransWindow();
+        static void StatusIconActivate();
+        static void PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint time);
+        static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
+                                                 gboolean key, GtkTooltip *tooltip);
 };
 
 #endif

@@ -18,8 +18,8 @@
  */
 AnalogFS::AnalogFS()
 {
-	if (!::getcwd(path, MAX_PATHLEN))
-		strcpy(path, "/");
+        if (!::getcwd(path, MAX_PATHLEN))
+                strcpy(path, "/");
 }
 
 /**
@@ -36,26 +36,26 @@ AnalogFS::~AnalogFS()
  */
 int AnalogFS::chdir(const char *dir)
 {
-	size_t len;
-	char *ptr;
+        size_t len;
+        char *ptr;
 
-	if (strcmp(dir, ".") == 0)
-		return 0;
+        if (strcmp(dir, ".") == 0)
+                return 0;
 
-	if (*dir != '/') {
-		if (strcmp(dir, "..") == 0) {
-			ptr = strrchr(path, '/');
-			if (ptr != path)
-				*ptr = '\0';
-		} else {
-			len = strlen(path);
-			ptr = (char *)(*(path + 1) != '\0' ? "/" : "");
-			snprintf(path + len, MAX_PATHLEN - len, "%s%s", ptr, dir);
-		}
-	} else
-		snprintf(path, MAX_PATHLEN, "%s", dir);
+        if (*dir != '/') {
+                if (strcmp(dir, "..") == 0) {
+                        ptr = strrchr(path, '/');
+                        if (ptr != path)
+                                *ptr = '\0';
+                } else {
+                        len = strlen(path);
+                        ptr = (char *)(*(path + 1) != '\0' ? "/" : "");
+                        snprintf(path + len, MAX_PATHLEN - len, "%s%s", ptr, dir);
+                }
+        } else
+                snprintf(path, MAX_PATHLEN, "%s", dir);
 
-	return 0;
+        return 0;
 }
 
 /**
@@ -67,28 +67,28 @@ int AnalogFS::chdir(const char *dir)
  */
 int AnalogFS::open(const char *fn, int flags, ...)
 {
-	char tpath[MAX_PATHLEN];
-	va_list ap;
-	char *tfn;
-	int fd;
+        char tpath[MAX_PATHLEN];
+        va_list ap;
+        char *tfn;
+        int fd;
 
-	strcpy(tpath, path);
-	mergepath(tpath, fn);
-	va_start(ap, flags);
-	if ((flags & O_ACCMODE) == O_WRONLY) {
-		tfn = assert_filename_inexist(tpath);
-		if ((fd = ::open(tfn, flags, va_arg(ap, mode_t))) == -1)
-			pwarning(_("Open() file \"%s\" failed, %s"), tfn,
-							 strerror(errno));
-		g_free(tfn);
-	} else {
-		if ((fd = ::open(tpath, flags, va_arg(ap, mode_t))) == -1)
-			pwarning(_("Open() file \"%s\" failed, %s"), tpath,
-							 strerror(errno));
-	}
-	va_end(ap);
+        strcpy(tpath, path);
+        mergepath(tpath, fn);
+        va_start(ap, flags);
+        if ((flags & O_ACCMODE) == O_WRONLY) {
+                tfn = assert_filename_inexist(tpath);
+                if ((fd = ::open(tfn, flags, va_arg(ap, mode_t))) == -1)
+                        pwarning(_("Open() file \"%s\" failed, %s"), tfn,
+                                                         strerror(errno));
+                g_free(tfn);
+        } else {
+                if ((fd = ::open(tpath, flags, va_arg(ap, mode_t))) == -1)
+                        pwarning(_("Open() file \"%s\" failed, %s"), tpath,
+                                                         strerror(errno));
+        }
+        va_end(ap);
 
-	return fd;
+        return fd;
 }
 
 /**
@@ -99,15 +99,15 @@ int AnalogFS::open(const char *fn, int flags, ...)
  */
 int AnalogFS::stat(const char *fn, struct stat64 *st)
 {
-	char tpath[MAX_PATHLEN];
-	int result;
+        char tpath[MAX_PATHLEN];
+        int result;
 
-	strcpy(tpath, path);
-	mergepath(tpath, fn);
-	if ((result = ::stat64(tpath, st)) != 0)
-		pwarning(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
+        strcpy(tpath, path);
+        mergepath(tpath, fn);
+        if ((result = ::stat64(tpath, st)) != 0)
+                pwarning(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
 
-	return result;
+        return result;
 }
 
 /**
@@ -118,18 +118,18 @@ int AnalogFS::stat(const char *fn, struct stat64 *st)
  */
 int AnalogFS::mkdir(const char *dir, mode_t mode)
 {
-	char tpath[MAX_PATHLEN];
-	int result;
+        char tpath[MAX_PATHLEN];
+        int result;
 
-	strcpy(tpath, path);
-	mergepath(tpath, dir);
-	if (::access(tpath, F_OK) == 0)
-		return 0;
-	if ((result = ::mkdir(tpath, mode)) != 0)
-		pwarning(_("Mkdir() directory \"%s\" failed, %s"), tpath,
-							 strerror(errno));
+        strcpy(tpath, path);
+        mergepath(tpath, dir);
+        if (::access(tpath, F_OK) == 0)
+                return 0;
+        if ((result = ::mkdir(tpath, mode)) != 0)
+                pwarning(_("Mkdir() directory \"%s\" failed, %s"), tpath,
+                                                         strerror(errno));
 
-	return result;
+        return result;
 }
 
 /**
@@ -139,55 +139,55 @@ int AnalogFS::mkdir(const char *dir, mode_t mode)
  */
 int64_t AnalogFS::ftwsize(const char *dir)
 {
-	struct stat64 st;
-	struct dirent *dirt;
-	DIR *dirs;
-	char tpath[MAX_PATHLEN];
-	int64_t sumsize;
+        struct stat64 st;
+        struct dirent *dirt;
+        DIR *dirs;
+        char tpath[MAX_PATHLEN];
+        int64_t sumsize;
 
-	LIST_HEAD(listhead, entry) head;
-	struct entry {
-		LIST_ENTRY(entry) entries;
-		void *data;
-	} *item;
-	LIST_INIT(&head);
+        LIST_HEAD(listhead, entry) head;
+        struct entry {
+                LIST_ENTRY(entry) entries;
+                void *data;
+        } *item;
+        LIST_INIT(&head);
 
-	strcpy(tpath, path);
-	mergepath(tpath, dir);
-	sumsize = 0;
-	dirs = NULL;
-	goto mark;
-	while ( (item = head.lh_first)) {
-		dirs = (DIR *)item->data;
-		LIST_REMOVE(item, entries);
-		g_free(item);
-		while (dirs && (dirt = ::readdir(dirs))) {
-			if (strcmp(dirt->d_name, ".") == 0
-				 || strcmp(dirt->d_name, "..") == 0)
-				continue;
-			mergepath(tpath, dirt->d_name);
-mark:			if ((::stat64(tpath, &st) == -1)
-				 || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
-				mergepath(tpath, "..");
-				continue;
-			}
-			if (S_ISDIR(st.st_mode)) {
-				item = (struct entry *)g_malloc(sizeof(struct entry));
-				item->data = dirs;
-				LIST_INSERT_HEAD(&head, item, entries);
-				dirs = ::opendir(tpath);
-			} else {
-				sumsize += st.st_size;
-				mergepath(tpath, "..");
-			}
-		}
-		if (dirs) {
-			::closedir(dirs);
-			mergepath(tpath, "..");
-		}
-	}
+        strcpy(tpath, path);
+        mergepath(tpath, dir);
+        sumsize = 0;
+        dirs = NULL;
+        goto mark;
+        while ( (item = head.lh_first)) {
+                dirs = (DIR *)item->data;
+                LIST_REMOVE(item, entries);
+                g_free(item);
+                while (dirs && (dirt = ::readdir(dirs))) {
+                        if (strcmp(dirt->d_name, ".") == 0
+                                 || strcmp(dirt->d_name, "..") == 0)
+                                continue;
+                        mergepath(tpath, dirt->d_name);
+mark:                   if ((::stat64(tpath, &st) == -1)
+                                 || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+                                mergepath(tpath, "..");
+                                continue;
+                        }
+                        if (S_ISDIR(st.st_mode)) {
+                                item = (struct entry *)g_malloc(sizeof(struct entry));
+                                item->data = dirs;
+                                LIST_INSERT_HEAD(&head, item, entries);
+                                dirs = ::opendir(tpath);
+                        } else {
+                                sumsize += st.st_size;
+                                mergepath(tpath, "..");
+                        }
+                }
+                if (dirs) {
+                        ::closedir(dirs);
+                        mergepath(tpath, "..");
+                }
+        }
 
-	return sumsize;
+        return sumsize;
 }
 
 /**
@@ -197,16 +197,16 @@ mark:			if ((::stat64(tpath, &st) == -1)
  */
 DIR *AnalogFS::opendir(const char *dir)
 {
-	char tpath[MAX_PATHLEN];
-	DIR *dirs;
+        char tpath[MAX_PATHLEN];
+        DIR *dirs;
 
-	strcpy(tpath, path);
-	mergepath(tpath, dir);
-	if (!(dirs = ::opendir(tpath)))
-		pwarning(_("Opendir() directory \"%s\" failed, %s"), tpath,
-							 strerror(errno));
+        strcpy(tpath, path);
+        mergepath(tpath, dir);
+        if (!(dirs = ::opendir(tpath)))
+                pwarning(_("Opendir() directory \"%s\" failed, %s"), tpath,
+                                                         strerror(errno));
 
-	return dirs;
+        return dirs;
 }
 
 /**
@@ -217,24 +217,24 @@ DIR *AnalogFS::opendir(const char *dir)
  */
 int AnalogFS::mergepath(char tpath[], const char *npath)
 {
-	size_t len;
-	char *ptr;
+        size_t len;
+        char *ptr;
 
-	if (strcmp(npath, ".") == 0)
-		return 0;
+        if (strcmp(npath, ".") == 0)
+                return 0;
 
-	if (*npath != '/') {
-		if (strcmp(npath, "..") == 0) {
-			ptr = strrchr(tpath, '/');
-			if (ptr != tpath)
-				*ptr = '\0';
-		} else {
-			len = strlen(tpath);
-			ptr = (char *)(*(tpath + 1) != '\0' ? "/" : "");
-			snprintf(tpath + len, MAX_PATHLEN - len, "%s%s", ptr, npath);
-		}
-	} else
-		snprintf(tpath, MAX_PATHLEN, "%s", npath);
+        if (*npath != '/') {
+                if (strcmp(npath, "..") == 0) {
+                        ptr = strrchr(tpath, '/');
+                        if (ptr != tpath)
+                                *ptr = '\0';
+                } else {
+                        len = strlen(tpath);
+                        ptr = (char *)(*(tpath + 1) != '\0' ? "/" : "");
+                        snprintf(tpath + len, MAX_PATHLEN - len, "%s%s", ptr, npath);
+                }
+        } else
+                snprintf(tpath, MAX_PATHLEN, "%s", npath);
 
-	return 0;
+        return 0;
 }

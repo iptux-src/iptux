@@ -16,17 +16,17 @@
 
 class SendFile {
 public:
-	SendFile();
-	~SendFile();
+        SendFile();
+        ~SendFile();
 
-	void SendSharedInfoEntry(PalInfo *pal);
-	void SendFileInfoEntry(PalInfo *pal, GSList *flist);
-	void BcstFileInfoEntry(GSList *plist, GSList *flist);
-	void RequestDataEntry(int sock, uint32_t fileattr, char *attach);
+        void SendSharedInfoEntry(PalInfo *pal);
+        void SendFileInfoEntry(PalInfo *pal, GSList *flist);
+        void BcstFileInfoEntry(GSList *plist, GSList *flist);
+        void RequestDataEntry(int sock, uint32_t fileattr, char *attach);
 private:
-	void SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist);
-	void BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist);
-	void ThreadSendFile(int sock, FileInfo *file);
+        void SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist);
+        void BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist);
+        void ThreadSendFile(int sock, FileInfo *file);
 };
 
 #endif

@@ -18,13 +18,13 @@
  */
 void ipv4_order(in_addr_t *ip1, in_addr_t *ip2)
 {
-	in_addr_t ip;
+        in_addr_t ip;
 
-	if (*ip1 > *ip2) {
-		ip = *ip1;
-		*ip1 = *ip2;
-		*ip2 = ip;
-	}
+        if (*ip1 > *ip2) {
+                ip = *ip1;
+                *ip1 = *ip2;
+                *ip2 = ip;
+        }
 }
 
 /**
@@ -38,30 +38,30 @@ void ipv4_order(in_addr_t *ip1, in_addr_t *ip2)
  */
 char *iptux_string_validate(const char *string, const char *codeset, char **encode)
 {
-	const char *pptr, *ptr;
-	char *tstring, *cset;
-	gsize rbytes, wbytes;
+        const char *pptr, *ptr;
+        char *tstring, *cset;
+        gsize rbytes, wbytes;
 
-	*encode = NULL;	//设置字符集编码未知
-	tstring = NULL;	//设置utf8有效串尚未成功获取
-	if (!g_utf8_validate(string, -1, NULL) && codeset) {
-		cset = NULL;
-		ptr = codeset;
-		do {
-			if (*(pptr = ptr + strspn(ptr, ",;\x20\t")) == '\0')
-				break;
-			if (!(ptr = strpbrk(pptr, ",;\x20\t")))
-				ptr = pptr + strlen(pptr);
-			g_free(cset);
-			cset = g_strndup(pptr, ptr - pptr);
-			if (strcasecmp(cset, "utf-8") == 0)
-				continue;
-		} while (!(tstring = g_convert(string, -1, "utf-8", cset,
-						 &rbytes, &wbytes, NULL)));
-		*encode = cset;
-	}
+        *encode = NULL; //设置字符集编码未知
+        tstring = NULL; //设置utf8有效串尚未成功获取
+        if (!g_utf8_validate(string, -1, NULL) && codeset) {
+                cset = NULL;
+                ptr = codeset;
+                do {
+                        if (*(pptr = ptr + strspn(ptr, ",;\x20\t")) == '\0')
+                                break;
+                        if (!(ptr = strpbrk(pptr, ",;\x20\t")))
+                                ptr = pptr + strlen(pptr);
+                        g_free(cset);
+                        cset = g_strndup(pptr, ptr - pptr);
+                        if (strcasecmp(cset, "utf-8") == 0)
+                                continue;
+                } while (!(tstring = g_convert(string, -1, "utf-8", cset,
+                                                 &rbytes, &wbytes, NULL)));
+                *encode = cset;
+        }
 
-	return tstring;
+        return tstring;
 }
 
 /**
@@ -75,14 +75,14 @@ char *iptux_string_validate(const char *string, const char *codeset, char **enco
  */
 char *iptux_string_validate_copy(const char *string, const char *codeset, char **encode)
 {
-	char *tstring;
+        char *tstring;
 
-	if (!codeset || !(tstring = iptux_string_validate(string, codeset, encode))) {
-		*encode = g_strdup("utf-8");
-		tstring = g_strdup(string);
-	}
+        if (!codeset || !(tstring = iptux_string_validate(string, codeset, encode))) {
+                *encode = g_strdup("utf-8");
+                tstring = g_strdup(string);
+        }
 
-	return tstring;
+        return tstring;
 }
 
 /**
@@ -95,12 +95,12 @@ char *iptux_string_validate_copy(const char *string, const char *codeset, char *
  */
 char *convert_encode(const char *string, const char *tocode, const char *fromcode)
 {
-	gsize rbytes, wbytes;
-	char *tstring;
+        gsize rbytes, wbytes;
+        char *tstring;
 
-	tstring = g_convert(string, -1, tocode, fromcode, &rbytes, &wbytes, NULL);
+        tstring = g_convert(string, -1, tocode, fromcode, &rbytes, &wbytes, NULL);
 
-	return tstring;
+        return tstring;
 }
 
 /**
@@ -113,12 +113,12 @@ char *convert_encode(const char *string, const char *tocode, const char *fromcod
  */
 char *convert_encode_copy(const char *string, const char *tocode, const char *fromcode)
 {
-	char *tstring;
+        char *tstring;
 
-	if (!(tstring = convert_encode(string, tocode, fromcode)))
-		tstring = g_strdup(string);
+        if (!(tstring = convert_encode(string, tocode, fromcode)))
+                tstring = g_strdup(string);
 
-	return tstring;
+        return tstring;
 }
 
 /**
@@ -129,20 +129,20 @@ char *convert_encode_copy(const char *string, const char *tocode, const char *fr
  */
 void get_file_system_info(const char *path, int64_t *avail, int64_t *total)
 {
-	struct statfs64 st;
-	int result;
+        struct statfs64 st;
+        int result;
 
-mark:	switch (result = statfs64(path, &st)) {
-	case 0:
-		*avail = (int64_t)st.f_bsize * st.f_bavail;
-		*total = (int64_t)st.f_bsize * st.f_blocks;
-		break;
-	default:
-		if (errno == EINTR)
-			goto mark;
-		*avail = *total = 0;
-		break;
-	}
+mark:   switch (result = statfs64(path, &st)) {
+        case 0:
+                *avail = (int64_t)st.f_bsize * st.f_bavail;
+                *total = (int64_t)st.f_bsize * st.f_blocks;
+                break;
+        default:
+                if (errno == EINTR)
+                        goto mark;
+                *avail = *total = 0;
+                break;
+        }
 }
 
 /**
@@ -153,19 +153,19 @@ mark:	switch (result = statfs64(path, &st)) {
  */
 char *iptux_string_getline(const char *str)
 {
-	const char *pptr, *ptr;
-	char *dst;
-	size_t len;
+        const char *pptr, *ptr;
+        char *dst;
+        size_t len;
 
-	dst = NULL;
-	pptr = str + strspn(str, "\x20\t");
-	ptr = strpbrk(pptr, "\r\n");
-	if ( (len = ptr ? (ptr - pptr) : strlen(pptr))) {
-		dst = g_strndup(pptr, len);
-		g_strchomp(dst);
-	}
+        dst = NULL;
+        pptr = str + strspn(str, "\x20\t");
+        ptr = strpbrk(pptr, "\r\n");
+        if ( (len = ptr ? (ptr - pptr) : strlen(pptr))) {
+                dst = g_strndup(pptr, len);
+                g_strchomp(dst);
+        }
 
-	return dst;
+        return dst;
 }
 
 /**
@@ -175,26 +175,26 @@ char *iptux_string_getline(const char *str)
  */
 char *assert_filename_inexist(const char *path)
 {
-	char buf[MAX_PATHLEN];
-	const char *ptr;
-	uint16_t count;
+        char buf[MAX_PATHLEN];
+        const char *ptr;
+        uint16_t count;
 
-	if (access(path, F_OK) != 0)
-		return g_strdup(path);
+        if (access(path, F_OK) != 0)
+                return g_strdup(path);
 
-	ptr = strrchr(path, '/');
-	ptr = ptr ? ptr + 1 : path;
-	count = 1;
-	while (count) {
-		snprintf(buf, MAX_PATHLEN, "%.*s%" PRIu16 "_%s",
-				 ptr - path, path, count, ptr);
-		if (access(buf, F_OK) != 0)
-			break;
-		count++;
-	}
+        ptr = strrchr(path, '/');
+        ptr = ptr ? ptr + 1 : path;
+        count = 1;
+        while (count) {
+                snprintf(buf, MAX_PATHLEN, "%.*s%" PRIu16 "_%s",
+                                 ptr - path, path, count, ptr);
+                if (access(buf, F_OK) != 0)
+                        break;
+                count++;
+        }
 
-	/* 概率极低，不妨忽略错误情形 */
-	return g_strdup(buf);
+        /* 概率极低，不妨忽略错误情形 */
+        return g_strdup(buf);
 }
 
 /**
@@ -205,23 +205,23 @@ char *assert_filename_inexist(const char *path)
  */
 char *getformattime(const char *format, ...)
 {
-	char buf[MAX_BUFLEN], *msg, *ptr;
-	struct tm *tm;
-	time_t tt;
-	va_list ap;
+        char buf[MAX_BUFLEN], *msg, *ptr;
+        struct tm *tm;
+        time_t tt;
+        va_list ap;
 
-	va_start(ap, format);
-	msg = g_strdup_vprintf(format, ap);
-	va_end(ap);
+        va_start(ap, format);
+        msg = g_strdup_vprintf(format, ap);
+        va_end(ap);
 
-	time(&tt);
-	tm = localtime(&tt);
-	strftime(buf, MAX_BUFLEN, "%X", tm);
+        time(&tt);
+        tm = localtime(&tt);
+        strftime(buf, MAX_BUFLEN, "%X", tm);
 
-	ptr = g_strdup_printf("(%s) %s:", buf, msg);
-	g_free(msg);
+        ptr = g_strdup_printf("(%s) %s:", buf, msg);
+        g_free(msg);
 
-	return ptr;
+        return ptr;
 }
 
 /**
@@ -232,7 +232,7 @@ char *getformattime(const char *format, ...)
  */
 gboolean giter_compare_foreach(gunichar src, gunichar dst)
 {
-	return (src == dst);
+        return (src == dst);
 }
 
 /**
@@ -242,20 +242,20 @@ gboolean giter_compare_foreach(gunichar src, gunichar dst)
  */
 char *numeric_to_size(int64_t numeric)
 {
-	gchar *ptr;
+        gchar *ptr;
 
-	if (numeric >= ((int64_t)1 << 40))
-		ptr = g_strdup_printf("%.1fT", (float)numeric / ((int64_t)1 << 40));
-	else if (numeric >= (1 << 30))
-		ptr = g_strdup_printf("%.1fG", (float)numeric / (1 << 30));
-	else if (numeric >= (1 << 20))
-		ptr = g_strdup_printf("%.1fM", (float)numeric / (1 << 20));
-	else if (numeric >= (1 << 10))
-		ptr = g_strdup_printf("%.1fK", (float)numeric / (1 << 10));
-	else
-		ptr = g_strdup_printf("%" PRId64 "B", numeric);
+        if (numeric >= ((int64_t)1 << 40))
+                ptr = g_strdup_printf("%.1fT", (float)numeric / ((int64_t)1 << 40));
+        else if (numeric >= (1 << 30))
+                ptr = g_strdup_printf("%.1fG", (float)numeric / (1 << 30));
+        else if (numeric >= (1 << 20))
+                ptr = g_strdup_printf("%.1fM", (float)numeric / (1 << 20));
+        else if (numeric >= (1 << 10))
+                ptr = g_strdup_printf("%.1fK", (float)numeric / (1 << 10));
+        else
+                ptr = g_strdup_printf("%" PRId64 "B", numeric);
 
-	return ptr;
+        return ptr;
 }
 
 /**
@@ -265,18 +265,18 @@ char *numeric_to_size(int64_t numeric)
  */
 char *numeric_to_rate(uint32_t numeric)
 {
-	gchar *ptr;
+        gchar *ptr;
 
-	if (numeric >= (1 << 30))
-		ptr = g_strdup_printf("%.1fG/s", (float)numeric / (1 << 30));
-	else if (numeric >= (1 << 20))
-		ptr = g_strdup_printf("%.1fM/s", (float)numeric / (1 << 20));
-	else if (numeric >= (1 << 10))
-		ptr = g_strdup_printf("%.1fK/s", (float)numeric / (1 << 10));
-	else
-		ptr = g_strdup_printf("%" PRIu32 "B/s", numeric);
+        if (numeric >= (1 << 30))
+                ptr = g_strdup_printf("%.1fG/s", (float)numeric / (1 << 30));
+        else if (numeric >= (1 << 20))
+                ptr = g_strdup_printf("%.1fM/s", (float)numeric / (1 << 20));
+        else if (numeric >= (1 << 10))
+                ptr = g_strdup_printf("%.1fK/s", (float)numeric / (1 << 10));
+        else
+                ptr = g_strdup_printf("%" PRIu32 "B/s", numeric);
 
-	return ptr;
+        return ptr;
 }
 
 /**
@@ -286,16 +286,16 @@ char *numeric_to_rate(uint32_t numeric)
  */
 char *numeric_to_time(uint32_t numeric)
 {
-	uint32_t hour, minute;
-	gchar *ptr;
+        uint32_t hour, minute;
+        gchar *ptr;
 
-	hour = numeric / 3600;
-	numeric %= 3600;
-	minute = numeric / 60;
-	numeric %= 60;
-	ptr = g_strdup_printf("%.2" PRIu32 ":%.2" PRIu32 ":%.2" PRIu32,
-					      hour, minute, numeric);
-	return ptr;
+        hour = numeric / 3600;
+        numeric %= 3600;
+        minute = numeric / 60;
+        numeric %= 60;
+        ptr = g_strdup_printf("%.2" PRIu32 ":%.2" PRIu32 ":%.2" PRIu32,
+                                              hour, minute, numeric);
+        return ptr;
 }
 
 /**
@@ -307,21 +307,21 @@ char *numeric_to_time(uint32_t numeric)
  */
 const char *iptux_skip_string(const char *string, size_t size, uint8_t times)
 {
-	const char *ptr;
-	uint8_t count;
+        const char *ptr;
+        uint8_t count;
 
-	ptr = string;
-	count = 0;
-	while (count < times) {
-		ptr += strlen(ptr) + 1;
-		if ((size_t)(ptr - string) >= size) {
-			ptr = NULL;
-			break;
-		}
-		count++;
-	}
+        ptr = string;
+        count = 0;
+        while (count < times) {
+                ptr += strlen(ptr) + 1;
+                if ((size_t)(ptr - string) >= size) {
+                        ptr = NULL;
+                        break;
+                }
+                count++;
+        }
 
-	return ptr;
+        return ptr;
 }
 
 /**
@@ -333,19 +333,19 @@ const char *iptux_skip_string(const char *string, size_t size, uint8_t times)
  */
 const char *iptux_skip_section(const char *string, char ch, uint8_t times)
 {
-	const char *ptr;
-	uint8_t count;
+        const char *ptr;
+        uint8_t count;
 
-	ptr = string;
-	count = 0;
-	while (count < times) {
-		if (!(ptr = strchr(ptr, ch)))
-			break;
-		ptr++;	//跳过当前分割字符
-		count++;
-	}
+        ptr = string;
+        count = 0;
+        while (count < times) {
+                if (!(ptr = strchr(ptr, ch)))
+                        break;
+                ptr++;  //跳过当前分割字符
+                count++;
+        }
 
-	return ptr;
+        return ptr;
 }
 
 /**
@@ -357,14 +357,14 @@ const char *iptux_skip_section(const char *string, char ch, uint8_t times)
  */
 int64_t iptux_get_hex64_number(const char *msg, char ch, uint8_t times)
 {
-	const char *ptr;
-	int64_t number;
+        const char *ptr;
+        int64_t number;
 
-	if (!(ptr = iptux_skip_section(msg, ch, times)))
-		return 0;
-	if (sscanf(ptr, "%" SCNx64, &number) == 1)
-		return number;
-	return 0;
+        if (!(ptr = iptux_skip_section(msg, ch, times)))
+                return 0;
+        if (sscanf(ptr, "%" SCNx64, &number) == 1)
+                return number;
+        return 0;
 }
 
 /**
@@ -376,14 +376,14 @@ int64_t iptux_get_hex64_number(const char *msg, char ch, uint8_t times)
  */
 uint32_t iptux_get_hex_number(const char *msg, char ch, uint8_t times)
 {
-	const char *ptr;
-	uint32_t number;
+        const char *ptr;
+        uint32_t number;
 
-	if (!(ptr = iptux_skip_section(msg, ch, times)))
-		return 0;
-	if (sscanf(ptr, "%" SCNx32, &number) == 1)
-		return number;
-	return 0;
+        if (!(ptr = iptux_skip_section(msg, ch, times)))
+                return 0;
+        if (sscanf(ptr, "%" SCNx32, &number) == 1)
+                return number;
+        return 0;
 }
 
 /**
@@ -395,14 +395,14 @@ uint32_t iptux_get_hex_number(const char *msg, char ch, uint8_t times)
  */
 uint32_t iptux_get_dec_number(const char *msg, char ch, uint8_t times)
 {
-	const char *ptr;
-	uint32_t number;
+        const char *ptr;
+        uint32_t number;
 
-	if (!(ptr = iptux_skip_section(msg, ch, times)))
-		return 0;
-	if (sscanf(ptr, "%" SCNu32, &number) == 1)
-		return number;
-	return 0;
+        if (!(ptr = iptux_skip_section(msg, ch, times)))
+                return 0;
+        if (sscanf(ptr, "%" SCNu32, &number) == 1)
+                return number;
+        return 0;
 }
 
 /**
@@ -414,18 +414,18 @@ uint32_t iptux_get_dec_number(const char *msg, char ch, uint8_t times)
  */
 char *iptux_get_section_string(const char *msg, char ch, uint8_t times)
 {
-	const char *pptr, *ptr;
-	char *string;
-	size_t len;
+        const char *pptr, *ptr;
+        char *string;
+        size_t len;
 
-	if (!(pptr = iptux_skip_section(msg, ch, times)))
-		return NULL;
-	ptr = strchr(pptr, ch);
-	if ((len = ptr ? ptr - pptr : strlen(pptr)) == 0)
-		return NULL;
-	string = g_strndup(pptr, len);
+        if (!(pptr = iptux_skip_section(msg, ch, times)))
+                return NULL;
+        ptr = strchr(pptr, ch);
+        if ((len = ptr ? ptr - pptr : strlen(pptr)) == 0)
+                return NULL;
+        string = g_strndup(pptr, len);
 
-	return string;
+        return string;
 }
 
 /**
@@ -439,30 +439,30 @@ char *iptux_get_section_string(const char *msg, char ch, uint8_t times)
  */
 char *ipmsg_get_filename(const char *msg, char ch, uint8_t times)
 {
-	static uint32_t serial = 1;
-	char filename[256];	//文件最大长度为255
-	const char *ptr;
-	size_t len;
+        static uint32_t serial = 1;
+        char filename[256];     //文件最大长度为255
+        const char *ptr;
+        size_t len;
 
-	if ( (ptr = iptux_skip_section(msg, ch, times))) {
-		len = 0;
-		while (*ptr != ':' || strncmp(ptr, "::", 2) == 0) {
-			if (len < 255) {	//防止缓冲区溢出
-				filename[len] = *ptr;
-				len++;
-			}
-			if (*ptr == ':') {	//抹除分割符
-				memcpy((void *)ptr, "xx", 2);
-				ptr++;
-			}
-			ptr++;
-		}
-		filename[len] = '\0';
+        if ( (ptr = iptux_skip_section(msg, ch, times))) {
+                len = 0;
+                while (*ptr != ':' || strncmp(ptr, "::", 2) == 0) {
+                        if (len < 255) {        //防止缓冲区溢出
+                                filename[len] = *ptr;
+                                len++;
+                        }
+                        if (*ptr == ':') {      //抹除分割符
+                                memcpy((void *)ptr, "xx", 2);
+                                ptr++;
+                        }
+                        ptr++;
+                }
+                filename[len] = '\0';
 
-	} else
-		snprintf(filename, 256, "%" PRIu32 "_file", serial++);
+        } else
+                snprintf(filename, 256, "%" PRIu32 "_file", serial++);
 
-	return g_strdup(filename);
+        return g_strdup(filename);
 }
 
 /**
@@ -474,11 +474,11 @@ char *ipmsg_get_filename(const char *msg, char ch, uint8_t times)
  */
 char *ipmsg_get_attach(const char *msg, char ch, uint8_t times)
 {
-	const char *ptr;
+        const char *ptr;
 
-	if (!(ptr = iptux_skip_section(msg, ch, times)))
-		return NULL;
-	return g_strdup(ptr);
+        if (!(ptr = iptux_skip_section(msg, ch, times)))
+                return NULL;
+        return g_strdup(ptr);
 }
 
 /**
@@ -489,27 +489,27 @@ char *ipmsg_get_attach(const char *msg, char ch, uint8_t times)
  */
 char *ipmsg_get_filename_pal(const char *pathname)
 {
-	char filename[512];	//文件最大长度为255
-	const char *ptr;
-	size_t len;
+        char filename[512];     //文件最大长度为255
+        const char *ptr;
+        size_t len;
 
-	ptr = strrchr(pathname, '/');
-	ptr = ptr ? ptr + 1 : pathname;
+        ptr = strrchr(pathname, '/');
+        ptr = ptr ? ptr + 1 : pathname;
 
-	len = 0;
-	while (*ptr && len < 510) {
-		if (*ptr == ':') {
-			memcpy(filename + len, "::", 2);
-			len += 2;
-		} else {
-			filename[len] = *ptr;
-			len++;
-		}
-		ptr++;
-	}
-	filename[len] = '\0';
+        len = 0;
+        while (*ptr && len < 510) {
+                if (*ptr == ':') {
+                        memcpy(filename + len, "::", 2);
+                        len += 2;
+                } else {
+                        filename[len] = *ptr;
+                        len++;
+                }
+                ptr++;
+        }
+        filename[len] = '\0';
 
-	return g_strdup(filename);
+        return g_strdup(filename);
 }
 
 /**
@@ -521,21 +521,21 @@ char *ipmsg_get_filename_pal(const char *pathname)
  */
 char *ipmsg_get_filename_me(const char *pathname, char **path)
 {
-	const char *ptr;
-	char *file;
+        const char *ptr;
+        char *file;
 
-	ptr = strrchr(pathname, '/');
-	if (ptr && ptr != pathname) {
-		file = g_strdup(ptr + 1);
-		if (path)
-			*path = g_strndup(pathname, ptr - pathname);
-	} else {
-		file = g_strdup(pathname);
-		if (path)
-			*path = NULL;
-	}
+        ptr = strrchr(pathname, '/');
+        if (ptr && ptr != pathname) {
+                file = g_strdup(ptr + 1);
+                if (path)
+                        *path = g_strndup(pathname, ptr - pathname);
+        } else {
+                file = g_strdup(pathname);
+                if (path)
+                        *path = NULL;
+        }
 
-	return file;
+        return file;
 }
 
 /**
@@ -545,14 +545,14 @@ char *ipmsg_get_filename_me(const char *pathname, char **path)
  */
 char *iptux_erase_filename_suffix(const char *filename)
 {
-	const char *ptr;
-	char *file;
+        const char *ptr;
+        char *file;
 
-	ptr = strrchr(filename, '.');
-	if (ptr && ptr != filename)
-		file = g_strndup(filename, ptr - filename);
-	else
-		file = g_strdup(filename);
+        ptr = strrchr(filename, '.');
+        if (ptr && ptr != filename)
+                file = g_strndup(filename, ptr - filename);
+        else
+                file = g_strdup(filename);
 
-	return file;
+        return file;
 }

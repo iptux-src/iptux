@@ -17,46 +17,46 @@
 
 class DialogPeer: public DialogBase {
 public:
-	DialogPeer(GroupInfo *grp);
-	virtual ~DialogPeer();
+        DialogPeer(GroupInfo *grp);
+        virtual ~DialogPeer();
 
-	static void PeerDialogEntry(GroupInfo *grpinf);
+        static void PeerDialogEntry(GroupInfo *grpinf);
 
-	virtual void UpdatePalData(PalInfo *pal);
-	virtual void InsertPalData(PalInfo *pal);
-	virtual void DelPalData(PalInfo *pal);
-	virtual void ClearAllPalData();
+        virtual void UpdatePalData(PalInfo *pal);
+        virtual void InsertPalData(PalInfo *pal);
+        virtual void DelPalData(PalInfo *pal);
+        virtual void ClearAllPalData();
 private:
-	void ReadUILayout();
-	void WriteUILayout();
+        void ReadUILayout();
+        void WriteUILayout();
 
-	GtkWidget *CreateMainWindow();
-	GtkWidget *CreateAllArea();
+        GtkWidget *CreateMainWindow();
+        GtkWidget *CreateAllArea();
 
-	GtkWidget *CreateMenuBar();
-	GtkWidget *CreateInfoArea();
+        GtkWidget *CreateMenuBar();
+        GtkWidget *CreateInfoArea();
         GtkWidget *CreateFileMenu();
-	GtkWidget *CreateToolMenu();
+        GtkWidget *CreateToolMenu();
 
-	void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
+        void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
 
 private:
-	void BroadcastEnclosureMsg(GSList *list);
-	bool SendTextMsg();
-	void FeedbackMsg(const GSList *dtlist);
-	MsgPara *PackageMsg(GSList *dtlist);
+        void BroadcastEnclosureMsg(GSList *list);
+        bool SendTextMsg();
+        void FeedbackMsg(const GSList *dtlist);
+        MsgPara *PackageMsg(GSList *dtlist);
 //回调处理部分
 private:
-	static void DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
-					 gint x, gint y, GtkSelectionData *data,
-					 guint info, guint time);
-	static void AskSharedFiles(GroupInfo *grpinf);
-	static void InsertPicture(DialogPeer *dlgpr);
+        static void DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
+                                         gint x, gint y, GtkSelectionData *data,
+                                         guint info, guint time);
+        static void AskSharedFiles(GroupInfo *grpinf);
+        static void InsertPicture(DialogPeer *dlgpr);
 
-	static void DialogPeerDestroy(DialogPeer *dlgpr);
+        static void DialogPeerDestroy(DialogPeer *dlgpr);
 //线程处理
 private:
-	static void ThreadSendTextMsg(MsgPara *para);
+        static void ThreadSendTextMsg(MsgPara *para);
 };
 
 #endif

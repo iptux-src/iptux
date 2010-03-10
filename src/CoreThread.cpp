@@ -32,8 +32,8 @@ CoreThread::CoreThread():tcpsock(-1), udpsock(-1), server(true),
  blacklist(NULL), pbn(1), prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL),
  passwd(NULL), timerid(0)
 {
-	g_queue_init(&msgline);
-	pthread_mutex_init(&mutex, NULL);
+        g_queue_init(&msgline);
+        pthread_mutex_init(&mutex, NULL);
 }
 
 /**
@@ -41,7 +41,7 @@ CoreThread::CoreThread():tcpsock(-1), udpsock(-1), server(true),
  */
 CoreThread::~CoreThread()
 {
-	ClearSublayer();
+        ClearSublayer();
 }
 
 /**
@@ -49,20 +49,20 @@ CoreThread::~CoreThread()
  */
 void CoreThread::CoreThreadEntry()
 {
-	pthread_t pid;
+        pthread_t pid;
 
-	/* 初始化底层数据 */
-	InitSublayer();
-	/* 开启UDP监听服务 */
-	pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
-	pthread_detach(pid);
-	/* 开启TCP监听服务 */
-	pthread_create(&pid, NULL, ThreadFunc(RecvTcpData), this);
-	pthread_detach(pid);
-	/* 定时扫描处理程序内部任务 */
-	timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
-	/* 通知所有计算机本大爷上线啦 */
-	SendNotifyToAll(this);
+        /* 初始化底层数据 */
+        InitSublayer();
+        /* 开启UDP监听服务 */
+        pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
+        pthread_detach(pid);
+        /* 开启TCP监听服务 */
+        pthread_create(&pid, NULL, ThreadFunc(RecvTcpData), this);
+        pthread_detach(pid);
+        /* 定时扫描处理程序内部任务 */
+        timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
+        /* 通知所有计算机本大爷上线啦 */
+        SendNotifyToAll(this);
 }
 
 /**
@@ -71,26 +71,26 @@ void CoreThread::CoreThreadEntry()
  */
 void CoreThread::WriteSharedData()
 {
-	GConfClient *client;
-	GSList *list, *tlist;
+        GConfClient *client;
+        GSList *list, *tlist;
 
-	list = NULL;
-	/* 获取共享文件链表 */
-	tlist = pblist;
-	while (tlist) {
-		list = g_slist_append(list, ((FileInfo *)tlist->data)->filepath);
-		tlist = g_slist_next(tlist);
-	}
-	/* 写出数据 */
-	client = gconf_client_get_default();
-	gconf_client_set_list(client, GCONF_PATH "/shared_file_list",
-					 GCONF_VALUE_STRING, list, NULL);
-	if (passwd)
-		gconf_client_set_string(client, GCONF_PATH "/access_shared_limit",
-								 passwd, NULL);
-	g_object_unref(client);
-	/* 释放链表 */
-	g_slist_free(list);
+        list = NULL;
+        /* 获取共享文件链表 */
+        tlist = pblist;
+        while (tlist) {
+                list = g_slist_append(list, ((FileInfo *)tlist->data)->filepath);
+                tlist = g_slist_next(tlist);
+        }
+        /* 写出数据 */
+        client = gconf_client_get_default();
+        gconf_client_set_list(client, GCONF_PATH "/shared_file_list",
+                                         GCONF_VALUE_STRING, list, NULL);
+        if (passwd)
+                gconf_client_set_string(client, GCONF_PATH "/access_shared_limit",
+                                                                 passwd, NULL);
+        g_object_unref(client);
+        /* 释放链表 */
+        g_slist_free(list);
 }
 
 /**
@@ -99,7 +99,7 @@ void CoreThread::WriteSharedData()
  */
 GSList *CoreThread::GetPalList()
 {
-	return pallist;
+        return pallist;
 }
 
 /**
@@ -108,7 +108,7 @@ GSList *CoreThread::GetPalList()
  */
 pthread_mutex_t *CoreThread::GetMutex()
 {
-	return &mutex;
+        return &mutex;
 }
 
 /**
@@ -121,44 +121,44 @@ pthread_mutex_t *CoreThread::GetMutex()
  */
 void CoreThread::InsertMessage(MsgPara *para)
 {
-	GroupInfo *grpinf;
-	SessionAbstract *session;
+        GroupInfo *grpinf;
+        SessionAbstract *session;
 
-	/* 启用UI线程安全保护 */
-	gdk_threads_enter();
+        /* 启用UI线程安全保护 */
+        gdk_threads_enter();
 
-	/* 获取群组信息 */
-	switch (para->btype) {
-	case GROUP_BELONG_TYPE_REGULAR:
-		grpinf = GetPalRegularItem(para->pal);
-		break;
-	case GROUP_BELONG_TYPE_SEGMENT:
-		grpinf = GetPalSegmentItem(para->pal);
-		break;
-	case GROUP_BELONG_TYPE_GROUP:
-		grpinf = GetPalGroupItem(para->pal);
-		break;
-	case GROUP_BELONG_TYPE_BROADCAST:
-		grpinf = GetPalBroadcastItem(para->pal);
-		break;
-	default:
-		grpinf = NULL;
-		break;
-	}
+        /* 获取群组信息 */
+        switch (para->btype) {
+        case GROUP_BELONG_TYPE_REGULAR:
+                grpinf = GetPalRegularItem(para->pal);
+                break;
+        case GROUP_BELONG_TYPE_SEGMENT:
+                grpinf = GetPalSegmentItem(para->pal);
+                break;
+        case GROUP_BELONG_TYPE_GROUP:
+                grpinf = GetPalGroupItem(para->pal);
+                break;
+        case GROUP_BELONG_TYPE_BROADCAST:
+                grpinf = GetPalBroadcastItem(para->pal);
+                break;
+        default:
+                grpinf = NULL;
+                break;
+        }
 
-	/* 如果群组存在则插入消息 */
-	/* 群组不存在是编程上的错误，请发送Bug报告 */
-	if (grpinf) {
-		InsertMsgToGroupInfoItem(grpinf, para);
-		if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->ScrollHistoryTextview();
-		}
-	}
+        /* 如果群组存在则插入消息 */
+        /* 群组不存在是编程上的错误，请发送Bug报告 */
+        if (grpinf) {
+                InsertMsgToGroupInfoItem(grpinf, para);
+                if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->ScrollHistoryTextview();
+                }
+        }
 
-	/* 离开UI操作处理 */
-	gdk_threads_leave();
+        /* 离开UI操作处理 */
+        gdk_threads_leave();
 }
 
 /**
@@ -168,32 +168,32 @@ void CoreThread::InsertMessage(MsgPara *para)
  */
 void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
 {
-	GtkTextIter iter;
-	GSList *tlist;
-	gchar *data;
+        GtkTextIter iter;
+        GSList *tlist;
+        gchar *data;
 
-	tlist = para->dtlist;
-	while (tlist) {
-		data = ((ChipData *)tlist->data)->data;
-		switch (((ChipData *)tlist->data)->type) {
-		case MESSAGE_CONTENT_TYPE_STRING:
-			InsertHeaderToBuffer(grpinf->buffer, para);
-			gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
-			gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-			InsertStringToBuffer(grpinf->buffer, data);
-			gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
-			gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-			lgsys.CommunicateLog(para->pal, "[STRING]%s", data);
-			break;
-		case MESSAGE_CONTENT_TYPE_PICTURE:
-			InsertPixbufToBuffer(grpinf->buffer, data);
-			lgsys.CommunicateLog(para->pal, "[PICTURE]%s", data);
-			break;
-		default:
-			break;
-		}
-		tlist = g_slist_next(tlist);
-	}
+        tlist = para->dtlist;
+        while (tlist) {
+                data = ((ChipData *)tlist->data)->data;
+                switch (((ChipData *)tlist->data)->type) {
+                case MESSAGE_CONTENT_TYPE_STRING:
+                        InsertHeaderToBuffer(grpinf->buffer, para);
+                        gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
+                        gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
+                        InsertStringToBuffer(grpinf->buffer, data);
+                        gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
+                        gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
+                        lgsys.CommunicateLog(para->pal, "[STRING]%s", data);
+                        break;
+                case MESSAGE_CONTENT_TYPE_PICTURE:
+                        InsertPixbufToBuffer(grpinf->buffer, data);
+                        lgsys.CommunicateLog(para->pal, "[PICTURE]%s", data);
+                        break;
+                default:
+                        break;
+                }
+                tlist = g_slist_next(tlist);
+        }
 }
 
 /**
@@ -202,10 +202,10 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
  */
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd)
 {
-	Command cmd;
+        Command cmd;
 
-	cmd.BroadCast(pcthrd->udpsock);
-	cmd.DialUp(pcthrd->udpsock);
+        cmd.BroadCast(pcthrd->udpsock);
+        cmd.DialUp(pcthrd->udpsock);
 }
 
 /**
@@ -214,27 +214,27 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd)
  */
 void CoreThread::SendFeatureData(PalInfo *pal)
 {
-	Command cmd;
-	char path[MAX_PATHLEN];
-	const gchar *env;
-	int sock;
+        Command cmd;
+        char path[MAX_PATHLEN];
+        const gchar *env;
+        int sock;
 
-	if (*progdt.sign != '\0')
-		cmd.SendMySign(cthrd.udpsock, pal);
-	env = g_get_user_config_dir();
-	snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, progdt.myicon);
-	if (access(path, F_OK) == 0)
-		cmd.SendMyIcon(cthrd.udpsock, pal);
-	snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
-	if (access(path, F_OK) == 0) {
-		if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-			pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-								 strerror(errno));
-			exit(1);
-		}
-		cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
-		close(sock);
-	}
+        if (*progdt.sign != '\0')
+                cmd.SendMySign(cthrd.udpsock, pal);
+        env = g_get_user_config_dir();
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, progdt.myicon);
+        if (access(path, F_OK) == 0)
+                cmd.SendMyIcon(cthrd.udpsock, pal);
+        snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
+        if (access(path, F_OK) == 0) {
+                if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+                        pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+                                                                 strerror(errno));
+                        exit(1);
+                }
+                cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
+                close(sock);
+        }
 }
 
 /**
@@ -243,9 +243,9 @@ void CoreThread::SendFeatureData(PalInfo *pal)
  */
 void CoreThread::SendBroadcastExit(PalInfo *pal)
 {
-	Command cmd;
+        Command cmd;
 
-	cmd.SendExit(cthrd.udpsock, pal);
+        cmd.SendExit(cthrd.udpsock, pal);
 }
 
 /**
@@ -253,24 +253,24 @@ void CoreThread::SendBroadcastExit(PalInfo *pal)
  */
 void CoreThread::UpdateMyInfo()
 {
-	Command cmd;
-	pthread_t pid;
-	PalInfo *pal;
-	GSList *tlist;
+        Command cmd;
+        pthread_t pid;
+        PalInfo *pal;
+        GSList *tlist;
 
-	pthread_mutex_lock(&cthrd.mutex);
-	tlist = cthrd.pallist;
-	while (tlist) {
-		pal = (PalInfo *)tlist->data;
-		if (FLAG_ISSET(pal->flags, 1))
-			cmd.SendAbsence(cthrd.udpsock, pal);
-		if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
-			pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
-			pthread_detach(pid);
-		}
-		tlist = g_slist_next(tlist);
-	}
-	pthread_mutex_unlock(&cthrd.mutex);
+        pthread_mutex_lock(&cthrd.mutex);
+        tlist = cthrd.pallist;
+        while (tlist) {
+                pal = (PalInfo *)tlist->data;
+                if (FLAG_ISSET(pal->flags, 1))
+                        cmd.SendAbsence(cthrd.udpsock, pal);
+                if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
+                        pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
+                        pthread_detach(pid);
+                }
+                tlist = g_slist_next(tlist);
+        }
+        pthread_mutex_unlock(&cthrd.mutex);
 }
 
 /**
@@ -279,71 +279,71 @@ void CoreThread::UpdateMyInfo()
  */
 void CoreThread::ClearAllPalFromList()
 {
-	SessionAbstract *session;
-	GroupInfo *grpinf;
-	PalInfo *pal;
-	GSList *tlist;
+        SessionAbstract *session;
+        GroupInfo *grpinf;
+        PalInfo *pal;
+        GSList *tlist;
 
-	/* 清除所有好友的在线标志 */
-	tlist = pallist;
-	while (tlist) {
-		pal = (PalInfo *)tlist->data;
-		FLAG_CLR(pal->flags, 1);
-		tlist = g_slist_next(tlist);
-	}
+        /* 清除所有好友的在线标志 */
+        tlist = pallist;
+        while (tlist) {
+                pal = (PalInfo *)tlist->data;
+                FLAG_CLR(pal->flags, 1);
+                tlist = g_slist_next(tlist);
+        }
 
-	/* 清空常规模式下所有群组的成员 */
-	tlist = rgllist;
-	while (tlist) {
-		grpinf = (GroupInfo *)tlist->data;
-		g_slist_free(grpinf->member);
-		grpinf->member = NULL;
-		if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->ClearAllPalData();
-		}
-		tlist = g_slist_next(tlist);
-	}
-	/* 清空网段模式下所有群组的成员 */
-	tlist = sgmlist;
-	while (tlist) {
-		grpinf = (GroupInfo *)tlist->data;
-		g_slist_free(grpinf->member);
-		grpinf->member = NULL;
-		if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->ClearAllPalData();
-		}
-		tlist = g_slist_next(tlist);
-	}
-	/* 清空分组模式下所有群组的成员 */
-	tlist = grplist;
-	while (tlist) {
-		grpinf = (GroupInfo *)tlist->data;
-		g_slist_free(grpinf->member);
-		grpinf->member = NULL;
-		if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->ClearAllPalData();
-		}
-		tlist = g_slist_next(tlist);
-	}
-	/* 清空广播模式下所有群组的成员 */
-	tlist = brdlist;
-	while (tlist) {
-		grpinf = (GroupInfo *)tlist->data;
-		g_slist_free(grpinf->member);
-		grpinf->member = NULL;
-		if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->ClearAllPalData();
-		}
-		tlist = g_slist_next(tlist);
-	}
+        /* 清空常规模式下所有群组的成员 */
+        tlist = rgllist;
+        while (tlist) {
+                grpinf = (GroupInfo *)tlist->data;
+                g_slist_free(grpinf->member);
+                grpinf->member = NULL;
+                if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->ClearAllPalData();
+                }
+                tlist = g_slist_next(tlist);
+        }
+        /* 清空网段模式下所有群组的成员 */
+        tlist = sgmlist;
+        while (tlist) {
+                grpinf = (GroupInfo *)tlist->data;
+                g_slist_free(grpinf->member);
+                grpinf->member = NULL;
+                if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->ClearAllPalData();
+                }
+                tlist = g_slist_next(tlist);
+        }
+        /* 清空分组模式下所有群组的成员 */
+        tlist = grplist;
+        while (tlist) {
+                grpinf = (GroupInfo *)tlist->data;
+                g_slist_free(grpinf->member);
+                grpinf->member = NULL;
+                if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->ClearAllPalData();
+                }
+                tlist = g_slist_next(tlist);
+        }
+        /* 清空广播模式下所有群组的成员 */
+        tlist = brdlist;
+        while (tlist) {
+                grpinf = (GroupInfo *)tlist->data;
+                g_slist_free(grpinf->member);
+                grpinf->member = NULL;
+                if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->ClearAllPalData();
+                }
+                tlist = g_slist_next(tlist);
+        }
 }
 
 /**
@@ -353,16 +353,16 @@ void CoreThread::ClearAllPalFromList()
  */
 PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = pallist;
-	while (tlist) {
-		if (((PalInfo *)tlist->data)->ipv4 == ipv4)
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = pallist;
+        while (tlist) {
+                if (((PalInfo *)tlist->data)->ipv4 == ipv4)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return (PalInfo *)(tlist ? tlist->data : NULL);
+        return (PalInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -372,16 +372,16 @@ PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4)
  */
 bool CoreThread::ListContainPal(in_addr_t ipv4)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = pallist;
-	while (tlist) {
-		if (((PalInfo *)tlist->data)->ipv4 == ipv4)
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = pallist;
+        while (tlist) {
+                if (((PalInfo *)tlist->data)->ipv4 == ipv4)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return tlist;
+        return tlist;
 }
 
 /**
@@ -392,23 +392,23 @@ bool CoreThread::ListContainPal(in_addr_t ipv4)
  */
 void CoreThread::DelPalFromList(in_addr_t ipv4)
 {
-	PalInfo *pal;
-	GroupInfo *grpinf;
+        PalInfo *pal;
+        GroupInfo *grpinf;
 
-	/* 获取好友信息数据，并将其置为下线状态 */
-	if (!(pal = GetPalFromList(ipv4)))
-		return;
-	FLAG_CLR(pal->flags, 1);
+        /* 获取好友信息数据，并将其置为下线状态 */
+        if (!(pal = GetPalFromList(ipv4)))
+                return;
+        FLAG_CLR(pal->flags, 1);
 
-	/* 从群组中移除好友 */
-	if ( (grpinf = GetPalRegularItem(pal)))
-		DelPalFromGroupInfoItem(grpinf, pal);
-	if ( (grpinf = GetPalSegmentItem(pal)))
-		DelPalFromGroupInfoItem(grpinf, pal);
-	if ( (grpinf = GetPalGroupItem(pal)))
-		DelPalFromGroupInfoItem(grpinf, pal);
-	if ( (grpinf = GetPalBroadcastItem(pal)))
-		DelPalFromGroupInfoItem(grpinf, pal);
+        /* 从群组中移除好友 */
+        if ( (grpinf = GetPalRegularItem(pal)))
+                DelPalFromGroupInfoItem(grpinf, pal);
+        if ( (grpinf = GetPalSegmentItem(pal)))
+                DelPalFromGroupInfoItem(grpinf, pal);
+        if ( (grpinf = GetPalGroupItem(pal)))
+                DelPalFromGroupInfoItem(grpinf, pal);
+        if ( (grpinf = GetPalBroadcastItem(pal)))
+                DelPalFromGroupInfoItem(grpinf, pal);
 }
 
 /**
@@ -421,75 +421,75 @@ void CoreThread::DelPalFromList(in_addr_t ipv4)
  */
 void CoreThread::UpdatePalToList(in_addr_t ipv4)
 {
-	PalInfo *pal;
-	GroupInfo *grpinf;
-	SessionAbstract *session;
+        PalInfo *pal;
+        GroupInfo *grpinf;
+        SessionAbstract *session;
 
-	/* 如果好友链表中不存在此好友，则视为程序设计出错 */
-	if (!(pal = GetPalFromList(ipv4)))
-		return;
-	FLAG_SET(pal->flags, 1);
+        /* 如果好友链表中不存在此好友，则视为程序设计出错 */
+        if (!(pal = GetPalFromList(ipv4)))
+                return;
+        FLAG_SET(pal->flags, 1);
 
-	/* 更新好友所在的群组，以及它在UI上的信息 */
-	/*/* 更新常规模式下的群组 */
-	if ( (grpinf = GetPalRegularItem(pal))) {
-		if (!g_slist_find(grpinf->member, pal)) {
-			AttachPalToGroupInfoItem(grpinf, pal);
-		} else if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->UpdatePalData(pal);
-		}
-	} else {
-		if (!(grpinf = GetPalRegularItem(pal)))
-			grpinf = AttachPalRegularItem(pal);
-		AttachPalToGroupInfoItem(grpinf, pal);
-	}
-	/*/* 更新网段模式下的群组 */
-	if ( (grpinf = GetPalSegmentItem(pal))) {
-		if (!g_slist_find(grpinf->member, pal)) {
-			AttachPalToGroupInfoItem(grpinf, pal);
-		} else if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->UpdatePalData(pal);
-		}
-	} else {
-		if (!(grpinf = GetPalSegmentItem(pal)))
-			grpinf = AttachPalSegmentItem(pal);
-		AttachPalToGroupInfoItem(grpinf, pal);
-	}
-	/*/* 更新分组模式下的群组 */
-	if ( (grpinf = GetPalPrevGroupItem(pal))) {
-		if (!pal->group || strcmp(grpinf->name, pal->group) != 0) {
-			DelPalFromGroupInfoItem(grpinf, pal);
-			if (!(grpinf = GetPalGroupItem(pal)))
-				grpinf = AttachPalGroupItem(pal);
-			AttachPalToGroupInfoItem(grpinf, pal);
-		} else if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->UpdatePalData(pal);
-		}
-	} else {
-		if (!(grpinf = GetPalGroupItem(pal)))
-			grpinf = AttachPalGroupItem(pal);
-		AttachPalToGroupInfoItem(grpinf, pal);
-	}
-	/*/* 更新广播模式下的群组 */
-	if ( (grpinf = GetPalBroadcastItem(pal))) {
-		if (!g_slist_find(grpinf->member, pal)) {
-			AttachPalToGroupInfoItem(grpinf, pal);
-		} else if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->UpdatePalData(pal);
-		}
-	} else {
-		if (!(grpinf = GetPalBroadcastItem(pal)))
-			grpinf = AttachPalBroadcastItem(pal);
-		AttachPalToGroupInfoItem(grpinf, pal);
-	}
+        /* 更新好友所在的群组，以及它在UI上的信息 */
+        /*/* 更新常规模式下的群组 */
+        if ( (grpinf = GetPalRegularItem(pal))) {
+                if (!g_slist_find(grpinf->member, pal)) {
+                        AttachPalToGroupInfoItem(grpinf, pal);
+                } else if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->UpdatePalData(pal);
+                }
+        } else {
+                if (!(grpinf = GetPalRegularItem(pal)))
+                        grpinf = AttachPalRegularItem(pal);
+                AttachPalToGroupInfoItem(grpinf, pal);
+        }
+        /*/* 更新网段模式下的群组 */
+        if ( (grpinf = GetPalSegmentItem(pal))) {
+                if (!g_slist_find(grpinf->member, pal)) {
+                        AttachPalToGroupInfoItem(grpinf, pal);
+                } else if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->UpdatePalData(pal);
+                }
+        } else {
+                if (!(grpinf = GetPalSegmentItem(pal)))
+                        grpinf = AttachPalSegmentItem(pal);
+                AttachPalToGroupInfoItem(grpinf, pal);
+        }
+        /*/* 更新分组模式下的群组 */
+        if ( (grpinf = GetPalPrevGroupItem(pal))) {
+                if (!pal->group || strcmp(grpinf->name, pal->group) != 0) {
+                        DelPalFromGroupInfoItem(grpinf, pal);
+                        if (!(grpinf = GetPalGroupItem(pal)))
+                                grpinf = AttachPalGroupItem(pal);
+                        AttachPalToGroupInfoItem(grpinf, pal);
+                } else if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->UpdatePalData(pal);
+                }
+        } else {
+                if (!(grpinf = GetPalGroupItem(pal)))
+                        grpinf = AttachPalGroupItem(pal);
+                AttachPalToGroupInfoItem(grpinf, pal);
+        }
+        /*/* 更新广播模式下的群组 */
+        if ( (grpinf = GetPalBroadcastItem(pal))) {
+                if (!g_slist_find(grpinf->member, pal)) {
+                        AttachPalToGroupInfoItem(grpinf, pal);
+                } else if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->UpdatePalData(pal);
+                }
+        } else {
+                if (!(grpinf = GetPalBroadcastItem(pal)))
+                        grpinf = AttachPalBroadcastItem(pal);
+                AttachPalToGroupInfoItem(grpinf, pal);
+        }
 }
 
 /**
@@ -500,25 +500,25 @@ void CoreThread::UpdatePalToList(in_addr_t ipv4)
  */
 void CoreThread::AttachPalToList(PalInfo *pal)
 {
-	GroupInfo *grpinf;
+        GroupInfo *grpinf;
 
-	/* 将好友加入到好友链表 */
-	pallist = g_slist_append(pallist, pal);
-	FLAG_SET(pal->flags, 1);
+        /* 将好友加入到好友链表 */
+        pallist = g_slist_append(pallist, pal);
+        FLAG_SET(pal->flags, 1);
 
-	/* 将好友加入到相应的群组 */
-	if (!(grpinf = GetPalRegularItem(pal)))
-		grpinf = AttachPalRegularItem(pal);
-	AttachPalToGroupInfoItem(grpinf, pal);
-	if (!(grpinf = GetPalSegmentItem(pal)))
-		grpinf = AttachPalSegmentItem(pal);
-	AttachPalToGroupInfoItem(grpinf, pal);
-	if (!(grpinf = GetPalGroupItem(pal)))
-		grpinf = AttachPalGroupItem(pal);
-	AttachPalToGroupInfoItem(grpinf, pal);
-	if (!(grpinf = GetPalBroadcastItem(pal)))
-		grpinf = AttachPalBroadcastItem(pal);
-	AttachPalToGroupInfoItem(grpinf, pal);
+        /* 将好友加入到相应的群组 */
+        if (!(grpinf = GetPalRegularItem(pal)))
+                grpinf = AttachPalRegularItem(pal);
+        AttachPalToGroupInfoItem(grpinf, pal);
+        if (!(grpinf = GetPalSegmentItem(pal)))
+                grpinf = AttachPalSegmentItem(pal);
+        AttachPalToGroupInfoItem(grpinf, pal);
+        if (!(grpinf = GetPalGroupItem(pal)))
+                grpinf = AttachPalGroupItem(pal);
+        AttachPalToGroupInfoItem(grpinf, pal);
+        if (!(grpinf = GetPalBroadcastItem(pal)))
+                grpinf = AttachPalBroadcastItem(pal);
+        AttachPalToGroupInfoItem(grpinf, pal);
 }
 
 /**
@@ -528,16 +528,16 @@ void CoreThread::AttachPalToList(PalInfo *pal)
  */
 GroupInfo *CoreThread::GetPalRegularItem(PalInfo *pal)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = rgllist;
-	while (tlist) {
-		if (((GroupInfo *)tlist->data)->grpid == pal->ipv4)
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = rgllist;
+        while (tlist) {
+                if (((GroupInfo *)tlist->data)->grpid == pal->ipv4)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return (GroupInfo *)(tlist ? tlist->data : NULL);
+        return (GroupInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -547,23 +547,23 @@ GroupInfo *CoreThread::GetPalRegularItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::GetPalSegmentItem(PalInfo *pal)
 {
-	GSList *tlist;
-	char *name;
-	GQuark grpid;
+        GSList *tlist;
+        char *name;
+        GQuark grpid;
 
-	/* 获取局域网网段ID */
-	name = ipv4_get_lan_name(pal->ipv4);
-	grpid = g_quark_from_string(name ? name : _("Others"));
-	g_free(name);
+        /* 获取局域网网段ID */
+        name = ipv4_get_lan_name(pal->ipv4);
+        grpid = g_quark_from_string(name ? name : _("Others"));
+        g_free(name);
 
-	tlist = sgmlist;
-	while (tlist) {
-		if (((GroupInfo *)tlist->data)->grpid == grpid)
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = sgmlist;
+        while (tlist) {
+                if (((GroupInfo *)tlist->data)->grpid == grpid)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return (GroupInfo *)(tlist ? tlist->data : NULL);
+        return (GroupInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -573,21 +573,21 @@ GroupInfo *CoreThread::GetPalSegmentItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::GetPalGroupItem(PalInfo *pal)
 {
-	GSList *tlist;
-	GQuark grpid;
+        GSList *tlist;
+        GQuark grpid;
 
-	/* 获取组ID */
-	NO_OPERATION_C
-	grpid = g_quark_from_string(pal->group ? pal->group : _("Others"));
+        /* 获取组ID */
+        NO_OPERATION_C
+        grpid = g_quark_from_string(pal->group ? pal->group : _("Others"));
 
-	tlist = grplist;
-	while (tlist) {
-		if (((GroupInfo *)tlist->data)->grpid == grpid)
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = grplist;
+        while (tlist) {
+                if (((GroupInfo *)tlist->data)->grpid == grpid)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return (GroupInfo *)(tlist ? tlist->data : NULL);
+        return (GroupInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -597,7 +597,7 @@ GroupInfo *CoreThread::GetPalGroupItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::GetPalBroadcastItem(PalInfo *pal)
 {
-	return (GroupInfo *)(brdlist ? brdlist->data : NULL);
+        return (GroupInfo *)(brdlist ? brdlist->data : NULL);
 }
 
 /**
@@ -607,7 +607,7 @@ GroupInfo *CoreThread::GetPalBroadcastItem(PalInfo *pal)
  */
 bool CoreThread::BlacklistContainItem(in_addr_t ipv4)
 {
-	return g_slist_find(blacklist, GUINT_TO_POINTER(ipv4));
+        return g_slist_find(blacklist, GUINT_TO_POINTER(ipv4));
 }
 
 /**
@@ -616,7 +616,7 @@ bool CoreThread::BlacklistContainItem(in_addr_t ipv4)
  */
 void CoreThread::AttachItemToBlacklist(in_addr_t ipv4)
 {
-	blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
+        blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
 }
 
 /**
@@ -624,8 +624,8 @@ void CoreThread::AttachItemToBlacklist(in_addr_t ipv4)
  */
 void CoreThread::ClearBlacklist()
 {
-	g_slist_free(blacklist);
-	blacklist = NULL;
+        g_slist_free(blacklist);
+        blacklist = NULL;
 }
 
 /**
@@ -634,7 +634,7 @@ void CoreThread::ClearBlacklist()
  */
 guint CoreThread::GetMsglineItems()
 {
-	return g_queue_get_length(&msgline);
+        return g_queue_get_length(&msgline);
 }
 
 /**
@@ -643,7 +643,7 @@ guint CoreThread::GetMsglineItems()
  */
 GroupInfo *CoreThread::GetMsglineHeadItem()
 {
-	return (GroupInfo *)g_queue_peek_head(&msgline);
+        return (GroupInfo *)g_queue_peek_head(&msgline);
 }
 
 /**
@@ -653,7 +653,7 @@ GroupInfo *CoreThread::GetMsglineHeadItem()
  */
 bool CoreThread::MsglineContainItem(GroupInfo *grpinf)
 {
-	return g_queue_find(&msgline, grpinf);
+        return g_queue_find(&msgline, grpinf);
 }
 
 /**
@@ -662,7 +662,7 @@ bool CoreThread::MsglineContainItem(GroupInfo *grpinf)
  */
 void CoreThread::PushItemToMsgline(GroupInfo *grpinf)
 {
-	g_queue_push_tail(&msgline, grpinf);
+        g_queue_push_tail(&msgline, grpinf);
 }
 
 /**
@@ -671,7 +671,7 @@ void CoreThread::PushItemToMsgline(GroupInfo *grpinf)
  */
 void CoreThread::PopItemFromMsgline(GroupInfo *grpinf)
 {
-	g_queue_remove(&msgline, grpinf);
+        g_queue_remove(&msgline, grpinf);
 }
 
 /**
@@ -680,7 +680,7 @@ void CoreThread::PopItemFromMsgline(GroupInfo *grpinf)
  */
 void CoreThread::AttachFileToPublic(FileInfo *file)
 {
-	pblist = g_slist_append(pblist, file);
+        pblist = g_slist_append(pblist, file);
 }
 
 /**
@@ -689,17 +689,17 @@ void CoreThread::AttachFileToPublic(FileInfo *file)
  */
 void CoreThread::DelFileFromPublic(uint32_t fileid)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = pblist;
-	while (tlist) {
-		if (((FileInfo *)tlist->data)->fileid == fileid) {
-			delete (FileInfo *)tlist->data;
-			pblist = g_slist_delete_link(pblist, tlist);
-			break;
-		}
-		tlist = g_slist_next(tlist);
-	}
+        tlist = pblist;
+        while (tlist) {
+                if (((FileInfo *)tlist->data)->fileid == fileid) {
+                        delete (FileInfo *)tlist->data;
+                        pblist = g_slist_delete_link(pblist, tlist);
+                        break;
+                }
+                tlist = g_slist_next(tlist);
+        }
 }
 
 /**
@@ -707,10 +707,10 @@ void CoreThread::DelFileFromPublic(uint32_t fileid)
  */
 void CoreThread::ClearFileFromPublic()
 {
-	for (GSList *tlist = pblist; tlist; tlist = g_slist_next(tlist))
-		delete (FileInfo *)tlist->data;
-	g_slist_free(pblist);
-	pblist = NULL;
+        for (GSList *tlist = pblist; tlist; tlist = g_slist_next(tlist))
+                delete (FileInfo *)tlist->data;
+        g_slist_free(pblist);
+        pblist = NULL;
 }
 
 /**
@@ -719,7 +719,7 @@ void CoreThread::ClearFileFromPublic()
  */
 GSList *CoreThread::GetPublicFileList()
 {
-	return pblist;
+        return pblist;
 }
 
 /**
@@ -728,7 +728,7 @@ GSList *CoreThread::GetPublicFileList()
  */
 void CoreThread::AttachFileToPrivate(FileInfo *file)
 {
-	prlist = g_slist_append(prlist, file);
+        prlist = g_slist_append(prlist, file);
 }
 
 /**
@@ -737,17 +737,17 @@ void CoreThread::AttachFileToPrivate(FileInfo *file)
  */
 void CoreThread::DelFileFromPrivate(uint32_t fileid)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = prlist;
-	while (tlist) {
-		if (((FileInfo *)tlist->data)->fileid == fileid) {
-			delete (FileInfo *)tlist->data;
-			prlist = g_slist_delete_link(prlist, tlist);
-			break;
-		}
-		tlist = g_slist_next(tlist);
-	}
+        tlist = prlist;
+        while (tlist) {
+                if (((FileInfo *)tlist->data)->fileid == fileid) {
+                        delete (FileInfo *)tlist->data;
+                        prlist = g_slist_delete_link(prlist, tlist);
+                        break;
+                }
+                tlist = g_slist_next(tlist);
+        }
 }
 
 /**
@@ -755,10 +755,10 @@ void CoreThread::DelFileFromPrivate(uint32_t fileid)
  */
 void CoreThread::ClearFileFromPrivate()
 {
-	for (GSList *tlist = prlist; tlist; tlist = g_slist_next(tlist))
-		delete (FileInfo *)tlist->data;
-	g_slist_free(prlist);
-	prlist = NULL;
+        for (GSList *tlist = prlist; tlist; tlist = g_slist_next(tlist))
+                delete (FileInfo *)tlist->data;
+        g_slist_free(prlist);
+        prlist = NULL;
 }
 
 /**
@@ -768,16 +768,16 @@ void CoreThread::ClearFileFromPrivate()
  */
 FileInfo *CoreThread::GetFileFromAll(uint32_t fileid)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = fileid < MAX_SHAREDFILE ? pblist : prlist;
-	while (tlist) {
-		if (((FileInfo *)tlist->data)->fileid == fileid)
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = fileid < MAX_SHAREDFILE ? pblist : prlist;
+        while (tlist) {
+                if (((FileInfo *)tlist->data)->fileid == fileid)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return (FileInfo *)(tlist ? tlist->data : NULL);
+        return (FileInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -786,7 +786,7 @@ FileInfo *CoreThread::GetFileFromAll(uint32_t fileid)
  */
 const char *CoreThread::GetAccessPublicLimit()
 {
-	return passwd;
+        return passwd;
 }
 
 /**
@@ -795,8 +795,8 @@ const char *CoreThread::GetAccessPublicLimit()
  */
 void CoreThread::SetAccessPublicLimit(const char *limit)
 {
-	g_free(passwd);
-	passwd = g_strdup(limit);
+        g_free(passwd);
+        passwd = g_strdup(limit);
 }
 
 /**
@@ -804,8 +804,8 @@ void CoreThread::SetAccessPublicLimit(const char *limit)
  */
 void CoreThread::InitSublayer()
 {
-	InitThemeSublayerData();
-	ReadSharedData();
+        InitThemeSublayerData();
+        ReadSharedData();
 }
 
 /**
@@ -813,45 +813,45 @@ void CoreThread::InitSublayer()
  */
 void CoreThread::ClearSublayer()
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	/**
-	 * @note 必须在发送下线信息之后才能关闭套接口.
-	 */
-	g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
-	shutdown(tcpsock, SHUT_RDWR);
-	shutdown(udpsock, SHUT_RDWR);
-	server = false;
+        /**
+         * @note 必须在发送下线信息之后才能关闭套接口.
+         */
+        g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+        shutdown(tcpsock, SHUT_RDWR);
+        shutdown(udpsock, SHUT_RDWR);
+        server = false;
 
-	for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
-		delete (PalInfo *)tlist->data;
-	g_slist_free(pallist);
-	for (tlist = rgllist; tlist; tlist = g_slist_next(tlist))
-		delete (GroupInfo *)tlist->data;
-	g_slist_free(rgllist);
-	for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
-		delete (GroupInfo *)tlist->data;
-	g_slist_free(sgmlist);
-	for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
-		delete (GroupInfo *)tlist->data;
-	g_slist_free(grplist);
-	for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
-		delete (GroupInfo *)tlist->data;
-	g_slist_free(brdlist);
-	g_slist_free(blacklist);
-	g_queue_clear(&msgline);
+        for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
+                delete (PalInfo *)tlist->data;
+        g_slist_free(pallist);
+        for (tlist = rgllist; tlist; tlist = g_slist_next(tlist))
+                delete (GroupInfo *)tlist->data;
+        g_slist_free(rgllist);
+        for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
+                delete (GroupInfo *)tlist->data;
+        g_slist_free(sgmlist);
+        for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
+                delete (GroupInfo *)tlist->data;
+        g_slist_free(grplist);
+        for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
+                delete (GroupInfo *)tlist->data;
+        g_slist_free(brdlist);
+        g_slist_free(blacklist);
+        g_queue_clear(&msgline);
 
-	for (tlist = pblist; tlist; tlist = g_slist_next(tlist))
-		delete (FileInfo *)tlist->data;
-	g_slist_free(pblist);
-	for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
-		delete (FileInfo *)tlist->data;
-	g_slist_free(prlist);
-	g_free(passwd);
+        for (tlist = pblist; tlist; tlist = g_slist_next(tlist))
+                delete (FileInfo *)tlist->data;
+        g_slist_free(pblist);
+        for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
+                delete (FileInfo *)tlist->data;
+        g_slist_free(prlist);
+        g_free(passwd);
 
-	if (timerid > 0)
-		g_source_remove(timerid);
-	pthread_mutex_destroy(&mutex);
+        if (timerid > 0)
+                g_source_remove(timerid);
+        pthread_mutex_destroy(&mutex);
 }
 
 /**
@@ -859,32 +859,32 @@ void CoreThread::ClearSublayer()
  */
 void CoreThread::InitThemeSublayerData()
 {
-	GtkIconTheme *theme;
-	GtkIconFactory *factory;
-	GtkIconSet *set;
-	GdkPixbuf *pixbuf;
+        GtkIconTheme *theme;
+        GtkIconFactory *factory;
+        GtkIconSet *set;
+        GdkPixbuf *pixbuf;
 
-	theme = gtk_icon_theme_get_default();
-	gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH);
-	gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/icon");
-	gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/menu");
-	gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/tip");
+        theme = gtk_icon_theme_get_default();
+        gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH);
+        gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/icon");
+        gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/menu");
+        gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/tip");
 
-	factory = gtk_icon_factory_new();
-	gtk_icon_factory_add_default(factory);
-	if ( (pixbuf = gtk_icon_theme_load_icon(theme, "ip-tux", 64,
-				 GtkIconLookupFlags(0), NULL))) {
-		set = gtk_icon_set_new_from_pixbuf(pixbuf);
-		gtk_icon_factory_add(factory, "iptux-logo-show", set);
-		g_object_unref(pixbuf);
-	}
-	if ( (pixbuf = gtk_icon_theme_load_icon(theme, "i-tux", 64,
-				 GtkIconLookupFlags(0), NULL))) {
-		set = gtk_icon_set_new_from_pixbuf(pixbuf);
-		gtk_icon_factory_add(factory, "iptux-logo-hide", set);
-		g_object_unref(pixbuf);
-	}
-	g_object_unref(factory);
+        factory = gtk_icon_factory_new();
+        gtk_icon_factory_add_default(factory);
+        if ( (pixbuf = gtk_icon_theme_load_icon(theme, "ip-tux", 64,
+                                 GtkIconLookupFlags(0), NULL))) {
+                set = gtk_icon_set_new_from_pixbuf(pixbuf);
+                gtk_icon_factory_add(factory, "iptux-logo-show", set);
+                g_object_unref(pixbuf);
+        }
+        if ( (pixbuf = gtk_icon_theme_load_icon(theme, "i-tux", 64,
+                                 GtkIconLookupFlags(0), NULL))) {
+                set = gtk_icon_set_new_from_pixbuf(pixbuf);
+                gtk_icon_factory_add(factory, "iptux-logo-hide", set);
+                g_object_unref(pixbuf);
+        }
+        g_object_unref(factory);
 }
 
 /**
@@ -892,39 +892,39 @@ void CoreThread::InitThemeSublayerData()
  */
 void CoreThread::ReadSharedData()
 {
-	GConfClient *client;
-	GSList *list, *tlist;
-	FileInfo *file;
-	struct stat64 st;
+        GConfClient *client;
+        GSList *list, *tlist;
+        FileInfo *file;
+        struct stat64 st;
 
-	/* 读取共享文件数据 */
-	client = gconf_client_get_default();
-	list = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
-						 GCONF_VALUE_STRING, NULL);
-	passwd = gconf_client_get_string(client, GCONF_PATH "/access_shared_limit", NULL);
-	g_object_unref(client);
+        /* 读取共享文件数据 */
+        client = gconf_client_get_default();
+        list = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
+                                                 GCONF_VALUE_STRING, NULL);
+        passwd = gconf_client_get_string(client, GCONF_PATH "/access_shared_limit", NULL);
+        g_object_unref(client);
 
-	/* 分析数据并加入文件链表 */
-	tlist = list;
-	while (tlist) {
-		if (stat64((char *)tlist->data, &st) == -1
-			 || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
-			g_free(tlist->data);
-			tlist = g_slist_next(tlist);
-		}
-		/* 加入文件信息到链表 */
-		file = new FileInfo;
-		pblist = g_slist_append(pblist, file);
-		file->fileid = pbn++;
-		/* file->packetn = 0;//没必要设置此字段 */
-		file->fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR :
-							 IPMSG_FILE_DIR;
-		/* file->filesize = 0;//我可不愿意程序启动时在这儿卡住 */
-		/* file->fileown = NULL;//没必要设置此字段 */
-		file->filepath = (char *)tlist->data;
-		tlist = g_slist_next(tlist);
-	}
-	g_slist_free(list);
+        /* 分析数据并加入文件链表 */
+        tlist = list;
+        while (tlist) {
+                if (stat64((char *)tlist->data, &st) == -1
+                         || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+                        g_free(tlist->data);
+                        tlist = g_slist_next(tlist);
+                }
+                /* 加入文件信息到链表 */
+                file = new FileInfo;
+                pblist = g_slist_append(pblist, file);
+                file->fileid = pbn++;
+                /* file->packetn = 0;//没必要设置此字段 */
+                file->fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR :
+                                                         IPMSG_FILE_DIR;
+                /* file->filesize = 0;//我可不愿意程序启动时在这儿卡住 */
+                /* file->fileown = NULL;//没必要设置此字段 */
+                file->filepath = (char *)tlist->data;
+                tlist = g_slist_next(tlist);
+        }
+        g_slist_free(list);
 }
 
 /**
@@ -934,37 +934,37 @@ void CoreThread::ReadSharedData()
  */
 void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
 {
-	GtkTextIter iter;
-	gchar *header;
+        GtkTextIter iter;
+        gchar *header;
 
-	/**
-	 * @note (para->pal)可能为null.
-	 */
-	switch (para->stype) {
-	case MESSAGE_SOURCE_TYPE_PAL:
-		header = getformattime("%s", para->pal ? para->pal->name : _("unknown"));
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
-					 header, -1, "pal-color", NULL);
-		g_free(header);
-		break;
-	case MESSAGE_SOURCE_TYPE_SELF:
-		header = getformattime("%s", progdt.nickname);
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
-					 header, -1, "me-color", NULL);
-		g_free(header);
-		break;
-	case MESSAGE_SOURCE_TYPE_ERROR:
-		header = getformattime("%s", _("<ERROR>"));
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
-					 header, -1, "error-color", NULL);
-		g_free(header);
-		break;
-	default:
-		break;
-	}
+        /**
+         * @note (para->pal)可能为null.
+         */
+        switch (para->stype) {
+        case MESSAGE_SOURCE_TYPE_PAL:
+                header = getformattime("%s", para->pal ? para->pal->name : _("unknown"));
+                gtk_text_buffer_get_end_iter(buffer, &iter);
+                gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
+                                         header, -1, "pal-color", NULL);
+                g_free(header);
+                break;
+        case MESSAGE_SOURCE_TYPE_SELF:
+                header = getformattime("%s", progdt.nickname);
+                gtk_text_buffer_get_end_iter(buffer, &iter);
+                gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
+                                         header, -1, "me-color", NULL);
+                g_free(header);
+                break;
+        case MESSAGE_SOURCE_TYPE_ERROR:
+                header = getformattime("%s", _("<ERROR>"));
+                gtk_text_buffer_get_end_iter(buffer, &iter);
+                gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
+                                         header, -1, "error-color", NULL);
+                g_free(header);
+                break;
+        default:
+                break;
+        }
 }
 
 /**
@@ -974,36 +974,36 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
  */
 void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string)
 {
-	static uint32_t count = 0;
-	GtkTextIter iter;
-	GtkTextTag *tag;
-	GMatchInfo *matchinfo;
-	gchar *substring;
-	char name[9];	//8 +1	=9
-	gint startp, endp;
-	gint urlendp;
+        static uint32_t count = 0;
+        GtkTextIter iter;
+        GtkTextTag *tag;
+        GMatchInfo *matchinfo;
+        gchar *substring;
+        char name[9];   //8 +1  =9
+        gint startp, endp;
+        gint urlendp;
 
-	urlendp = 0;
-	matchinfo = NULL;
-	gtk_text_buffer_get_end_iter(buffer, &iter);
-	g_regex_match_full(progdt.urlregex, string, -1, 0, GRegexMatchFlags(0),
-							 &matchinfo, NULL);
-	while (g_match_info_matches(matchinfo))
-	{
-		snprintf(name, 9, "%" PRIx32, count++);
-		tag = gtk_text_buffer_create_tag(buffer, name, NULL);
-		substring = g_match_info_fetch(matchinfo, 0);
-		g_object_set_data_full(G_OBJECT(tag), "url",  substring,
-						 GDestroyNotify(g_free));
-		g_match_info_fetch_pos(matchinfo, 0, &startp, &endp);
-		gtk_text_buffer_insert(buffer, &iter, string + urlendp, startp - urlendp);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, string + startp,
-						 endp - startp, "url-link", name, NULL);
-		urlendp = endp;
-		g_match_info_next(matchinfo, NULL);
-	}
-	g_match_info_free(matchinfo);
-	gtk_text_buffer_insert(buffer, &iter, string + urlendp, -1);
+        urlendp = 0;
+        matchinfo = NULL;
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        g_regex_match_full(progdt.urlregex, string, -1, 0, GRegexMatchFlags(0),
+                                                         &matchinfo, NULL);
+        while (g_match_info_matches(matchinfo))
+        {
+                snprintf(name, 9, "%" PRIx32, count++);
+                tag = gtk_text_buffer_create_tag(buffer, name, NULL);
+                substring = g_match_info_fetch(matchinfo, 0);
+                g_object_set_data_full(G_OBJECT(tag), "url",  substring,
+                                                 GDestroyNotify(g_free));
+                g_match_info_fetch_pos(matchinfo, 0, &startp, &endp);
+                gtk_text_buffer_insert(buffer, &iter, string + urlendp, startp - urlendp);
+                gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, string + startp,
+                                                 endp - startp, "url-link", name, NULL);
+                urlendp = endp;
+                g_match_info_next(matchinfo, NULL);
+        }
+        g_match_info_free(matchinfo);
+        gtk_text_buffer_insert(buffer, &iter, string + urlendp, -1);
 }
 
 /**
@@ -1013,22 +1013,22 @@ void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string)
  */
 void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path)
 {
-	GtkTextIter start, end;
-	GdkPixbuf *pixbuf;
+        GtkTextIter start, end;
+        GdkPixbuf *pixbuf;
 
-	if ( (pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
-		gtk_text_buffer_get_start_iter(buffer, &start);
-		if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT
-			 || gtk_text_iter_forward_find_char(&start,
-				 GtkTextCharPredicate(giter_compare_foreach),
-				 GUINT_TO_POINTER(OCCUPY_OBJECT), NULL)) {
-			end = start;
-			gtk_text_iter_forward_char(&end);
-			gtk_text_buffer_delete(buffer, &start, &end);
-		}
-		gtk_text_buffer_insert_pixbuf(buffer, &start, pixbuf);
-		g_object_unref(pixbuf);
-	}
+        if ( (pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
+                gtk_text_buffer_get_start_iter(buffer, &start);
+                if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT
+                         || gtk_text_iter_forward_find_char(&start,
+                                 GtkTextCharPredicate(giter_compare_foreach),
+                                 GUINT_TO_POINTER(OCCUPY_OBJECT), NULL)) {
+                        end = start;
+                        gtk_text_iter_forward_char(&end);
+                        gtk_text_buffer_delete(buffer, &start, &end);
+                }
+                gtk_text_buffer_insert_pixbuf(buffer, &start, pixbuf);
+                g_object_unref(pixbuf);
+        }
 }
 
 /**
@@ -1038,16 +1038,16 @@ void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path)
  */
 GroupInfo *CoreThread::GetPalPrevGroupItem(PalInfo *pal)
 {
-	GSList *tlist;
+        GSList *tlist;
 
-	tlist = grplist;
-	while (tlist) {
-		if (g_slist_find(((GroupInfo *)tlist->data)->member, pal))
-			break;
-		tlist = g_slist_next(tlist);
-	}
+        tlist = grplist;
+        while (tlist) {
+                if (g_slist_find(((GroupInfo *)tlist->data)->member, pal))
+                        break;
+                tlist = g_slist_next(tlist);
+        }
 
-	return (GroupInfo *)(tlist ? tlist->data : NULL);
+        return (GroupInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -1057,18 +1057,18 @@ GroupInfo *CoreThread::GetPalPrevGroupItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal)
 {
-	GroupInfo *grpinf;
+        GroupInfo *grpinf;
 
-	grpinf = new GroupInfo;
-	grpinf->grpid = pal->ipv4;
-	grpinf->type = GROUP_BELONG_TYPE_REGULAR;
-	grpinf->name = g_strdup(pal->name);
-	grpinf->member = NULL;
-	grpinf->buffer = gtk_text_buffer_new(progdt.table);
-	grpinf->dialog = NULL;
-	rgllist = g_slist_append(rgllist, grpinf);
+        grpinf = new GroupInfo;
+        grpinf->grpid = pal->ipv4;
+        grpinf->type = GROUP_BELONG_TYPE_REGULAR;
+        grpinf->name = g_strdup(pal->name);
+        grpinf->member = NULL;
+        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->dialog = NULL;
+        rgllist = g_slist_append(rgllist, grpinf);
 
-	return grpinf;
+        return grpinf;
 }
 
 /**
@@ -1078,23 +1078,23 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal)
 {
-	GroupInfo *grpinf;
-	char *name;
+        GroupInfo *grpinf;
+        char *name;
 
-	/* 获取局域网网段名称 */
-	name = ipv4_get_lan_name(pal->ipv4);
-	name = name ? name : g_strdup(_("Others"));
+        /* 获取局域网网段名称 */
+        name = ipv4_get_lan_name(pal->ipv4);
+        name = name ? name : g_strdup(_("Others"));
 
-	grpinf = new GroupInfo;
-	grpinf->grpid = g_quark_from_static_string(name);
-	grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
-	grpinf->name = name;
-	grpinf->member = NULL;
-	grpinf->buffer = gtk_text_buffer_new(progdt.table);
-	grpinf->dialog = NULL;
-	sgmlist = g_slist_append(sgmlist, grpinf);
+        grpinf = new GroupInfo;
+        grpinf->grpid = g_quark_from_static_string(name);
+        grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
+        grpinf->name = name;
+        grpinf->member = NULL;
+        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->dialog = NULL;
+        sgmlist = g_slist_append(sgmlist, grpinf);
 
-	return grpinf;
+        return grpinf;
 }
 
 /**
@@ -1104,23 +1104,23 @@ GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal)
 {
-	GroupInfo *grpinf;
-	char *name;
+        GroupInfo *grpinf;
+        char *name;
 
-	/* 备份组名称，用于计算ID号 */
-	NO_OPERATION_C
-	name = g_strdup(pal->group ? pal->group : _("Others"));
+        /* 备份组名称，用于计算ID号 */
+        NO_OPERATION_C
+        name = g_strdup(pal->group ? pal->group : _("Others"));
 
-	grpinf = new GroupInfo;
-	grpinf->grpid = g_quark_from_static_string(name);
-	grpinf->type = GROUP_BELONG_TYPE_GROUP;
-	grpinf->name = name;
-	grpinf->member = NULL;
-	grpinf->buffer = gtk_text_buffer_new(progdt.table);
-	grpinf->dialog = NULL;
-	grplist = g_slist_append(grplist, grpinf);
+        grpinf = new GroupInfo;
+        grpinf->grpid = g_quark_from_static_string(name);
+        grpinf->type = GROUP_BELONG_TYPE_GROUP;
+        grpinf->name = name;
+        grpinf->member = NULL;
+        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->dialog = NULL;
+        grplist = g_slist_append(grplist, grpinf);
 
-	return grpinf;
+        return grpinf;
 }
 
 /**
@@ -1130,21 +1130,21 @@ GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal)
  */
 GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal)
 {
-	GroupInfo *grpinf;
-	char *name;
+        GroupInfo *grpinf;
+        char *name;
 
-	name = g_strdup(_("Broadcast"));
+        name = g_strdup(_("Broadcast"));
 
-	grpinf = new GroupInfo;
-	grpinf->grpid = g_quark_from_static_string(name);
-	grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
-	grpinf->name = name;
-	grpinf->member = NULL;
-	grpinf->buffer = gtk_text_buffer_new(progdt.table);
-	grpinf->dialog = NULL;
-	brdlist = g_slist_append(brdlist, grpinf);
+        grpinf = new GroupInfo;
+        grpinf->grpid = g_quark_from_static_string(name);
+        grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
+        grpinf->name = name;
+        grpinf->member = NULL;
+        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->dialog = NULL;
+        brdlist = g_slist_append(brdlist, grpinf);
 
-	return grpinf;
+        return grpinf;
 }
 
 /**
@@ -1154,17 +1154,17 @@ GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal)
  */
 void CoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal)
 {
-	GSList *tlist;
-	SessionAbstract *session;
+        GSList *tlist;
+        SessionAbstract *session;
 
-	if ( (tlist = g_slist_find(grpinf->member, pal))) {
-		grpinf->member = g_slist_delete_link(grpinf->member, tlist);
-		if (grpinf->dialog) {
-			session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-						 grpinf->dialog), "session-class");
-			session->DelPalData(pal);
-		}
-	}
+        if ( (tlist = g_slist_find(grpinf->member, pal))) {
+                grpinf->member = g_slist_delete_link(grpinf->member, tlist);
+                if (grpinf->dialog) {
+                        session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                                 grpinf->dialog), "session-class");
+                        session->DelPalData(pal);
+                }
+        }
 }
 
 /**
@@ -1174,14 +1174,14 @@ void CoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal)
  */
 void CoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal)
 {
-	SessionAbstract *session;
+        SessionAbstract *session;
 
-	grpinf->member = g_slist_append(grpinf->member, pal);
-	if (grpinf->dialog) {
-		session = (SessionAbstract *)g_object_get_data(G_OBJECT(
-					 grpinf->dialog), "session-class");
-		session->InsertPalData(pal);
-	}
+        grpinf->member = g_slist_append(grpinf->member, pal);
+        if (grpinf->dialog) {
+                session = (SessionAbstract *)g_object_get_data(G_OBJECT(
+                                         grpinf->dialog), "session-class");
+                session->InsertPalData(pal);
+        }
 }
 
 /**
@@ -1190,20 +1190,20 @@ void CoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal)
  */
 void CoreThread::RecvUdpData(CoreThread *pcthrd)
 {
-	struct sockaddr_in addr;
-	socklen_t len;
-	char buf[MAX_UDPLEN];
-	ssize_t size;
+        struct sockaddr_in addr;
+        socklen_t len;
+        char buf[MAX_UDPLEN];
+        ssize_t size;
 
-	while (pcthrd->server) {
-		len = sizeof(addr);
-		if ((size = recvfrom(pcthrd->udpsock, buf, MAX_UDPLEN, 0,
-				 (struct sockaddr *)&addr, &len)) == -1)
-			continue;
-		if (size != MAX_UDPLEN)
-			buf[size] = '\0';
-		UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
-	}
+        while (pcthrd->server) {
+                len = sizeof(addr);
+                if ((size = recvfrom(pcthrd->udpsock, buf, MAX_UDPLEN, 0,
+                                 (struct sockaddr *)&addr, &len)) == -1)
+                        continue;
+                if (size != MAX_UDPLEN)
+                        buf[size] = '\0';
+                UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+        }
 }
 
 /**
@@ -1212,17 +1212,17 @@ void CoreThread::RecvUdpData(CoreThread *pcthrd)
  */
 void CoreThread::RecvTcpData(CoreThread *pcthrd)
 {
-	pthread_t pid;
-	int subsock;
+        pthread_t pid;
+        int subsock;
 
-	listen(pcthrd->tcpsock, 5);
-	while (pcthrd->server) {
-		if ((subsock = accept(pcthrd->tcpsock, NULL, NULL)) == -1)
-			continue;
-		pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
-						 GINT_TO_POINTER(subsock));
-		pthread_detach(pid);
-	}
+        listen(pcthrd->tcpsock, 5);
+        while (pcthrd->server) {
+                if ((subsock = accept(pcthrd->tcpsock, NULL, NULL)) == -1)
+                        continue;
+                pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
+                                                 GINT_TO_POINTER(subsock));
+                pthread_detach(pid);
+        }
 }
 
 /**
@@ -1232,16 +1232,16 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd)
  */
 gboolean CoreThread::WatchCoreStatus(CoreThread *pcthrd)
 {
-	GList *tlist;
+        GList *tlist;
 
-	/* 让等待队列中的群组信息项闪烁 */
-	pthread_mutex_lock(&pcthrd->mutex);
-	tlist = pcthrd->msgline.head;
-	while (tlist) {
-		mwin.MakeItemBlinking((GroupInfo *)tlist->data, true);
-		tlist = g_list_next(tlist);
-	}
-	pthread_mutex_unlock(&pcthrd->mutex);
+        /* 让等待队列中的群组信息项闪烁 */
+        pthread_mutex_lock(&pcthrd->mutex);
+        tlist = pcthrd->msgline.head;
+        while (tlist) {
+                mwin.MakeItemBlinking((GroupInfo *)tlist->data, true);
+                tlist = g_list_next(tlist);
+        }
+        pthread_mutex_unlock(&pcthrd->mutex);
 
-	return TRUE;
+        return TRUE;
 }

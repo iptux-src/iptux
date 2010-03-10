@@ -16,14 +16,14 @@
 
 class LogSystem {
 public:
-	LogSystem();
-	~LogSystem();
+        LogSystem();
+        ~LogSystem();
 
-	void InitSublayer();
-	void CommunicateLog(PalInfo *pal, const char *fmt, ...);
-	void SystemLog(const char *fmt, ...);
+        void InitSublayer();
+        void CommunicateLog(PalInfo *pal, const char *fmt, ...);
+        void SystemLog(const char *fmt, ...);
 private:
-	int fdc, fds;
+        int fdc, fds;
 };
 
 #endif

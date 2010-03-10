@@ -23,27 +23,27 @@
  * 消息来源类型.
  */
 typedef enum {
-	MESSAGE_SOURCE_TYPE_PAL,	///< 好友
-	MESSAGE_SOURCE_TYPE_SELF,	///< 自身
-	MESSAGE_SOURCE_TYPE_ERROR	///< 错误
+        MESSAGE_SOURCE_TYPE_PAL,        ///< 好友
+        MESSAGE_SOURCE_TYPE_SELF,       ///< 自身
+        MESSAGE_SOURCE_TYPE_ERROR       ///< 错误
 }MessageSourceType;
 
 /**
  * 消息内容类型.
  */
 typedef enum {
-	MESSAGE_CONTENT_TYPE_STRING,	///< 字符串
-	MESSAGE_CONTENT_TYPE_PICTURE	///< 图片
+        MESSAGE_CONTENT_TYPE_STRING,    ///< 字符串
+        MESSAGE_CONTENT_TYPE_PICTURE    ///< 图片
 }MessageContentType;
 
 /**
  * 群组所属类型
  */
 typedef enum {
-	GROUP_BELONG_TYPE_REGULAR,	///< 常规
-	GROUP_BELONG_TYPE_SEGMENT,	///< 分段
-	GROUP_BELONG_TYPE_GROUP,	///< 分组
-	GROUP_BELONG_TYPE_BROADCAST	///< 广播
+        GROUP_BELONG_TYPE_REGULAR,      ///< 常规
+        GROUP_BELONG_TYPE_SEGMENT,      ///< 分段
+        GROUP_BELONG_TYPE_GROUP,        ///< 分组
+        GROUP_BELONG_TYPE_BROADCAST     ///< 广播
 }GroupBelongType;
 
 /***************偶是可爱的分割线(数据对象)*****************/
@@ -58,24 +58,24 @@ typedef enum {
  */
 class PalInfo {
 public:
-	PalInfo();
-	~PalInfo();
+        PalInfo();
+        ~PalInfo();
 
-	in_addr_t ipv4;	///< 好友IP
-	char *segdes;	///< 所在网段描述
-	char *version;	///< 版本串 *
-	char *user;	///< 好友用户 *
-	char *host;	///< 好友主机 *
-	char *name;	///< 昵称 *
-	char *group;	///< 所在群组
-	char *photo;	///< 形象照片
-	char *sign;	///< 个性签名
-	char *iconfile;	///< 好友头像 *
-	char *encode;	///< 好友编码 *
-	uint8_t flags;	///< 3 黑名单:2 更改:1 在线:0 兼容
+        in_addr_t ipv4; ///< 好友IP
+        char *segdes;   ///< 所在网段描述
+        char *version;  ///< 版本串 *
+        char *user;     ///< 好友用户 *
+        char *host;     ///< 好友主机 *
+        char *name;     ///< 昵称 *
+        char *group;    ///< 所在群组
+        char *photo;    ///< 形象照片
+        char *sign;     ///< 个性签名
+        char *iconfile; ///< 好友头像 *
+        char *encode;   ///< 好友编码 *
+        uint8_t flags;  ///< 3 黑名单:2 更改:1 在线:0 兼容
 
-	uint32_t packetn;	///< 已接受最大的包编号
-	uint32_t rpacketn;	///< 需要接受检查的包编号
+        uint32_t packetn;       ///< 已接受最大的包编号
+        uint32_t rpacketn;      ///< 需要接受检查的包编号
 };
 
 /**
@@ -83,15 +83,15 @@ public:
  */
 class GroupInfo {
 public:
-	GroupInfo();
-	~GroupInfo();
+        GroupInfo();
+        ~GroupInfo();
 
-	GQuark grpid;	///< 唯一标识
-	GroupBelongType type;	///< 群组类型
-	char *name;	///< 群组名称 *
-	GSList *member;	///< 群组成员(数据不为本链表拥有)
-	GtkTextBuffer *buffer;	///< 消息缓冲区 *
-	GtkWidget *dialog;	///< 对话框(若存在则必须与对话框类关联)
+        GQuark grpid;   ///< 唯一标识
+        GroupBelongType type;   ///< 群组类型
+        char *name;     ///< 群组名称 *
+        GSList *member; ///< 群组成员(数据不为本链表拥有)
+        GtkTextBuffer *buffer;  ///< 消息缓冲区 *
+        GtkWidget *dialog;      ///< 对话框(若存在则必须与对话框类关联)
 };
 
 /**
@@ -99,15 +99,15 @@ public:
  */
 class FileInfo {
 public:
-	FileInfo();
-	~FileInfo();
+        FileInfo();
+        ~FileInfo();
 
-	uint32_t fileid;	///< 唯一标识
-	uint32_t packetn;	///< 包编号
-	uint32_t fileattr;	///< 文件属性
-	int64_t filesize;	///< 文件大小
-	PalInfo *fileown;	///< 文件拥有者(来自好友*)
-	char *filepath;	///< 文件路径 *
+        uint32_t fileid;        ///< 唯一标识
+        uint32_t packetn;       ///< 包编号
+        uint32_t fileattr;      ///< 文件属性
+        int64_t filesize;       ///< 文件大小
+        PalInfo *fileown;       ///< 文件拥有者(来自好友*)
+        char *filepath; ///< 文件路径 *
 };
 
 /**
@@ -115,13 +115,13 @@ public:
  */
 class MsgPara {
 public:
-	MsgPara();
-	~MsgPara();
+        MsgPara();
+        ~MsgPara();
 
-	PalInfo *pal;	///< 好友数据信息(来自好友*)
-	MessageSourceType stype;	///< 来源类型
-	GroupBelongType btype;	///< 所属类型
-	GSList *dtlist;	///< 数据链表 *
+        PalInfo *pal;   ///< 好友数据信息(来自好友*)
+        MessageSourceType stype;        ///< 来源类型
+        GroupBelongType btype;  ///< 所属类型
+        GSList *dtlist; ///< 数据链表 *
 };
 
 /**
@@ -129,11 +129,11 @@ public:
  */
 class ChipData {
 public:
-	ChipData();
-	~ChipData();
+        ChipData();
+        ~ChipData();
 
-	MessageContentType type;	///< 消息内容类型
-	char *data;	///< 数据串 *
+        MessageContentType type;        ///< 消息内容类型
+        char *data;     ///< 数据串 *
 };
 
 /**
@@ -141,12 +141,12 @@ public:
  */
 class NetSegment {
 public:
-	NetSegment();
-	~NetSegment();
+        NetSegment();
+        ~NetSegment();
 
-	char *startip;	///< IP起始地址 *
-	char *endip;	///< IP终止地址 *
-	char *description;	///< 此IP段描述
+        char *startip;  ///< IP起始地址 *
+        char *endip;    ///< IP终止地址 *
+        char *description;      ///< 此IP段描述
 };
 
 /***************偶是可爱的分割线(抽象类)*****************/
@@ -157,16 +157,16 @@ public:
  */
 class SessionAbstract {
 public:
-	SessionAbstract();
-	virtual ~SessionAbstract();
+        SessionAbstract();
+        virtual ~SessionAbstract();
 
-	virtual void UpdatePalData(PalInfo *pal) = 0;	///< 更新好友数据
-	virtual void InsertPalData(PalInfo *pal) = 0;	///< 插入好友数据
-	virtual void DelPalData(PalInfo *pal) = 0;	///< 删除好友数据
-	virtual void ClearAllPalData() = 0;	///< 清除所有好友数据
-	virtual void ShowEnclosure() = 0;	///< 显示附件
-	virtual void AttachEnclosure(const GSList *list) = 0;	///< 添加附件
-	virtual void ScrollHistoryTextview() = 0;	///< 滚动历史区域
+        virtual void UpdatePalData(PalInfo *pal) = 0;   ///< 更新好友数据
+        virtual void InsertPalData(PalInfo *pal) = 0;   ///< 插入好友数据
+        virtual void DelPalData(PalInfo *pal) = 0;      ///< 删除好友数据
+        virtual void ClearAllPalData() = 0;     ///< 清除所有好友数据
+        virtual void ShowEnclosure() = 0;       ///< 显示附件
+        virtual void AttachEnclosure(const GSList *list) = 0;   ///< 添加附件
+        virtual void ScrollHistoryTextview() = 0;       ///< 滚动历史区域
 };
 
 /**
@@ -175,18 +175,18 @@ public:
  */
 class TransAbstract {
 public:
-	TransAbstract();
-	virtual ~TransAbstract();
+        TransAbstract();
+        virtual ~TransAbstract();
 
-	/**
-	 * GData数据如下: \n
-	 * [GdkPixbuf]status, [gchar]task, [gchar]peer, [gchar]filename, [gchar]filelength,
-	 * [gchar]finishlength, [gint]progress, [gchar]pro-text, [gchar]cost, [gchar]remain,
-	 * [gchar]rate, [gpointer]data \n
-	 * @see MainWindow::CreateTransModel()
-	 */
-	virtual GData **GetTransFilePara() = 0;	///< 获取更新UI的数据
-	virtual void TerminateTrans() = 0;	///< 终止过程处理
+        /**
+         * GData数据如下: \n
+         * [GdkPixbuf]status, [gchar]task, [gchar]peer, [gchar]filename, [gchar]filelength,
+         * [gchar]finishlength, [gint]progress, [gchar]pro-text, [gchar]cost, [gchar]remain,
+         * [gchar]rate, [gpointer]data \n
+         * @see MainWindow::CreateTransModel()
+         */
+        virtual GData **GetTransFilePara() = 0; ///< 获取更新UI的数据
+        virtual void TerminateTrans() = 0;      ///< 终止过程处理
 };
 
 #endif

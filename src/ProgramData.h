@@ -31,53 +31,53 @@
 */
 class ProgramData {
 public:
-	ProgramData();
-	~ProgramData();
+        ProgramData();
+        ~ProgramData();
 
-	void InitSublayer();
-	void WriteProgData();
-	GSList *CopyNetSegment();
-	char *FindNetSegDescription(in_addr_t ipv4);
+        void InitSublayer();
+        void WriteProgData();
+        GSList *CopyNetSegment();
+        char *FindNetSegDescription(in_addr_t ipv4);
 
-	char *nickname;	//昵称 *
-	char *mygroup;	//所属群组 *
-	char *myicon;		//个人头像 *
-	char *path;		//存档路径 *
-	char *sign;		//个性签名 *
+        char *nickname; //昵称 *
+        char *mygroup;  //所属群组 *
+        char *myicon;           //个人头像 *
+        char *path;             //存档路径 *
+        char *sign;             //个性签名 *
 
-	char *codeset;		//候选编码 *
-	char *encode;		//默认通信编码 *
-	char *palicon;		//默认头像 *
-	char *font;		//面板字体 *
-	uint8_t flags;		//6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
+        char *codeset;          //候选编码 *
+        char *encode;           //默认通信编码 *
+        char *palicon;          //默认头像 *
+        char *font;             //面板字体 *
+        uint8_t flags;          //6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
 
-	char *transtip;		//传输完成提示声音 *
-	char *msgtip;		//消息到来提示声音 *
-	double volume;		//音量控制
-	uint8_t sndfgs;		//2 传输:1 消息:0 声音
+        char *transtip;         //传输完成提示声音 *
+        char *msgtip;           //消息到来提示声音 *
+        double volume;          //音量控制
+        uint8_t sndfgs;         //2 传输:1 消息:0 声音
 
-	GSList *netseg;		//需要通知登录的IP段
+        GSList *netseg;         //需要通知登录的IP段
 
-	GRegex *urlregex;		//URL正则表达式
-	GdkCursor *xcursor, *lcursor;	//光标
-	GtkTextTagTable *table;	//tag table
+        GRegex *urlregex;               //URL正则表达式
+        GdkCursor *xcursor, *lcursor;   //光标
+        GtkTextTagTable *table; //tag table
 
-	guint cnxnid;		//GConfClient连接ID
-	struct timeval timestamp;	//程序数据时间戳
-	pthread_mutex_t mutex;	//锁
+        guint cnxnid;           //GConfClient连接ID
+        struct timeval timestamp;       //程序数据时间戳
+        pthread_mutex_t mutex;  //锁
 private:
-	void ReadProgData();
-	void AddGconfNotify();
-	void CheckIconTheme();
-	void CreateRegex();
-	void CreateCursor();
-	void CreateTagTable();
+        void ReadProgData();
+        void AddGconfNotify();
+        void CheckIconTheme();
+        void CreateRegex();
+        void CreateCursor();
+        void CreateTagTable();
 
-	void WriteNetSegment(GConfClient *client);
-	void ReadNetSegment(GConfClient *client);
+        void WriteNetSegment(GConfClient *client);
+        void ReadNetSegment(GConfClient *client);
 private:
-	static void GconfNotifyFunc(GConfClient *client, guint cnxnid,
-				 GConfEntry *entry, ProgramData *progdt);
+        static void GconfNotifyFunc(GConfClient *client, guint cnxnid,
+                                 GConfEntry *entry, ProgramData *progdt);
 };
 
 #endif

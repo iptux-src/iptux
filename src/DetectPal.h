@@ -16,16 +16,16 @@
 
 class DetectPal {
 public:
-	DetectPal();
-	~DetectPal();
+        DetectPal();
+        ~DetectPal();
 
-	static void DetectEntry(GtkWidget *parent);
+        static void DetectEntry(GtkWidget *parent);
 private:
-	GtkWidget *CreateMainDialog(GtkWidget *parent);
-	GtkWidget *CreateInputArea();
-	void SendDetectPacket();
+        GtkWidget *CreateMainDialog(GtkWidget *parent);
+        GtkWidget *CreateInputArea();
+        void SendDetectPacket();
 
-	GData *widset;
+        GData *widset;
 };
 
 #endif

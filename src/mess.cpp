@@ -18,16 +18,16 @@ PalInfo::PalInfo():ipv4(0), segdes(NULL), version(NULL), user(NULL), host(NULL),
 {}
 PalInfo::~PalInfo()
 {
-	g_free(segdes);
-	g_free(version);
-	g_free(user);
-	g_free(host);
-	g_free(name);
-	g_free(group);
-	g_free(photo);
-	g_free(sign);
-	g_free(iconfile);
-	g_free(encode);
+        g_free(segdes);
+        g_free(version);
+        g_free(user);
+        g_free(host);
+        g_free(name);
+        g_free(group);
+        g_free(photo);
+        g_free(sign);
+        g_free(iconfile);
+        g_free(encode);
 }
 
 GroupInfo::GroupInfo():grpid(0), type(GROUP_BELONG_TYPE_REGULAR), name(NULL),
@@ -35,9 +35,9 @@ GroupInfo::GroupInfo():grpid(0), type(GROUP_BELONG_TYPE_REGULAR), name(NULL),
 {}
 GroupInfo::~GroupInfo()
 {
-	g_free(name);
-	g_slist_free(member);
-	g_object_unref(buffer);
+        g_free(name);
+        g_slist_free(member);
+        g_object_unref(buffer);
 }
 
 FileInfo::FileInfo():fileid(0), packetn(0), fileattr(0), filesize(-1),
@@ -45,7 +45,7 @@ FileInfo::FileInfo():fileid(0), packetn(0), fileattr(0), filesize(-1),
 {}
 FileInfo::~FileInfo()
 {
-	g_free(filepath);
+        g_free(filepath);
 }
 
 MsgPara::MsgPara():pal(NULL), stype(MESSAGE_SOURCE_TYPE_PAL),
@@ -53,25 +53,25 @@ MsgPara::MsgPara():pal(NULL), stype(MESSAGE_SOURCE_TYPE_PAL),
 {}
 MsgPara::~MsgPara()
 {
-	for (GSList *tlist = dtlist; tlist; tlist = g_slist_next(tlist))
-		delete (ChipData *)tlist->data;
-	g_slist_free(dtlist);
+        for (GSList *tlist = dtlist; tlist; tlist = g_slist_next(tlist))
+                delete (ChipData *)tlist->data;
+        g_slist_free(dtlist);
 }
 
 ChipData::ChipData():type(MESSAGE_CONTENT_TYPE_STRING), data(NULL)
 {}
 ChipData::~ChipData()
 {
-	g_free(data);
+        g_free(data);
 }
 
 NetSegment::NetSegment():startip(NULL), endip(NULL), description(NULL)
 {}
 NetSegment::~NetSegment()
 {
-	g_free(startip);
-	g_free(endip);
-	g_free(description);
+        g_free(startip);
+        g_free(endip);
+        g_free(description);
 }
 
 SessionAbstract::SessionAbstract()

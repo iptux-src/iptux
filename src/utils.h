@@ -15,9 +15,9 @@
 #include "mess.h"
 
 #define difftimeval(val2,val1) \
-	((((val2).tv_sec-(val1).tv_sec)*1000000 \
-	+ (val2).tv_usec-(val1).tv_usec) \
-	/ 1000000.0f)
+        ((((val2).tv_sec-(val1).tv_sec)*1000000 \
+        + (val2).tv_usec-(val1).tv_usec) \
+        / 1000000.0f)
 #define percent(num1,num2) (100.0f*(num1)/(num2))
 
 #define FLAG_ISSET(num,bit) ((num)&(1<<(bit)))

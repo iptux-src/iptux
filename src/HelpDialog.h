@@ -16,23 +16,23 @@
 
 class HelpDialog {
 public:
-	HelpDialog();
-	~HelpDialog();
+        HelpDialog();
+        ~HelpDialog();
 
-	static void AboutEntry();
-	static void MoreEntry();
+        static void AboutEntry();
+        static void MoreEntry();
 private:
-	GtkWidget *CreateAboutDialog();
-	GtkWidget *CreateMoreDialog();
-	void RunHelpDialog(GtkWidget **dialog);
+        GtkWidget *CreateAboutDialog();
+        GtkWidget *CreateMoreDialog();
+        void RunHelpDialog(GtkWidget **dialog);
 
-	static GtkWidget *about;
-	static GtkWidget *more;
+        static GtkWidget *about;
+        static GtkWidget *more;
 //回调处理部分
 private:
-	static void DialogOpenEmail(GtkWidget *dialog, const gchar *link);
-	static void DialogOpenUrl(GtkWidget *dialog, const gchar *link);
-	static void DialogDestroy(GtkWidget **dialog);
+        static void DialogOpenEmail(GtkWidget *dialog, const gchar *link);
+        static void DialogOpenUrl(GtkWidget *dialog, const gchar *link);
+        static void DialogDestroy(GtkWidget **dialog);
 };
 
 #endif

@@ -62,11 +62,11 @@ protected:
                                        GData **dtset);
 protected:
 
-        GData *widset;		//窗体集
-	GData *mdlset;		//数据model集
-	GData *dtset;		//通用数据集
-	GtkAccelGroup *accel;	//快捷键组
-	GroupInfo *grpinf;	//群组信息
+        GData *widset;          //窗体集
+        GData *mdlset;          //数据model集
+        GData *dtset;           //通用数据集
+        GtkAccelGroup *accel;   //快捷键组
+        GroupInfo *grpinf;      //群组信息
 };
 
 #endif

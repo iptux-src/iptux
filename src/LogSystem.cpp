@@ -23,65 +23,65 @@ LogSystem::LogSystem():fdc(-1), fds(-1)
 
 LogSystem::~LogSystem()
 {
-	close(fdc);
-	close(fds);
+        close(fdc);
+        close(fds);
 }
 
 void LogSystem::InitSublayer()
 {
-	const gchar *env;
-	char path[MAX_PATHLEN];
+        const gchar *env;
+        char path[MAX_PATHLEN];
 
-	env = g_get_user_config_dir();
-	snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/communicate.log", env);
-	fdc = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/system.log", env);
-	fds = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        env = g_get_user_config_dir();
+        snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/communicate.log", env);
+        fdc = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/system.log", env);
+        fds = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 }
 
 void LogSystem::CommunicateLog(PalInfo *pal, const char *fmt, ...)
 {
-	gchar *log, *msg, *ptr;
-	va_list ap;
+        gchar *log, *msg, *ptr;
+        va_list ap;
 
-	if (!FLAG_ISSET(progdt.flags, 2))
-		return;
+        if (!FLAG_ISSET(progdt.flags, 2))
+                return;
 
-	if (pal)
-		ptr = getformattime(_("Nickname:%s User:%s Host:%s"), pal->name,
-							 pal->user, pal->host);
-	else
-		ptr = getformattime(_("Me"));
+        if (pal)
+                ptr = getformattime(_("Nickname:%s User:%s Host:%s"), pal->name,
+                                                         pal->user, pal->host);
+        else
+                ptr = getformattime(_("Me"));
 
-	va_start(ap, fmt);
-	msg = g_strdup_vprintf(fmt, ap);
-	va_end(ap);
-	log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER,
-					 ptr, msg, LOG_END_HEADER);
-	g_free(ptr);
-	g_free(msg);
+        va_start(ap, fmt);
+        msg = g_strdup_vprintf(fmt, ap);
+        va_end(ap);
+        log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER,
+                                         ptr, msg, LOG_END_HEADER);
+        g_free(ptr);
+        g_free(msg);
 
-	write(fdc, log, strlen(log));
-	g_free(log);
+        write(fdc, log, strlen(log));
+        g_free(log);
 }
 
 void LogSystem::SystemLog(const char *fmt, ...)
 {
-	gchar *log, *msg, *ptr;
-	va_list ap;
+        gchar *log, *msg, *ptr;
+        va_list ap;
 
-	if (!FLAG_ISSET(progdt.flags, 2))
-		return;
+        if (!FLAG_ISSET(progdt.flags, 2))
+                return;
 
-	ptr = getformattime(_("User:%s Host:%s"), g_get_user_name(), g_get_host_name());
-	va_start(ap, fmt);
-	msg = g_strdup_vprintf(fmt, ap);
-	va_end(ap);
-	log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER,
-					 ptr, msg, LOG_END_HEADER);
-	g_free(ptr);
-	g_free(msg);
+        ptr = getformattime(_("User:%s Host:%s"), g_get_user_name(), g_get_host_name());
+        va_start(ap, fmt);
+        msg = g_strdup_vprintf(fmt, ap);
+        va_end(ap);
+        log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER,
+                                         ptr, msg, LOG_END_HEADER);
+        g_free(ptr);
+        g_free(msg);
 
-	write(fds, log, strlen(log));
-	g_free(log);
+        write(fds, log, strlen(log));
+        g_free(log);
 }

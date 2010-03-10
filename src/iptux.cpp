@@ -33,24 +33,24 @@ SoundSystem sndsys;
 
 int main(int argc, char *argv[])
 {
-	setlocale(LC_ALL, "");
-	bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
+        setlocale(LC_ALL, "");
+        bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
+        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+        textdomain(GETTEXT_PACKAGE);
 
-	if (!g_thread_supported())
-		g_thread_init(NULL);
-	gdk_threads_init();
-	gdk_threads_enter();
-	gtk_init(&argc, &argv);
+        if (!g_thread_supported())
+                g_thread_init(NULL);
+        gdk_threads_init();
+        gdk_threads_enter();
+        gtk_init(&argc, &argv);
 
-	analysis_parameter(argc, argv);
-	iptux_init();
-	sicon.CreateStatusIcon();
-	mwin.CreateWindow();
-	cthrd.CoreThreadEntry();
+        analysis_parameter(argc, argv);
+        iptux_init();
+        sicon.CreateStatusIcon();
+        mwin.CreateWindow();
+        cthrd.CoreThreadEntry();
 
-	gtk_main();
-	gdk_threads_leave();
-	return 0;
+        gtk_main();
+        gdk_threads_leave();
+        return 0;
 }

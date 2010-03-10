@@ -19,7 +19,7 @@
  */
 void *operator new(size_t size)
 {
-	return g_malloc(size);
+        return g_malloc(size);
 }
 
 /**
@@ -31,21 +31,21 @@ void *operator new(size_t size)
  */
 ssize_t xwrite(int fd, const void *buf, size_t count)
 {
-	size_t offset;
-	ssize_t size;
+        size_t offset;
+        ssize_t size;
 
-	size = -1;
-	offset = 0;
-	while ((offset != count) && (size != 0)) {
-		if ((size = write(fd, (char *)buf + offset, count - offset)) == -1) {
-			if (errno == EINTR)
-				continue;
-			return -1;
-		}
-		offset += size;
-	}
+        size = -1;
+        offset = 0;
+        while ((offset != count) && (size != 0)) {
+                if ((size = write(fd, (char *)buf + offset, count - offset)) == -1) {
+                        if (errno == EINTR)
+                                continue;
+                        return -1;
+                }
+                offset += size;
+        }
 
-	return offset;
+        return offset;
 }
 
 /**
@@ -57,21 +57,21 @@ ssize_t xwrite(int fd, const void *buf, size_t count)
  */
 ssize_t xread(int fd, void *buf, size_t count)
 {
-	size_t offset;
-	ssize_t size;
+        size_t offset;
+        ssize_t size;
 
-	size = -1;
-	offset = 0;
-	while ((offset != count) && (size != 0)) {
-		if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-			if (errno == EINTR)
-				continue;
-			return -1;
-		}
-		offset += size;
-	}
+        size = -1;
+        offset = 0;
+        while ((offset != count) && (size != 0)) {
+                if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
+                        if (errno == EINTR)
+                                continue;
+                        return -1;
+                }
+                offset += size;
+        }
 
-	return offset;
+        return offset;
 }
 
 /**
@@ -86,29 +86,29 @@ ssize_t xread(int fd, void *buf, size_t count)
  */
 ssize_t read_ipmsg_prefix(int fd, void *buf, size_t count)
 {
-	struct timeval tval;
-	fd_set rset;
-	size_t offset;
-	ssize_t size;
+        struct timeval tval;
+        fd_set rset;
+        size_t offset;
+        ssize_t size;
 
-	offset = 0;	//当前缓冲区已有字符数为0
-	do {
-		/* 先尝试着读取一次 */
-mark:		if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-			if (errno == EINTR)
-				goto mark;
-			return -1;
-		}
-		if ((offset += size) == count)	//如果已经读满则可以跳出循环了
-			break;
-		/* 为考察文件描述符做准备工作 */
-		FD_ZERO(&rset);
-		FD_SET(fd, &rset);
-		tval.tv_sec = 0;
-		tval.tv_usec = 100000;
-	} while (size && (select(fd + 1, &rset, NULL, NULL, &tval) == 1));
+        offset = 0;     //当前缓冲区已有字符数为0
+        do {
+                /* 先尝试着读取一次 */
+mark:           if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
+                        if (errno == EINTR)
+                                goto mark;
+                        return -1;
+                }
+                if ((offset += size) == count)  //如果已经读满则可以跳出循环了
+                        break;
+                /* 为考察文件描述符做准备工作 */
+                FD_ZERO(&rset);
+                FD_SET(fd, &rset);
+                tval.tv_sec = 0;
+                tval.tv_usec = 100000;
+        } while (size && (select(fd + 1, &rset, NULL, NULL, &tval) == 1));
 
-	return offset;
+        return offset;
 }
 
 /**
@@ -126,24 +126,24 @@ mark:		if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
  */
 ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset)
 {
-	ssize_t size;
-	uint32_t headsize;
+        ssize_t size;
+        uint32_t headsize;
 
-	if (offset < count)	//注意不要写到缓冲区外了
-		((char *)buf)[offset] = '\0';
-	while (!offset || !strchr((char *)buf, ':')
-		 || sscanf((char *)buf, "%" SCNx32, &headsize) != 1
-		 || headsize > offset) {
-mark:		if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-			if (errno == EINTR)
-				goto mark;
-			return -1;
-		} else if (size == 0)
-			return -1;
-		if ((offset += size) == count)
-			break;
-		((char *)buf)[offset] = '\0';
-	}
+        if (offset < count)     //注意不要写到缓冲区外了
+                ((char *)buf)[offset] = '\0';
+        while (!offset || !strchr((char *)buf, ':')
+                 || sscanf((char *)buf, "%" SCNx32, &headsize) != 1
+                 || headsize > offset) {
+mark:           if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
+                        if (errno == EINTR)
+                                goto mark;
+                        return -1;
+                } else if (size == 0)
+                        return -1;
+                if ((offset += size) == count)
+                        break;
+                ((char *)buf)[offset] = '\0';
+        }
 
-	return offset;
+        return offset;
 }
