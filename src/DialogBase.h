@@ -26,6 +26,8 @@ protected:
 
         void ClearHistoryTextView();
         void ScrollHistoryTextview();
+        virtual void OnNewMessageComing();
+        void NotifyUser();
 
         void ShowEnclosure();
         void AttachEnclosure(const GSList *list);
@@ -38,6 +40,8 @@ protected:
         virtual GtkWidget *CreateHelpMenu();
         virtual GtkWidget *CreateEnclosureTree(GtkTreeModel *model);
 
+        void MainWindowSignalSetup(GtkWidget *window);
+
         GtkTreeModel *CreateEnclosureModel();
         GSList *PickEnclosure(uint32_t fileattr);
 
@@ -48,6 +52,8 @@ protected:
         virtual void BroadcastEnclosureMsg(GSList *list) {};
 
         // 回调部分
+        static void DialogDestory(DialogBase *);
+        static void ClearNotify(GtkWidget *window, GdkEventConfigure *event);
         static void DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
                                      gint x, gint y, GtkSelectionData *data,
                                      guint info, guint time);

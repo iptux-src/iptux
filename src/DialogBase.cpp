@@ -125,6 +125,28 @@ void DialogBase::ScrollHistoryTextview()
 }
 
 /**
+ * 窗口打开情况下，新消息来到以后的接口
+ */
+void DialogBase::OnNewMessageComing()
+{
+    this->NotifyUser();
+    this->ScrollHistoryTextview();
+}
+
+/**
+ * 在窗口打开并且没有设置为最顶端的窗口时候，用窗口在任务栏的闪动来提示用户
+ */
+void DialogBase::NotifyUser()
+{
+#if GTK_CHECK_VERSION(2,8,0)
+    GtkWindow *window;
+    window = GTK_WINDOW(g_datalist_get_data(&widset, "window-widget"));
+    if (!gtk_window_has_toplevel_focus(window))
+        gtk_window_set_urgency_hint(window, TRUE);
+#endif
+}
+
+/**
  * 显示附件.
  */
 void DialogBase::ShowEnclosure()
@@ -182,6 +204,22 @@ void DialogBase::AttachEnclosure(const GSList *list)
                 g_object_unref(rpixbuf);
         if (dpixbuf)
                 g_object_unref(dpixbuf);
+}
+
+/*
+ * 主窗口的信号连接
+ */
+void DialogBase::MainWindowSignalSetup(GtkWidget *window)
+{
+        g_object_set_data(G_OBJECT(window), "session-class", this);
+        g_signal_connect_swapped(window, "destroy",
+                                 G_CALLBACK(DialogDestory), this);
+        g_signal_connect_swapped(window, "drag-data-received",
+                                 G_CALLBACK(DragDataReceived), this);
+        g_signal_connect(window, "configure-event",
+                         G_CALLBACK(WindowConfigureEvent), &dtset);
+        g_signal_connect(window, "focus-in-event",
+                         G_CALLBACK(ClearNotify), NULL);
 }
 
 /**
@@ -560,6 +598,25 @@ void DialogBase::SendMessage(DialogBase *dlgpr)
         dlgpr->SendEnclosureMsg();
         dlgpr->SendTextMsg();
         dlgpr->ScrollHistoryTextview();
+}
+/**
+ * 对话框被摧毁的回调函数
+ * @param dialog
+ */
+void DialogBase::DialogDestory(DialogBase *dialog)
+{
+        delete dialog;
+}
+
+/**
+ * 清除提示,这个提示只是窗口闪动的提示
+ */
+void DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event)
+{
+#if GTK_CHECK_VERSION(2,8,0)
+    if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
+        gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
+#endif
 }
 
 /**

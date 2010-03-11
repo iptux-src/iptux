@@ -163,10 +163,10 @@ public:
         virtual void UpdatePalData(PalInfo *pal) = 0;   ///< 更新好友数据
         virtual void InsertPalData(PalInfo *pal) = 0;   ///< 插入好友数据
         virtual void DelPalData(PalInfo *pal) = 0;      ///< 删除好友数据
-        virtual void ClearAllPalData() = 0;     ///< 清除所有好友数据
-        virtual void ShowEnclosure() = 0;       ///< 显示附件
+        virtual void ClearAllPalData() = 0;             ///< 清除所有好友数据
+        virtual void ShowEnclosure() = 0;               ///< 显示附件
         virtual void AttachEnclosure(const GSList *list) = 0;   ///< 添加附件
-        virtual void ScrollHistoryTextview() = 0;       ///< 滚动历史区域
+        virtual void OnNewMessageComing() = 0;          ///< 窗口打开情况下有新消息
 };
 
 /**

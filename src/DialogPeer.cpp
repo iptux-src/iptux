@@ -208,15 +208,10 @@ GtkWidget *DialogPeer::CreateMainWindow()
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
         widget_enable_dnd_uri(window);
         g_datalist_set_data(&widset, "window-widget", window);
-
         grpinf->dialog = window;
-        g_object_set_data(G_OBJECT(window), "session-class", this);
-        g_signal_connect_swapped(window, "destroy", G_CALLBACK(DialogPeerDestroy), this);
-        g_signal_connect_swapped(window, "drag-data-received",
-                         G_CALLBACK(DragDataReceived), this);
-        g_signal_connect(window, "configure-event",
-                         G_CALLBACK(WindowConfigureEvent), &dtset);
 
+        MainWindowSignalSetup(window);
+        
         return window;
 }
 
@@ -700,17 +695,6 @@ void DialogPeer::InsertPicture(DialogPeer *dlgpr)
         gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
         gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
         g_object_unref(pixbuf);
-}
-
-
-
-/**
- * 对话框窗口被摧毁的响应函数.
- * @param dlgpr 对话框类
- */
-void DialogPeer::DialogPeerDestroy(DialogPeer *dlgpr)
-{
-        delete dlgpr;
 }
 
 /**

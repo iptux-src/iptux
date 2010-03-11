@@ -285,16 +285,11 @@ GtkWidget *DialogGroup::CreateMainWindow()
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
         g_datalist_set_data(&widset, "window-widget", window);
-
-        grpinf->dialog = window;
-        g_object_set_data(G_OBJECT(window), "session-class", this);
-        g_signal_connect_swapped(window, "destroy", G_CALLBACK(DialogGroupDestroy), this);
         widget_enable_dnd_uri(window);
-        g_signal_connect_swapped(window, "drag-data-received",
-                         G_CALLBACK(DialogBase::DragDataReceived), this);
-        g_signal_connect(window, "configure-event",
-                         G_CALLBACK(WindowConfigureEvent), &dtset);
+        grpinf->dialog = window;
 
+        MainWindowSignalSetup(window);
+        
         return window;
 }
 
@@ -826,14 +821,4 @@ void DialogGroup::SendMessage(DialogGroup *dlggrp)
 {
         dlggrp->SendEnclosureMsg();
         dlggrp->SendTextMsg();
-}
-
-
-/**
- * 对话框窗口被摧毁的响应函数.
- * @param dlggrp 对话框类
- */
-void DialogGroup::DialogGroupDestroy(DialogGroup *dlggrp)
-{
-        delete dlggrp;
 }

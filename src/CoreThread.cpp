@@ -153,7 +153,7 @@ void CoreThread::InsertMessage(MsgPara *para)
                 if (grpinf->dialog) {
                         session = (SessionAbstract *)g_object_get_data(G_OBJECT(
                                                  grpinf->dialog), "session-class");
-                        session->ScrollHistoryTextview();
+                        session->OnNewMessageComing();
                 }
         }
 

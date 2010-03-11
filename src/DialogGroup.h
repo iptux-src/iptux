@@ -65,8 +65,6 @@ private:
         static void MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
                                                          GtkTreeViewColumn *column);
         static void SendMessage(DialogGroup *dlggrp);
-
-        static void DialogGroupDestroy(DialogGroup *dlggrp);
 };
 
 #endif
