@@ -9,6 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "SendFileData.h"
 #include "ProgramData.h"
 #include "MainWindow.h"
@@ -103,21 +106,27 @@ void SendFileData::CreateUIPara()
 {
         GtkIconTheme *theme;
         GdkPixbuf *pixbuf;
+        struct in_addr addr;
 
         theme = gtk_icon_theme_get_default();
-        if ((pixbuf = gtk_icon_theme_load_icon(theme, "tip-send", MAX_ICONSIZE,
-                                                 GtkIconLookupFlags(0), NULL)))
-                g_datalist_set_data_full(&para, "status", pixbuf,
-                                 GDestroyNotify(g_object_unref));
-
+        if ((pixbuf = gtk_icon_theme_load_icon(theme, "tip-send",
+                                               MAX_ICONSIZE,
+                                               GtkIconLookupFlags(0), NULL)))
+            g_datalist_set_data_full(&para, "status", pixbuf,
+                                     GDestroyNotify(g_object_unref));
         g_datalist_set_data(&para, "task", (gpointer)(_("send")));
         g_datalist_set_data_full(&para, "peer", g_strdup(file->fileown->name),
-                                                 GDestroyNotify(g_free));
+                                 GDestroyNotify(g_free));
+
+        addr.s_addr = file->fileown->ipv4;
+        g_datalist_set_data_full(&para, "ip", g_strdup(inet_ntoa(addr)),
+                                 GDestroyNotify(g_free));
         g_datalist_set_data_full(&para, "filename",
                                  ipmsg_get_filename_me(file->filepath, NULL),
                                  GDestroyNotify(g_free));
-        g_datalist_set_data_full(&para, "filelength", numeric_to_size(file->filesize),
-                                                         GDestroyNotify(g_free));
+        g_datalist_set_data_full(&para, "filelength",
+                                 numeric_to_size(file->filesize),
+                                 GDestroyNotify(g_free));
         g_datalist_set_data(&para, "finishlength", (gpointer)("0B"));
         g_datalist_set_data(&para, "progress", GINT_TO_POINTER(0));
         g_datalist_set_data(&para, "pro-text", (gpointer)("0.0%"));

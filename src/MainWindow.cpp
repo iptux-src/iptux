@@ -27,6 +27,8 @@ extern ProgramData progdt;
 extern CoreThread cthrd;
 extern MainWindow mwin;
 
+#define TRANS_TREE_MAX 13
+
 /**
  * 类构造函数.
  */
@@ -382,20 +384,19 @@ void MainWindow::UpdateItemToTransTree(GData **para)
         GtkTreeModel *model;
         GtkTreeIter iter;
         gpointer data;
-
         /* 查询项所在位置，若不存在则自动加入 */
         data = NULL;
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "trans-model"));
         if (gtk_tree_model_get_iter_first(model, &iter)) {
                 do {
-                        gtk_tree_model_get(model, &iter, 12, &data, -1);
+                        gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
                         if (para == data)
                                 break;
                 } while (gtk_tree_model_iter_next(model, &iter));
         }
         if (para != data) {
                 gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-                gtk_list_store_set(GTK_LIST_STORE(model), &iter, 12, para, -1);
+                gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, para, -1);
         }
 
         /**
@@ -403,22 +404,23 @@ void MainWindow::UpdateItemToTransTree(GData **para)
          * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
          */
         if (!g_datalist_get_data(para, "data"))
-                gtk_list_store_set(GTK_LIST_STORE(model), &iter, 12, NULL, -1);
+                gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, NULL, -1);
 
         /* 重设数据 */
         gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-                         0, g_datalist_get_data(para, "status"),
-                         1, g_datalist_get_data(para, "task"),
-                         2, g_datalist_get_data(para, "peer"),
-                         3, g_datalist_get_data(para, "filename"),
-                         4, g_datalist_get_data(para, "filelength"),
-                         5, g_datalist_get_data(para, "finishlength"),
-                         6, GPOINTER_TO_INT(g_datalist_get_data(para, "progress")),
-                         7, g_datalist_get_data(para, "pro-text"),
-                         8, g_datalist_get_data(para, "cost"),
-                         9, g_datalist_get_data(para, "remain"),
-                         10, g_datalist_get_data(para, "rate"),
-                         11, g_datalist_get_data(para, "data"), -1);
+                           0, g_datalist_get_data(para, "status"),
+                           1, g_datalist_get_data(para, "task"),
+                           2, g_datalist_get_data(para, "peer"),
+                           3, g_datalist_get_data(para, "ip"),
+                           4, g_datalist_get_data(para, "filename"),
+                           5, g_datalist_get_data(para, "filelength"),
+                           6, g_datalist_get_data(para, "finishlength"),
+                           7, GPOINTER_TO_INT(g_datalist_get_data(para, "progress")),
+                           8, g_datalist_get_data(para, "pro-text"),
+                           9, g_datalist_get_data(para, "cost"),
+                           10, g_datalist_get_data(para, "remain"),
+                           11, g_datalist_get_data(para, "rate"),
+                           12, g_datalist_get_data(para, "data"), -1);
 }
 
 /**
@@ -435,7 +437,7 @@ bool MainWindow::TransmissionActive()
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "trans-model"));
         if (gtk_tree_model_get_iter_first(model, &iter)) {
                 do {
-                        gtk_tree_model_get(model, &iter, 12, &data, -1);
+                        gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
                         if (data)
                                 break;
                 } while (gtk_tree_model_iter_next(model, &iter));
@@ -1016,8 +1018,8 @@ GtkTreeModel *MainWindow::CreatePallistModel()
 
 /**
  * 文件传输树(trans-tree)底层数据结构.
- * 13,0 status,1 task,2 peer,3 filename,4 filelength,5 finishlength,6 progress,
- *    7 pro-text,8 cost,9 remain,10 rate,11 data,12 para \n
+ * 13,0 status,1 task,2 peer,3 ip,4 filename,5 filelength,6 finishlength,7 progress,
+ *    8 pro-text,9 cost,10 remain,11 rate,12 data,13 para \n
  * 任务状态;任务类型;任务对端;文件名;文件长度;完成长度;完成进度;
  * 进度串;已花费时间;任务剩余时间;传输速度;文件传输类;参数指针值 \n
  * @return trans-model
@@ -1026,11 +1028,12 @@ GtkTreeModel *MainWindow::CreateTransModel()
 {
         GtkListStore *model;
 
-        model = gtk_list_store_new(13, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
-                                         G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                                         G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING,
-                                         G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER,
-                                         G_TYPE_POINTER);
+        model = gtk_list_store_new(14, GDK_TYPE_PIXBUF, G_TYPE_STRING,
+                                   G_TYPE_STRING,G_TYPE_STRING,G_TYPE_STRING,
+                                   G_TYPE_STRING, G_TYPE_STRING,
+                                   G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING,
+                                   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER,
+                                   G_TYPE_POINTER);
 
         return GTK_TREE_MODEL(model);
 }
@@ -1193,44 +1196,50 @@ GtkWidget *MainWindow::CreateTransTree(GtkTreeModel *model)
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
         cell = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes(_("Filename"), cell,
-                                                         "text", 3, NULL);
+        column = gtk_tree_view_column_new_with_attributes(_("IPv4"), cell,
+                                                          "text", 3, NULL);
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
         cell = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes(_("Size"), cell,
+        column = gtk_tree_view_column_new_with_attributes(_("Filename"), cell,
                                                          "text", 4, NULL);
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
         cell = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes(_("Completed"), cell,
+        column = gtk_tree_view_column_new_with_attributes(_("Size"), cell,
                                                          "text", 5, NULL);
+        gtk_tree_view_column_set_resizable(column, TRUE);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
+        cell = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes(_("Completed"), cell,
+                                                         "text", 6, NULL);
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
         cell = gtk_cell_renderer_progress_new();
         column = gtk_tree_view_column_new_with_attributes(_("Progress"), cell,
-                                                 "value", 6, "text", 7, NULL);
+                                                 "value", 7, "text", 8, NULL);
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
         cell = gtk_cell_renderer_text_new();
         column = gtk_tree_view_column_new_with_attributes(_("Cost"), cell,
-                                                         "text", 8, NULL);
-        gtk_tree_view_column_set_resizable(column, TRUE);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-
-        cell = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes(_("Remaining"), cell,
                                                          "text", 9, NULL);
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
         cell = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes(_("Rate"), cell,
+        column = gtk_tree_view_column_new_with_attributes(_("Remaining"), cell,
                                                          "text", 10, NULL);
+        gtk_tree_view_column_set_resizable(column, TRUE);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
+        cell = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes(_("Rate"), cell,
+                                                         "text", 11, NULL);
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -1754,23 +1763,24 @@ gboolean MainWindow::UpdateTransUI(GtkWidget *treeview)
 
         /* 更新UI */
         do {
-                gtk_tree_model_get(model, &iter, 11, &trans, -1);
+                gtk_tree_model_get(model, &iter, TRANS_TREE_MAX-1, &trans, -1);
                 if (trans) {    //当文件传输类存在时才能更新
                         para = trans->GetTransFilePara();       //获取参数
                         /* 更新数据 */
                         gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-                                 0, g_datalist_get_data(para, "status"),
-                                 1, g_datalist_get_data(para, "task"),
-                                 2, g_datalist_get_data(para, "peer"),
-                                 3, g_datalist_get_data(para, "filename"),
-                                 4, g_datalist_get_data(para, "filelength"),
-                                 5, g_datalist_get_data(para, "finishlength"),
-                                 6, GPOINTER_TO_INT(g_datalist_get_data(para,
-                                                                 "progress")),
-                                 7, g_datalist_get_data(para, "pro-text"),
-                                 8, g_datalist_get_data(para, "cost"),
-                                 9, g_datalist_get_data(para, "remain"),
-                                 10, g_datalist_get_data(para, "rate"), -1);
+                                           0, g_datalist_get_data(para, "status"),
+                                           1, g_datalist_get_data(para, "task"),
+                                           2, g_datalist_get_data(para, "peer"),
+                                           3, g_datalist_get_data(para, "ip"),
+                                           4, g_datalist_get_data(para, "filename"),
+                                           5, g_datalist_get_data(para, "filelength"),
+                                           6, g_datalist_get_data(para, "finishlength"),
+                                           7, GPOINTER_TO_INT(g_datalist_get_data(para,
+                                                                                  "progress")),
+                                           8, g_datalist_get_data(para, "pro-text"),
+                                           9, g_datalist_get_data(para, "cost"),
+                                           10, g_datalist_get_data(para, "remain"),
+                                           11, g_datalist_get_data(para, "rate"), -1);
                 }
         } while (gtk_tree_model_iter_next(model, &iter));
 
