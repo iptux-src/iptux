@@ -193,6 +193,10 @@ void DialogGroup::InitSublayerSpecify()
         model = CreateMemberModel();
         g_datalist_set_data_full(&mdlset, "member-model", model,
                                  GDestroyNotify(g_object_unref));
+        FillMemberModel(model);
+	model = CreateEnclosureModel();
+	g_datalist_set_data_full(&mdlset, "enclosure-model", model,
+				 GDestroyNotify(g_object_unref));
 }
 
 
