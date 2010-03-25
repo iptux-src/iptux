@@ -795,6 +795,7 @@ bool DialogGroup::SendTextMsg()
         GtkWidget *textview;
         GtkTextBuffer *buffer;
         GtkTextIter start, end;
+        MsgPara msgpara;
         gchar *msg;
 
         /* 考察缓冲区内是否存在数据 */
@@ -810,7 +811,10 @@ bool DialogGroup::SendTextMsg()
         gtk_text_buffer_delete(buffer, &start, &end);
         FeedbackMsg(msg);
         BroadcastTextMsg(msg);
-        lgsys.CommunicateLog(NULL, "%s", msg);
+
+        msgpara.stype = MESSAGE_SOURCE_TYPE_SELF;
+        msgpara.pal = NULL;
+        lgsys.CommunicateLog(&msgpara, "[STRING]%s", msg);
         g_free(msg);
 
         return true;

@@ -20,7 +20,7 @@ public:
         ~LogSystem();
 
         void InitSublayer();
-        void CommunicateLog(PalInfo *pal, const char *fmt, ...);
+        void CommunicateLog(MsgPara *msgpara, const char *fmt, ...);
         void SystemLog(const char *fmt, ...);
 private:
         int fdc, fds;

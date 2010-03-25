@@ -41,7 +41,7 @@ void get_file_system_info(const char *path, int64_t *avail, int64_t *total);
 
 char *iptux_string_getline(const char *str);
 char *assert_filename_inexist(const char *path);
-char *getformattime(const char *format, ...);
+char *getformattime(gboolean date, const char *format, ...);
 
 gboolean giter_compare_foreach(gunichar src, gunichar dst);
 

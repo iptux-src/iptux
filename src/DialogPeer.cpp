@@ -554,7 +554,11 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist)
         MsgPara para;
 
         /* 构建消息封装包 */
-        para.pal = NULL;
+        if (grpinf->member)
+                para.pal = (PalInfo *)grpinf->member->data;
+        else
+                para.pal = cthrd.GetPalFromList(grpinf->grpid);
+
         para.stype = MESSAGE_SOURCE_TYPE_SELF;
         para.btype = grpinf->type;
         para.dtlist = (GSList *)dtlist;

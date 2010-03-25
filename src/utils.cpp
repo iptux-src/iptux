@@ -199,11 +199,12 @@ char *assert_filename_inexist(const char *path)
 
 /**
  * 获取包含指定数据的格式化时间串.
+ * @param date 是否需要包含日期
  * @param format as in printf()
  * @param ... as in printf()
  * @return 时间串
  */
-char *getformattime(const char *format, ...)
+char *getformattime(gboolean date, const char *format, ...)
 {
         char buf[MAX_BUFLEN], *msg, *ptr;
         struct tm *tm;
@@ -216,7 +217,10 @@ char *getformattime(const char *format, ...)
 
         time(&tt);
         tm = localtime(&tt);
-        strftime(buf, MAX_BUFLEN, "%X", tm);
+        if (date)
+            strftime(buf, MAX_BUFLEN, "%c", tm);
+        else
+            strftime(buf, MAX_BUFLEN, "%X", tm);
 
         ptr = g_strdup_printf("(%s) %s:", buf, msg);
         g_free(msg);

@@ -647,14 +647,21 @@ msgstr ""
 msgid "More About Iptux"
 msgstr ""
 
-#: src/LogSystem.cpp:51
+#: src/LogSystem.cpp:53
 #, c-format
-msgid "Nickname:%s User:%s Host:%s"
+msgid "Recevied-From: Nickname:%s User:%s Host:%s"
 msgstr ""
 
-#: src/LogSystem.cpp:54
-msgid "Me"
+#: src/LogSystem.cpp:57
+#, c-format
+msgid "Send-To: Nickname:%s User:%s Host:%s"
 msgstr ""
+
+#: src/LogSystem.cpp:60
+#, c-format
+msgid "Send-Broadcast"
+msgstr ""
+
 
 #: src/LogSystem.cpp:76
 #, c-format

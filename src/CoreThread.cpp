@@ -183,11 +183,11 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
                         InsertStringToBuffer(grpinf->buffer, data);
                         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
                         gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-                        lgsys.CommunicateLog(para->pal, "[STRING]%s", data);
+                        lgsys.CommunicateLog(para, "[STRING]%s", data);
                         break;
                 case MESSAGE_CONTENT_TYPE_PICTURE:
                         InsertPixbufToBuffer(grpinf->buffer, data);
-                        lgsys.CommunicateLog(para->pal, "[PICTURE]%s", data);
+                        lgsys.CommunicateLog(para, "[PICTURE]%s", data);
                         break;
                 default:
                         break;
@@ -942,21 +942,21 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
          */
         switch (para->stype) {
         case MESSAGE_SOURCE_TYPE_PAL:
-                header = getformattime("%s", para->pal ? para->pal->name : _("unknown"));
+                header = getformattime(FALSE, "%s", para->pal ? para->pal->name : _("unknown"));
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
                                          header, -1, "pal-color", NULL);
                 g_free(header);
                 break;
         case MESSAGE_SOURCE_TYPE_SELF:
-                header = getformattime("%s", progdt.nickname);
+                header = getformattime(FALSE, "%s", progdt.nickname);
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
                                          header, -1, "me-color", NULL);
                 g_free(header);
                 break;
         case MESSAGE_SOURCE_TYPE_ERROR:
-                header = getformattime("%s", _("<ERROR>"));
+                header = getformattime(FALSE, "%s", _("<ERROR>"));
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
                                          header, -1, "error-color", NULL);
