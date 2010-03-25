@@ -611,12 +611,13 @@ void DialogBase::DialogDestory(DialogBase *dialog)
 /**
  * 清除提示,这个提示只是窗口闪动的提示
  */
-void DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event)
+gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event)
 {
 #if GTK_CHECK_VERSION(2,8,0)
     if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
         gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
 #endif
+    return FALSE;
 }
 
 /**

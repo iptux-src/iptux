@@ -53,7 +53,7 @@ protected:
 
         // 回调部分
         static void DialogDestory(DialogBase *);
-        static void ClearNotify(GtkWidget *window, GdkEventConfigure *event);
+        static gboolean ClearNotify(GtkWidget *window, GdkEventConfigure *event);
         static void DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
                                      gint x, gint y, GtkSelectionData *data,
                                      guint info, guint time);
