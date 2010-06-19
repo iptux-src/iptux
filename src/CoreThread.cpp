@@ -905,12 +905,12 @@ void CoreThread::ReadSharedData()
         g_object_unref(client);
 
         /* 分析数据并加入文件链表 */
-        tlist = list;
-        while (tlist) {
+        for(tlist = list; tlist; tlist = g_slist_next(tlist)) {
                 if (stat64((char *)tlist->data, &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
                         g_free(tlist->data);
-                        tlist = g_slist_next(tlist);
+                        tlist->data = NULL;
+                        continue;
                 }
                 /* 加入文件信息到链表 */
                 file = new FileInfo;
@@ -922,7 +922,6 @@ void CoreThread::ReadSharedData()
                 /* file->filesize = 0;//我可不愿意程序启动时在这儿卡住 */
                 /* file->fileown = NULL;//没必要设置此字段 */
                 file->filepath = (char *)tlist->data;
-                tlist = g_slist_next(tlist);
         }
         g_slist_free(list);
 }
