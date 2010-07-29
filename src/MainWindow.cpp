@@ -2410,25 +2410,27 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry,GData **widset)
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
                 inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-                if (*text == '\0' || strstr(pal->name, text)
-                                 || (pal->group && strstr(pal->group, text))
-                                 || strstr(ipstr, text)
-                                 || strstr(pal->user, text)
-                                 || strstr(pal->host, text)) {
-                        file = iptux_erase_filename_suffix(pal->iconfile);
-                        pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
-                                                         GtkIconLookupFlags(0), NULL);
-                        g_free(file);
-                        gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-                        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf,
-                                         1, pal->name, 2, pal->group, 3, ipstr,
-                                         4, pal->user, 5, pal->host, 6, pal, -1);
-                        if (pixbuf)
-                                g_object_unref(pixbuf);
+                /* Search friends case ingore is better. */
+                if (*text == '\0'
+                    || strcasestr(pal->name, text)
+                    || (pal->group && strcasestr(pal->group, text))
+                    || strcasestr(ipstr, text)
+                    || strcasestr(pal->user, text)
+                    || strcasestr(pal->host, text)) {
+                    file = iptux_erase_filename_suffix(pal->iconfile);
+                    pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
+                                                      GtkIconLookupFlags(0), NULL);
+                    g_free(file);
+                    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+                    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf,
+                                       1, pal->name, 2, pal->group, 3, ipstr,
+                                       4, pal->user, 5, pal->host, 6, pal, -1);
+                    if (pixbuf)
+                        g_object_unref(pixbuf);
                 }
                 tlist = g_slist_next(tlist);
         }
-
+        
         /* 重新调整好友清单UI */
         gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
 }
