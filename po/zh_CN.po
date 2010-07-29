@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-28 19:34+0800\n"
+"POT-Creation-Date: 2010-07-29 20:31+0800\n"
 "PO-Revision-Date: 2010-03-26 00:20+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese Simplify\n"
@@ -17,8 +17,7 @@ msgstr ""
 "X-Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: src/AnalogFS.cpp:81
-#: src/AnalogFS.cpp:86
+#: src/AnalogFS.cpp:81 src/AnalogFS.cpp:86
 #, c-format
 msgid "Open() file \"%s\" failed, %s"
 msgstr "打开文件\"%s\"失败，%s"
@@ -38,15 +37,12 @@ msgstr "创建文件夹\"%s\"失败，%s"
 msgid "Opendir() directory \"%s\" failed, %s"
 msgstr "打开文件夹\"%s\"失败，%s"
 
-#: src/Command.cpp:219
+#: src/Command.cpp:221
 msgid "Your pal didn't receive the packet. He or she is offline maybe."
 msgstr "你的好友没有接收到此数据包，他可能已经下线。"
 
-#: src/CoreThread.cpp:231
-#: src/DialogPeer.cpp:1257
-#: src/RecvFileData.cpp:143
-#: src/RecvFileData.cpp:197
-#: src/support.cpp:166
+#: src/CoreThread.cpp:231 src/DialogPeer.cpp:726 src/RecvFileData.cpp:148
+#: src/RecvFileData.cpp:202 src/support.cpp:166
 #, c-format
 msgid ""
 "Fatal Error!!\n"
@@ -57,29 +53,22 @@ msgstr ""
 "创建新的套接口失败！\n"
 "%s"
 
-#: src/CoreThread.cpp:556
-#: src/CoreThread.cpp:581
-#: src/CoreThread.cpp:1079
-#: src/CoreThread.cpp:1105
+#: src/CoreThread.cpp:556 src/CoreThread.cpp:581 src/CoreThread.cpp:1085
+#: src/CoreThread.cpp:1111
 msgid "Others"
 msgstr "其他"
 
-#: src/CoreThread.cpp:938
-#: src/RecvFile.cpp:313
-#: src/RecvFileData.cpp:126
-#: src/RecvFileData.cpp:245
-#: src/SendFileData.cpp:125
-#: src/SendFileData.cpp:212
-#: src/ShareFile.cpp:228
-#: src/ShareFile.cpp:382
+#: src/CoreThread.cpp:944 src/RecvFile.cpp:313 src/RecvFileData.cpp:131
+#: src/RecvFileData.cpp:250 src/SendFileData.cpp:134 src/SendFileData.cpp:221
+#: src/ShareFile.cpp:228 src/ShareFile.cpp:382
 msgid "unknown"
 msgstr "未知"
 
-#: src/CoreThread.cpp:952
+#: src/CoreThread.cpp:958
 msgid "<ERROR>"
 msgstr "<错误>"
 
-#: src/CoreThread.cpp:1129
+#: src/CoreThread.cpp:1135
 msgid "Broadcast"
 msgstr "广播"
 
@@ -123,8 +112,7 @@ msgstr "请输入您的组名！"
 msgid "Your face picture:"
 msgstr "您的头像:"
 
-#: src/DataSettings.cpp:213
-#: src/RecvFile.cpp:236
+#: src/DataSettings.cpp:213 src/RecvFile.cpp:236
 msgid "Save files to: "
 msgstr "保存文件到:"
 
@@ -149,7 +137,9 @@ msgid "Preference network coding:"
 msgstr "首选网络编码:"
 
 #: src/DataSettings.cpp:283
-msgid "Preference network coding (You should be aware of what you are doing if you want to modify it.)"
+msgid ""
+"Preference network coding (You should be aware of what you are doing if you "
+"want to modify it.)"
 msgstr "首选网络编码(如果你想要修改它，那么你必须明白你正在做什么。)"
 
 #: src/DataSettings.cpp:289
@@ -276,8 +266,7 @@ msgstr "终止"
 msgid "Description"
 msgstr "描述"
 
-#: src/DataSettings.cpp:839
-#: src/RecvFile.cpp:389
+#: src/DataSettings.cpp:839 src/RecvFile.cpp:389
 msgid "Please select download folder"
 msgstr "请选择下载文件夹"
 
@@ -289,8 +278,7 @@ msgstr "选择字体"
 msgid "Please select a sound file"
 msgstr "请选择一个声音文件"
 
-#: src/DataSettings.cpp:1138
-#: src/DataSettings.cpp:1170
+#: src/DataSettings.cpp:1139 src/DataSettings.cpp:1171
 #, c-format
 msgid ""
 "Fopen() file \"%s\" failed!\n"
@@ -299,36 +287,27 @@ msgstr ""
 "打开文件\"%s\"失败！\n"
 "%s"
 
-#: src/DataSettings.cpp:1219
-#: src/DialogGroup.cpp:1131
-#: src/RecvFile.cpp:409
+#: src/DataSettings.cpp:1220 src/DialogGroup.cpp:654 src/RecvFile.cpp:409
 msgid "Select All"
 msgstr "全选"
 
-#: src/DataSettings.cpp:1224
-#: src/DialogGroup.cpp:1136
-#: src/RecvFile.cpp:414
+#: src/DataSettings.cpp:1225 src/DialogGroup.cpp:659 src/RecvFile.cpp:414
 msgid "Reverse Select"
 msgstr "反选"
 
-#: src/DataSettings.cpp:1229
-#: src/DialogGroup.cpp:1141
-#: src/RecvFile.cpp:419
+#: src/DataSettings.cpp:1230 src/DialogGroup.cpp:664 src/RecvFile.cpp:419
 msgid "Clear Up"
 msgstr "清空"
 
-#: src/DataSettings.cpp:1323
-#: src/RevisePal.cpp:426
+#: src/DataSettings.cpp:1324 src/RevisePal.cpp:426
 msgid "Please select a face picture"
 msgstr "请选择一个头像图片"
 
-#: src/DataSettings.cpp:1346
+#: src/DataSettings.cpp:1347
 msgid "Please select a personal photo"
 msgstr "请选择个人形象照片"
 
-#: src/DataSettings.cpp:1490
-#: src/DataSettings.cpp:1497
-#: src/DetectPal.cpp:122
+#: src/DataSettings.cpp:1491 src/DataSettings.cpp:1498 src/DetectPal.cpp:122
 #, c-format
 msgid ""
 "\n"
@@ -337,11 +316,11 @@ msgstr ""
 "\n"
 "非法的IP(v4)地址：%s！"
 
-#: src/DataSettings.cpp:1595
+#: src/DataSettings.cpp:1596
 msgid "Please select a file to import data"
 msgstr "请选择导入数据的文件"
 
-#: src/DataSettings.cpp:1643
+#: src/DataSettings.cpp:1644
 msgid "Save data to file"
 msgstr "保存数据到文件"
 
@@ -353,9 +332,7 @@ msgstr "探测好友"
 msgid "Detect"
 msgstr "探测"
 
-#: src/DetectPal.cpp:73
-#: src/RecvFile.cpp:264
-#: src/ShareFile.cpp:107
+#: src/DetectPal.cpp:73 src/RecvFile.cpp:264 src/ShareFile.cpp:107
 msgid "Cancel"
 msgstr "取消"
 
@@ -384,9 +361,7 @@ msgstr ""
 msgid "Confirm Exit"
 msgstr "确认退出"
 
-#: src/dialog.cpp:55
-#: src/DialogPeer.cpp:653
-#: src/MainWindow.cpp:1554
+#: src/dialog.cpp:55 src/DialogPeer.cpp:345 src/MainWindow.cpp:1569
 msgid "Request Shared Resources"
 msgstr "请求共享资源"
 
@@ -422,8 +397,7 @@ msgstr "请输入获取共享文件的密码"
 msgid "(%s)[%s]Password:"
 msgstr "(%s)[%s]密码: "
 
-#: src/dialog.cpp:138
-#: src/dialog.cpp:198
+#: src/dialog.cpp:138 src/dialog.cpp:198
 msgid ""
 "\n"
 "Empty Password!"
@@ -451,197 +425,135 @@ msgstr ""
 "\n"
 "密码不一致！"
 
-#: src/DialogGroup.cpp:416
+#: src/DialogGroup.cpp:284
 #, c-format
 msgid "Talk with the group %s"
 msgstr "与%s组对话"
 
-#: src/DialogGroup.cpp:515
+#: src/DialogGroup.cpp:378
 msgid "Member"
 msgstr "成员"
 
-#: src/DialogGroup.cpp:545
-#: src/DialogPeer.cpp:480
-msgid "Enclosure"
-msgstr "附件"
-
-#: src/DialogGroup.cpp:572
-#: src/DialogPeer.cpp:507
-msgid "Chat History"
-msgstr "聊天历史"
-
-#: src/DialogGroup.cpp:637
-#: src/DialogGroup.cpp:814
-#: src/DialogPeer.cpp:572
-#: src/DialogPeer.cpp:661
-msgid "Close"
-msgstr "关闭"
-
-#: src/DialogGroup.cpp:641
-#: src/DialogGroup.cpp:740
-#: src/DialogPeer.cpp:576
+#: src/DialogGroup.cpp:472
 msgid "Send"
 msgstr "发送"
 
-#: src/DialogGroup.cpp:747
+#: src/DialogGroup.cpp:479
 msgid "Pals"
 msgstr "好友"
 
-#: src/DialogGroup.cpp:799
-#: src/DialogPeer.cpp:641
-#: src/MainWindow.cpp:816
-msgid "_File"
-msgstr "文件(_F)"
-
-#: src/DialogGroup.cpp:803
-#: src/DialogPeer.cpp:645
-msgid "Attach File"
-msgstr "增添文件"
-
-#: src/DialogGroup.cpp:807
-#: src/DialogPeer.cpp:649
-msgid "Attach Folder"
-msgstr "增添目录"
-
-#: src/DialogGroup.cpp:833
-#: src/DialogPeer.cpp:678
-#: src/MainWindow.cpp:858
+#: src/DialogGroup.cpp:502 src/DialogPeer.cpp:374 src/MainWindow.cpp:864
 msgid "_Tools"
 msgstr "工具(_T)"
 
-#: src/DialogGroup.cpp:839
-#: src/DialogPeer.cpp:686
+#: src/DialogGroup.cpp:508 src/DialogPeer.cpp:382
 msgid "Clear Buffer"
 msgstr "清空缓冲"
 
-#: src/DialogGroup.cpp:846
+#: src/DialogGroup.cpp:515
 msgid "Sort"
 msgstr "排序"
 
-#: src/DialogGroup.cpp:852
-#: src/MainWindow.cpp:897
+#: src/DialogGroup.cpp:521 src/MainWindow.cpp:903
 msgid "By Nickname"
 msgstr "按昵称"
 
-#: src/DialogGroup.cpp:859
-#: src/MainWindow.cpp:904
+#: src/DialogGroup.cpp:528 src/MainWindow.cpp:910
 msgid "By IP"
 msgstr "按 IP"
 
-#: src/DialogGroup.cpp:869
-#: src/MainWindow.cpp:914
+#: src/DialogGroup.cpp:538 src/MainWindow.cpp:920
 msgid "Ascending"
 msgstr "升序"
 
-#: src/DialogGroup.cpp:876
-#: src/MainWindow.cpp:921
+#: src/DialogGroup.cpp:545 src/MainWindow.cpp:927
 msgid "Descending"
 msgstr "降序"
 
-#: src/DialogGroup.cpp:894
-#: src/DialogPeer.cpp:703
-#: src/MainWindow.cpp:948
-msgid "_Help"
-msgstr "帮助(_H)"
-
-#: src/DialogGroup.cpp:919
-#: src/DialogPeer.cpp:788
-msgid "Choose enclosure files"
-msgstr "选择文件附件"
-
-#: src/DialogGroup.cpp:922
-#: src/DialogPeer.cpp:791
-msgid "Choose enclosure folders"
-msgstr "选择文件夹附件"
-
-#: src/DialogGroup.cpp:1364
-#: src/DialogPeer.cpp:1187
-msgid ""
-"<span weight=\"heavy\" underline=\"error\">\n"
-"Can't send an empty message!!</span>"
-msgstr ""
-"<span weight=\"heavy\" underline=\"error\">\n"
-"发送内容不能为空！！</span>"
-
-#: src/DialogPeer.cpp:349
+#: src/DialogPeer.cpp:202
 #, c-format
 msgid "Talk with %s"
 msgstr "与%s对话"
 
-#: src/DialogPeer.cpp:448
+#: src/DialogPeer.cpp:296
 msgid "Info."
 msgstr "信息"
 
-#: src/DialogPeer.cpp:682
+#: src/DialogPeer.cpp:329 src/MainWindow.cpp:818
+msgid "_File"
+msgstr "文件(_F)"
+
+#: src/DialogPeer.cpp:333
+msgid "Attach File"
+msgstr "增添文件"
+
+#: src/DialogPeer.cpp:339
+msgid "Attach Folder"
+msgstr "增添目录"
+
+#: src/DialogPeer.cpp:355
+msgid "Close"
+msgstr "关闭"
+
+#: src/DialogPeer.cpp:378
 msgid "Insert Picture"
 msgstr "插入图片"
 
-#: src/DialogPeer.cpp:727
-#: src/MainWindow.cpp:1610
+#: src/DialogPeer.cpp:404 src/MainWindow.cpp:1625
 #, c-format
 msgid "Version: %s\n"
 msgstr "版本: %s\n"
 
-#: src/DialogPeer.cpp:731
-#: src/MainWindow.cpp:1614
+#: src/DialogPeer.cpp:408 src/MainWindow.cpp:1629
 #, c-format
 msgid "Nickname: %s@%s\n"
 msgstr "昵称: %s@%s\n"
 
-#: src/DialogPeer.cpp:733
-#: src/MainWindow.cpp:1616
+#: src/DialogPeer.cpp:410 src/MainWindow.cpp:1631
 #, c-format
 msgid "Nickname: %s\n"
 msgstr "昵称: %s\n"
 
-#: src/DialogPeer.cpp:736
-#: src/MainWindow.cpp:1619
+#: src/DialogPeer.cpp:413 src/MainWindow.cpp:1634
 #, c-format
 msgid "User: %s\n"
 msgstr "用户: %s\n"
 
-#: src/DialogPeer.cpp:739
-#: src/MainWindow.cpp:1622
+#: src/DialogPeer.cpp:416 src/MainWindow.cpp:1637
 #, c-format
 msgid "Host: %s\n"
 msgstr "主机: %s\n"
 
-#: src/DialogPeer.cpp:744
-#: src/MainWindow.cpp:1627
+#: src/DialogPeer.cpp:421 src/MainWindow.cpp:1642
 #, c-format
 msgid "Address: %s(%s)\n"
 msgstr "地址: %s(%s)\n"
 
-#: src/DialogPeer.cpp:746
-#: src/MainWindow.cpp:1629
+#: src/DialogPeer.cpp:423 src/MainWindow.cpp:1644
 #, c-format
 msgid "Address: %s\n"
 msgstr "地址: %s\n"
 
-#: src/DialogPeer.cpp:750
-#: src/MainWindow.cpp:1633
+#: src/DialogPeer.cpp:427 src/MainWindow.cpp:1648
 #, c-format
 msgid "Compatibility: Microsoft\n"
 msgstr "兼容性: Microsoft\n"
 
-#: src/DialogPeer.cpp:752
-#: src/MainWindow.cpp:1635
+#: src/DialogPeer.cpp:429 src/MainWindow.cpp:1650
 #, c-format
 msgid "Compatibility: GNU/Linux\n"
 msgstr "兼容性: GNU/Linux\n"
 
-#: src/DialogPeer.cpp:755
-#: src/MainWindow.cpp:1638
+#: src/DialogPeer.cpp:432 src/MainWindow.cpp:1653
 #, c-format
 msgid "System coding: %s\n"
 msgstr "系统编码: %s\n"
 
-#: src/DialogPeer.cpp:759
-#: src/MainWindow.cpp:1642
+#: src/DialogPeer.cpp:436 src/MainWindow.cpp:1657
 msgid "Signature:\n"
 msgstr "个性签名:\n"
 
-#: src/DialogPeer.cpp:766
+#: src/DialogPeer.cpp:443
 msgid ""
 "\n"
 "Photo:\n"
@@ -649,17 +561,15 @@ msgstr ""
 "\n"
 "个人形象:\n"
 
-#: src/DialogPeer.cpp:1146
+#: src/DialogPeer.cpp:686
 msgid "Please select a picture to insert the buffer"
 msgstr "请选择插入缓冲区的图片"
 
-#: src/HelpDialog.cpp:61
-#: src/HelpDialog.cpp:66
+#: src/HelpDialog.cpp:61 src/HelpDialog.cpp:66
 msgid "Jally <jallyx@163.com>"
 msgstr ""
 
-#: src/HelpDialog.cpp:62
-#: src/HelpDialog.cpp:68
+#: src/HelpDialog.cpp:62 src/HelpDialog.cpp:68
 msgid "ManPT <pentie@gmail.com>"
 msgstr ""
 
@@ -675,9 +585,7 @@ msgstr ""
 "alick <alick9188@163.com>\n"
 "ManPT <pentie@gmail.com>"
 
-#: src/HelpDialog.cpp:80
-#: src/MainWindow.cpp:573
-#: src/StatusIcon.cpp:106
+#: src/HelpDialog.cpp:80 src/MainWindow.cpp:575 src/StatusIcon.cpp:106
 #: src/StatusIcon.cpp:277
 msgid "iptux"
 msgstr "信使(iptux)"
@@ -694,8 +602,7 @@ msgstr "帮助"
 msgid "Contributers"
 msgstr "贡献者"
 
-#: src/HelpDialog.cpp:102
-#: src/HelpDialog.cpp:120
+#: src/HelpDialog.cpp:102 src/HelpDialog.cpp:120
 msgid "..."
 msgstr "..."
 
@@ -709,7 +616,9 @@ msgid ""
 "\n"
 "Note that you can get help form the project wiki page.\n"
 "\n"
-"If you find no solutions in any of the existed documents, feel free to drop a email at iptux@googlegroups.com, lots of users and developers would be glade to help about your problems."
+"If you find no solutions in any of the existed documents, feel free to drop "
+"a email at iptux@googlegroups.com, lots of users and developers would be "
+"glade to help about your problems."
 msgstr ""
 "项目主页: \n"
 "http://code.google.com/p/iptux/\n"
@@ -719,11 +628,13 @@ msgstr ""
 "\n"
 "遇到问题时，麻烦留意一下项目Wiki页面，会得到不少帮助信息。\n"
 "\n"
-"如果仍然找不到解决的办法，欢迎发信到邮件组iptux@googlegroups.com，我们会乐意帮助你解决问题。"
+"如果仍然找不到解决的办法，欢迎发信到邮件组iptux@googlegroups.com，我们会乐意"
+"帮助你解决问题。"
 
 #: src/HelpDialog.cpp:110
 msgid ""
-"It's an honor that iptux was contributed voluntarilly by many people. Without your help, iptux could never make it.\n"
+"It's an honor that iptux was contributed voluntarilly by many people. "
+"Without your help, iptux could never make it.\n"
 "\n"
 "Especially, Here's some we would like to thank much:\n"
 "\n"
@@ -751,164 +662,159 @@ msgid "Send-To: Nickname:%s User:%s Host:%s"
 msgstr "发往: 昵称:%s 用户:%s 主机:%s"
 
 #: src/LogSystem.cpp:60
-#, c-format
 msgid "Send-Broadcast"
 msgstr "发送广播"
 
-#: src/LogSystem.cpp:76
+#: src/LogSystem.cpp:83
 #, c-format
 msgid "User:%s Host:%s"
 msgstr "用户:%s 主机:%s"
 
-#: src/MainWindow.cpp:600
+#: src/MainWindow.cpp:602
 msgid "Files Transmission Management"
 msgstr "文件传输管理器"
 
-#: src/MainWindow.cpp:715
+#: src/MainWindow.cpp:717
 msgid "Pals Online: 0"
 msgstr "在线好友: 0"
 
-#: src/MainWindow.cpp:798
+#: src/MainWindow.cpp:800
 msgid "Search Pals"
 msgstr "搜索好友"
 
-#: src/MainWindow.cpp:821
-#: src/StatusIcon.cpp:185
+#: src/MainWindow.cpp:823 src/StatusIcon.cpp:185
 msgid "_Detect"
 msgstr "探测(_D)"
 
-#: src/MainWindow.cpp:828
+#: src/MainWindow.cpp:832
 msgid "_Find"
 msgstr "查找(_F)"
 
-#: src/MainWindow.cpp:838
-#: src/StatusIcon.cpp:194
+#: src/MainWindow.cpp:844 src/StatusIcon.cpp:194
 msgid "_Quit"
 msgstr "退出(_Q)"
 
-#: src/MainWindow.cpp:864
-#: src/StatusIcon.cpp:164
+#: src/MainWindow.cpp:870 src/StatusIcon.cpp:164
 msgid "_Preferences"
 msgstr "首选项(_P)"
 
-#: src/MainWindow.cpp:873
-#: src/StatusIcon.cpp:156
+#: src/MainWindow.cpp:879 src/StatusIcon.cpp:156
 msgid "_Transmission"
 msgstr "传输管理器(_T)"
 
-#: src/MainWindow.cpp:882
-#: src/StatusIcon.cpp:173
+#: src/MainWindow.cpp:888 src/StatusIcon.cpp:173
 msgid "_Shared Management"
 msgstr "共享管理器(_S)"
 
-#: src/MainWindow.cpp:891
+#: src/MainWindow.cpp:897
 msgid "_Sort"
 msgstr "排序(_S)"
 
-#: src/MainWindow.cpp:929
+#: src/MainWindow.cpp:935
 msgid "_Update"
 msgstr "刷新(_U)"
 
-#: src/MainWindow.cpp:944
+#: src/MainWindow.cpp:952
 msgid "http://code.google.com/p/iptux/wiki/FAQ_EnglishVersion"
 msgstr "http://code.google.com/p/iptux/wiki/FAQ"
 
 #: src/MainWindow.cpp:956
+msgid "_Help"
+msgstr "帮助(_H)"
+
+#: src/MainWindow.cpp:964
 msgid "_More"
 msgstr "更多(_M)"
 
-#: src/MainWindow.cpp:960
+#: src/MainWindow.cpp:968
 msgid "_FAQ"
 msgstr "FAQ(_F)"
 
-#: src/MainWindow.cpp:1110
+#: src/MainWindow.cpp:1119
 msgid "Nickname"
 msgstr "昵称"
 
-#: src/MainWindow.cpp:1121
+#: src/MainWindow.cpp:1130
 msgid "Group"
 msgstr "组名"
 
-#: src/MainWindow.cpp:1127
+#: src/MainWindow.cpp:1136 src/MainWindow.cpp:1199
 msgid "IPv4"
 msgstr "IPv4"
 
-#: src/MainWindow.cpp:1133
+#: src/MainWindow.cpp:1142
 msgid "User"
 msgstr "用户"
 
-#: src/MainWindow.cpp:1139
+#: src/MainWindow.cpp:1148
 msgid "Host"
 msgstr "主机"
 
-#: src/MainWindow.cpp:1172
+#: src/MainWindow.cpp:1181
 msgid "State"
 msgstr "状态"
 
-#: src/MainWindow.cpp:1178
+#: src/MainWindow.cpp:1187
 msgid "Task"
 msgstr "任务"
 
-#: src/MainWindow.cpp:1184
+#: src/MainWindow.cpp:1193
 msgid "Peer"
 msgstr "好友"
 
-#: src/MainWindow.cpp:1190
-#: src/RecvFile.cpp:360
+#: src/MainWindow.cpp:1205 src/RecvFile.cpp:360
 msgid "Filename"
 msgstr "文件名"
 
-#: src/MainWindow.cpp:1196
-#: src/RecvFile.cpp:367
-#: src/ShareFile.cpp:280
+#: src/MainWindow.cpp:1211 src/RecvFile.cpp:367 src/ShareFile.cpp:280
 msgid "Size"
 msgstr "大小"
 
-#: src/MainWindow.cpp:1202
+#: src/MainWindow.cpp:1217
 msgid "Completed"
 msgstr "已完成"
 
-#: src/MainWindow.cpp:1208
+#: src/MainWindow.cpp:1223
 msgid "Progress"
 msgstr "进度"
 
-#: src/MainWindow.cpp:1214
+#: src/MainWindow.cpp:1229
 msgid "Cost"
 msgstr "花费时间"
 
-#: src/MainWindow.cpp:1220
+#: src/MainWindow.cpp:1235
 msgid "Remaining"
 msgstr "剩余时间"
 
-#: src/MainWindow.cpp:1226
+#: src/MainWindow.cpp:1241
 msgid "Rate"
 msgstr "速率"
 
-#: src/MainWindow.cpp:1503
+#: src/MainWindow.cpp:1518
 msgid "Terminate Task"
 msgstr "终止任务"
 
-#: src/MainWindow.cpp:1508
+#: src/MainWindow.cpp:1523
 msgid "Terminate All"
 msgstr "终止所有"
 
-#: src/MainWindow.cpp:1513
+#: src/MainWindow.cpp:1528
 msgid "Clear Tasklist"
 msgstr "清理任务"
 
-#: src/MainWindow.cpp:1534
+#: src/MainWindow.cpp:1549
 msgid "Send Message"
 msgstr "发送消息"
 
-#: src/MainWindow.cpp:1568
+#: src/MainWindow.cpp:1583
 msgid "Change Info."
 msgstr "更改信息"
 
-#: src/MainWindow.cpp:1583
+#: src/MainWindow.cpp:1598
 msgid "Delete Pal"
 msgstr "删除好友"
 
-#: src/MainWindow.cpp:1672
+#: src/MainWindow.cpp:1687
 #, c-format
 msgid "Pals Online: %<PRIu32>"
 msgstr "在线好友: %<PRIu32>"
@@ -945,15 +851,11 @@ msgstr "文件接收管理器"
 msgid "Accept"
 msgstr "接受"
 
-#: src/RecvFile.cpp:307
-#: src/ShareFile.cpp:220
-#: src/ShareFile.cpp:374
+#: src/RecvFile.cpp:307 src/ShareFile.cpp:220 src/ShareFile.cpp:374
 msgid "regular"
 msgstr "常规文件"
 
-#: src/RecvFile.cpp:310
-#: src/ShareFile.cpp:224
-#: src/ShareFile.cpp:378
+#: src/RecvFile.cpp:310 src/ShareFile.cpp:224 src/ShareFile.cpp:378
 msgid "directory"
 msgstr "文件夹"
 
@@ -965,8 +867,7 @@ msgstr "接收"
 msgid "Source"
 msgstr "来源"
 
-#: src/RecvFile.cpp:373
-#: src/ShareFile.cpp:286
+#: src/RecvFile.cpp:373 src/ShareFile.cpp:286
 msgid "Type"
 msgstr "类型"
 
@@ -975,26 +876,26 @@ msgstr "类型"
 msgid "Free:%s Total:%s"
 msgstr "空闲:%s 总计:%s"
 
-#: src/RecvFileData.cpp:114
+#: src/RecvFileData.cpp:115
 msgid "receive"
 msgstr "接收"
 
-#: src/RecvFileData.cpp:170
+#: src/RecvFileData.cpp:175
 #, c-format
 msgid "Failed to receive the file \"%s\" from %s!"
 msgstr "接收文件\"%s\"来自%s失败！"
 
-#: src/RecvFileData.cpp:173
+#: src/RecvFileData.cpp:178
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
 msgstr "接收文件\"%s\"来自%s成功！"
 
-#: src/RecvFileData.cpp:300
+#: src/RecvFileData.cpp:305
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
 msgstr "接收文件夹\"%s\"来自%s失败！"
 
-#: src/RecvFileData.cpp:303
+#: src/RecvFileData.cpp:308
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
 msgstr "接收文件夹\"%s\"来自%s成功！"
@@ -1035,26 +936,26 @@ msgstr "好友头像:"
 msgid "Be compatible with iptux's protocol (DANGEROUS)"
 msgstr "兼容 iptux 扩展协议(危险)"
 
-#: src/SendFileData.cpp:113
+#: src/SendFileData.cpp:117
 msgid "send"
 msgstr "发送"
 
-#: src/SendFileData.cpp:153
+#: src/SendFileData.cpp:162
 #, c-format
 msgid "Failed to send the file \"%s\" to %s!"
 msgstr "发送文件\"%s\"到%s失败！"
 
-#: src/SendFileData.cpp:156
+#: src/SendFileData.cpp:165
 #, c-format
 msgid "Send the file \"%s\" to %s successfully!"
 msgstr "发送文件\"%s\"到%s成功！"
 
-#: src/SendFileData.cpp:280
+#: src/SendFileData.cpp:289
 #, c-format
 msgid "Failed to send the directory \"%s\" to %s!"
 msgstr "发送文件夹\"%s\"到%s失败！"
 
-#: src/SendFileData.cpp:283
+#: src/SendFileData.cpp:292
 #, c-format
 msgid "Send the directory \"%s\" to %s successfully!"
 msgstr "发送文件夹\"%s\"到%s失败！"
@@ -1108,8 +1009,7 @@ msgstr "选择共享文件夹"
 msgid "Failed to play the prompt tone, %s\n"
 msgstr "播放提示音失败，%s\n"
 
-#: src/StatusIcon.cpp:102
-#: src/StatusIcon.cpp:274
+#: src/StatusIcon.cpp:102 src/StatusIcon.cpp:274
 #, c-format
 msgid "To be read: %u messages"
 msgstr "未读消息: %u条"
@@ -1169,9 +1069,7 @@ msgstr ""
 "绑定TCP/UDP端口(2425)失败！\n"
 "%s"
 
-#: src/UdpData.cpp:130
-#: src/UdpData.cpp:131
-#: src/UdpData.cpp:538
+#: src/UdpData.cpp:130 src/UdpData.cpp:131 src/UdpData.cpp:538
 #: src/UdpData.cpp:575
 msgid "mysterious"
 msgstr "神秘来客"
@@ -1190,8 +1088,7 @@ msgstr "打开文件夹\"%s\"失败，%s\n"
 msgid "Stat() file \"%s\" failed, %s\n"
 msgstr "查看文件\"%s\"状态失败，%s\n"
 
-#: src/uninstall/utils.cpp:51
-#: src/uninstall/utils.cpp:67
+#: src/uninstall/utils.cpp:51 src/uninstall/utils.cpp:67
 #, c-format
 msgid "Unlink() file \"%s\" failed, %s\n"
 msgstr "删除文件\"%s\"失败，%s\n"
@@ -1201,3 +1098,21 @@ msgstr "删除文件\"%s\"失败，%s\n"
 msgid "Rmdir() directory \"%s\" failed, %s\n"
 msgstr "删除文件夹\"%s\"失败，%s\n"
 
+#~ msgid "Enclosure"
+#~ msgstr "附件"
+
+#~ msgid "Chat History"
+#~ msgstr "聊天历史"
+
+#~ msgid "Choose enclosure files"
+#~ msgstr "选择文件附件"
+
+#~ msgid "Choose enclosure folders"
+#~ msgstr "选择文件夹附件"
+
+#~ msgid ""
+#~ "<span weight=\"heavy\" underline=\"error\">\n"
+#~ "Can't send an empty message!!</span>"
+#~ msgstr ""
+#~ "<span weight=\"heavy\" underline=\"error\">\n"
+#~ "发送内容不能为空！！</span>"
