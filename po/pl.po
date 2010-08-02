@@ -6,21 +6,21 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-07-29 20:31+0800\n"
-"PO-Revision-Date: 2010-07-16 00:10+0000\n"
+"PO-Revision-Date: 2010-07-29 13:29+0000\n"
 "Last-Translator: Twojwujaszek <twojwujaszek@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-07-16 00:12+0000\n"
+"X-Launchpad-Export-Date: 2010-07-29 14:36+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: src/AnalogFS.cpp:81 src/AnalogFS.cpp:86
 #, c-format
 msgid "Open() file \"%s\" failed, %s"
-msgstr "Open() file \"%s\" failed, %s"
+msgstr "Open() plik \"%s\" błąd, %s"
 
 #: src/AnalogFS.cpp:108
 #, c-format
@@ -582,9 +582,7 @@ msgstr "LiWeijian <weijian_li88@qq.com>"
 msgid ""
 "alick <alick9188@163.com>\n"
 "ManPT <pentie@gmail.com>"
-msgstr ""
-"alick <alick9188@163.com>\n"
-"ManPT <pentie@gmail.com>"
+msgstr "Tybek <TwojWujaszek@gmail.com>"
 
 #: src/HelpDialog.cpp:80 src/MainWindow.cpp:575 src/StatusIcon.cpp:106
 #: src/StatusIcon.cpp:277
@@ -706,7 +704,7 @@ msgstr "_Znajdź"
 
 #: src/MainWindow.cpp:844 src/StatusIcon.cpp:194
 msgid "_Quit"
-msgstr "_Wyjdź"
+msgstr "_Zakończ"
 
 #: src/MainWindow.cpp:870 src/StatusIcon.cpp:164
 msgid "_Preferences"
