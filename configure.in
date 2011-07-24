@@ -1,11 +1,10 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.63)
-AC_INIT(configure.in)
-AC_CONFIG_SRCDIR(acconfig.h)
-AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(iptux, 0.6.0)
+AC_INIT(iptux, 0.5.2, jallyx@gmail.com)
+AC_CONFIG_SRCDIR(config.h.in)
+AC_CONFIG_HEADERS(config.h)
+AM_INIT_AUTOMAKE(foreign dist-bzip2 -Wall)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -19,7 +18,9 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h inttypes.h libintl.h locale.h netinet/in.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/socket.h sys/time.h sys/vfs.h unistd.h])
+AC_CHECK_HEADERS(arpa/inet.h fcntl.h inttypes.h libintl.h locale.h \
+                 netinet/in.h stdint.h stdlib.h string.h strings.h \
+                 sys/ioctl.h sys/socket.h sys/time.h sys/vfs.h unistd.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -34,26 +35,34 @@ AC_TYPE_UINT8_T
 
 # Checks for library functions.
 AC_FUNC_FORK
-AC_CHECK_FUNCS([bzero endpwent getcwd gettimeofday memchr memmove mkdir rmdir select setlocale socket strcasecmp strchr strerror strncasecmp strpbrk strrchr strspn strstr])
+AC_CHECK_FUNCS(bzero endpwent getcwd gettimeofday inet_ntoa memchr memmove \
+               mkdir rmdir setlocale socket strcasecmp strchr strerror \
+               strncasecmp strpbrk strrchr strspn)
 
 AC_DEFINE(__IP_TUX__)
-AC_ARG_ENABLE(message,
-		[  --disable-message       disable print message], ,
-		enable_message=yes)
-if test "${enable_message}" = yes ; then
-AC_DEFINE(MESSAGE)
+AC_ARG_ENABLE([message],
+              AS_HELP_STRING([--disable-message],
+                             [disable print message @<:@default=yes@:>@]),
+              [enable_message=$enableval],
+              [enable_message=yes])
+if test "x${enable_message}" = "xyes" ; then
+  AC_DEFINE(MESSAGE, 1, [Define if you want to print message])
 fi
-AC_ARG_ENABLE(warning,
-		[  --disable-warning       disable print warning], ,
-		enable_warning=yes)
-if test "${enable_warning}" = yes ; then
-AC_DEFINE(WARNING)
+AC_ARG_ENABLE([warning],
+              AS_HELP_STRING([--disable-warning],
+                             [disable print warning @<:@default=yes@:>@]),
+              [enable_warning=$enableval],
+              [enable_warning=yes])
+if test "x${enable_warning}" = "xyes" ; then
+  AC_DEFINE(WARNING, 1, [Define if you want to print warning])
 fi
-AC_ARG_ENABLE(trace,
-		[  --enable-trace          enable print trace], ,
-		enable_trace=no)
-if test "${enable_trace}" = yes ; then
-AC_DEFINE(TRACE)
+AC_ARG_ENABLE([trace],
+              AS_HELP_STRING([--enable-trace],
+                             [enable print trace @<:@default=no@:>@]),
+              [enable_trace=$enableval],
+              [enable_trace=no])
+if test "x${enable_trace}" = "xyes" ; then
+  AC_DEFINE(TRACE, 1, [Define if you want to print trace])
 fi
 
 dnl In Autoconf 2.63, ${bindir} --> ${exec_prefix}

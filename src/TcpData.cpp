@@ -82,7 +82,24 @@ void TcpData::DispatchTcpData()
 void TcpData::RequestData(uint32_t fileattr)
 {
         SendFile sfile;
+        const char *attachptr;
         char *attach;
+
+        attachptr = iptux_skip_section(buf, ':', 5);
+        switch (GET_MODE(fileattr)) {
+                case IPMSG_FILE_REGULAR:
+                        read_ipmsg_filedata(sock, (void *)attachptr,
+                                            buf + MAX_SOCKLEN - attachptr,
+                                            buf + size - attachptr);
+                        break;
+                case IPMSG_FILE_DIR:
+                        read_ipmsg_dirfiles(sock, (void *)attachptr,
+                                            buf + MAX_SOCKLEN - attachptr,
+                                            buf + size - attachptr);
+                        break;
+                default:
+                        break;
+        }
 
         attach = ipmsg_get_attach(buf, ':', 5);
         sfile.RequestDataEntry(sock, fileattr, attach);
