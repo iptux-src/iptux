@@ -59,7 +59,8 @@ am_iptux_OBJECTS = AnalogFS.$(OBJEXT) Command.$(OBJEXT) \
 	iptux.$(OBJEXT) mess.$(OBJEXT) output.$(OBJEXT) \
 	support.$(OBJEXT) utils.$(OBJEXT) wrapper.$(OBJEXT)
 iptux_OBJECTS = $(am_iptux_OBJECTS)
-iptux_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+iptux_DEPENDENCIES = $(am__DEPENDENCIES_1)
 iptux_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(iptux_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -256,7 +257,8 @@ AM_CXXFLAGS = -Wall
 INCLUDES = $(all_includes) @PACKAGE_CFLAGS@
 
 # the library search path.
-iptux_LDFLAGS = $(all_libraries) @PACKAGE_LIBS@
+iptux_LDADD = $(INTLLIBS) @PACKAGE_LIBS@
+iptux_LDFLAGS = $(all_libraries)
 noinst_HEADERS = AnalogFS.h Command.h CoreThread.h DataSettings.h DetectPal.h DialogBase.h \
 	DialogGroup.h DialogPeer.h HelpDialog.h LogSystem.h MainWindow.h ProgramData.h \
 	RecvFile.h RecvFileData.h RevisePal.h SendFile.h SendFileData.h ShareFile.h \
