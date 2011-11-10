@@ -342,6 +342,12 @@ GtkWidget *DialogPeer::CreateFileMenu()
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+        menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+        g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(RemoveSelectedEnclosure), this);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+                                   GDK_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
         menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
         g_signal_connect_swapped(menuitem, "activate",
@@ -359,6 +365,7 @@ GtkWidget *DialogPeer::CreateFileMenu()
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+        g_datalist_set_data(&widset, "file-menu",menu);
         return menushell;
 
 }

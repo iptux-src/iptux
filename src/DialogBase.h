@@ -59,6 +59,7 @@ protected:
                                      guint info, guint time);
         static void AttachRegular(DialogBase *dlgpr);
         static void AttachFolder(DialogBase *dlgpr);
+        static void RemoveSelectedEnclosure(DialogBase *dlgpr);
 
         static void ClearHistoryBuffer(DialogBase *dlgpr);
         static void SendMessage(DialogBase *dlggrp);
@@ -66,6 +67,7 @@ protected:
                                              GdkEventConfigure *event, GData **dtset);
         static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                        GData **dtset);
+        static gint EncosureTreePopup(GtkWidget *menupopup, GdkEvent *event);
 protected:
 
         GData *widset;          //窗体集

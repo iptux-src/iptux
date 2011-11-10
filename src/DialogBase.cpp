@@ -194,7 +194,7 @@ void DialogBase::AttachEnclosure(const GSList *list)
                 /* 添加数据 */
                 gtk_list_store_append(GTK_LIST_STORE(model), &iter);
                 gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf,
-                                                         1, tlist->data, -1);
+                                   1, tlist->data,2,"", -1);
                 /* 转到下一个节点 */
                 tlist = g_slist_next(tlist);
         }
@@ -364,6 +364,13 @@ GtkWidget *DialogBase::CreateFileMenu()
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+        menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+        g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(RemoveSelectedEnclosure), this);
+        gtk_widget_add_accelerator(menuitem, "activate", accel,
+                                   GDK_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+
         menuitem = gtk_tearoff_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
@@ -374,6 +381,7 @@ GtkWidget *DialogBase::CreateFileMenu()
         gtk_widget_add_accelerator(menuitem, "activate", accel,
                                    GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+        g_datalist_set_data(&widset, "file-menu",menu);
         return menushell;
 }
 
@@ -408,11 +416,12 @@ GtkWidget *DialogBase::CreateEnclosureTree(GtkTreeModel *model)
         GtkTreeSelection *selection;
         GtkCellRenderer *cell;
         GtkTreeViewColumn *column;
+        GtkWidget *menu;
 
         view = gtk_tree_view_new_with_model(model);
         gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
         selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-        gtk_tree_selection_set_mode(selection, GTK_SELECTION_NONE);
+        gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
 
         column = gtk_tree_view_column_new();
         gtk_tree_view_column_set_resizable(column, TRUE);
@@ -423,7 +432,15 @@ GtkWidget *DialogBase::CreateEnclosureTree(GtkTreeModel *model)
         gtk_tree_view_column_pack_start(column, cell, TRUE);
         gtk_tree_view_column_set_attributes(column, cell, "text", 1, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+        //增加一列用来标记错误添加的附件，删除时用的
+        cell = gtk_cell_renderer_text_new();
+        gtk_tree_view_column_pack_start(column, cell, FALSE);
+        gtk_tree_view_column_set_attributes(column, cell, "text", 2, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
+        menu = GTK_WIDGET(g_datalist_get_data(&widset, "file-menu"));
+        g_signal_connect_swapped(GTK_OBJECT(view), "button_press_event",
+                    G_CALLBACK(EncosureTreePopup), GTK_OBJECT(menu));
         return view;
 }
 
@@ -437,7 +454,7 @@ GtkTreeModel *DialogBase::CreateEnclosureModel()
 {
         GtkListStore *model;
 
-        model = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+        model = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
         return GTK_TREE_MODEL(model);
 }
@@ -685,4 +702,71 @@ void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
         identify = (const gchar *)g_object_get_data(G_OBJECT(paned), "position-name");
         position = gtk_paned_get_position(GTK_PANED(paned));
         g_datalist_set_data(dtset, identify, GINT_TO_POINTER(position));
+}
+
+/**
+ *删除选定附件.
+ * @param dlgpr 对话框类
+ */
+void DialogBase::RemoveSelectedEnclosure(DialogBase *dlgpr)
+{
+    GtkWidget *widget;
+    GList *list;
+    GtkTreeSelection *TreeSel;
+    GtkTreePath *path;
+    GtkTreeModel *model;
+    gchar *str_data;
+    GValue a = G_VALUE_INIT;
+    g_type_init ();
+    g_value_init (&a, G_TYPE_STRING);
+    g_assert (G_VALUE_HOLDS_STRING (&a));
+    g_value_set_static_string (&a, "delete");
+    gboolean valid = 0;
+    GtkTreeIter iter;
+
+    widget = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "enclosure-treeview-widget"));
+    model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
+
+    TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+    list = gtk_tree_selection_get_selected_rows(TreeSel,NULL);
+    while(list) {
+        gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, (GtkTreePath *)g_list_nth(list, 0)->data);
+        gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, 2, &a);
+        list = g_list_next(list);
+    }
+    valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter);
+    path = gtk_tree_model_get_path(GTK_TREE_MODEL(model), &iter);
+    while(valid) {
+        gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
+        gtk_tree_model_get(GTK_TREE_MODEL(model),&iter,2,&str_data,-1);
+        if(str_data[0] == 'd')
+            gtk_list_store_remove(GTK_LIST_STORE(model),&iter);
+        else
+            gtk_tree_path_next(path);
+        valid = gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
+    }
+}
+
+/**
+ *显示附件的TreeView的弹出菜单回调函数.
+ * @param menushell 要显示的弹出菜单
+ * @param event 事件
+ */
+gint DialogBase::EncosureTreePopup(GtkWidget *menupopup, GdkEvent *event)
+{
+    GtkMenu *menu;
+    GdkEventButton *event_button;
+    g_return_val_if_fail(menupopup != NULL, FALSE);
+    g_return_val_if_fail(GTK_IS_MENU (menupopup), FALSE);
+    g_return_val_if_fail(event != NULL, FALSE);
+    menu = GTK_MENU(menupopup);
+    if (event->type == GDK_BUTTON_PRESS) {
+        event_button = (GdkEventButton *) event;
+        if (event_button->button == 3) {
+            gtk_menu_popup (menu, NULL, NULL, NULL, NULL,
+            event_button->button, event_button->time);
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
