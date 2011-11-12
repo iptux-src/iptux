@@ -102,6 +102,8 @@ private:
         static void TerminateTransTask(GtkTreeModel *model);
         static void TerminateAllTransTask(GtkTreeModel *model);
         static void ClearTransTask(GtkTreeModel *model);
+        static void OpenContainingFolder(GtkTreeModel *model);
+        static void OpenThisFile(GtkTreeModel *model);
 
         static void UpdatePalTree(MainWindow *mwin);
         static void AskSharedFiles(GroupInfo *grpinf);

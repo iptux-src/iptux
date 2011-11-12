@@ -1513,7 +1513,33 @@ GtkWidget *MainWindow::CreateTransPopupMenu(GtkTreeModel *model)
 {
         GtkWidget *menu, *menuitem;
 
+        GtkTreePath *path;
+        GtkTreeIter iter;
+        gchar *remaining;
+        gboolean sensitive = TRUE;
+
+        if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
+                                                 "selected-path"))))
+                return NULL;
+        gtk_tree_model_get_iter(model, &iter, path);
+        gtk_tree_model_get(model, &iter, 10, &remaining, -1);
+
+        if (g_strcmp0(remaining,'\0'))
+                sensitive = FALSE;
+
         menu = gtk_menu_new();
+
+        menuitem = gtk_menu_item_new_with_label(_("Open This File"));
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+        g_signal_connect_swapped(menuitem, "activate",
+                         G_CALLBACK(OpenThisFile), model);
+        gtk_widget_set_sensitive(GTK_WIDGET(menuitem),sensitive);
+
+        menuitem = gtk_menu_item_new_with_label(_("Open Containing Folder"));
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+        g_signal_connect_swapped(menuitem, "activate",
+                         G_CALLBACK(OpenContainingFolder), model);
+        gtk_widget_set_sensitive(GTK_WIDGET(menuitem),sensitive);
 
         menuitem = gtk_menu_item_new_with_label(_("Terminate Task"));
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -1906,6 +1932,55 @@ void MainWindow::TerminateTransTask(GtkTreeModel *model)
         gtk_tree_model_get(model, &iter, 11, &trans, -1);
         if (trans)
                 trans->TerminateTrans();
+}
+
+/**
+ * 打开接收的文件.
+ * @param model trans-model
+ */
+void MainWindow::OpenThisFile(GtkTreeModel *model)
+{
+    GtkTreePath *path;
+    GtkTreeIter iter;
+    gchar *filename;
+
+    if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
+                                             "selected-path"))))
+            return;
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 4, &filename, -1);
+    if (filename){
+        filename = g_strconcat(progdt.path,"/",filename,NULL);
+        if( !g_file_test(filename,G_FILE_TEST_EXISTS)){
+            GtkWidget *dialog = gtk_message_dialog_new(NULL,
+            GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
+            GTK_BUTTONS_OK, "The file you want to open not exist!");
+            gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            return;
+        }
+        iptux_open_url(filename);
+    }
+}
+
+/**
+ * 打开接收文件所在文件夹.
+ * @param model trans-model
+ */
+void MainWindow::OpenContainingFolder(GtkTreeModel *model)
+{
+    GtkTreePath *path;
+    GtkTreeIter iter;
+    gchar *filename;
+
+    if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
+                                             "selected-path"))))
+            return;
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 4, &filename, -1);
+    if (filename)
+        iptux_open_url(progdt.path);
 }
 
 /**
