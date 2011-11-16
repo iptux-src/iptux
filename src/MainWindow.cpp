@@ -1789,7 +1789,7 @@ gboolean MainWindow::UpdateTransUI(GtkWidget *treeview)
 
         /* 更新UI */
         do {
-                gtk_tree_model_get(model, &iter, TRANS_TREE_MAX-1, &trans, -1);
+                gtk_tree_model_get(model, &iter, TRANS_TREE_MAX - 1, &trans, -1);
                 if (trans) {    //当文件传输类存在时才能更新
                         para = trans->GetTransFilePara();       //获取参数
                         /* 更新数据 */
@@ -1898,18 +1898,7 @@ void MainWindow::ClearTransWindow(GData **widset)
         /* 考察是否需要清理UI */
         treeview = GTK_WIDGET(g_datalist_get_data(widset, "trans-treeview-widget"));
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-        if (!gtk_tree_model_get_iter_first(model, &iter))
-                return;
-
-        /* 清理UI */
-        do {
-mark:           gtk_tree_model_get(model, &iter, 11, &data, -1);
-                if (!data) {
-                        if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter))
-                                goto mark;
-                        break;
-                }
-        } while (gtk_tree_model_iter_next(model, &iter));
+        ClearTransTask(model);
 
         /* 重新调整UI */
         gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
@@ -1929,7 +1918,7 @@ void MainWindow::TerminateTransTask(GtkTreeModel *model)
                                                  "selected-path"))))
                 return;
         gtk_tree_model_get_iter(model, &iter, path);
-        gtk_tree_model_get(model, &iter, 11, &trans, -1);
+        gtk_tree_model_get(model, &iter, 12, &trans, -1);
         if (trans)
                 trans->TerminateTrans();
 }
@@ -1995,7 +1984,7 @@ void MainWindow::TerminateAllTransTask(GtkTreeModel *model)
         if (!gtk_tree_model_get_iter_first(model, &iter))
                 return;
         do {
-                gtk_tree_model_get(model, &iter, 11, &trans, -1);
+                gtk_tree_model_get(model, &iter, 12, &trans, -1);
                 if (trans)
                         trans->TerminateTrans();
         } while (gtk_tree_model_iter_next(model, &iter));
@@ -2013,7 +2002,7 @@ void MainWindow::ClearTransTask(GtkTreeModel *model)
         if (!gtk_tree_model_get_iter_first(model, &iter))
                 return;
         do {
-mark:           gtk_tree_model_get(model, &iter, 11, &data, -1);
+mark:           gtk_tree_model_get(model, &iter, 12, &data, -1);
                 if (!data) {
                         if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter))
                                 goto mark;
