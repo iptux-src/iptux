@@ -62,7 +62,7 @@ void CoreThread::CoreThreadEntry()
         /* 定时扫描处理程序内部任务 */
         timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
         /* 通知所有计算机本大爷上线啦 */
-        SendNotifyToAll(this);
+        pthread_create(&pid, NULL, ThreadFunc(SendNotifyToAll), this);
 }
 
 /**
