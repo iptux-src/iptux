@@ -101,6 +101,8 @@ void ProgramData::WriteProgData()
         gconf_client_set_string(client, GCONF_PATH "/preference_encode", encode, NULL);
         gconf_client_set_string(client, GCONF_PATH "/pal_icon", palicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/panel_font", font, NULL);
+	gconf_client_set_bool(client, GCONF_PATH "/open-chat",
+                         FLAG_ISSET(flags, 7) ? TRUE : FALSE, NULL);
         gconf_client_set_bool(client, GCONF_PATH "/hide_startup",
                          FLAG_ISSET(flags, 6) ? TRUE : FALSE, NULL);
         gconf_client_set_bool(client, GCONF_PATH "/open_transmission",
@@ -219,6 +221,8 @@ void ProgramData::ReadProgData()
                 palicon = g_strdup("icon-qq.png");
         if (!(font = gconf_client_get_string(client, GCONF_PATH "/panel_font", NULL)))
                 font = g_strdup("Sans Serif 10");
+        if (gconf_client_get_bool(client, GCONF_PATH "/open-chat", NULL))
+                FLAG_SET(flags, 7);
         if (gconf_client_get_bool(client, GCONF_PATH "/hide_startup", NULL))
                 FLAG_SET(flags, 6);
         if (gconf_client_get_bool(client, GCONF_PATH "/open_transmission", NULL))

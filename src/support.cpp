@@ -211,6 +211,10 @@ void init_iptux_environment()
         snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
         if (access(path, F_OK) != 0)
                 mkdir(path, 0777);
+        snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
+        if (access(path, F_OK) != 0)
+                mkdir(path, 0777);
+
 
         env = g_get_user_config_dir();
         if (access(env, F_OK) != 0)
@@ -225,6 +229,9 @@ void init_iptux_environment()
         if (access(path, F_OK) != 0)
                 mkdir(path, 0777);
         snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
+        if (access(path, F_OK) != 0)
+                mkdir(path, 0777);
+        snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
         if (access(path, F_OK) != 0)
                 mkdir(path, 0777);
 }

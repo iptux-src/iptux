@@ -13,6 +13,8 @@
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
+#include "DialogPeer.h"
+#include "DialogGroup.h"
 #include "SoundSystem.h"
 #include "Command.h"
 #include "RecvFile.h"
@@ -324,6 +326,27 @@ void UdpData::SomeoneSendmsg()
                 if (!grpinf->dialog && !cthrd.MsglineContainItem(grpinf))
                         cthrd.PushItemToMsgline(grpinf);
                 pthread_mutex_unlock(cthrd.GetMutex());
+                /* 是否直接弹出聊天窗口 */
+                if (FLAG_ISSET(progdt.flags, 7)) {
+                        gdk_threads_enter();
+                        if (!(grpinf->dialog)) {
+                             switch (grpinf->type) {
+                             case GROUP_BELONG_TYPE_REGULAR:
+                                  DialogPeer::PeerDialogEntry(grpinf);
+                                  break;
+                             case GROUP_BELONG_TYPE_SEGMENT:
+                             case GROUP_BELONG_TYPE_GROUP:
+                             case GROUP_BELONG_TYPE_BROADCAST:
+                                  DialogGroup::GroupDialogEntry(grpinf);
+                             default:
+                                  break;
+                             }
+                        } else {
+                             gtk_window_present(GTK_WINDOW(grpinf->dialog));
+                        }
+                        gdk_threads_leave();
+                }
+
         }
         g_free(text);
 

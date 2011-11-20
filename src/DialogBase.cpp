@@ -431,7 +431,7 @@ GtkWidget *DialogBase::CreateEnclosureTree(GtkTreeModel *model)
         cell = gtk_cell_renderer_text_new();
         gtk_tree_view_column_pack_start(column, cell, TRUE);
         gtk_tree_view_column_set_attributes(column, cell, "text", 1, NULL);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
         //增加一列用来标记错误添加的附件，删除时用的
         cell = gtk_cell_renderer_text_new();
         gtk_tree_view_column_pack_start(column, cell, FALSE);

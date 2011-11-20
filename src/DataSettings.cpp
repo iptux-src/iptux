@@ -305,6 +305,11 @@ GtkWidget *DataSettings::CreateSystem()
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
         g_datalist_set_data(&widset, "font-chooser-widget", widget);
 
+        /* 有消息时直接弹出聊天窗口 */
+        widget = gtk_check_button_new_with_label(
+                    _("Automatically open the chat dialog"));
+        gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+        g_datalist_set_data(&widset, "chat-check-widget", widget);
         /* 隐藏面板，只显示状态图标 */
         widget = gtk_check_button_new_with_label(
                          _("Automatically hide the panel after login"));
@@ -546,6 +551,9 @@ void DataSettings::SetSystemValue()
         gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
         gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), progdt.font);
+        widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
+                                     FLAG_ISSET(progdt.flags, 7));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                  FLAG_ISSET(progdt.flags, 6));
@@ -1008,6 +1016,12 @@ void DataSettings::ObtainSystemValue()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
         g_free(progdt.font);
         progdt.font = g_strdup(gtk_font_button_get_font_name(GTK_FONT_BUTTON(widget)));
+
+        widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
+        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
+            FLAG_SET(progdt.flags, 7);
+        else
+            FLAG_CLR(progdt.flags, 7);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
