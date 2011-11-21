@@ -284,6 +284,10 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, g
         return TRUE;
 }
 
+/**
+ * 状态图标是否嵌入到状态栏.
+ * @return 是否已嵌入
+ */
 gboolean StatusIcon::IsEmbedded() 
 { 
 	embedded = gtk_status_icon_is_embedded(statusicon);

@@ -12,7 +12,6 @@
 #include "MainWindow.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
-#include "StatusIcon.h"
 #include "DialogPeer.h"
 #include "DialogGroup.h"
 #include "DataSettings.h"
