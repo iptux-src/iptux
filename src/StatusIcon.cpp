@@ -283,3 +283,10 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, g
 
         return TRUE;
 }
+
+gboolean StatusIcon::IsEmbedded() 
+{ 
+	embedded = gtk_status_icon_is_embedded(statusicon);
+	return embedded;
+}
+

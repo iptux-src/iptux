@@ -20,10 +20,12 @@ public:
         ~StatusIcon();
 
         void CreateStatusIcon();
+	gboolean IsEmbedded();
         void AlterStatusIconMode();
 private:
         GtkStatusIcon *statusicon;
         guint timerid;
+	gboolean embedded;
 private:
         static gboolean UpdateUI(StatusIcon *sicon);
         static GtkWidget *CreatePopupMenu(GtkStatusIcon *statusicon);

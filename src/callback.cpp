@@ -25,7 +25,10 @@ extern MainWindow mwin;
 gboolean alter_interface_mode()
 {
         sicon.AlterStatusIconMode();
-        mwin.AlterWindowMode();
+        if(sicon.IsEmbedded())
+            mwin.AlterWindowMode();
+        else
+            gtk_main_quit();
 
         return TRUE;
 }
