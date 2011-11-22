@@ -150,134 +150,138 @@ msgid "Panel font:"
 msgstr "面板字體："
 
 #: src/DataSettings.cpp:310
+msgid "Automatically open the chat dialog"
+msgstr "自動打開聊天對話框"
+
+#: src/DataSettings.cpp:315
 msgid "Automatically hide the panel after login"
 msgstr "程序啟動後隱藏面板"
 
-#: src/DataSettings.cpp:315
+#: src/DataSettings.cpp:320
 msgid "Automatically open the File Transmission Management"
 msgstr "自動打開檔案傳輸管理器"
 
-#: src/DataSettings.cpp:320
+#: src/DataSettings.cpp:325
 msgid "Use the 'Enter' key to send message"
 msgstr "使用Enter鍵傳送訊息"
 
-#: src/DataSettings.cpp:325
+#: src/DataSettings.cpp:330
 msgid "Automatically clean up the chat history"
 msgstr "自動清空聊天記錄"
 
-#: src/DataSettings.cpp:330
+#: src/DataSettings.cpp:335
 msgid "Save the chat history"
 msgstr "儲存聊天記錄"
 
-#: src/DataSettings.cpp:335
+#: src/DataSettings.cpp:340
 msgid "Use the Blacklist (NOT recommended)"
 msgstr "開啟黑名單處理方案(不推薦)"
 
-#: src/DataSettings.cpp:340
+#: src/DataSettings.cpp:345
 msgid "Filter the request of sharing files"
 msgstr "過濾共享檔案請求"
 
-#: src/DataSettings.cpp:362
+#: src/DataSettings.cpp:367
 msgid "Activate the sound support"
 msgstr "啟動聲音支援"
 
-#: src/DataSettings.cpp:369
+#: src/DataSettings.cpp:374
 msgid "Volume Control: "
 msgstr "音量控制:"
 
-#: src/DataSettings.cpp:378
+#: src/DataSettings.cpp:383
 msgid "Sound Event"
 msgstr "聲音事件"
 
-#: src/DataSettings.cpp:406
+#: src/DataSettings.cpp:411
 msgid "Test"
 msgstr "測試"
 
-#: src/DataSettings.cpp:409
+#: src/DataSettings.cpp:414
 msgid "Stop"
 msgstr "停止"
 
-#: src/DataSettings.cpp:432
+#: src/DataSettings.cpp:437
 msgid "From:"
 msgstr "起始:"
 
-#: src/DataSettings.cpp:438
+#: src/DataSettings.cpp:443
 msgid "Beginning of the IP(v4) section"
 msgstr "IP(v4)網路區段起始點"
 
-#: src/DataSettings.cpp:441
+#: src/DataSettings.cpp:445
 msgid "To:"
 msgstr "終止:"
 
-#: src/DataSettings.cpp:447
+#: src/DataSettings.cpp:452
 msgid "End of the IP(v4) section"
 msgstr "IP(v4)網路區段終止點"
 
-#: src/DataSettings.cpp:454
+#: src/DataSettings.cpp:459
 msgid "Add"
 msgstr "新增"
 
-#: src/DataSettings.cpp:458
+#: src/DataSettings.cpp:463
 msgid "Delete"
 msgstr "刪除"
 
-#: src/DataSettings.cpp:464
+#: src/DataSettings.cpp:469
 msgid "Added IP(v4) Section:"
 msgstr "已添加的IP(v4)網路區段:"
 
-#: src/DataSettings.cpp:483
+#: src/DataSettings.cpp:488
 msgid "Import"
 msgstr "匯入"
 
-#: src/DataSettings.cpp:486
+#: src/DataSettings.cpp:491
 msgid "Export"
 msgstr "匯出"
 
-#: src/DataSettings.cpp:489
+#: src/DataSettings.cpp:494
 msgid "Clear"
 msgstr "清空"
 
-#: src/DataSettings.cpp:701
+#: src/DataSettings.cpp:709
 msgid "Transfer finished"
 msgstr "傳輸完成"
 
-#: src/DataSettings.cpp:706
+#: src/DataSettings.cpp:714
 msgid "Message received"
 msgstr "收到訊息"
 
-#: src/DataSettings.cpp:767
+#: src/DataSettings.cpp:775
 msgid "Play"
 msgstr "播放"
 
-#: src/DataSettings.cpp:774
+#: src/DataSettings.cpp:782
 msgid "Event"
 msgstr "事件"
 
-#: src/DataSettings.cpp:808
+#: src/DataSettings.cpp:816
 msgid "From"
 msgstr "起始"
 
-#: src/DataSettings.cpp:814
+#: src/DataSettings.cpp:822
 msgid "To"
 msgstr "終止"
 
-#: src/DataSettings.cpp:822
+#: src/DataSettings.cpp:830
 msgid "Description"
 msgstr "描述"
 
-#: src/DataSettings.cpp:839 src/RecvFile.cpp:389
+#: src/DataSettings.cpp:847 src/RecvFile.cpp:389
 msgid "Please select download folder"
 msgstr "請選擇下載目錄"
 
-#: src/DataSettings.cpp:861
+#: src/DataSettings.cpp:869
 msgid "Select Font"
 msgstr "選擇字體"
 
-#: src/DataSettings.cpp:874
+#: src/DataSettings.cpp:882
 msgid "Please select a sound file"
 msgstr "請選擇一個聲音檔案"
 
-#: src/DataSettings.cpp:1139 src/DataSettings.cpp:1171
+#: src/DataSettings.cpp:1157 src/DataSettings.cpp:1189
 #, c-format
 msgid ""
 "Fopen() file \"%s\" failed!\n"
@@ -286,27 +290,27 @@ msgstr ""
 "打開檔案\"%s\"失敗！\n"
 "%s"
 
-#: src/DataSettings.cpp:1220 src/DialogGroup.cpp:654 src/RecvFile.cpp:409
+#: src/DataSettings.cpp:1238 src/DialogGroup.cpp:654 src/RecvFile.cpp:409
 msgid "Select All"
 msgstr "全選"
 
-#: src/DataSettings.cpp:1225 src/DialogGroup.cpp:659 src/RecvFile.cpp:414
+#: src/DataSettings.cpp:1243 src/DialogGroup.cpp:659 src/RecvFile.cpp:414
 msgid "Reverse Select"
 msgstr "反選"
 
-#: src/DataSettings.cpp:1230 src/DialogGroup.cpp:664 src/RecvFile.cpp:419
+#: src/DataSettings.cpp:1248 src/DialogGroup.cpp:664 src/RecvFile.cpp:419
 msgid "Clear Up"
 msgstr "清空"
 
-#: src/DataSettings.cpp:1324 src/RevisePal.cpp:426
+#: src/DataSettings.cpp:1342 src/RevisePal.cpp:426
 msgid "Please select a face picture"
 msgstr "請選擇一個頭像圖片"
 
-#: src/DataSettings.cpp:1347
+#: src/DataSettings.cpp:1365
 msgid "Please select a personal photo"
 msgstr "請選擇個人照片"
 
-#: src/DataSettings.cpp:1491 src/DataSettings.cpp:1498 src/DetectPal.cpp:122
+#: src/DataSettings.cpp:1509 src/DataSettings.cpp:1516 src/DetectPal.cpp:122
 #, c-format
 msgid ""
 "\n"
@@ -315,11 +319,11 @@ msgstr ""
 "\n"
 "非法的IP(v4)位址：%s！"
 
-#: src/DataSettings.cpp:1596
+#: src/DataSettings.cpp:1614
 msgid "Please select a file to import data"
 msgstr "請選擇匯入資料的檔案"
 
-#: src/DataSettings.cpp:1644
+#: src/DataSettings.cpp:1662
 msgid "Save data to file"
 msgstr "保存資料到檔案"
 
@@ -498,57 +502,57 @@ msgstr "關閉"
 msgid "Insert Picture"
 msgstr "插入圖片"
 
-#: src/DialogPeer.cpp:404 src/MainWindow.cpp:1625
+#: src/DialogPeer.cpp:404 src/MainWindow.cpp:1651
 #, c-format
 msgid "Version: %s\n"
 msgstr "版本: %s\n"
 
-#: src/DialogPeer.cpp:408 src/MainWindow.cpp:1629
+#: src/DialogPeer.cpp:408 src/MainWindow.cpp:1655
 #, c-format
 msgid "Nickname: %s@%s\n"
 msgstr "暱稱: %s@%s\n"
 
-#: src/DialogPeer.cpp:410 src/MainWindow.cpp:1631
+#: src/DialogPeer.cpp:410 src/MainWindow.cpp:1657
 #, c-format
 msgid "Nickname: %s\n"
 msgstr "暱稱: %s\n"
 
-#: src/DialogPeer.cpp:413 src/MainWindow.cpp:1634
+#: src/DialogPeer.cpp:413 src/MainWindow.cpp:1660
 #, c-format
 msgid "User: %s\n"
 msgstr "用戶: %s\n"
 
-#: src/DialogPeer.cpp:416 src/MainWindow.cpp:1637
+#: src/DialogPeer.cpp:416 src/MainWindow.cpp:1663
 #, c-format
 msgid "Host: %s\n"
 msgstr "主機: %s\n"
 
-#: src/DialogPeer.cpp:421 src/MainWindow.cpp:1642
+#: src/DialogPeer.cpp:421 src/MainWindow.cpp:1668
 #, c-format
 msgid "Address: %s(%s)\n"
 msgstr "位址: %s(%s)\n"
 
-#: src/DialogPeer.cpp:423 src/MainWindow.cpp:1644
+#: src/DialogPeer.cpp:423 src/MainWindow.cpp:1670
 #, c-format
 msgid "Address: %s\n"
 msgstr "位址: %s\n"
 
-#: src/DialogPeer.cpp:427 src/MainWindow.cpp:1648
+#: src/DialogPeer.cpp:427 src/MainWindow.cpp:1674
 #, c-format
 msgid "Compatibility: Microsoft\n"
 msgstr "相容性: Microsoft\n"
 
-#: src/DialogPeer.cpp:429 src/MainWindow.cpp:1650
+#: src/DialogPeer.cpp:429 src/MainWindow.cpp:1676
 #, c-format
 msgid "Compatibility: GNU/Linux\n"
 msgstr "相容性: GNU/Linux\n"
 
-#: src/DialogPeer.cpp:432 src/MainWindow.cpp:1653
+#: src/DialogPeer.cpp:432 src/MainWindow.cpp:1679
 #, c-format
 msgid "System coding: %s\n"
 msgstr "系統編碼: %s\n"
 
-#: src/DialogPeer.cpp:436 src/MainWindow.cpp:1657
+#: src/DialogPeer.cpp:436 src/MainWindow.cpp:1683
 msgid "Signature:\n"
 msgstr "個性簽名:\n"
 
@@ -790,31 +794,39 @@ msgstr "剩餘時間"
 msgid "Rate"
 msgstr "速率"
 
+#: src/MainWindow.cpp:1532
+msgid "Open This File"
+msgstr "打開此文件"
+
+#: src/MainWindow.cpp:1538
+msgid "Open Containing Folder"
+msgstr "打開所在的文件夾"
+
 #: src/MainWindow.cpp:1518
 msgid "Terminate Task"
 msgstr "終止任務"
 
-#: src/MainWindow.cpp:1523
+#: src/MainWindow.cpp:1544
 msgid "Terminate All"
 msgstr "終止所有"
 
-#: src/MainWindow.cpp:1528
+#: src/MainWindow.cpp:1554
 msgid "Clear Tasklist"
 msgstr "清理任務"
 
-#: src/MainWindow.cpp:1549
+#: src/MainWindow.cpp:1575
 msgid "Send Message"
 msgstr "傳送訊息"
 
-#: src/MainWindow.cpp:1583
+#: src/MainWindow.cpp:1609
 msgid "Change Info."
 msgstr "更改資訊"
 
-#: src/MainWindow.cpp:1598
+#: src/MainWindow.cpp:1624
 msgid "Delete Pal"
 msgstr "刪除好友"
 
-#: src/MainWindow.cpp:1687
+#: src/MainWindow.cpp:1673
 #, c-format
 msgid "Pals Online: %<PRIu32>"
 msgstr "線上好友: %<PRIu32>"

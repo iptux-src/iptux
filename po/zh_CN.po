@@ -151,134 +151,138 @@ msgid "Panel font:"
 msgstr "面板字体："
 
 #: src/DataSettings.cpp:310
+msgid "Automatically open the chat dialog"
+msgstr "自动打开聊天窗口"
+
+#: src/DataSettings.cpp:315
 msgid "Automatically hide the panel after login"
 msgstr "程序启动之后自动隐藏面板"
 
-#: src/DataSettings.cpp:315
+#: src/DataSettings.cpp:320
 msgid "Automatically open the File Transmission Management"
 msgstr "自动打开文件传输管理器"
 
-#: src/DataSettings.cpp:320
+#: src/DataSettings.cpp:325
 msgid "Use the 'Enter' key to send message"
 msgstr "使用Enter键发送消息"
 
-#: src/DataSettings.cpp:325
+#: src/DataSettings.cpp:330
 msgid "Automatically clean up the chat history"
 msgstr "自动清空聊天历史记录"
 
-#: src/DataSettings.cpp:330
+#: src/DataSettings.cpp:335
 msgid "Save the chat history"
 msgstr "保存聊天历史"
 
-#: src/DataSettings.cpp:335
+#: src/DataSettings.cpp:340
 msgid "Use the Blacklist (NOT recommended)"
 msgstr "开启黑名单处理方案(不推荐)"
 
-#: src/DataSettings.cpp:340
+#: src/DataSettings.cpp:345
 msgid "Filter the request of sharing files"
 msgstr "过滤好友对共享文件的请求"
 
-#: src/DataSettings.cpp:362
+#: src/DataSettings.cpp:367
 msgid "Activate the sound support"
 msgstr "启动声音支持"
 
-#: src/DataSettings.cpp:369
+#: src/DataSettings.cpp:374
 msgid "Volume Control: "
 msgstr "音量控制:"
 
-#: src/DataSettings.cpp:378
+#: src/DataSettings.cpp:383
 msgid "Sound Event"
 msgstr "声音事件"
 
-#: src/DataSettings.cpp:406
+#: src/DataSettings.cpp:411
 msgid "Test"
 msgstr "测试"
 
-#: src/DataSettings.cpp:409
+#: src/DataSettings.cpp:414
 msgid "Stop"
 msgstr "停止"
 
-#: src/DataSettings.cpp:432
+#: src/DataSettings.cpp:437
 msgid "From:"
 msgstr "起始:"
 
-#: src/DataSettings.cpp:438
+#: src/DataSettings.cpp:443
 msgid "Beginning of the IP(v4) section"
 msgstr "IP(v4)网络段起始点"
 
-#: src/DataSettings.cpp:441
+#: src/DataSettings.cpp:445
 msgid "To:"
 msgstr "终止:"
 
-#: src/DataSettings.cpp:447
+#: src/DataSettings.cpp:452
 msgid "End of the IP(v4) section"
 msgstr "IP(v4)网络段终止点"
 
-#: src/DataSettings.cpp:454
+#: src/DataSettings.cpp:459
 msgid "Add"
 msgstr "增添"
 
-#: src/DataSettings.cpp:458
+#: src/DataSettings.cpp:463
 msgid "Delete"
 msgstr "删除"
 
-#: src/DataSettings.cpp:464
+#: src/DataSettings.cpp:469
 msgid "Added IP(v4) Section:"
 msgstr "已添加的IP(v4)网段:"
 
-#: src/DataSettings.cpp:483
+#: src/DataSettings.cpp:488
 msgid "Import"
 msgstr "导入"
 
-#: src/DataSettings.cpp:486
+#: src/DataSettings.cpp:491
 msgid "Export"
 msgstr "导出"
 
-#: src/DataSettings.cpp:489
+#: src/DataSettings.cpp:494
 msgid "Clear"
 msgstr "清空"
 
-#: src/DataSettings.cpp:701
+#: src/DataSettings.cpp:709
 msgid "Transfer finished"
 msgstr "传输完成"
 
-#: src/DataSettings.cpp:706
+#: src/DataSettings.cpp:714
 msgid "Message received"
 msgstr "收到消息"
 
-#: src/DataSettings.cpp:767
+#: src/DataSettings.cpp:775
 msgid "Play"
 msgstr "播放"
 
-#: src/DataSettings.cpp:774
+#: src/DataSettings.cpp:782
 msgid "Event"
 msgstr "事件"
 
-#: src/DataSettings.cpp:808
+#: src/DataSettings.cpp:816
 msgid "From"
 msgstr "起始"
 
-#: src/DataSettings.cpp:814
+#: src/DataSettings.cpp:822
 msgid "To"
 msgstr "终止"
 
-#: src/DataSettings.cpp:822
+#: src/DataSettings.cpp:830
 msgid "Description"
 msgstr "描述"
 
-#: src/DataSettings.cpp:839 src/RecvFile.cpp:389
+#: src/DataSettings.cpp:847 src/RecvFile.cpp:389
 msgid "Please select download folder"
 msgstr "请选择下载文件夹"
 
-#: src/DataSettings.cpp:861
+#: src/DataSettings.cpp:869
 msgid "Select Font"
 msgstr "选择字体"
 
-#: src/DataSettings.cpp:874
+#: src/DataSettings.cpp:882
 msgid "Please select a sound file"
 msgstr "请选择一个声音文件"
 
-#: src/DataSettings.cpp:1139 src/DataSettings.cpp:1171
+#: src/DataSettings.cpp:1157 src/DataSettings.cpp:1189
 #, c-format
 msgid ""
 "Fopen() file \"%s\" failed!\n"
@@ -287,27 +291,27 @@ msgstr ""
 "打开文件\"%s\"失败！\n"
 "%s"
 
-#: src/DataSettings.cpp:1220 src/DialogGroup.cpp:654 src/RecvFile.cpp:409
+#: src/DataSettings.cpp:1238 src/DialogGroup.cpp:654 src/RecvFile.cpp:409
 msgid "Select All"
 msgstr "全选"
 
-#: src/DataSettings.cpp:1225 src/DialogGroup.cpp:659 src/RecvFile.cpp:414
+#: src/DataSettings.cpp:1243 src/DialogGroup.cpp:659 src/RecvFile.cpp:414
 msgid "Reverse Select"
 msgstr "反选"
 
-#: src/DataSettings.cpp:1230 src/DialogGroup.cpp:664 src/RecvFile.cpp:419
+#: src/DataSettings.cpp:1248 src/DialogGroup.cpp:664 src/RecvFile.cpp:419
 msgid "Clear Up"
 msgstr "清空"
 
-#: src/DataSettings.cpp:1324 src/RevisePal.cpp:426
+#: src/DataSettings.cpp:1342 src/RevisePal.cpp:426
 msgid "Please select a face picture"
 msgstr "请选择一个头像图片"
 
-#: src/DataSettings.cpp:1347
+#: src/DataSettings.cpp:1365
 msgid "Please select a personal photo"
 msgstr "请选择个人形象照片"
 
-#: src/DataSettings.cpp:1491 src/DataSettings.cpp:1498 src/DetectPal.cpp:122
+#: src/DataSettings.cpp:1509 src/DataSettings.cpp:1498 src/DetectPal.cpp:122
 #, c-format
 msgid ""
 "\n"
@@ -316,11 +320,11 @@ msgstr ""
 "\n"
 "非法的IP(v4)地址：%s！"
 
-#: src/DataSettings.cpp:1596
+#: src/DataSettings.cpp:1614
 msgid "Please select a file to import data"
 msgstr "请选择导入数据的文件"
 
-#: src/DataSettings.cpp:1644
+#: src/DataSettings.cpp:1662
 msgid "Save data to file"
 msgstr "保存数据到文件"
 
@@ -790,31 +794,39 @@ msgstr "剩余时间"
 msgid "Rate"
 msgstr "速率"
 
-#: src/MainWindow.cpp:1518
+#: src/MainWindow.cpp:1532
+msgid "Open This File"
+msgstr "打开文件"
+
+#: src/MainWindow.cpp:1538
+msgid "Open Containing Folder"
+msgstr "打开所在文件夹"
+
+#: src/MainWindow.cpp:1544
 msgid "Terminate Task"
 msgstr "终止任务"
 
-#: src/MainWindow.cpp:1523
+#: src/MainWindow.cpp:1549
 msgid "Terminate All"
 msgstr "终止所有"
 
-#: src/MainWindow.cpp:1528
+#: src/MainWindow.cpp:1554
 msgid "Clear Tasklist"
 msgstr "清理任务"
 
-#: src/MainWindow.cpp:1549
+#: src/MainWindow.cpp:1575
 msgid "Send Message"
 msgstr "发送消息"
 
-#: src/MainWindow.cpp:1583
+#: src/MainWindow.cpp:1609
 msgid "Change Info."
 msgstr "更改信息"
 
-#: src/MainWindow.cpp:1598
+#: src/MainWindow.cpp:1624
 msgid "Delete Pal"
 msgstr "删除好友"
 
-#: src/MainWindow.cpp:1687
+#: src/MainWindow.cpp:1713
 #, c-format
 msgid "Pals Online: %<PRIu32>"
 msgstr "在线好友: %<PRIu32>"

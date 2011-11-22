@@ -67,7 +67,7 @@ protected:
                                              GdkEventConfigure *event, GData **dtset);
         static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                        GData **dtset);
-        static gint EncosureTreePopup(GtkWidget *menupopup, GdkEvent *event);
+        static gint EncosureTreePopup(DialogBase *dlgpr,GdkEvent *event);
 protected:
 
         GData *widset;          //窗体集

@@ -416,7 +416,6 @@ GtkWidget *DialogBase::CreateEnclosureTree(GtkTreeModel *model)
         GtkTreeSelection *selection;
         GtkCellRenderer *cell;
         GtkTreeViewColumn *column;
-        GtkWidget *menu;
 
         view = gtk_tree_view_new_with_model(model);
         gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
@@ -438,9 +437,8 @@ GtkWidget *DialogBase::CreateEnclosureTree(GtkTreeModel *model)
         gtk_tree_view_column_set_attributes(column, cell, "text", 2, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-        menu = GTK_WIDGET(g_datalist_get_data(&widset, "file-menu"));
         g_signal_connect_swapped(GTK_OBJECT(view), "button_press_event",
-                    G_CALLBACK(EncosureTreePopup), GTK_OBJECT(menu));
+                    G_CALLBACK(EncosureTreePopup), this);
         return view;
 }
 
@@ -752,19 +750,22 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase *dlgpr)
  * @param menushell 要显示的弹出菜单
  * @param event 事件
  */
-gint DialogBase::EncosureTreePopup(GtkWidget *menupopup, GdkEvent *event)
+gint DialogBase::EncosureTreePopup(DialogBase *dlgpr,GdkEvent *event)
 {
-    GtkMenu *menu;
+    GtkWidget *menu,*menuitem;
     GdkEventButton *event_button;
-    g_return_val_if_fail(menupopup != NULL, FALSE);
-    g_return_val_if_fail(GTK_IS_MENU (menupopup), FALSE);
-    g_return_val_if_fail(event != NULL, FALSE);
-    menu = GTK_MENU(menupopup);
+
+    menu = gtk_menu_new();
+    menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
+    g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(RemoveSelectedEnclosure), dlgpr);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
     if (event->type == GDK_BUTTON_PRESS) {
         event_button = (GdkEventButton *) event;
         if (event_button->button == 3) {
-            gtk_menu_popup (menu, NULL, NULL, NULL, NULL,
-            event_button->button, event_button->time);
+            gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+                            event_button->button, event_button->time);
+            gtk_widget_show(menuitem);
             return TRUE;
         }
     }
