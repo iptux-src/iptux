@@ -1892,8 +1892,6 @@ void MainWindow::ClearTransWindow(GData **widset)
 {
         GtkWidget *treeview;
         GtkTreeModel *model;
-        GtkTreeIter iter;
-        gpointer data;
 
         /* 考察是否需要清理UI */
         treeview = GTK_WIDGET(g_datalist_get_data(widset, "trans-treeview-widget"));
@@ -2494,7 +2492,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry,GData **widset)
                 }
                 tlist = g_slist_next(tlist);
         }
-        
+
         /* 重新调整好友清单UI */
         gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
 }
