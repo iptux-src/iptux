@@ -14,7 +14,7 @@ INCLUDES= $(all_includes) @PACKAGE_CFLAGS@
 
 # the library search path.
 iptux_LDADD = $(INTLLIBS) @PACKAGE_LIBS@
-iptux_LDFLAGS = $(all_libraries)
+LIBS = $(all_libraries)
 
 noinst_HEADERS = AnalogFS.h Command.h CoreThread.h DataSettings.h DetectPal.h DialogBase.h \
 	DialogGroup.h DialogPeer.h HelpDialog.h LogSystem.h MainWindow.h ProgramData.h \
