@@ -14,8 +14,6 @@
 
 #include "sys.h"
 
-void *operator new(size_t size);
-
 ssize_t xwrite(int fd, const void *buf, size_t count);
 ssize_t xread(int fd, void *buf, size_t count);
 ssize_t read_ipmsg_prefix(int fd, void *buf, size_t count);
