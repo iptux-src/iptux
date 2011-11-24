@@ -187,7 +187,7 @@ char *assert_filename_inexist(const char *path)
         count = 1;
         while (count) {
                 snprintf(buf, MAX_PATHLEN, "%.*s%" PRIu16 "_%s",
-                                 ptr - path, path, count, ptr);
+                                 (int)(ptr - path), path, count, ptr);
                 if (access(buf, F_OK) != 0)
                         break;
                 count++;
