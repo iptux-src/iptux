@@ -781,6 +781,35 @@ FileInfo *CoreThread::GetFileFromAll(uint32_t fileid)
 }
 
 /**
+ * 获取指定文件包编号的文件信息.
+ * @param PacketN 文件包ID
+ * @return 文件信息
+ * 这个函数主要是为了兼容adroid版的信鸽(IPMSG),IPMSG把包编号转换为
+ * 16进制放在了本来应该是fileid的地方,所以在调用这个函数时,传给packageNum
+ * 的是fileid
+ */
+FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum)
+{
+        GSList *tlist;
+
+        tlist = prlist;
+        while (tlist) {
+                if (((FileInfo *)tlist->data)->packetn == packageNum)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
+	if (tlist != NULL)
+		return (FileInfo *)(tlist ? tlist->data : NULL);
+	tlist =  pblist ; 
+        while (tlist) {
+                if (((FileInfo *)tlist->data)->packetn == packageNum)
+                        break;
+                tlist = g_slist_next(tlist);
+        }
+        return (FileInfo *)(tlist ? tlist->data : NULL);
+}
+
+/**
  * 获取共享文件访问密码.
  * @return 密码字符串
  */

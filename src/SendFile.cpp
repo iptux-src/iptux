@@ -152,6 +152,17 @@ void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach)
         /* 检查文件属性是否匹配 */
         fileid = iptux_get_hex_number(attach, ':', 1);
         file = (FileInfo *)cthrd.GetFileFromAll(fileid);
+	/* 兼容windows版信鸽(IPMSG) ,这里的信鸽不是飞鸽传书(IPMSG)*/
+	if(!file) {
+		fileid = iptux_get_dec_number(attach, ':', 1);
+		file = (FileInfo *)cthrd.GetFileFromAll(fileid);
+	}
+	/* 兼容adroid版信鸽(IPMSG) */
+	if(!file) {
+		fileid = iptux_get_hex_number(attach, ':', 1);
+		file = (FileInfo *)cthrd.GetFileFromAllWithPacketN(fileid);
+	}
+	
         if (!file || GET_MODE(file->fileattr) != GET_MODE(fileattr))
                 return;
 

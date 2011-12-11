@@ -69,6 +69,7 @@ public:
         void DelFileFromPrivate(uint32_t fileid);
         void ClearFileFromPrivate();
         FileInfo *GetFileFromAll(uint32_t fileid);
+	FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum);
         const char *GetAccessPublicLimit();
         void SetAccessPublicLimit(const char *limit);
 private:
