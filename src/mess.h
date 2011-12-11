@@ -108,6 +108,7 @@ public:
         int64_t filesize;       ///< 文件大小
         PalInfo *fileown;       ///< 文件拥有者(来自好友*)
         char *filepath; ///< 文件路径 *
+        uint32_t filenum;        /// < 发送多个文件时文件在包内的编号
 };
 
 /**

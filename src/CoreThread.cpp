@@ -788,13 +788,14 @@ FileInfo *CoreThread::GetFileFromAll(uint32_t fileid)
  * 16进制放在了本来应该是fileid的地方,所以在调用这个函数时,传给packageNum
  * 的是fileid
  */
-FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum)
+FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,uint32_t filenum)
 {
         GSList *tlist;
 
         tlist = prlist;
         while (tlist) {
-                if (((FileInfo *)tlist->data)->packetn == packageNum)
+            if( (((FileInfo *)tlist->data)->packetn == packageNum)
+                    && ((((FileInfo *)tlist->data)->filenum == filenum) ) )
                         break;
                 tlist = g_slist_next(tlist);
         }
@@ -802,7 +803,8 @@ FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum)
 		return (FileInfo *)(tlist ? tlist->data : NULL);
 	tlist =  pblist ; 
         while (tlist) {
-                if (((FileInfo *)tlist->data)->packetn == packageNum)
+             if( (((FileInfo *)tlist->data)->packetn == packageNum)
+                    && ((((FileInfo *)tlist->data)->filenum == filenum) ) )
                         break;
                 tlist = g_slist_next(tlist);
         }

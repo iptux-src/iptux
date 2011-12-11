@@ -303,6 +303,7 @@ void ShareFile::ApplySharedData()
         uint32_t fileattr;
         gchar *filepath;
         const gchar *passwd;
+        uint32_t filenum = 0;
 
         /* 更新共享文件链表 */
         pthread_mutex_lock(cthrd.GetMutex());
@@ -320,6 +321,8 @@ void ShareFile::ApplySharedData()
                         /* file->filesize = 0;//我喜欢延后处理 */
                         /* file->fileown = NULL;//没必要设置此字段 */
                         file->filepath = filepath;
+                        file->filenum = filenum;
+                        filenum++;
                         cthrd.AttachFileToPublic(file);
                 } while (gtk_tree_model_iter_next(model, &iter));
         }

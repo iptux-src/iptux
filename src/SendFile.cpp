@@ -50,10 +50,12 @@ void SendFile::SendFileInfoEntry(PalInfo *pal, GSList *flist)
         struct stat64 st;
         FileInfo *file;
         GSList *tlist, *list;
+        uint32_t filenum;
 
         /* 将文件路径链表转换为文件信息链表 */
         list = NULL;
         tlist = flist;
+        filenum = 0;
         while (tlist) {
                 if (stat64((char *)tlist->data, &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
@@ -70,6 +72,8 @@ void SendFile::SendFileInfoEntry(PalInfo *pal, GSList *flist)
                 /* file->filesize = 0;//我喜欢延后处理 */
                 /* file->fileown = NULL;//没必要设置此字段 */
                 file->filepath = (char *)tlist->data;
+                file->filenum = filenum;
+                filenum ++;
                 tlist = g_slist_next(tlist);
         }
 
@@ -98,10 +102,12 @@ void SendFile::BcstFileInfoEntry(GSList *plist, GSList *flist)
         struct stat64 st;
         FileInfo *file;
         GSList *tlist, *list;
+        uint32_t filenum;
 
         /* 将文件路径链表转换为文件信息链表 */
         list = NULL;
         tlist = flist;
+        filenum = 0;
         while (tlist) {
                 if (stat64((char *)tlist->data, &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
@@ -117,7 +123,9 @@ void SendFile::BcstFileInfoEntry(GSList *plist, GSList *flist)
                                                          IPMSG_FILE_DIR;
                 /* file->filesize = 0;//我喜欢延后处理 */
                 /* file->fileown = NULL;//没必要设置此字段 */
-                file->filepath = (char *)tlist->data;
+                file->filepath = (char *)tlist->data;                
+                file->filenum = filenum;
+                filenum ++;
                 tlist = g_slist_next(tlist);
         }
 
@@ -148,19 +156,21 @@ void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach)
         PalInfo *pal;
         FileInfo *file, *nfile;
         uint32_t fileid;
+        uint32_t filenum;
 
         /* 检查文件属性是否匹配 */
         fileid = iptux_get_hex_number(attach, ':', 1);
         file = (FileInfo *)cthrd.GetFileFromAll(fileid);
 	/* 兼容windows版信鸽(IPMSG) ,这里的信鸽不是飞鸽传书(IPMSG)*/
 	if(!file) {
-		fileid = iptux_get_dec_number(attach, ':', 1);
+                fileid = iptux_get_dec_number(attach, ':', 1);
 		file = (FileInfo *)cthrd.GetFileFromAll(fileid);
 	}
 	/* 兼容adroid版信鸽(IPMSG) */
 	if(!file) {
-		fileid = iptux_get_hex_number(attach, ':', 1);
-		file = (FileInfo *)cthrd.GetFileFromAllWithPacketN(fileid);
+                fileid = iptux_get_hex_number(attach, ':', 0);
+                filenum = iptux_get_hex_number(attach, ':', 1);
+                file = (FileInfo *)cthrd.GetFileFromAllWithPacketN(fileid,filenum);
 	}
 	
         if (!file || GET_MODE(file->fileattr) != GET_MODE(fileattr))
@@ -197,6 +207,7 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist)
         char *ptr, *name;
         GSList *tlist;
         FileInfo *file;
+        uint32_t filenum;
 
         /* 初始化 */
         len = 0;
@@ -213,9 +224,11 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist)
                 }
                 name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
                 file->filesize = afs.ftwsize(file->filepath);   //不得不计算文件长度了
+                filenum = file->filenum;
+                file->packetn =  cmd.Packetn();
                 snprintf(ptr, MAX_UDPLEN - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
-                                 PRIx32 ":%" PRIx32 ":\a:", file->fileid, name,
-                                 file->filesize, 0, file->fileattr);
+                                 PRIx32 ":%" PRIx32 ":\a", file->fileid, name,
+                                 file->filesize, filenum, file->fileattr);
                 g_free(name);
                 len += strlen(ptr);
                 ptr = buf + len;
@@ -241,6 +254,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist)
         char *ptr, *name;
         GSList *tlist;
         FileInfo *file;
+        uint32_t filenum;
 
         /* 初始化 */
         len = 0;
@@ -257,9 +271,11 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist)
                 }
                 name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
                 file->filesize = afs.ftwsize(file->filepath);   //不得不计算文件长度了
+                file->packetn =  cmd.Packetn();
+                filenum = file->filenum;
                 snprintf(ptr, MAX_UDPLEN - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
                                  PRIx32 ":%" PRIx32 ":\a:", file->fileid, name,
-                                 file->filesize, 0, file->fileattr);
+                                 file->filesize, filenum, file->fileattr);
                 g_free(name);
                 len += strlen(ptr);
                 ptr = buf + len;
