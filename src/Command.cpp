@@ -302,10 +302,16 @@ bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
 {
         char attrstr[35];       //8+1+8+1+16 +1 =35
         struct sockaddr_in addr;
+        char *iptuxstr = "iptux";
 
         snprintf(attrstr, 35, "%" PRIx32 ":%" PRIx32 ":%" PRIx64,
                                          packetno, fileid, offset);
-        CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
+        //IPMSG和Feiq的命令字段都是只有IPMSG_GETFILEDATA,使用(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA）
+	//会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
+        if(strstr(pal->version,iptuxstr))
+            CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
+        else
+            CreateCommand(IPMSG_GETFILEDATA, attrstr);
         ConvertEncode(pal->encode);
 
         bzero(&addr, sizeof(addr));
@@ -554,7 +560,10 @@ void Command::CreateCommand(uint32_t command, const char *attach)
         size += strlen(ptr);
         ptr = buf + size;
 
-        snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, command);
+        if(command == IPMSG_GETFILEDATA)
+            snprintf(ptr, MAX_UDPLEN - size, ":%d", command);
+        else
+            snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, command);
         size += strlen(ptr);
         ptr = buf + size;
 
