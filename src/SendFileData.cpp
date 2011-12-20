@@ -229,14 +229,14 @@ start:                  if (afs.stat(dirt->d_name, &st) == -1
                         } else
                                 dirname = ipmsg_get_filename_pal(dirt->d_name);
                         /* 构造数据头并发送 */
-                        snprintf(buf, MAX_SOCKLEN, "000:%s:%" PRIx64 ":%lx:",
-                                 dirname, st.st_size,
-                                 S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR :
-                                                         IPMSG_FILE_DIR);
+                        snprintf(buf, MAX_SOCKLEN, "0000:%s:%.9" PRIx64 ":%lx:%lx=%lx:%lx=%lx:",
+                                 dirname, S_ISREG(st.st_mode) ? st.st_size :0,
+                                 S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR,
+                                 IPMSG_FILE_MTIME,st.st_mtime,IPMSG_FILE_CREATETIME,st.st_ctime);
                         g_free(dirname);
                         headsize = strlen(buf);
-                        snprintf(buf, MAX_SOCKLEN, "%.3" PRIx32, headsize);
-                        *(buf + 3) = ':';
+                        snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
+                        *(buf + 4) = ':';
                         if (xwrite(sock, buf, headsize) == -1)
                                 goto end;
                         /* 选择处理方案 */
@@ -266,10 +266,11 @@ start:                  if (afs.stat(dirt->d_name, &st) == -1
                         closedir(dir);
                         dir = NULL;
                         /* 构造向上转的数据头并发送 */
-                        snprintf(buf, MAX_SOCKLEN, "000:.:0:%lx:", IPMSG_FILE_RETPARENT);
+                        snprintf(buf, MAX_SOCKLEN, "0000:.:0:%lx:%lx=%lx:%lx=%lx:", IPMSG_FILE_RETPARENT,
+                                  IPMSG_FILE_MTIME,st.st_mtime,IPMSG_FILE_CREATETIME,st.st_ctime);
                         headsize = strlen(buf);
-                        snprintf(buf, MAX_SOCKLEN, "%.3" PRIx32, headsize);
-                        *(buf + 3) = ':';
+                        snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
+                        *(buf + 4) = ':';
                         if (xwrite(sock, buf, headsize) == -1)
                                 goto end;
                         /* 本地端也须向上转一层 */
