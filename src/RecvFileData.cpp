@@ -19,6 +19,8 @@
 #include "wrapper.h"
 #include "output.h"
 #include "utils.h"
+#include <utime.h>
+
 extern ProgramData progdt;
 extern MainWindow mwin;
 extern LogSystem lgsys;
@@ -142,6 +144,7 @@ void RecvFileData::RecvRegularFile()
         Command cmd;
         int64_t finishsize;
         int sock, fd;
+        struct utimbuf timebuf;
 
         /* 创建文件传输套接口 */
         if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -167,6 +170,11 @@ void RecvFileData::RecvRegularFile()
         gettimeofday(&filetime, NULL);
         finishsize = RecvData(sock, fd, file->filesize, 0);
         close(fd);
+        if(file->filectime != 0) {
+            timebuf.actime = int(file->filectime);
+            timebuf.modtime = int(file->filectime);
+            utime(file->filepath,&timebuf);
+        }
         sumsize += finishsize;
 
         /* 考察处理结果 */
@@ -189,13 +197,14 @@ void RecvFileData::RecvDirFiles()
 {
         AnalogFS afs;
         Command cmd;
-        gchar *dirname, *pathname, *filename;
+        gchar *dirname, *pathname, *filename, *filectime,*filemtime;
         int64_t filesize, finishsize;
         uint32_t headsize, fileattr;
         int sock, fd;
         ssize_t size;
         size_t len;
         bool result;
+        struct utimbuf timebuf;
 
         /* 创建文件传输套接口 */
         if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -226,6 +235,12 @@ void RecvFileData::RecvDirFiles()
                 filename = ipmsg_get_filename(buf, ':', 1);
                 filesize = iptux_get_hex64_number(buf, ':', 2);
                 fileattr = iptux_get_hex_number(buf, ':', 3);
+                filectime = iptux_get_section_string(buf, ':', 4);
+                filemtime = iptux_get_section_string(buf, ':', 5);
+                if (filectime != NULL)
+                    timebuf.actime = int(iptux_get_hex_number(filectime, '=', 1));
+                if (filemtime != NULL)
+                    timebuf.modtime = int(iptux_get_hex_number(filemtime, '=', 1));
                 len = size - headsize;  //更新缓冲区有效数据量
 
                 /* 转码(如果好友不兼容iptux协议) */
@@ -236,7 +251,6 @@ void RecvFileData::RecvDirFiles()
                         g_free(filename);
                 else
                         dirname = filename;
-
                 /* 更新UI参考值 */
                 //要有谁敢在下一段代码中释放(dirname)，那可别怪我没提醒哦
                 g_datalist_set_data_full(&para, "filename", dirname,
@@ -257,6 +271,12 @@ void RecvFileData::RecvDirFiles()
                         afs.chdir("..");
                         if (len)
                                 memmove(buf, buf + headsize, len);
+                        if( strlen(afs.cwd()) < strlen(file->filepath))
+                        {
+                            //如果这时候还不成功结束就会陷入while开关第1句的死循环
+                            result = true;
+                            goto end;
+                        }
                         continue;
                 case IPMSG_FILE_DIR:
                         afs.mkdir(dirname, 0777);
@@ -295,6 +315,12 @@ void RecvFileData::RecvDirFiles()
                         }
                 }
                 close(fd);
+                if(GET_MODE(fileattr) == IPMSG_FILE_REGULAR) {
+                    pathname = ipmsg_get_pathname_full(afs.cwd(),dirname);
+                    if(utime(pathname,&timebuf) < 0)
+                        g_print("Error to modify the file %s's filetime!\n",pathname);
+                    g_free(pathname);
+                }
                 sumsize += filesize;
         }
         result = true;

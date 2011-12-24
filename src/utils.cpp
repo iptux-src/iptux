@@ -560,3 +560,17 @@ char *iptux_erase_filename_suffix(const char *filename)
 
         return file;
 }
+/**
+ * 从给定的文件路径和文件名返回全文件名.
+ * @param path  文件路径
+ * @param name  文件名
+ * @return 带路径的文件名 *
+ */
+char *ipmsg_get_pathname_full(const char *path, const char *name)
+{
+    char filename[MAX_PATHLEN];
+    strcpy(filename,path);
+    strcat(filename,"/");
+    strcat(filename,name);
+    return g_strdup(filename);
+}

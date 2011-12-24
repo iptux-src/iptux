@@ -158,6 +158,7 @@ FileInfo *RecvFile::DivideFileinfo(char **extra)
         file->fileattr = iptux_get_hex_number(*extra, ':', 4);
         file->filesize = iptux_get_hex64_number(*extra, ':', 2);
         file->filepath = ipmsg_get_filename(*extra, ':', 1);
+        file->filectime = iptux_get_hex_number(*extra, ':', 3);
 
         //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
         *extra = strchr(*extra, '\a');

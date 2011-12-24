@@ -61,5 +61,5 @@ char *ipmsg_get_attach(const char *msg, char ch, uint8_t times);
 char *ipmsg_get_filename_pal(const char *pathname);
 char *ipmsg_get_filename_me(const char *pathname, char **path);
 char *iptux_erase_filename_suffix(const char *filename);
-
+char *ipmsg_get_pathname_full(const char *path, const char *name);
 #endif

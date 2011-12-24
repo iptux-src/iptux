@@ -30,6 +30,10 @@ private:
         int mergepath(char tpath[], const char *npath);
 
         char path[MAX_PATHLEN]; //当前工作路径
+public:
+        inline char* cwd() {
+                        return path;
+                }
 };
 
 #endif

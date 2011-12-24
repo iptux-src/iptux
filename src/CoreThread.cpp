@@ -785,30 +785,31 @@ FileInfo *CoreThread::GetFileFromAll(uint32_t fileid)
  * @param PacketN 文件包ID
  * @return 文件信息
  * 这个函数主要是为了兼容adroid版的信鸽(IPMSG),IPMSG把包编号转换为
- * 16进制放在了本来应该是fileid的地方,所以在调用这个函数时,传给packageNum
- * 的是fileid
+ * 16进制放在了本来应该是fileid的地方,在存放文件创建时间的地方放上了包内编号
+ * 所以在调用这个函数时,传给packageNum的是fileid,
+ * 传的filectime实际上是包内编号
  */
-FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,uint32_t filenum)
+FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,uint32_t filectime)
 {
-        GSList *tlist;
+    GSList *tlist;
 
-        tlist = prlist;
-        while (tlist) {
-            if( (((FileInfo *)tlist->data)->packetn == packageNum)
-                    && ((((FileInfo *)tlist->data)->filenum == filenum) ) )
-                        break;
-                tlist = g_slist_next(tlist);
-        }
-	if (tlist != NULL)
-		return (FileInfo *)(tlist ? tlist->data : NULL);
-	tlist =  pblist ; 
-        while (tlist) {
-             if( (((FileInfo *)tlist->data)->packetn == packageNum)
-                    && ((((FileInfo *)tlist->data)->filenum == filenum) ) )
-                        break;
-                tlist = g_slist_next(tlist);
-        }
-        return (FileInfo *)(tlist ? tlist->data : NULL);
+    tlist = prlist;
+    while (tlist) {
+        if( (((FileInfo *)tlist->data)->packetn == packageNum)
+                && ((((FileInfo *)tlist->data)->filenum == filectime) ) )
+                    break;
+            tlist = g_slist_next(tlist);
+    }
+    if (tlist != NULL)
+            return (FileInfo *)(tlist ? tlist->data : NULL);
+    tlist =  pblist ;
+    while (tlist) {
+         if( (((FileInfo *)tlist->data)->packetn == packageNum)
+                && ((((FileInfo *)tlist->data)->filenum == filectime) ) )
+                    break;
+            tlist = g_slist_next(tlist);
+    }
+    return (FileInfo *)(tlist ? tlist->data : NULL);
 }
 
 /**
