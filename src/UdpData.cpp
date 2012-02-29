@@ -4,10 +4,11 @@
 // Description:
 //
 //
-// Author: Jally <jallyx@163.com>, (C) 2008
+// Author: cwll <cwll2009@126.com> ,(C)2012
+//        Jally <jallyx@163.com>, (C) 2008
 //
 // Copyright: See COPYING file that comes with this distribution
-//
+// 2012.02 在接收消息中去掉了群组模式，群组模式只用来发消息
 //
 #include "UdpData.h"
 #include "ProgramData.h"
@@ -279,6 +280,7 @@ void UdpData::SomeoneAbsence()
 
 /**
  * 好友发送消息.
+ *
  */
 void UdpData::SomeoneSendmsg()
 {
@@ -313,48 +315,23 @@ void UdpData::SomeoneSendmsg()
         text = ipmsg_get_attach(buf, ':', 5);
         if (text && *text != '\0') {
                 /*/* 插入消息 */
-                if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
-                        InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST, text);
-                else
+//                if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
+//                        InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST, text);
+//                else
                         InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
-                /*/* 注册消息 */
-                pthread_mutex_lock(cthrd.GetMutex());
-                if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
-                        grpinf = cthrd.GetPalBroadcastItem(pal);
-                else
-                        grpinf = cthrd.GetPalRegularItem(pal);
-                if (!grpinf->dialog && !cthrd.MsglineContainItem(grpinf))
-                        cthrd.PushItemToMsgline(grpinf);
-                pthread_mutex_unlock(cthrd.GetMutex());
-                /* 是否直接弹出聊天窗口 */
-                if (FLAG_ISSET(progdt.flags, 7)) {
-                        gdk_threads_enter();
-                        if (!(grpinf->dialog)) {
-                             switch (grpinf->type) {
-                             case GROUP_BELONG_TYPE_REGULAR:
-                                  DialogPeer::PeerDialogEntry(grpinf);
-                                  break;
-                             case GROUP_BELONG_TYPE_SEGMENT:
-                             case GROUP_BELONG_TYPE_GROUP:
-                             case GROUP_BELONG_TYPE_BROADCAST:
-                                  DialogGroup::GroupDialogEntry(grpinf);
-                             default:
-                                  break;
-                             }
-                        } else {
-                             gtk_window_present(GTK_WINDOW(grpinf->dialog));
-                        }
-                        gdk_threads_leave();
-                }
-
         }
         g_free(text);
+        /*/* 注册消息 */
+        pthread_mutex_lock(cthrd.GetMutex());
+//        if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
+//                grpinf = cthrd.GetPalBroadcastItem(pal);
+//        else
+                grpinf = cthrd.GetPalRegularItem(pal);
+        if (!grpinf->dialog && !cthrd.MsglineContainItem(grpinf))
+                cthrd.PushItemToMsgline(grpinf);
+        pthread_mutex_unlock(cthrd.GetMutex());
 
-        /* 播放提示音 */
-        if (FLAG_ISSET(progdt.sndfgs, 1))
-                sndsys.Playing(progdt.msgtip);
-
-        /* 标记位处理 */
+        /* 标记位处理 先处理底层数据，后面显示窗口*/
         if (commandno & IPMSG_FILEATTACHOPT) {
                 if ((commandno & IPTUX_SHAREDOPT) && (commandno & IPTUX_PASSWDOPT)) {
                         pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedPasswd), pal);
@@ -362,6 +339,30 @@ void UdpData::SomeoneSendmsg()
                 } else
                         RecvPalFile();
         }
+        /* 是否直接弹出聊天窗口 */
+        if (FLAG_ISSET(progdt.flags, 7)) {
+                gdk_threads_enter();
+                if (!(grpinf->dialog)) {
+//                     switch (grpinf->type) {
+//                     case GROUP_BELONG_TYPE_REGULAR:
+                          DialogPeer::PeerDialogEntry(grpinf);
+//                          break;
+//                     case GROUP_BELONG_TYPE_SEGMENT:
+//                     case GROUP_BELONG_TYPE_GROUP:
+//                     case GROUP_BELONG_TYPE_BROADCAST:
+//                          DialogGroup::GroupDialogEntry(grpinf);
+//                     default:
+//                          break;
+//                     }
+                } else {
+                     gtk_window_present(GTK_WINDOW(grpinf->dialog));
+                }
+                gdk_threads_leave();
+        }
+
+        /* 播放提示音 */
+        if (FLAG_ISSET(progdt.sndfgs, 1))
+                sndsys.Playing(progdt.msgtip);
 }
 
 /**

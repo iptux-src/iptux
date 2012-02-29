@@ -41,7 +41,7 @@ GroupInfo::~GroupInfo()
 }
 
 FileInfo::FileInfo():fileid(0), packetn(0), fileattr(0), filesize(-1),
- fileown(NULL), filepath(NULL)
+    finishedsize(0),fileown(NULL), filepath(NULL)
 {}
 FileInfo::~FileInfo()
 {

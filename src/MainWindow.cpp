@@ -27,7 +27,7 @@ extern ProgramData progdt;
 extern CoreThread cthrd;
 extern MainWindow mwin;
 
-#define TRANS_TREE_MAX 13
+#define TRANS_TREE_MAX 14
 
 /**
  * 类构造函数.
@@ -420,7 +420,7 @@ void MainWindow::UpdateItemToTransTree(GData **para)
                            9, g_datalist_get_data(para, "cost"),
                            10, g_datalist_get_data(para, "remain"),
                            11, g_datalist_get_data(para, "rate"),
-                           12, g_datalist_get_data(para, "data"), -1);
+                           13, g_datalist_get_data(para, "data"),-1);
 }
 
 /**
@@ -1018,22 +1018,23 @@ GtkTreeModel *MainWindow::CreatePallistModel()
 
 /**
  * 文件传输树(trans-tree)底层数据结构.
- * 13,0 status,1 task,2 peer,3 ip,4 filename,5 filelength,6 finishlength,7 progress,
- *    8 pro-text,9 cost,10 remain,11 rate,12 data,13 para \n
- * 任务状态;任务类型;任务对端;文件名;文件长度;完成长度;完成进度;
- * 进度串;已花费时间;任务剩余时间;传输速度;文件传输类;参数指针值 \n
+ * 14,0 status,1 task,2 peer,3 ip,4 currentfilename,5 filelength,6 finishlength,7 progress,
+ *    8 pro-text,9 cost,10 remain,11 rate,12,filename,13 data,14 para \n
+ * 任务状态;任务类型;任务对端;当前正传输的文件名(如果当前是文件夹，该项指正在传输的文件夹内单个文件,
+ * 整个文件夹传输完成后,该项与13项相同,指向当前是文件夹);文件长度;完成长度;完成进度;
+ * 进度串;已花费时间;任务剩余时间;传输速度;文件名;文件传输类;参数指针值 \n
  * @return trans-model
  */
 GtkTreeModel *MainWindow::CreateTransModel()
 {
         GtkListStore *model;
 
-        model = gtk_list_store_new(14, GDK_TYPE_PIXBUF, G_TYPE_STRING,
+        model = gtk_list_store_new(15, GDK_TYPE_PIXBUF, G_TYPE_STRING,
                                    G_TYPE_STRING,G_TYPE_STRING,G_TYPE_STRING,
                                    G_TYPE_STRING, G_TYPE_STRING,
                                    G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING,
-                                   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER,
-                                   G_TYPE_POINTER);
+                                   G_TYPE_STRING, G_TYPE_STRING,G_TYPE_STRING,
+                                   G_TYPE_POINTER,G_TYPE_POINTER);
 
         return GTK_TREE_MODEL(model);
 }
@@ -1806,7 +1807,8 @@ gboolean MainWindow::UpdateTransUI(GtkWidget *treeview)
                                            8, g_datalist_get_data(para, "pro-text"),
                                            9, g_datalist_get_data(para, "cost"),
                                            10, g_datalist_get_data(para, "remain"),
-                                           11, g_datalist_get_data(para, "rate"), -1);
+                                           11, g_datalist_get_data(para, "rate"),
+                                           13, g_datalist_get_data(para, "data"),-1);
                 }
         } while (gtk_tree_model_iter_next(model, &iter));
 
@@ -1862,7 +1864,7 @@ void MainWindow::ShowTransWindow(GData **widset)
         gtk_widget_show(widget);
         gtk_window_present(GTK_WINDOW(widget));
         widget = GTK_WIDGET(g_datalist_get_data(widset, "trans-treeview-widget"));
-        timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateTransUI), widget);
+        timerid = gdk_threads_add_timeout(200, GSourceFunc(UpdateTransUI), widget);
         g_object_set_data(G_OBJECT(widget), "update-timer-id", GUINT_TO_POINTER(timerid));
 }
 
@@ -2061,7 +2063,6 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf)
                 cthrd.AttachItemToBlacklist(grpinf->grpid);
         pthread_mutex_unlock(cthrd.GetMutex());
 
-
 }
 
 /**
@@ -2128,7 +2129,6 @@ void MainWindow::PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-
         /* 检查是否需要新建对话框 */
         if (grpinf->dialog) {
                 gtk_window_present(GTK_WINDOW(grpinf->dialog));
@@ -2291,7 +2291,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
         session->AttachEnclosure(list);
         g_slist_foreach(list, GFunc(g_free), NULL);
         g_slist_free(list);
-        session->ShowEnclosure();
+//        session->ShowEnclosure();
 }
 
 /**
@@ -2518,7 +2518,9 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
                 if (!(grpinf->dialog))
                         DialogPeer::PeerDialogEntry(grpinf);
                 else
-                        gtk_window_present(GTK_WINDOW(grpinf->dialog));
+                    gtk_window_present(GTK_WINDOW(grpinf->dialog));
+//                if(pal->filelist)
+//                    ((DialogPeer *)(grpinf->dialog))->FillFileToReceiveModel();
         }
 }
 
@@ -2572,7 +2574,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
         session->AttachEnclosure(list);
         g_slist_foreach(list, GFunc(g_free), NULL);
         g_slist_free(list);
-        session->ShowEnclosure();
+//        session->ShowEnclosure();
 }
 
 /**

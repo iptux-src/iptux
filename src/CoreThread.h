@@ -4,8 +4,12 @@
 // Description:
 // 程序中的核心线程类，实际上也被设计成了所有底层核心数据的中心点，
 // 所有数据的更新、查询、插入、删除都必须通过本类接口才能完成。
-//
-// Author: Jally <jallyx@163.com>, (C) 2008
+// -----------------------------------------------------
+//2012.02:把文件传送的核心数据全部放在CoreThread类。
+// prlist不变,增加ecsList来存放好友发来文件.
+//------------------------------------------------------
+// Author: cwll <cwll2009@126.com>, (C) 2012
+//         Jally <jallyx@163.com>, (C) 2008
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -61,6 +65,11 @@ public:
         void PushItemToMsgline(GroupInfo *grpinf);
         void PopItemFromMsgline(GroupInfo *grpinf);
 
+        GSList *GetPalEnclosure(PalInfo *pal);
+        void PushItemToEnclosureList(FileInfo *file);
+        void PopItemFromEnclosureList(FileInfo *file);
+        GSList *GetPalRcvdEnclosure(PalInfo *pal);
+
         void AttachFileToPublic(FileInfo *file);
         void DelFileFromPublic(uint32_t fileid);
         void ClearFileFromPublic();
@@ -100,6 +109,8 @@ private:
 
         uint32_t pbn, prn;      //当前已使用的文件编号(共享/私有)
         GSList *pblist, *prlist;        //文件链表(共享/私有)
+        GSList *ecsList;                //文件链表(好友发过来)
+//        GSList *rcvdList;               //文件链表(好友发过来已接收)
         char *passwd;           //共享文件密码
 
         guint timerid;  //定时器ID

@@ -106,6 +106,7 @@ public:
         uint32_t packetn;       ///< 包编号
         uint32_t fileattr;      ///< 文件属性
         int64_t filesize;       ///< 文件大小
+        int64_t finishedsize;   ///< 已完成大小
         PalInfo *fileown;       ///< 文件拥有者(来自好友*)
         char *filepath; ///< 文件路径 *
         uint32_t filectime;        ///<  文件创建时间
@@ -167,7 +168,7 @@ public:
         virtual void InsertPalData(PalInfo *pal) = 0;   ///< 插入好友数据
         virtual void DelPalData(PalInfo *pal) = 0;      ///< 删除好友数据
         virtual void ClearAllPalData() = 0;             ///< 清除所有好友数据
-        virtual void ShowEnclosure() = 0;               ///< 显示附件
+//        virtual void ShowEnclosure() = 0;               ///< 显示附件
         virtual void AttachEnclosure(const GSList *list) = 0;   ///< 添加附件
         virtual void OnNewMessageComing() = 0;          ///< 窗口打开情况下有新消息
 };

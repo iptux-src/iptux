@@ -30,7 +30,7 @@ extern LogSystem lgsys;
 CoreThread::CoreThread():tcpsock(-1), udpsock(-1), server(true),
  pallist(NULL), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
  blacklist(NULL), pbn(1), prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL),
- passwd(NULL), timerid(0)
+ ecsList(NULL),passwd(NULL)
 {
         g_queue_init(&msgline);
         pthread_mutex_init(&mutex, NULL);
@@ -881,6 +881,10 @@ void CoreThread::ClearSublayer()
         g_slist_free(prlist);
         g_free(passwd);
 
+        for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
+                delete (FileInfo *)tlist->data;
+        g_slist_free(ecsList);
+
         if (timerid > 0)
                 g_source_remove(timerid);
         pthread_mutex_destroy(&mutex);
@@ -976,7 +980,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
                 header = getformattime(FALSE, "%s", para->pal ? para->pal->name : _("unknown"));
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
-                                         header, -1, "pal-color", NULL);
+                                                         header, -1, "pal-color", NULL);
                 g_free(header);
                 break;
         case MESSAGE_SOURCE_TYPE_SELF:
@@ -990,7 +994,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
                 header = getformattime(FALSE, "%s", _("<ERROR>"));
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
-                                         header, -1, "error-color", NULL);
+                                                         header, -1, "error-color", NULL);
                 g_free(header);
                 break;
         default:
@@ -1275,4 +1279,37 @@ gboolean CoreThread::WatchCoreStatus(CoreThread *pcthrd)
         pthread_mutex_unlock(&pcthrd->mutex);
 
         return TRUE;
+}
+/**
+ * 获取特定好友发过来的文件(非UI线程安全).
+ * @param pal class PalInfo
+ * @return palecslist 该好友发过来待接收的文件列表
+ */
+GSList *CoreThread::GetPalEnclosure(PalInfo *pal)
+{
+    GSList *tlist,*palecslist;
+    palecslist = NULL;
+    for (tlist = ecsList; tlist; tlist = g_slist_next(tlist)) {
+        if (((FileInfo *)tlist->data)->fileown == pal) {
+            palecslist = g_slist_append(palecslist,tlist->data);
+        }
+    }
+    return palecslist;
+}
+/**
+ * 压入项进接收文件列表(非UI线程安全).
+ * @param file 文件类指针
+ */
+void CoreThread::PushItemToEnclosureList(FileInfo *file)
+{
+    ecsList = g_slist_append(ecsList, file);
+}
+/**
+ * 从接收文件列表删除项(非UI线程安全).
+ * @param file 文件类指针
+ */
+void CoreThread::PopItemFromEnclosureList(FileInfo *file)
+{
+    ecsList = g_slist_remove(ecsList, file);
+    delete file;
 }

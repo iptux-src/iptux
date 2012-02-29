@@ -26,6 +26,7 @@ public:
         virtual void InsertPalData(PalInfo *pal);
         virtual void DelPalData(PalInfo *pal);
         virtual void ClearAllPalData();
+        virtual GSList *GetSelPal();
 private:
         virtual void InitSublayerSpecify();
         void ReadUILayout();

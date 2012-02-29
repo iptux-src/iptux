@@ -11,9 +11,11 @@
 //
 #include "dialog.h"
 #include "MainWindow.h"
+#include "ProgramData.h"
 #include "callback.h"
 #include "output.h"
 extern MainWindow mwin;
+extern ProgramData progdt;
 
 /**
  * 弹出请求程序退出的对话框.
@@ -210,4 +212,29 @@ mark:   switch (result = gtk_dialog_run(GTK_DIALOG(dialog))) {
                 return text2;
         }
         return NULL;
+}
+/**
+ * 弹出接收文件存放位置的对话框.
+ * @param parent parent window
+ * @return path string
+ */
+char *pop_save_path(GtkWidget *parent)
+{
+    char *path;
+    GtkWidget *dialog;
+
+    dialog = gtk_file_chooser_dialog_new (_("Please select a folder to save files."),
+                                          GTK_WINDOW(parent),
+                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                          GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                          NULL);
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),progdt.path);
+    path = progdt.path;
+    if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+        path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER (dialog));
+    }
+    gtk_widget_destroy (dialog);
+    return path;
 }

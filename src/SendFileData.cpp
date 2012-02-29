@@ -154,7 +154,7 @@ void SendFileData::SendRegularFile()
         gettimeofday(&filetime, NULL);
         finishsize = SendData(fd, file->filesize);
         close(fd);
-        sumsize += finishsize;
+//        sumsize += finishsize;
 
         /* 考察处理结果 */
         if (finishsize < file->filesize) {
@@ -249,7 +249,7 @@ start:                  if (afs.stat(dirt->d_name, &st) == -1
                                 close(fd);
                                 if (finishsize < st.st_size)
                                         goto end;
-                                sumsize += finishsize;
+//                                sumsize += finishsize;
                         } else if (S_ISDIR(st.st_mode)) {       //目录文件
                                 if (dir)        //若当前目录流有效则须压入堆栈
                                         g_queue_push_head(&dirstack, dir);
@@ -324,6 +324,8 @@ int64_t SendFileData::SendData(int fd, int64_t filesize)
                 if (size > 0 && xwrite(sock, buf, size) == -1)
                         return finishsize;
                 finishsize += size;
+                sumsize += size;
+                file->finishedsize = sumsize;
                 /* 判断是否需要更新UI参考值 */
                 gettimeofday(&val2, NULL);
                 difftime = difftimeval(val2, val1);

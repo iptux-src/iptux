@@ -64,10 +64,6 @@ void DialogGroup::GroupDialogEntry(GroupInfo *grpinf)
         widget = GTK_WIDGET(g_datalist_get_data(&dlggrp->widset,
                                          "input-textview-widget"));
         gtk_widget_grab_focus(widget);
-        /* 隐藏附件窗体 */
-        widget = GTK_WIDGET(g_datalist_get_data(&dlggrp->widset,
-                                         "enclosure-frame-widget"));
-        gtk_widget_hide(widget);
         /* 从消息队列中移除 */
         pthread_mutex_lock(cthrd.GetMutex());
         if (cthrd.MsglineContainItem(grpinf)) {
@@ -194,9 +190,6 @@ void DialogGroup::InitSublayerSpecify()
         g_datalist_set_data_full(&mdlset, "member-model", model,
                                  GDestroyNotify(g_object_unref));
         FillMemberModel(model);
-	model = CreateEnclosureModel();
-	g_datalist_set_data_full(&mdlset, "enclosure-model", model,
-				 GDestroyNotify(g_object_unref));
 }
 
 
@@ -332,7 +325,7 @@ GtkWidget *DialogGroup::CreateAllArea()
         g_signal_connect(vpaned, "notify::position",
                          G_CALLBACK(PanedDivideChanged), &dtset);
         gtk_paned_pack1(GTK_PANED(vpaned), CreateMemberArea(), TRUE, TRUE);
-        gtk_paned_pack2(GTK_PANED(vpaned), CreateEnclosureArea(), FALSE, TRUE);
+        gtk_paned_pack2(GTK_PANED(vpaned), CreateFileSendArea(), FALSE, TRUE);
         /*/* 加入聊天历史记录&输入区域 */
         vpaned = gtk_vpaned_new();
         g_object_set_data(G_OBJECT(vpaned), "position-name",
@@ -829,4 +822,32 @@ void DialogGroup::SendMessage(DialogGroup *dlggrp)
 {
         dlggrp->SendEnclosureMsg();
         dlggrp->SendTextMsg();
+}
+/**
+ * 获取待发送成员列表.
+ * @return plist 获取待发送成员列表
+ * 调用该函数后须free plist
+ */
+GSList *DialogGroup::GetSelPal()
+{
+    GtkWidget *widget;
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    gboolean active;
+    PalInfo *pal;
+    GSList *plist;
+
+    /* 考察是否有成员 */
+    widget = GTK_WIDGET(g_datalist_get_data(&widset, "member-treeview-widget"));
+    model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
+    if (!gtk_tree_model_get_iter_first(model, &iter))
+       return NULL;
+
+    plist = NULL;
+    do {
+            gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
+            if (active)
+                    plist = g_slist_append(plist, pal);
+    } while (gtk_tree_model_iter_next(model, &iter));
+    return plist;
 }

@@ -175,7 +175,7 @@ void RecvFileData::RecvRegularFile()
             timebuf.modtime = int(file->filectime);
             utime(file->filepath,&timebuf);
         }
-        sumsize += finishsize;
+//        sumsize += finishsize;
 
         /* 考察处理结果 */
         if (finishsize < file->filesize) {
@@ -321,7 +321,7 @@ void RecvFileData::RecvDirFiles()
                         g_print("Error to modify the file %s's filetime!\n",pathname);
                     g_free(pathname);
                 }
-                sumsize += filesize;
+//                sumsize += filesize;
         }
         result = true;
 
@@ -370,6 +370,8 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize, int64_t offse
                 if (size > 0 && xwrite(fd, buf, size) == -1)
                         return finishsize;
                 finishsize += size;
+                sumsize += size;
+                file->finishedsize = sumsize;
                 /* 判断是否需要更新UI参考值 */
                 gettimeofday(&val2, NULL);
                 difftime = difftimeval(val2, val1);
@@ -394,6 +396,9 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize, int64_t offse
                         g_datalist_set_data_full(&para, "rate",
                                          numeric_to_rate(rate),
                                          GDestroyNotify(g_free));
+//                        g_datalist_set_data_full(&para, "finishsize",
+//                                                 numeric_to_str(sumsize),
+//                                                 GDestroyNotify(g_free));
                         val1 = val2;    //更新时间参考点
                         tmpsize = finishsize;   //更新下载量
                 }
@@ -425,6 +430,7 @@ void RecvFileData::UpdateUIParaToOver()
                                  GDestroyNotify(g_free));
                 g_datalist_set_data_full(&para, "filelength", numeric_to_size(sumsize),
                                                          GDestroyNotify(g_free));
+                file->finishedsize = file->filesize;
         }
         if (!terminate) {
                 gettimeofday(&time, NULL);
@@ -437,6 +443,7 @@ void RecvFileData::UpdateUIParaToOver()
                                          GDestroyNotify(g_free));
                 g_datalist_set_data(&para, "remain", NULL);
                 g_datalist_set_data(&para, "rate", NULL);
+                file->finishedsize = file->filesize;
         }
         g_datalist_set_data(&para, "data", NULL);
 }

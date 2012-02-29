@@ -18,5 +18,5 @@ bool pop_request_quit();
 bool pop_request_shared_file(PalInfo *pal);
 char *pop_obtain_shared_passwd(PalInfo *pal);
 char *pop_password_settings(GtkWidget *parent);
-
+char *pop_save_path(GtkWidget *parent);
 #endif
