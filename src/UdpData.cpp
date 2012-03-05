@@ -290,6 +290,7 @@ void UdpData::SomeoneSendmsg()
         uint32_t commandno, packetno;
         char *text;
         pthread_t pid;
+        DialogPeer *dlgpr;
 
         /* 如果对方兼容iptux协议，则无须再转换编码 */
         pal = cthrd.GetPalFromList(ipv4);
@@ -339,6 +340,9 @@ void UdpData::SomeoneSendmsg()
                 } else
                         RecvPalFile();
         }
+        dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(grpinf->dialog),"dialog"));
+        if(grpinf->dialog)
+            dlgpr->ShowDialogPeer(dlgpr);
         /* 是否直接弹出聊天窗口 */
         if (FLAG_ISSET(progdt.flags, 7)) {
                 gdk_threads_enter();

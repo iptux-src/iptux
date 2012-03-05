@@ -239,6 +239,7 @@ GtkWidget *DialogPeer::CreateMainWindow()
         widget_enable_dnd_uri(window);
         g_datalist_set_data(&widset, "window-widget", window);
         grpinf->dialog = window;
+        g_object_set_data(G_OBJECT(window),"dialog",this);
 
         MainWindowSignalSetup(window);
         g_signal_connect_swapped(GTK_OBJECT(window), "show",
