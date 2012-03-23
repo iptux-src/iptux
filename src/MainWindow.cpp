@@ -420,6 +420,7 @@ void MainWindow::UpdateItemToTransTree(GData **para)
                            9, g_datalist_get_data(para, "cost"),
                            10, g_datalist_get_data(para, "remain"),
                            11, g_datalist_get_data(para, "rate"),
+                           12,g_datalist_get_data(para, "filepath"),
                            13, g_datalist_get_data(para, "data"),-1);
 }
 
@@ -1018,11 +1019,11 @@ GtkTreeModel *MainWindow::CreatePallistModel()
 
 /**
  * 文件传输树(trans-tree)底层数据结构.
- * 14,0 status,1 task,2 peer,3 ip,4 currentfilename,5 filelength,6 finishlength,7 progress,
- *    8 pro-text,9 cost,10 remain,11 rate,12,filename,13 data,14 para \n
- * 任务状态;任务类型;任务对端;当前正传输的文件名(如果当前是文件夹，该项指正在传输的文件夹内单个文件,
- * 整个文件夹传输完成后,该项与13项相同,指向当前是文件夹);文件长度;完成长度;完成进度;
- * 进度串;已花费时间;任务剩余时间;传输速度;文件名;文件传输类;参数指针值 \n
+ * 14,0 status,1 task,2 peer,3 ip,4 filename,5 filelength,6 finishlength,7 progress,
+ *    8 pro-text,9 cost,10 remain,11 rate,12,pathname,13 data,14 para \n
+ * 任务状态;任务类型;任务对端;文件名(如果当前是文件夹，该项指正在传输的文件夹内单个文件,
+ * 整个文件夹传输完成后,该项指向当前是文件夹);文件长度;完成长度;完成进度;
+ * 进度串;已花费时间;任务剩余时间;传输速度;带路径文件名(不显示);文件传输类;参数指针值 \n
  * @return trans-model
  */
 GtkTreeModel *MainWindow::CreateTransModel()
@@ -1937,13 +1938,12 @@ void MainWindow::OpenThisFile(GtkTreeModel *model)
                                              "selected-path"))))
             return;
     gtk_tree_model_get_iter(model, &iter, path);
-    gtk_tree_model_get(model, &iter, 4, &filename, -1);
+    gtk_tree_model_get(model, &iter, 12, &filename, -1);
     if (filename){
-        filename = g_strconcat(progdt.path,"/",filename,NULL);
         if( !g_file_test(filename,G_FILE_TEST_EXISTS)){
             GtkWidget *dialog = gtk_message_dialog_new(NULL,
             GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_OK, "The file you want to open not exist!");
+            GTK_BUTTONS_OK, _("The file you want to open not exist!"));
             gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
             gtk_dialog_run(GTK_DIALOG(dialog));
             gtk_widget_destroy(dialog);
@@ -1961,15 +1961,27 @@ void MainWindow::OpenContainingFolder(GtkTreeModel *model)
 {
     GtkTreePath *path;
     GtkTreeIter iter;
-    gchar *filename;
-
+    gchar *filename,*filepath,*name;
     if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                              "selected-path"))))
             return;
     gtk_tree_model_get_iter(model, &iter, path);
-    gtk_tree_model_get(model, &iter, 4, &filename, -1);
-    if (filename)
-        iptux_open_url(progdt.path);
+    gtk_tree_model_get(model, &iter, 12, &filename, -1);
+    if (filename) {
+        name = ipmsg_get_filename_me(filename,&filepath);
+        if( !g_file_test(filepath,G_FILE_TEST_EXISTS)){
+            GtkWidget *dialog = gtk_message_dialog_new(NULL,
+            GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
+            GTK_BUTTONS_OK, _("The path you want to open not exist!"));
+            gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            return;
+        }
+        iptux_open_url(filepath);
+        g_free(name);
+        g_free(filepath);
+    }
 }
 
 /**

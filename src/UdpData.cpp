@@ -291,6 +291,7 @@ void UdpData::SomeoneSendmsg()
         char *text;
         pthread_t pid;
         DialogPeer *dlgpr;
+        GtkWidget *window;
 
         /* 如果对方兼容iptux协议，则无须再转换编码 */
         pal = cthrd.GetPalFromList(ipv4);
@@ -340,7 +341,9 @@ void UdpData::SomeoneSendmsg()
                 } else
                         RecvPalFile();
         }
-        dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(grpinf->dialog),"dialog"));
+        window = GTK_WIDGET(grpinf->dialog);
+        //这里不知道为什么运行时一直会提示window不是object
+        dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window),"dialog"));
         if(grpinf->dialog)
             dlgpr->ShowDialogPeer(dlgpr);
         /* 是否直接弹出聊天窗口 */

@@ -132,6 +132,7 @@ void RecvFileData::CreateUIPara()
         g_datalist_set_data(&para, "cost", (gpointer)("00:00:00"));
         g_datalist_set_data(&para, "remain", (gpointer)(_("unknown")));
         g_datalist_set_data(&para, "rate", (gpointer)("0B/s"));
+        g_datalist_set_data(&para,"filepath",file->filepath);
         g_datalist_set_data(&para, "data", this);
 }
 

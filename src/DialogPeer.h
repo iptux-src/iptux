@@ -28,6 +28,7 @@ public:
         virtual void DelPalData(PalInfo *pal);
         virtual void ClearAllPalData();
         virtual GSList *GetSelPal();
+        static void ShowDialogPeer(DialogPeer *dlgpr);
 private:
         void ReadUILayout();
         void WriteUILayout();
@@ -61,7 +62,6 @@ private:
                                          guint info, guint time);
         static void AskSharedFiles(GroupInfo *grpinf);
         static void InsertPicture(DialogPeer *dlgpr);
-        static void ShowDialogPeer(DialogPeer *dlgpr);
         static void DialogPeerDestroy(DialogPeer *dlgpr);
         static void ReceiveFile(DialogPeer *dlgpr);
         static void ThreadRecvFile(FileInfo *file);
