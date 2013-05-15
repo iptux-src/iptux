@@ -42,7 +42,7 @@
 #include <dirent.h>
 #include <ftw.h>
 #include <signal.h>
-#include <sys/vfs.h>
+// #include <sys/vfs.h>
 #include <pwd.h>
 #include <getopt.h>
 #include <locale.h>
@@ -50,6 +50,10 @@
 
 #ifndef _
 #define _(string) gettext(string)
+#endif
+
+#ifdef __APPLE__
+#  define O_LARGEFILE 0
 #endif
 
 #endif

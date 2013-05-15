@@ -22,4 +22,4 @@ noinst_HEADERS = AnalogFS.h Command.h CoreThread.h DataSettings.h DetectPal.h Di
 	SoundSystem.h StatusIcon.h TcpData.h UdpData.h callback.h deplib.h dialog.h \
 	ipmsg.h mess.h net.h output.h support.h sys.h utils.h wrapper.h
 
-SUBDIRS = uninstall
+# SUBDIRS = uninstall
