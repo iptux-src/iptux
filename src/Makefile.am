@@ -10,7 +10,7 @@ iptux_SOURCES = AnalogFS.cpp Command.cpp CoreThread.cpp DataSettings.cpp \
 AM_CXXFLAGS = -Wall
 
 # set the include path found by configure
-INCLUDES= $(all_includes) @PACKAGE_CFLAGS@
+AM_CPPFLAGS = $(all_includes) @PACKAGE_CFLAGS@
 
 # the library search path.
 iptux_LDADD = $(INTLLIBS) @PACKAGE_LIBS@
