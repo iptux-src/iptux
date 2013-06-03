@@ -1,0 +1,5 @@
+language: cpp
+compiler:
+  - gcc
+script: autoreconf -i && ./configure && make
+install: sudo apt-get install libgtk2.0-dev libgconf2-dev

@@ -1,5 +1,7 @@
 # iptux: 飞鸽传书GNU/Linux版
 
+[![Build Status](https://travis-ci.org/iptux-src/iptux.png?branch=master)](https://travis-ci.org/iptux-src/iptux)
+
 # Build
 
 ## Linux (Ubuntu)
