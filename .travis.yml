@@ -4,4 +4,4 @@ compiler:
   - clang
 # Change this to your needs
 script: autoreconf -i && ./configure && make
-install: make libgtk2.0-dev libgconf2-dev get-deps
+install: sudo apt-get install libgtk2.0-dev libgconf2-dev
