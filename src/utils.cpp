@@ -12,7 +12,9 @@
 
 #include "utils.h"
 
-#include <sys/vfs.h>
+#ifndef __APPLE__
+  #include <sys/vfs.h>
+#endif
 
 
 /**
