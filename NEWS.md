@@ -1,6 +1,7 @@
 # 0.6.0 (2013-06-XX)
 
-* buildable under Mac OSX
+* [#4] buildable under Linux
+* [#1] buildable under Mac OSX
 
 
 # OLD RELEASES
