@@ -9,7 +9,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
 #include "utils.h"
+
+#include <sys/vfs.h>
+
 
 /**
  * 对两个主机序的ipv4地址进行排序.
