@@ -16,7 +16,7 @@
 
 void iptux_init();
 void iptux_gui_quit();
-void iptux_quit();
+void iptux_quit(int);
 
 void analysis_parameter(int argc, char *const argv[]);
 void print_version();

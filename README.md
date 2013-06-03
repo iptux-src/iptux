@@ -1,5 +1,23 @@
 # iptux: 飞鸽传书GNU/Linux版
 
+# Build
+
+## Linux
+
+TODO
+
+## Mac OSX
+
+```
+brew install autoconf gettext gtk+ gconf
+autoreconf -i
+./configure CPPFLAGS="-I/usr/local/opt/gettext/include" PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
+make
+sudo make install
+iptux
+```
+
+
 ## 贡献
 
 * [launchpad](http://translations.launchpad.net/iptux/trunk) ,为iptux贡献翻译。页面由lidaobing(lidaobing@gmail.com)提供；

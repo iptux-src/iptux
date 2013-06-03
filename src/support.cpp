@@ -36,10 +36,10 @@ void iptux_init()
         sndsys.InitSublayer();
 
         signal(SIGPIPE, SIG_IGN);
-        signal(SIGHUP, (sighandler_t) iptux_quit);
-        signal(SIGINT, (sighandler_t) iptux_quit);
-        signal(SIGQUIT, (sighandler_t) iptux_quit);
-        signal(SIGTERM, (sighandler_t) iptux_quit);
+        signal(SIGHUP, iptux_quit);
+        signal(SIGINT, iptux_quit);
+        signal(SIGQUIT, iptux_quit);
+        signal(SIGTERM, iptux_quit);
 
         lgsys.SystemLog(_("Loading the process successfully!"));
 }
@@ -52,13 +52,13 @@ void iptux_gui_quit()
         if (mwin.TransmissionActive() && !pop_request_quit())
                 return;
         gtk_main_quit();
-        iptux_quit();
+        iptux_quit(0);
 }
 
 /**
  * 程序底层退出.
  */
-void iptux_quit()
+void iptux_quit(int _ignore)
 {
         lgsys.SystemLog(_("The process is about to quit!"));
         exit(0);

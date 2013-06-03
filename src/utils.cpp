@@ -129,6 +129,10 @@ char *convert_encode_copy(const char *string, const char *tocode, const char *fr
  */
 void get_file_system_info(const char *path, int64_t *avail, int64_t *total)
 {
+    #ifdef __APPLE__
+        *avail = *total = 0;
+    #else
+
         struct statfs64 st;
         int result;
 
@@ -143,6 +147,7 @@ mark:   switch (result = statfs64(path, &st)) {
                 *avail = *total = 0;
                 break;
         }
+    #endif
 }
 
 /**
