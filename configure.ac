@@ -35,6 +35,20 @@ AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT8_T
 
+AH_TEMPLATE([GETTEXT_PACKAGE], [Gettext Package])
+AH_TEMPLATE([__EXEC_PATH], [System Execute Directory])
+AH_TEMPLATE([__DATA_PATH], [System Data Directory])
+AH_TEMPLATE([__LOCALE_PATH], [System Locale Directory])
+AH_TEMPLATE([__DESKTOP_PATH], [System Applications Directory])
+AH_TEMPLATE([__LOGO_PATH], [Iptux Logo Directory])
+AH_TEMPLATE([__PIXMAPS_PATH], [Iptux Pixmaps Directory])
+AH_TEMPLATE([__SOUND_PATH], [Iptux Sound Directory])
+AH_TEMPLATE([__IP_TUX__], [Define if you want to use defined macros for iptux])
+AH_TEMPLATE([HAVE_GST], [Define if you system has installed gstreamer already])
+AH_TEMPLATE([MESSAGE], [Define if you want to print message])
+AH_TEMPLATE([WARNING], [Define if you want to print warning])
+AH_TEMPLATE([TRACE], [Define if you want to print trace])
+
 # Checks for library functions.
 AC_FUNC_FORK
 AC_CHECK_FUNCS(bzero endpwent getcwd gettimeofday inet_ntoa memchr memmove \
