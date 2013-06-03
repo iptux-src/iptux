@@ -9,7 +9,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
 #include "utils.h"
+
+#ifndef __APPLE__
+  #include <sys/vfs.h>
+#endif
+
 
 /**
  * 对两个主机序的ipv4地址进行排序.

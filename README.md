@@ -2,7 +2,17 @@
 
 # Build
 
-## Linux
+## Linux (Ubuntu)
+
+```
+sudo apt-get install git libgtk2.0-dev libgconf2-dev g++ make autoconf libtool automake
+git clone git://github.com/iptux-src/iptux.git
+autoreconf -i
+./configure
+make
+sudo make install
+iptux
+```
 
 TODO
 
@@ -10,6 +20,7 @@ TODO
 
 ```
 brew install autoconf gettext gtk+ gconf
+git clone git://github.com/iptux-src/iptux.git
 autoreconf -i
 ./configure CPPFLAGS="-I/usr/local/opt/gettext/include" PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
 make
