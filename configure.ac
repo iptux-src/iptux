@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(iptux, 0.6.0, jallyx@gmail.com)
+AC_INIT(iptux, 0.6.0, [https://github.com/iptux-src/iptux/issues])
 AM_MAINTAINER_MODE
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADERS(config.h)
