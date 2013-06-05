@@ -77,13 +77,9 @@ GTAGS
 *~
 \#*#
 Makefile
-Makefile.in
-aclocal.m4
-autom4te.cache
 config.h
 config.log
 config.status
-configure
 po/POTFILES
 src/iptux
 stamp-h1
