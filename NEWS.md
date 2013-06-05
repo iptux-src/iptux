@@ -1,4 +1,4 @@
-# 0.6.0 (2013-06-XX)
+# 0.6.0 (2013-06-05)
 
 * [#8] fix autoreconf warning
 * [#6] add travis support
