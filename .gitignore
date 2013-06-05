@@ -83,3 +83,4 @@ config.status
 po/POTFILES
 src/iptux
 stamp-h1
+autom4te.cache
