@@ -121,7 +121,7 @@ msgstr "Por favor ingrese su grupo!"
 
 #: src/DataSettings.cpp:200
 msgid "Your face picture:"
-msgstr "Su imágen:"
+msgstr "Su imagen:"
 
 #: src/DataSettings.cpp:213
 #: src/RecvFile.cpp:236
@@ -154,7 +154,7 @@ msgstr "Codificación de red Preferida (Ud. debe saber lo que está por hacer si
 
 #: src/DataSettings.cpp:289
 msgid "Pal's default face picture:"
-msgstr "Imágen por defecto de amigos:"
+msgstr "Imagen por defecto de amigos:"
 
 #: src/DataSettings.cpp:302
 msgid "Panel font:"
@@ -324,7 +324,7 @@ msgstr "Limpiar"
 #: src/DataSettings.cpp:1342
 #: src/RevisePal.cpp:426
 msgid "Please select a face picture"
-msgstr "Por favor seleccione una imágen"
+msgstr "Por favor seleccione una imagen"
 
 #: src/DataSettings.cpp:1365
 msgid "Please select a personal photo"
@@ -535,7 +535,7 @@ msgstr "Cerrar"
 
 #: src/DialogPeer.cpp:378
 msgid "Insert Picture"
-msgstr "Insertar Imágen"
+msgstr "Insertar Imagen"
 
 #: src/DialogPeer.cpp:404
 #: src/MainWindow.cpp:1651
@@ -612,7 +612,7 @@ msgstr ""
 
 #: src/DialogPeer.cpp:686
 msgid "Please select a picture to insert the buffer"
-msgstr "Seleccione una imágen para insertar en la conversación"
+msgstr "Seleccione una imagen para insertar en la conversación"
 
 #: src/HelpDialog.cpp:61
 #: src/HelpDialog.cpp:66
@@ -1013,7 +1013,7 @@ msgstr "Esté SEGURO de saber lo que va a hacer!"
 
 #: src/RevisePal.cpp:161
 msgid "Pal's face picture:"
-msgstr "Imágen del amigo"
+msgstr "Imagen del amigo"
 
 #: src/RevisePal.cpp:175
 msgid "Be compatible with iptux's protocol (DANGEROUS)"
