@@ -84,3 +84,13 @@ po/POTFILES
 src/iptux
 stamp-h1
 autom4te.cache
+Makefile.in
+aclocal.m4
+configure
+desktop/Makefile.in
+pixmaps/Makefile.in
+po/es.gmo
+sound/Makefile.in
+src/Makefile.in
+src/uninstall/Makefile.in
+po/Makefile.in
