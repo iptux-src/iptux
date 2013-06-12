@@ -9,21 +9,19 @@
 ```
 sudo apt-get install git libgtk2.0-dev libgconf2-dev g++ make autoconf libtool automake
 git clone git://github.com/iptux-src/iptux.git
-autoreconf -i
+cd iptux
 ./configure
 make
 sudo make install
 iptux
 ```
 
-TODO
-
 ## Mac OSX
 
 ```
 brew install autoconf gettext gtk+ gconf
 git clone git://github.com/iptux-src/iptux.git
-autoreconf -i
+cd iptux
 ./configure CPPFLAGS="-I/usr/local/opt/gettext/include" PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
 make
 sudo make install
