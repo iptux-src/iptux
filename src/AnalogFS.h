@@ -21,7 +21,8 @@ public:
         ~AnalogFS();
 
         int chdir(const char *dir);
-        int open(const char *fn, int flags, ...);
+        int open(const char *fn, int flags);
+        int open(const char *fn, int flags, mode_t mode);
         int stat(const char *fn, struct stat64 *st);
         int mkdir(const char *dir, mode_t mode);
         int64_t ftwsize(const char *dir);
