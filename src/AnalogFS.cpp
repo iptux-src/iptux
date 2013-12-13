@@ -58,6 +58,11 @@ int AnalogFS::chdir(const char *dir)
         return 0;
 }
 
+int AnalogFS::open(const char *fn, int flags) {
+        return open(fn, flags, 0);
+}
+
+
 /**
  * 打开文件.
  * @param fn 文件路径
@@ -65,29 +70,25 @@ int AnalogFS::chdir(const char *dir)
  * @param ... as in open()
  * @return 文件描述符
  */
-int AnalogFS::open(const char *fn, int flags, ...)
+int AnalogFS::open(const char *fn, int flags, mode_t mode)
 {
         char tpath[MAX_PATHLEN];
-        va_list ap;
         char *tfn;
         int fd;
 
         strcpy(tpath, path);
         mergepath(tpath, fn);
-        va_start(ap, flags);
         if ((flags & O_ACCMODE) == O_WRONLY) {
                 tfn = assert_filename_inexist(tpath);
-                if ((fd = ::open(tfn, flags, va_arg(ap, mode_t))) == -1)
+                if ((fd = ::open(tfn, flags, mode)) == -1)
                         pwarning(_("Open() file \"%s\" failed, %s"), tfn,
                                                          strerror(errno));
                 g_free(tfn);
         } else {
-                if ((fd = ::open(tpath, flags, va_arg(ap, mode_t))) == -1)
+                if ((fd = ::open(tpath, flags, mode)) == -1)
                         pwarning(_("Open() file \"%s\" failed, %s"), tpath,
                                                          strerror(errno));
         }
-        va_end(ap);
-
         return fd;
 }
 
@@ -134,61 +135,45 @@ int AnalogFS::mkdir(const char *dir, mode_t mode)
 
 /**
  * 获取目录总大小.
- * @param dir 目录路径
+ * @param dir_name 目录路径
  * @return 目录大小
  */
-int64_t AnalogFS::ftwsize(const char *dir)
+int64_t AnalogFS::ftwsize(const char *dir_name)
 {
-        struct stat64 st;
-        struct dirent *dirt;
-        DIR *dirs;
-        char tpath[MAX_PATHLEN];
-        int64_t sumsize;
-
-        LIST_HEAD(listhead, entry) head;
-        struct entry {
-                LIST_ENTRY(entry) entries;
-                void *data;
-        } *item;
-        LIST_INIT(&head);
-
-        strcpy(tpath, path);
-        mergepath(tpath, dir);
-        sumsize = 0;
-        dirs = NULL;
-        goto mark;
-        while ( (item = head.lh_first)) {
-                dirs = (DIR *)item->data;
-                LIST_REMOVE(item, entries);
-                g_free(item);
-                while (dirs && (dirt = ::readdir(dirs))) {
-                        if (strcmp(dirt->d_name, ".") == 0
-                                 || strcmp(dirt->d_name, "..") == 0)
-                                continue;
-                        mergepath(tpath, dirt->d_name);
-mark:                   if ((::stat64(tpath, &st) == -1)
-                                 || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
-                                mergepath(tpath, "..");
-                                continue;
-                        }
-                        if (S_ISDIR(st.st_mode)) {
-                                item = (struct entry *)g_malloc(sizeof(struct entry));
-                                item->data = dirs;
-                                LIST_INSERT_HEAD(&head, item, entries);
-                                dirs = ::opendir(tpath);
-                        } else {
-                                sumsize += st.st_size;
-                                mergepath(tpath, "..");
-                        }
-                }
-                if (dirs) {
-                        ::closedir(dirs);
-                        mergepath(tpath, "..");
-                }
+        DIR* dir = opendir(dir_name);
+        if(dir == NULL) {
+                pwarning(_("opendir on \"%s\" failed: %s"), dir_name, strerror(errno));
+                return 0;
         }
 
+        struct dirent *dirt;
+        int64_t sumsize = 0;
+        while(dirt = readdir(dir)) {
+                if(strcmp(dirt->d_name, ".") == 0) {
+                        continue;
+                }
+                if(strcmp(dirt->d_name, "..") == 0) {
+                        continue;
+                }
+                char tpath[MAX_PATHLEN];
+                strcpy(tpath, dir_name);
+                mergepath(tpath, dirt->d_name);
+                struct stat64 st;
+                if(stat64(tpath, &st) == -1) {
+                        continue;
+                }
+                if(S_ISDIR(st.st_mode)) {
+                        sumsize += ftwsize(tpath);
+                } else if(S_ISREG(st.st_mode)) {
+                        sumsize += st.st_size;
+                } else {
+                        // ignore other files
+                }
+
+        }
         return sumsize;
 }
+
 
 /**
  * 打开目录.
