@@ -1,3 +1,7 @@
+# 0.6.1 (2013-XX-XX)
+
+* [#20] fix compile problem under MacOSX 10.9
+
 # 0.6.0 (2013-06-05)
 
 * [#8] fix autoreconf warning
