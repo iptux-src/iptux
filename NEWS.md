@@ -1,4 +1,4 @@
-# 0.6.1 (2013-XX-XX)
+# 0.6.1 (2013-12-14)
 
 * [#20] fix compile problem under MacOSX 10.9
 
