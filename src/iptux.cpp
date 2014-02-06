@@ -38,13 +38,14 @@ int main(int argc, char *argv[])
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
         textdomain(GETTEXT_PACKAGE);
 
+        analysis_parameter(argc, argv);
+
         if (!g_thread_supported())
                 g_thread_init(NULL);
         gdk_threads_init();
         gdk_threads_enter();
         gtk_init(&argc, &argv);
 
-        analysis_parameter(argc, argv);
         iptux_init();
         sicon.CreateStatusIcon();
         mwin.CreateWindow();
