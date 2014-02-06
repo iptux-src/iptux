@@ -84,3 +84,5 @@ po/POTFILES
 src/iptux
 stamp-h1
 autom4te.cache
+*.gmo
+po/Makefile.in
