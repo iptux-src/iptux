@@ -61,6 +61,6 @@ iptux
 
 
 ## TODO
-错误不可避免，请发送错误简介到开发组！https://groups.google.com/group/iptux
+错误不可避免，请发送错误到 https://github.com/iptux-src/iptux/issues
 
-同时可以去wiki的[http://code.google.com/p/iptux/wiki/TODO TODO]页面把自己希望的功能和改进留言在那里。
+同时可以去 https://github.com/iptux-src/iptux/issues
