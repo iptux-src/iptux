@@ -1,4 +1,4 @@
-# 0.6.2 (2014-XX-XX)
+# 0.6.2 (2014-02-06)
 
 * [#26] iptux --version should work without DISPLAY env.
 * [#28] code.google.com -> github.com
