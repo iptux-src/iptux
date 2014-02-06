@@ -950,7 +950,7 @@ GtkWidget *MainWindow::CreateToolMenu()
  */
 GtkWidget *MainWindow::CreateHelpMenu()
 {
-        const char *faq = _("http://code.google.com/p/iptux/wiki/FAQ_EnglishVersion");
+        const char *faq = _("http://code.google.com/p/iptux/wiki/FAQ?wl=en");
         GtkWidget *menushell;
         GtkWidget *menu, *menuitem;
 
