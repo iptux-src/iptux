@@ -84,7 +84,7 @@ GtkWidget *HelpDialog::CreateAboutDialog()
         gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog),
                                          _("A GTK+ based LAN Messenger."));
         gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog),
-                                         "http://code.google.com/p/iptux/");
+                                         "https://github.com/iptux-src/iptux");
         gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), "GPL 2+");
         gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), authors);
         gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(dialog), artists);
@@ -101,7 +101,7 @@ GtkWidget *HelpDialog::CreateMoreDialog()
 {
         char *labels[] = {_("Help"), _("Contributers"), _("..."), NULL};
         char *text[] = {
-                _("Project Home: \nhttp://code.google.com/p/iptux/\n\n"
+                _("Project Home: \nhttps://github.com/iptux-src/iptux\n\n"
                   "User and Developer Group: \nhttps://groups.google.com/group/iptux/\n\n"
                   "Note that you can get help form the project wiki page.\n\n"
                   "If you find no solutions in any of the existed documents, "
