@@ -1,3 +1,7 @@
+# 0.6.2 (2014-XX-XX)
+
+* [#26] iptux --version should work without DISPLAY env.
+
 # 0.6.1 (2013-12-14)
 
 * [#20] fix compile problem under MacOSX 10.9
