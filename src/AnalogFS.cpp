@@ -140,6 +140,22 @@ int AnalogFS::mkdir(const char *dir, mode_t mode)
  */
 int64_t AnalogFS::ftwsize(const char *dir_name)
 {
+        // 由于系统中存在使用此方法读取文件的大小的调用，因此需要判断文件dir_name是文件还是目录
+        struct stat64 st ;
+        int result = stat(dir_name, &st);
+        if (result != 0)
+        {
+                // 判断文件类型失败，直接返回0
+                pwarning(_("stat file \"%s\" failed: %s"), dir_name, strerror(errno));
+                return 0;
+        }
+        // 不是文件，也不是目录，直接返回
+        if (!(S_ISREG(st.st_mode)) && !(S_ISDIR(st.st_mode)))
+                return 0;
+        // 文件
+        if (S_ISREG(st.st_mode))
+                return st.st_size;
+        // 到了这里就一定是目录了
         DIR* dir = opendir(dir_name);
         if(dir == NULL) {
                 pwarning(_("opendir on \"%s\" failed: %s"), dir_name, strerror(errno));
