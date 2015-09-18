@@ -6114,7 +6114,7 @@ else
 $as_echo "yes" >&6; }
 
 fi
-gst_modules="gstreamer-0.10 >= 0.10.0"
+gst_modules="gstreamer-1.0 >= 1.0"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GST" >&5
@@ -6190,8 +6190,8 @@ if test "${have_gst}" = yes ; then
 $as_echo "#define HAVE_GST 1" >>confdefs.h
 
 else
-{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: You need GStreamer-0.10 or later installed if you need sound relevant functions" >&5
-$as_echo "$as_me: WARNING: You need GStreamer-0.10 or later installed if you need sound relevant functions" >&2;}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: You need GStreamer-1.0 or later installed if you need sound relevant functions" >&5
+$as_echo "$as_me: WARNING: You need GStreamer-1.0 or later installed if you need sound relevant functions" >&2;}
 fi
 PACKAGE_CFLAGS="${GLIB_CFLAGS} ${GTHREAD_CFLAGS} ${GTK_CFLAGS} ${GCONF_CFLAGS} ${GST_CFLAGS}"
 PACKAGE_LIBS="${GLIB_LIBS} ${GTHREAD_LIBS} ${GTK_LIBS} ${GCONF_LIBS} ${GST_LIBS}"

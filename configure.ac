@@ -113,12 +113,12 @@ gtk_modules="gtk+-2.0 >= 2.12.0"
 PKG_CHECK_MODULES(GTK, [$gtk_modules])
 gconf_modules="gconf-2.0 >= 2.4.0"
 PKG_CHECK_MODULES(GCONF, [$gconf_modules])
-gst_modules="gstreamer-0.10 >= 0.10.0"
+gst_modules="gstreamer-1.0 >= 1.0"
 PKG_CHECK_MODULES(GST, [$gst_modules], have_gst=yes, have_gst=no)
 if test "${have_gst}" = yes ; then
 AC_DEFINE(HAVE_GST)
 else
-AC_MSG_WARN(You need GStreamer-0.10 or later installed if you need sound relevant functions)
+AC_MSG_WARN(You need GStreamer-1.0 or later installed if you need sound relevant functions)
 fi
 PACKAGE_CFLAGS="${GLIB_CFLAGS} ${GTHREAD_CFLAGS} ${GTK_CFLAGS} ${GCONF_CFLAGS} ${GST_CFLAGS}"
 PACKAGE_LIBS="${GLIB_LIBS} ${GTHREAD_LIBS} ${GTK_LIBS} ${GCONF_LIBS} ${GST_LIBS}"
