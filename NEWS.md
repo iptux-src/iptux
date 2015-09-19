@@ -1,3 +1,7 @@
+# 0.6.3 (2015-XX-XX)
+
+* [#45] Upgrade to GStreamer from 0.10 to 1.0.
+
 # 0.6.2 (2014-02-06)
 
 * [#26] iptux --version should work without DISPLAY env.
