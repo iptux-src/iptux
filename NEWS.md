@@ -1,5 +1,6 @@
 # 0.6.3 (2015-XX-XX)
 
+* [#43] Remove deprecated "Encoding" in group "Desktop Entry".
 * [#45] Upgrade to GStreamer from 0.10 to 1.0.
 
 # 0.6.2 (2014-02-06)
