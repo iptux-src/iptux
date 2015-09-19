@@ -1,15 +1,22 @@
 [Desktop Entry]
 Name=iptux
 Name[zh_CN]=信使(iptux)
+Name[zh_HK]=信使(iptux)
 Name[zh_TW]=信使(iptux)
-Name[es_AR]=Iptux
-Comment=Lan communication software
+Name[es]=iptux
+Comment=LAN communication software
 Comment[zh_CN]=局域网通讯工具
-Comment[zh_TW]=局域網通訊工具
-Comment[es_AR]=Software de comunicaciÃ³n para red local
+Comment[zh_HK]=LAN 通訊工具
+Comment[zh_TW]=區域網路通訊工具
+Comment[es]=Software de comunicación para red local
+Keywords=iptux
+Keywords[zh_CN]=chat;talk;im;message;聊天;消息;即时通讯;飞鸽传书;飛鴿傳書;ipmsg;feige;
+Keywords[zh_HK]=chat;talk;im;message;聊天;訊息;即時通;飛鴿傳書;飞鸽传书;ipmsg;feige;
+Keywords[zh_TW]=chat;talk;im;message;聊天;訊息;即時通;飛鴿傳書;飞鸽传书;ipmsg;feige;
+Keywords[es]=chat;hablar;im;mensajería instantánea;mensaje;talk;message;ipmsg;feige;飞鸽传书;飛鴿傳書;
 Exec=iptux
 Terminal=false
 Type=Application
 Icon=ip-tux
 StartupNotify=true
-Categories=GTK;Network;
+Categories=GTK;Network;InstantMessaging;
