@@ -132,7 +132,7 @@ void SoundSystem::LinkElement(GData **eltset, GstPad *pad)
         GstStructure *str;
         GstPad *spad;
 
-        caps = gst_pad_get_caps(pad);
+        caps = gst_pad_query_caps(pad, NULL);
         str = gst_caps_get_structure(caps, 0);
         volume = GST_ELEMENT(g_datalist_get_data(eltset, "volume-element"));
         if(strcasestr(gst_structure_get_name(str), "audio")
