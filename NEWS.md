@@ -1,4 +1,4 @@
-# 0.6.3 (2015-XX-XX)
+# 0.6.3 (2015-09-29)
 
 * [#44] Add "Keywords" entries to iptux.desktop, etc.
 * [#43] Remove deprecated "Encoding" in group "Desktop Entry".
