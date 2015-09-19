@@ -1,5 +1,7 @@
 # iptux: 飞鸽传书GNU/Linux版
 
+* If anyone want to adopt this software, please fill an issue at https://github.com/iptux-src/iptux/issues/new
+
 [![Build Status](https://travis-ci.org/iptux-src/iptux.png?branch=master)](https://travis-ci.org/iptux-src/iptux)
 [![GitHub version](https://badge.fury.io/gh/iptux-src%2Fiptux.png)](http://badge.fury.io/gh/iptux-src%2Fiptux)
 
