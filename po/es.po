@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-06 19:16+0800\n"
+"POT-Creation-Date: 2015-10-09 05:32+0800\n"
 "PO-Revision-Date: 2013-06-05 13:46-0300\n"
 "Last-Translator: Fernando Toledo <ftoledo@docksud.com.ar>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -33,12 +33,18 @@ msgstr "Stat64() archivo \"%s\" fallo, %s"
 msgid "Mkdir() directory \"%s\" failed, %s"
 msgstr "Mkdir() directorio \"%s\" fallo, %s"
 
-#: src/AnalogFS.cpp:145
+#. Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
+#: src/AnalogFS.cpp:149
+#, fuzzy, c-format
+msgid "stat file \"%s\" failed: %s"
+msgstr "Stat() archivo \"%s\" fallo, %s\n"
+
+#: src/AnalogFS.cpp:161
 #, fuzzy, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr "Opendir() directorio \"%s\" fallo, %s"
 
-#: src/AnalogFS.cpp:191
+#: src/AnalogFS.cpp:207
 #, c-format
 msgid "Opendir() directory \"%s\" failed, %s"
 msgstr "Opendir() directorio \"%s\" fallo, %s"
@@ -600,7 +606,7 @@ msgid "Accept"
 msgstr "Aceptar"
 
 #: src/DialogPeer.cpp:853
-msgid "Detial"
+msgid "Detail"
 msgstr ""
 
 #: src/DialogPeer.cpp:884

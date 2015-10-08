@@ -145,7 +145,7 @@ int64_t AnalogFS::ftwsize(const char *dir_name)
         int result = stat(dir_name, &st);
         if (result != 0)
         {
-                // 判断文件类型失败，直接返回0
+                // Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
                 pwarning(_("stat file \"%s\" failed: %s"), dir_name, strerror(errno));
                 return 0;
         }

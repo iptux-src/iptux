@@ -850,7 +850,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea()
     g_signal_connect_swapped(button, "clicked",
                      G_CALLBACK(RemoveSelectedRcv), this);
     g_datalist_set_data(&widset, "file-receive-refuse-button", button);
-    button = gtk_button_new_with_label(_("Detial"));
+    button = gtk_button_new_with_label(_("Detail"));
     gtk_box_pack_end(GTK_BOX(hbox),button,FALSE,TRUE,0);
     g_signal_connect_swapped(button, "clicked",
                      G_CALLBACK(OpenTransDlg), NULL);
