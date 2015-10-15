@@ -10,14 +10,15 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-09 05:32+0800\n"
 "PO-Revision-Date: 2010-03-26 00:20+0800\n"
-"Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
-"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"Last-Translator: NightSharp <hxlqrj@126.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+# "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+
 
 #: src/AnalogFS.cpp:84 src/AnalogFS.cpp:89
 #, c-format
@@ -36,12 +37,12 @@ msgstr "创建文件夹\"%s\"失败，%s"
 
 #. Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
 #: src/AnalogFS.cpp:149
-#, fuzzy, c-format
+#, c-format
 msgid "stat file \"%s\" failed: %s"
-msgstr "查看文件\"%s\"状态失败，%s\n"
+msgstr "查看文件\"%s\"状态失败，%s"
 
 #: src/AnalogFS.cpp:161
-#, fuzzy, c-format
+#, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr "打开文件夹\"%s\"失败，%s"
 
@@ -443,9 +444,64 @@ msgstr ""
 "密码不一致！"
 
 #: src/dialog.cpp:226
-#, fuzzy
+#, c-format
 msgid "Please select a folder to save files."
-msgstr "请选择一个声音文件"
+msgstr "请选择一个文件夹来保存文件"
+
+#: src/DialogBase.cpp:230
+#, c-format
+msgid "%s To Send."
+msgstr "%s 等待传输"
+
+#: src/DialogBase.cpp:309
+#, c-format
+msgid "Chat History"
+msgstr "聊天记录"
+
+#: src/DialogBase.cpp:422
+#, c-format
+msgid "Choose enclosure files"
+msgstr "选择文件附件"
+
+#: src/DialogBase.cpp:425
+#, c-format
+msgid "Choose enclosure folders"
+msgstr "选择文件夹附件"
+
+#: src/DialogBase.cpp:750
+#, c-format
+msgid "File to send."
+msgstr "等待传输的文件"
+
+#: src/DialogBase.cpp:755
+#, c-format
+msgid "Sending progress."
+msgstr "传输进度"
+
+#: src/DialogBase.cpp:758
+#, c-format
+msgid "Dirs"
+msgstr "目录"
+
+#: src/DialogBase.cpp:761
+#, c-format
+msgid "Files"
+msgstr "文件"
+
+#: src/DialogBase.cpp:827
+#, c-format
+msgid "Path"
+msgstr "路径"
+
+#: src/DialogBase.cpp:895
+#, c-format
+msgid "Sending Progress."
+msgstr "传输进度"
+
+#: src/DialogBase.cpp:898
+#, c-format
+msgid "%s Of %s Sent."
+msgstr "已传输 %s，总共 %s "
 
 #: src/DialogGroup.cpp:277
 #, c-format
@@ -493,9 +549,9 @@ msgid "Descending"
 msgstr "降序"
 
 #: src/DialogPeer.cpp:231
-#, fuzzy, c-format
+#, c-format
 msgid "Talk with %s(%s) IP:%s"
-msgstr "与%s对话"
+msgstr "与 %s(%s) 对话 IP地址: %s"
 
 #: src/DialogPeer.cpp:329
 msgid "Info."
@@ -588,17 +644,16 @@ msgid "Please select a picture to insert the buffer"
 msgstr "请选择插入缓冲区的图片"
 
 #: src/DialogPeer.cpp:789
-#, fuzzy
 msgid "Enclosure."
 msgstr "附件"
 
 #: src/DialogPeer.cpp:836
 msgid "File to be receive."
-msgstr ""
+msgstr "等待接收的文件"
 
 #: src/DialogPeer.cpp:840
 msgid "Receiving progress."
-msgstr ""
+msgstr "接收进度"
 
 #: src/DialogPeer.cpp:843
 msgid "Accept"
@@ -606,12 +661,11 @@ msgstr "接受"
 
 #: src/DialogPeer.cpp:853
 msgid "Detail"
-msgstr ""
+msgstr "详情"
 
 #: src/DialogPeer.cpp:884
-#, fuzzy
 msgid "File received."
-msgstr "收到消息"
+msgstr "已接收的文件"
 
 #: src/DialogPeer.cpp:926 src/DialogPeer.cpp:990
 msgid "Source"
@@ -619,7 +673,7 @@ msgstr "来源"
 
 #: src/DialogPeer.cpp:932
 msgid "SaveAs"
-msgstr ""
+msgstr "另存为"
 
 #: src/DialogPeer.cpp:937 src/DialogPeer.cpp:1000 src/MainWindow.cpp:1213
 #: src/ShareFile.cpp:280
@@ -628,32 +682,31 @@ msgstr "大小"
 
 #: src/DialogPeer.cpp:995
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: src/DialogPeer.cpp:1096 src/DialogPeer.cpp:1169
 #, c-format
 msgid "Receiving Progress."
-msgstr ""
+msgstr "接收进度"
 
 #: src/DialogPeer.cpp:1099 src/DialogPeer.cpp:1172
 #, c-format
 msgid "%s to Receive."
-msgstr ""
+msgstr "%s 等待接收"
 
 #: src/DialogPeer.cpp:1103 src/DialogPeer.cpp:1176
 #, c-format
 msgid "%s Of %s Received."
-msgstr ""
+msgstr "已接收 %s，总共 %s "
 
 #: src/DialogPeer.cpp:1109
-#, fuzzy, c-format
+#, c-format
 msgid "Mission Completed!"
-msgstr "已完成"
+msgstr "任务完成"
 
 #: src/DialogPeer.cpp:1321
-#, fuzzy
 msgid "Remove Selected"
-msgstr "反选"
+msgstr "移除选中项"
 
 #: src/HelpDialog.cpp:61 src/HelpDialog.cpp:66
 msgid "Jally <jallyx@163.com>"
@@ -682,7 +735,7 @@ msgstr "信使(iptux)"
 
 #: src/HelpDialog.cpp:85
 msgid "A GTK+ based LAN Messenger."
-msgstr "基于GTK+的局域网通信工具"
+msgstr "一个基于GTK+的局域网通信工具"
 
 #: src/HelpDialog.cpp:102
 msgid "Help"
@@ -697,7 +750,6 @@ msgid "..."
 msgstr "..."
 
 #: src/HelpDialog.cpp:104
-#, fuzzy
 msgid ""
 "Project Home: \n"
 "https://github.com/iptux-src/iptux\n"
@@ -737,6 +789,18 @@ msgid ""
 "<syranosun@gmail.com>\n"
 "..."
 msgstr ""
+"很荣幸有很多人们自发为iptux项目作出了贡献。"
+"没有你们的帮助，iptux不可能做到现在这样。\n"
+"\n"
+"特别地，这里有些人我们想要表示高度感谢：\n"
+"\n"
+"ChenGang\n"
+"<liangsuilong@gmail.com>\n"
+"<lidaobing@gmail.com>\n"
+"<mdjhu@sina.com>\n"
+"<omegao.hu@gmail.com>\n"
+"<syranosun@gmail.com>\n"
+"..."
 
 #: src/HelpDialog.cpp:128
 msgid "More About Iptux"
@@ -806,7 +870,6 @@ msgid "_Update"
 msgstr "刷新(_U)"
 
 #: src/MainWindow.cpp:953
-#, fuzzy
 msgid "http://code.google.com/p/iptux/wiki/FAQ?wl=en"
 msgstr "http://code.google.com/p/iptux/wiki/FAQ"
 
@@ -917,11 +980,11 @@ msgstr "在线好友: %<PRIu32>"
 
 #: src/MainWindow.cpp:1946
 msgid "The file you want to open not exist!"
-msgstr ""
+msgstr "你想打开的文件不存在！"
 
 #: src/MainWindow.cpp:1975
 msgid "The path you want to open not exist!"
-msgstr ""
+msgstr "你想打开的路径不存在"
 
 #: src/output.cpp:35
 msgid "Infomation"
@@ -950,22 +1013,22 @@ msgstr "接收"
 #: src/RecvFileData.cpp:184
 #, c-format
 msgid "Failed to receive the file \"%s\" from %s!"
-msgstr "接收文件\"%s\"来自%s失败！"
+msgstr "接收文件\"%s\"(来自%s)失败！"
 
 #: src/RecvFileData.cpp:187
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
-msgstr "接收文件\"%s\"来自%s成功！"
+msgstr "接收文件\"%s\"(来自%s)成功！"
 
 #: src/RecvFileData.cpp:332
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
-msgstr "接收文件夹\"%s\"来自%s失败！"
+msgstr "接收文件夹\"%s\"(来自%s)失败！"
 
 #: src/RecvFileData.cpp:335
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
-msgstr "接收文件夹\"%s\"来自%s成功！"
+msgstr "接收文件夹\"%s\"(来自%s)成功！"
 
 #: src/RevisePal.cpp:97
 msgid "Change Pal's Information"
@@ -1112,7 +1175,7 @@ msgstr "进程即将退出！"
 #: src/support.cpp:102
 #, c-format
 msgid "iptux: A software for sharing in LAN\n"
-msgstr ""
+msgstr "信使(iptux)：一款用于在局域网内共享文件的软件\n"
 
 #: src/support.cpp:103
 #, c-format
@@ -1120,6 +1183,8 @@ msgid ""
 "\t-h --help\n"
 "\t\tdisplay this help and exit\n"
 msgstr ""
+"\t-h --help\n"
+"\t\t显示该帮助并退出\n"
 
 #: src/support.cpp:104
 #, c-format
@@ -1127,15 +1192,17 @@ msgid ""
 "\t-v --version\n"
 "\t\toutput version information and exit\n"
 msgstr ""
+"\t-v --version\n"
+"\t\t输出版本信息并退出\n"
 
 #: src/support.cpp:120
 #, c-format
 msgid "What do you want to do?\n"
-msgstr ""
+msgstr "你想要做些什么？\n"
 
 #: src/support.cpp:149
 msgid "Can't find any available web browser!\n"
-msgstr "不能找到可用的浏览器！\n"
+msgstr "无法找到可用的浏览器！\n"
 
 #: src/support.cpp:179
 #, c-format
@@ -1155,7 +1222,7 @@ msgstr "神秘来客"
 
 #: src/uninstall/utils.cpp:23
 msgid "The user is not privileged!\n"
-msgstr "用户没有特权！\n"
+msgstr "该用户没有特权！\n"
 
 #: src/uninstall/utils.cpp:34
 #, c-format
@@ -1188,15 +1255,6 @@ msgstr "删除文件夹\"%s\"失败，%s\n"
 
 #~ msgid "Free:%s Total:%s"
 #~ msgstr "空闲:%s 总计:%s"
-
-#~ msgid "Chat History"
-#~ msgstr "聊天历史"
-
-#~ msgid "Choose enclosure files"
-#~ msgstr "选择文件附件"
-
-#~ msgid "Choose enclosure folders"
-#~ msgstr "选择文件夹附件"
 
 #~ msgid ""
 #~ "<span weight=\"heavy\" underline=\"error\">\n"
