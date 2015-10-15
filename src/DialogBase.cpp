@@ -227,7 +227,7 @@ void DialogBase::AttachEnclosure(const GSList *list)
                 g_object_unref(dpixbuf);
 
         pbar = GTK_WIDGET(g_datalist_get_data(&widset, "file-send-progress-bar-widget"));
-        progresstip = g_strdup_printf("%s To Send.",numeric_to_size(totalsendsize));
+        progresstip = g_strdup_printf(_("%s To Send."),numeric_to_size(totalsendsize));
         gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), _(progresstip));
         g_free(progresstip);
 }
