@@ -567,7 +567,7 @@ GtkWidget *MainWindow::CreateMainWindow()
                                  0.0, 0.0, GDK_GRAVITY_NORTH_WEST};
         GdkWindowHints hints = GdkWindowHints(GDK_HINT_MIN_SIZE |
                          GDK_HINT_MAX_SIZE | GDK_HINT_BASE_SIZE |
-                         GDK_HINT_RESIZE_INC | GDK_HINT_WIN_GRAVITY |
+                         /*GDK_HINT_RESIZE_INC |*/ GDK_HINT_WIN_GRAVITY |
                          GDK_HINT_USER_POS | GDK_HINT_USER_SIZE);
         GtkWidget *window;
         gint width, height;
