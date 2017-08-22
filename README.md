@@ -21,7 +21,7 @@ sudo apt-get install iptux
 ### Linux (Debian and Ubuntu)
 
 ```
-sudo apt-get install git libgtk2.0-dev libgconf2-dev libgstreamer1.0-dev g++ make autoconf libtool automake
+sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgconf2-dev libgstreamer1.0-dev g++ make autoconf libtool automake
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 ./configure
