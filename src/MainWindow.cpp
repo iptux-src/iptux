@@ -1526,7 +1526,7 @@ GtkWidget *MainWindow::CreateTransPopupMenu(GtkTreeModel *model)
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 10, &remaining, -1);
 
-        if (g_strcmp0(remaining,'\0'))
+        if (g_strcmp0(remaining,""))
                 sensitive = FALSE;
 
         menu = gtk_menu_new();
