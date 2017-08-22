@@ -302,7 +302,7 @@ bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
 {
         char attrstr[35];       //8+1+8+1+16 +1 =35
         struct sockaddr_in addr;
-        char *iptuxstr = "iptux";
+        const char *iptuxstr = "iptux";
 
         snprintf(attrstr, 35, "%" PRIx32 ":%" PRIx32 ":%" PRIx64,
                                          packetno, fileid, offset);
