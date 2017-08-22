@@ -1,3 +1,7 @@
+# 0.6.4 (2017-08-22)
+
+* [#58] fix compile problem under gcc 7.
+
 # 0.6.3 (2015-09-29)
 
 * [#44] Add "Keywords" entries to iptux.desktop, etc.

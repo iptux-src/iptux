@@ -1526,7 +1526,7 @@ GtkWidget *MainWindow::CreateTransPopupMenu(GtkTreeModel *model)
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 10, &remaining, -1);
 
-        if (g_strcmp0(remaining,'\0'))
+        if (g_strcmp0(remaining,""))
                 sensitive = FALSE;
 
         menu = gtk_menu_new();
@@ -1673,9 +1673,9 @@ void MainWindow::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal)
         gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
         if (!FLAG_ISSET(pal->flags, 0))
-                snprintf(buf, MAX_BUFLEN, _("Compatibility: Microsoft\n"));
+                snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
         else
-                snprintf(buf, MAX_BUFLEN, _("Compatibility: GNU/Linux\n"));
+                snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
         gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
         snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);
@@ -1944,7 +1944,7 @@ void MainWindow::OpenThisFile(GtkTreeModel *model)
             GtkWidget *dialog = gtk_message_dialog_new(NULL,
             GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
             GTK_BUTTONS_OK, _("The file you want to open not exist!"));
-            gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
+            gtk_window_set_title(GTK_WINDOW(dialog), _("iptux Error"));
             gtk_dialog_run(GTK_DIALOG(dialog));
             gtk_widget_destroy(dialog);
             return;

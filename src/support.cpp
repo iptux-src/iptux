@@ -146,6 +146,7 @@ void iptux_open_url(const char *url)
         execlp("firefox", "firefox", url, NULL);
         execlp("opera", "opera", url, NULL);
         execlp("konqueror", "konqueror", url, NULL);
+        execlp("open", "open", url, NULL);
         pwarning(_("Can't find any available web browser!\n"));
 }
 
