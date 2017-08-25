@@ -12,6 +12,7 @@
 #ifndef SOUNDSYSTEM_H
 #define SOUNDSYSTEM_H
 
+#include "config.h"
 #include "mess.h"
 
 class SoundSystem
@@ -24,7 +25,7 @@ public:
         void AdjustVolume(double value);
         void Playing(const char *file);
         void Stop();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
 private:
         GData *eltset;          //元素集
         struct timeval timestamp;       //时间戳

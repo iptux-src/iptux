@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "CoreThread.h"
 #include "ProgramData.h"
 #include "MainWindow.h"
@@ -931,7 +932,7 @@ void CoreThread::ReadSharedData()
         GConfClient *client;
         GSList *list, *tlist;
         FileInfo *file;
-        struct stat64 st;
+        struct stat st;
 
         /* 读取共享文件数据 */
         client = gconf_client_get_default();
@@ -942,7 +943,7 @@ void CoreThread::ReadSharedData()
 
         /* 分析数据并加入文件链表 */
         for(tlist = list; tlist; tlist = g_slist_next(tlist)) {
-                if (stat64((char *)tlist->data, &st) == -1
+                if (stat((char *)tlist->data, &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
                         g_free(tlist->data);
                         tlist->data = NULL;

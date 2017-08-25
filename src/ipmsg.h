@@ -150,10 +150,6 @@
 #define HOSTLIST_SEPARATOR              '\a'
 #define HOSTLIST_DUMMY          "\b"
 #define HLIST_ENTRY_SEPARATOR   ':'
-#endif
-
-///*    @(#)Copyright (C) Jally 2008   iptux.h    Version 0.4 *///
-#ifdef __IP_TUX__
 
 /* macro */
 #define GET_MODE(command)               (command & 0x000000ffUL)

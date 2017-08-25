@@ -1942,8 +1942,11 @@ void MainWindow::OpenThisFile(GtkTreeModel *model)
     if (filename){
         if( !g_file_test(filename,G_FILE_TEST_EXISTS)){
             GtkWidget *dialog = gtk_message_dialog_new(NULL,
-            GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_OK, _("The file you want to open not exist!"));
+                GTK_DIALOG_MODAL, 
+                GTK_MESSAGE_ERROR,
+                GTK_BUTTONS_OK, 
+                "%s",
+                _("The file you want to open not exist!"));
             gtk_window_set_title(GTK_WINDOW(dialog), _("iptux Error"));
             gtk_dialog_run(GTK_DIALOG(dialog));
             gtk_widget_destroy(dialog);
@@ -1971,8 +1974,11 @@ void MainWindow::OpenContainingFolder(GtkTreeModel *model)
         name = ipmsg_get_filename_me(filename,&filepath);
         if( !g_file_test(filepath,G_FILE_TEST_EXISTS)){
             GtkWidget *dialog = gtk_message_dialog_new(NULL,
-            GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_OK, _("The path you want to open not exist!"));
+                GTK_DIALOG_MODAL, 
+                GTK_MESSAGE_ERROR,
+                GTK_BUTTONS_OK, 
+                "%s",
+                _("The path you want to open not exist!"));
             gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
             gtk_dialog_run(GTK_DIALOG(dialog));
             gtk_widget_destroy(dialog);

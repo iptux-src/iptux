@@ -155,7 +155,7 @@ void DialogBase::AttachEnclosure(const GSList *list)
         GtkTreeModel *model;
         GtkTreeIter iter;
         GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
-        struct stat64 st;
+        struct stat st;
         const GSList *tlist,*pallist;
         AnalogFS afs;
         int64_t filesize;
@@ -172,7 +172,7 @@ void DialogBase::AttachEnclosure(const GSList *list)
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
         tlist = list;
         while (tlist) {
-            if (stat64((const char *)tlist->data, &st) == -1
+            if (stat((const char *)tlist->data, &st) == -1
                      || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
                     tlist = g_slist_next(tlist);
                     continue;
@@ -892,7 +892,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp)
 
     if(dlggrp->totalsendsize == 0) {
         progress = 0;
-        snprintf(progresstip, MAX_BUFLEN,_("Sending Progress."));
+        snprintf(progresstip, MAX_BUFLEN, "%s", _("Sending Progress."));
     } else {
         progress = percent(sentsize,dlggrp->totalsendsize)/100;
         snprintf(progresstip, MAX_BUFLEN,_("%s Of %s Sent."),
@@ -901,7 +901,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp)
     if(progress == 1){
             g_source_remove(dlggrp->timersend);
             gtk_list_store_clear(GTK_LIST_STORE(model));
-            snprintf(progresstip, MAX_BUFLEN,_("Mission Completed!"));
+            snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
     }
     gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(pbar),progress);
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar),_(progresstip));

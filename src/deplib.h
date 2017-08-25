@@ -12,11 +12,9 @@
 #ifndef DEPLIB_H
 #define DEPLIB_H
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include "config.h"
 
-#ifdef HAVE_GST
+#ifdef GST_FOUND
 #include <gst/gst.h>
 #endif
 

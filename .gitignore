@@ -80,4 +80,12 @@ src/iptux
 stamp-h1
 autom4te.cache
 *.gmo
+*.mo
 po/Makefile.in
+
+cmake_install.cmake
+
+CMakeCache.txt
+CMakeFiles
+
+install_manifest.txt

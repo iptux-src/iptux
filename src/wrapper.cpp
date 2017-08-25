@@ -13,16 +13,6 @@
 #include "deplib.h"
 
 /**
- * 保证new运算符申请内存一定成功.
- * @param size 需要申请的内存大小
- * @return 新内存指针
- */
-void *operator new(size_t size)
-{
-        return g_malloc(size);
-}
-
-/**
  * 写出数据.
  * @param fd 文件描述符
  * @param buf 缓冲区

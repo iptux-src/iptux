@@ -1,0 +1,8 @@
+#file(GLOB _po_files *.po)
+#gettext_process_po_files(de ALL PO_FILES de.po)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/de.gmo DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/de/LC_MESSAGES/ RENAME iptux.mo)
+
+GETTEXT_PROCESS_POT_FILE(iptux.pot 
+	ALL 
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LOCALEDIR} 
+	LANGUAGES de en_GB es pl zh_CN zh_TW)
