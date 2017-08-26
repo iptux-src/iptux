@@ -1,4 +1,8 @@
-GETTEXT_PROCESS_POT_FILE(iptux.pot 
+GETTEXT_CREATE_TRANSLATIONS(iptux.pot 
 	ALL 
-	INSTALL_DESTINATION ${CMAKE_INSTALL_LOCALEDIR} 
-	LANGUAGES de en_GB es pl zh_CN zh_TW)
+	de.po    
+	en_GB.po 
+	es.po    
+	pl.po    
+	zh_CN.po 
+	zh_TW.po)
