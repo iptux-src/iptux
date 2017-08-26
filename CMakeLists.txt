@@ -20,6 +20,6 @@ configure_file (
   )
 
 add_subdirectory(src)
-add_subdirectory(pixmaps)
 add_subdirectory(po)
-
+add_subdirectory(pixmaps)
+add_subdirectory(sound)
