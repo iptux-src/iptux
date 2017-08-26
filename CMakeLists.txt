@@ -4,7 +4,6 @@ project (iptux
 
 include(GNUInstallDirs)
 include(FindPkgConfig)
-include(FindGtk2)
 include(FindGettext)
 include(FindIntl)
 
