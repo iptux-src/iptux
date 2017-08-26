@@ -2,7 +2,7 @@ language: cpp
 compiler:
   - gcc
   - clang
-script: cmake . && make
+script: mkdir build && cd build && cmake .. && make
 dist: trusty
 sudo: false
 addons:
