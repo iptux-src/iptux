@@ -23,7 +23,6 @@
 #include "callback.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
 extern CoreThread cthrd;
 extern MainWindow mwin;
 
@@ -32,8 +31,17 @@ extern MainWindow mwin;
 /**
  * 类构造函数.
  */
-MainWindow::MainWindow():widset(NULL), mdlset(NULL), dtset(NULL),
- tmdllist(NULL), accel(NULL), timerid(0)
+MainWindow::MainWindow(
+    IptuxConfig* config,
+    ProgramData* progdt
+    ):
+    config(config),
+    progdt(progdt),
+    widset(NULL), 
+    mdlset(NULL),
+    tmdllist(NULL), 
+    accel(NULL), 
+    timerid(0)
 {
 }
 
@@ -42,7 +50,6 @@ MainWindow::MainWindow():widset(NULL), mdlset(NULL), dtset(NULL),
  */
 MainWindow::~MainWindow()
 {
-        WriteUILayout();
         ClearSublayer();
 }
 
@@ -55,7 +62,6 @@ void MainWindow::CreateWindow()
         GtkWidget *widget;
 
         InitSublayer();
-        ReadUILayout();
 
         /* 创建主窗口 */
         window = CreateMainWindow();
@@ -68,7 +74,7 @@ void MainWindow::CreateWindow()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "pallist-box-widget"));
         gtk_widget_hide(widget);
         /* 如果需要隐藏主窗口，则隐藏 */
-        if (FLAG_ISSET(progdt.flags, 6))
+        if (FLAG_ISSET(progdt->flags, 6))
                 gtk_widget_hide(window);
 
         /* 创建传输窗口 */
@@ -456,7 +462,7 @@ void MainWindow::InitSublayer()
 
         g_datalist_init(&widset);
         g_datalist_init(&mdlset);
-        g_datalist_init(&dtset);
+
         accel = gtk_accel_group_new();
         timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 
@@ -491,7 +497,6 @@ void MainWindow::ClearSublayer()
 {
         g_datalist_clear(&widset);
         g_datalist_clear(&mdlset);
-        g_datalist_clear(&dtset);
         g_list_free(tmdllist);
         if (accel)
                 g_object_unref(accel);
@@ -499,63 +504,6 @@ void MainWindow::ClearSublayer()
                 g_source_remove(timerid);
 }
 
-/**
- * 读取窗口的UI布局数据.
- */
-void MainWindow::ReadUILayout()
-{
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = gconf_client_get_int(client, GCONF_PATH "/main_window_width", NULL);
-        numeric = numeric ? numeric : 250;
-        g_datalist_set_data(&dtset, "main-window-width", GINT_TO_POINTER(numeric));
-        numeric = gconf_client_get_int(client, GCONF_PATH "/main_window_height", NULL);
-        numeric = numeric ? numeric : 510;
-        g_datalist_set_data(&dtset, "main-window-height", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/mwin_main_paned_divide", NULL);
-        numeric = numeric ? numeric : 210;
-        g_datalist_set_data(&dtset, "mwin-main-paned-divide", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client, GCONF_PATH "/trans_window_width", NULL);
-        numeric = numeric ? numeric : 500;
-        g_datalist_set_data(&dtset, "trans-window-width", GINT_TO_POINTER(numeric));
-        numeric = gconf_client_get_int(client, GCONF_PATH "/trans_window_height", NULL);
-        numeric = numeric ? numeric : 350;
-        g_datalist_set_data(&dtset, "trans-window-height", GINT_TO_POINTER(numeric));
-
-        g_object_unref(client);
-}
-
-/**
- * 写出窗口的UI布局数据.
- */
-void MainWindow::WriteUILayout()
-{
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-window-width"));
-        gconf_client_set_int(client, GCONF_PATH "/main_window_width", numeric, NULL);
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-window-height"));
-        gconf_client_set_int(client, GCONF_PATH "/main_window_height", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "mwin-main-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/mwin_main_paned_divide", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "trans-window-width"));
-        gconf_client_set_int(client, GCONF_PATH "/trans_window_width", numeric, NULL);
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "trans-window-height"));
-        gconf_client_set_int(client, GCONF_PATH "/trans_window_height", numeric, NULL);
-
-        g_object_unref(client);
-}
 
 /**
  * 创建主窗口.
@@ -574,9 +522,7 @@ GtkWidget *MainWindow::CreateMainWindow()
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
-        width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-window-width"));
-        height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-window-height"));
-        gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+        gtk_window_set_default_size(GTK_WINDOW(window), config->GetMainWindowWidth(), config->GetMainWindowHeight());
         gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
         gtk_window_set_default_icon_name("ip-tux");
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
@@ -585,7 +531,7 @@ GtkWidget *MainWindow::CreateMainWindow()
         g_signal_connect_swapped(window, "delete-event",
                          G_CALLBACK(alter_interface_mode), NULL);
         g_signal_connect(window, "configure-event",
-                         G_CALLBACK(MWinConfigureEvent), &dtset);
+                         G_CALLBACK(MWinConfigureEvent), this);
 
         return window;
 }
@@ -597,19 +543,18 @@ GtkWidget *MainWindow::CreateMainWindow()
 GtkWidget *MainWindow::CreateTransWindow()
 {
         GtkWidget *window;
-        gint width, height;
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
-        width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "trans-window-width"));
-        height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "trans-window-height"));
-        gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+        gtk_window_set_default_size(GTK_WINDOW(window), 
+            config->GetTransWindowWidth(),
+            config->GetTransWindowHeight());
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_container_set_border_width(GTK_CONTAINER(window), 5);
         g_signal_connect_swapped(window, "delete-event",
                          G_CALLBACK(HideTransWindow), &widset);
         g_signal_connect(window, "configure-event",
-                         G_CALLBACK(TWinConfigureEvent), &dtset);
+                         G_CALLBACK(TWinConfigureEvent), this);
         g_datalist_set_data(&widset, "trans-window-widget", window);
 
         return window;
@@ -632,12 +577,12 @@ GtkWidget *MainWindow::CreateAllArea()
         paned = gtk_vpaned_new();
         g_object_set_data(G_OBJECT(paned), "position-name",
                          (gpointer)"mwin-main-paned-divide");
-        position = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "mwin-main-paned-divide"));
-        gtk_paned_set_position(GTK_PANED(paned), position);
+        gtk_paned_set_position(GTK_PANED(paned),
+            config->GetMwinMainPanedDivide());
         gtk_container_set_border_width(GTK_CONTAINER(paned), 4);
         gtk_box_pack_start(GTK_BOX(box), paned, TRUE, TRUE, 0);
         g_signal_connect(paned, "notify::position",
-                         G_CALLBACK(PanedDivideChanged), &dtset);
+                         G_CALLBACK(PanedDivideChanged), NULL);
         gtk_paned_pack1(GTK_PANED(paned), CreatePaltreeArea(), TRUE, TRUE);
         gtk_paned_pack2(GTK_PANED(paned), CreatePallistArea(), FALSE, TRUE);
 
@@ -1086,7 +1031,7 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model)
                          "text", 3, "attributes", 4, "foreground-gdk", 5, NULL);
 
         /* 连接信号 */
-        g_signal_connect(view, "query-tooltip", G_CALLBACK(PaltreeQueryTooltip), NULL);
+        g_signal_connect(view, "query-tooltip", G_CALLBACK(PaltreeQueryTooltip), this);
         g_signal_connect(view, "row-activated", G_CALLBACK(PaltreeItemActivated), NULL);
         g_signal_connect(view, "drag-data-received",
                          G_CALLBACK(PaltreeDragDataReceived), NULL);
@@ -1383,7 +1328,7 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
         /* 创建字体风格 */
         attrs = pango_attr_list_new();
         if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-                dspt = pango_font_description_from_string(progdt.font);
+                dspt = pango_font_description_from_string(progdt->font);
                 attr = pango_attr_font_desc_new(dspt);
                 pango_attr_list_insert(attrs, attr);
                 pango_font_description_free(dspt);
@@ -1458,7 +1403,7 @@ void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter
         attrs = NULL;
         if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
                 attrs = pango_attr_list_new();
-                dspt = pango_font_description_from_string(progdt.font);
+                dspt = pango_font_description_from_string(progdt->font);
                 attr = pango_attr_font_desc_new(dspt);
                 pango_attr_list_insert(attrs, attr);
                 pango_font_description_free(dspt);
@@ -2093,7 +2038,8 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf)
  * @return Gtk+库所需
  */
 gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
-                                         gboolean key, GtkTooltip *tooltip)
+                                         gboolean key, GtkTooltip *tooltip,
+                                         MainWindow* self)
 {
         GdkColor color = {0xff, 0xffff, 0xffff, 0xd6d8};
         GtkWidget *textview;
@@ -2117,7 +2063,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
         if (grpinf->type != GROUP_BELONG_TYPE_REGULAR)
                 return FALSE;
 
-        buffer = gtk_text_buffer_new(progdt.table);
+        buffer = gtk_text_buffer_new(self->progdt->table);
         FillPalInfoToBuffer(buffer, (PalInfo *)grpinf->member->data);
         textview = gtk_text_view_new_with_buffer(buffer);
         gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(textview), FALSE);
@@ -2603,12 +2549,14 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
  * @return Gtk+库所需
  */
 gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
-                         GdkEventConfigure *event, GData **dtset)
+                         GdkEventConfigure *event, 
+                         MainWindow* self)
 {
-        g_datalist_set_data(dtset, "main-window-width", GINT_TO_POINTER(event->width));
-        g_datalist_set_data(dtset, "main-window-height", GINT_TO_POINTER(event->height));
-
-        return FALSE;
+    self->config
+        ->SetMainWindowWidth(event->width)
+        ->SetMainWindowHeight(event->height)
+        ->Save();
+    return FALSE;
 }
 
 /**
@@ -2619,12 +2567,15 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
  * @return Gtk+库所需
  */
 gboolean MainWindow::TWinConfigureEvent(GtkWidget *window,
-                         GdkEventConfigure *event, GData **dtset)
+                         GdkEventConfigure *event, 
+                         MainWindow* self)
 {
-        g_datalist_set_data(dtset, "trans-window-width", GINT_TO_POINTER(event->width));
-        g_datalist_set_data(dtset, "trans-window-height", GINT_TO_POINTER(event->height));
+    self->config
+        ->SetTransWindowWidth(event->width)
+        ->SetTransWindowHeight(event->height)
+        ->Save();
 
-        return FALSE;
+    return FALSE;
 }
 
 /**
@@ -2634,12 +2585,12 @@ gboolean MainWindow::TWinConfigureEvent(GtkWidget *window,
  * @param dtset data set
  */
 void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
-                                                         GData **dtset)
+                                MainWindow* self)
 {
-        const gchar *identify;
         gint position;
 
-        identify = (const gchar *)g_object_get_data(G_OBJECT(paned), "position-name");
         position = gtk_paned_get_position(GTK_PANED(paned));
-        g_datalist_set_data(dtset, identify, GINT_TO_POINTER(position));
+        self->config
+            ->SetMwinMainPanedDivide(position)
+            ->Save();
 }

@@ -12,6 +12,7 @@
 #ifndef PROGRAMDATA_H
 #define PROGRAMDATA_H
 
+#include <gconf/gconf-client.h>
 #include "sys.h"
 #include "net.h"
 #include "deplib.h"

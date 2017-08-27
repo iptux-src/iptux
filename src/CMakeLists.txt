@@ -20,6 +20,7 @@ add_executable (iptux
 	DialogPeer.cpp
 	HelpDialog.cpp
 	iptux.cpp
+	IptuxConfig.cpp
 	LogSystem.cpp
 	MainWindow.cpp
 	mess.cpp

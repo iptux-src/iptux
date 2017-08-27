@@ -28,7 +28,9 @@
 ProgramData progdt;
 CoreThread cthrd;
 StatusIcon sicon;
-MainWindow mwin;
+GConfClient* client = gconf_client_get_default();
+IptuxConfig config(client);
+MainWindow mwin(&config, &progdt);
 LogSystem lgsys;
 SoundSystem sndsys;
 

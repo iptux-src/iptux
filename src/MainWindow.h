@@ -13,6 +13,8 @@
 #define MAINWINDOW_H
 
 #include "mess.h"
+#include "IptuxConfig.h"
+#include "ProgramData.h"
 
 /**
  * @note 鉴于本类成员函数所访问的(CoreThread)类成员链表都具有只增不减的特性，
@@ -21,7 +23,10 @@
  */
 class MainWindow {
 public:
-        MainWindow();
+        MainWindow(
+            IptuxConfig* config,
+            ProgramData* progdt
+            );
         ~MainWindow();
 
         void CreateWindow();
@@ -39,10 +44,11 @@ public:
         void UpdateItemToTransTree(GData **para);
         bool TransmissionActive();
 private:
+        IptuxConfig* config;
+        ProgramData* progdt;
+
         void InitSublayer();
         void ClearSublayer();
-        void ReadUILayout();
-        void WriteUILayout();
 
         GtkWidget *CreateMainWindow();
         GtkWidget *CreateTransWindow();
@@ -80,7 +86,7 @@ private:
 
         GData *widset;          //窗体集
         GData *mdlset;          //数据model集
-        GData *dtset;           //通用数据集
+        //GData *dtset;           //通用数据集
         GList *tmdllist;                //model链表，用于构建model循环结构
         GtkAccelGroup *accel;   //快捷键集组
         guint timerid;          //UI更新定时器ID
@@ -109,7 +115,7 @@ private:
         static void AskSharedFiles(GroupInfo *grpinf);
         static void DeletePalItem(GroupInfo *grpinf);
         static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
-                                         gboolean key, GtkTooltip *tooltip);
+                                         gboolean key, GtkTooltip *tooltip, MainWindow* self);
         static void PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
                                                  GtkTreeViewColumn *column);
         static gboolean PaltreePopupMenu(GtkWidget *treeview, GdkEventButton *event);
@@ -136,11 +142,11 @@ private:
                                          guint info, guint time);
 
         static gboolean MWinConfigureEvent(GtkWidget *window,
-                                 GdkEventConfigure *event, GData **dtset);
+                                 GdkEventConfigure *event, MainWindow* self);
         static gboolean TWinConfigureEvent(GtkWidget *window,
-                                 GdkEventConfigure *event, GData **dtset);
+                                 GdkEventConfigure *event, MainWindow* self);
         static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
-                                                         GData **dtset);
+                                                         MainWindow* self);
 };
 
 #endif

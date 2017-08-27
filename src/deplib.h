@@ -22,7 +22,6 @@
 #include <gdk/gdkkeysyms.h>
 #undef _
 #include <glib/gi18n.h>
-#include <gconf/gconf-client.h>
 
 #define ATOM_OBJECT 0xFFFC
 #define OCCUPY_OBJECT 0x01
