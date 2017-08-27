@@ -1,7 +1,11 @@
 #include "IptuxConfig.h"
 
 #include <fstream>
+
+#include <glib.h>
+#include <glib/gstdio.h>
 #include <json/json.h>
+
 #include "deplib.h"
 
 using namespace std;
@@ -21,7 +25,7 @@ IptuxConfig::IptuxConfig(string& fname)
 
 	int version = root.get("version", 1).asInt();
 	if(version != 1) {
-		g_error("unknown config file version %d", version);
+		g_error("unknown config file version %d (from %s)", version, fname.c_str());
 		return;
 	}
 
@@ -91,6 +95,13 @@ IptuxConfig* IptuxConfig::SetMwinMainPanedDivide(int d) {
 }
 
 IptuxConfig* IptuxConfig::Save() {
+	if(!g_file_test(fname.c_str(), G_FILE_TEST_IS_REGULAR)) {
+		const char* dirname = g_path_get_dirname(fname.c_str());
+		if(g_mkdir_with_parents(dirname, 0700) != 0) {
+			g_error("create config dir %s failed: %s", dirname, strerror(errno));
+		}
+	}
+
 	Json::Value root;
 	root["version"] = 1;
 	root["main_window_width"] = mainWindowWidth;
@@ -99,6 +110,13 @@ IptuxConfig* IptuxConfig::Save() {
 	root["trans_window_height"] = transWindowHeight;
 	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
 	ofstream ofs(fname);
+	if(!ofs) {
+		g_warning("open config file %s for write failed.", fname.c_str());
+		return this;
+	}
 	ofs << root;
+	if(!ofs) {
+		g_warning("write to config file %s failed.", fname.c_str());
+	}
 	return this;
 }
