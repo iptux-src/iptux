@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "config.h"
+
+#include <string>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "StatusIcon.h"
@@ -25,14 +28,32 @@
 #include "LogSystem.h"
 #include "SoundSystem.h"
 #include "support.h"
+
+using namespace std;
+
+string getConfigPath();
+
 ProgramData progdt;
 CoreThread cthrd;
 StatusIcon sicon;
 GConfClient* client = gconf_client_get_default();
-IptuxConfig config(client);
+string configPath = getConfigPath();
+IptuxConfig config(configPath);
 MainWindow mwin(&config, &progdt);
 LogSystem lgsys;
 SoundSystem sndsys;
+
+string getConfigPath() {
+        const char* res1 =  g_build_path("/",
+                g_getenv("HOME"),
+                ".iptux",
+                "config.json",
+                NULL
+                );
+        string res2(res1);
+        g_free(gpointer(res1));
+        return res2;
+}
 
 int main(int argc, char *argv[])
 {

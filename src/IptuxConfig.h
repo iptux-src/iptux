@@ -1,11 +1,11 @@
 #ifndef IPTUX_CONFIG_H
 #define IPTUX_CONFIG_H
 
-#include <gconf/gconf-client.h>
+#include <string>
 
 class IptuxConfig {
 public:
-	IptuxConfig(GConfClient* client);
+	IptuxConfig(std::string& fname);
 	~IptuxConfig();
 
 	int GetTransWindowWidth() const;
@@ -21,7 +21,7 @@ public:
 	IptuxConfig* SetMwinMainPanedDivide(int d);
 	IptuxConfig* Save();
 private:
-	GConfClient* client;
+	std::string fname;
 
 	int transWindowWidth;
 	int transWindowHeight;

@@ -1,24 +1,35 @@
 #include "IptuxConfig.h"
 
+#include <fstream>
+#include <json/json.h>
 #include "deplib.h"
 
-IptuxConfig::IptuxConfig(GConfClient* client) 
-	: client(client)
+using namespace std;
+
+IptuxConfig::IptuxConfig(string& fname) 
+	: fname(fname)
 {
-	mainWindowWidth = gconf_client_get_int(client, GCONF_PATH "/main_window_width", NULL);
-	mainWindowWidth = mainWindowWidth ? mainWindowWidth : 250;
 
-	mainWindowHeight = gconf_client_get_int(client, GCONF_PATH "/main_window_height", NULL);
-	mainWindowHeight = mainWindowHeight ? mainWindowHeight : 510;
+	Json::Value root;
 
-	mwinMainPanedDivide = gconf_client_get_int(client, GCONF_PATH "/mwin_main_paned_divide", NULL);
-	mwinMainPanedDivide = mwinMainPanedDivide ? mwinMainPanedDivide : 210;
+	ifstream ifs(fname.c_str());
+	if(ifs.is_open()) {
+		ifs >> root;
+	} else {
+		g_warning("config file %s not found", fname.c_str());
+	}
 
-	transWindowWidth = gconf_client_get_int(client, GCONF_PATH "/trans_window_width", NULL);
-	transWindowWidth = transWindowWidth ? transWindowWidth : 500;
+	int version = root.get("version", 1).asInt();
+	if(version != 1) {
+		g_error("unknown config file version %d", version);
+		return;
+	}
 
-	transWindowHeight = gconf_client_get_int(client, GCONF_PATH "/trans_window_height", NULL);
-	transWindowHeight = transWindowHeight ? transWindowHeight : 350;
+	mainWindowWidth = root.get("main_window_width", 250).asInt();
+	mainWindowHeight = root.get("main_window_height", 510).asInt();
+	transWindowWidth = root.get("trans_window_width", 500).asInt();
+	transWindowHeight = root.get("trans_window_height", 350).asInt();
+	mwinMainPanedDivide = root.get("mwin_main_paned_divide", 210).asInt();
 }
 
 IptuxConfig::~IptuxConfig() {
@@ -47,7 +58,6 @@ int IptuxConfig::GetMwinMainPanedDivide() const {
 IptuxConfig* IptuxConfig::SetMainWindowWidth(int w) {
 	if(mainWindowWidth != w) {
 		mainWindowWidth = w;
-		gconf_client_set_int(client, GCONF_PATH "/main_window_width", mainWindowWidth, NULL);
 	}
 	return this;
 }
@@ -55,7 +65,6 @@ IptuxConfig* IptuxConfig::SetMainWindowWidth(int w) {
 IptuxConfig* IptuxConfig::SetMainWindowHeight(int h) {
 	if(mainWindowHeight != h) {
 		mainWindowHeight = h;
-		gconf_client_set_int(client, GCONF_PATH "/main_window_height", mainWindowHeight, NULL);
 	}
 	return this;
 }
@@ -63,7 +72,6 @@ IptuxConfig* IptuxConfig::SetMainWindowHeight(int h) {
 IptuxConfig* IptuxConfig::SetTransWindowWidth(int w) {
 	if(transWindowWidth != w) {
 		transWindowWidth = w;
-		gconf_client_set_int(client, GCONF_PATH "/trans_window_width", transWindowWidth, NULL);
 	}
 	return this;
 }
@@ -71,7 +79,6 @@ IptuxConfig* IptuxConfig::SetTransWindowWidth(int w) {
 IptuxConfig* IptuxConfig::SetTransWindowHeight(int h) {
 	if(transWindowHeight != h) {
 		transWindowHeight = h;
-		gconf_client_set_int(client, GCONF_PATH "/transWindowHeight", transWindowHeight, NULL);
 	}
 	return this;
 }
@@ -79,11 +86,19 @@ IptuxConfig* IptuxConfig::SetTransWindowHeight(int h) {
 IptuxConfig* IptuxConfig::SetMwinMainPanedDivide(int d) {
 	if(mwinMainPanedDivide != d) {
 		mwinMainPanedDivide = d;
-		gconf_client_set_int(client, GCONF_PATH "/mwin_main_paned_divide", mwinMainPanedDivide, NULL);
 	}
 	return this;
 }
 
 IptuxConfig* IptuxConfig::Save() {
+	Json::Value root;
+	root["version"] = 1;
+	root["main_window_width"] = mainWindowWidth;
+	root["main_window_height"] = mainWindowHeight;
+	root["trans_window_width"] = transWindowWidth;
+	root["trans_window_height"] = transWindowHeight;
+	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
+	ofstream ofs(fname);
+	ofs << root;
 	return this;
 }
