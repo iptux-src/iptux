@@ -304,7 +304,7 @@ void ShareFile::ApplySharedData()
         gchar *filepath;
         const gchar *passwd;
         AnalogFS afs;
-        struct stat64 st;
+        struct stat st;
 
         /* 更新共享文件链表 */
         pthread_mutex_lock(cthrd.GetMutex());
@@ -349,7 +349,7 @@ void ShareFile::AttachSharedFiles(GSList *list)
         GtkTreeModel *model;
         GtkTreeIter iter;
         GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
-        struct stat64 st;
+        struct stat st;
         int64_t pathsize;
         GSList *tlist;
         char *filesize;
@@ -365,7 +365,7 @@ void ShareFile::AttachSharedFiles(GSList *list)
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
         tlist = list;
         while (tlist) {
-                if (stat64((const char *)tlist->data, &st) == -1
+                if (stat((const char *)tlist->data, &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
                         tlist = g_slist_next(tlist);
                         continue;

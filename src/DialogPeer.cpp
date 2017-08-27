@@ -458,9 +458,9 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal)
         gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
         if (!FLAG_ISSET(pal->flags, 0))
-                snprintf(buf, MAX_BUFLEN, _("Compatibility: Microsoft\n"));
+                snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
         else
-                snprintf(buf, MAX_BUFLEN, _("Compatibility: GNU/Linux\n"));
+                snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
         gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
         snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);
@@ -1093,7 +1093,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
         //设置进度条,如果接收完成重新载入待接收和已接收列表
         if(dlgpr->torcvsize == 0) {
             progress = 0;
-            snprintf(progresstip, MAX_BUFLEN,_("Receiving Progress."));
+            snprintf(progresstip, MAX_BUFLEN, "%s", _("Receiving Progress."));
         } else {
             if(dlgpr->rcvdsize == 0)
                  snprintf(progresstip, MAX_BUFLEN,_("%s to Receive."),
@@ -1106,7 +1106,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
         }
         if(progress == 1.0){
                 g_source_remove(dlgpr->timerrcv);
-                snprintf(progresstip, MAX_BUFLEN,_("Mission Completed!"));
+                snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
         }
         pbar = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset),
                                               "file-receive-progress-bar-widget"));
@@ -1166,7 +1166,7 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr)
     //设置进度条,如果接收完成重新载入待接收和已接收列表
     if(dlgpr->torcvsize == 0) {
         progress = 0;
-        snprintf(progresstip, MAX_BUFLEN,_("Receiving Progress."));
+        snprintf(progresstip, MAX_BUFLEN, "%s", _("Receiving Progress."));
     } else {
         if(dlgpr->rcvdsize == 0)
              snprintf(progresstip, MAX_BUFLEN,_("%s to Receive."),

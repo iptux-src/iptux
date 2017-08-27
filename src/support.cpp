@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "support.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
@@ -99,9 +100,9 @@ void analysis_parameter(int argc, char *const argv[])
  */
 void print_usage()
 {
-        printf(_("iptux: A software for sharing in LAN\n"));
-        printf(_("\t-h --help\n\t\tdisplay this help and exit\n"));
-        printf(_("\t-v --version\n\t\toutput version information and exit\n"));
+        puts(_("iptux: A software for sharing in LAN"));
+        puts(_("\t-h --help\n\t\tdisplay this help and exit"));
+        puts(_("\t-v --version\n\t\toutput version information and exit"));
 }
 
 /**
@@ -117,7 +118,7 @@ void print_version()
  */
 void print_stun()
 {
-        printf(_("What do you want to do?\n"));
+        puts(_("What do you want to do?"));
 }
 
 /**

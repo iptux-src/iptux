@@ -174,7 +174,7 @@ void SendFileData::SendDirFiles()
 {
         AnalogFS afs;
         GQueue dirstack = G_QUEUE_INIT;
-        struct stat64 st;
+        struct stat st;
         struct dirent *dirt, vdirt;
         DIR *dir;
         gchar *dirname, *pathname, *filename;

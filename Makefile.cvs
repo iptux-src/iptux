@@ -1,9 +1,0 @@
-default: all
-
-all:
-	aclocal
-	autoheader
-	automake --add-missing
-	autoconf
-	glib-gettextize -f
-

@@ -98,14 +98,14 @@ int AnalogFS::open(const char *fn, int flags, mode_t mode)
  * @param st a stat64 struct
  * @return 成功与否
  */
-int AnalogFS::stat(const char *fn, struct stat64 *st)
+int AnalogFS::stat(const char *fn, struct stat *st)
 {
         char tpath[MAX_PATHLEN];
         int result;
 
         strcpy(tpath, path);
         mergepath(tpath, fn);
-        if ((result = ::stat64(tpath, st)) != 0)
+        if ((result = ::stat(tpath, st)) != 0)
                 pwarning(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
 
         return result;
@@ -141,7 +141,7 @@ int AnalogFS::mkdir(const char *dir, mode_t mode)
 int64_t AnalogFS::ftwsize(const char *dir_name)
 {
         // 由于系统中存在使用此方法读取文件的大小的调用，因此需要判断文件dir_name是文件还是目录
-        struct stat64 st ;
+        struct stat st ;
         int result = stat(dir_name, &st);
         if (result != 0)
         {
@@ -164,7 +164,7 @@ int64_t AnalogFS::ftwsize(const char *dir_name)
 
         struct dirent *dirt;
         int64_t sumsize = 0;
-        while(dirt = readdir(dir)) {
+        while((dirt = readdir(dir))) {
                 if(strcmp(dirt->d_name, ".") == 0) {
                         continue;
                 }
@@ -174,8 +174,8 @@ int64_t AnalogFS::ftwsize(const char *dir_name)
                 char tpath[MAX_PATHLEN];
                 strcpy(tpath, dir_name);
                 mergepath(tpath, dirt->d_name);
-                struct stat64 st;
-                if(stat64(tpath, &st) == -1) {
+                struct stat st;
+                if(stat(tpath, &st) == -1) {
                         continue;
                 }
                 if(S_ISDIR(st.st_mode)) {

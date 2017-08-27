@@ -18,40 +18,352 @@ msgstr ""
 "X-Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: src/AnalogFS.cpp:84 src/AnalogFS.cpp:89
+#: src/support.cpp:103
 #, c-format
-msgid "Open() file \"%s\" failed, %s"
-msgstr "打開檔案\"%s\"失敗，%s"
+msgid ""
+"\t-h --help\n"
+"\t\tdisplay this help and exit\n"
+msgstr ""
 
-#: src/AnalogFS.cpp:109
+#: src/support.cpp:104
 #, c-format
-msgid "Stat64() file \"%s\" failed, %s"
-msgstr "獲取檔案\"%s\"狀態失敗，%s"
+msgid ""
+"\t-v --version\n"
+"\t\toutput version information and exit\n"
+msgstr ""
 
-#: src/AnalogFS.cpp:130
+#: src/dialog.cpp:140 src/dialog.cpp:200
+msgid ""
+"\n"
+"Empty Password!"
+msgstr ""
+"\n"
+"密碼為空！"
+
+#: src/DataSettings.cpp:1509 src/DataSettings.cpp:1516 src/DetectPal.cpp:122
 #, c-format
-msgid "Mkdir() directory \"%s\" failed, %s"
-msgstr "建立目錄\"%s\"失敗，%s"
+msgid ""
+"\n"
+"Illegal IP(v4) address: %s!"
+msgstr ""
+"\n"
+"非法的IP(v4)位址：%s！"
 
-#. Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
-#: src/AnalogFS.cpp:149
-#, fuzzy, c-format
-msgid "stat file \"%s\" failed: %s"
-msgstr "查看檔案\"%s\"狀態失敗，%s\n"
+#: src/dialog.cpp:195
+msgid ""
+"\n"
+"Password Mismatched!"
+msgstr ""
+"\n"
+"密碼不一致！"
 
-#: src/AnalogFS.cpp:161
-#, fuzzy, c-format
-msgid "opendir on \"%s\" failed: %s"
-msgstr "打開目錄\"%s\"失敗，%s"
+#: src/DialogPeer.cpp:477
+msgid ""
+"\n"
+"Photo:\n"
+msgstr ""
+"\n"
+"個人頭象:\n"
 
-#: src/AnalogFS.cpp:207
+#: src/DialogPeer.cpp:1103 src/DialogPeer.cpp:1176
 #, c-format
-msgid "Opendir() directory \"%s\" failed, %s"
-msgstr "打開目錄\"%s\"失敗，%s"
+msgid "%s Of %s Received."
+msgstr ""
 
-#: src/Command.cpp:221
-msgid "Your pal didn't receive the packet. He or she is offline maybe."
-msgstr "你的好友沒有收到傳送的資料，他可能已經下線。"
+#: src/DialogPeer.cpp:1099 src/DialogPeer.cpp:1172
+#, c-format
+msgid "%s to Receive."
+msgstr ""
+
+#: src/dialog.cpp:123
+#, c-format
+msgid "(%s)[%s]Password:"
+msgstr "(%s)[%s]密碼: "
+
+#: src/HelpDialog.cpp:102 src/HelpDialog.cpp:120
+msgid "..."
+msgstr "..."
+
+#: src/CoreThread.cpp:994
+msgid "<ERROR>"
+msgstr "<錯誤>"
+
+#: src/HelpDialog.cpp:85
+msgid "A GTK+ based LAN Messenger."
+msgstr "基於GTK+的區域網路通信工具"
+
+#: src/DialogPeer.cpp:843
+msgid "Accept"
+msgstr "接受"
+
+#: src/dialog.cpp:103
+msgid "Access Password"
+msgstr "存取密碼"
+
+#: src/DataSettings.cpp:367
+msgid "Activate the sound support"
+msgstr "啟動聲音支援"
+
+#: src/DataSettings.cpp:459
+msgid "Add"
+msgstr "新增"
+
+#: src/ShareFile.cpp:150
+msgid "Add Files"
+msgstr "新增檔案"
+
+#: src/ShareFile.cpp:153
+msgid "Add Folders"
+msgstr "新增目錄"
+
+#: src/DataSettings.cpp:469
+msgid "Added IP(v4) Section:"
+msgstr "已添加的IP(v4)網路區段:"
+
+#: src/DialogPeer.cpp:457 src/MainWindow.cpp:1672
+#, c-format
+msgid "Address: %s\n"
+msgstr "位址: %s\n"
+
+#: src/DialogPeer.cpp:455 src/MainWindow.cpp:1670
+#, c-format
+msgid "Address: %s(%s)\n"
+msgstr "位址: %s(%s)\n"
+
+#: src/dialog.cpp:60
+msgid "Agree"
+msgstr "允許"
+
+#: src/ShareFile.cpp:106
+msgid "Apply"
+msgstr "套用"
+
+#: src/DialogGroup.cpp:531 src/MainWindow.cpp:921
+msgid "Ascending"
+msgstr "升冪"
+
+#: src/DialogPeer.cpp:367
+msgid "Attach File"
+msgstr "新增檔案"
+
+#: src/DialogPeer.cpp:373
+msgid "Attach Folder"
+msgstr "新增目錄"
+
+#: src/DataSettings.cpp:330
+msgid "Automatically clean up the chat history"
+msgstr "自動清空聊天記錄"
+
+#: src/DataSettings.cpp:315
+msgid "Automatically hide the panel after login"
+msgstr "程序啟動後隱藏面板"
+
+#: src/DataSettings.cpp:320
+msgid "Automatically open the File Transmission Management"
+msgstr "自動打開檔案傳輸管理器"
+
+#: src/DataSettings.cpp:310
+msgid "Automatically open the chat dialog"
+msgstr "自動打開聊天對話框"
+
+#: src/RevisePal.cpp:155
+msgid "Be SURE to know what you are doing!"
+msgstr "你最好明白你到底在做些什麼！"
+
+#: src/RevisePal.cpp:175
+msgid "Be compatible with iptux's protocol (DANGEROUS)"
+msgstr "相容 iptux 擴展協議(危險)"
+
+#: src/DataSettings.cpp:443
+msgid "Beginning of the IP(v4) section"
+msgstr "IP(v4)網路區段起始點"
+
+#: src/CoreThread.cpp:1171
+msgid "Broadcast"
+msgstr "廣播"
+
+#: src/DialogGroup.cpp:521 src/MainWindow.cpp:911
+msgid "By IP"
+msgstr "依 IP"
+
+#: src/DialogGroup.cpp:514 src/MainWindow.cpp:904
+msgid "By Nickname"
+msgstr "依暱稱"
+
+#: src/support.cpp:149
+msgid "Can't find any available web browser!\n"
+msgstr "未發現可用的瀏覽器！\n"
+
+#: src/DetectPal.cpp:73 src/ShareFile.cpp:107
+msgid "Cancel"
+msgstr "取消"
+
+#: src/DataSettings.cpp:272
+msgid "Candidate network coding"
+msgstr "預設網路編碼"
+
+#: src/DataSettings.cpp:266
+msgid "Candidate network coding:"
+msgstr "預設網路編碼:"
+
+#: src/MainWindow.cpp:1611
+msgid "Change Info."
+msgstr "更改資訊"
+
+#: src/RevisePal.cpp:97
+msgid "Change Pal's Information"
+msgstr "更改好友資訊"
+
+#: src/ShareFile.cpp:422
+msgid "Choose the files to share"
+msgstr "選擇共享檔案"
+
+#: src/ShareFile.cpp:425
+msgid "Choose the folders to share"
+msgstr "選擇共享目錄"
+
+#: src/DataSettings.cpp:494
+msgid "Clear"
+msgstr "清空"
+
+#: src/DialogGroup.cpp:501 src/DialogPeer.cpp:417
+msgid "Clear Buffer"
+msgstr "清空暫存"
+
+#: src/ShareFile.cpp:159
+msgid "Clear Password"
+msgstr "清除密碼"
+
+#: src/MainWindow.cpp:1556
+msgid "Clear Tasklist"
+msgstr "清理任務"
+
+#: src/DataSettings.cpp:1248 src/DialogGroup.cpp:657
+msgid "Clear Up"
+msgstr "清空"
+
+#: src/DialogPeer.cpp:389
+msgid "Close"
+msgstr "關閉"
+
+#: src/DialogPeer.cpp:463 src/MainWindow.cpp:1678
+#, c-format
+msgid "Compatibility: GNU/Linux\n"
+msgstr "相容性: GNU/Linux\n"
+
+#: src/DialogPeer.cpp:461 src/MainWindow.cpp:1676
+#, c-format
+msgid "Compatibility: Microsoft\n"
+msgstr "相容性: Microsoft\n"
+
+#: src/MainWindow.cpp:1219
+msgid "Completed"
+msgstr "已完成"
+
+#: src/dialog.cpp:37
+msgid "Confirm Exit"
+msgstr "確認退出"
+
+#: src/HelpDialog.cpp:102
+msgid "Contributers"
+msgstr "貢獻者"
+
+#: src/MainWindow.cpp:1231
+msgid "Cost"
+msgstr "花費時間"
+
+#: src/DataSettings.cpp:463
+msgid "Delete"
+msgstr "刪除"
+
+#: src/MainWindow.cpp:1626
+msgid "Delete Pal"
+msgstr "刪除好友"
+
+#: src/ShareFile.cpp:156
+msgid "Delete Resources"
+msgstr "刪除資源"
+
+#: src/DialogGroup.cpp:538 src/MainWindow.cpp:928
+msgid "Descending"
+msgstr "降冪"
+
+#: src/DataSettings.cpp:830
+msgid "Description"
+msgstr "描述"
+
+#: src/DialogPeer.cpp:853
+msgid "Detail"
+msgstr ""
+
+#: src/DetectPal.cpp:72
+msgid "Detect"
+msgstr "搜尋"
+
+#: src/DetectPal.cpp:70
+msgid "Detect pals"
+msgstr "搜尋好友"
+
+#: src/DialogPeer.cpp:789
+#, fuzzy
+msgid "Enclosure."
+msgstr "附件"
+
+#: src/DataSettings.cpp:452
+msgid "End of the IP(v4) section"
+msgstr "IP(v4)網路區段終止點"
+
+#: src/dialog.cpp:163
+msgid "Enter a New Password"
+msgstr "輸入一個新的密碼"
+
+#: src/output.cpp:83
+msgid "Error"
+msgstr "錯誤"
+
+#: src/DataSettings.cpp:782
+msgid "Event"
+msgstr "事件"
+
+#: src/DataSettings.cpp:491
+msgid "Export"
+msgstr "匯出"
+
+#: src/SoundSystem.cpp:153
+#, c-format
+msgid "Failed to play the prompt tone, %s\n"
+msgstr "播放提示音失敗，%s\n"
+
+#: src/RecvFileData.cpp:332
+#, c-format
+msgid "Failed to receive the directory \"%s\" from %s!"
+msgstr "接收目錄\"%s\"來自%s失敗！"
+
+#: src/RecvFileData.cpp:184
+#, c-format
+msgid "Failed to receive the file \"%s\" from %s!"
+msgstr "接收檔案\"%s\"來自%s失敗！"
+
+#: src/SendFileData.cpp:290
+#, c-format
+msgid "Failed to send the directory \"%s\" to %s!"
+msgstr "傳送目錄\"%s\"到%s失敗！"
+
+#: src/SendFileData.cpp:162
+#, c-format
+msgid "Failed to send the file \"%s\" to %s!"
+msgstr "傳送檔案\"%s\"到%s失敗！"
+
+#: src/support.cpp:179
+#, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to bind the TCP/UDP port(2425)!\n"
+"%s"
+msgstr ""
+"致命錯誤！！\n"
+"連接TCP/UDP端口(2425)失敗！\n"
+"%s"
 
 #: src/CoreThread.cpp:231 src/DialogPeer.cpp:762 src/RecvFileData.cpp:152
 #: src/RecvFileData.cpp:212 src/support.cpp:166
@@ -65,234 +377,38 @@ msgstr ""
 "建立新的連接失敗！\n"
 "%s"
 
-#: src/CoreThread.cpp:556 src/CoreThread.cpp:581 src/CoreThread.cpp:1121
-#: src/CoreThread.cpp:1147
-msgid "Others"
-msgstr "其他"
+#: src/ShareFile.cpp:270
+msgid "File"
+msgstr "檔案"
 
-#: src/CoreThread.cpp:980 src/RecvFileData.cpp:133 src/RecvFileData.cpp:265
-#: src/SendFileData.cpp:134 src/SendFileData.cpp:221 src/ShareFile.cpp:228
-#: src/ShareFile.cpp:386
-msgid "unknown"
-msgstr "未知"
+#: src/DialogPeer.cpp:884
+#, fuzzy
+msgid "File received."
+msgstr "收到訊息"
 
-#: src/CoreThread.cpp:994
-msgid "<ERROR>"
-msgstr "<錯誤>"
+#: src/DialogPeer.cpp:836
+msgid "File to be receive."
+msgstr ""
 
-#: src/CoreThread.cpp:1171
-msgid "Broadcast"
-msgstr "廣播"
-
-#: src/DataSettings.cpp:56
-msgid "Personal"
-msgstr "個人"
-
-#: src/DataSettings.cpp:58
-msgid "System"
-msgstr "系統"
-
-#: src/DataSettings.cpp:61
-msgid "Sound"
-msgstr "聲音"
-
-#: src/DataSettings.cpp:64
-msgid "Network"
-msgstr "網路"
-
-#: src/DataSettings.cpp:148
-msgid "Preferences"
-msgstr "偏好設定"
-
-#: src/DataSettings.cpp:178
-msgid "Your nickname:"
-msgstr "您的暱稱:"
-
-#: src/DataSettings.cpp:184
-msgid "Please input your nickname!"
-msgstr "請輸入您的暱稱！"
-
-#: src/DataSettings.cpp:189
-msgid "Your group name:"
-msgstr "您的群組名稱:"
-
-#: src/DataSettings.cpp:195
-msgid "Please input your group name!"
-msgstr "請輸入您的群組名稱！"
-
-#: src/DataSettings.cpp:200
-msgid "Your face picture:"
-msgstr "您的頭像:"
-
-#: src/DataSettings.cpp:213
-msgid "Save files to: "
-msgstr "檔案存至:"
-
-#: src/DataSettings.cpp:223
-msgid "Photo"
-msgstr "個人相片"
-
-#: src/DataSettings.cpp:235
-msgid "Signature"
-msgstr "個人簽名"
-
-#: src/DataSettings.cpp:266
-msgid "Candidate network coding:"
-msgstr "預設網路編碼:"
-
-#: src/DataSettings.cpp:272
-msgid "Candidate network coding"
-msgstr "預設網路編碼"
-
-#: src/DataSettings.cpp:277
-msgid "Preference network coding:"
-msgstr "偏好網路編碼:"
-
-#: src/DataSettings.cpp:283
+#: src/dialog.cpp:34
 msgid ""
-"Preference network coding (You should be aware of what you are doing if you "
-"want to modify it.)"
-msgstr "偏好網路編碼(如果你想要修改它，那麼你必須明白你正在做什麼。)"
+"File transfer has not been completed.\n"
+"Are you sure to cancel and quit?"
+msgstr ""
+"檔案傳輸尚未完成。\n"
+"你確定要取消任務並退出嗎？"
 
-#: src/DataSettings.cpp:289
-msgid "Pal's default face picture:"
-msgstr "預設好友頭像:"
+#: src/MainWindow.cpp:1207
+msgid "Filename"
+msgstr "檔案名"
 
-#: src/DataSettings.cpp:302
-msgid "Panel font:"
-msgstr "面板字體："
-
-#: src/DataSettings.cpp:310
-msgid "Automatically open the chat dialog"
-msgstr "自動打開聊天對話框"
-
-#: src/DataSettings.cpp:315
-msgid "Automatically hide the panel after login"
-msgstr "程序啟動後隱藏面板"
-
-#: src/DataSettings.cpp:320
-msgid "Automatically open the File Transmission Management"
-msgstr "自動打開檔案傳輸管理器"
-
-#: src/DataSettings.cpp:325
-msgid "Use the 'Enter' key to send message"
-msgstr "使用Enter鍵傳送訊息"
-
-#: src/DataSettings.cpp:330
-msgid "Automatically clean up the chat history"
-msgstr "自動清空聊天記錄"
-
-#: src/DataSettings.cpp:335
-msgid "Save the chat history"
-msgstr "儲存聊天記錄"
-
-#: src/DataSettings.cpp:340
-msgid "Use the Blacklist (NOT recommended)"
-msgstr "開啟黑名單處理方案(不推薦)"
+#: src/MainWindow.cpp:603
+msgid "Files Transmission Management"
+msgstr "檔案傳輸管理器"
 
 #: src/DataSettings.cpp:345
 msgid "Filter the request of sharing files"
 msgstr "過濾共享檔案請求"
-
-#: src/DataSettings.cpp:367
-msgid "Activate the sound support"
-msgstr "啟動聲音支援"
-
-#: src/DataSettings.cpp:374
-msgid "Volume Control: "
-msgstr "音量控制:"
-
-#: src/DataSettings.cpp:383
-msgid "Sound Event"
-msgstr "聲音事件"
-
-#: src/DataSettings.cpp:411
-msgid "Test"
-msgstr "測試"
-
-#: src/DataSettings.cpp:414
-msgid "Stop"
-msgstr "停止"
-
-#: src/DataSettings.cpp:437
-msgid "From:"
-msgstr "起始:"
-
-#: src/DataSettings.cpp:443
-msgid "Beginning of the IP(v4) section"
-msgstr "IP(v4)網路區段起始點"
-
-#: src/DataSettings.cpp:446
-msgid "To:"
-msgstr "終止:"
-
-#: src/DataSettings.cpp:452
-msgid "End of the IP(v4) section"
-msgstr "IP(v4)網路區段終止點"
-
-#: src/DataSettings.cpp:459
-msgid "Add"
-msgstr "新增"
-
-#: src/DataSettings.cpp:463
-msgid "Delete"
-msgstr "刪除"
-
-#: src/DataSettings.cpp:469
-msgid "Added IP(v4) Section:"
-msgstr "已添加的IP(v4)網路區段:"
-
-#: src/DataSettings.cpp:488
-msgid "Import"
-msgstr "匯入"
-
-#: src/DataSettings.cpp:491
-msgid "Export"
-msgstr "匯出"
-
-#: src/DataSettings.cpp:494
-msgid "Clear"
-msgstr "清空"
-
-#: src/DataSettings.cpp:709
-msgid "Transfer finished"
-msgstr "傳輸完成"
-
-#: src/DataSettings.cpp:714
-msgid "Message received"
-msgstr "收到訊息"
-
-#: src/DataSettings.cpp:775
-msgid "Play"
-msgstr "播放"
-
-#: src/DataSettings.cpp:782
-msgid "Event"
-msgstr "事件"
-
-#: src/DataSettings.cpp:816
-msgid "From"
-msgstr "起始"
-
-#: src/DataSettings.cpp:822
-msgid "To"
-msgstr "終止"
-
-#: src/DataSettings.cpp:830
-msgid "Description"
-msgstr "描述"
-
-#: src/DataSettings.cpp:847
-msgid "Please select download folder"
-msgstr "請選擇下載目錄"
-
-#: src/DataSettings.cpp:869
-msgid "Select Font"
-msgstr "選擇字體"
-
-#: src/DataSettings.cpp:882
-msgid "Please select a sound file"
-msgstr "請選擇一個聲音檔案"
 
 #: src/DataSettings.cpp:1157 src/DataSettings.cpp:1189
 #, c-format
@@ -303,398 +419,286 @@ msgstr ""
 "打開檔案\"%s\"失敗！\n"
 "%s"
 
-#: src/DataSettings.cpp:1238 src/DialogGroup.cpp:647
-msgid "Select All"
-msgstr "全選"
+#: src/DataSettings.cpp:816
+msgid "From"
+msgstr "起始"
 
-#: src/DataSettings.cpp:1243 src/DialogGroup.cpp:652
-msgid "Reverse Select"
-msgstr "反選"
+#: src/DataSettings.cpp:437
+msgid "From:"
+msgstr "起始:"
 
-#: src/DataSettings.cpp:1248 src/DialogGroup.cpp:657
-msgid "Clear Up"
-msgstr "清空"
+#: src/MainWindow.cpp:1132
+msgid "Group"
+msgstr "群組名稱"
 
-#: src/DataSettings.cpp:1342 src/RevisePal.cpp:426
-msgid "Please select a face picture"
-msgstr "請選擇一個頭像圖片"
+#: src/HelpDialog.cpp:102
+msgid "Help"
+msgstr "幫助"
 
-#: src/DataSettings.cpp:1365
-msgid "Please select a personal photo"
-msgstr "請選擇個人照片"
-
-#: src/DataSettings.cpp:1509 src/DataSettings.cpp:1516 src/DetectPal.cpp:122
-#, c-format
-msgid ""
-"\n"
-"Illegal IP(v4) address: %s!"
-msgstr ""
-"\n"
-"非法的IP(v4)位址：%s！"
-
-#: src/DataSettings.cpp:1614
-msgid "Please select a file to import data"
-msgstr "請選擇匯入資料的檔案"
-
-#: src/DataSettings.cpp:1662
-msgid "Save data to file"
-msgstr "保存資料到檔案"
-
-#: src/DetectPal.cpp:70
-msgid "Detect pals"
-msgstr "搜尋好友"
-
-#: src/DetectPal.cpp:72
-msgid "Detect"
-msgstr "搜尋"
-
-#: src/DetectPal.cpp:73 src/ShareFile.cpp:107
-msgid "Cancel"
-msgstr "取消"
-
-#: src/DetectPal.cpp:91
-msgid "Please input an IP address (IPv4 only):"
-msgstr "請輸入IP位址(限IPv4格式)："
-
-#: src/DetectPal.cpp:99
-msgid "Please input an IP address (IPv4 only)!"
-msgstr "請輸入IP位址(限IPv4格式)！"
-
-#: src/DetectPal.cpp:127
-#, c-format
-msgid "The notification has been sent to %s."
-msgstr "訊息已經傳送到%s。"
-
-#: src/dialog.cpp:34
-msgid ""
-"File transfer has not been completed.\n"
-"Are you sure to cancel and quit?"
-msgstr ""
-"檔案傳輸尚未完成。\n"
-"你確定要取消任務並退出嗎？"
-
-#: src/dialog.cpp:37
-msgid "Confirm Exit"
-msgstr "確認退出"
-
-#: src/dialog.cpp:57 src/DialogPeer.cpp:379 src/MainWindow.cpp:1597
-msgid "Request Shared Resources"
-msgstr "請求共享資源"
-
-#: src/dialog.cpp:60
-msgid "Agree"
-msgstr "允許"
-
-#: src/dialog.cpp:61 src/DialogPeer.cpp:848
-msgid "Refuse"
-msgstr "拒絕"
-
-#: src/dialog.cpp:74
-#, c-format
-msgid ""
-"Your pal (%s)[%s]\n"
-"is requesting to get your shared resources,\n"
-"Do you agree?"
-msgstr ""
-"您的好友(%s)[%s]\n"
-"請求獲取您的共享資源,\n"
-"是否允許?"
-
-#: src/dialog.cpp:103
-msgid "Access Password"
-msgstr "存取密碼"
-
-#: src/dialog.cpp:110
-msgid "Please input the password for the shared files behind"
-msgstr "請輸入共享檔案的存取密碼"
-
-#: src/dialog.cpp:123
-#, c-format
-msgid "(%s)[%s]Password:"
-msgstr "(%s)[%s]密碼: "
-
-#: src/dialog.cpp:140 src/dialog.cpp:200
-msgid ""
-"\n"
-"Empty Password!"
-msgstr ""
-"\n"
-"密碼為空！"
-
-#: src/dialog.cpp:163
-msgid "Enter a New Password"
-msgstr "輸入一個新的密碼"
-
-#: src/dialog.cpp:173
-msgid "Password: "
-msgstr "密碼: "
-
-#: src/dialog.cpp:181
-msgid "Repeat: "
-msgstr "重複: "
-
-#: src/dialog.cpp:195
-msgid ""
-"\n"
-"Password Mismatched!"
-msgstr ""
-"\n"
-"密碼不一致！"
-
-#: src/dialog.cpp:226
-#, fuzzy
-msgid "Please select a folder to save files."
-msgstr "請選擇一個聲音檔案"
-
-#: src/DialogGroup.cpp:277
-#, c-format
-msgid "Talk with the group %s"
-msgstr "與%s組對話"
-
-#: src/DialogGroup.cpp:371
-msgid "Member"
-msgstr "成員"
-
-#: src/DialogGroup.cpp:465
-msgid "Send"
-msgstr "傳送"
-
-#: src/DialogGroup.cpp:472
-msgid "Pals"
-msgstr "好友"
-
-#: src/DialogGroup.cpp:495 src/DialogPeer.cpp:409 src/MainWindow.cpp:865
-msgid "_Tools"
-msgstr "工具(_T)"
-
-#: src/DialogGroup.cpp:501 src/DialogPeer.cpp:417
-msgid "Clear Buffer"
-msgstr "清空暫存"
-
-#: src/DialogGroup.cpp:508
-msgid "Sort"
-msgstr "排序"
-
-#: src/DialogGroup.cpp:514 src/MainWindow.cpp:904
-msgid "By Nickname"
-msgstr "依暱稱"
-
-#: src/DialogGroup.cpp:521 src/MainWindow.cpp:911
-msgid "By IP"
-msgstr "依 IP"
-
-#: src/DialogGroup.cpp:531 src/MainWindow.cpp:921
-msgid "Ascending"
-msgstr "升冪"
-
-#: src/DialogGroup.cpp:538 src/MainWindow.cpp:928
-msgid "Descending"
-msgstr "降冪"
-
-#: src/DialogPeer.cpp:231
-#, fuzzy, c-format
-msgid "Talk with %s(%s) IP:%s"
-msgstr "與%s對話"
-
-#: src/DialogPeer.cpp:329
-msgid "Info."
-msgstr "資訊"
-
-#: src/DialogPeer.cpp:363 src/MainWindow.cpp:819
-msgid "_File"
-msgstr "檔案(_F)"
-
-#: src/DialogPeer.cpp:367
-msgid "Attach File"
-msgstr "新增檔案"
-
-#: src/DialogPeer.cpp:373
-msgid "Attach Folder"
-msgstr "新增目錄"
-
-#: src/DialogPeer.cpp:389
-msgid "Close"
-msgstr "關閉"
-
-#: src/DialogPeer.cpp:413
-msgid "Insert Picture"
-msgstr "插入圖片"
-
-#: src/DialogPeer.cpp:438 src/MainWindow.cpp:1653
-#, c-format
-msgid "Version: %s\n"
-msgstr "版本: %s\n"
-
-#: src/DialogPeer.cpp:442 src/MainWindow.cpp:1657
-#, c-format
-msgid "Nickname: %s@%s\n"
-msgstr "暱稱: %s@%s\n"
-
-#: src/DialogPeer.cpp:444 src/MainWindow.cpp:1659
-#, c-format
-msgid "Nickname: %s\n"
-msgstr "暱稱: %s\n"
-
-#: src/DialogPeer.cpp:447 src/MainWindow.cpp:1662
-#, c-format
-msgid "User: %s\n"
-msgstr "用戶: %s\n"
+#: src/MainWindow.cpp:1150
+msgid "Host"
+msgstr "主機"
 
 #: src/DialogPeer.cpp:450 src/MainWindow.cpp:1665
 #, c-format
 msgid "Host: %s\n"
 msgstr "主機: %s\n"
 
-#: src/DialogPeer.cpp:455 src/MainWindow.cpp:1670
-#, c-format
-msgid "Address: %s(%s)\n"
-msgstr "位址: %s(%s)\n"
+#: src/MainWindow.cpp:1138 src/MainWindow.cpp:1201
+msgid "IPv4"
+msgstr "IPv4"
 
-#: src/DialogPeer.cpp:457 src/MainWindow.cpp:1672
-#, c-format
-msgid "Address: %s\n"
-msgstr "位址: %s\n"
+#: src/DataSettings.cpp:488
+msgid "Import"
+msgstr "匯入"
 
-#: src/DialogPeer.cpp:461 src/MainWindow.cpp:1676
-#, c-format
-msgid "Compatibility: Microsoft\n"
-msgstr "相容性: Microsoft\n"
+#: src/DialogPeer.cpp:329
+msgid "Info."
+msgstr "資訊"
 
-#: src/DialogPeer.cpp:463 src/MainWindow.cpp:1678
-#, c-format
-msgid "Compatibility: GNU/Linux\n"
-msgstr "相容性: GNU/Linux\n"
+#: src/output.cpp:35
+msgid "Infomation"
+msgstr "資訊"
 
-#: src/DialogPeer.cpp:466 src/MainWindow.cpp:1681
-#, c-format
-msgid "System coding: %s\n"
-msgstr "系統編碼: %s\n"
+#: src/DialogPeer.cpp:413
+msgid "Insert Picture"
+msgstr "插入圖片"
 
-#: src/DialogPeer.cpp:470 src/MainWindow.cpp:1685
-msgid "Signature:\n"
-msgstr "個性簽名:\n"
-
-#: src/DialogPeer.cpp:477
+#: src/HelpDialog.cpp:110
 msgid ""
+"It's an honor that iptux was contributed voluntarilly by many people. "
+"Without your help, iptux could never make it.\n"
 "\n"
-"Photo:\n"
-msgstr ""
+"Especially, Here's some we would like to thank much:\n"
 "\n"
-"個人頭象:\n"
-
-#: src/DialogPeer.cpp:722
-msgid "Please select a picture to insert the buffer"
-msgstr "請選擇插入緩衝區的圖片"
-
-#: src/DialogPeer.cpp:789
-#, fuzzy
-msgid "Enclosure."
-msgstr "附件"
-
-#: src/DialogPeer.cpp:836
-msgid "File to be receive."
+"ChenGang\n"
+"<liangsuilong@gmail.com>\n"
+"<lidaobing@gmail.com>\n"
+"<mdjhu@sina.com>\n"
+"<omegao.hu@gmail.com>\n"
+"<syranosun@gmail.com>\n"
+"..."
 msgstr ""
-
-#: src/DialogPeer.cpp:840
-msgid "Receiving progress."
-msgstr ""
-
-#: src/DialogPeer.cpp:843
-msgid "Accept"
-msgstr "接受"
-
-#: src/DialogPeer.cpp:853
-msgid "Detail"
-msgstr ""
-
-#: src/DialogPeer.cpp:884
-#, fuzzy
-msgid "File received."
-msgstr "收到訊息"
-
-#: src/DialogPeer.cpp:926 src/DialogPeer.cpp:990
-msgid "Source"
-msgstr "來源"
-
-#: src/DialogPeer.cpp:932
-msgid "SaveAs"
-msgstr ""
-
-#: src/DialogPeer.cpp:937 src/DialogPeer.cpp:1000 src/MainWindow.cpp:1213
-#: src/ShareFile.cpp:280
-msgid "Size"
-msgstr "大小"
-
-#: src/DialogPeer.cpp:995
-msgid "Name"
-msgstr ""
-
-#: src/DialogPeer.cpp:1096 src/DialogPeer.cpp:1169
-#, c-format
-msgid "Receiving Progress."
-msgstr ""
-
-#: src/DialogPeer.cpp:1099 src/DialogPeer.cpp:1172
-#, c-format
-msgid "%s to Receive."
-msgstr ""
-
-#: src/DialogPeer.cpp:1103 src/DialogPeer.cpp:1176
-#, c-format
-msgid "%s Of %s Received."
-msgstr ""
-
-#: src/DialogPeer.cpp:1109
-#, fuzzy, c-format
-msgid "Mission Completed!"
-msgstr "已完成"
-
-#: src/DialogPeer.cpp:1321
-#, fuzzy
-msgid "Remove Selected"
-msgstr "反選"
 
 #: src/HelpDialog.cpp:61 src/HelpDialog.cpp:66
 msgid "Jally <jallyx@163.com>"
-msgstr ""
-
-#: src/HelpDialog.cpp:62 src/HelpDialog.cpp:68
-msgid "ManPT <pentie@gmail.com>"
 msgstr ""
 
 #: src/HelpDialog.cpp:67
 msgid "LiWeijian <weijian_li88@qq.com>"
 msgstr "牛牛 <weijian_li88@qq.com>"
 
-#: src/HelpDialog.cpp:71
-msgid ""
-"alick <alick9188@163.com>\n"
-"ManPT <pentie@gmail.com>"
+#: src/support.cpp:44
+msgid "Loading the process successfully!"
+msgstr "程序載入成功！"
+
+#: src/HelpDialog.cpp:62 src/HelpDialog.cpp:68
+msgid "ManPT <pentie@gmail.com>"
 msgstr ""
-"alick <alick9188@163.com>\n"
-"ManPT <pentie@gmail.com>\n"
-"村仔 <tw.chi.ming@gmail.com>"
 
-#: src/HelpDialog.cpp:80 src/MainWindow.cpp:576 src/StatusIcon.cpp:106
-#: src/StatusIcon.cpp:277
-msgid "iptux"
-msgstr "信使(iptux)"
+#: src/DialogGroup.cpp:371
+msgid "Member"
+msgstr "成員"
 
-#: src/HelpDialog.cpp:85
-msgid "A GTK+ based LAN Messenger."
-msgstr "基於GTK+的區域網路通信工具"
+#: src/DataSettings.cpp:714
+msgid "Message received"
+msgstr "收到訊息"
 
-#: src/HelpDialog.cpp:102
-msgid "Help"
-msgstr "幫助"
+#: src/DialogPeer.cpp:1109
+#, fuzzy, c-format
+msgid "Mission Completed!"
+msgstr "已完成"
 
-#: src/HelpDialog.cpp:102
-msgid "Contributers"
-msgstr "貢獻者"
+#: src/AnalogFS.cpp:130
+#, c-format
+msgid "Mkdir() directory \"%s\" failed, %s"
+msgstr "建立目錄\"%s\"失敗，%s"
 
-#: src/HelpDialog.cpp:102 src/HelpDialog.cpp:120
-msgid "..."
-msgstr "..."
+#: src/HelpDialog.cpp:128
+msgid "More About Iptux"
+msgstr "更多..."
+
+#: src/DialogPeer.cpp:995
+msgid "Name"
+msgstr ""
+
+#: src/DataSettings.cpp:64
+msgid "Network"
+msgstr "網路"
+
+#: src/MainWindow.cpp:1121
+msgid "Nickname"
+msgstr "暱稱"
+
+#: src/DialogPeer.cpp:444 src/MainWindow.cpp:1659
+#, c-format
+msgid "Nickname: %s\n"
+msgstr "暱稱: %s\n"
+
+#: src/DialogPeer.cpp:442 src/MainWindow.cpp:1657
+#, c-format
+msgid "Nickname: %s@%s\n"
+msgstr "暱稱: %s@%s\n"
+
+#: src/ShareFile.cpp:105
+msgid "OK"
+msgstr "確定"
+
+#: src/MainWindow.cpp:1540
+msgid "Open Containing Folder"
+msgstr "打開所在的文件夾"
+
+#: src/MainWindow.cpp:1534
+msgid "Open This File"
+msgstr "打開此文件"
+
+#: src/AnalogFS.cpp:84 src/AnalogFS.cpp:89
+#, c-format
+msgid "Open() file \"%s\" failed, %s"
+msgstr "打開檔案\"%s\"失敗，%s"
+
+#: src/AnalogFS.cpp:207
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s"
+msgstr "打開目錄\"%s\"失敗，%s"
+
+#: src/uninstall/utils.cpp:34
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s\n"
+msgstr "打開目錄\"%s\"失敗，%s\n"
+
+#: src/CoreThread.cpp:556 src/CoreThread.cpp:581 src/CoreThread.cpp:1121
+#: src/CoreThread.cpp:1147
+msgid "Others"
+msgstr "其他"
+
+#: src/DataSettings.cpp:289
+msgid "Pal's default face picture:"
+msgstr "預設好友頭像:"
+
+#: src/RevisePal.cpp:161
+msgid "Pal's face picture:"
+msgstr "好友頭像:"
+
+#: src/RevisePal.cpp:137
+msgid "Pal's group name:"
+msgstr "好友群組名稱:"
+
+#: src/RevisePal.cpp:125
+msgid "Pal's nickname:"
+msgstr "好友暱稱:"
+
+#: src/DialogGroup.cpp:472
+msgid "Pals"
+msgstr "好友"
+
+#: src/MainWindow.cpp:1715
+#, c-format
+msgid "Pals Online: %<PRIu32>"
+msgstr "線上好友: %<PRIu32>"
+
+#: src/MainWindow.cpp:718
+msgid "Pals Online: 0"
+msgstr "線上好友: 0"
+
+#: src/DataSettings.cpp:302
+msgid "Panel font:"
+msgstr "面板字體："
+
+#: src/dialog.cpp:173
+msgid "Password: "
+msgstr "密碼: "
+
+#: src/MainWindow.cpp:1195
+msgid "Peer"
+msgstr "好友"
+
+#: src/DataSettings.cpp:56
+msgid "Personal"
+msgstr "個人"
+
+#: src/DataSettings.cpp:223
+msgid "Photo"
+msgstr "個人相片"
+
+#: src/DataSettings.cpp:775
+msgid "Play"
+msgstr "播放"
+
+#: src/DetectPal.cpp:99
+msgid "Please input an IP address (IPv4 only)!"
+msgstr "請輸入IP位址(限IPv4格式)！"
+
+#: src/DetectPal.cpp:91
+msgid "Please input an IP address (IPv4 only):"
+msgstr "請輸入IP位址(限IPv4格式)："
+
+#: src/RevisePal.cpp:143
+msgid "Please input pal's new group name!"
+msgstr "請輸入好友的新群組名稱！"
+
+#: src/RevisePal.cpp:131
+msgid "Please input pal's new nickname!"
+msgstr "請輸入好友的新暱稱！"
+
+#: src/dialog.cpp:110
+msgid "Please input the password for the shared files behind"
+msgstr "請輸入共享檔案的存取密碼"
+
+#: src/DataSettings.cpp:195
+msgid "Please input your group name!"
+msgstr "請輸入您的群組名稱！"
+
+#: src/DataSettings.cpp:184
+msgid "Please input your nickname!"
+msgstr "請輸入您的暱稱！"
+
+#: src/DataSettings.cpp:1342 src/RevisePal.cpp:426
+msgid "Please select a face picture"
+msgstr "請選擇一個頭像圖片"
+
+#: src/DataSettings.cpp:1614
+msgid "Please select a file to import data"
+msgstr "請選擇匯入資料的檔案"
+
+#: src/dialog.cpp:226
+#, fuzzy
+msgid "Please select a folder to save files."
+msgstr "請選擇一個聲音檔案"
+
+#: src/DataSettings.cpp:1365
+msgid "Please select a personal photo"
+msgstr "請選擇個人照片"
+
+#: src/DialogPeer.cpp:722
+msgid "Please select a picture to insert the buffer"
+msgstr "請選擇插入緩衝區的圖片"
+
+#: src/DataSettings.cpp:882
+msgid "Please select a sound file"
+msgstr "請選擇一個聲音檔案"
+
+#: src/DataSettings.cpp:847
+msgid "Please select download folder"
+msgstr "請選擇下載目錄"
+
+#: src/DataSettings.cpp:283
+msgid ""
+"Preference network coding (You should be aware of what you are doing if you "
+"want to modify it.)"
+msgstr "偏好網路編碼(如果你想要修改它，那麼你必須明白你正在做什麼。)"
+
+#: src/DataSettings.cpp:277
+msgid "Preference network coding:"
+msgstr "偏好網路編碼:"
+
+#: src/DataSettings.cpp:148
+msgid "Preferences"
+msgstr "偏好設定"
+
+#: src/MainWindow.cpp:1225
+msgid "Progress"
+msgstr "進度"
 
 #: src/HelpDialog.cpp:104
 #, fuzzy
@@ -722,218 +726,448 @@ msgstr ""
 "如果仍然找不到解決的辦法，歡迎發信到郵件群組iptux@googlegroups.com，我們會樂"
 "意幫助你解決問題。"
 
-#: src/HelpDialog.cpp:110
-msgid ""
-"It's an honor that iptux was contributed voluntarilly by many people. "
-"Without your help, iptux could never make it.\n"
-"\n"
-"Especially, Here's some we would like to thank much:\n"
-"\n"
-"ChenGang\n"
-"<liangsuilong@gmail.com>\n"
-"<lidaobing@gmail.com>\n"
-"<mdjhu@sina.com>\n"
-"<omegao.hu@gmail.com>\n"
-"<syranosun@gmail.com>\n"
-"..."
+#: src/MainWindow.cpp:1243
+msgid "Rate"
+msgstr "速率"
+
+#: src/RecvFileData.cpp:335
+#, c-format
+msgid "Receive the directory \"%s\" from %s successfully!"
+msgstr "接收目錄\"%s\"來自%s成功！"
+
+#: src/RecvFileData.cpp:187
+#, c-format
+msgid "Receive the file \"%s\" from %s successfully!"
+msgstr "接收檔案\"%s\"來自%s成功！"
+
+#: src/DialogPeer.cpp:1096 src/DialogPeer.cpp:1169
+#, c-format
+msgid "Receiving Progress."
 msgstr ""
 
-#: src/HelpDialog.cpp:128
-msgid "More About Iptux"
-msgstr "更多..."
+#: src/DialogPeer.cpp:840
+msgid "Receiving progress."
+msgstr ""
 
 #: src/LogSystem.cpp:53
 #, c-format
 msgid "Recevied-From: Nickname:%s User:%s Host:%s"
 msgstr "来自: 昵称:%s 用户:%s 主機:%s"
 
+#: src/dialog.cpp:61 src/DialogPeer.cpp:848
+msgid "Refuse"
+msgstr "拒絕"
+
+#: src/MainWindow.cpp:1237
+msgid "Remaining"
+msgstr "剩餘時間"
+
+#: src/DialogPeer.cpp:1321
+#, fuzzy
+msgid "Remove Selected"
+msgstr "反選"
+
+#: src/dialog.cpp:181
+msgid "Repeat: "
+msgstr "重複: "
+
+#: src/dialog.cpp:57 src/DialogPeer.cpp:379 src/MainWindow.cpp:1597
+msgid "Request Shared Resources"
+msgstr "請求共享資源"
+
+#: src/DataSettings.cpp:1243 src/DialogGroup.cpp:652
+msgid "Reverse Select"
+msgstr "反選"
+
+#: src/uninstall/utils.cpp:61
+#, c-format
+msgid "Rmdir() directory \"%s\" failed, %s\n"
+msgstr "刪除目錄\"%s\"失敗，%s\n"
+
+#: src/DataSettings.cpp:1662
+msgid "Save data to file"
+msgstr "保存資料到檔案"
+
+#: src/DataSettings.cpp:213
+msgid "Save files to: "
+msgstr "檔案存至:"
+
+#: src/DataSettings.cpp:335
+msgid "Save the chat history"
+msgstr "儲存聊天記錄"
+
+#: src/DialogPeer.cpp:932
+msgid "SaveAs"
+msgstr ""
+
+#: src/MainWindow.cpp:801
+msgid "Search Pals"
+msgstr "搜尋好友"
+
+#: src/DataSettings.cpp:1238 src/DialogGroup.cpp:647
+msgid "Select All"
+msgstr "全選"
+
+#: src/DataSettings.cpp:869
+msgid "Select Font"
+msgstr "選擇字體"
+
+#: src/DialogGroup.cpp:465
+msgid "Send"
+msgstr "傳送"
+
+#: src/MainWindow.cpp:1577
+msgid "Send Message"
+msgstr "傳送訊息"
+
+#: src/SendFileData.cpp:293
+#, c-format
+msgid "Send the directory \"%s\" to %s successfully!"
+msgstr "傳送目錄\"%s\"到%s失敗！"
+
+#: src/SendFileData.cpp:165
+#, c-format
+msgid "Send the file \"%s\" to %s successfully!"
+msgstr "傳送檔案\"%s\"到%s成功！"
+
+#: src/LogSystem.cpp:60
+msgid "Send-Broadcast"
+msgstr "傳送廣播"
+
 #: src/LogSystem.cpp:57
 #, c-format
 msgid "Send-To: Nickname:%s User:%s Host:%s"
 msgstr "傳送: 暱稱:%s 用戶:%s 主機:%s"
 
-#: src/LogSystem.cpp:60
-msgid "Send-Broadcast"
-msgstr "傳送廣播"
+#: src/ShareFile.cpp:162
+msgid "Set Password"
+msgstr "設置密碼"
+
+#: src/ShareFile.cpp:102
+msgid "Shared Files Management"
+msgstr "共享檔案管理器"
+
+#: src/DataSettings.cpp:235
+msgid "Signature"
+msgstr "個人簽名"
+
+#: src/DialogPeer.cpp:470 src/MainWindow.cpp:1685
+msgid "Signature:\n"
+msgstr "個性簽名:\n"
+
+#: src/DialogPeer.cpp:937 src/DialogPeer.cpp:1000 src/MainWindow.cpp:1213
+#: src/ShareFile.cpp:280
+msgid "Size"
+msgstr "大小"
+
+#: src/DialogGroup.cpp:508
+msgid "Sort"
+msgstr "排序"
+
+#: src/DataSettings.cpp:61
+msgid "Sound"
+msgstr "聲音"
+
+#: src/DataSettings.cpp:383
+msgid "Sound Event"
+msgstr "聲音事件"
+
+#: src/DialogPeer.cpp:926 src/DialogPeer.cpp:990
+msgid "Source"
+msgstr "來源"
+
+#: src/uninstall/utils.cpp:45
+#, c-format
+msgid "Stat() file \"%s\" failed, %s\n"
+msgstr "查看檔案\"%s\"狀態失敗，%s\n"
+
+#: src/AnalogFS.cpp:109
+#, c-format
+msgid "Stat64() file \"%s\" failed, %s"
+msgstr "獲取檔案\"%s\"狀態失敗，%s"
+
+#: src/MainWindow.cpp:1183
+msgid "State"
+msgstr "狀態"
+
+#: src/DataSettings.cpp:414
+msgid "Stop"
+msgstr "停止"
+
+#: src/DataSettings.cpp:58
+msgid "System"
+msgstr "系統"
+
+#: src/RevisePal.cpp:149
+msgid "System coding:"
+msgstr "系統編碼:"
+
+#: src/DialogPeer.cpp:466 src/MainWindow.cpp:1681
+#, c-format
+msgid "System coding: %s\n"
+msgstr "系統編碼: %s\n"
+
+#: src/DialogPeer.cpp:231
+#, fuzzy, c-format
+msgid "Talk with %s(%s) IP:%s"
+msgstr "與%s對話"
+
+#: src/DialogGroup.cpp:277
+#, c-format
+msgid "Talk with the group %s"
+msgstr "與%s組對話"
+
+#: src/MainWindow.cpp:1189
+msgid "Task"
+msgstr "任務"
+
+#: src/MainWindow.cpp:1551
+msgid "Terminate All"
+msgstr "終止所有"
+
+#: src/MainWindow.cpp:1546
+msgid "Terminate Task"
+msgstr "終止任務"
+
+#: src/DataSettings.cpp:411
+msgid "Test"
+msgstr "測試"
+
+#: src/MainWindow.cpp:1946
+msgid "The file you want to open not exist!"
+msgstr ""
+
+#: src/DetectPal.cpp:127
+#, c-format
+msgid "The notification has been sent to %s."
+msgstr "訊息已經傳送到%s。"
+
+#: src/MainWindow.cpp:1975
+msgid "The path you want to open not exist!"
+msgstr ""
+
+#: src/support.cpp:63
+msgid "The process is about to quit!"
+msgstr "程序即將退出！"
+
+#: src/uninstall/utils.cpp:23
+msgid "The user is not privileged!\n"
+msgstr "用戶沒有權限！\n"
+
+#: src/DataSettings.cpp:822
+msgid "To"
+msgstr "終止"
+
+#: src/StatusIcon.cpp:102 src/StatusIcon.cpp:274
+#, c-format
+msgid "To be read: %u messages"
+msgstr "未讀訊息: %u條"
+
+#: src/DataSettings.cpp:446
+msgid "To:"
+msgstr "終止:"
+
+#: src/DataSettings.cpp:709
+msgid "Transfer finished"
+msgstr "傳輸完成"
+
+#: src/ShareFile.cpp:286
+msgid "Type"
+msgstr "類型"
+
+#: src/uninstall/utils.cpp:51 src/uninstall/utils.cpp:67
+#, c-format
+msgid "Unlink() file \"%s\" failed, %s\n"
+msgstr "刪除檔案\"%s\"失敗，%s\n"
+
+#: src/DataSettings.cpp:325
+msgid "Use the 'Enter' key to send message"
+msgstr "使用Enter鍵傳送訊息"
+
+#: src/DataSettings.cpp:340
+msgid "Use the Blacklist (NOT recommended)"
+msgstr "開啟黑名單處理方案(不推薦)"
+
+#: src/MainWindow.cpp:1144
+msgid "User"
+msgstr "用戶"
+
+#: src/DialogPeer.cpp:447 src/MainWindow.cpp:1662
+#, c-format
+msgid "User: %s\n"
+msgstr "用戶: %s\n"
 
 #: src/LogSystem.cpp:83
 #, c-format
 msgid "User:%s Host:%s"
 msgstr "用戶:%s 主機:%s"
 
-#: src/MainWindow.cpp:603
-msgid "Files Transmission Management"
-msgstr "檔案傳輸管理器"
+#: src/DialogPeer.cpp:438 src/MainWindow.cpp:1653
+#, c-format
+msgid "Version: %s\n"
+msgstr "版本: %s\n"
 
-#: src/MainWindow.cpp:718
-msgid "Pals Online: 0"
-msgstr "線上好友: 0"
+#: src/DataSettings.cpp:374
+msgid "Volume Control: "
+msgstr "音量控制:"
 
-#: src/MainWindow.cpp:801
-msgid "Search Pals"
-msgstr "搜尋好友"
+#: src/output.cpp:60
+msgid "Warning"
+msgstr "警告"
+
+#: src/support.cpp:120
+#, c-format
+msgid "What do you want to do?\n"
+msgstr ""
+
+#: src/DataSettings.cpp:200
+msgid "Your face picture:"
+msgstr "您的頭像:"
+
+#: src/DataSettings.cpp:189
+msgid "Your group name:"
+msgstr "您的群組名稱:"
+
+#: src/DataSettings.cpp:178
+msgid "Your nickname:"
+msgstr "您的暱稱:"
+
+#: src/dialog.cpp:74
+#, c-format
+msgid ""
+"Your pal (%s)[%s]\n"
+"is requesting to get your shared resources,\n"
+"Do you agree?"
+msgstr ""
+"您的好友(%s)[%s]\n"
+"請求獲取您的共享資源,\n"
+"是否允許?"
+
+#: src/Command.cpp:221
+msgid "Your pal didn't receive the packet. He or she is offline maybe."
+msgstr "你的好友沒有收到傳送的資料，他可能已經下線。"
 
 #: src/MainWindow.cpp:824 src/StatusIcon.cpp:185
 msgid "_Detect"
 msgstr "搜尋(_D)"
 
+#: src/MainWindow.cpp:969
+msgid "_FAQ"
+msgstr "FAQ(_F)"
+
+#: src/DialogPeer.cpp:363 src/MainWindow.cpp:819
+msgid "_File"
+msgstr "檔案(_F)"
+
 #: src/MainWindow.cpp:833
 msgid "_Find"
 msgstr "尋找(_F)"
 
-#: src/MainWindow.cpp:845 src/StatusIcon.cpp:194
-msgid "_Quit"
-msgstr "退出(_Q)"
+#: src/MainWindow.cpp:957
+msgid "_Help"
+msgstr "幫助(_H)"
+
+#: src/StatusIcon.cpp:143
+msgid "_Hide"
+msgstr "隱藏(_H)"
+
+#: src/MainWindow.cpp:965
+msgid "_More"
+msgstr "更多(_M)"
 
 #: src/MainWindow.cpp:871 src/StatusIcon.cpp:164
 msgid "_Preferences"
 msgstr "偏好設定(_P)"
 
-#: src/MainWindow.cpp:880 src/StatusIcon.cpp:156
-msgid "_Transmission"
-msgstr "傳輸管理器(_T)"
+#: src/MainWindow.cpp:845 src/StatusIcon.cpp:194
+msgid "_Quit"
+msgstr "退出(_Q)"
 
 #: src/MainWindow.cpp:889 src/StatusIcon.cpp:173
 msgid "_Shared Management"
 msgstr "共享管理器(_S)"
 
+#: src/StatusIcon.cpp:145
+msgid "_Show"
+msgstr "顯示(_S)"
+
 #: src/MainWindow.cpp:898
 msgid "_Sort"
 msgstr "排序(_S)"
 
+#: src/DialogGroup.cpp:495 src/DialogPeer.cpp:409 src/MainWindow.cpp:865
+msgid "_Tools"
+msgstr "工具(_T)"
+
+#: src/MainWindow.cpp:880 src/StatusIcon.cpp:156
+msgid "_Transmission"
+msgstr "傳輸管理器(_T)"
+
 #: src/MainWindow.cpp:936
 msgid "_Update"
 msgstr "更新(_U)"
+
+#: src/HelpDialog.cpp:71
+msgid ""
+"alick <alick9188@163.com>\n"
+"ManPT <pentie@gmail.com>"
+msgstr ""
+"alick <alick9188@163.com>\n"
+"ManPT <pentie@gmail.com>\n"
+"村仔 <tw.chi.ming@gmail.com>"
+
+#: src/ShareFile.cpp:224 src/ShareFile.cpp:382
+msgid "directory"
+msgstr "目錄"
 
 #: src/MainWindow.cpp:953
 #, fuzzy
 msgid "http://code.google.com/p/iptux/wiki/FAQ?wl=en"
 msgstr "http://code.google.com/p/iptux/wiki/FAQ"
 
-#: src/MainWindow.cpp:957
-msgid "_Help"
-msgstr "幫助(_H)"
+#: src/HelpDialog.cpp:80 src/MainWindow.cpp:576 src/StatusIcon.cpp:106
+#: src/StatusIcon.cpp:277
+msgid "iptux"
+msgstr "信使(iptux)"
 
-#: src/MainWindow.cpp:965
-msgid "_More"
-msgstr "更多(_M)"
-
-#: src/MainWindow.cpp:969
-msgid "_FAQ"
-msgstr "FAQ(_F)"
-
-#: src/MainWindow.cpp:1121
-msgid "Nickname"
-msgstr "暱稱"
-
-#: src/MainWindow.cpp:1132
-msgid "Group"
-msgstr "群組名稱"
-
-#: src/MainWindow.cpp:1138 src/MainWindow.cpp:1201
-msgid "IPv4"
-msgstr "IPv4"
-
-#: src/MainWindow.cpp:1144
-msgid "User"
-msgstr "用戶"
-
-#: src/MainWindow.cpp:1150
-msgid "Host"
-msgstr "主機"
-
-#: src/MainWindow.cpp:1183
-msgid "State"
-msgstr "狀態"
-
-#: src/MainWindow.cpp:1189
-msgid "Task"
-msgstr "任務"
-
-#: src/MainWindow.cpp:1195
-msgid "Peer"
-msgstr "好友"
-
-#: src/MainWindow.cpp:1207
-msgid "Filename"
-msgstr "檔案名"
-
-#: src/MainWindow.cpp:1219
-msgid "Completed"
-msgstr "已完成"
-
-#: src/MainWindow.cpp:1225
-msgid "Progress"
-msgstr "進度"
-
-#: src/MainWindow.cpp:1231
-msgid "Cost"
-msgstr "花費時間"
-
-#: src/MainWindow.cpp:1237
-msgid "Remaining"
-msgstr "剩餘時間"
-
-#: src/MainWindow.cpp:1243
-msgid "Rate"
-msgstr "速率"
-
-#: src/MainWindow.cpp:1534
-msgid "Open This File"
-msgstr "打開此文件"
-
-#: src/MainWindow.cpp:1540
-msgid "Open Containing Folder"
-msgstr "打開所在的文件夾"
-
-#: src/MainWindow.cpp:1546
-msgid "Terminate Task"
-msgstr "終止任務"
-
-#: src/MainWindow.cpp:1551
-msgid "Terminate All"
-msgstr "終止所有"
-
-#: src/MainWindow.cpp:1556
-msgid "Clear Tasklist"
-msgstr "清理任務"
-
-#: src/MainWindow.cpp:1577
-msgid "Send Message"
-msgstr "傳送訊息"
-
-#: src/MainWindow.cpp:1611
-msgid "Change Info."
-msgstr "更改資訊"
-
-#: src/MainWindow.cpp:1626
-msgid "Delete Pal"
-msgstr "刪除好友"
-
-#: src/MainWindow.cpp:1715
+#: src/support.cpp:102
 #, c-format
-msgid "Pals Online: %<PRIu32>"
-msgstr "線上好友: %<PRIu32>"
-
-#: src/MainWindow.cpp:1946
-msgid "The file you want to open not exist!"
+msgid "iptux: A software for sharing in LAN\n"
 msgstr ""
 
-#: src/MainWindow.cpp:1975
-msgid "The path you want to open not exist!"
-msgstr ""
+#: src/UdpData.cpp:133 src/UdpData.cpp:134 src/UdpData.cpp:569
+#: src/UdpData.cpp:606
+msgid "mysterious"
+msgstr "神秘訪客"
 
-#: src/output.cpp:35
-msgid "Infomation"
-msgstr "資訊"
+#: src/AnalogFS.cpp:161
+#, fuzzy, c-format
+msgid "opendir on \"%s\" failed: %s"
+msgstr "打開目錄\"%s\"失敗，%s"
 
-#: src/output.cpp:60
-msgid "Warning"
-msgstr "警告"
+#: src/RecvFileData.cpp:117
+msgid "receive"
+msgstr "接收"
 
-#: src/output.cpp:83
-msgid "Error"
-msgstr "錯誤"
+#: src/ShareFile.cpp:220 src/ShareFile.cpp:378
+msgid "regular"
+msgstr "常規檔案"
+
+#: src/SendFileData.cpp:117
+msgid "send"
+msgstr "傳送"
+
+#. Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
+#: src/AnalogFS.cpp:149
+#, fuzzy, c-format
+msgid "stat file \"%s\" failed: %s"
+msgstr "查看檔案\"%s\"狀態失敗，%s\n"
+
+#: src/CoreThread.cpp:980 src/RecvFileData.cpp:133 src/RecvFileData.cpp:265
+#: src/SendFileData.cpp:134 src/SendFileData.cpp:221 src/ShareFile.cpp:228
+#: src/ShareFile.cpp:386
+msgid "unknown"
+msgstr "未知"
 
 #: src/ProgramData.cpp:216
 msgid "utf-16"
@@ -943,251 +1177,12 @@ msgstr "big5,gb18030"
 msgid "utf-8"
 msgstr "big5"
 
-#: src/RecvFileData.cpp:117
-msgid "receive"
-msgstr "接收"
-
-#: src/RecvFileData.cpp:184
-#, c-format
-msgid "Failed to receive the file \"%s\" from %s!"
-msgstr "接收檔案\"%s\"來自%s失敗！"
-
-#: src/RecvFileData.cpp:187
-#, c-format
-msgid "Receive the file \"%s\" from %s successfully!"
-msgstr "接收檔案\"%s\"來自%s成功！"
-
-#: src/RecvFileData.cpp:332
-#, c-format
-msgid "Failed to receive the directory \"%s\" from %s!"
-msgstr "接收目錄\"%s\"來自%s失敗！"
-
-#: src/RecvFileData.cpp:335
-#, c-format
-msgid "Receive the directory \"%s\" from %s successfully!"
-msgstr "接收目錄\"%s\"來自%s成功！"
-
-#: src/RevisePal.cpp:97
-msgid "Change Pal's Information"
-msgstr "更改好友資訊"
-
-#: src/RevisePal.cpp:125
-msgid "Pal's nickname:"
-msgstr "好友暱稱:"
-
-#: src/RevisePal.cpp:131
-msgid "Please input pal's new nickname!"
-msgstr "請輸入好友的新暱稱！"
-
-#: src/RevisePal.cpp:137
-msgid "Pal's group name:"
-msgstr "好友群組名稱:"
-
-#: src/RevisePal.cpp:143
-msgid "Please input pal's new group name!"
-msgstr "請輸入好友的新群組名稱！"
-
-#: src/RevisePal.cpp:149
-msgid "System coding:"
-msgstr "系統編碼:"
-
-#: src/RevisePal.cpp:155
-msgid "Be SURE to know what you are doing!"
-msgstr "你最好明白你到底在做些什麼！"
-
-#: src/RevisePal.cpp:161
-msgid "Pal's face picture:"
-msgstr "好友頭像:"
-
-#: src/RevisePal.cpp:175
-msgid "Be compatible with iptux's protocol (DANGEROUS)"
-msgstr "相容 iptux 擴展協議(危險)"
-
-#: src/SendFileData.cpp:117
-msgid "send"
-msgstr "傳送"
-
-#: src/SendFileData.cpp:162
-#, c-format
-msgid "Failed to send the file \"%s\" to %s!"
-msgstr "傳送檔案\"%s\"到%s失敗！"
-
-#: src/SendFileData.cpp:165
-#, c-format
-msgid "Send the file \"%s\" to %s successfully!"
-msgstr "傳送檔案\"%s\"到%s成功！"
-
-#: src/SendFileData.cpp:290
-#, c-format
-msgid "Failed to send the directory \"%s\" to %s!"
-msgstr "傳送目錄\"%s\"到%s失敗！"
-
-#: src/SendFileData.cpp:293
-#, c-format
-msgid "Send the directory \"%s\" to %s successfully!"
-msgstr "傳送目錄\"%s\"到%s失敗！"
-
-#: src/ShareFile.cpp:102
-msgid "Shared Files Management"
-msgstr "共享檔案管理器"
-
-#: src/ShareFile.cpp:105
-msgid "OK"
-msgstr "確定"
-
-#: src/ShareFile.cpp:106
-msgid "Apply"
-msgstr "套用"
-
-#: src/ShareFile.cpp:150
-msgid "Add Files"
-msgstr "新增檔案"
-
-#: src/ShareFile.cpp:153
-msgid "Add Folders"
-msgstr "新增目錄"
-
-#: src/ShareFile.cpp:156
-msgid "Delete Resources"
-msgstr "刪除資源"
-
-#: src/ShareFile.cpp:159
-msgid "Clear Password"
-msgstr "清除密碼"
-
-#: src/ShareFile.cpp:162
-msgid "Set Password"
-msgstr "設置密碼"
-
-#: src/ShareFile.cpp:220 src/ShareFile.cpp:378
-msgid "regular"
-msgstr "常規檔案"
-
-#: src/ShareFile.cpp:224 src/ShareFile.cpp:382
-msgid "directory"
-msgstr "目錄"
-
-#: src/ShareFile.cpp:270
-msgid "File"
-msgstr "檔案"
-
-#: src/ShareFile.cpp:286
-msgid "Type"
-msgstr "類型"
-
-#: src/ShareFile.cpp:422
-msgid "Choose the files to share"
-msgstr "選擇共享檔案"
-
-#: src/ShareFile.cpp:425
-msgid "Choose the folders to share"
-msgstr "選擇共享目錄"
-
-#: src/SoundSystem.cpp:153
-#, c-format
-msgid "Failed to play the prompt tone, %s\n"
-msgstr "播放提示音失敗，%s\n"
-
-#: src/StatusIcon.cpp:102 src/StatusIcon.cpp:274
-#, c-format
-msgid "To be read: %u messages"
-msgstr "未讀訊息: %u條"
-
-#: src/StatusIcon.cpp:143
-msgid "_Hide"
-msgstr "隱藏(_H)"
-
-#: src/StatusIcon.cpp:145
-msgid "_Show"
-msgstr "顯示(_S)"
-
-#: src/support.cpp:44
-msgid "Loading the process successfully!"
-msgstr "程序載入成功！"
-
-#: src/support.cpp:63
-msgid "The process is about to quit!"
-msgstr "程序即將退出！"
-
-#: src/support.cpp:102
-#, c-format
-msgid "iptux: A software for sharing in LAN\n"
-msgstr ""
-
-#: src/support.cpp:103
-#, c-format
-msgid ""
-"\t-h --help\n"
-"\t\tdisplay this help and exit\n"
-msgstr ""
-
-#: src/support.cpp:104
-#, c-format
-msgid ""
-"\t-v --version\n"
-"\t\toutput version information and exit\n"
-msgstr ""
-
-#: src/support.cpp:120
-#, c-format
-msgid "What do you want to do?\n"
-msgstr ""
-
-#: src/support.cpp:149
-msgid "Can't find any available web browser!\n"
-msgstr "未發現可用的瀏覽器！\n"
-
-#: src/support.cpp:179
-#, c-format
-msgid ""
-"Fatal Error!!\n"
-"Failed to bind the TCP/UDP port(2425)!\n"
-"%s"
-msgstr ""
-"致命錯誤！！\n"
-"連接TCP/UDP端口(2425)失敗！\n"
-"%s"
-
-#: src/UdpData.cpp:133 src/UdpData.cpp:134 src/UdpData.cpp:569
-#: src/UdpData.cpp:606
-msgid "mysterious"
-msgstr "神秘訪客"
-
-#: src/uninstall/utils.cpp:23
-msgid "The user is not privileged!\n"
-msgstr "用戶沒有權限！\n"
-
-#: src/uninstall/utils.cpp:34
-#, c-format
-msgid "Opendir() directory \"%s\" failed, %s\n"
-msgstr "打開目錄\"%s\"失敗，%s\n"
-
-#: src/uninstall/utils.cpp:45
-#, c-format
-msgid "Stat() file \"%s\" failed, %s\n"
-msgstr "查看檔案\"%s\"狀態失敗，%s\n"
-
-#: src/uninstall/utils.cpp:51 src/uninstall/utils.cpp:67
-#, c-format
-msgid "Unlink() file \"%s\" failed, %s\n"
-msgstr "刪除檔案\"%s\"失敗，%s\n"
-
-#: src/uninstall/utils.cpp:61
-#, c-format
-msgid "Rmdir() directory \"%s\" failed, %s\n"
-msgstr "刪除目錄\"%s\"失敗，%s\n"
-
-#~ msgid "Pal's Shared Resources"
-#~ msgstr "好友共享的資源"
-
-#~ msgid "Files Receive Management"
-#~ msgstr "檔案接收管理器"
-
-#~ msgid "Recv"
-#~ msgstr "接收"
-
-#~ msgid "Free:%s Total:%s"
-#~ msgstr "空閒:%s 總計:%s"
+#~ msgid ""
+#~ "<span weight=\"heavy\" underline=\"error\">\n"
+#~ "Can't send an empty message!!</span>"
+#~ msgstr ""
+#~ "<span weight=\"heavy\" underline=\"error\">\n"
+#~ "傳送內容不能為空！！</span>"
 
 #~ msgid "Chat History"
 #~ msgstr "聊天記錄"
@@ -1198,9 +1193,14 @@ msgstr "刪除目錄\"%s\"失敗，%s\n"
 #~ msgid "Choose enclosure folders"
 #~ msgstr "選擇目錄附件"
 
-#~ msgid ""
-#~ "<span weight=\"heavy\" underline=\"error\">\n"
-#~ "Can't send an empty message!!</span>"
-#~ msgstr ""
-#~ "<span weight=\"heavy\" underline=\"error\">\n"
-#~ "傳送內容不能為空！！</span>"
+#~ msgid "Files Receive Management"
+#~ msgstr "檔案接收管理器"
+
+#~ msgid "Free:%s Total:%s"
+#~ msgstr "空閒:%s 總計:%s"
+
+#~ msgid "Pal's Shared Resources"
+#~ msgstr "好友共享的資源"
+
+#~ msgid "Recv"
+#~ msgstr "接收"

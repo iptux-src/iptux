@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "StatusIcon.h"
@@ -40,8 +41,6 @@ int main(int argc, char *argv[])
 
         analysis_parameter(argc, argv);
 
-        if (!g_thread_supported())
-                g_thread_init(NULL);
         gdk_threads_init();
         gdk_threads_enter();
         gtk_init(&argc, &argv);
