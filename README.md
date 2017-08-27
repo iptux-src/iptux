@@ -21,11 +21,10 @@ sudo apt-get install iptux
 ### Linux (Debian and Ubuntu)
 
 ```
-sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgconf2-dev libgstreamer1.0-dev g++ make autoconf libtool automake
+sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgconf2-dev libgstreamer1.0-dev g++ make cmake
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
-./configure
-make
+mkdir build && cd build && cmake .. && make
 sudo make install
 iptux
 ```
@@ -33,11 +32,11 @@ iptux
 ### Mac OS X
 
 ```
-brew install autoconf gettext gtk+ gconf
+brew install gettext gtk+ gconf cmake
+brew link gettext --force
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
-./configure CPPFLAGS="-I/usr/local/opt/gettext/include" PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
-make
+mkdir build && cd build && cmake .. && make
 sudo make install
 iptux
 ```
