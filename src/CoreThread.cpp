@@ -828,7 +828,11 @@ const char *CoreThread::GetAccessPublicLimit()
  */
 void CoreThread::SetAccessPublicLimit(const char *limit)
 {
-        passwd = string(limit);
+    if(limit == NULL) {
+        passwd = "";
+    } else {
+        passwd = string(limit);        
+    }
 }
 
 /**
