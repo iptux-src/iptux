@@ -35,6 +35,11 @@ IptuxConfig::IptuxConfig(string& fname)
 	transWindowHeight = root.get("trans_window_height", 350).asInt();
 	mwinMainPanedDivide = root.get("mwin_main_paned_divide", 210).asInt();
 	accessSharedLimit = root.get("access_shared_limit", "").asString();
+
+	const Json::Value l = root["shared_file_list"];
+	for(int i = 0; i < l.size(); ++i) {
+		sharedFileList.push_back(l[i].asString());
+	}
 }
 
 IptuxConfig::~IptuxConfig() {
@@ -111,6 +116,9 @@ IptuxConfig* IptuxConfig::Save() {
 	root["trans_window_height"] = transWindowHeight;
 	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
 	root["access_shared_limit"] = accessSharedLimit;
+	for(int i = 0; i < sharedFileList.size(); ++i) {
+		root["shared_file_list"].append(sharedFileList[i]);
+	}
 
 	ofstream ofs(fname.c_str());
 	if(!ofs) {

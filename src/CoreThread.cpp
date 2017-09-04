@@ -931,26 +931,17 @@ void CoreThread::InitThemeSublayerData()
  */
 void CoreThread::ReadSharedData()
 {
-        //GConfClient *client;
-        GSList *list, *tlist;
         FileInfo *file;
         struct stat st;
 
         /* 读取共享文件数据 */
         vector<string> sharedFileList = config.GetSharedFileList();
         passwd = config.GetAccessSharedLimit().c_str();
-        //client = gconf_client_get_default();
-        //list = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
-        //                                         GCONF_VALUE_STRING, NULL);
-        //passwd = gconf_client_get_string(client, GCONF_PATH "/access_shared_limit", NULL);
-        //g_object_unref(client);
 
         /* 分析数据并加入文件链表 */
-        for(tlist = list; tlist; tlist = g_slist_next(tlist)) {
-                if (stat((char *)tlist->data, &st) == -1
+        for(int i = 0; i < sharedFileList.size(); ++i) {
+                if (stat(sharedFileList[i].c_str(), &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
-                        g_free(tlist->data);
-                        tlist->data = NULL;
                         continue;
                 }
                 /* 加入文件信息到链表 */
@@ -962,9 +953,8 @@ void CoreThread::ReadSharedData()
                                                          IPMSG_FILE_DIR;
                 /* file->filesize = 0;//我可不愿意程序启动时在这儿卡住 */
                 /* file->fileown = NULL;//没必要设置此字段 */
-                file->filepath = (char *)tlist->data;
+                file->filepath = strdup(sharedFileList[i].c_str());
         }
-        g_slist_free(list);
 }
 
 /**
