@@ -13,16 +13,18 @@
 #define STATUSICON_H
 
 #include "mess.h"
+#include "IptuxConfig.h"
 
 class StatusIcon {
 public:
-        StatusIcon();
+        StatusIcon(IptuxConfig& config);
         ~StatusIcon();
 
         void CreateStatusIcon();
 	gboolean IsEmbedded();
         void AlterStatusIconMode();
 private:
+    IptuxConfig& config;
         GtkStatusIcon *statusicon;
         guint timerid;
 	gboolean embedded;
@@ -32,7 +34,7 @@ private:
 //回调处理部分
 private:
         static void ShowTransWindow();
-        static void StatusIconActivate();
+        static void StatusIconActivate(StatusIcon* self);
         static void PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint time);
         static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
                                                  gboolean key, GtkTooltip *tooltip);

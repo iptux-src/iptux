@@ -24,7 +24,7 @@
 class MainWindow {
 public:
         MainWindow(
-            IptuxConfig* config,
+            IptuxConfig& config,
             ProgramData* progdt
             );
         ~MainWindow();
@@ -44,7 +44,7 @@ public:
         void UpdateItemToTransTree(GData **para);
         bool TransmissionActive();
 private:
-        IptuxConfig* config;
+        IptuxConfig& config;
         ProgramData* progdt;
 
         void InitSublayer();
@@ -117,12 +117,12 @@ private:
         static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
                                          gboolean key, GtkTooltip *tooltip, MainWindow* self);
         static void PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                 GtkTreeViewColumn *column);
+                                                 GtkTreeViewColumn *column, MainWindow* self);
         static gboolean PaltreePopupMenu(GtkWidget *treeview, GdkEventButton *event);
         static gboolean PaltreeChangeStatus(GtkWidget *treeview, GdkEventButton *event);
         static void PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *context,
                                          gint x, gint y, GtkSelectionData *data,
-                                         guint info, guint time);
+                                         guint info, guint time, MainWindow* self);
 
         static gint PaltreeCompareByNameFunc(GtkTreeModel *model,
                                          GtkTreeIter *a, GtkTreeIter *b);

@@ -14,13 +14,14 @@
 
 #include "mess.h"
 #include "DialogBase.h"
+#include "IptuxConfig.h"
 
 class DialogGroup: public DialogBase {
 public:
-        DialogGroup(GroupInfo *grp);
+        DialogGroup(GroupInfo *grp, IptuxConfig& config);
         virtual ~DialogGroup();
 
-        static void GroupDialogEntry(GroupInfo *grpinf);
+        static void GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config);
 
         virtual void UpdatePalData(PalInfo *pal);
         virtual void InsertPalData(PalInfo *pal);
@@ -28,6 +29,7 @@ public:
         virtual void ClearAllPalData();
         virtual GSList *GetSelPal();
 private:
+        IptuxConfig& config;
         virtual void InitSublayerSpecify();
         void ReadUILayout();
         void SaveUILayout();

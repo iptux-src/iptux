@@ -32,7 +32,7 @@ extern MainWindow mwin;
  * 类构造函数.
  */
 MainWindow::MainWindow(
-    IptuxConfig* config,
+    IptuxConfig& config,
     ProgramData* progdt
     ):
     config(config),
@@ -522,7 +522,7 @@ GtkWidget *MainWindow::CreateMainWindow()
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
-        gtk_window_set_default_size(GTK_WINDOW(window), config->GetMainWindowWidth(), config->GetMainWindowHeight());
+        gtk_window_set_default_size(GTK_WINDOW(window), config.GetMainWindowWidth(), config.GetMainWindowHeight());
         gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
         gtk_window_set_default_icon_name("ip-tux");
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
@@ -547,8 +547,8 @@ GtkWidget *MainWindow::CreateTransWindow()
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
         gtk_window_set_default_size(GTK_WINDOW(window), 
-            config->GetTransWindowWidth(),
-            config->GetTransWindowHeight());
+            config.GetTransWindowWidth(),
+            config.GetTransWindowHeight());
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_container_set_border_width(GTK_CONTAINER(window), 5);
         g_signal_connect_swapped(window, "delete-event",
@@ -578,7 +578,7 @@ GtkWidget *MainWindow::CreateAllArea()
         g_object_set_data(G_OBJECT(paned), "position-name",
                          (gpointer)"mwin-main-paned-divide");
         gtk_paned_set_position(GTK_PANED(paned),
-            config->GetMwinMainPanedDivide());
+            config.GetMwinMainPanedDivide());
         gtk_container_set_border_width(GTK_CONTAINER(paned), 4);
         gtk_box_pack_start(GTK_BOX(box), paned, TRUE, TRUE, 0);
         g_signal_connect(paned, "notify::position",
@@ -1032,9 +1032,9 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model)
 
         /* 连接信号 */
         g_signal_connect(view, "query-tooltip", G_CALLBACK(PaltreeQueryTooltip), this);
-        g_signal_connect(view, "row-activated", G_CALLBACK(PaltreeItemActivated), NULL);
+        g_signal_connect(view, "row-activated", G_CALLBACK(PaltreeItemActivated), this);
         g_signal_connect(view, "drag-data-received",
-                         G_CALLBACK(PaltreeDragDataReceived), NULL);
+                         G_CALLBACK(PaltreeDragDataReceived), this);
         g_signal_connect(view, "button-press-event", G_CALLBACK(PaltreePopupMenu), NULL);
         g_signal_connect(view, "button-release-event",
                          G_CALLBACK(PaltreeChangeStatus), NULL);
@@ -2082,8 +2082,10 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
  * @param path the GtkTreePath for the activated row
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
-void MainWindow::PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                         GtkTreeViewColumn *column)
+void MainWindow::PaltreeItemActivated(GtkWidget *treeview, 
+    GtkTreePath *path,
+    GtkTreeViewColumn *column,
+    MainWindow* self)
 {
         GtkTreeModel *model;
         GtkTreeIter iter;
@@ -2107,7 +2109,7 @@ void MainWindow::PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
         case GROUP_BELONG_TYPE_SEGMENT:
         case GROUP_BELONG_TYPE_GROUP:
         case GROUP_BELONG_TYPE_BROADCAST:
-                DialogGroup::GroupDialogEntry(grpinf);
+                DialogGroup::GroupDialogEntry(grpinf, self->config);
         default:
                 break;
         }
@@ -2210,7 +2212,7 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview, GdkEventButton *ev
  */
 void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *context,
                                                  gint x, gint y, GtkSelectionData *data,
-                                                 guint info, guint time)
+                                                 guint info, guint time, MainWindow* self)
 {
         GtkTreeModel *model;
         GtkTreePath *path;
@@ -2242,7 +2244,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
                 case GROUP_BELONG_TYPE_SEGMENT:
                 case GROUP_BELONG_TYPE_GROUP:
                 case GROUP_BELONG_TYPE_BROADCAST:
-                        DialogGroup::GroupDialogEntry(grpinf);
+                        DialogGroup::GroupDialogEntry(grpinf, self->config);
                 default:
                         break;
                 }
@@ -2552,8 +2554,7 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
                          GdkEventConfigure *event, 
                          MainWindow* self)
 {
-    self->config
-        ->SetMainWindowWidth(event->width)
+    self->config.SetMainWindowWidth(event->width)
         ->SetMainWindowHeight(event->height)
         ->Save();
     return FALSE;
@@ -2570,8 +2571,7 @@ gboolean MainWindow::TWinConfigureEvent(GtkWidget *window,
                          GdkEventConfigure *event, 
                          MainWindow* self)
 {
-    self->config
-        ->SetTransWindowWidth(event->width)
+    self->config.SetTransWindowWidth(event->width)
         ->SetTransWindowHeight(event->height)
         ->Save();
 
@@ -2590,7 +2590,6 @@ void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
         gint position;
 
         position = gtk_paned_get_position(GTK_PANED(paned));
-        self->config
-            ->SetMwinMainPanedDivide(position)
+        self->config.SetMwinMainPanedDivide(position)
             ->Save();
 }

@@ -28,7 +28,9 @@ extern MainWindow mwin;
 /**
  * 类构造函数.
  */
-StatusIcon::StatusIcon():statusicon(NULL), timerid(0)
+StatusIcon::StatusIcon(IptuxConfig& config)
+    :config(config),
+    statusicon(NULL), timerid(0)
 {
 }
 
@@ -60,7 +62,7 @@ void StatusIcon::CreateStatusIcon()
         screen = gdk_screen_get_default();
         gtk_status_icon_set_screen(statusicon, screen);
 
-        g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), NULL);
+        g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), this);
         g_signal_connect(statusicon, "popup-menu", G_CALLBACK(PopupWorkMenu), NULL);
 #if GTK_CHECK_VERSION(2,16,0)
         g_object_set(statusicon, "has-tooltip", TRUE, NULL);
@@ -211,7 +213,7 @@ void StatusIcon::ShowTransWindow()
 /**
  * 状态图标被激活的响应处理函数.
  */
-void StatusIcon::StatusIconActivate()
+void StatusIcon::StatusIconActivate(StatusIcon* self)
 {
         GroupInfo *grpinf;
 
@@ -229,7 +231,7 @@ void StatusIcon::StatusIconActivate()
                 case GROUP_BELONG_TYPE_SEGMENT:
                 case GROUP_BELONG_TYPE_GROUP:
                 case GROUP_BELONG_TYPE_BROADCAST:
-                        DialogGroup::GroupDialogEntry(grpinf);
+                        DialogGroup::GroupDialogEntry(grpinf, self->config);
                         break;
                 default:
                         break;

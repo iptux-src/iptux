@@ -34,12 +34,12 @@ using namespace std;
 string getConfigPath();
 
 ProgramData progdt;
-StatusIcon sicon;
 GConfClient* client = gconf_client_get_default();
 string configPath = getConfigPath();
 IptuxConfig config(configPath);
-MainWindow mwin(&config, &progdt);
+MainWindow mwin(config, &progdt);
 CoreThread cthrd(config);
+StatusIcon sicon(config);
 LogSystem lgsys;
 SoundSystem sndsys;
 
