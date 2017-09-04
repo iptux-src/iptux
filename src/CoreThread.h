@@ -18,6 +18,7 @@
 #define CORETHREAD_H
 
 #include "mess.h"
+#include "IptuxConfig.h"
 
 /**
  * @note 请保证插入或更新某成员时，底层优先于UI；删除某成员时，UI优先于底层，
@@ -29,7 +30,7 @@
  */
 class CoreThread {
 public:
-        CoreThread();
+        CoreThread(IptuxConfig& config);
         ~CoreThread();
 
         void CoreThreadEntry();
@@ -82,6 +83,8 @@ public:
         const char *GetAccessPublicLimit();
         void SetAccessPublicLimit(const char *limit);
 private:
+        IptuxConfig& config;
+
         void InitSublayer();
         void ClearSublayer();
         void InitThemeSublayerData();
@@ -111,7 +114,7 @@ private:
         GSList *pblist, *prlist;        //文件链表(共享/私有)
         GSList *ecsList;                //文件链表(好友发过来)
 //        GSList *rcvdList;               //文件链表(好友发过来已接收)
-        char *passwd;           //共享文件密码
+        std::string passwd;           //共享文件密码
 
         guint timerid;  //定时器ID
         pthread_mutex_t mutex;  //锁

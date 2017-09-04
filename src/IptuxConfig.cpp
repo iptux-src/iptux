@@ -34,6 +34,7 @@ IptuxConfig::IptuxConfig(string& fname)
 	transWindowWidth = root.get("trans_window_width", 500).asInt();
 	transWindowHeight = root.get("trans_window_height", 350).asInt();
 	mwinMainPanedDivide = root.get("mwin_main_paned_divide", 210).asInt();
+	accessSharedLimit = root.get("access_shared_limit", "").asString();
 }
 
 IptuxConfig::~IptuxConfig() {
@@ -109,6 +110,8 @@ IptuxConfig* IptuxConfig::Save() {
 	root["trans_window_width"] = transWindowWidth;
 	root["trans_window_height"] = transWindowHeight;
 	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
+	root["access_shared_limit"] = accessSharedLimit;
+
 	ofstream ofs(fname.c_str());
 	if(!ofs) {
 		g_warning("open config file %s for write failed.", fname.c_str());

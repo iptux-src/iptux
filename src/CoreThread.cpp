@@ -25,10 +25,14 @@ extern CoreThread cthrd;
 extern MainWindow mwin;
 extern LogSystem lgsys;
 
+using namespace std;
+
 /**
  * 类构造函数.
  */
-CoreThread::CoreThread():tcpsock(-1), udpsock(-1), server(true),
+CoreThread::CoreThread(IptuxConfig& config):
+    config(config),
+    tcpsock(-1), udpsock(-1), server(true),
  pallist(NULL), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
  blacklist(NULL), pbn(1), prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL),
  ecsList(NULL),passwd(NULL)
@@ -75,23 +79,18 @@ void CoreThread::WriteSharedData()
         GConfClient *client;
         GSList *list, *tlist;
 
-        list = NULL;
         /* 获取共享文件链表 */
+        vector<string> sharedFileList;
         tlist = pblist;
         while (tlist) {
-                list = g_slist_append(list, ((FileInfo *)tlist->data)->filepath);
-                tlist = g_slist_next(tlist);
+            sharedFileList.push_back(string(((FileInfo *)tlist->data)->filepath));
+            tlist = g_slist_next(tlist);
         }
         /* 写出数据 */
-        client = gconf_client_get_default();
-        gconf_client_set_list(client, GCONF_PATH "/shared_file_list",
-                                         GCONF_VALUE_STRING, list, NULL);
-        if (passwd)
-                gconf_client_set_string(client, GCONF_PATH "/access_shared_limit",
-                                                                 passwd, NULL);
-        g_object_unref(client);
-        /* 释放链表 */
-        g_slist_free(list);
+        config.SetSharedFileList(sharedFileList);
+        if (!passwd.empty()) {
+            config.SetAccessSharedLimit(passwd);
+        }
 }
 
 /**
@@ -819,7 +818,7 @@ FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,uint32_t fil
  */
 const char *CoreThread::GetAccessPublicLimit()
 {
-        return passwd;
+        return passwd.c_str();
 }
 
 /**
@@ -828,8 +827,7 @@ const char *CoreThread::GetAccessPublicLimit()
  */
 void CoreThread::SetAccessPublicLimit(const char *limit)
 {
-        g_free(passwd);
-        passwd = g_strdup(limit);
+        passwd = string(limit);
 }
 
 /**
@@ -880,7 +878,6 @@ void CoreThread::ClearSublayer()
         for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
                 delete (FileInfo *)tlist->data;
         g_slist_free(prlist);
-        g_free(passwd);
 
         for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
                 delete (FileInfo *)tlist->data;
@@ -929,17 +926,19 @@ void CoreThread::InitThemeSublayerData()
  */
 void CoreThread::ReadSharedData()
 {
-        GConfClient *client;
+        //GConfClient *client;
         GSList *list, *tlist;
         FileInfo *file;
         struct stat st;
 
         /* 读取共享文件数据 */
-        client = gconf_client_get_default();
-        list = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
-                                                 GCONF_VALUE_STRING, NULL);
-        passwd = gconf_client_get_string(client, GCONF_PATH "/access_shared_limit", NULL);
-        g_object_unref(client);
+        vector<string> sharedFileList = config.GetSharedFileList();
+        passwd = config.GetAccessSharedLimit().c_str();
+        //client = gconf_client_get_default();
+        //list = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
+        //                                         GCONF_VALUE_STRING, NULL);
+        //passwd = gconf_client_get_string(client, GCONF_PATH "/access_shared_limit", NULL);
+        //g_object_unref(client);
 
         /* 分析数据并加入文件链表 */
         for(tlist = list; tlist; tlist = g_slist_next(tlist)) {
