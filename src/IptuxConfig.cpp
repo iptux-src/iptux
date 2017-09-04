@@ -109,7 +109,7 @@ IptuxConfig* IptuxConfig::Save() {
 	root["trans_window_width"] = transWindowWidth;
 	root["trans_window_height"] = transWindowHeight;
 	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
-	ofstream ofs(fname);
+	ofstream ofs(fname.c_str());
 	if(!ofs) {
 		g_warning("open config file %s for write failed.", fname.c_str());
 		return this;
