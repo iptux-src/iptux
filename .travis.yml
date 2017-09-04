@@ -22,3 +22,4 @@ addons:
     - libgtk2.0-dev
     - libgconf2-dev
     - libgstreamer1.0-dev
+    - libjsoncpp-dev
