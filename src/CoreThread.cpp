@@ -35,7 +35,7 @@ CoreThread::CoreThread(IptuxConfig& config):
     tcpsock(-1), udpsock(-1), server(true),
  pallist(NULL), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
  blacklist(NULL), pbn(1), prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL),
- ecsList(NULL),passwd(NULL)
+ ecsList(NULL)
 {
         g_queue_init(&msgline);
         pthread_mutex_init(&mutex, NULL);
@@ -91,6 +91,7 @@ void CoreThread::WriteSharedData()
         if (!passwd.empty()) {
             config.SetAccessSharedLimit(passwd);
         }
+        config.Save();
 }
 
 /**
