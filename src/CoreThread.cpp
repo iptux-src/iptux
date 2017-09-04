@@ -76,8 +76,7 @@ void CoreThread::CoreThreadEntry()
  */
 void CoreThread::WriteSharedData()
 {
-        GConfClient *client;
-        GSList *list, *tlist;
+        GSList *tlist;
 
         /* 获取共享文件链表 */
         vector<string> sharedFileList;
