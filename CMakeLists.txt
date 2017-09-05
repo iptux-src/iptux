@@ -7,6 +7,9 @@ include(FindPkgConfig)
 include(FindGettext)
 include(FindIntl)
 
+set(CMAKE_C_FLAGS "-Wall -O2")
+set(CMAKE_CXX_FLAGS "-Wall -O2")
+
 if(NOT Intl_FOUND)
 	message(FATAL_ERROR "libintl not found")
 endif(NOT Intl_FOUND)
