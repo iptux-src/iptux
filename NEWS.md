@@ -1,3 +1,7 @@
+# 0.6.5 (XXXX-XX-XX)
+
+* [#33] refactor src/AnalogFS.cpp to make the bug log has more information.
+
 # 0.6.4 (2017-08-22)
 
 * [#58] fix compile problem under gcc 7.
