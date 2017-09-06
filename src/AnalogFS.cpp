@@ -153,6 +153,7 @@ int64_t AnalogFS::ftwsize(const char *dir_name)
         }
         if(!S_ISDIR(st.st_mode)) {
             pwarning(_("path %s is not file or directory: st_mode(%x)"), dirname, st.st_mode);
+            return 0;
         }
         // 到了这里就一定是目录了
         DIR* dir = opendir(dir_name);
