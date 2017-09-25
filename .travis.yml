@@ -1,10 +1,20 @@
 language: cpp
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+os:
+  - linux
+  - osx
 compiler:
   - gcc
   - clang
 script: mkdir build && cd build && cmake .. && make
 dist: trusty
 sudo: false
+install:
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+ gconf'
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew link gettext --force'
+
 addons:
   apt:
     packages:
