@@ -1,4 +1,7 @@
 language: cpp
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
 os:
   - linux
   - osx
