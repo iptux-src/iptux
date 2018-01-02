@@ -585,7 +585,7 @@ GtkWidget *MainWindow::CreateAllArea()
         gtk_container_set_border_width(GTK_CONTAINER(paned), 4);
         gtk_box_pack_start(GTK_BOX(box), paned, TRUE, TRUE, 0);
         g_signal_connect(paned, "notify::position",
-                         G_CALLBACK(PanedDivideChanged), NULL);
+                         G_CALLBACK(PanedDivideChanged), this);
         gtk_paned_pack1(GTK_PANED(paned), CreatePaltreeArea(), TRUE, TRUE);
         gtk_paned_pack2(GTK_PANED(paned), CreatePallistArea(), FALSE, TRUE);
 
