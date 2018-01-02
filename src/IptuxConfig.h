@@ -14,6 +14,25 @@ public:
 	int GetMainWindowWidth() const;
 	int GetMainWindowHeight() const;
 	int GetMwinMainPanedDivide() const;
+
+	int GetGroupWindowHeight() const {
+		return groupWindowHeight;
+	}
+
+	IptuxConfig* SetGroupWindowHeight(int height) {
+		this->groupWindowHeight = height;
+		return this;
+	}
+
+	int GetGroupWindowWidth() const {
+		return groupWindowWidth;
+	}
+
+	IptuxConfig* SetGroupWindowWidth(int width) {
+		this->groupWindowWidth = width;
+		return this;
+	}
+
 	const std::vector<std::string>& GetSharedFileList() const {
 		return sharedFileList;
 	}
@@ -49,6 +68,8 @@ private:
 	int mainWindowWidth;
 	int mainWindowHeight;
 	int mwinMainPanedDivide;
+	int groupWindowWidth;
+	int groupWindowHeight;
 };
 
 #endif

@@ -36,7 +36,6 @@ DialogGroup::DialogGroup(GroupInfo *grp, IptuxConfig& config)
     config(config)
 {
         InitSublayerSpecify();
-        ReadUILayout();
 }
 
 /**
@@ -194,44 +193,6 @@ void DialogGroup::InitSublayerSpecify()
 }
 
 
-
-/**
- * 读取对话框的UI布局数据.
- */
-void DialogGroup::ReadUILayout()
-{
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = gconf_client_get_int(client, GCONF_PATH "/group_window_width", NULL);
-        numeric = numeric ? numeric : 550;
-        g_datalist_set_data(&dtset, "window-width", GINT_TO_POINTER(numeric));
-        numeric = gconf_client_get_int(client, GCONF_PATH "/group_window_height", NULL);
-        numeric = numeric ? numeric : 500;
-        g_datalist_set_data(&dtset, "window-height", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/group_main_paned_divide", NULL);
-        numeric = numeric ? numeric : 150;
-        g_datalist_set_data(&dtset, "main-paned-divide", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/group_historyinput_paned_divide", NULL);
-        numeric = numeric ? numeric : 320;
-        g_datalist_set_data(&dtset, "historyinput-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/group_memberenclosure_paned_divide", NULL);
-        numeric = numeric ? numeric : 320;
-        g_datalist_set_data(&dtset, "memberenclosure-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        g_object_unref(client);
-}
-
 /**
  * 写出对话框的UI布局数据.
  */
@@ -277,8 +238,8 @@ GtkWidget *DialogGroup::CreateMainWindow()
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
         gtk_window_set_title(GTK_WINDOW(window), buf);
-        width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
-        height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
+        width = config.GetGroupWindowWidth();
+        height = config.GetGroupWindowHeight();
         gtk_window_set_default_size(GTK_WINDOW(window), width, height);
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
