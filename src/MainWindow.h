@@ -15,6 +15,7 @@
 #include "mess.h"
 #include "IptuxConfig.h"
 #include "ProgramData.h"
+#include "WindowConfig.h"
 
 /**
  * @note 鉴于本类成员函数所访问的(CoreThread)类成员链表都具有只增不减的特性，
@@ -90,6 +91,7 @@ private:
         GList *tmdllist;                //model链表，用于构建model循环结构
         GtkAccelGroup *accel;   //快捷键集组
         guint timerid;          //UI更新定时器ID
+        WindowConfig windowConfig;
 private:
         static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
         static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);

@@ -39,6 +39,7 @@ add_executable (iptux
 	UdpData.cpp
 	utils.cpp
 	wrapper.cpp
+	WindowConfig.cpp
 	)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

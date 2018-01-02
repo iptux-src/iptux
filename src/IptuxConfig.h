@@ -3,16 +3,18 @@
 
 #include <string>
 #include <vector>
+#include <json/json.h>
 
 class IptuxConfig {
 public:
 	IptuxConfig(std::string& fname);
 	~IptuxConfig();
 
+	int GetInt(const std::string& key) const;
+	void SetInt(const std::string& key, int value);
+
 	int GetTransWindowWidth() const;
 	int GetTransWindowHeight() const;
-	int GetMainWindowWidth() const;
-	int GetMainWindowHeight() const;
 	int GetMwinMainPanedDivide() const;
 
 	int GetGroupWindowHeight() const {
@@ -43,8 +45,6 @@ public:
 
 	IptuxConfig* SetTransWindowWidth(int w);
 	IptuxConfig* SetTransWindowHeight(int h);
-	IptuxConfig* SetMainWindowWidth(int w);
-	IptuxConfig* SetMainWindowHeight(int h);
 	IptuxConfig* SetMwinMainPanedDivide(int d);
 	IptuxConfig* SetSharedFileList(std::vector<std::string>& l) {
 		sharedFileList.clear();
@@ -63,10 +63,10 @@ private:
 	std::vector<std::string> sharedFileList;
 	std::string accessSharedLimit;
 
+	Json::Value root;
+
 	int transWindowWidth;
 	int transWindowHeight;
-	int mainWindowWidth;
-	int mainWindowHeight;
 	int mwinMainPanedDivide;
 	int groupWindowWidth;
 	int groupWindowHeight;

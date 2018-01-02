@@ -165,6 +165,8 @@ void bind_iptux_port()
         socket_enable_reuse(udpsock);
         socket_enable_broadcast(udpsock);
         if ((tcpsock == -1) || (udpsock == -1)) {
+                g_error(_("Fatal Error!! Failed to create new socket!\n%s"),
+                                                         strerror(errno));
                 pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
                                                          strerror(errno));
                 exit(1);
@@ -178,7 +180,9 @@ void bind_iptux_port()
                  || bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
                 close(tcpsock);
                 close(udpsock);
-                pop_error(_("Fatal Error!!\nFailed to bind the TCP/UDP port(2425)!\n%s"),
+                g_error(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
+                                                                         strerror(errno));
+                pop_error(_("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
                                                                          strerror(errno));
                 exit(1);
         }

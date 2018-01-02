@@ -41,8 +41,10 @@ MainWindow::MainWindow(
     mdlset(NULL),
     tmdllist(NULL), 
     accel(NULL), 
-    timerid(0)
+    timerid(0),
+    windowConfig(250, 510, "main_window")
 {
+        windowConfig.LoadFromConfig(config);
 }
 
 /**
@@ -521,7 +523,9 @@ GtkWidget *MainWindow::CreateMainWindow()
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
-        gtk_window_set_default_size(GTK_WINDOW(window), config.GetMainWindowWidth(), config.GetMainWindowHeight());
+        gtk_window_set_default_size(GTK_WINDOW(window), 
+                windowConfig.GetWidth(),
+                windowConfig.GetHeight());
         gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
         gtk_window_set_default_icon_name("ip-tux");
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
@@ -2553,9 +2557,10 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
                          GdkEventConfigure *event, 
                          MainWindow* self)
 {
-    self->config.SetMainWindowWidth(event->width)
-        ->SetMainWindowHeight(event->height)
-        ->Save();
+        self->windowConfig
+                .SetWidth(event->width)
+                .SetHeight(event->height)
+                .SaveToConfig(self->config);
     return FALSE;
 }
 

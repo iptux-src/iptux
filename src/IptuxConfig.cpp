@@ -14,23 +14,27 @@ IptuxConfig::IptuxConfig(string& fname)
 	: fname(fname)
 {
 
-	Json::Value root;
-
 	ifstream ifs(fname.c_str());
-	if(ifs.is_open()) {
-		ifs >> root;
-	} else {
+	if(!ifs.is_open()) {
 		g_warning("config file %s not found", fname.c_str());
+		return;		
 	}
 
+
+	Json::CharReaderBuilder rbuilder;
+	std::string errs;
+	bool ok = Json::parseFromStream(rbuilder, ifs, &root, &errs);
+	if(!ok) {
+		g_warning("invalid content in config file %s:\n%s", fname.c_str(),errs.c_str());
+		return;
+	}
+	
 	int version = root.get("version", 1).asInt();
 	if(version != 1) {
 		g_error("unknown config file version %d (from %s)", version, fname.c_str());
 		return;
 	}
 
-	mainWindowWidth = root.get("main_window_width", 250).asInt();
-	mainWindowHeight = root.get("main_window_height", 510).asInt();
 	transWindowWidth = root.get("trans_window_width", 500).asInt();
 	transWindowHeight = root.get("trans_window_height", 350).asInt();
 	mwinMainPanedDivide = root.get("mwin_main_paned_divide", 210).asInt();
@@ -45,6 +49,14 @@ IptuxConfig::IptuxConfig(string& fname)
 IptuxConfig::~IptuxConfig() {
 }
 
+int IptuxConfig::GetInt(const string& key) const {
+	return root.get(key, 0).asInt();
+}
+
+void IptuxConfig::SetInt(const string& key, int value) {
+	root[key] = value;
+}
+
 int IptuxConfig::GetTransWindowWidth() const {
 	return transWindowWidth;
 }
@@ -53,31 +65,10 @@ int IptuxConfig::GetTransWindowHeight() const {
 	return transWindowHeight;
 }
 
-int IptuxConfig::GetMainWindowWidth() const {
-	return mainWindowWidth;
-}
-
-int IptuxConfig::GetMainWindowHeight() const {
-	return mainWindowHeight;
-}
-
 int IptuxConfig::GetMwinMainPanedDivide() const {
 	return mwinMainPanedDivide;
 }
 
-IptuxConfig* IptuxConfig::SetMainWindowWidth(int w) {
-	if(mainWindowWidth != w) {
-		mainWindowWidth = w;
-	}
-	return this;
-}
-
-IptuxConfig* IptuxConfig::SetMainWindowHeight(int h) {
-	if(mainWindowHeight != h) {
-		mainWindowHeight = h;
-	}
-	return this;
-}
 
 IptuxConfig* IptuxConfig::SetTransWindowWidth(int w) {
 	if(transWindowWidth != w) {
@@ -108,10 +99,7 @@ IptuxConfig* IptuxConfig::Save() {
 		}
 	}
 
-	Json::Value root;
 	root["version"] = 1;
-	root["main_window_width"] = mainWindowWidth;
-	root["main_window_height"] = mainWindowHeight;
 	root["trans_window_width"] = transWindowWidth;
 	root["trans_window_height"] = transWindowHeight;
 	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
