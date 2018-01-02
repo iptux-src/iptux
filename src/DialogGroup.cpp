@@ -383,7 +383,7 @@ GtkWidget *DialogGroup::CreateMemberArea()
         gtk_container_add(GTK_CONTAINER(sw), widget);
         g_signal_connect(widget, "button-press-event", G_CALLBACK(PopupPickMenu), NULL);
         g_signal_connect(widget, "row-activated",
-                         G_CALLBACK(MembertreeItemActivated), NULL);
+                         G_CALLBACK(MembertreeItemActivated), this);
         g_datalist_set_data(&widset, "member-treeview-widget", widget);
 
         return frame;
@@ -765,8 +765,10 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget *treeview, GdkEventButton *event)
  * @param path path
  * @param column column
  */
-void DialogGroup::MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                         GtkTreeViewColumn *column)
+void DialogGroup::MembertreeItemActivated(GtkWidget *treeview, 
+        GtkTreePath *path,
+        GtkTreeViewColumn *column,
+        DialogGroup* self)
 {
         GtkTreeModel *model;
         GtkTreeIter iter;
@@ -780,7 +782,7 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path
                 if ( (grpinf->dialog))
                         gtk_window_present(GTK_WINDOW(grpinf->dialog));
                 else
-                        DialogPeer::PeerDialogEntry(grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf);
         }
 }
 

@@ -33,8 +33,11 @@ extern LogSystem lgsys;
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(GroupInfo *grp):DialogBase(grp),
-  torcvsize(0),rcvdsize(0)
+DialogPeer::DialogPeer(IptuxConfig& config, GroupInfo *grp)
+        :DialogBase(grp),
+        config(config),
+        torcvsize(0),
+        rcvdsize(0)
 {
         ReadUILayout();
 }
@@ -55,12 +58,12 @@ DialogPeer::~DialogPeer()
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(GroupInfo *grpinf)
+void DialogPeer::PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf)
 {
         DialogPeer *dlgpr;
         GtkWidget *window, *widget;
 
-        dlgpr = new DialogPeer(grpinf);
+        dlgpr = new DialogPeer(config, grpinf);
         window = dlgpr->CreateMainWindow();
         gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
         gtk_widget_show_all(window);

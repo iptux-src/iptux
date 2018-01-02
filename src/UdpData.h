@@ -13,13 +13,14 @@
 #define UDPDATA_H
 
 #include "mess.h"
+#include "IptuxConfig.h"
 
 class UdpData {
 public:
-        UdpData();
+        UdpData(IptuxConfig& config);
         ~UdpData();
 
-        static void UdpDataEntry(in_addr_t ipv4, const char buf[], size_t size);
+        static void UdpDataEntry(IptuxConfig& config, in_addr_t ipv4, const char buf[], size_t size);
 private:
         void DispatchUdpData();
 
@@ -47,6 +48,7 @@ private:
         PalInfo *AssertPalOnline();
         void RecvPalFile();
 
+        IptuxConfig& config;
         in_addr_t ipv4;                 //数据来自
         size_t size;                    //缓冲区数据有效长度
         char buf[MAX_UDPLEN];   //数据缓冲区

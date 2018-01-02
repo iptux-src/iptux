@@ -1217,21 +1217,21 @@ void CoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal)
  * 监听UDP服务端口.
  * @param pcthrd 核心类
  */
-void CoreThread::RecvUdpData(CoreThread *pcthrd)
+void CoreThread::RecvUdpData(CoreThread* self)
 {
         struct sockaddr_in addr;
         socklen_t len;
         char buf[MAX_UDPLEN];
         ssize_t size;
 
-        while (pcthrd->server) {
+        while (self->server) {
                 len = sizeof(addr);
-                if ((size = recvfrom(pcthrd->udpsock, buf, MAX_UDPLEN, 0,
+                if ((size = recvfrom(self->udpsock, buf, MAX_UDPLEN, 0,
                                  (struct sockaddr *)&addr, &len)) == -1)
                         continue;
                 if (size != MAX_UDPLEN)
                         buf[size] = '\0';
-                UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+                UdpData::UdpDataEntry(self->config, addr.sin_addr.s_addr, buf, size);
         }
 }
 

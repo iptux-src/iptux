@@ -32,7 +32,8 @@ extern SoundSystem sndsys;
 /**
  * 类构造函数.
  */
-UdpData::UdpData():ipv4(0), size(0), encode(NULL)
+UdpData::UdpData(IptuxConfig& config)
+        :config(config),ipv4(0), size(0), encode(NULL)
 {
 }
 
@@ -50,9 +51,9 @@ UdpData::~UdpData()
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(in_addr_t ipv4, const char buf[], size_t size)
+void UdpData::UdpDataEntry(IptuxConfig& config, in_addr_t ipv4, const char buf[], size_t size)
 {
-        UdpData udata;
+        UdpData udata(config);
 
         udata.ipv4 = ipv4;
         udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
@@ -353,7 +354,7 @@ void UdpData::SomeoneSendmsg()
                 if (!(grpinf->dialog)) {
 //                     switch (grpinf->type) {
 //                     case GROUP_BELONG_TYPE_REGULAR:
-                          DialogPeer::PeerDialogEntry(grpinf);
+                          DialogPeer::PeerDialogEntry(config, grpinf);
 //                          break;
 //                     case GROUP_BELONG_TYPE_SEGMENT:
 //                     case GROUP_BELONG_TYPE_GROUP:

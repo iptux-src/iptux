@@ -136,10 +136,10 @@ private:
         static gboolean ClearPallistEntry(GtkWidget *entry, GdkEventKey *event);
         static void PallistEntryChanged(GtkWidget *entry,GData **widset);
         static void PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                 GtkTreeViewColumn *column);
+                                                 GtkTreeViewColumn *column, MainWindow* self);
         static void PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *context,
                                          gint x, gint y, GtkSelectionData *data,
-                                         guint info, guint time);
+                                         guint info, guint time, MainWindow* self);
 
         static gboolean MWinConfigureEvent(GtkWidget *window,
                                  GdkEventConfigure *event, MainWindow* self);

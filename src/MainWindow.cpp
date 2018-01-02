@@ -518,7 +518,6 @@ GtkWidget *MainWindow::CreateMainWindow()
                          /*GDK_HINT_RESIZE_INC |*/ GDK_HINT_WIN_GRAVITY |
                          GDK_HINT_USER_POS | GDK_HINT_USER_SIZE);
         GtkWidget *window;
-        gint width, height;
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
@@ -1097,9 +1096,9 @@ GtkWidget *MainWindow::CreatePallistTree(GtkTreeModel *model)
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-        g_signal_connect(view, "row-activated", G_CALLBACK(PallistItemActivated), NULL);
+        g_signal_connect(view, "row-activated", G_CALLBACK(PallistItemActivated), this);
         g_signal_connect(view, "drag-data-received",
-                         G_CALLBACK(PallistDragDataReceived), NULL);
+                         G_CALLBACK(PallistDragDataReceived), this);
 
         return view;
 }
@@ -2104,7 +2103,7 @@ void MainWindow::PaltreeItemActivated(GtkWidget *treeview,
         /* 根据需求建立对应的对话框 */
         switch (grpinf->type) {
         case GROUP_BELONG_TYPE_REGULAR:
-                DialogPeer::PeerDialogEntry(grpinf);
+                DialogPeer::PeerDialogEntry(self->config, grpinf);
                 break;
         case GROUP_BELONG_TYPE_SEGMENT:
         case GROUP_BELONG_TYPE_GROUP:
@@ -2239,7 +2238,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
         if (!(grpinf->dialog)) {
                 switch (grpinf->type) {
                 case GROUP_BELONG_TYPE_REGULAR:
-                        DialogPeer::PeerDialogEntry(grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf);
                         break;
                 case GROUP_BELONG_TYPE_SEGMENT:
                 case GROUP_BELONG_TYPE_GROUP:
@@ -2470,7 +2469,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry,GData **widset)
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
 void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                 GtkTreeViewColumn *column)
+                                                 GtkTreeViewColumn *column, MainWindow* self)
 {
         GtkTreeModel *model;
         GtkTreeIter iter;
@@ -2482,7 +2481,7 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
         gtk_tree_model_get(model, &iter, 6, &pal, -1);
         if ( (grpinf = cthrd.GetPalRegularItem(pal))) {
                 if (!(grpinf->dialog))
-                        DialogPeer::PeerDialogEntry(grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf);
                 else
                     gtk_window_present(GTK_WINDOW(grpinf->dialog));
 //                if(pal->filelist)
@@ -2502,7 +2501,7 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
  */
 void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *context,
                                                  gint x, gint y, GtkSelectionData *data,
-                                                 guint info, guint time)
+                                                 guint info, guint time, MainWindow* self)
 {
         GtkTreeModel *model;
         GtkTreePath *path;
@@ -2530,7 +2529,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
 
         /* 如果好友群组对话框尚未创建，则先创建对话框 */
         if (!(grpinf->dialog))
-                DialogPeer::PeerDialogEntry(grpinf);
+                DialogPeer::PeerDialogEntry(self->config, grpinf);
         else
                 gtk_window_present(GTK_WINDOW(grpinf->dialog));
         /* 获取会话对象，并将数据添加到会话对象 */
