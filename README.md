@@ -33,7 +33,6 @@ iptux
 
 ```
 brew install gettext gtk+ gconf cmake
-brew link gettext --force
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make
