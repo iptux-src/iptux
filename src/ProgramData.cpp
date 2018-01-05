@@ -22,7 +22,7 @@ using namespace std;
  * 类构造函数.
  */
 ProgramData::ProgramData(IptuxConfig& config):
- myicon(NULL), path(NULL),  sign(NULL), codeset(NULL), encode(NULL),
+ path(NULL),  sign(NULL), codeset(NULL), encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
  lcursor(NULL), table(NULL), cnxnid(0), config(config)
@@ -38,7 +38,6 @@ ProgramData::~ProgramData()
 {
         GConfClient *client;
 
-        g_free(myicon);
         g_free(path);
         g_free(sign);
 
@@ -95,9 +94,9 @@ void ProgramData::WriteProgData()
         gettimeofday(&timestamp, NULL); //更新时间戳
         config.SetString("nick_name", nickname);
         config.SetString("belong_group", mygroup);
+        config.SetString("my_icon", myicon);
         config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/my_icon", myicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/archive_path", path, NULL);
         gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign, NULL);
 
@@ -208,10 +207,13 @@ void ProgramData::ReadProgData()
 
         mygroup = config.GetString("belong_group");
 
+        myicon = config.GetString("my_icon");
+        if(myicon.empty()) {
+          myicon = "icon-tux.png";
+        }
+
         client = gconf_client_get_default();
 
-        if (!(myicon = gconf_client_get_string(client, GCONF_PATH "/my_icon", NULL)))
-                myicon = g_strdup("icon-tux.png");
         if (!(path = gconf_client_get_string(client, GCONF_PATH "/archive_path", NULL)))
                 path = g_strdup(g_get_home_dir());
         if (!(sign = gconf_client_get_string(client, GCONF_PATH "/personal_sign", NULL)))
@@ -295,12 +297,12 @@ void ProgramData::CheckIconTheme()
         char pathbuf[MAX_PATHLEN];
         GdkPixbuf *pixbuf;
 
-        snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", myicon);
+        snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", myicon.c_str());
         if (access(pathbuf, F_OK) != 0) {
                 snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
-                                 g_get_user_config_dir(), myicon);
+                                 g_get_user_config_dir(), myicon.c_str());
                 if ( (pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-                        gtk_icon_theme_add_builtin_icon(myicon, MAX_ICONSIZE, pixbuf);
+                        gtk_icon_theme_add_builtin_icon(myicon.c_str(), MAX_ICONSIZE, pixbuf);
                         g_object_unref(pixbuf);
                 }
         }
@@ -468,8 +470,7 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/my_icon") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->myicon);
-                        progdt->myicon = g_strdup(str);
+                        progdt->myicon = str;
                         update = true;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/archive_path") == 0) {

@@ -520,7 +520,7 @@ void DataSettings::SetPersonalValue()
         gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->mygroup.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "myicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
-        active = IconfileGetItemPos(model, g_progdt->myicon);
+        active = IconfileGetItemPos(model, g_progdt->myicon.c_str());
         gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "archive-chooser-widget"));
         gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), g_progdt->path);
@@ -925,21 +925,19 @@ void DataSettings::ObtainPersonalValue()
             snprintf(path, MAX_PATHLEN, "%d", active);
             gtk_tree_model_get_iter_from_string(model, &iter, path);
             gtk_tree_model_get(model, &iter, 1, &file, -1);
-            if (strcmp(g_progdt->myicon, file) != 0) {
+            if (strcmp(g_progdt->myicon.c_str(), file) != 0) {
                     snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
                     if (access(path, F_OK) != 0) {
                             g_free(file);
-                            g_free(g_progdt->myicon);
-                            g_progdt->myicon = g_strdup("my-icon");
+                            g_progdt->myicon = "my-icon";
                             snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon",
                                                      g_get_user_config_dir());
                             gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
                             gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-                            gtk_icon_theme_add_builtin_icon(g_progdt->myicon,
+                            gtk_icon_theme_add_builtin_icon(g_progdt->myicon.c_str(),
                                                      MAX_ICONSIZE, pixbuf);
                             g_object_unref(pixbuf);
                     } else {
-                            g_free(g_progdt->myicon);
                             g_progdt->myicon = file;
                     }
             } else

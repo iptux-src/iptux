@@ -612,7 +612,7 @@ void Command::CreateIptuxExtra(const char *encode)
         size += strlen(pptr) + 1;
 
         pptr = buf + size;
-        snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->myicon);
+        snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->myicon.c_str());
         size += strlen(pptr) + 1;
 
         pptr = buf + size;
