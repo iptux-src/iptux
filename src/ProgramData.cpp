@@ -24,7 +24,7 @@ using namespace std;
  * 类构造函数.
  */
 ProgramData::ProgramData(IptuxConfig& config):
- codeset(NULL), encode(NULL),
+ encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
  lcursor(NULL), table(NULL), cnxnid(0), config(config)
@@ -38,7 +38,6 @@ ProgramData::ProgramData(IptuxConfig& config):
  */
 ProgramData::~ProgramData()
 {
-        g_free(codeset);
         g_free(encode);
         g_free(palicon);
         g_free(font);
@@ -95,9 +94,10 @@ void ProgramData::WriteProgData()
         config.SetString("my_icon", myicon);
         config.SetString("archive_path", path);
         config.SetString("personal_sign", sign);
+
+        config.SetString("candidacy_encode", codeset);
         config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/candidacy_encode", codeset, NULL);
         gconf_client_set_string(client, GCONF_PATH "/preference_encode", encode, NULL);
         gconf_client_set_string(client, GCONF_PATH "/pal_icon", palicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/panel_font", font, NULL);
@@ -215,12 +215,13 @@ void ProgramData::ReadProgData()
         }
 
         sign = config.GetString("personal_sign");
+        codeset = config.GetString("candidacy_encode");
+        if(codeset.empty()) {
+          codeset = "utf-16";
+        }
 
         client = gconf_client_get_default();
 
-        if (!(codeset = gconf_client_get_string(client,
-                 GCONF_PATH "/candidacy_encode", NULL)))
-                codeset = g_strdup(_("utf-16"));
         if (!(encode = gconf_client_get_string(client,
                  GCONF_PATH "/preference_encode", NULL)))
                 encode = g_strdup(_("utf-8"));
@@ -484,8 +485,7 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/candidacy_encode") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->codeset);
-                        progdt->codeset = g_strdup(str);
+                        progdt->codeset = str;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/preference_encode") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {

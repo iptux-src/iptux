@@ -12,6 +12,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <string>
+
 #include "mess.h"
 
 #define difftimeval(val2,val1) \
@@ -32,7 +34,7 @@
 typedef void *(*ThreadFunc)(void *);
 void ipv4_order(in_addr_t *ip1, in_addr_t *ip2);
 
-char *iptux_string_validate(const char *string, const char *codeset, char **encode);
+char *iptux_string_validate(const char *string, const std::string& codeset, char **encode);
 char *iptux_string_validate_copy(const char *string, const char *codeset, char **encode);
 char *convert_encode(const char *string, const char *tocode, const char *fromcode);
 char *convert_encode_copy(const char *string, const char *tocode, const char *fromcode);
