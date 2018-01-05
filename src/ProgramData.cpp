@@ -96,9 +96,9 @@ void ProgramData::WriteProgData()
         config.SetString("candidacy_encode", codeset);
         config.SetString("preference_encode", encode);
         config.SetString("pal_icon", palicon);
+        config.SetString("panel_font", font);
         config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/panel_font", font, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/open-chat",
                          FLAG_ISSET(flags, 7) ? TRUE : FALSE, NULL);
         gconf_client_set_bool(client, GCONF_PATH "/hide_startup",
@@ -204,11 +204,10 @@ void ProgramData::ReadProgData()
         codeset = config.GetString("candidacy_encode", "utf-16");
         encode = config.GetString("preference_encode", "utf-8");
         palicon = g_strdup(config.GetString("pal_icon", "icon-qq.png").c_str());
+        font = g_strdup(config.GetString("panel_font", "Sans Serif 10").c_str());
 
         client = gconf_client_get_default();
 
-        if (!(font = gconf_client_get_string(client, GCONF_PATH "/panel_font", NULL)))
-                font = g_strdup("Sans Serif 10");
         if (gconf_client_get_bool(client, GCONF_PATH "/open-chat", NULL))
                 FLAG_SET(flags, 7);
         if (gconf_client_get_bool(client, GCONF_PATH "/hide_startup", NULL))
