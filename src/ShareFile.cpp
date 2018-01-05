@@ -11,6 +11,8 @@
 //
 #include "ShareFile.h"
 
+#include <sys/stat.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "AnalogFS.h"

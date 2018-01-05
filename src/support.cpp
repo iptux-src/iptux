@@ -11,6 +11,9 @@
 //
 #include "support.h"
 
+#include <getopt.h>
+#include <sys/stat.h>
+
 #include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"

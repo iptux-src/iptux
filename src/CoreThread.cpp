@@ -223,7 +223,7 @@ void CoreThread::SendFeatureData(PalInfo *pal)
         if (*g_progdt->sign != '\0')
                 cmd.SendMySign(g_cthrd->udpsock, pal);
         env = g_get_user_config_dir();
-        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, g_progdt->myicon);
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, g_progdt->myicon.c_str());
         if (access(path, F_OK) == 0)
                 cmd.SendMyIcon(g_cthrd->udpsock, pal);
         snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);

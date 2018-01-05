@@ -11,6 +11,8 @@
 //
 #include "ProgramData.h"
 
+#include <sys/time.h>
+
 #include "config.h"
 #include "CoreThread.h"
 #include "ipmsg.h"

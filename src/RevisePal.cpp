@@ -11,6 +11,8 @@
 //
 #include "RevisePal.h"
 
+#include <inttypes.h>
+
 #include "ipmsg.h"
 #include "config.h"
 #include "CoreThread.h"
