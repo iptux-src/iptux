@@ -10,8 +10,11 @@
 //
 //
 #include "LogSystem.h"
+
 #include "ProgramData.h"
 #include "utils.h"
+#include "ipmsg.h"
+
 extern ProgramData progdt;
 
 #define LOG_START_HEADER "====================================="

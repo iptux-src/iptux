@@ -9,8 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "DataSettings.h"
+
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "SoundSystem.h"
@@ -18,6 +19,8 @@
 #include "output.h"
 #include "support.h"
 #include "utils.h"
+#include "ipmsg.h"
+
 extern ProgramData progdt;
 extern SoundSystem sndsys;
 

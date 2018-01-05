@@ -9,12 +9,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "RevisePal.h"
+
+#include "ipmsg.h"
+#include "config.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
 #include "callback.h"
 #include "utils.h"
+
 extern CoreThread cthrd;
 extern MainWindow mwin;
 

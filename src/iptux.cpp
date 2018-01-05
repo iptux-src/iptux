@@ -37,9 +37,9 @@ ProgramData progdt;
 GConfClient* client = gconf_client_get_default();
 string configPath = getConfigPath();
 IptuxConfig config(configPath);
-MainWindow mwin(config, &progdt);
+MainWindow mwin(config, progdt);
 CoreThread cthrd(config);
-StatusIcon sicon(config);
+StatusIcon sicon(config, mwin);
 LogSystem lgsys;
 SoundSystem sndsys;
 
@@ -57,6 +57,8 @@ string getConfigPath() {
 
 int main(int argc, char *argv[])
 {
+  mwin.SetStatusIcon(&sicon);
+
         setlocale(LC_ALL, "");
         bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");

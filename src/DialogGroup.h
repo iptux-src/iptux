@@ -15,13 +15,14 @@
 #include "mess.h"
 #include "DialogBase.h"
 #include "IptuxConfig.h"
+#include "ProgramData.h"
 
 class DialogGroup: public DialogBase {
 public:
-        DialogGroup(GroupInfo *grp, IptuxConfig& config);
+        DialogGroup(GroupInfo *grp, IptuxConfig& config, ProgramData& progdt);
         virtual ~DialogGroup();
 
-        static void GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config);
+        static void GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, ProgramData& progdt);
 
         virtual void UpdatePalData(PalInfo *pal);
         virtual void InsertPalData(PalInfo *pal);

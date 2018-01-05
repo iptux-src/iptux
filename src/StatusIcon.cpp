@@ -28,8 +28,9 @@ extern MainWindow mwin;
 /**
  * 类构造函数.
  */
-StatusIcon::StatusIcon(IptuxConfig& config)
+StatusIcon::StatusIcon(IptuxConfig& config, MainWindow& mwin)
     :config(config),
+    mwin(mwin),
     statusicon(NULL), timerid(0)
 {
 }
@@ -63,7 +64,7 @@ void StatusIcon::CreateStatusIcon()
         gtk_status_icon_set_screen(statusicon, screen);
 
         g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), this);
-        g_signal_connect(statusicon, "popup-menu", G_CALLBACK(PopupWorkMenu), NULL);
+        g_signal_connect(statusicon, "popup-menu", G_CALLBACK(onPopupMenu), NULL);
 #if GTK_CHECK_VERSION(2,16,0)
         g_object_set(statusicon, "has-tooltip", TRUE, NULL);
         g_signal_connect(statusicon, "query-tooltip",
@@ -132,7 +133,7 @@ gboolean StatusIcon::UpdateUI(StatusIcon *sicon)
  * 创建弹出菜单.
  * @return 菜单
  */
-GtkWidget *StatusIcon::CreatePopupMenu(GtkStatusIcon *statusicon)
+GtkWidget* StatusIcon::CreatePopupMenu()
 {
         GtkWidget *menu, *menuitem;
         GtkWidget *image, *window;
@@ -148,7 +149,7 @@ GtkWidget *StatusIcon::CreatePopupMenu(GtkStatusIcon *statusicon)
         image = gtk_image_new_from_icon_name("menu-board", GTK_ICON_SIZE_MENU);
         gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-        g_signal_connect(menuitem, "activate", G_CALLBACK(alter_interface_mode), NULL);
+        g_signal_connect(menuitem, "activate", G_CALLBACK(onActivate), this);
 
         menuitem = gtk_separator_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -159,7 +160,7 @@ GtkWidget *StatusIcon::CreatePopupMenu(GtkStatusIcon *statusicon)
         image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
         gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-        g_signal_connect(menuitem, "activate", G_CALLBACK(ShowTransWindow), NULL);
+        g_signal_connect(menuitem, "activate", G_CALLBACK(ShowTransWindow), this);
 
         /* 首选项 */
         NO_OPERATION_C
@@ -205,9 +206,9 @@ GtkWidget *StatusIcon::CreatePopupMenu(GtkStatusIcon *statusicon)
 /**
  * 显示文件传输窗口.
  */
-void StatusIcon::ShowTransWindow()
+void StatusIcon::ShowTransWindow(StatusIcon* self)
 {
-        mwin.OpenTransWindow();
+  self->mwin.OpenTransWindow();
 }
 
 /**
@@ -226,18 +227,19 @@ void StatusIcon::StatusIconActivate(StatusIcon* self)
         if (grpinf) {
                 switch (grpinf->type) {
                 case GROUP_BELONG_TYPE_REGULAR:
-                        DialogPeer::PeerDialogEntry(self->config, grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf, self->getProgramData());
                         break;
                 case GROUP_BELONG_TYPE_SEGMENT:
                 case GROUP_BELONG_TYPE_GROUP:
                 case GROUP_BELONG_TYPE_BROADCAST:
-                        DialogGroup::GroupDialogEntry(grpinf, self->config);
+                        DialogGroup::GroupDialogEntry(grpinf, self->config, self->getProgramData());
                         break;
                 default:
                         break;
                 }
-        } else
-                alter_interface_mode();
+        } else {
+                onActivate(self);
+        }
 }
 
 /**
@@ -246,11 +248,11 @@ void StatusIcon::StatusIconActivate(StatusIcon* self)
  * @param button the button that was pressed
  * @param time the timestamp of the event that triggered the signal emission
  */
-void StatusIcon::PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint time)
+void StatusIcon::onPopupMenu(GtkStatusIcon *statusicon, guint button, guint time, StatusIcon* self)
 {
         GtkWidget *menu;
 
-        menu = CreatePopupMenu(statusicon);
+        menu = self->CreatePopupMenu();
         gtk_widget_show_all(menu);
         gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, time);
 }
@@ -295,4 +297,25 @@ gboolean StatusIcon::IsEmbedded()
 	embedded = gtk_status_icon_is_embedded(statusicon);
 	return embedded;
 }
+
+/**
+ * 改变UI的外观.
+ * @return Gtk+库所需
+ */
+gboolean StatusIcon::onActivate(StatusIcon* self)
+{
+  return self->AlterInterfaceMode();
+}
+
+gboolean StatusIcon::AlterInterfaceMode()
+{
+  AlterStatusIconMode();
+  if(IsEmbedded()) {
+      mwin.AlterWindowMode();
+  } else {
+    gtk_main_quit();
+  }
+  return TRUE;
+}
+
 

@@ -9,8 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "support.h"
+
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -19,6 +20,8 @@
 #include "dialog.h"
 #include "utils.h"
 #include "output.h"
+#include "ipmsg.h"
+
 extern ProgramData progdt;
 extern CoreThread cthrd;
 extern MainWindow mwin;
@@ -165,9 +168,9 @@ void bind_iptux_port()
         socket_enable_reuse(udpsock);
         socket_enable_broadcast(udpsock);
         if ((tcpsock == -1) || (udpsock == -1)) {
-                g_error(_("Fatal Error!! Failed to create new socket!\n%s"),
+                g_warning(_("Fatal Error!! Failed to create new socket!\n%s"),
                                                          strerror(errno));
-                pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+                pop_warning(NULL, _("Fatal Error!!\nFailed to create new socket!\n%s"),
                                                          strerror(errno));
                 exit(1);
         }
@@ -180,9 +183,9 @@ void bind_iptux_port()
                  || bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
                 close(tcpsock);
                 close(udpsock);
-                g_error(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
+                g_warning(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
                                                                          strerror(errno));
-                pop_error(_("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
+                pop_warning(NULL, _("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
                                                                          strerror(errno));
                 exit(1);
         }

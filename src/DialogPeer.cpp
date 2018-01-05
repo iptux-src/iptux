@@ -11,6 +11,7 @@
 //
 //
 #include "DialogPeer.h"
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -24,7 +25,7 @@
 #include "support.h"
 #include "utils.h"
 #include "dialog.h"
-extern ProgramData progdt;
+
 extern CoreThread cthrd;
 extern MainWindow mwin;
 extern LogSystem lgsys;
@@ -33,8 +34,8 @@ extern LogSystem lgsys;
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(IptuxConfig& config, GroupInfo *grp)
-        :DialogBase(grp),
+DialogPeer::DialogPeer(IptuxConfig& config, GroupInfo *grp, ProgramData& progdt)
+        :DialogBase(grp, progdt),
         config(config),
         torcvsize(0),
         rcvdsize(0)
@@ -58,12 +59,12 @@ DialogPeer::~DialogPeer()
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf)
+void DialogPeer::PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf, ProgramData& progdt)
 {
         DialogPeer *dlgpr;
         GtkWidget *window, *widget;
 
-        dlgpr = new DialogPeer(config, grpinf);
+        dlgpr = new DialogPeer(config, grpinf, progdt);
         window = dlgpr->CreateMainWindow();
         gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
         gtk_widget_show_all(window);
@@ -845,7 +846,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea()
     gtk_box_pack_start(GTK_BOX(hbox),pbar,TRUE,TRUE,0);
     button = gtk_button_new_with_label(_("Accept"));
     g_signal_connect_swapped(button, "clicked",
-                     G_CALLBACK(ReceiveFile), this);
+                     G_CALLBACK(onAcceptButtonClicked), this);
     g_datalist_set_data(&widset, "file-receive-accept-button", button);
     gtk_box_pack_start(GTK_BOX(hbox),button,FALSE,TRUE,0);
     button = gtk_button_new_with_label(_("Refuse"));
@@ -1032,7 +1033,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
     GtkTreeModel *mdltorcv,*mdlrcvd,*mdltmp;
     GSList *ecslist;
     GtkWidget *widget,*hpaned,*pbar;
-    float progress;
+    float progress = 0.0;
     GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
     FileInfo *file;
     gchar *filesize,*path;
@@ -1128,7 +1129,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
             g_object_unref(dpixbuf);
 
     if(receiving > 0)
-        dlgpr->ReceiveFile(dlgpr);
+        dlgpr->onAcceptButtonClicked(dlgpr);
 }
 /**
  * 显示窗口事件响应函数.
@@ -1139,7 +1140,7 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr)
 {
     GtkTreeModel *model;
     GtkWidget *pbar,*button;
-    float progress;
+    float progress = 0.0;
     FileInfo *file;
     GtkTreeIter iter;
     GtkIconTheme *theme;
@@ -1219,26 +1220,26 @@ void DialogPeer::ShowDialogPeer(DialogPeer *dlgpr)
  *@param dlgpr 对话框类
  *
  */
-void DialogPeer::ReceiveFile(DialogPeer *dlgpr)
+void DialogPeer::onAcceptButtonClicked(DialogPeer* self)
 {
     GtkWidget *widget;
     GtkTreeModel *model;
     GtkTreeIter iter;
-    gchar *filename, *filepath;
+    gchar *filename;
     FileInfo *file;
     pthread_t pid;
 
-    filepath = pop_save_path(GTK_WIDGET(dlgpr->grpinf->dialog));
-    g_free(progdt.path);
-    progdt.path = filepath;
+    gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog));
+    g_free(self->progdt.path);
+    self->progdt.path = filepath;
     /* 考察数据集中是否存在项 */
-    widget = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset), "file-to-receive-treeview-widget"));
+    widget = GTK_WIDGET(g_datalist_get_data(&(self->widset), "file-to-receive-treeview-widget"));
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
     if(!model)
         return;
     if (!gtk_tree_model_get_iter_first(model, &iter))
             return;
-    dlgpr->torcvsize = 0;
+    self->torcvsize = 0;
     /* 将选中的项投入文件数据接收类 */
     do {
             gtk_tree_model_get(model, &iter,2, &filename,
@@ -1250,10 +1251,10 @@ void DialogPeer::ReceiveFile(DialogPeer *dlgpr)
             pthread_create(&pid, NULL, ThreadFunc(ThreadRecvFile), file);
             pthread_detach(pid);
             g_free(filename);
-            dlgpr->torcvsize += file->filesize;
+            self->torcvsize += file->filesize;
     } while (gtk_tree_model_iter_next(model, &iter));
-    dlgpr->rcvdsize = 0;
-    dlgpr->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), dlgpr);
+    self->rcvdsize = 0;
+    self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
 }
 /**
  * 接收文件数据.

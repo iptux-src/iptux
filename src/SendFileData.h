@@ -12,6 +12,7 @@
 #ifndef SENDFILEDATA_H
 #define SENDFILEDATA_H
 
+#include "ipmsg.h"
 #include "mess.h"
 
 class SendFileData: public TransAbstract

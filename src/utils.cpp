@@ -15,7 +15,10 @@
 #ifndef __APPLE__
   #include <sys/vfs.h>
 #endif
+#include <string.h>
+#include <inttypes.h>
 
+#include "ipmsg.h"
 
 /**
  * 对两个主机序的ipv4地址进行排序.

@@ -10,6 +10,7 @@
 //
 //
 #include "MainWindow.h"
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "DialogPeer.h"
@@ -23,6 +24,8 @@
 #include "callback.h"
 #include "support.h"
 #include "utils.h"
+#include "StatusIcon.h"
+
 extern CoreThread cthrd;
 extern MainWindow mwin;
 
@@ -31,11 +34,8 @@ extern MainWindow mwin;
 /**
  * 类构造函数.
  */
-MainWindow::MainWindow(
-    IptuxConfig& config,
-    ProgramData* progdt
-    ):
-    config(config),
+MainWindow::MainWindow(IptuxConfig& config, ProgramData& progdt)
+  : config(config),
     progdt(progdt),
     widset(NULL), 
     mdlset(NULL),
@@ -76,7 +76,7 @@ void MainWindow::CreateWindow()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "pallist-box-widget"));
         gtk_widget_hide(widget);
         /* 如果需要隐藏主窗口，则隐藏 */
-        if (FLAG_ISSET(progdt->flags, 6))
+        if (FLAG_ISSET(progdt.flags, 6))
                 gtk_widget_hide(window);
 
         /* 创建传输窗口 */
@@ -532,7 +532,7 @@ GtkWidget *MainWindow::CreateMainWindow()
 
         g_datalist_set_data(&widset, "window-widget", window);
         g_signal_connect_swapped(window, "delete-event",
-                         G_CALLBACK(alter_interface_mode), NULL);
+                         G_CALLBACK(onDeleteEvent), NULL);
         g_signal_connect(window, "configure-event",
                          G_CALLBACK(MWinConfigureEvent), this);
 
@@ -570,7 +570,6 @@ GtkWidget *MainWindow::CreateTransWindow()
 GtkWidget *MainWindow::CreateAllArea()
 {
         GtkWidget *box, *paned;
-        gint position;
 
         box = gtk_vbox_new(FALSE, 0);
 
@@ -1035,7 +1034,7 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model)
 
         /* 连接信号 */
         g_signal_connect(view, "query-tooltip", G_CALLBACK(PaltreeQueryTooltip), this);
-        g_signal_connect(view, "row-activated", G_CALLBACK(PaltreeItemActivated), this);
+        g_signal_connect(view, "row-activated", G_CALLBACK(onPaltreeItemActivated), this);
         g_signal_connect(view, "drag-data-received",
                          G_CALLBACK(PaltreeDragDataReceived), this);
         g_signal_connect(view, "button-press-event", G_CALLBACK(PaltreePopupMenu), NULL);
@@ -1331,7 +1330,7 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
         /* 创建字体风格 */
         attrs = pango_attr_list_new();
         if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-                dspt = pango_font_description_from_string(progdt->font);
+                dspt = pango_font_description_from_string(progdt.font);
                 attr = pango_attr_font_desc_new(dspt);
                 pango_attr_list_insert(attrs, attr);
                 pango_font_description_free(dspt);
@@ -1406,7 +1405,7 @@ void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter
         attrs = NULL;
         if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
                 attrs = pango_attr_list_new();
-                dspt = pango_font_description_from_string(progdt->font);
+                dspt = pango_font_description_from_string(progdt.font);
                 attr = pango_attr_font_desc_new(dspt);
                 pango_attr_list_insert(attrs, attr);
                 pango_font_description_free(dspt);
@@ -2066,7 +2065,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
         if (grpinf->type != GROUP_BELONG_TYPE_REGULAR)
                 return FALSE;
 
-        buffer = gtk_text_buffer_new(self->progdt->table);
+        buffer = gtk_text_buffer_new(self->progdt.table);
         FillPalInfoToBuffer(buffer, (PalInfo *)grpinf->member->data);
         textview = gtk_text_view_new_with_buffer(buffer);
         gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(textview), FALSE);
@@ -2085,7 +2084,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
  * @param path the GtkTreePath for the activated row
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
-void MainWindow::PaltreeItemActivated(GtkWidget *treeview, 
+void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, 
     GtkTreePath *path,
     GtkTreeViewColumn *column,
     MainWindow* self)
@@ -2107,12 +2106,12 @@ void MainWindow::PaltreeItemActivated(GtkWidget *treeview,
         /* 根据需求建立对应的对话框 */
         switch (grpinf->type) {
         case GROUP_BELONG_TYPE_REGULAR:
-                DialogPeer::PeerDialogEntry(self->config, grpinf);
+                DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
                 break;
         case GROUP_BELONG_TYPE_SEGMENT:
         case GROUP_BELONG_TYPE_GROUP:
         case GROUP_BELONG_TYPE_BROADCAST:
-                DialogGroup::GroupDialogEntry(grpinf, self->config);
+                DialogGroup::GroupDialogEntry(grpinf, self->config, self->progdt);
         default:
                 break;
         }
@@ -2242,12 +2241,12 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
         if (!(grpinf->dialog)) {
                 switch (grpinf->type) {
                 case GROUP_BELONG_TYPE_REGULAR:
-                        DialogPeer::PeerDialogEntry(self->config, grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
                         break;
                 case GROUP_BELONG_TYPE_SEGMENT:
                 case GROUP_BELONG_TYPE_GROUP:
                 case GROUP_BELONG_TYPE_BROADCAST:
-                        DialogGroup::GroupDialogEntry(grpinf, self->config);
+                        DialogGroup::GroupDialogEntry(grpinf, self->config, self->progdt);
                 default:
                         break;
                 }
@@ -2472,9 +2471,10 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry,GData **widset)
  * @param path the GtkTreePath for the activated row
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
-void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                 GtkTreeViewColumn *column, MainWindow* self)
-{
+void MainWindow::PallistItemActivated(GtkWidget *treeview, 
+  GtkTreePath *path,
+  GtkTreeViewColumn *column, 
+  MainWindow* self) {
         GtkTreeModel *model;
         GtkTreeIter iter;
         GroupInfo *grpinf;
@@ -2485,11 +2485,9 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
         gtk_tree_model_get(model, &iter, 6, &pal, -1);
         if ( (grpinf = cthrd.GetPalRegularItem(pal))) {
                 if (!(grpinf->dialog))
-                        DialogPeer::PeerDialogEntry(self->config, grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
                 else
                     gtk_window_present(GTK_WINDOW(grpinf->dialog));
-//                if(pal->filelist)
-//                    ((DialogPeer *)(grpinf->dialog))->FillFileToReceiveModel();
         }
 }
 
@@ -2533,7 +2531,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
 
         /* 如果好友群组对话框尚未创建，则先创建对话框 */
         if (!(grpinf->dialog))
-                DialogPeer::PeerDialogEntry(self->config, grpinf);
+                DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
         else
                 gtk_window_present(GTK_WINDOW(grpinf->dialog));
         /* 获取会话对象，并将数据添加到会话对象 */
@@ -2596,4 +2594,8 @@ void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
         position = gtk_paned_get_position(GTK_PANED(paned));
         self->config.SetMwinMainPanedDivide(position)
             ->Save();
+}
+
+gboolean MainWindow::onDeleteEvent(MainWindow* self) {
+  return self->statusIcon->AlterInterfaceMode();
 }

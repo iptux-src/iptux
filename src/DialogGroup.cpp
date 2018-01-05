@@ -31,8 +31,8 @@ extern LogSystem lgsys;
  * 类构造函数.
  * @param grp 群组信息
  */
-DialogGroup::DialogGroup(GroupInfo *grp, IptuxConfig& config)
-    :DialogBase(grp),
+DialogGroup::DialogGroup(GroupInfo *grp, IptuxConfig& config, ProgramData& progdt)
+    :DialogBase(grp, progdt),
     config(config)
 {
         InitSublayerSpecify();
@@ -50,12 +50,12 @@ DialogGroup::~DialogGroup()
  * 群组对话框入口.
  * @param grpinf 群组信息
  */
-void DialogGroup::GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config)
+void DialogGroup::GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, ProgramData& progdt)
 {
         DialogGroup *dlggrp;
         GtkWidget *window, *widget;
 
-        dlggrp = new DialogGroup(grpinf, config);
+        dlggrp = new DialogGroup(grpinf, config, progdt);
         window = dlggrp->CreateMainWindow();
         gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
         gtk_widget_show_all(window);
@@ -743,7 +743,7 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
                 if ( (grpinf->dialog))
                         gtk_window_present(GTK_WINDOW(grpinf->dialog));
                 else
-                        DialogPeer::PeerDialogEntry(self->config, grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
         }
 }
 

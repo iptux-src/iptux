@@ -12,6 +12,7 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include "ipmsg.h"
 #include "mess.h"
 
 class Command {

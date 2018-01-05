@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.1)
 project (iptux
 	VERSION 0.6.5)
 
-
+set (CMAKE_CXX_STANDARD 11)
 if (APPLE AND EXISTS /usr/local/opt/gettext)
     list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/gettext")
     set(CMAKE_EXE_LINKER_FLAGS "-L/usr/local/opt/gettext/lib")

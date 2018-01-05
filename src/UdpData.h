@@ -14,6 +14,7 @@
 
 #include "mess.h"
 #include "IptuxConfig.h"
+#include "ipmsg.h"
 
 class UdpData {
 public:

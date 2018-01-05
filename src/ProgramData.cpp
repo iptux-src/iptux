@@ -9,9 +9,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "ProgramData.h"
+
+#include "config.h"
 #include "CoreThread.h"
+#include "ipmsg.h"
 #include "utils.h"
 
 /**

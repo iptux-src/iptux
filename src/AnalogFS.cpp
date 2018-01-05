@@ -10,8 +10,13 @@
 //
 //
 #include "AnalogFS.h"
+
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include "output.h"
 #include "utils.h"
+#include "ipmsg.h"
 
 /**
  * 类构造函数.

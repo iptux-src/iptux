@@ -30,8 +30,9 @@ extern ProgramData progdt;
 extern CoreThread cthrd;
 extern MainWindow mwin;
 
-DialogBase::DialogBase(GroupInfo *grp)
-        :widset(NULL), mdlset(NULL),dtset(NULL), accel(NULL), grpinf(grp),
+DialogBase::DialogBase(GroupInfo *grp, ProgramData& progdt)
+        :progdt(progdt),
+        widset(NULL), mdlset(NULL),dtset(NULL), accel(NULL), grpinf(grp),
          totalsendsize(0)
 {
         InitSublayerGeneral();

@@ -354,7 +354,7 @@ void UdpData::SomeoneSendmsg()
                 if (!(grpinf->dialog)) {
 //                     switch (grpinf->type) {
 //                     case GROUP_BELONG_TYPE_REGULAR:
-                          DialogPeer::PeerDialogEntry(config, grpinf);
+                          DialogPeer::PeerDialogEntry(config, grpinf, progdt);
 //                          break;
 //                     case GROUP_BELONG_TYPE_SEGMENT:
 //                     case GROUP_BELONG_TYPE_GROUP:

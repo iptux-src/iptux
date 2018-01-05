@@ -17,6 +17,8 @@
 #include "ProgramData.h"
 #include "WindowConfig.h"
 
+class StatusIcon;
+
 /**
  * @note 鉴于本类成员函数所访问的(CoreThread)类成员链表都具有只增不减的特性，
  * 所以无须加锁访问，若有例外，请于注释中说明，否则应当bug处理.\n
@@ -26,7 +28,7 @@ class MainWindow {
 public:
         MainWindow(
             IptuxConfig& config,
-            ProgramData* progdt
+            ProgramData& progdt
             );
         ~MainWindow();
 
@@ -44,10 +46,28 @@ public:
         void OpenTransWindow();
         void UpdateItemToTransTree(GData **para);
         bool TransmissionActive();
-private:
-        IptuxConfig& config;
-        ProgramData* progdt;
 
+        ProgramData& GetProgramData() {
+          return progdt;
+        }
+
+        void SetStatusIcon(StatusIcon* statusIcon) {
+          this->statusIcon = statusIcon;
+        }
+private:
+  IptuxConfig& config;
+  ProgramData& progdt;
+  StatusIcon* statusIcon;
+  
+  GData *widset;          //窗体集
+  GData *mdlset;          //数据model集
+  //GData *dtset;           //通用数据集
+  GList *tmdllist;                //model链表，用于构建model循环结构
+  GtkAccelGroup *accel;   //快捷键集组
+  guint timerid;          //UI更新定时器ID
+  WindowConfig windowConfig;
+
+private:
         void InitSublayer();
         void ClearSublayer();
 
@@ -84,15 +104,6 @@ private:
                                                          GroupInfo *grpinf);
         void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                                          bool blinking);
-
-        GData *widset;          //窗体集
-        GData *mdlset;          //数据model集
-        //GData *dtset;           //通用数据集
-        GList *tmdllist;                //model链表，用于构建model循环结构
-        GtkAccelGroup *accel;   //快捷键集组
-        guint timerid;          //UI更新定时器ID
-        WindowConfig windowConfig;
-private:
         static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
         static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
         static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
@@ -118,7 +129,7 @@ private:
         static void DeletePalItem(GroupInfo *grpinf);
         static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
                                          gboolean key, GtkTooltip *tooltip, MainWindow* self);
-        static void PaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
+        static void onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
                                                  GtkTreeViewColumn *column, MainWindow* self);
         static gboolean PaltreePopupMenu(GtkWidget *treeview, GdkEventButton *event);
         static gboolean PaltreeChangeStatus(GtkWidget *treeview, GdkEventButton *event);
@@ -149,6 +160,7 @@ private:
                                  GdkEventConfigure *event, MainWindow* self);
         static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                                          MainWindow* self);
+  static gboolean onDeleteEvent(MainWindow* self);
 };
 
 #endif

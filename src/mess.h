@@ -9,15 +9,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef UDT_H
-#define UDT_H
+#ifndef MESS_H
+#define MESS_H
 
-#include "sys.h"
-#include "net.h"
-#include "deplib.h"
-#include "ipmsg.h"
-
-/***************偶是可爱的分割线(枚举变量)*****************/
+#include <arpa/inet.h>
+#include <gtk/gtk.h>
 
 /**
  * 消息来源类型.

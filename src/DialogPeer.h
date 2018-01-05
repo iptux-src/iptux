@@ -19,10 +19,10 @@
 
 class DialogPeer: public DialogBase {
 public:
-        DialogPeer(IptuxConfig& config, GroupInfo* grp);
+        DialogPeer(IptuxConfig& config, GroupInfo* grp, ProgramData& progdt);
         virtual ~DialogPeer();
 
-        static void PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf);
+        static void PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf, ProgramData& progdt);
 
         virtual void UpdatePalData(PalInfo *pal);
         virtual void InsertPalData(PalInfo *pal);
@@ -64,7 +64,7 @@ private:
         static void AskSharedFiles(GroupInfo *grpinf);
         static void InsertPicture(DialogPeer *dlgpr);
         static void DialogPeerDestroy(DialogPeer *dlgpr);
-        static void ReceiveFile(DialogPeer *dlgpr);
+        static void onAcceptButtonClicked(DialogPeer *dlgpr);
         static void ThreadRecvFile(FileInfo *file);
         static void ShowInfoEnclosure(DialogPeer *dlgpr);
         static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
