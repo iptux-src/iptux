@@ -45,7 +45,7 @@ public:
         void Unlock();
 
         std::string nickname; //昵称 *
-        char *mygroup;  //所属群组 *
+        std::string mygroup;  //所属群组 *
         char *myicon;           //个人头像 *
         char *path;             //存档路径 *
         char *sign;             //个性签名 *

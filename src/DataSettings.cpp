@@ -517,7 +517,7 @@ void DataSettings::SetPersonalValue()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
         gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->nickname.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "mygroup-entry-widget"));
-        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->mygroup);
+        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->mygroup.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "myicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
         active = IconfileGetItemPos(model, g_progdt->myicon);
@@ -908,15 +908,15 @@ void DataSettings::ObtainPersonalValue()
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
         if (*(text = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
-                g_progdt->nickname = string(text);
+                g_progdt->nickname = text;
         }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "mygroup-entry-widget"));
         if (*(text = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
-                g_free(g_progdt->mygroup);
-                g_progdt->mygroup = g_strdup(text);
-        } else
-                *g_progdt->mygroup = '\0';
+                g_progdt->mygroup = text;
+        } else {
+                g_progdt->mygroup = "";
+        }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "myicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));

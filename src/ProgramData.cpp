@@ -21,7 +21,7 @@ using namespace std;
 /**
  * 类构造函数.
  */
-ProgramData::ProgramData(IptuxConfig& config):mygroup(NULL),
+ProgramData::ProgramData(IptuxConfig& config):
  myicon(NULL), path(NULL),  sign(NULL), codeset(NULL), encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
@@ -38,7 +38,6 @@ ProgramData::~ProgramData()
 {
         GConfClient *client;
 
-        g_free(mygroup);
         g_free(myicon);
         g_free(path);
         g_free(sign);
@@ -95,9 +94,9 @@ void ProgramData::WriteProgData()
         client = gconf_client_get_default();
         gettimeofday(&timestamp, NULL); //更新时间戳
         config.SetString("nick_name", nickname);
+        config.SetString("belong_group", mygroup);
         config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/belong_group", mygroup, NULL);
         gconf_client_set_string(client, GCONF_PATH "/my_icon", myicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/archive_path", path, NULL);
         gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign, NULL);
@@ -207,11 +206,10 @@ void ProgramData::ReadProgData()
           nickname = string(g_get_user_name());
         }
 
+        mygroup = config.GetString("belong_group");
+
         client = gconf_client_get_default();
 
-        if (!(mygroup = gconf_client_get_string(client,
-                 GCONF_PATH "/belong_group", NULL)))
-                mygroup = g_strdup("");
         if (!(myicon = gconf_client_get_string(client, GCONF_PATH "/my_icon", NULL)))
                 myicon = g_strdup("icon-tux.png");
         if (!(path = gconf_client_get_string(client, GCONF_PATH "/archive_path", NULL)))
@@ -465,8 +463,7 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/belong_group") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->mygroup);
-                        progdt->mygroup = g_strdup(str);
+                        progdt->mygroup = str;
                         update = true;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/my_icon") == 0) {

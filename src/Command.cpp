@@ -604,11 +604,11 @@ void Command::CreateIptuxExtra(const char *encode)
 
         pptr = buf + size;
         if (encode && strcasecmp(encode, "utf-8") != 0
-                 && (ptr = convert_encode(g_progdt->mygroup, encode, "utf-8"))) {
+                 && (ptr = convert_encode(g_progdt->mygroup.c_str(), encode, "utf-8"))) {
                 snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
                 g_free(ptr);
         } else
-                snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->mygroup);
+                snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->mygroup.c_str());
         size += strlen(pptr) + 1;
 
         pptr = buf + size;
