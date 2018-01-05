@@ -218,9 +218,9 @@ mark:   switch (result = gtk_dialog_run(GTK_DIALOG(dialog))) {
  * @param parent parent window
  * @return path string
  */
-char* pop_save_path(GtkWidget *parent)
+const char* pop_save_path(GtkWidget *parent)
 {
-    char *path;
+    const char *path;
     GtkWidget *dialog;
 
     dialog = gtk_file_chooser_dialog_new (_("Please select a folder to save files."),
@@ -229,8 +229,8 @@ char* pop_save_path(GtkWidget *parent)
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                           NULL);
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), g_progdt->path);
-    path = g_progdt->path;
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), g_progdt->path.c_str());
+    path = g_progdt->path.c_str();
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
       path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER (dialog));
     }

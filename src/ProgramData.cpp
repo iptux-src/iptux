@@ -24,7 +24,7 @@ using namespace std;
  * 类构造函数.
  */
 ProgramData::ProgramData(IptuxConfig& config):
- path(NULL),  sign(NULL), codeset(NULL), encode(NULL),
+ sign(NULL), codeset(NULL), encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
  lcursor(NULL), table(NULL), cnxnid(0), config(config)
@@ -40,7 +40,6 @@ ProgramData::~ProgramData()
 {
         GConfClient *client;
 
-        g_free(path);
         g_free(sign);
 
         g_free(codeset);
@@ -97,9 +96,9 @@ void ProgramData::WriteProgData()
         config.SetString("nick_name", nickname);
         config.SetString("belong_group", mygroup);
         config.SetString("my_icon", myicon);
+        config.SetString("archive_path", path);
         config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/archive_path", path, NULL);
         gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign, NULL);
 
         gconf_client_set_string(client, GCONF_PATH "/candidacy_encode", codeset, NULL);
@@ -214,10 +213,13 @@ void ProgramData::ReadProgData()
           myicon = "icon-tux.png";
         }
 
+        path = config.GetString("archive_path");
+        if(path.empty()) {
+          path = g_get_home_dir();
+        }
+
         client = gconf_client_get_default();
 
-        if (!(path = gconf_client_get_string(client, GCONF_PATH "/archive_path", NULL)))
-                path = g_strdup(g_get_home_dir());
         if (!(sign = gconf_client_get_string(client, GCONF_PATH "/personal_sign", NULL)))
                 sign = g_strdup("");
 
@@ -477,8 +479,8 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/archive_path") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->path);
-                        progdt->path = g_strdup(str);
+                        progdt->path = str;
+                        update = true;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/personal_sign") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {

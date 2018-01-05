@@ -1231,8 +1231,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer* self)
     FileInfo *file;
     pthread_t pid;
 
-    gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog));
-    g_free(self->progdt.path);
+    const gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog));
     self->progdt.path = filepath;
     /* 考察数据集中是否存在项 */
     widget = GTK_WIDGET(g_datalist_get_data(&(self->widset), "file-to-receive-treeview-widget"));

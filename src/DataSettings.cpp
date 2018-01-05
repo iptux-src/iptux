@@ -523,7 +523,7 @@ void DataSettings::SetPersonalValue()
         active = IconfileGetItemPos(model, g_progdt->myicon.c_str());
         gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "archive-chooser-widget"));
-        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), g_progdt->path);
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), g_progdt->path.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "photo-image-widget"));
         snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", g_get_user_config_dir());
         if ( (pixbuf = gdk_pixbuf_new_from_file_at_size(path, MAX_PREVIEWSIZE,
@@ -945,7 +945,6 @@ void DataSettings::ObtainPersonalValue()
         }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "archive-chooser-widget"));
-        g_free(g_progdt->path);
         g_progdt->path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sign-textview-widget"));
