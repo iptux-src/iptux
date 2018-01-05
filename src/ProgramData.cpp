@@ -197,28 +197,13 @@ void ProgramData::ReadProgData()
         GConfClient *client;
         GConfValue *value;
 
-        nickname = config.GetString("nick_name");
-        if(nickname.empty()) {
-          nickname = string(g_get_user_name());
-        }
-
+        nickname = config.GetString("nick_name", g_get_user_name());
         mygroup = config.GetString("belong_group");
-
-        myicon = config.GetString("my_icon");
-        if(myicon.empty()) {
-          myicon = "icon-tux.png";
-        }
-
-        path = config.GetString("archive_path");
-        if(path.empty()) {
-          path = g_get_home_dir();
-        }
-
+        myicon = config.GetString("my_icon", "icon-tux.png");
+        path = config.GetString("archive_path", g_get_home_dir());
         sign = config.GetString("personal_sign");
-        codeset = config.GetString("candidacy_encode");
-        if(codeset.empty()) {
-          codeset = "utf-16";
-        }
+
+        codeset = config.GetString("candidacy_encode", "utf-16");
 
         client = gconf_client_get_default();
 

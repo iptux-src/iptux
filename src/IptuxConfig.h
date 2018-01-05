@@ -11,9 +11,11 @@ public:
 	~IptuxConfig();
 
 	int GetInt(const std::string& key) const;
+	int GetInt(const std::string& key, int defaultValue) const;
 	void SetInt(const std::string& key, int value);
 
         std::string GetString(const std::string& key) const;
+        std::string GetString(const std::string& key, const std::string& defaultValue) const;
         void SetString(const std::string& key, const std::string& value);
 
 	int GetTransWindowWidth() const;

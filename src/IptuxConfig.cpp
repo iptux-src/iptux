@@ -58,7 +58,11 @@ void IptuxConfig::SetInt(const string& key, int value) {
 }
 
 string IptuxConfig::GetString(const string& key) const {
-	return root.get(key, "").asString();
+  return GetString(key, "");
+}
+
+string IptuxConfig::GetString(const string& key, const string& defaultValue) const {
+  return root.get(key, defaultValue).asString();
 }
 
 void IptuxConfig::SetString(const string& key, const string& value) {
