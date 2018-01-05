@@ -548,7 +548,7 @@ void DataSettings::SetSystemValue()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
         gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->codeset.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "encode-entry-widget"));
-        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->encode);
+        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->encode.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "palicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
         active = IconfileGetItemPos(model, g_progdt->palicon);
@@ -978,7 +978,6 @@ void DataSettings::ObtainSystemValue()
         text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
         g_strstrip(text);
         if (*text != '\0') {
-                g_free(g_progdt->encode);
                 g_progdt->encode =text;
         } else
                 g_free(text);

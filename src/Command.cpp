@@ -23,6 +23,8 @@
 #include "deplib.h"
 #include "global.h"
 
+using namespace std;
+
 uint32_t Command::packetn = 1;
 
 /**
@@ -524,12 +526,16 @@ void Command::SendSublayerData(int sock, int fd)
  * 将缓冲区中的字符串转换为指定的编码.
  * @param encode 字符集编码
  */
-void Command::ConvertEncode(const char *encode)
+void Command::ConvertEncode(const string& encode)
 {
         char *ptr;
 
-        if (encode && strcasecmp(encode, "utf-8") != 0
-                 && (ptr = convert_encode(buf, encode, "utf-8"))) {
+        if(encode.empty()) {
+          return;
+        }
+
+        if (strcasecmp(encode.c_str(), "utf-8") != 0
+                 && (ptr = convert_encode(buf, encode.c_str(), "utf-8"))) {
                 size = strlen(ptr) + 1;
                 memcpy(buf, ptr, size);
                 g_free(ptr);
@@ -602,13 +608,13 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode)
  * 创建iptux程序独有的扩展数据.
  * @param encode 字符集编码
  */
-void Command::CreateIptuxExtra(const char *encode)
+void Command::CreateIptuxExtra(const string& encode)
 {
         char *pptr, *ptr;
 
         pptr = buf + size;
-        if (encode && strcasecmp(encode, "utf-8") != 0
-                 && (ptr = convert_encode(g_progdt->mygroup.c_str(), encode, "utf-8"))) {
+        if (!encode.empty() && strcasecmp(encode.c_str(), "utf-8") != 0
+                 && (ptr = convert_encode(g_progdt->mygroup.c_str(), encode.c_str(), "utf-8"))) {
                 snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
                 g_free(ptr);
         } else

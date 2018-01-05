@@ -30,6 +30,8 @@
 #include "utils.h"
 #include "global.h"
 
+using namespace std;
+
 /**
  * 类构造函数.
  */
@@ -245,7 +247,7 @@ void UdpData::SomeoneAnsentry()
         if (FLAG_ISSET(pal->flags, 0)) {
                 pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
                 pthread_detach(pid);
-        } else if (strcasecmp(g_progdt->encode, pal->encode) != 0)
+        } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0)
                 cmd.SendAnsentry(g_cthrd->UdpSockQuote(), pal);
 }
 
@@ -260,8 +262,14 @@ void UdpData::SomeoneAbsence()
         /* 若好友不兼容iptux协议，则需转码 */
         pal = g_cthrd->GetPalFromList(ipv4);       //利用好友链表只增不减的特性，无须加锁
         ptr = iptux_skip_string(buf, size, 3);
-        if (!ptr || *ptr == '\0')
-                ConvertEncode(pal ? pal->encode : g_progdt->encode);
+        if (!ptr || *ptr == '\0') {
+          if(pal) {
+            string s(pal->encode);
+            ConvertEncode(s);
+          } else {
+            ConvertEncode(g_progdt->encode);
+          }
+        }
 
         /* 加入或更新好友列表 */
         gdk_threads_enter();
@@ -298,8 +306,13 @@ void UdpData::SomeoneSendmsg()
 
         /* 如果对方兼容iptux协议，则无须再转换编码 */
         pal = g_cthrd->GetPalFromList(ipv4);
-        if (!pal || !FLAG_ISSET(pal->flags, 0))
-                ConvertEncode(pal ? pal->encode : g_progdt->encode);
+        if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+          if(pal) {
+            ConvertEncode(pal->encode);
+          } else {
+            ConvertEncode(g_progdt->encode);
+          }
+        }
         /* 确保好友在线，并对编码作出适当调整 */
         pal = AssertPalOnline();
         if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
@@ -488,8 +501,13 @@ void UdpData::SomeoneBcstmsg()
 
         /* 如果对方兼容iptux协议，则无须再转换编码 */
         pal = g_cthrd->GetPalFromList(ipv4);
-        if (!pal || !FLAG_ISSET(pal->flags, 0))
-                ConvertEncode(pal ? pal->encode : g_progdt->encode);
+        if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+          if(pal) {
+            ConvertEncode(pal->encode);
+          } else {
+            ConvertEncode(g_progdt->encode);
+          }
+        }
         /* 确保好友在线，并对编码作出适当调整 */
         pal = AssertPalOnline();
         if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
@@ -648,12 +666,16 @@ void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg
         g_cthrd->InsertMessage(&para);
 }
 
+void UdpData::ConvertEncode(const char* enc) {
+  string encode(enc);
+  ConvertEncode(encode);
+}
+
 /**
  * 将缓冲区中的数据转换为utf8编码.
  * @param enc 原数据首选编码
  */
-void UdpData::ConvertEncode(const char *enc)
-{
+void UdpData::ConvertEncode(const string& enc) {
         char *ptr;
         size_t len;
 
@@ -670,9 +692,9 @@ void UdpData::ConvertEncode(const char *enc)
          * if (g_utf8_validate(buf, -1, NULL)) {encode = g_strdup("utf-8")} \n
          * e.g. 系统编码为GB18030的xx发送来纯ASCII字符串 \n
          */
-        if (enc && strcasecmp(enc, "utf-8") != 0
-                 && (ptr = convert_encode(buf, "utf-8", enc)))
-                encode = g_strdup(enc);
+        if (!enc.empty() && strcasecmp(enc.c_str(), "utf-8") != 0
+                 && (ptr = convert_encode(buf, "utf-8", enc.c_str())))
+                encode = g_strdup(enc.c_str());
         else
                 ptr = iptux_string_validate(buf, g_progdt->codeset, &encode);
         if (ptr) {

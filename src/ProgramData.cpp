@@ -24,7 +24,6 @@ using namespace std;
  * 类构造函数.
  */
 ProgramData::ProgramData(IptuxConfig& config):
- encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
  lcursor(NULL), table(NULL), cnxnid(0), config(config)
@@ -38,7 +37,6 @@ ProgramData::ProgramData(IptuxConfig& config):
  */
 ProgramData::~ProgramData()
 {
-        g_free(encode);
         g_free(palicon);
         g_free(font);
 
@@ -96,9 +94,9 @@ void ProgramData::WriteProgData()
         config.SetString("personal_sign", sign);
 
         config.SetString("candidacy_encode", codeset);
+        config.SetString("preference_encode", encode);
         config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/preference_encode", encode, NULL);
         gconf_client_set_string(client, GCONF_PATH "/pal_icon", palicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/panel_font", font, NULL);
 	gconf_client_set_bool(client, GCONF_PATH "/open-chat",
@@ -204,12 +202,10 @@ void ProgramData::ReadProgData()
         sign = config.GetString("personal_sign");
 
         codeset = config.GetString("candidacy_encode", "utf-16");
+        encode = config.GetString("preference_encode", "utf-8");
 
         client = gconf_client_get_default();
 
-        if (!(encode = gconf_client_get_string(client,
-                 GCONF_PATH "/preference_encode", NULL)))
-                encode = g_strdup(_("utf-8"));
         if (!(palicon = gconf_client_get_string(client, GCONF_PATH "/pal_icon", NULL)))
                 palicon = g_strdup("icon-qq.png");
         if (!(font = gconf_client_get_string(client, GCONF_PATH "/panel_font", NULL)))
@@ -474,8 +470,7 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/preference_encode") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->encode);
-                        progdt->encode = g_strdup(str);
+                        progdt->encode = str;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/pal_icon") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {

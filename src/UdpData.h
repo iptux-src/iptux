@@ -12,6 +12,8 @@
 #ifndef UDPDATA_H
 #define UDPDATA_H
 
+#include <string>
+
 #include "mess.h"
 #include "IptuxConfig.h"
 #include "ipmsg.h"
@@ -41,7 +43,8 @@ private:
         void UpdatePalInfo(PalInfo *pal);
 
         void InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg);
-        void ConvertEncode(const char *enc);
+        void ConvertEncode(const std::string& enc);
+        void ConvertEncode(const char* enc);
         char *GetPalGroup();
         char *GetPalIcon();
         char *GetPalEncode();
