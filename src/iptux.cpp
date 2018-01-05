@@ -34,7 +34,6 @@ using namespace std;
 string getConfigPath();
 
 ProgramData progdt;
-GConfClient* client = gconf_client_get_default();
 string configPath = getConfigPath();
 IptuxConfig config(configPath);
 MainWindow mwin(config, progdt);
