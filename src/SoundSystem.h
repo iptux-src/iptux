@@ -13,6 +13,10 @@
 #define SOUNDSYSTEM_H
 
 #include "config.h"
+#ifdef GST_FOUND
+# include <gst/gst.h>
+#endif
+
 #include "mess.h"
 
 class SoundSystem
