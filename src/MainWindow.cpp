@@ -1984,10 +1984,10 @@ void MainWindow::UpdatePalTree(MainWindow *mwin)
 {
         pthread_t pid;
 
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         mwin->ClearAllItemFromPaltree();
         g_cthrd->ClearAllPalFromList();
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 
         pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendNotifyToAll), g_cthrd);
         pthread_detach(pid);
@@ -2017,7 +2017,7 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf)
         if (g_mwin->PaltreeContainItem(grpinf->grpid))
                 g_mwin->DelItemFromPaltree(grpinf->grpid);
 
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         /* 从数据中心点移除 */
         if ( (pal = g_cthrd->GetPalFromList(grpinf->grpid))) {
                 g_cthrd->DelPalFromList(grpinf->grpid);
@@ -2026,7 +2026,7 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf)
         /* 加入黑名单 */
         if (!g_cthrd->BlacklistContainItem(grpinf->grpid))
                 g_cthrd->AttachItemToBlacklist(grpinf->grpid);
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 
 }
 

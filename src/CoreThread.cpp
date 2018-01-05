@@ -103,14 +103,6 @@ GSList *CoreThread::GetPalList()
         return pallist;
 }
 
-/**
- * 获取锁.
- * @return 锁
- */
-pthread_mutex_t *CoreThread::GetMutex()
-{
-        return &mutex;
-}
 
 /**
  * 插入消息(UI线程安全).
@@ -1308,4 +1300,12 @@ void CoreThread::PopItemFromEnclosureList(FileInfo *file)
 {
     ecsList = g_slist_remove(ecsList, file);
     delete file;
+}
+
+void CoreThread::Lock() {
+  pthread_mutex_lock(&mutex);
+}
+
+void CoreThread::Unlock() {
+  pthread_mutex_unlock(&mutex);
 }

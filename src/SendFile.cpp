@@ -37,10 +37,10 @@ void SendFile::SendSharedInfoEntry(PalInfo *pal)
 {
         GSList *list;
 
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         list = g_cthrd->GetPublicFileList();
         SendFileInfo(pal, IPTUX_SHAREDOPT, list);
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 }
 
 /**

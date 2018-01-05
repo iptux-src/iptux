@@ -194,9 +194,9 @@ void TcpData::RecvPhotoPic(PalInfo *pal, const char *path)
         g_free(pal->photo);
         pal->photo = g_strdup(path);
         gdk_threads_enter();
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         g_cthrd->UpdatePalToList(pal->ipv4);
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
         g_mwin->UpdateItemToPaltree(pal->ipv4);
         gdk_threads_leave();
 }

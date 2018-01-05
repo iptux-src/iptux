@@ -200,9 +200,9 @@ void DialogBase::AttachEnclosure(const GSList *list)
                 file->filenum = filenum;
                 file->fileown = (PalInfo *)(pallist->data);
                 /* 加入文件信息到中心节点 */
-                pthread_mutex_lock(g_cthrd->GetMutex());
+                g_cthrd->Lock();
                 g_cthrd->AttachFileToPrivate(file);
-                pthread_mutex_unlock(g_cthrd->GetMutex());
+                g_cthrd->Unlock();
                 /* 添加数据 */
                 gtk_list_store_append(GTK_LIST_STORE(model), &iter);
                 gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf,1, filename,

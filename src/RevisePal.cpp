@@ -291,9 +291,9 @@ void RevisePal::ApplyReviseData()
         FLAG_SET(pal->flags, 2);
 
         /* 更新好友信息 */
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         g_cthrd->UpdatePalToList(pal->ipv4);
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
         g_mwin->UpdateItemToPaltree(pal->ipv4);
 }
 

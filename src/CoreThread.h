@@ -36,7 +36,8 @@ public:
         void CoreThreadEntry();
         void WriteSharedData();
         GSList *GetPalList();
-        pthread_mutex_t *GetMutex();
+        void Lock();
+        void Unlock();
 
         void InsertMessage(MsgPara *para);
         void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);

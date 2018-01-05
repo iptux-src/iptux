@@ -309,7 +309,7 @@ void ShareFile::ApplySharedData()
         struct stat st;
 
         /* 更新共享文件链表 */
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         g_cthrd->ClearFileFromPublic();
         g_cthrd->PbnQuote() = 1;
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "file-treeview-widget"));
@@ -329,7 +329,7 @@ void ShareFile::ApplySharedData()
                         g_cthrd->AttachFileToPublic(file);
                 } while (gtk_tree_model_iter_next(model, &iter));
         }
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 
         /* 更新密码 */
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "password-button-widget"));

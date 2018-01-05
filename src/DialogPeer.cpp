@@ -77,12 +77,12 @@ void DialogPeer::PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf, Program
         gtk_widget_grab_focus(widget);
 
         /* 从消息队列中移除 */
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         if (g_cthrd->MsglineContainItem(grpinf)) {
                 g_mwin->MakeItemBlinking(grpinf, FALSE);
                 g_cthrd->PopItemFromMsgline(grpinf);
         }
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 
         /* delete dlgpr;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }

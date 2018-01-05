@@ -66,12 +66,12 @@ void DialogGroup::GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, Progr
                                          "input-textview-widget"));
         gtk_widget_grab_focus(widget);
         /* 从消息队列中移除 */
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         if (g_cthrd->MsglineContainItem(grpinf)) {
                 g_mwin->MakeItemBlinking(grpinf, FALSE);
                 g_cthrd->PopItemFromMsgline(grpinf);
         }
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 
         /* delete dlggrp;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }
@@ -387,7 +387,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model)
         char *file;
 
         theme = gtk_icon_theme_get_default();
-        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->Lock();
         tlist = grpinf->member;
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
@@ -402,7 +402,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model)
                         g_object_unref(pixbuf);
                 tlist = g_slist_next(tlist);
         }
-        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_cthrd->Unlock();
 }
 
 /**
