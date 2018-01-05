@@ -220,8 +220,9 @@ void CoreThread::SendFeatureData(PalInfo *pal)
         const gchar *env;
         int sock;
 
-        if (*g_progdt->sign != '\0')
+        if (!g_progdt->sign.empty()) {
                 cmd.SendMySign(g_cthrd->udpsock, pal);
+        }
         env = g_get_user_config_dir();
         snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, g_progdt->myicon.c_str());
         if (access(path, F_OK) == 0)

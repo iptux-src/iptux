@@ -24,7 +24,7 @@ using namespace std;
  * 类构造函数.
  */
 ProgramData::ProgramData(IptuxConfig& config):
- sign(NULL), codeset(NULL), encode(NULL),
+ codeset(NULL), encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
  lcursor(NULL), table(NULL), cnxnid(0), config(config)
@@ -38,10 +38,6 @@ ProgramData::ProgramData(IptuxConfig& config):
  */
 ProgramData::~ProgramData()
 {
-        GConfClient *client;
-
-        g_free(sign);
-
         g_free(codeset);
         g_free(encode);
         g_free(palicon);
@@ -64,9 +60,10 @@ ProgramData::~ProgramData()
                 g_object_unref(table);
 
         if (cnxnid > 0) {
-                client = gconf_client_get_default();
-                gconf_client_notify_remove(client, cnxnid);
-                g_object_unref(client);
+          GConfClient *client;
+          client = gconf_client_get_default();
+          gconf_client_notify_remove(client, cnxnid);
+          g_object_unref(client);
         }
         pthread_mutex_destroy(&mutex);
 }
@@ -97,9 +94,8 @@ void ProgramData::WriteProgData()
         config.SetString("belong_group", mygroup);
         config.SetString("my_icon", myicon);
         config.SetString("archive_path", path);
+        config.SetString("personal_sign", sign);
         config.Save();
-
-        gconf_client_set_string(client, GCONF_PATH "/personal_sign", sign, NULL);
 
         gconf_client_set_string(client, GCONF_PATH "/candidacy_encode", codeset, NULL);
         gconf_client_set_string(client, GCONF_PATH "/preference_encode", encode, NULL);
@@ -218,10 +214,9 @@ void ProgramData::ReadProgData()
           path = g_get_home_dir();
         }
 
-        client = gconf_client_get_default();
+        sign = config.GetString("personal_sign");
 
-        if (!(sign = gconf_client_get_string(client, GCONF_PATH "/personal_sign", NULL)))
-                sign = g_strdup("");
+        client = gconf_client_get_default();
 
         if (!(codeset = gconf_client_get_string(client,
                  GCONF_PATH "/candidacy_encode", NULL)))
@@ -484,8 +479,7 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/personal_sign") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->sign);
-                        progdt->sign = g_strdup(str);
+                        progdt->sign = str;
                         update = true;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/candidacy_encode") == 0) {

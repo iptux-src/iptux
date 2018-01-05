@@ -438,7 +438,7 @@ void Command::SendMySign(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPTUX_SENDSIGN, g_progdt->sign);
+        CreateCommand(IPTUX_SENDSIGN, g_progdt->sign.c_str());
         ConvertEncode(pal->encode);
 
         bzero(&addr, sizeof(addr));

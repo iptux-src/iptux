@@ -533,7 +533,7 @@ void DataSettings::SetPersonalValue()
         }
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sign-textview-widget"));
         buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-        gtk_text_buffer_set_text(buffer, g_progdt->sign, -1);
+        gtk_text_buffer_set_text(buffer, g_progdt->sign.c_str(), -1);
 }
 
 /**
@@ -950,7 +950,6 @@ void DataSettings::ObtainPersonalValue()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sign-textview-widget"));
         buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
         gtk_text_buffer_get_bounds(buffer, &start, &end);
-        g_free(g_progdt->sign);
         g_progdt->sign = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 }
 

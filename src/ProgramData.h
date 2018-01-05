@@ -47,7 +47,7 @@ public:
         std::string mygroup;  //所属群组 *
         std::string myicon;           //个人头像 *
         std::string path;             //存档路径 *
-        char *sign;             //个性签名 *
+        std::string sign;             //个性签名 *
 
         char *codeset;          //候选编码 *
         char *encode;           //默认通信编码 *
