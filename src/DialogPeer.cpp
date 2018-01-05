@@ -12,6 +12,10 @@
 //
 #include "DialogPeer.h"
 
+#include <inttypes.h>
+
+#include <gconf/gconf-client.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"

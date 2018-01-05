@@ -11,6 +11,8 @@
 //
 #include "MainWindow.h"
 
+#include <inttypes.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "DialogPeer.h"
@@ -37,10 +39,10 @@ extern MainWindow mwin;
 MainWindow::MainWindow(IptuxConfig& config, ProgramData& progdt)
   : config(config),
     progdt(progdt),
-    widset(NULL), 
+    widset(NULL),
     mdlset(NULL),
-    tmdllist(NULL), 
-    accel(NULL), 
+    tmdllist(NULL),
+    accel(NULL),
     timerid(0),
     windowConfig(250, 510, "main_window")
 {
@@ -523,7 +525,7 @@ GtkWidget *MainWindow::CreateMainWindow()
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
-        gtk_window_set_default_size(GTK_WINDOW(window), 
+        gtk_window_set_default_size(GTK_WINDOW(window),
                 windowConfig.GetWidth(),
                 windowConfig.GetHeight());
         gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
@@ -549,7 +551,7 @@ GtkWidget *MainWindow::CreateTransWindow()
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
-        gtk_window_set_default_size(GTK_WINDOW(window), 
+        gtk_window_set_default_size(GTK_WINDOW(window),
             config.GetTransWindowWidth(),
             config.GetTransWindowHeight());
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
@@ -1889,9 +1891,9 @@ void MainWindow::OpenThisFile(GtkTreeModel *model)
     if (filename){
         if( !g_file_test(filename,G_FILE_TEST_EXISTS)){
             GtkWidget *dialog = gtk_message_dialog_new(NULL,
-                GTK_DIALOG_MODAL, 
+                GTK_DIALOG_MODAL,
                 GTK_MESSAGE_ERROR,
-                GTK_BUTTONS_OK, 
+                GTK_BUTTONS_OK,
                 "%s",
                 _("The file you want to open not exist!"));
             gtk_window_set_title(GTK_WINDOW(dialog), _("iptux Error"));
@@ -1921,9 +1923,9 @@ void MainWindow::OpenContainingFolder(GtkTreeModel *model)
         name = ipmsg_get_filename_me(filename,&filepath);
         if( !g_file_test(filepath,G_FILE_TEST_EXISTS)){
             GtkWidget *dialog = gtk_message_dialog_new(NULL,
-                GTK_DIALOG_MODAL, 
+                GTK_DIALOG_MODAL,
                 GTK_MESSAGE_ERROR,
-                GTK_BUTTONS_OK, 
+                GTK_BUTTONS_OK,
                 "%s",
                 _("The path you want to open not exist!"));
             gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
@@ -2084,7 +2086,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
  * @param path the GtkTreePath for the activated row
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
-void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, 
+void MainWindow::onPaltreeItemActivated(GtkWidget *treeview,
     GtkTreePath *path,
     GtkTreeViewColumn *column,
     MainWindow* self)
@@ -2471,9 +2473,9 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry,GData **widset)
  * @param path the GtkTreePath for the activated row
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
-void MainWindow::PallistItemActivated(GtkWidget *treeview, 
+void MainWindow::PallistItemActivated(GtkWidget *treeview,
   GtkTreePath *path,
-  GtkTreeViewColumn *column, 
+  GtkTreeViewColumn *column,
   MainWindow* self) {
         GtkTreeModel *model;
         GtkTreeIter iter;
@@ -2552,7 +2554,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
  * @return Gtk+库所需
  */
 gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
-                         GdkEventConfigure *event, 
+                         GdkEventConfigure *event,
                          MainWindow* self)
 {
         self->windowConfig
@@ -2570,7 +2572,7 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
  * @return Gtk+库所需
  */
 gboolean MainWindow::TWinConfigureEvent(GtkWidget *window,
-                         GdkEventConfigure *event, 
+                         GdkEventConfigure *event,
                          MainWindow* self)
 {
     self->config.SetTransWindowWidth(event->width)

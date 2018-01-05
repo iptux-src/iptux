@@ -10,11 +10,14 @@
 //
 //
 #include "Command.h"
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "wrapper.h"
 #include "support.h"
 #include "utils.h"
+#include "deplib.h"
+
 extern ProgramData progdt;
 extern CoreThread cthrd;
 uint32_t Command::packetn = 1;

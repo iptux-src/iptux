@@ -48,7 +48,7 @@ public:
 	IptuxConfig* SetMwinMainPanedDivide(int d);
 	IptuxConfig* SetSharedFileList(std::vector<std::string>& l) {
 		sharedFileList.clear();
-		for(int i = 0; i < l.size(); ++i) {
+		for(size_t i = 0; i < l.size(); ++i) {
 			sharedFileList.push_back(l[i]);
 		}
 		return this;

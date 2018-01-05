@@ -21,6 +21,8 @@
 
 #include <string>
 
+#include <libintl.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "StatusIcon.h"

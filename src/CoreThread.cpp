@@ -9,8 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "CoreThread.h"
+
+#include <inttypes.h>
+#include <sys/stat.h>
+
+#include "config.h"
 #include "ProgramData.h"
 #include "MainWindow.h"
 #include "LogSystem.h"
@@ -830,7 +834,7 @@ void CoreThread::SetAccessPublicLimit(const char *limit)
     if(limit == NULL) {
         passwd = "";
     } else {
-        passwd = string(limit);        
+        passwd = string(limit);
     }
 }
 
@@ -938,7 +942,7 @@ void CoreThread::ReadSharedData()
         passwd = config.GetAccessSharedLimit().c_str();
 
         /* 分析数据并加入文件链表 */
-        for(int i = 0; i < sharedFileList.size(); ++i) {
+        for(size_t i = 0; i < sharedFileList.size(); ++i) {
                 if (stat(sharedFileList[i].c_str(), &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
                         continue;

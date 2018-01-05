@@ -11,6 +11,9 @@
 //
 #include "LogSystem.h"
 
+#include <fcntl.h>
+
+#include "deplib.h"
 #include "ProgramData.h"
 #include "utils.h"
 #include "ipmsg.h"
@@ -61,7 +64,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...)
                                             pal->name, pal->user, pal->host);
                 else
                         ptr = getformattime(TRUE, _("Send-Broadcast"));
-        } else 
+        } else
                 return;
 
         va_start(ap, fmt);

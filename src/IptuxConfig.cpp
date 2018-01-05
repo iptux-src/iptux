@@ -10,14 +10,14 @@
 
 using namespace std;
 
-IptuxConfig::IptuxConfig(string& fname) 
+IptuxConfig::IptuxConfig(string& fname)
 	: fname(fname)
 {
 
 	ifstream ifs(fname.c_str());
 	if(!ifs.is_open()) {
 		g_warning("config file %s not found", fname.c_str());
-		return;		
+		return;
 	}
 
 
@@ -28,7 +28,7 @@ IptuxConfig::IptuxConfig(string& fname)
 		g_warning("invalid content in config file %s:\n%s", fname.c_str(),errs.c_str());
 		return;
 	}
-	
+
 	int version = root.get("version", 1).asInt();
 	if(version != 1) {
 		g_error("unknown config file version %d (from %s)", version, fname.c_str());
@@ -41,7 +41,7 @@ IptuxConfig::IptuxConfig(string& fname)
 	accessSharedLimit = root.get("access_shared_limit", "").asString();
 
 	const Json::Value l = root["shared_file_list"];
-	for(int i = 0; i < l.size(); ++i) {
+	for(int i = 0; i < int(l.size()); ++i) {
 		sharedFileList.push_back(l[i].asString());
 	}
 }
@@ -104,7 +104,7 @@ IptuxConfig* IptuxConfig::Save() {
 	root["trans_window_height"] = transWindowHeight;
 	root["mwin_main_paned_divide"] = mwinMainPanedDivide;
 	root["access_shared_limit"] = accessSharedLimit;
-	for(int i = 0; i < sharedFileList.size(); ++i) {
+	for(size_t i = 0; i < sharedFileList.size(); ++i) {
 		root["shared_file_list"].append(sharedFileList[i]);
 	}
 

@@ -13,6 +13,8 @@
 
 #include <string.h>
 
+#include <gdk/gdkkeysyms.h>
+
 #include "ipmsg.h"
 #include "ProgramData.h"
 #include "StatusIcon.h"

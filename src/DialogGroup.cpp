@@ -10,6 +10,9 @@
 //
 //
 #include "DialogGroup.h"
+
+#include <gconf/gconf-client.h>
+
 #include "DialogPeer.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
@@ -248,7 +251,7 @@ GtkWidget *DialogGroup::CreateMainWindow()
         grpinf->dialog = window;
 
         MainWindowSignalSetup(window);
-        
+
         return window;
 }
 
@@ -726,7 +729,7 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget *treeview, GdkEventButton *event)
  * @param path path
  * @param column column
  */
-void DialogGroup::MembertreeItemActivated(GtkWidget *treeview, 
+void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
         GtkTreePath *path,
         GtkTreeViewColumn *column,
         DialogGroup* self)

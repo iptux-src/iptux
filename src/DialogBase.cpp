@@ -12,6 +12,9 @@
 //
 
 #include "DialogBase.h"
+
+#include <sys/stat.h>
+
 #include "DialogPeer.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
