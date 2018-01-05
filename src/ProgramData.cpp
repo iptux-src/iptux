@@ -97,6 +97,15 @@ void ProgramData::WriteProgData()
         config.SetString("preference_encode", encode);
         config.SetString("pal_icon", palicon);
         config.SetString("panel_font", font);
+
+        config.SetBool("open_chat", FLAG_ISSET(flags, 7));
+        config.SetBool("hide_startup", FLAG_ISSET(flags, 6));
+        config.SetBool("open_transmission", FLAG_ISSET(flags, 5));
+        config.SetBool("use_enter_key", FLAG_ISSET(flags, 4));
+        config.SetBool("clearup_history", FLAG_ISSET(flags, 3));
+        config.SetBool("record_log", FLAG_ISSET(flags, 2));
+        config.SetBool("open_blacklist", FLAG_ISSET(flags, 1));
+        config.SetBool("proof_shared", FLAG_ISSET(flags, 0));
         config.Save();
 
 	gconf_client_set_bool(client, GCONF_PATH "/open-chat",
@@ -208,22 +217,14 @@ void ProgramData::ReadProgData()
 
         client = gconf_client_get_default();
 
-        if (gconf_client_get_bool(client, GCONF_PATH "/open-chat", NULL))
-                FLAG_SET(flags, 7);
-        if (gconf_client_get_bool(client, GCONF_PATH "/hide_startup", NULL))
-                FLAG_SET(flags, 6);
-        if (gconf_client_get_bool(client, GCONF_PATH "/open_transmission", NULL))
-                FLAG_SET(flags, 5);
-        if (gconf_client_get_bool(client, GCONF_PATH "/use_enter_key", NULL))
-                FLAG_SET(flags, 4);
-        if (gconf_client_get_bool(client, GCONF_PATH "/clearup_history", NULL))
-                FLAG_SET(flags, 3);
-        if (gconf_client_get_bool(client, GCONF_PATH "/record_log", NULL))
-                FLAG_SET(flags, 2);
-        if (gconf_client_get_bool(client, GCONF_PATH "/open_blacklist", NULL))
-                FLAG_SET(flags, 1);
-        if (gconf_client_get_bool(client, GCONF_PATH "/proof_shared", NULL))
-                FLAG_SET(flags, 0);
+        FLAG_SET(flags, 7, config.GetBool("open_chat"));
+        FLAG_SET(flags, 6, config.GetBool("hide_startup"));
+        FLAG_SET(flags, 5, config.GetBool("open_transmission"));
+        FLAG_SET(flags, 4, config.GetBool("use_enter_key"));
+        FLAG_SET(flags, 3, config.GetBool("clearup_history"));
+        FLAG_SET(flags, 2, config.GetBool("record_log"));
+        FLAG_SET(flags, 1, config.GetBool("open_blacklist"));
+        FLAG_SET(flags, 0, config.GetBool("proof_shared"));
 
         if (!(msgtip = gconf_client_get_string(client, GCONF_PATH "/msg_tip", NULL)))
                 msgtip = g_strdup(__SOUND_PATH "/msg.ogg");

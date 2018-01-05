@@ -591,3 +591,13 @@ char *ipmsg_get_pathname_full(const char *path, const char *name)
     strcat(filename,name);
     return g_strdup(filename);
 }
+
+void FLAG_SET(uint8_t& num, int bit) {
+  ((num)|=(1<<(bit)));
+}
+
+void FLAG_SET(uint8_t& num, int bit, bool value) {
+  if(value) {
+    ((num)|=(1<<(bit)));
+  }
+}

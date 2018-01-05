@@ -18,6 +18,10 @@ public:
         std::string GetString(const std::string& key, const std::string& defaultValue) const;
         void SetString(const std::string& key, const std::string& value);
 
+        bool GetBool(const std::string& key) const;
+        bool GetBool(const std::string& key, bool defaultValue) const;
+        void SetBool(const std::string& key, bool value);
+
 	int GetTransWindowWidth() const;
 	int GetTransWindowHeight() const;
 	int GetMwinMainPanedDivide() const;

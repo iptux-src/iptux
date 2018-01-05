@@ -57,6 +57,13 @@ void IptuxConfig::SetInt(const string& key, int value) {
 	root[key] = value;
 }
 
+bool IptuxConfig::GetBool(const string& key) const {
+	return root.get(key, false).asBool();
+}
+void IptuxConfig::SetBool(const string& key, bool value) {
+	root[key] = value;
+}
+
 string IptuxConfig::GetString(const string& key) const {
   return GetString(key, "");
 }
