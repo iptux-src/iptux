@@ -12,6 +12,7 @@
 #include "SendFile.h"
 
 #include <inttypes.h>
+#include <string.h>
 
 #include "SendFileData.h"
 #include "CoreThread.h"
@@ -141,13 +142,13 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist)
                 }
                 name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
                 file->packetn =  cmd.Packetn();
-                snprintf(ptr, 
+                snprintf(ptr,
                   MAX_UDPLEN - len,
-                  "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a", 
-                  file->fileid, 
+                  "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a",
+                  file->fileid,
                   name,
-                  file->filesize, 
-                  file->filectime, 
+                  file->filesize,
+                  file->filectime,
                   file->fileattr);
                 g_free(name);
                 len += strlen(ptr);

@@ -15,6 +15,7 @@
 #ifndef __APPLE__
   #include <sys/vfs.h>
 #endif
+#include <errno.h>
 #include <string.h>
 #include <inttypes.h>
 
