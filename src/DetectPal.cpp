@@ -10,11 +10,12 @@
 //
 //
 #include "DetectPal.h"
+
 #include "CoreThread.h"
 #include "Command.h"
 #include "callback.h"
 #include "output.h"
-extern CoreThread cthrd;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -123,7 +124,7 @@ void DetectPal::SendDetectPacket()
                 return;
         }
 
-        cmd.SendDetectPacket(cthrd.UdpSockQuote(), ipv4);
+        cmd.SendDetectPacket(g_cthrd->UdpSockQuote(), ipv4);
         pop_info(parent, _("The notification has been sent to %s."), text);
         gtk_entry_set_text(GTK_ENTRY(widget), "");
 }

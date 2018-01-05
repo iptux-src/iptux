@@ -27,9 +27,7 @@
 #include "support.h"
 #include "utils.h"
 #include "StatusIcon.h"
-
-extern CoreThread cthrd;
-extern MainWindow mwin;
+#include "global.h"
 
 #define TRANS_TREE_MAX 14
 
@@ -124,8 +122,8 @@ bool MainWindow::PaltreeContainItem(in_addr_t ipv4)
         PalInfo *pal;
         bool exist;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4))
-                 || !(grpinf = cthrd.GetPalRegularItem(pal)))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4))
+                 || !(grpinf = g_cthrd->GetPalRegularItem(pal)))
                 return false;
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
         exist = GroupGetPaltreeItem(model, &iter, grpinf);
@@ -144,8 +142,8 @@ void MainWindow::UpdateItemToPaltree(in_addr_t ipv4)
         GroupInfo *pgrpinf, *grpinf;
         PalInfo *pal;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4))
-                 || !(grpinf = cthrd.GetPalRegularItem(pal)))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4))
+                 || !(grpinf = g_cthrd->GetPalRegularItem(pal)))
                 return;
 
         /* 更新常规模式树 */
@@ -154,13 +152,13 @@ void MainWindow::UpdateItemToPaltree(in_addr_t ipv4)
         UpdateGroupInfoToPaltree(model, &iter, grpinf);
         /* 更新网段模式树 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
-        pgrpinf = cthrd.GetPalSegmentItem(pal);
+        pgrpinf = g_cthrd->GetPalSegmentItem(pal);
         GroupGetPaltreeItem(model, &iter, pgrpinf);
         GroupGetPaltreeItemWithParent(model, &iter, grpinf);
         UpdateGroupInfoToPaltree(model, &iter, grpinf);
         /* 更新分组模式树 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
-        pgrpinf = cthrd.GetPalGroupItem(pal);
+        pgrpinf = g_cthrd->GetPalGroupItem(pal);
         GroupGetPrevPaltreeItem(model, &iter, grpinf);
         gtk_tree_model_iter_parent(model, &parent, &iter);
         if (gtk_tree_model_iter_n_children(model, &parent) == 1)
@@ -176,7 +174,7 @@ void MainWindow::UpdateItemToPaltree(in_addr_t ipv4)
         UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
         /* 更新广播模式树 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
-        pgrpinf = cthrd.GetPalBroadcastItem(pal);
+        pgrpinf = g_cthrd->GetPalBroadcastItem(pal);
         GroupGetPaltreeItem(model, &iter, pgrpinf);
         GroupGetPaltreeItemWithParent(model, &iter, grpinf);
         UpdateGroupInfoToPaltree(model, &iter, grpinf);
@@ -193,8 +191,8 @@ void MainWindow::AttachItemToPaltree(in_addr_t ipv4)
         GroupInfo *pgrpinf, *grpinf;
         PalInfo *pal;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4))
-                 || !(grpinf = cthrd.GetPalRegularItem(pal)))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4))
+                 || !(grpinf = g_cthrd->GetPalRegularItem(pal)))
                 return;
 
         /* 添加到常规模式树 */
@@ -203,7 +201,7 @@ void MainWindow::AttachItemToPaltree(in_addr_t ipv4)
         FillGroupInfoToPaltree(model, &iter, grpinf);
         /* 添加到网段模式树 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
-        pgrpinf = cthrd.GetPalSegmentItem(pal);
+        pgrpinf = g_cthrd->GetPalSegmentItem(pal);
         if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
                 gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
                 FillGroupInfoToPaltree(model, &parent, pgrpinf);
@@ -213,7 +211,7 @@ void MainWindow::AttachItemToPaltree(in_addr_t ipv4)
         UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
         /* 添加到分组模式树 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
-        pgrpinf = cthrd.GetPalGroupItem(pal);
+        pgrpinf = g_cthrd->GetPalGroupItem(pal);
         if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
                 gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
                 FillGroupInfoToPaltree(model, &parent, pgrpinf);
@@ -223,7 +221,7 @@ void MainWindow::AttachItemToPaltree(in_addr_t ipv4)
         UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
         /* 添加到广播模式树 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
-        pgrpinf = cthrd.GetPalBroadcastItem(pal);
+        pgrpinf = g_cthrd->GetPalBroadcastItem(pal);
         if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
                 gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
                 FillGroupInfoToPaltree(model, &parent, pgrpinf);
@@ -244,8 +242,8 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4)
         GroupInfo *pgrpinf, *grpinf;
         PalInfo *pal;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4))
-                 || !(grpinf = cthrd.GetPalRegularItem(pal)))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4))
+                 || !(grpinf = g_cthrd->GetPalRegularItem(pal)))
                 return;
 
         /* 从常规模式树移除 */
@@ -254,7 +252,7 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4)
         gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
         /* 从网段模式树移除 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
-        pgrpinf = cthrd.GetPalSegmentItem(pal);
+        pgrpinf = g_cthrd->GetPalSegmentItem(pal);
         GroupGetPaltreeItem(model, &parent, pgrpinf);
         if (g_slist_length(pgrpinf->member) != 1) {
                 iter = parent;
@@ -265,7 +263,7 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4)
                 gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
         /* 从分组模式树移除 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
-        pgrpinf = cthrd.GetPalGroupItem(pal);
+        pgrpinf = g_cthrd->GetPalGroupItem(pal);
         GroupGetPaltreeItem(model, &parent, pgrpinf);
         if (g_slist_length(pgrpinf->member) != 1) {
                 iter = parent;
@@ -276,7 +274,7 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4)
                 gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
         /* 从广播模式树移除 */
         model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
-        pgrpinf = cthrd.GetPalBroadcastItem(pal);
+        pgrpinf = g_cthrd->GetPalBroadcastItem(pal);
         GroupGetPaltreeItem(model, &parent, pgrpinf);
         if (g_slist_length(pgrpinf->member) != 1) {
                 iter = parent;
@@ -331,21 +329,21 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking)
                 /* 闪烁网段模式树 */
                 model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
                                          "segment-paltree-model"));
-                pgrpinf = cthrd.GetPalSegmentItem((PalInfo *)grpinf->member->data);
+                pgrpinf = g_cthrd->GetPalSegmentItem((PalInfo *)grpinf->member->data);
                 GroupGetPaltreeItem(model, &iter, pgrpinf);
                 GroupGetPaltreeItemWithParent(model, &iter, grpinf);
                 BlinkGroupItemToPaltree(model, &iter, blinking);
                 /* 闪烁分组模式树 */
                 model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
                                          "group-paltree-model"));
-                pgrpinf = cthrd.GetPalGroupItem((PalInfo *)grpinf->member->data);
+                pgrpinf = g_cthrd->GetPalGroupItem((PalInfo *)grpinf->member->data);
                 GroupGetPaltreeItem(model, &iter, pgrpinf);
                 GroupGetPaltreeItemWithParent(model, &iter, grpinf);
                 BlinkGroupItemToPaltree(model, &iter, blinking);
                 /* 闪烁广播模式树 */
                 model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset,
                                          "broadcast-paltree-model"));
-                pgrpinf = cthrd.GetPalBroadcastItem((PalInfo *)grpinf->member->data);
+                pgrpinf = g_cthrd->GetPalBroadcastItem((PalInfo *)grpinf->member->data);
                 GroupGetPaltreeItem(model, &iter, pgrpinf);
                 GroupGetPaltreeItemWithParent(model, &iter, grpinf);
                 BlinkGroupItemToPaltree(model, &iter, blinking);
@@ -1652,7 +1650,7 @@ gboolean MainWindow::UpdateUI(MainWindow *mwin)
 
         /* 统计当前在线人数 */
         sum = 0;
-        tlist = cthrd.GetPalList();
+        tlist = g_cthrd->GetPalList();
         while (tlist) {
                 if (FLAG_ISSET(((PalInfo *)tlist->data)->flags, 1))
                         sum++;
@@ -1986,12 +1984,12 @@ void MainWindow::UpdatePalTree(MainWindow *mwin)
 {
         pthread_t pid;
 
-        pthread_mutex_lock(cthrd.GetMutex());
+        pthread_mutex_lock(g_cthrd->GetMutex());
         mwin->ClearAllItemFromPaltree();
-        cthrd.ClearAllPalFromList();
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->ClearAllPalFromList();
+        pthread_mutex_unlock(g_cthrd->GetMutex());
 
-        pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendNotifyToAll), &cthrd);
+        pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendNotifyToAll), g_cthrd);
         pthread_detach(pid);
 }
 
@@ -2003,7 +2001,7 @@ void MainWindow::AskSharedFiles(GroupInfo *grpinf)
 {
         Command cmd;
 
-        cmd.SendAskShared(cthrd.UdpSockQuote(),
+        cmd.SendAskShared(g_cthrd->UdpSockQuote(),
                  (PalInfo *)grpinf->member->data, 0, NULL);
 }
 
@@ -2016,19 +2014,19 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf)
         PalInfo *pal;
 
         /* 从UI中移除 */
-        if (mwin.PaltreeContainItem(grpinf->grpid))
-                mwin.DelItemFromPaltree(grpinf->grpid);
+        if (g_mwin->PaltreeContainItem(grpinf->grpid))
+                g_mwin->DelItemFromPaltree(grpinf->grpid);
 
-        pthread_mutex_lock(cthrd.GetMutex());
+        pthread_mutex_lock(g_cthrd->GetMutex());
         /* 从数据中心点移除 */
-        if ( (pal = cthrd.GetPalFromList(grpinf->grpid))) {
-                cthrd.DelPalFromList(grpinf->grpid);
+        if ( (pal = g_cthrd->GetPalFromList(grpinf->grpid))) {
+                g_cthrd->DelPalFromList(grpinf->grpid);
                 FLAG_CLR(pal->flags, 1);
         }
         /* 加入黑名单 */
-        if (!cthrd.BlacklistContainItem(grpinf->grpid))
-                cthrd.AttachItemToBlacklist(grpinf->grpid);
-        pthread_mutex_unlock(cthrd.GetMutex());
+        if (!g_cthrd->BlacklistContainItem(grpinf->grpid))
+                g_cthrd->AttachItemToBlacklist(grpinf->grpid);
+        pthread_mutex_unlock(g_cthrd->GetMutex());
 
 }
 
@@ -2438,7 +2436,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry,GData **widset)
         gtk_list_store_clear(GTK_LIST_STORE(model));
 
         /* 将符合条件的好友加入好友清单 */
-        tlist = cthrd.GetPalList();
+        tlist = g_cthrd->GetPalList();
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
                 inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
@@ -2485,7 +2483,7 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview,
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 6, &pal, -1);
-        if ( (grpinf = cthrd.GetPalRegularItem(pal))) {
+        if ( (grpinf = g_cthrd->GetPalRegularItem(pal))) {
                 if (!(grpinf->dialog))
                         DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
                 else
@@ -2528,7 +2526,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview, GdkDragContext *co
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_path_free(path);
         gtk_tree_model_get(model, &iter, 6, &pal, -1);
-        if (!(grpinf = cthrd.GetPalRegularItem(pal)))
+        if (!(grpinf = g_cthrd->GetPalRegularItem(pal)))
                 return;
 
         /* 如果好友群组对话框尚未创建，则先创建对话框 */

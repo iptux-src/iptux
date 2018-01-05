@@ -10,12 +10,12 @@
 //
 //
 #include "dialog.h"
+
 #include "MainWindow.h"
 #include "ProgramData.h"
 #include "callback.h"
 #include "output.h"
-extern MainWindow mwin;
-extern ProgramData progdt;
+#include "global.h"
 
 /**
  * 弹出请求程序退出的对话框.
@@ -26,7 +26,7 @@ bool pop_request_quit()
         GtkWidget *dialog;
         gint result;
 
-        dialog = gtk_message_dialog_new(GTK_WINDOW(mwin.ObtainWindow()),
+        dialog = gtk_message_dialog_new(GTK_WINDOW(g_mwin->ObtainWindow()),
                                  GTK_DIALOG_MODAL,
                                  GTK_MESSAGE_QUESTION,
                                  GTK_BUTTONS_OK_CANCEL,
@@ -55,7 +55,7 @@ bool pop_request_shared_file(PalInfo *pal)
         gint result;
 
         dialog = gtk_dialog_new_with_buttons(_("Request Shared Resources"),
-                                         GTK_WINDOW(mwin.ObtainWindow()),
+                                         GTK_WINDOW(g_mwin->ObtainWindow()),
                                          GTK_DIALOG_MODAL,
                                          _("Agree"), GTK_RESPONSE_ACCEPT,
                                          _("Refuse"), GTK_RESPONSE_CANCEL, NULL);
@@ -101,7 +101,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal)
         gint result;
 
         dialog = gtk_dialog_new_with_buttons(_("Access Password"),
-                                 GTK_WINDOW(mwin.ObtainWindow()),
+                                 GTK_WINDOW(g_mwin->ObtainWindow()),
                                  GTK_DIALOG_MODAL,
                                  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -229,8 +229,8 @@ char* pop_save_path(GtkWidget *parent)
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                           NULL);
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), progdt.path);
-    path = progdt.path;
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), g_progdt->path);
+    path = g_progdt->path;
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
       path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER (dialog));
     }

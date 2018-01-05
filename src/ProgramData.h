@@ -16,6 +16,7 @@
 #include "sys.h"
 #include "net.h"
 #include "deplib.h"
+#include "IptuxConfig.h"
 
 /* flags
 // 消息(:7);当有消息时自动打开聊天窗口
@@ -33,15 +34,17 @@
 */
 class ProgramData {
 public:
-        ProgramData();
+        ProgramData(IptuxConfig& config);
         ~ProgramData();
 
         void InitSublayer();
         void WriteProgData();
         GSList *CopyNetSegment();
         char *FindNetSegDescription(in_addr_t ipv4);
+        void Lock();
+        void Unlock();
 
-        char *nickname; //昵称 *
+        std::string nickname; //昵称 *
         char *mygroup;  //所属群组 *
         char *myicon;           //个人头像 *
         char *path;             //存档路径 *
@@ -66,7 +69,12 @@ public:
 
         guint cnxnid;           //GConfClient连接ID
         struct timeval timestamp;       //程序数据时间戳
+
+private:
+        IptuxConfig& config;
         pthread_mutex_t mutex;  //锁
+
+
 private:
         void ReadProgData();
         void AddGconfNotify();

@@ -17,9 +17,8 @@
 #include "MainWindow.h"
 #include "callback.h"
 #include "utils.h"
+#include "global.h"
 
-extern CoreThread cthrd;
-extern MainWindow mwin;
 
 /**
  * 类构造函数.
@@ -99,7 +98,7 @@ GtkWidget *RevisePal::CreateMainDialog()
         GtkWidget *dialog;
 
         dialog = gtk_dialog_new_with_buttons(_("Change Pal's Information"),
-                         GTK_WINDOW(mwin.ObtainWindow()), GTK_DIALOG_MODAL,
+                         GTK_WINDOW(g_mwin->ObtainWindow()), GTK_DIALOG_MODAL,
                          GTK_STOCK_OK, GTK_RESPONSE_OK,
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -290,10 +289,10 @@ void RevisePal::ApplyReviseData()
         FLAG_SET(pal->flags, 2);
 
         /* 更新好友信息 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        cthrd.UpdatePalToList(pal->ipv4);
-        pthread_mutex_unlock(cthrd.GetMutex());
-        mwin.UpdateItemToPaltree(pal->ipv4);
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->UpdatePalToList(pal->ipv4);
+        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_mwin->UpdateItemToPaltree(pal->ipv4);
 }
 
 /**

@@ -10,6 +10,7 @@
 //
 //
 #include "StatusIcon.h"
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -21,9 +22,7 @@
 #include "callback.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -53,7 +52,7 @@ void StatusIcon::CreateStatusIcon()
 {
         GdkScreen *screen;
 
-        if (FLAG_ISSET(progdt.flags, 6)) {
+        if (FLAG_ISSET(g_progdt->flags, 6)) {
                 statusicon = gtk_status_icon_new_from_stock("iptux-logo-hide");
                 g_object_set_data(G_OBJECT(statusicon), "show", GINT_TO_POINTER(FALSE));
         } else {
@@ -99,16 +98,16 @@ gboolean StatusIcon::UpdateUI(StatusIcon *sicon)
         guint len;
 
         /* 获取消息串 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        if ( (len = cthrd.GetMsglineItems())) {
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        if ( (len = g_cthrd->GetMsglineItems())) {
                 gtk_status_icon_set_blinking(sicon->statusicon, TRUE);
                 msgstr = g_strdup_printf(_("To be read: %u messages"), len);
         } else {
                 gtk_status_icon_set_blinking(sicon->statusicon, FALSE);
-                msgstr = get_sys_host_addr_string(cthrd.UdpSockQuote());
+                msgstr = get_sys_host_addr_string(g_cthrd->UdpSockQuote());
                 msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
         /* 在必要的条件下更改消息串 */
         prestr = (char *)g_object_get_data(G_OBJECT(sicon->statusicon), "tooltip-text");
         if (!prestr || strcmp(prestr, msgstr) != 0) {
@@ -118,12 +117,12 @@ gboolean StatusIcon::UpdateUI(StatusIcon *sicon)
         } else
                 g_free(msgstr);
 #else
-        pthread_mutex_lock(cthrd.GetMutex());
-        if (cthrd.GetMsglineHeadItem())
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        if (g_cthrd->GetMsglineHeadItem())
                 gtk_status_icon_set_blinking(sicon->statusicon, TRUE);
         else
                 gtk_status_icon_set_blinking(sicon->statusicon, FALSE);
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
 #endif
 
         return TRUE;
@@ -218,12 +217,12 @@ void StatusIcon::StatusIconActivate(StatusIcon* self)
 {
         GroupInfo *grpinf;
 
-        pthread_mutex_lock(cthrd.GetMutex());
-        if (cthrd.GetMsglineItems())
-                grpinf = cthrd.GetMsglineHeadItem();
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        if (g_cthrd->GetMsglineItems())
+                grpinf = g_cthrd->GetMsglineHeadItem();
         else
                 grpinf = NULL;
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
         if (grpinf) {
                 switch (grpinf->type) {
                 case GROUP_BELONG_TYPE_REGULAR:
@@ -273,14 +272,14 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, g
         guint len;
 
         /* 获取消息串 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        if ( (len = cthrd.GetMsglineItems())) {
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        if ( (len = g_cthrd->GetMsglineItems())) {
                 msgstr = g_strdup_printf(_("To be read: %u messages"), len);
         } else {
-                msgstr = get_sys_host_addr_string(cthrd.UdpSockQuote());
+                msgstr = get_sys_host_addr_string(g_cthrd->UdpSockQuote());
                 msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
         /* 设置信息提示串 */
         gtk_tooltip_set_text(tooltip, msgstr);
         g_free(msgstr);
@@ -292,8 +291,8 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, g
  * 状态图标是否嵌入到状态栏.
  * @return 是否已嵌入
  */
-gboolean StatusIcon::IsEmbedded() 
-{ 
+gboolean StatusIcon::IsEmbedded()
+{
 	embedded = gtk_status_icon_is_embedded(statusicon);
 	return embedded;
 }

@@ -16,14 +16,16 @@
 #include "ipmsg.h"
 #include "utils.h"
 
+using namespace std;
+
 /**
  * 类构造函数.
  */
-ProgramData::ProgramData():nickname(NULL), mygroup(NULL),
+ProgramData::ProgramData(IptuxConfig& config):mygroup(NULL),
  myicon(NULL), path(NULL),  sign(NULL), codeset(NULL), encode(NULL),
  palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
- lcursor(NULL), table(NULL), cnxnid(0)
+ lcursor(NULL), table(NULL), cnxnid(0), config(config)
 {
         gettimeofday(&timestamp, NULL);
         pthread_mutex_init(&mutex, NULL);
@@ -36,7 +38,6 @@ ProgramData::~ProgramData()
 {
         GConfClient *client;
 
-        g_free(nickname);
         g_free(mygroup);
         g_free(myicon);
         g_free(path);
@@ -94,7 +95,7 @@ void ProgramData::WriteProgData()
         client = gconf_client_get_default();
         gettimeofday(&timestamp, NULL); //更新时间戳
 
-        gconf_client_set_string(client, GCONF_PATH "/nick_name", nickname, NULL);
+        gconf_client_set_string(client, GCONF_PATH "/nick_name", nickname.c_str(), NULL);
         gconf_client_set_string(client, GCONF_PATH "/belong_group", mygroup, NULL);
         gconf_client_set_string(client, GCONF_PATH "/my_icon", myicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/archive_path", path, NULL);
@@ -200,10 +201,13 @@ void ProgramData::ReadProgData()
         GConfClient *client;
         GConfValue *value;
 
+        nickname = config.GetString("nick_name");
+        if(nickname.empty()) {
+          nickname = string(g_get_user_name());
+        }
+
         client = gconf_client_get_default();
 
-        if (!(nickname = gconf_client_get_string(client, GCONF_PATH "/nick_name", NULL)))
-                nickname = g_strdup(g_get_user_name());
         if (!(mygroup = gconf_client_get_string(client,
                  GCONF_PATH "/belong_group", NULL)))
                 mygroup = g_strdup("");
@@ -455,8 +459,7 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
         update = false; //预设更新标记为假
         if (strcmp(entry->key, GCONF_PATH "/nick_name") == 0) {
                 if ( (str = gconf_value_get_string(entry->value))) {
-                        g_free(progdt->nickname);
-                        progdt->nickname = g_strdup(str);
+                        progdt->nickname = str;
                         update = true;
                 }
         } else if (strcmp(entry->key, GCONF_PATH "/belong_group") == 0) {
@@ -569,4 +572,12 @@ void ProgramData::GconfNotifyFunc(GConfClient *client, guint cnxnid,
         /* 如果需要更新则调用更新处理函数 */
         if (update)
                 CoreThread::UpdateMyInfo();
+}
+
+void ProgramData::Lock() {
+  pthread_mutex_lock(&mutex);
+}
+
+void ProgramData::Unlock() {
+  pthread_mutex_unlock(&mutex);
 }

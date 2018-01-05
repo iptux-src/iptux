@@ -13,6 +13,9 @@ public:
 	int GetInt(const std::string& key) const;
 	void SetInt(const std::string& key, int value);
 
+        std::string GetString(const std::string& key) const;
+        void SetString(const std::string& key, const std::string& value);
+
 	int GetTransWindowWidth() const;
 	int GetTransWindowHeight() const;
 	int GetMwinMainPanedDivide() const;

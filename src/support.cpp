@@ -21,12 +21,8 @@
 #include "utils.h"
 #include "output.h"
 #include "ipmsg.h"
+#include "global.h"
 
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
-extern SoundSystem sndsys;
 /**
  * 程序必要初始化.
  */
@@ -35,9 +31,9 @@ void iptux_init()
         bind_iptux_port();
         init_iptux_environment();
 
-        progdt.InitSublayer();
-        lgsys.InitSublayer();
-        sndsys.InitSublayer();
+        g_progdt->InitSublayer();
+        g_lgsys->InitSublayer();
+        g_sndsys->InitSublayer();
 
         signal(SIGPIPE, SIG_IGN);
         signal(SIGHUP, iptux_quit);
@@ -45,7 +41,7 @@ void iptux_init()
         signal(SIGQUIT, iptux_quit);
         signal(SIGTERM, iptux_quit);
 
-        lgsys.SystemLog(_("Loading the process successfully!"));
+        g_lgsys->SystemLog(_("Loading the process successfully!"));
 }
 
 /**
@@ -53,7 +49,7 @@ void iptux_init()
  */
 void iptux_gui_quit()
 {
-        if (mwin.TransmissionActive() && !pop_request_quit())
+        if (g_mwin->TransmissionActive() && !pop_request_quit())
                 return;
         gtk_main_quit();
         iptux_quit(0);
@@ -64,7 +60,7 @@ void iptux_gui_quit()
  */
 void iptux_quit(int _ignore)
 {
-        lgsys.SystemLog(_("The process is about to quit!"));
+        g_lgsys->SystemLog(_("The process is about to quit!"));
         exit(0);
 }
 
@@ -190,8 +186,8 @@ void bind_iptux_port()
                 exit(1);
         }
 
-        cthrd.TcpSockQuote() = tcpsock;
-        cthrd.UdpSockQuote() = udpsock;
+        g_cthrd->TcpSockQuote() = tcpsock;
+        g_cthrd->UdpSockQuote() = udpsock;
 
 }
 

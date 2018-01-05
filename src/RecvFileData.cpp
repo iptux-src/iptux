@@ -10,6 +10,9 @@
 //
 //
 #include "RecvFileData.h"
+
+#include <utime.h>
+
 #include "ProgramData.h"
 #include "MainWindow.h"
 #include "LogSystem.h"
@@ -19,12 +22,7 @@
 #include "wrapper.h"
 #include "output.h"
 #include "utils.h"
-#include <utime.h>
-
-extern ProgramData progdt;
-extern MainWindow mwin;
-extern LogSystem lgsys;
-extern SoundSystem sndsys;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -54,9 +52,9 @@ void RecvFileData::RecvFileDataEntry()
         /* 创建UI参考数据，并将数据主动加入UI */
         gdk_threads_enter();
         CreateUIPara();
-        mwin.UpdateItemToTransTree(&para);
-        if (FLAG_ISSET(progdt.flags, 5))
-                mwin.OpenTransWindow();
+        g_mwin->UpdateItemToTransTree(&para);
+        if (FLAG_ISSET(g_progdt->flags, 5))
+                g_mwin->OpenTransWindow();
         gdk_threads_leave();
 
         /* 分类处理 */
@@ -74,12 +72,12 @@ void RecvFileData::RecvFileDataEntry()
         /* 主动更新UI */
         gdk_threads_enter();
         UpdateUIParaToOver();
-        mwin.UpdateItemToTransTree(&para);
+        g_mwin->UpdateItemToTransTree(&para);
         gdk_threads_leave();
 
         /* 处理成功则播放提示音 */
-        if (!terminate && FLAG_ISSET(progdt.sndfgs, 2))
-                sndsys.Playing(progdt.transtip);
+        if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
+                g_sndsys->Playing(g_progdt->transtip);
 }
 
 /**
@@ -113,7 +111,7 @@ void RecvFileData::CreateUIPara()
                                                 GtkIconLookupFlags(0), NULL)))
             g_datalist_set_data_full(&para, "status", pixbuf,
                                      GDestroyNotify(g_object_unref));
-        
+
         g_datalist_set_data(&para, "task", (gpointer)(_("receive")));
         g_datalist_set_data_full(&para, "peer", g_strdup(file->fileown->name),
                                                  GDestroyNotify(g_free));
@@ -181,10 +179,10 @@ void RecvFileData::RecvRegularFile()
         /* 考察处理结果 */
         if (finishsize < file->filesize) {
                 terminate = true;
-                lgsys.SystemLog(_("Failed to receive the file \"%s\" from %s!"),
+                g_lgsys->SystemLog(_("Failed to receive the file \"%s\" from %s!"),
                                          file->filepath, file->fileown->name);
         } else {
-                lgsys.SystemLog(_("Receive the file \"%s\" from %s successfully!"),
+                g_lgsys->SystemLog(_("Receive the file \"%s\" from %s successfully!"),
                                                  file->filepath, file->fileown->name);
         }
         /* 关闭文件传输套接口 */
@@ -329,10 +327,10 @@ void RecvFileData::RecvDirFiles()
         /* 考察处理结果 */
 end:    if (!result) {
                 terminate = true;
-                lgsys.SystemLog(_("Failed to receive the directory \"%s\" from %s!"),
+                g_lgsys->SystemLog(_("Failed to receive the directory \"%s\" from %s!"),
                                                  file->filepath, file->fileown->name);
         } else {
-                lgsys.SystemLog(_("Receive the directory \"%s\" from %s successfully!"),
+                g_lgsys->SystemLog(_("Receive the directory \"%s\" from %s successfully!"),
                                                  file->filepath, file->fileown->name);
         }
         /* 关闭文件传输套接口 */

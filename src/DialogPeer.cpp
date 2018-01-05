@@ -29,10 +29,8 @@
 #include "support.h"
 #include "utils.h"
 #include "dialog.h"
+#include "global.h"
 
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
 
 /**
  * 类构造函数.
@@ -79,12 +77,12 @@ void DialogPeer::PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf, Program
         gtk_widget_grab_focus(widget);
 
         /* 从消息队列中移除 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        if (cthrd.MsglineContainItem(grpinf)) {
-                mwin.MakeItemBlinking(grpinf, FALSE);
-                cthrd.PopItemFromMsgline(grpinf);
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        if (g_cthrd->MsglineContainItem(grpinf)) {
+                g_mwin->MakeItemBlinking(grpinf, FALSE);
+                g_cthrd->PopItemFromMsgline(grpinf);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
 
         /* delete dlgpr;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }
@@ -601,14 +599,14 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist)
         if (grpinf->member)
                 para.pal = (PalInfo *)grpinf->member->data;
         else
-                para.pal = cthrd.GetPalFromList(grpinf->grpid);
+                para.pal = g_cthrd->GetPalFromList(grpinf->grpid);
 
         para.stype = MESSAGE_SOURCE_TYPE_SELF;
         para.btype = grpinf->type;
         para.dtlist = (GSList *)dtlist;
 
         /* 交给某人处理吧 */
-        cthrd.InsertMsgToGroupInfoItem(grpinf, &para);
+        g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
         para.dtlist = NULL;     //防止参数数据被修改
 }
 
@@ -623,7 +621,7 @@ MsgPara *DialogPeer::PackageMsg(GSList *dtlist)
 
         para = new MsgPara;
         if (!(grpinf->member))
-                para->pal = cthrd.GetPalFromList(grpinf->grpid);
+                para->pal = g_cthrd->GetPalFromList(grpinf->grpid);
         else
                 para->pal = (PalInfo *)grpinf->member->data;
         para->stype = MESSAGE_SOURCE_TYPE_SELF;
@@ -705,11 +703,11 @@ void DialogPeer::AskSharedFiles(GroupInfo *grpinf)
         PalInfo *pal;
 
         if (!(grpinf->member))
-                pal = cthrd.GetPalFromList(grpinf->grpid);
+                pal = g_cthrd->GetPalFromList(grpinf->grpid);
         else
                 pal = (PalInfo *)grpinf->member->data;
 
-        cmd.SendAskShared(cthrd.UdpSockQuote(), pal, 0, NULL);
+        cmd.SendAskShared(g_cthrd->UdpSockQuote(), pal, 0, NULL);
 }
 
 /**
@@ -762,7 +760,7 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para)
                 switch (((ChipData *)tlist->data)->type) {
                 case MESSAGE_CONTENT_TYPE_STRING:
                         /* 文本类型 */
-                        cmd.SendMessage(cthrd.UdpSockQuote(), para->pal, ptr);
+                        cmd.SendMessage(g_cthrd->UdpSockQuote(), para->pal, ptr);
                         break;
                 case MESSAGE_CONTENT_TYPE_PICTURE:
                         /* 图片类型 */
@@ -1056,7 +1054,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
     gtk_list_store_clear(GTK_LIST_STORE(mdltorcv));
     mdlrcvd = (GtkTreeModel*)g_datalist_get_data(&(dlgpr->mdlset), "file-received-model");
     gtk_list_store_clear(GTK_LIST_STORE(mdlrcvd));
-    ecslist = cthrd.GetPalEnclosure(palinfor);
+    ecslist = g_cthrd->GetPalEnclosure(palinfor);
     if(ecslist) {
         //只要有该好友的接收文件信息(不分待接收和未接收)，就显示
         hpaned = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset), "main-paned"));
@@ -1306,7 +1304,7 @@ void DialogPeer::RemoveSelectedRcv(GtkWidget *widget)
     while(list) {
         gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, (GtkTreePath *)g_list_nth(list, 0)->data);
         gtk_tree_model_get(model, &iter,5,&file, -1);
-        cthrd.PopItemFromEnclosureList(file);
+        g_cthrd->PopItemFromEnclosureList(file);
         list = g_list_next(list);
     }
     g_list_free(list);

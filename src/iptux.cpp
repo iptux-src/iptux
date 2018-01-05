@@ -33,16 +33,11 @@
 
 using namespace std;
 
-string getConfigPath();
-
-ProgramData progdt;
-string configPath = getConfigPath();
-IptuxConfig config(configPath);
-MainWindow mwin(config, progdt);
-CoreThread cthrd(config);
-StatusIcon sicon(config, mwin);
-LogSystem lgsys;
-SoundSystem sndsys;
+ProgramData* g_progdt;
+CoreThread* g_cthrd;
+MainWindow* g_mwin;
+SoundSystem* g_sndsys;
+LogSystem* g_lgsys;
 
 string getConfigPath() {
         const char* res1 =  g_build_path("/",
@@ -58,6 +53,22 @@ string getConfigPath() {
 
 int main(int argc, char *argv[])
 {
+  string configPath = getConfigPath();
+  IptuxConfig config(configPath);
+  ProgramData progdt(config);
+  MainWindow mwin(config, progdt);
+  CoreThread cthrd(config);
+  StatusIcon sicon(config, mwin);
+  LogSystem lgsys;
+  SoundSystem sndsys;
+
+  g_progdt = &progdt;
+  g_cthrd = &cthrd;
+  g_mwin = &mwin;
+  g_sndsys = &sndsys;
+  g_lgsys = &lgsys;
+
+
   mwin.SetStatusIcon(&sicon);
 
         setlocale(LC_ALL, "");

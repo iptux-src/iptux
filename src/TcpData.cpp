@@ -10,13 +10,13 @@
 //
 //
 #include "TcpData.h"
+
 #include "CoreThread.h"
 #include "MainWindow.h"
 #include "SendFile.h"
 #include "wrapper.h"
 #include "utils.h"
-extern CoreThread cthrd;
-extern MainWindow mwin;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -122,7 +122,7 @@ void TcpData::RecvSublayer(uint32_t cmdopt)
         /* 检查好友是否存在 */
         len = sizeof(addr);
         getpeername(sock, (struct sockaddr *)&addr, &len);
-        if (!(pal = cthrd.GetPalFromList(addr.sin_addr.s_addr)))
+        if (!(pal = g_cthrd->GetPalFromList(addr.sin_addr.s_addr)))
                 return;
 
         /* 创建即将接收的数据文件路径 */
@@ -191,10 +191,10 @@ void TcpData::RecvPhotoPic(PalInfo *pal, const char *path)
         g_free(pal->photo);
         pal->photo = g_strdup(path);
         gdk_threads_enter();
-        pthread_mutex_lock(cthrd.GetMutex());
-        cthrd.UpdatePalToList(pal->ipv4);
-        pthread_mutex_unlock(cthrd.GetMutex());
-        mwin.UpdateItemToPaltree(pal->ipv4);
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        g_cthrd->UpdatePalToList(pal->ipv4);
+        pthread_mutex_unlock(g_cthrd->GetMutex());
+        g_mwin->UpdateItemToPaltree(pal->ipv4);
         gdk_threads_leave();
 }
 
@@ -218,5 +218,5 @@ void TcpData::RecvMsgPic(PalInfo *pal, const char *path)
         para.dtlist = g_slist_append(NULL, chip);
 
         /* 交给某人处理吧 */
-        cthrd.InsertMessage(&para);
+        g_cthrd->InsertMessage(&para);
 }

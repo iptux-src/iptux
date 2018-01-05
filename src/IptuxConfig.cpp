@@ -57,6 +57,14 @@ void IptuxConfig::SetInt(const string& key, int value) {
 	root[key] = value;
 }
 
+string IptuxConfig::GetString(const string& key) const {
+	return root.get(key, "").asString();
+}
+
+void IptuxConfig::SetString(const string& key, const string& value) {
+	root[key] = value;
+}
+
 int IptuxConfig::GetTransWindowWidth() const {
 	return transWindowWidth;
 }

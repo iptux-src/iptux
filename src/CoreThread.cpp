@@ -24,10 +24,7 @@
 #include "output.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
+#include "global.h"
 
 using namespace std;
 
@@ -187,11 +184,11 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
                         InsertStringToBuffer(grpinf->buffer, data);
                         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
                         gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-                        lgsys.CommunicateLog(para, "[STRING]%s", data);
+                        g_lgsys->CommunicateLog(para, "[STRING]%s", data);
                         break;
                 case MESSAGE_CONTENT_TYPE_PICTURE:
                         InsertPixbufToBuffer(grpinf->buffer, data);
-                        lgsys.CommunicateLog(para, "[PICTURE]%s", data);
+                        g_lgsys->CommunicateLog(para, "[PICTURE]%s", data);
                         break;
                 default:
                         break;
@@ -223,12 +220,12 @@ void CoreThread::SendFeatureData(PalInfo *pal)
         const gchar *env;
         int sock;
 
-        if (*progdt.sign != '\0')
-                cmd.SendMySign(cthrd.udpsock, pal);
+        if (*g_progdt->sign != '\0')
+                cmd.SendMySign(g_cthrd->udpsock, pal);
         env = g_get_user_config_dir();
-        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, progdt.myicon);
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, g_progdt->myicon);
         if (access(path, F_OK) == 0)
-                cmd.SendMyIcon(cthrd.udpsock, pal);
+                cmd.SendMyIcon(g_cthrd->udpsock, pal);
         snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
         if (access(path, F_OK) == 0) {
                 if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -249,7 +246,7 @@ void CoreThread::SendBroadcastExit(PalInfo *pal)
 {
         Command cmd;
 
-        cmd.SendExit(cthrd.udpsock, pal);
+        cmd.SendExit(g_cthrd->udpsock, pal);
 }
 
 /**
@@ -262,19 +259,19 @@ void CoreThread::UpdateMyInfo()
         PalInfo *pal;
         GSList *tlist;
 
-        pthread_mutex_lock(&cthrd.mutex);
-        tlist = cthrd.pallist;
+        pthread_mutex_lock(&g_cthrd->mutex);
+        tlist = g_cthrd->pallist;
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
                 if (FLAG_ISSET(pal->flags, 1))
-                        cmd.SendAbsence(cthrd.udpsock, pal);
+                        cmd.SendAbsence(g_cthrd->udpsock, pal);
                 if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
                         pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
                         pthread_detach(pid);
                 }
                 tlist = g_slist_next(tlist);
         }
-        pthread_mutex_unlock(&cthrd.mutex);
+        pthread_mutex_unlock(&g_cthrd->mutex);
 }
 
 /**
@@ -982,7 +979,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
                 g_free(header);
                 break;
         case MESSAGE_SOURCE_TYPE_SELF:
-                header = getformattime(FALSE, "%s", progdt.nickname);
+                header = getformattime(FALSE, "%s", g_progdt->nickname);
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
                                          header, -1, "me-color", NULL);
@@ -1019,7 +1016,7 @@ void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string)
         urlendp = 0;
         matchinfo = NULL;
         gtk_text_buffer_get_end_iter(buffer, &iter);
-        g_regex_match_full(progdt.urlregex, string, -1, 0, GRegexMatchFlags(0),
+        g_regex_match_full(g_progdt->urlregex, string, -1, 0, GRegexMatchFlags(0),
                                                          &matchinfo, NULL);
         while (g_match_info_matches(matchinfo))
         {
@@ -1097,7 +1094,7 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_REGULAR;
         grpinf->name = g_strdup(pal->name);
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         rgllist = g_slist_append(rgllist, grpinf);
 
@@ -1123,7 +1120,7 @@ GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
         grpinf->name = name;
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -1149,7 +1146,7 @@ GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_GROUP;
         grpinf->name = name;
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         grplist = g_slist_append(grplist, grpinf);
 
@@ -1173,7 +1170,7 @@ GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
         grpinf->name = name;
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         brdlist = g_slist_append(brdlist, grpinf);
 
@@ -1271,7 +1268,7 @@ gboolean CoreThread::WatchCoreStatus(CoreThread *pcthrd)
         pthread_mutex_lock(&pcthrd->mutex);
         tlist = pcthrd->msgline.head;
         while (tlist) {
-                mwin.MakeItemBlinking((GroupInfo *)tlist->data, true);
+                g_mwin->MakeItemBlinking((GroupInfo *)tlist->data, true);
                 tlist = g_list_next(tlist);
         }
         pthread_mutex_unlock(&pcthrd->mutex);

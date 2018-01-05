@@ -15,13 +15,12 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "global.h"
 #include "ipmsg.h"
 #include "ProgramData.h"
 #include "StatusIcon.h"
 #include "MainWindow.h"
 #include "support.h"
-
-extern ProgramData progdt;
 
 /**
  * 给entry控件设置提示信息.
@@ -304,7 +303,7 @@ gboolean textview_motion_notify_event(GtkWidget *textview, GdkEventMotion *event
 
         gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                  GTK_TEXT_WINDOW_WIDGET, event->x, event->y, &x, &y);
-        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, progdt);
+        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, *g_progdt);
         gdk_window_get_pointer(textview->window, NULL, NULL, NULL);
 
         return FALSE;
@@ -317,7 +316,7 @@ gboolean textview_visibility_notify_event(GtkWidget *textview, GdkEventVisibilit
         gdk_window_get_pointer(textview->window, &wx, &wy, NULL);
         gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                          GTK_TEXT_WINDOW_WIDGET, wx, wy, &bx, &by);
-        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by, progdt);
+        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by, *g_progdt);
 
         return FALSE;
 }

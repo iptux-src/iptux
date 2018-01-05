@@ -28,10 +28,7 @@
 #include "support.h"
 #include "utils.h"
 #include "AnalogFS.h"
-
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
+#include "global.h"
 
 DialogBase::DialogBase(GroupInfo *grp, ProgramData& progdt)
         :progdt(progdt),
@@ -193,7 +190,7 @@ void DialogBase::AttachEnclosure(const GSList *list)
             pallist = GetSelPal();
             while(pallist) {
                 file = new FileInfo;
-                file->fileid = cthrd.PrnQuote()++;
+                file->fileid = g_cthrd->PrnQuote()++;
                 /* file->packetn = 0;//没必要设置此字段 */
                 file->fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR :
                                                          IPMSG_FILE_DIR;
@@ -203,9 +200,9 @@ void DialogBase::AttachEnclosure(const GSList *list)
                 file->filenum = filenum;
                 file->fileown = (PalInfo *)(pallist->data);
                 /* 加入文件信息到中心节点 */
-                pthread_mutex_lock(cthrd.GetMutex());
-                cthrd.AttachFileToPrivate(file);
-                pthread_mutex_unlock(cthrd.GetMutex());
+                pthread_mutex_lock(g_cthrd->GetMutex());
+                g_cthrd->AttachFileToPrivate(file);
+                pthread_mutex_unlock(g_cthrd->GetMutex());
                 /* 添加数据 */
                 gtk_list_store_append(GTK_LIST_STORE(model), &iter);
                 gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf,1, filename,
@@ -503,7 +500,7 @@ void DialogBase::FeedbackMsg(const gchar *msg)
         para.dtlist = g_slist_append(NULL, chip);
 
         /* 交给某人处理吧 */
-        cthrd.InsertMsgToGroupInfoItem(grpinf, &para);
+        g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
 }
 
 /**
@@ -733,7 +730,7 @@ void DialogBase::RemoveSelectedEnclosure(GtkWidget *widget)
                                 (GtkTreePath *)g_list_nth(list, 0)->data);
         gtk_tree_model_get(model, &iter,4,&file, -1);
         dlg->totalsendsize -= file->filesize;
-        cthrd.DelFileFromPrivate(file->fileid);
+        g_cthrd->DelFileFromPrivate(file->fileid);
         list = g_list_next(list);
     }
     g_list_free(list);
@@ -917,5 +914,5 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp)
  */
 void DialogBase::OpenTransDlg(DialogBase *dlgpr)
 {
-    mwin.OpenTransWindow();
+    g_mwin->OpenTransWindow();
 }

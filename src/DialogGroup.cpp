@@ -25,10 +25,8 @@
 #include "output.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
+#include "global.h"
+
 
 /**
  * 类构造函数.
@@ -68,12 +66,12 @@ void DialogGroup::GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, Progr
                                          "input-textview-widget"));
         gtk_widget_grab_focus(widget);
         /* 从消息队列中移除 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        if (cthrd.MsglineContainItem(grpinf)) {
-                mwin.MakeItemBlinking(grpinf, FALSE);
-                cthrd.PopItemFromMsgline(grpinf);
+        pthread_mutex_lock(g_cthrd->GetMutex());
+        if (g_cthrd->MsglineContainItem(grpinf)) {
+                g_mwin->MakeItemBlinking(grpinf, FALSE);
+                g_cthrd->PopItemFromMsgline(grpinf);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
 
         /* delete dlggrp;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }
@@ -389,7 +387,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model)
         char *file;
 
         theme = gtk_icon_theme_get_default();
-        pthread_mutex_lock(cthrd.GetMutex());
+        pthread_mutex_lock(g_cthrd->GetMutex());
         tlist = grpinf->member;
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
@@ -404,7 +402,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model)
                         g_object_unref(pixbuf);
                 tlist = g_slist_next(tlist);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        pthread_mutex_unlock(g_cthrd->GetMutex());
 }
 
 /**
@@ -590,10 +588,10 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg)
                                         opttype = IPTUX_REGULAROPT;
                                         break;
                                 }
-                                cmd.SendUnitMsg(cthrd.UdpSockQuote(), pal,
+                                cmd.SendUnitMsg(g_cthrd->UdpSockQuote(), pal,
                                                          opttype, msg);
                         } else
-                                cmd.SendGroupMsg(cthrd.UdpSockQuote(), pal, msg);
+                                cmd.SendGroupMsg(g_cthrd->UdpSockQuote(), pal, msg);
                 }
         } while (gtk_tree_model_iter_next(model, &iter));
 }
@@ -742,7 +740,7 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 3, &pal, -1);
-        if ( (grpinf = cthrd.GetPalRegularItem(pal))) {
+        if ( (grpinf = g_cthrd->GetPalRegularItem(pal))) {
                 if ( (grpinf->dialog))
                         gtk_window_present(GTK_WINDOW(grpinf->dialog));
                 else
@@ -774,7 +772,7 @@ bool DialogGroup::SendTextMsg()
 
         msgpara.stype = MESSAGE_SOURCE_TYPE_SELF;
         msgpara.pal = NULL;
-        lgsys.CommunicateLog(&msgpara, "[STRING]%s", msg);
+        g_lgsys->CommunicateLog(&msgpara, "[STRING]%s", msg);
         g_free(msg);
 
         return true;

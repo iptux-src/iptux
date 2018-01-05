@@ -17,9 +17,8 @@
 #include "support.h"
 #include "utils.h"
 #include "deplib.h"
+#include "global.h"
 
-extern ProgramData progdt;
-extern CoreThread cthrd;
 uint32_t Command::packetn = 1;
 
 /**
@@ -45,9 +44,9 @@ void Command::BroadCast(int sock)
         struct sockaddr_in addr;
         GSList *list, *tlist;
 
-        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, progdt.nickname);
-        ConvertEncode(progdt.encode);
-        CreateIptuxExtra(progdt.encode);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, g_progdt->nickname.c_str());
+        ConvertEncode(g_progdt->encode);
+        CreateIptuxExtra(g_progdt->encode);
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
@@ -74,17 +73,17 @@ void Command::DialUp(int sock)
         GSList *list, *tlist;
 
         CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                                                         progdt.nickname);
-        ConvertEncode(progdt.encode);
-        CreateIptuxExtra(progdt.encode);
+                                                         g_progdt->nickname.c_str());
+        ConvertEncode(g_progdt->encode);
+        CreateIptuxExtra(g_progdt->encode);
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
         addr.sin_port = htons(IPTUX_DEFAULT_PORT);
         //与某些代码片段的获取网段描述相冲突，必须复制出来使用
-        pthread_mutex_lock(&progdt.mutex);
-        list = progdt.CopyNetSegment();
-        pthread_mutex_unlock(&progdt.mutex);
+        g_progdt->Lock();
+        list = g_progdt->CopyNetSegment();
+        g_progdt->Unlock();
         tlist = list;
         while (tlist) {
                 pns = (NetSegment *)tlist->data;
@@ -117,7 +116,7 @@ void Command::SendAnsentry(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, progdt.nickname);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, g_progdt->nickname.c_str());
         ConvertEncode(pal->encode);
         CreateIptuxExtra(pal->encode);
 
@@ -158,7 +157,7 @@ void Command::SendAbsence(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE, progdt.nickname);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE, g_progdt->nickname.c_str());
         ConvertEncode(pal->encode);
         CreateIptuxExtra(pal->encode);
 
@@ -180,9 +179,9 @@ void Command::SendDetectPacket(int sock, in_addr_t ipv4)
         struct sockaddr_in addr;
 
         CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                                                         progdt.nickname);
-        ConvertEncode(progdt.encode);
-        CreateIptuxExtra(progdt.encode);
+                                                         g_progdt->nickname.c_str());
+        ConvertEncode(g_progdt->encode);
+        CreateIptuxExtra(g_progdt->encode);
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
@@ -435,7 +434,7 @@ void Command::SendMySign(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPTUX_SENDSIGN, progdt.sign);
+        CreateCommand(IPTUX_SENDSIGN, g_progdt->sign);
         ConvertEncode(pal->encode);
 
         bzero(&addr, sizeof(addr));
@@ -497,7 +496,7 @@ void Command::FeedbackError(PalInfo *pal, GroupBelongType btype, const char *err
         para.dtlist = g_slist_append(NULL, chip);
 
         /* 交给某人处理吧 */
-        cthrd.InsertMessage(&para);
+        g_cthrd->InsertMessage(&para);
 }
 
 /**
@@ -605,15 +604,15 @@ void Command::CreateIptuxExtra(const char *encode)
 
         pptr = buf + size;
         if (encode && strcasecmp(encode, "utf-8") != 0
-                 && (ptr = convert_encode(progdt.mygroup, encode, "utf-8"))) {
+                 && (ptr = convert_encode(g_progdt->mygroup, encode, "utf-8"))) {
                 snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
                 g_free(ptr);
         } else
-                snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.mygroup);
+                snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->mygroup);
         size += strlen(pptr) + 1;
 
         pptr = buf + size;
-        snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.myicon);
+        snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->myicon);
         size += strlen(pptr) + 1;
 
         pptr = buf + size;
