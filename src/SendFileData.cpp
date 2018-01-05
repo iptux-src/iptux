@@ -11,9 +11,13 @@
 //
 #include "SendFileData.h"
 
+#include <fcntl.h>
 #include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <inttypes.h>
 
 #include "ProgramData.h"
 #include "MainWindow.h"

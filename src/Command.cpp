@@ -11,6 +11,10 @@
 //
 #include "Command.h"
 
+#include <inttypes.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "wrapper.h"

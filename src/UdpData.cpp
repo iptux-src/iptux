@@ -12,6 +12,9 @@
 //
 #include "UdpData.h"
 
+#include <inttypes.h>
+#include <fcntl.h>
+
 #include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"

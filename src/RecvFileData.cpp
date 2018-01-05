@@ -12,6 +12,8 @@
 #include "RecvFileData.h"
 
 #include <utime.h>
+#include <sys/time.h>
+#include <fcntl.h>
 
 #include "ProgramData.h"
 #include "MainWindow.h"

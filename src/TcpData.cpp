@@ -11,6 +11,9 @@
 //
 #include "TcpData.h"
 
+#include <fcntl.h>
+#include <inttypes.h>
+
 #include "CoreThread.h"
 #include "MainWindow.h"
 #include "SendFile.h"
