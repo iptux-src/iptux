@@ -979,7 +979,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
                 g_free(header);
                 break;
         case MESSAGE_SOURCE_TYPE_SELF:
-                header = getformattime(FALSE, "%s", g_progdt->nickname);
+                header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
                                          header, -1, "me-color", NULL);
