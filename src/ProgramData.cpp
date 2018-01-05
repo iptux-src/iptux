@@ -94,8 +94,9 @@ void ProgramData::WriteProgData()
 
         client = gconf_client_get_default();
         gettimeofday(&timestamp, NULL); //更新时间戳
+        config.SetString("nick_name", nickname);
+        config.Save();
 
-        gconf_client_set_string(client, GCONF_PATH "/nick_name", nickname.c_str(), NULL);
         gconf_client_set_string(client, GCONF_PATH "/belong_group", mygroup, NULL);
         gconf_client_set_string(client, GCONF_PATH "/my_icon", myicon, NULL);
         gconf_client_set_string(client, GCONF_PATH "/archive_path", path, NULL);

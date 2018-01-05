@@ -532,7 +532,7 @@ GtkWidget *MainWindow::CreateMainWindow()
 
         g_datalist_set_data(&widset, "window-widget", window);
         g_signal_connect_swapped(window, "delete-event",
-                         G_CALLBACK(onDeleteEvent), NULL);
+                         G_CALLBACK(onDeleteEvent), this);
         g_signal_connect(window, "configure-event",
                          G_CALLBACK(MWinConfigureEvent), this);
 
