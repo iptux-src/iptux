@@ -1,14 +1,10 @@
 language: cpp
-cache:
-  directories:
-    - $HOME/Library/Caches/Homebrew
 os:
   - linux
-  - osx
 compiler:
   - gcc
-  - clang
-script: mkdir build && cd build && cmake .. && make
+script:
+  - docker run -t -v `pwd`:/ws ubuntu:16.04 /ws/docker_build.sh
 dist: trusty
 sudo: false
 install:
