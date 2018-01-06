@@ -4,7 +4,7 @@ os:
 compiler:
   - gcc
 script:
-  - docker run -t ubuntu:14.04 uptime
+  - docker run -t -v `pwd`:/ws ubuntu:16.04 /ws/docker_build.sh
 dist: trusty
 sudo: false
 install:
