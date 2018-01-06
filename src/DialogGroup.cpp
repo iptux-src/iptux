@@ -11,8 +11,6 @@
 //
 #include "DialogGroup.h"
 
-#include <gconf/gconf-client.h>
-
 #include "DialogPeer.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
@@ -199,31 +197,11 @@ void DialogGroup::InitSublayerSpecify()
  */
 void DialogGroup::SaveUILayout()
 {
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
-        gconf_client_set_int(client, GCONF_PATH "/group_window_width", numeric, NULL);
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
-        gconf_client_set_int(client, GCONF_PATH "/group_window_height", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/group_main_paned_divide",
-                                                         numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "historyinput-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/group_historyinput_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "memberenclosure-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/group_memberenclosure_paned_divide",
-                                                                         numeric, NULL);
-
-        g_object_unref(client);
+  config.SetInt("group_window_width", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
+  config.SetInt("group_window_height", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
+  config.SetInt("group_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide")));
+  config.SetInt("group_historyinput_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide")));
+  config.SetInt("group_memberenclosure_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "memberenclosure-paned-divide")));
 }
 
 /**
