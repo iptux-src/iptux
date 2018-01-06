@@ -21,7 +21,7 @@ sudo apt-get install iptux
 ### Linux (Debian and Ubuntu)
 
 ```
-sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgconf2-dev libgstreamer1.0-dev g++ make cmake
+sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgstreamer1.0-dev g++ make cmake
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make
@@ -32,7 +32,7 @@ iptux
 ### Mac OS X
 
 ```
-brew install gettext gtk+ gconf cmake
+brew install gettext gtk+ cmake
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make
@@ -67,7 +67,6 @@ iptux
 ## 必须
 
 * 打开防火墙的 TCP/UDP 2425 端口
-* 运行命令: `gconftool-2 --recursive-unset /apps/iptux` (使用时机: 从 <= 0.4.5 升级到 >= 0.5.0)
 * 运行命令: `sudo gtk-update-icon-cache PREFIX/share/icons/hicolor` (使用时机: 图标显示异常，PREFIX 为程序安装目录)
 
 

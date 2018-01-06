@@ -8,7 +8,6 @@ class Iptux < Formula
   depends_on :x11
   depends_on 'gettext'
   depends_on 'gtk+'
-  depends_on 'gconf'
   depends_on 'hicolor-icon-theme'
   depends_on 'pkg-config' => :build
 

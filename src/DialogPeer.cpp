@@ -14,8 +14,6 @@
 
 #include <inttypes.h>
 
-#include <gconf/gconf-client.h>
-
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -135,48 +133,16 @@ void DialogPeer::ClearAllPalData()
 */
 void DialogPeer::ReadUILayout()
 {
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = gconf_client_get_int(client, GCONF_PATH "/peer_window_width", NULL);
-        numeric = numeric ? numeric : 570;
-        g_datalist_set_data(&dtset, "window-width", GINT_TO_POINTER(numeric));
-        numeric = gconf_client_get_int(client, GCONF_PATH "/peer_window_height", NULL);
-        numeric = numeric ? numeric : 420;
-        g_datalist_set_data(&dtset, "window-height", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_main_paned_divide", NULL);
-        numeric = numeric ? numeric : 375;
-        g_datalist_set_data(&dtset, "main-paned-divide", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_historyinput_paned_divide", NULL);
-        numeric = numeric ? numeric : 255;
-        g_datalist_set_data(&dtset, "historyinput-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_infoenclosure_paned_divide", NULL);
-        numeric = numeric ? numeric : 255;
-        g_datalist_set_data(&dtset, "infoenclosure-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_enclosure_paned_divide", NULL);
-        numeric = numeric ? numeric : 280;
-        g_datalist_set_data(&dtset, "enclosure-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_file_recieve_paned_divide", NULL);
-        numeric = numeric ? numeric : 140;
-        g_datalist_set_data(&dtset, "file-receive-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        g_object_unref(client);
+  g_datalist_set_data(&dtset, "window-width", GINT_TO_POINTER(config.GetInt("peer_window_width", 570)));
+  g_datalist_set_data(&dtset, "window-height", GINT_TO_POINTER(config.GetInt("peer_window_height", 420)));
+  g_datalist_set_data(&dtset, "main-paned-divide", GINT_TO_POINTER(config.GetInt("peer_main_paned_divide", 375)));
+  g_datalist_set_data(&dtset, "historyinput-paned-divide", GINT_TO_POINTER(config.GetInt("peer_historyinput_paned_divide", 255)));
+  g_datalist_set_data(&dtset, "infoenclosure-paned-divide",
+    GINT_TO_POINTER(config.GetInt("peer_infoenclosure_paned_divide", 255)));
+  g_datalist_set_data(&dtset, "enclosure-paned-divide",
+    GINT_TO_POINTER(config.GetInt("peer_enclosure_paned_divide", 280)));
+  g_datalist_set_data(&dtset, "file-receive-paned-divide",
+    GINT_TO_POINTER(config.GetInt("peer_file_recieve_paned_divide", 140)));
 }
 
 /**
@@ -184,38 +150,14 @@ void DialogPeer::ReadUILayout()
  */
 void DialogPeer::WriteUILayout()
 {
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_window_width", numeric, NULL);
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_window_height", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_main_paned_divide", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "historyinput-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_historyinput_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "infoenclosure-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_infoenclosure_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,"enclosure-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_enclosure_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,"file-receive-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_file_recieve_paned_divide",
-                                                                 numeric, NULL);
-
-        g_object_unref(client);
+  config.SetInt("peer_window_width", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
+  config.SetInt("peer_window_height", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
+  config.SetInt("peer_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide")));
+  config.SetInt("peer_historyinput_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide")));
+  config.SetInt("peer_infoenclosure_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "infoenclosure-paned-divide")));
+  config.SetInt("peer_enclosure_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "enclosure-paned-divide")));
+  config.SetInt("peer_file_recieve_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "file-receive-paned-divide")));
+  config.Save();
 }
 
 

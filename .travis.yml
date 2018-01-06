@@ -13,13 +13,12 @@ dist: trusty
 sudo: false
 install:
   - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+ gconf jsoncpp'
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+ jsoncpp'
 
 addons:
   apt:
     packages:
     - cmake
     - libgtk2.0-dev
-    - libgconf2-dev
     - libgstreamer1.0-dev
     - libjsoncpp-dev
