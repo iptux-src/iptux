@@ -1,6 +1,9 @@
-# 0.6.5 (XXXX-XX-XX)
+# 0.7.0 (XXXX-XX-XX)
 
+* [#58] fix compile problem under gcc 7.
 * [#33] refactor src/AnalogFS.cpp to make the bug log has more information.
+* [#61] switch from autotools to cmake.
+* [#67] improve compile under MacOS, thanks to @jiegec.
 
 # 0.6.4 (2017-08-22)
 
