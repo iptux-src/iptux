@@ -74,6 +74,23 @@ NetSegment::~NetSegment()
         g_free(description);
 }
 
+Json::Value NetSegment::ToJsonValue() const {
+  Json::Value value;
+  value["startip"] = startip;
+  value["endip"] = endip;
+  value["description"] = description;
+  return value;
+}
+
+//static
+NetSegment* NetSegment::NewFromJsonValue(const Json::Value& value) {
+  NetSegment* res = new NetSegment();
+  res->startip = g_strdup(value["startip"].asString().c_str());
+  res->endip = g_strdup(value["startip"].asString().c_str());
+  res->description = g_strdup(value["startip"].asString().c_str());
+  return res;
+}
+
 SessionAbstract::SessionAbstract()
 {}
 SessionAbstract::~SessionAbstract()

@@ -599,5 +599,7 @@ void FLAG_SET(uint8_t& num, int bit) {
 void FLAG_SET(uint8_t& num, int bit, bool value) {
   if(value) {
     ((num)|=(1<<(bit)));
+  } else {
+    ((num)&=(~(1<<(bit))));
   }
 }

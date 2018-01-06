@@ -82,7 +82,7 @@ private:
         void CreateCursor();
         void CreateTagTable();
 
-        void WriteNetSegment(GConfClient *client);
+        void WriteNetSegment();
         void ReadNetSegment(GConfClient *client);
 private:
         static void GconfNotifyFunc(GConfClient *client, guint cnxnid,

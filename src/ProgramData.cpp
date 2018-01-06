@@ -83,9 +83,6 @@ void ProgramData::InitSublayer()
  */
 void ProgramData::WriteProgData()
 {
-        GConfClient *client;
-
-        client = gconf_client_get_default();
         gettimeofday(&timestamp, NULL); //更新时间戳
         config.SetString("nick_name", nickname);
         config.SetString("belong_group", mygroup);
@@ -106,38 +103,18 @@ void ProgramData::WriteProgData()
         config.SetBool("record_log", FLAG_ISSET(flags, 2));
         config.SetBool("open_blacklist", FLAG_ISSET(flags, 1));
         config.SetBool("proof_shared", FLAG_ISSET(flags, 0));
+
+        config.SetString("trans_tip", transtip);
+        config.SetString("msg_tip", msgtip);
+        config.SetDouble("volume_degree", volume);
+
+        config.SetBool("transnd_support", FLAG_ISSET(sndfgs, 2));
+        config.SetBool("msgsnd_support", FLAG_ISSET(sndfgs, 1));
+        config.SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
+        
         config.Save();
 
-	gconf_client_set_bool(client, GCONF_PATH "/open-chat",
-                         FLAG_ISSET(flags, 7) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/hide_startup",
-                         FLAG_ISSET(flags, 6) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/open_transmission",
-                         FLAG_ISSET(flags, 5) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/use_enter_key",
-                         FLAG_ISSET(flags, 4) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/clearup_history",
-                         FLAG_ISSET(flags, 3) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/record_log",
-                         FLAG_ISSET(flags, 2) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/open_blacklist",
-                         FLAG_ISSET(flags, 1) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/proof_shared",
-                         FLAG_ISSET(flags, 0) ? TRUE : FALSE, NULL);
-
-        gconf_client_set_string(client, GCONF_PATH "/trans_tip", transtip, NULL);
-        gconf_client_set_string(client, GCONF_PATH "/msg_tip", msgtip, NULL);
-        gconf_client_set_float(client, GCONF_PATH "/volume_degree", volume, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/transnd_support",
-                         FLAG_ISSET(sndfgs, 2) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/msgsnd_support",
-                         FLAG_ISSET(sndfgs, 1) ? TRUE : FALSE, NULL);
-        gconf_client_set_bool(client, GCONF_PATH "/sound_support",
-                         FLAG_ISSET(sndfgs, 0) ? TRUE : FALSE, NULL);
-
-        WriteNetSegment(client);
-
-        g_object_unref(client);
+        WriteNetSegment();
 }
 
 /**
@@ -202,7 +179,6 @@ char *ProgramData::FindNetSegDescription(in_addr_t ipv4)
 void ProgramData::ReadProgData()
 {
         GConfClient *client;
-        GConfValue *value;
 
         nickname = config.GetString("nick_name", g_get_user_name());
         mygroup = config.GetString("belong_group");
@@ -226,29 +202,13 @@ void ProgramData::ReadProgData()
         FLAG_SET(flags, 1, config.GetBool("open_blacklist"));
         FLAG_SET(flags, 0, config.GetBool("proof_shared"));
 
-        if (!(msgtip = gconf_client_get_string(client, GCONF_PATH "/msg_tip", NULL)))
-                msgtip = g_strdup(__SOUND_PATH "/msg.ogg");
-        if (!(transtip = gconf_client_get_string(client, GCONF_PATH "/trans_tip", NULL)))
-                transtip = g_strdup(__SOUND_PATH "/trans.ogg");
-        if ( (value = gconf_client_get(client, GCONF_PATH "/volume_degree", NULL))) {
-                volume = gconf_value_get_float(value);
-                gconf_value_free(value);
-        }
-        if ( (value = gconf_client_get(client, GCONF_PATH "/transnd_support", NULL))) {
-                if (!gconf_value_get_bool(value))
-                        FLAG_CLR(sndfgs, 2);
-                gconf_value_free(value);
-        }
-        if ( (value = gconf_client_get(client, GCONF_PATH "/msgsnd_support", NULL))) {
-                if (!gconf_value_get_bool(value))
-                        FLAG_CLR(sndfgs, 1);
-                gconf_value_free(value);
-        }
-        if ( (value = gconf_client_get(client, GCONF_PATH "/sound_support", NULL))) {
-                if (!gconf_value_get_bool(value))
-                        FLAG_CLR(sndfgs, 0);
-                gconf_value_free(value);
-        }
+        msgtip = g_strdup(config.GetString("msg_tip", __SOUND_PATH "/msg.ogg").c_str());
+        transtip = g_strdup(config.GetString("trans_tip", __SOUND_PATH "/trans.ogg").c_str());
+        volume = config.GetDouble("volume_degree");
+
+        FLAG_SET(flags, 2, config.GetBool("transnd_support"));
+        FLAG_SET(flags, 1, config.GetBool("msgsnd_support"));
+        FLAG_SET(flags, 0, config.GetBool("sound_support"));
 
         ReadNetSegment(client);
 
@@ -361,28 +321,20 @@ void ProgramData::CreateTagTable()
 
 /**
  * 写出网段数据.
- * @param client GConfClient
  */
-void ProgramData::WriteNetSegment(GConfClient *client)
+void ProgramData::WriteNetSegment()
 {
-        NetSegment *pns;
-        GSList *list, *tlist;
-
-        list = NULL;
-        pthread_mutex_lock(&mutex);
-        tlist = netseg;
-        while (tlist) {
-                pns = (NetSegment *)tlist->data;
-                list = g_slist_append(list, pns->startip);
-                list = g_slist_append(list, pns->endip);
-                list = g_slist_append(list, pns->description ?
-                                 pns->description : (void*)"");
-                tlist = g_slist_next(tlist);
-        }
-        pthread_mutex_unlock(&mutex);
-        gconf_client_set_list(client, GCONF_PATH "/scan_net_segment",
-                                 GCONF_VALUE_STRING, list, NULL);
-        g_slist_free(list);
+  vector<Json::Value> jsons;
+  
+  pthread_mutex_lock(&mutex);
+  GSList* tlist = netseg;
+  while (tlist) {
+    NetSegment* pns = (NetSegment *)tlist->data;
+    jsons.push_back(pns->ToJsonValue());
+    tlist = g_slist_next(tlist);
+  }
+  pthread_mutex_unlock(&mutex);
+  config.SetVector("scan_net_segement", jsons);
 }
 
 /**
@@ -391,24 +343,11 @@ void ProgramData::WriteNetSegment(GConfClient *client)
  */
 void ProgramData::ReadNetSegment(GConfClient *client)
 {
-        NetSegment *ns;
-        GSList *list, *tlist;
-
-        tlist = list = gconf_client_get_list(client, GCONF_PATH "/scan_net_segment",
-                                                 GCONF_VALUE_STRING, NULL);
-        pthread_mutex_lock(&mutex);
-        while (tlist) {
-                ns = new NetSegment;
-                netseg = g_slist_append(netseg, ns);
-                ns->startip = (char *)tlist->data;
-                tlist = g_slist_next(tlist);
-                ns->endip = (char *)tlist->data;
-                tlist = g_slist_next(tlist);
-                ns->description = (char *)tlist->data;
-                tlist = g_slist_next(tlist);
-        }
-        pthread_mutex_unlock(&mutex);
-        g_slist_free(list);
+  vector<Json::Value> values = config.GetVector("scan_net_segment");
+  for(size_t i = 0; i < values.size(); ++i) {
+    NetSegment* segment = NetSegment::NewFromJsonValue(values[i]);
+    netseg = g_slist_append(netseg, segment);
+  }
 }
 
 /**

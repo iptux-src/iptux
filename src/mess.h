@@ -13,7 +13,9 @@
 #define MESS_H
 
 #include <arpa/inet.h>
+
 #include <gtk/gtk.h>
+#include <json/json.h>
 
 /**
  * 消息来源类型.
@@ -141,12 +143,15 @@ public:
  */
 class NetSegment {
 public:
-        NetSegment();
-        ~NetSegment();
+  NetSegment();
+  ~NetSegment();
 
-        char *startip;  ///< IP起始地址 *
-        char *endip;    ///< IP终止地址 *
-        char *description;      ///< 此IP段描述
+  char *startip;  ///< IP起始地址 *
+  char *endip;    ///< IP终止地址 *
+  char *description;      ///< 此IP段描述
+
+  Json::Value ToJsonValue() const;
+  static NetSegment* NewFromJsonValue(const Json::Value& value);
 };
 
 /***************偶是可爱的分割线(抽象类)*****************/

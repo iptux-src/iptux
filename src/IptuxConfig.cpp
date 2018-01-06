@@ -76,6 +76,34 @@ void IptuxConfig::SetString(const string& key, const string& value) {
 	root[key] = value;
 }
 
+double IptuxConfig::GetDouble(const string& key) const {
+  return root.get(key, 0.0).asDouble();
+}
+
+void IptuxConfig::SetDouble(const string& key, double value) {
+	root[key] = value;
+}
+
+void IptuxConfig::SetVector(const string& key, const vector<Json::Value>& value) {
+  for(size_t i = 0; i < value.size(); ++i) {
+    root[key][int(i)] = value[i];
+  }
+}
+
+vector<Json::Value> IptuxConfig::GetVector(const string& key) const {
+  vector<Json::Value> res;
+  Json::Value value = root[key];
+  if(value.isNull()) {
+    return res;
+  }
+  if(value.isArray()) {
+    for(int i = 0; i < value.size(); ++i) {
+      res.push_back(value[i]);
+    }
+  }
+  return res;
+}
+
 int IptuxConfig::GetTransWindowWidth() const {
 	return transWindowWidth;
 }
