@@ -1,14 +1,10 @@
 language: cpp
-cache:
-  directories:
-    - $HOME/Library/Caches/Homebrew
 os:
   - linux
-  - osx
 compiler:
   - gcc
-  - clang
-script: mkdir build && cd build && cmake .. && make
+script:
+  - docker run -t ubuntu:14.04 uptime
 dist: trusty
 sudo: false
 install:
