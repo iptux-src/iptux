@@ -12,7 +12,6 @@
 #ifndef PROGRAMDATA_H
 #define PROGRAMDATA_H
 
-#include <gconf/gconf-client.h>
 #include "net.h"
 #include "deplib.h"
 #include "IptuxConfig.h"
@@ -66,7 +65,6 @@ public:
         GdkCursor *xcursor, *lcursor;   //光标
         GtkTextTagTable *table; //tag table
 
-        guint cnxnid;           //GConfClient连接ID
         struct timeval timestamp;       //程序数据时间戳
 
 private:
@@ -83,10 +81,7 @@ private:
         void CreateTagTable();
 
         void WriteNetSegment();
-        void ReadNetSegment(GConfClient *client);
-private:
-        static void GconfNotifyFunc(GConfClient *client, guint cnxnid,
-                                 GConfEntry *entry, ProgramData *progdt);
+        void ReadNetSegment();
 };
 
 #endif
