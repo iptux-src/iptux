@@ -87,9 +87,9 @@ void CoreThread::WriteSharedData()
             tlist = g_slist_next(tlist);
         }
         /* 写出数据 */
-        config.SetSharedFileList(sharedFileList);
+        config.SetStringList("shared_file_list", sharedFileList);
         if (!passwd.empty()) {
-            config.SetAccessSharedLimit(passwd);
+          config.SetString("access_shared_limit", passwd);
         }
         config.Save();
 }
@@ -928,8 +928,8 @@ void CoreThread::ReadSharedData()
         struct stat st;
 
         /* 读取共享文件数据 */
-        vector<string> sharedFileList = config.GetSharedFileList();
-        passwd = config.GetAccessSharedLimit().c_str();
+        vector<string> sharedFileList = config.GetStringList("shared_file_list");
+        passwd = g_strdup(config.GetString("access_shared_limit").c_str());
 
         /* 分析数据并加入文件链表 */
         for(size_t i = 0; i < sharedFileList.size(); ++i) {

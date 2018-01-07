@@ -212,14 +212,13 @@ GtkWidget *DialogGroup::CreateMainWindow()
 {
         char buf[MAX_BUFLEN];
         GtkWidget *window;
-        gint width, height;
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
         gtk_window_set_title(GTK_WINDOW(window), buf);
-        width = config.GetGroupWindowWidth();
-        height = config.GetGroupWindowHeight();
-        gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+        gtk_window_set_default_size(GTK_WINDOW(window),
+          config.GetInt("group_window_width", 500),
+          config.GetInt("group_window_height", 350));
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
         g_datalist_set_data(&widset, "window-widget", window);

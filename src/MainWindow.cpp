@@ -550,8 +550,8 @@ GtkWidget *MainWindow::CreateTransWindow()
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
         gtk_window_set_default_size(GTK_WINDOW(window),
-            config.GetTransWindowWidth(),
-            config.GetTransWindowHeight());
+          config.GetInt("trans_window_width", 500),
+          config.GetInt("trans_window_height", 350));
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_container_set_border_width(GTK_CONTAINER(window), 5);
         g_signal_connect_swapped(window, "delete-event",
@@ -580,7 +580,7 @@ GtkWidget *MainWindow::CreateAllArea()
         g_object_set_data(G_OBJECT(paned), "position-name",
                          (gpointer)"mwin-main-paned-divide");
         gtk_paned_set_position(GTK_PANED(paned),
-            config.GetMwinMainPanedDivide());
+          config.GetInt("mwin_main_paned_divide", 210));
         gtk_container_set_border_width(GTK_CONTAINER(paned), 4);
         gtk_box_pack_start(GTK_BOX(box), paned, TRUE, TRUE, 0);
         g_signal_connect(paned, "notify::position",
@@ -2573,10 +2573,9 @@ gboolean MainWindow::TWinConfigureEvent(GtkWidget *window,
                          GdkEventConfigure *event,
                          MainWindow* self)
 {
-    self->config.SetTransWindowWidth(event->width)
-        ->SetTransWindowHeight(event->height)
-        ->Save();
-
+    self->config.SetInt("trans_window_width", event->width);
+    self->config.SetInt("trans_window_height", event->height);
+    self->config.Save();
     return FALSE;
 }
 
@@ -2589,11 +2588,8 @@ gboolean MainWindow::TWinConfigureEvent(GtkWidget *window,
 void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                 MainWindow* self)
 {
-        gint position;
-
-        position = gtk_paned_get_position(GTK_PANED(paned));
-        self->config.SetMwinMainPanedDivide(position)
-            ->Save();
+        self->config.SetInt("mwin_main_paned_divide",gtk_paned_get_position(GTK_PANED(paned)));
+        self->config.Save();
 }
 
 gboolean MainWindow::onDeleteEvent(MainWindow* self) {
