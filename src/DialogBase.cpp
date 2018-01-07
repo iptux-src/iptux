@@ -137,12 +137,10 @@ void DialogBase::OnNewMessageComing()
  */
 void DialogBase::NotifyUser()
 {
-#if GTK_CHECK_VERSION(2,8,0)
     GtkWindow *window;
     window = GTK_WINDOW(g_datalist_get_data(&widset, "window-widget"));
     if (!gtk_window_has_toplevel_focus(window))
         gtk_window_set_urgency_hint(window, TRUE);
-#endif
 }
 
 
@@ -566,10 +564,8 @@ void DialogBase::DialogDestory(DialogBase *dialog)
  */
 gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event)
 {
-#if GTK_CHECK_VERSION(2,8,0)
     if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
         gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
-#endif
     return FALSE;
 }
 

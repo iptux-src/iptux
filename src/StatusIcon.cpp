@@ -64,12 +64,9 @@ void StatusIcon::CreateStatusIcon()
 
         g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), this);
         g_signal_connect(statusicon, "popup-menu", G_CALLBACK(onPopupMenu), NULL);
-#if GTK_CHECK_VERSION(2,16,0)
         g_object_set(statusicon, "has-tooltip", TRUE, NULL);
         g_signal_connect(statusicon, "query-tooltip",
                          G_CALLBACK(StatusIconQueryTooltip), NULL);
-#endif
-        timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 }
 
 /**
@@ -84,48 +81,6 @@ void StatusIcon::AlterStatusIconMode()
                 gtk_status_icon_set_from_stock(statusicon, "iptux-logo-show");
                 g_object_set_data(G_OBJECT(statusicon), "show", GINT_TO_POINTER(TRUE));
         }
-}
-
-/**
- * 更新与状态图标相关的UI.
- * @param sicon 状态图标类
- * @return GLib库所需
- */
-gboolean StatusIcon::UpdateUI(StatusIcon *sicon)
-{
-#if !(GTK_CHECK_VERSION(2,16,0))
-        char *msgstr, *prestr;
-        guint len;
-
-        /* 获取消息串 */
-        g_cthrd->Lock();
-        if ( (len = g_cthrd->GetMsglineItems())) {
-                gtk_status_icon_set_blinking(sicon->statusicon, TRUE);
-                msgstr = g_strdup_printf(_("To be read: %u messages"), len);
-        } else {
-                gtk_status_icon_set_blinking(sicon->statusicon, FALSE);
-                msgstr = get_sys_host_addr_string(g_cthrd->UdpSockQuote());
-                msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
-        }
-        g_cthrd->Unlock();
-        /* 在必要的条件下更改消息串 */
-        prestr = (char *)g_object_get_data(G_OBJECT(sicon->statusicon), "tooltip-text");
-        if (!prestr || strcmp(prestr, msgstr) != 0) {
-                gtk_status_icon_set_tooltip(sicon->statusicon, msgstr);
-                g_object_set_data_full(G_OBJECT(sicon->statusicon), "tooltip-text",
-                                                 msgstr, GDestroyNotify(g_free));
-        } else
-                g_free(msgstr);
-#else
-        g_cthrd->Lock();
-        if (g_cthrd->GetMsglineHeadItem())
-                gtk_status_icon_set_blinking(sicon->statusicon, TRUE);
-        else
-                gtk_status_icon_set_blinking(sicon->statusicon, FALSE);
-        g_cthrd->Unlock();
-#endif
-
-        return TRUE;
 }
 
 /**

@@ -206,10 +206,9 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter)
         while (tmp) {
                 tag = (GtkTextTag *)tmp->data;
                 if ( (url = (gchar *)g_object_get_data(G_OBJECT(tag), "url"))) {
-#if GTK_CHECK_VERSION(2,14,0)
-                        if (!gtk_show_uri(NULL, url, GDK_CURRENT_TIME, NULL))
-#endif
+                        if (!gtk_show_uri(NULL, url, GDK_CURRENT_TIME, NULL)) {
                                 iptux_open_url(url);
+                        }
                         break;
                 }
                 tmp = tmp->next;
