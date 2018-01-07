@@ -28,6 +28,9 @@
 
 using namespace std;
 
+static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
+static const char* CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
+
 /**
  * 类构造函数.
  */
@@ -87,9 +90,9 @@ void CoreThread::WriteSharedData()
             tlist = g_slist_next(tlist);
         }
         /* 写出数据 */
-        config.SetStringList("shared_file_list", sharedFileList);
+        config.SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
         if (!passwd.empty()) {
-          config.SetString("access_shared_limit", passwd);
+          config.SetString(CONFIG_ACCESS_SHARED_LIMIT, passwd);
         }
         config.Save();
 }
@@ -928,8 +931,8 @@ void CoreThread::ReadSharedData()
         struct stat st;
 
         /* 读取共享文件数据 */
-        vector<string> sharedFileList = config.GetStringList("shared_file_list");
-        passwd = g_strdup(config.GetString("access_shared_limit").c_str());
+        vector<string> sharedFileList = config.GetStringList(CONFIG_SHARED_FILE_LIST);
+        passwd = g_strdup(config.GetString(CONFIG_ACCESS_SHARED_LIMIT).c_str());
 
         /* 分析数据并加入文件链表 */
         for(size_t i = 0; i < sharedFileList.size(); ++i) {
