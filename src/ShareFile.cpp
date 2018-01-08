@@ -48,7 +48,7 @@ void ShareFile::ShareEntry(GtkWidget *parent)
 
         /* 创建对话框 */
         dialog = sfile.CreateMainDialog(parent);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox),
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                          sfile.CreateAllArea(), TRUE, TRUE, 0);
 
         /* 运行对话框 */
@@ -541,10 +541,8 @@ void ShareFile::DragDataReceived(ShareFile *sfile, GdkDragContext *context,
                                  guint info, guint time)
 {
         GSList *list;
-
-        if (data->length <= 0 || data->format != 8) {
-                gtk_drag_finish(context, FALSE, FALSE, time);
-                return;
+        if(!ValidateDragData(data, context, time)) {
+          return;
         }
 
         list = selection_data_get_path(data);

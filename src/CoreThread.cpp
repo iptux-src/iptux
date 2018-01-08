@@ -37,7 +37,7 @@ static const char* CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 CoreThread::CoreThread(IptuxConfig& config):
     config(config),
     tcpsock(-1), udpsock(-1), server(true),
- pallist(NULL), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
+ pallist(nullptr), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
  blacklist(NULL), pbn(1), prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL),
  ecsList(NULL)
 {

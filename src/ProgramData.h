@@ -32,7 +32,7 @@
 */
 class ProgramData {
 public:
-        ProgramData(IptuxConfig& config);
+        explicit ProgramData(IptuxConfig& config);
         ~ProgramData();
 
         void InitSublayer();

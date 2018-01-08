@@ -594,9 +594,8 @@ void DialogPeer::DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
         GSList *list, *flist, *tlist;
         gint position;
 
-        if (data->length <= 0 || data->format != 8) {
-                gtk_drag_finish(context, FALSE, FALSE, time);
-                return;
+        if(!ValidateDragData(data, context, time)) {
+          return;
         }
 
         /* 获取(text-buffer)的当前插入点 */

@@ -56,7 +56,9 @@ void DataSettings::ResetDataEntry(GtkWidget *parent)
         note = gtk_notebook_new();
         gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_LEFT);
         gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), note, TRUE, TRUE, 0);
+        gtk_box_pack_start(
+          GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+          note, TRUE, TRUE, 0);
         label = gtk_label_new(_("Personal"));
         gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
         label = gtk_label_new(_("System"));

@@ -130,7 +130,7 @@ GtkWidget *HelpDialog::CreateMoreDialog()
 
         frame = gtk_frame_new(NULL);
         gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), frame, TRUE, TRUE, 0);
         gtk_container_set_border_width(GTK_CONTAINER(frame), 3);
 
         notebook = gtk_notebook_new();

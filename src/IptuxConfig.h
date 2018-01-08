@@ -7,7 +7,7 @@
 
 class IptuxConfig {
 public:
-	IptuxConfig(std::string& fname);
+	explicit IptuxConfig(std::string& fname);
 	~IptuxConfig();
 
 	int GetInt(const std::string& key) const;

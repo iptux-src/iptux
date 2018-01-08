@@ -586,9 +586,8 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
         GtkWidget *widget;
         GSList *list;
 
-        if (data->length <= 0 || data->format != 8) {
-                gtk_drag_finish(context, FALSE, FALSE, time);
-                return;
+        if(!ValidateDragData(data, context, time)) {
+          return;
         }
 
         list = selection_data_get_path(data);   //获取所有文件

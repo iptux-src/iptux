@@ -63,7 +63,7 @@ bool pop_request_shared_file(PalInfo *pal)
         gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
         box = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), box, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), box, TRUE, TRUE, 0);
 
         image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
         gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
@@ -110,7 +110,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal)
         frame = gtk_frame_new(_("Please input the password for "
                                  "the shared files behind"));
         gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), frame, FALSE, FALSE, 0);
         box = gtk_hbox_new(FALSE, 0);
         gtk_container_add(GTK_CONTAINER(frame), box);
 
@@ -168,7 +168,7 @@ char *pop_password_settings(GtkWidget *parent)
         gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
         hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox,
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), hbox,
                                                    FALSE, FALSE, 0);
         passwd = gtk_label_new(_("Password: "));
         gtk_box_pack_start(GTK_BOX(hbox), passwd, FALSE, FALSE, 0);
@@ -177,7 +177,7 @@ char *pop_password_settings(GtkWidget *parent)
         gtk_entry_set_visibility(GTK_ENTRY(passwd), FALSE);
         gtk_box_pack_start(GTK_BOX(hbox), passwd, TRUE, TRUE, 0);
         hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), hbox, FALSE, FALSE, 0);
         repeat = gtk_label_new(_("Repeat: "));
         gtk_box_pack_start(GTK_BOX(hbox), repeat, FALSE, FALSE, 0);
         repeat = gtk_entry_new();

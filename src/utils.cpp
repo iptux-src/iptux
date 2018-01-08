@@ -603,3 +603,12 @@ void FLAG_SET(uint8_t& num, int bit, bool value) {
     ((num)&=(~(1<<(bit))));
   }
 }
+
+bool ValidateDragData(GtkSelectionData* data, GdkDragContext* context, guint time) {
+  if (gtk_selection_data_get_length(data) <= 0
+      || gtk_selection_data_get_format(data) != 8) {
+    gtk_drag_finish(context, FALSE, FALSE, time);
+    return false;
+  }
+  return true;
+}

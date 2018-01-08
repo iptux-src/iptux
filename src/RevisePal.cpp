@@ -50,7 +50,7 @@ void RevisePal::ReviseEntry(PalInfo *pal)
 
         /* 创建对话框 */
         dialog = rpal.CreateMainDialog();
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox),
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                          rpal.CreateAllArea(), TRUE, TRUE, 0);
         rpal.SetAllValue();
 

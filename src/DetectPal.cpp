@@ -44,7 +44,7 @@ void DetectPal::DetectEntry(GtkWidget *parent)
 
         /* 创建对话框窗体 */
         dialog = dpal.CreateMainDialog(parent);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox),
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                          dpal.CreateInputArea(), TRUE, TRUE, 0);
 
         /* 运行对话框 */

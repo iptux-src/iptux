@@ -303,7 +303,7 @@ gboolean textview_motion_notify_event(GtkWidget *textview, GdkEventMotion *event
         gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                  GTK_TEXT_WINDOW_WIDGET, event->x, event->y, &x, &y);
         textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, *g_progdt);
-        gdk_window_get_pointer(textview->window, NULL, NULL, NULL);
+        gdk_window_get_pointer(gtk_widget_get_window(textview), NULL, NULL, NULL);
 
         return FALSE;
 }
@@ -312,7 +312,7 @@ gboolean textview_visibility_notify_event(GtkWidget *textview, GdkEventVisibilit
 {
         gint wx, wy, bx, by;
 
-        gdk_window_get_pointer(textview->window, &wx, &wy, NULL);
+        gdk_window_get_pointer(gtk_widget_get_window(textview), &wx, &wy, NULL);
         gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                          GTK_TEXT_WINDOW_WIDGET, wx, wy, &bx, &by);
         textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by, *g_progdt);
