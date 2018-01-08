@@ -18,6 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "config.h"
+
+#include <string>
+
+#include <libintl.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "StatusIcon.h"
@@ -25,15 +30,47 @@
 #include "LogSystem.h"
 #include "SoundSystem.h"
 #include "support.h"
-ProgramData progdt;
-CoreThread cthrd;
-StatusIcon sicon;
-MainWindow mwin;
-LogSystem lgsys;
-SoundSystem sndsys;
+
+using namespace std;
+
+ProgramData* g_progdt;
+CoreThread* g_cthrd;
+MainWindow* g_mwin;
+SoundSystem* g_sndsys;
+LogSystem* g_lgsys;
+
+string getConfigPath() {
+        const char* res1 =  g_build_path("/",
+                g_getenv("HOME"),
+                ".iptux",
+                "config.json",
+                NULL
+                );
+        string res2(res1);
+        g_free(gpointer(res1));
+        return res2;
+}
 
 int main(int argc, char *argv[])
 {
+  string configPath = getConfigPath();
+  IptuxConfig config(configPath);
+  ProgramData progdt(config);
+  MainWindow mwin(config, progdt);
+  CoreThread cthrd(config);
+  StatusIcon sicon(config, mwin);
+  LogSystem lgsys;
+  SoundSystem sndsys;
+
+  g_progdt = &progdt;
+  g_cthrd = &cthrd;
+  g_mwin = &mwin;
+  g_sndsys = &sndsys;
+  g_lgsys = &lgsys;
+
+
+  mwin.SetStatusIcon(&sicon);
+
         setlocale(LC_ALL, "");
         bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");

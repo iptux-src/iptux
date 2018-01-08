@@ -9,10 +9,16 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "SendFileData.h"
+
+#include <fcntl.h>
 #include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "SendFileData.h"
+#include <inttypes.h>
+
 #include "ProgramData.h"
 #include "MainWindow.h"
 #include "LogSystem.h"
@@ -20,10 +26,7 @@
 #include "AnalogFS.h"
 #include "wrapper.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern MainWindow mwin;
-extern LogSystem lgsys;
-extern SoundSystem sndsys;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -54,9 +57,9 @@ void SendFileData::SendFileDataEntry()
         /* 创建UI参考数据，并将数据主动加入UI */
         gdk_threads_enter();
         CreateUIPara();
-        mwin.UpdateItemToTransTree(&para);
-        if (FLAG_ISSET(progdt.flags, 5))
-                mwin.OpenTransWindow();
+        g_mwin->UpdateItemToTransTree(&para);
+        if (FLAG_ISSET(g_progdt->flags, 5))
+                g_mwin->OpenTransWindow();
         gdk_threads_leave();
 
         /* 分类处理 */
@@ -74,12 +77,12 @@ void SendFileData::SendFileDataEntry()
         /* 主动更新UI */
         gdk_threads_enter();
         UpdateUIParaToOver();
-        mwin.UpdateItemToTransTree(&para);
+        g_mwin->UpdateItemToTransTree(&para);
         gdk_threads_leave();
 
         /* 处理成功则播放提示音 */
-        if (!terminate && FLAG_ISSET(progdt.sndfgs, 2))
-                sndsys.Playing(progdt.transtip);
+        if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
+                g_sndsys->Playing(g_progdt->transtip);
 }
 
 /**
@@ -159,10 +162,10 @@ void SendFileData::SendRegularFile()
         /* 考察处理结果 */
         if (finishsize < file->filesize) {
                 terminate = true;
-                lgsys.SystemLog(_("Failed to send the file \"%s\" to %s!"),
+                g_lgsys->SystemLog(_("Failed to send the file \"%s\" to %s!"),
                                          file->filepath, file->fileown->name);
         } else {
-                lgsys.SystemLog(_("Send the file \"%s\" to %s successfully!"),
+                g_lgsys->SystemLog(_("Send the file \"%s\" to %s successfully!"),
                                          file->filepath, file->fileown->name);
         }
 }
@@ -287,10 +290,10 @@ end:    if (!result) {
                 /* 关闭堆栈中所有的目录流，并清空堆栈 */
                 g_queue_foreach(&dirstack, GFunc(closedir), NULL);
                 g_queue_clear(&dirstack);
-                lgsys.SystemLog(_("Failed to send the directory \"%s\" to %s!"),
+                g_lgsys->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
                                          file->filepath, file->fileown->name);
         } else {
-                lgsys.SystemLog(_("Send the directory \"%s\" to %s successfully!"),
+                g_lgsys->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
                                          file->filepath, file->fileown->name);
         }
 }

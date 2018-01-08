@@ -9,8 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "DataSettings.h"
+
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "SoundSystem.h"
@@ -18,8 +19,10 @@
 #include "output.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern SoundSystem sndsys;
+#include "ipmsg.h"
+#include "global.h"
+
+using namespace std;
 
 /**
  * 类构造函数.
@@ -53,7 +56,9 @@ void DataSettings::ResetDataEntry(GtkWidget *parent)
         note = gtk_notebook_new();
         gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_LEFT);
         gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), note, TRUE, TRUE, 0);
+        gtk_box_pack_start(
+          GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+          note, TRUE, TRUE, 0);
         label = gtk_label_new(_("Personal"));
         gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
         label = gtk_label_new(_("System"));
@@ -83,7 +88,7 @@ mark:   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
                 dset.ObtainSoundValue();
 #endif
                 dset.ObtainNetworkValue();
-                progdt.WriteProgData();
+                g_progdt->WriteProgData();
                 CoreThread::UpdateMyInfo();
                 break;
         case GTK_RESPONSE_APPLY:
@@ -93,7 +98,7 @@ mark:   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
                 dset.ObtainSoundValue();
 #endif
                 dset.ObtainNetworkValue();
-                progdt.WriteProgData();
+                g_progdt->WriteProgData();
                 CoreThread::UpdateMyInfo();
                 goto mark;
         default:
@@ -512,15 +517,15 @@ void DataSettings::SetPersonalValue()
         gint active;
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
-        gtk_entry_set_text(GTK_ENTRY(widget), progdt.nickname);
+        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->nickname.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "mygroup-entry-widget"));
-        gtk_entry_set_text(GTK_ENTRY(widget), progdt.mygroup);
+        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->mygroup.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "myicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
-        active = IconfileGetItemPos(model, progdt.myicon);
+        active = IconfileGetItemPos(model, g_progdt->myicon.c_str());
         gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "archive-chooser-widget"));
-        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), progdt.path);
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), g_progdt->path.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "photo-image-widget"));
         snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", g_get_user_config_dir());
         if ( (pixbuf = gdk_pixbuf_new_from_file_at_size(path, MAX_PREVIEWSIZE,
@@ -530,7 +535,7 @@ void DataSettings::SetPersonalValue()
         }
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sign-textview-widget"));
         buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-        gtk_text_buffer_set_text(buffer, progdt.sign, -1);
+        gtk_text_buffer_set_text(buffer, g_progdt->sign.c_str(), -1);
 }
 
 /**
@@ -543,39 +548,39 @@ void DataSettings::SetSystemValue()
         gint active;
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
-        gtk_entry_set_text(GTK_ENTRY(widget), progdt.codeset);
+        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->codeset.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "encode-entry-widget"));
-        gtk_entry_set_text(GTK_ENTRY(widget), progdt.encode);
+        gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->encode.c_str());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "palicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
-        active = IconfileGetItemPos(model, progdt.palicon);
+        active = IconfileGetItemPos(model, g_progdt->palicon);
         gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
-        gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), progdt.font);
+        gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), g_progdt->font);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                     FLAG_ISSET(progdt.flags, 7));
+                                     FLAG_ISSET(g_progdt->flags, 7));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 6));
+                                 FLAG_ISSET(g_progdt->flags, 6));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "transmission-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 5));
+                                 FLAG_ISSET(g_progdt->flags, 5));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "enterkey-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 4));
+                                 FLAG_ISSET(g_progdt->flags, 4));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 3));
+                                 FLAG_ISSET(g_progdt->flags, 3));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "log-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 2));
+                                 FLAG_ISSET(g_progdt->flags, 2));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "blacklist-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 1));
+                                 FLAG_ISSET(g_progdt->flags, 1));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.flags, 0));
+                                 FLAG_ISSET(g_progdt->flags, 0));
 }
 
 /**
@@ -591,10 +596,10 @@ void DataSettings::SetSoundValue()
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-check-widget"));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(progdt.sndfgs, 0));
+                                 FLAG_ISSET(g_progdt->sndfgs, 0));
         gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(widget));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "volume-hscale-widget"));
-        gtk_range_set_value(GTK_RANGE(widget), progdt.volume);
+        gtk_range_set_value(GTK_RANGE(widget), g_progdt->volume);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-treeview-widget"));
         selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
         if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
@@ -706,14 +711,14 @@ void DataSettings::FillSndModel(GtkTreeModel *model)
 
         gtk_list_store_append(GTK_LIST_STORE(model), &iter);
         gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-                         0, FLAG_ISSET(progdt.sndfgs, 2),
+                         0, FLAG_ISSET(g_progdt->sndfgs, 2),
                          1, _("Transfer finished"),
-                         2, progdt.transtip, -1);
+                         2, g_progdt->transtip, -1);
         gtk_list_store_append(GTK_LIST_STORE(model), &iter);
         gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-                         0, FLAG_ISSET(progdt.sndfgs, 1),
+                         0, FLAG_ISSET(g_progdt->sndfgs, 1),
                          1, _("Message received"),
-                         2, progdt.msgtip, -1);
+                         2, g_progdt->msgtip, -1);
 }
 
 /**
@@ -727,7 +732,7 @@ void DataSettings::FillNetworkModel(GtkTreeModel *model)
         GSList *tlist;
         NetSegment *pns;
 
-        tlist = progdt.netseg;
+        tlist = g_progdt->netseg;
         while (tlist) {
                 pns = (NetSegment *)tlist->data;
                 gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -905,16 +910,15 @@ void DataSettings::ObtainPersonalValue()
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
         if (*(text = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
-                g_free(progdt.nickname);
-                progdt.nickname = g_strdup(text);
+                g_progdt->nickname = text;
         }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "mygroup-entry-widget"));
         if (*(text = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
-                g_free(progdt.mygroup);
-                progdt.mygroup = g_strdup(text);
-        } else
-                *progdt.mygroup = '\0';
+                g_progdt->mygroup = text;
+        } else {
+                g_progdt->mygroup = "";
+        }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "myicon-combo-widget"));
         model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
@@ -923,36 +927,32 @@ void DataSettings::ObtainPersonalValue()
             snprintf(path, MAX_PATHLEN, "%d", active);
             gtk_tree_model_get_iter_from_string(model, &iter, path);
             gtk_tree_model_get(model, &iter, 1, &file, -1);
-            if (strcmp(progdt.myicon, file) != 0) {
+            if (strcmp(g_progdt->myicon.c_str(), file) != 0) {
                     snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
                     if (access(path, F_OK) != 0) {
                             g_free(file);
-                            g_free(progdt.myicon);
-                            progdt.myicon = g_strdup("my-icon");
+                            g_progdt->myicon = "my-icon";
                             snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon",
                                                      g_get_user_config_dir());
                             gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
                             gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-                            gtk_icon_theme_add_builtin_icon(progdt.myicon,
+                            gtk_icon_theme_add_builtin_icon(g_progdt->myicon.c_str(),
                                                      MAX_ICONSIZE, pixbuf);
                             g_object_unref(pixbuf);
                     } else {
-                            g_free(progdt.myicon);
-                            progdt.myicon = file;
+                            g_progdt->myicon = file;
                     }
             } else
                     g_free(file);
         }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "archive-chooser-widget"));
-        g_free(progdt.path);
-        progdt.path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
+        g_progdt->path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sign-textview-widget"));
         buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
         gtk_text_buffer_get_bounds(buffer, &start, &end);
-        g_free(progdt.sign);
-        progdt.sign = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+        g_progdt->sign = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 }
 
 /**
@@ -972,8 +972,7 @@ void DataSettings::ObtainSystemValue()
         text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
         g_strstrip(text);
         if (*text != '\0') {
-                g_free(progdt.codeset);
-                progdt.codeset = text;
+                g_progdt->codeset = text;
         } else
                 g_free(text);
 
@@ -981,8 +980,7 @@ void DataSettings::ObtainSystemValue()
         text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
         g_strstrip(text);
         if (*text != '\0') {
-                g_free(progdt.encode);
-                progdt.encode =text;
+                g_progdt->encode =text;
         } else
                 g_free(text);
 
@@ -993,78 +991,78 @@ void DataSettings::ObtainSystemValue()
             snprintf(path, MAX_PATHLEN, "%d", active);
             gtk_tree_model_get_iter_from_string(model, &iter, path);
             gtk_tree_model_get(model, &iter, 1, &file, -1);
-            if (strcmp(progdt.palicon, file) != 0) {
+            if (strcmp(g_progdt->palicon, file) != 0) {
                     snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
                     if (access(path, F_OK) != 0) {
                             g_free(file);
-                            g_free(progdt.palicon);
-                            progdt.palicon = g_strdup("pal-icon");
+                            g_free(g_progdt->palicon);
+                            g_progdt->palicon = g_strdup("pal-icon");
                             snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/pal-icon",
                                                      g_get_user_config_dir());
                             gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
                             gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-                            gtk_icon_theme_add_builtin_icon(progdt.palicon,
+                            gtk_icon_theme_add_builtin_icon(g_progdt->palicon,
                                                      MAX_ICONSIZE, pixbuf);
                             g_object_unref(pixbuf);
                     } else {
-                            g_free(progdt.palicon);
-                            progdt.palicon = file;
+                            g_free(g_progdt->palicon);
+                            g_progdt->palicon = file;
                     }
             } else
                     g_free(file);
         }
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
-        g_free(progdt.font);
-        progdt.font = g_strdup(gtk_font_button_get_font_name(GTK_FONT_BUTTON(widget)));
+        g_free(g_progdt->font);
+        g_progdt->font = g_strdup(gtk_font_button_get_font_name(GTK_FONT_BUTTON(widget)));
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-            FLAG_SET(progdt.flags, 7);
+            FLAG_SET(g_progdt->flags, 7);
         else
-            FLAG_CLR(progdt.flags, 7);
+            FLAG_CLR(g_progdt->flags, 7);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 6);
+                FLAG_SET(g_progdt->flags, 6);
         else
-                FLAG_CLR(progdt.flags, 6);
+                FLAG_CLR(g_progdt->flags, 6);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "transmission-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 5);
+                FLAG_SET(g_progdt->flags, 5);
         else
-                FLAG_CLR(progdt.flags, 5);
+                FLAG_CLR(g_progdt->flags, 5);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "enterkey-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 4);
+                FLAG_SET(g_progdt->flags, 4);
         else
-                FLAG_CLR(progdt.flags, 4);
+                FLAG_CLR(g_progdt->flags, 4);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 3);
+                FLAG_SET(g_progdt->flags, 3);
         else
-                FLAG_CLR(progdt.flags, 3);
+                FLAG_CLR(g_progdt->flags, 3);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "log-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 2);
+                FLAG_SET(g_progdt->flags, 2);
         else
-                FLAG_CLR(progdt.flags, 2);
+                FLAG_CLR(g_progdt->flags, 2);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "blacklist-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 1);
+                FLAG_SET(g_progdt->flags, 1);
         else
-                FLAG_CLR(progdt.flags, 1);
+                FLAG_CLR(g_progdt->flags, 1);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.flags, 0);
+                FLAG_SET(g_progdt->flags, 0);
         else
-                FLAG_CLR(progdt.flags, 0);
+                FLAG_CLR(g_progdt->flags, 0);
 }
 
 /**
@@ -1080,12 +1078,12 @@ void DataSettings::ObtainSoundValue()
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-check-widget"));
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(progdt.sndfgs, 0);
+                FLAG_SET(g_progdt->sndfgs, 0);
         else
-                FLAG_CLR(progdt.sndfgs, 0);
+                FLAG_CLR(g_progdt->sndfgs, 0);
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "volume-hscale-widget"));
-        progdt.volume = gtk_range_get_value(GTK_RANGE(widget));
+        g_progdt->volume = gtk_range_get_value(GTK_RANGE(widget));
 
         /**
          * @see ::FillSndModel()，数据的获取应该与其保持一致.
@@ -1096,20 +1094,20 @@ void DataSettings::ObtainSoundValue()
         gtk_tree_model_get_iter_from_string(model, &iter, "0");
         gtk_tree_model_get(model, &iter, 0, &active, 2, &path, -1);
         if (active)
-                FLAG_SET(progdt.sndfgs, 2);
+                FLAG_SET(g_progdt->sndfgs, 2);
         else
-                FLAG_CLR(progdt.sndfgs, 2);
-        g_free(progdt.transtip);
-        progdt.transtip = path;
+                FLAG_CLR(g_progdt->sndfgs, 2);
+        g_free(g_progdt->transtip);
+        g_progdt->transtip = path;
         /*/* 获取有消息到来的声音信息 */
         gtk_tree_model_get_iter_from_string(model, &iter, "1");
         gtk_tree_model_get(model, &iter, 0, &active, 2, &path, -1);
         if (active)
-                FLAG_SET(progdt.sndfgs, 1);
+                FLAG_SET(g_progdt->sndfgs, 1);
         else
-                FLAG_CLR(progdt.sndfgs, 1);
-        g_free(progdt.msgtip);
-        progdt.msgtip = path;
+                FLAG_CLR(g_progdt->sndfgs, 1);
+        g_free(g_progdt->msgtip);
+        g_progdt->msgtip = path;
 }
 
 /**
@@ -1125,20 +1123,20 @@ void DataSettings::ObtainNetworkValue()
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-        pthread_mutex_lock(&progdt.mutex);
-        for (tlist = progdt.netseg; tlist; tlist = g_slist_next(tlist))
+        g_progdt->Lock();
+        for (tlist = g_progdt->netseg; tlist; tlist = g_slist_next(tlist))
                 delete (NetSegment *)tlist->data;
-        g_slist_free(progdt.netseg);
-        progdt.netseg = NULL;
+        g_slist_free(g_progdt->netseg);
+        g_progdt->netseg = NULL;
         if (gtk_tree_model_get_iter_first(model, &iter)) {
                 do {
                         ns = new NetSegment;
                         gtk_tree_model_get(model, &iter, 0, &ns->startip,
                                  1, &ns->endip, 2, &ns->description, -1);
-                        progdt.netseg = g_slist_append(progdt.netseg, ns);
+                        g_progdt->netseg = g_slist_append(g_progdt->netseg, ns);
                 } while (gtk_tree_model_iter_next(model, &iter));
         }
-        pthread_mutex_unlock(&progdt.mutex);
+        g_progdt->Unlock();
 }
 
 /**
@@ -1401,7 +1399,7 @@ void DataSettings::AdjustVolume(GtkWidget *hscale)
         gdouble value;
 
         value = gtk_range_get_value(GTK_RANGE(hscale));
-        sndsys.AdjustVolume(value);
+        g_sndsys->AdjustVolume(value);
 }
 
 /**
@@ -1455,7 +1453,7 @@ void DataSettings::PlayTesting(GData **widset)
 
         widget = GTK_WIDGET(g_datalist_get_data(widset, "sound-chooser-widget"));
         path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-        sndsys.Playing(path);
+        g_sndsys->Playing(path);
         g_free(path);
 }
 
@@ -1464,7 +1462,7 @@ void DataSettings::PlayTesting(GData **widset)
  */
 void DataSettings::StopTesting()
 {
-        sndsys.Stop();
+        g_sndsys->Stop();
 }
 
 /**

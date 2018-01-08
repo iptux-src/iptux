@@ -12,13 +12,13 @@
 //
 //
 #include "CoreThread.h"
+
 #include "RecvFile.h"
 #include "RecvFileData.h"
 #include "ProgramData.h"
 #include "callback.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -66,7 +66,7 @@ void RecvFile::ParseFilePara(GData **para)
                 file = DivideFileinfo(&extra);
                 file->packetn = packetn;
                 file->fileown = pal;
-                cthrd.PushItemToEnclosureList(file);
+                g_cthrd->PushItemToEnclosureList(file);
         }
 }
 

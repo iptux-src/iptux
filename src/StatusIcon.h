@@ -13,29 +13,39 @@
 #define STATUSICON_H
 
 #include "mess.h"
+#include "IptuxConfig.h"
+#include "MainWindow.h"
 
 class StatusIcon {
 public:
-        StatusIcon();
-        ~StatusIcon();
+  StatusIcon(IptuxConfig& config, MainWindow& mwin);
+  ~StatusIcon();
 
-        void CreateStatusIcon();
+  void CreateStatusIcon();
 	gboolean IsEmbedded();
-        void AlterStatusIconMode();
+  void AlterStatusIconMode();
+  gboolean AlterInterfaceMode();
 private:
-        GtkStatusIcon *statusicon;
-        guint timerid;
+  IptuxConfig& config;
+  MainWindow& mwin;
+  GtkStatusIcon *statusicon;
+  guint timerid;
 	gboolean embedded;
+
 private:
-        static gboolean UpdateUI(StatusIcon *sicon);
-        static GtkWidget *CreatePopupMenu(GtkStatusIcon *statusicon);
+  ProgramData& getProgramData() {
+    return mwin.GetProgramData();
+  }
+  static gboolean UpdateUI(StatusIcon *sicon);
+  GtkWidget* CreatePopupMenu();
 //回调处理部分
 private:
-        static void ShowTransWindow();
-        static void StatusIconActivate();
-        static void PopupWorkMenu(GtkStatusIcon *statusicon, guint button, guint time);
-        static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
-                                                 gboolean key, GtkTooltip *tooltip);
+  static void ShowTransWindow(StatusIcon* self);
+  static void StatusIconActivate(StatusIcon* self);
+  static void onPopupMenu(GtkStatusIcon *statusicon, guint button, guint time, StatusIcon* self);
+  static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
+                                            gboolean key, GtkTooltip *tooltip);
+  static gboolean onActivate(StatusIcon* self);
 };
 
 #endif

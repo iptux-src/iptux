@@ -10,8 +10,12 @@
 // Copyright: See COPYING file that comes with this distribution
 // 2012.02 在接收消息中去掉了群组模式，群组模式只用来发消息
 //
-#include "config.h"
 #include "UdpData.h"
+
+#include <inttypes.h>
+#include <fcntl.h>
+
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -24,15 +28,15 @@
 #include "wrapper.h"
 #include "dialog.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern SoundSystem sndsys;
+#include "global.h"
+
+using namespace std;
 
 /**
  * 类构造函数.
  */
-UdpData::UdpData():ipv4(0), size(0), encode(NULL)
+UdpData::UdpData(IptuxConfig& config)
+        :config(config),ipv4(0), size(0), encode(NULL)
 {
 }
 
@@ -50,9 +54,9 @@ UdpData::~UdpData()
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(in_addr_t ipv4, const char buf[], size_t size)
+void UdpData::UdpDataEntry(IptuxConfig& config, in_addr_t ipv4, const char buf[], size_t size)
 {
-        UdpData udata;
+        UdpData udata(config);
 
         udata.ipv4 = ipv4;
         udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
@@ -71,7 +75,7 @@ void UdpData::DispatchUdpData()
 
         /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
         /* 嘿嘿，那就不要怪偶心狠手辣了 */
-        if (FLAG_ISSET(progdt.flags, 1) && cthrd.BlacklistContainItem(ipv4))
+        if (FLAG_ISSET(g_progdt->flags, 1) && g_cthrd->BlacklistContainItem(ipv4))
                 return;
 
         /* 决定消息去向 */
@@ -124,7 +128,7 @@ void UdpData::SomeoneLost()
         /* 创建好友数据 */
         pal = new PalInfo;
         pal->ipv4 = ipv4;
-        pal->segdes = progdt.FindNetSegDescription(ipv4);
+        pal->segdes = g_progdt->FindNetSegDescription(ipv4);
         if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
                 pal->version = g_strdup("?");
         if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
@@ -135,7 +139,7 @@ void UdpData::SomeoneLost()
         pal->group = g_strdup(_("mysterious"));
         pal->photo = NULL;
         pal->sign = NULL;
-        pal->iconfile = g_strdup(progdt.palicon);
+        pal->iconfile = g_strdup(g_progdt->palicon);
         pal->encode = g_strdup(encode ? encode : "utf-8");
         FLAG_SET(pal->flags, 1);
         pal->packetn = 0;
@@ -143,10 +147,10 @@ void UdpData::SomeoneLost()
 
         /* 加入好友列表 */
         gdk_threads_enter();
-        pthread_mutex_lock(cthrd.GetMutex());
-        cthrd.AttachPalToList(pal);
-        pthread_mutex_unlock(cthrd.GetMutex());
-        mwin.AttachItemToPaltree(ipv4);
+        g_cthrd->Lock();
+        g_cthrd->AttachPalToList(pal);
+        g_cthrd->Unlock();
+        g_mwin->AttachItemToPaltree(ipv4);
         gdk_threads_leave();
 }
 
@@ -160,27 +164,27 @@ void UdpData::SomeoneEntry()
         PalInfo *pal;
 
         /* 转换缓冲区数据编码 */
-        ConvertEncode(progdt.encode);
+        ConvertEncode(g_progdt->encode);
 
         /* 加入或更新好友列表 */
         gdk_threads_enter();
-        pthread_mutex_lock(cthrd.GetMutex());
-        if ( (pal = cthrd.GetPalFromList(ipv4))) {
+        g_cthrd->Lock();
+        if ( (pal = g_cthrd->GetPalFromList(ipv4))) {
                 UpdatePalInfo(pal);
-                cthrd.UpdatePalToList(ipv4);
+                g_cthrd->UpdatePalToList(ipv4);
         } else {
                 pal = CreatePalInfo();
-                cthrd.AttachPalToList(pal);
+                g_cthrd->AttachPalToList(pal);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
-        if (mwin.PaltreeContainItem(ipv4))
-                mwin.UpdateItemToPaltree(ipv4);
+        g_cthrd->Unlock();
+        if (g_mwin->PaltreeContainItem(ipv4))
+                g_mwin->UpdateItemToPaltree(ipv4);
         else
-                mwin.AttachItemToPaltree(ipv4);
+                g_mwin->AttachItemToPaltree(ipv4);
         gdk_threads_leave();
 
         /* 通知好友本大爷在线 */
-        cmd.SendAnsentry(cthrd.UdpSockQuote(), pal);
+        cmd.SendAnsentry(g_cthrd->UdpSockQuote(), pal);
         if (FLAG_ISSET(pal->flags, 0)) {
                 pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
                 pthread_detach(pid);
@@ -196,14 +200,14 @@ void UdpData::SomeoneExit()
 
         /* 从好友链表中删除 */
         gdk_threads_enter();
-        if (mwin.PaltreeContainItem(ipv4))
-                mwin.DelItemFromPaltree(ipv4);
-        pthread_mutex_lock(cthrd.GetMutex());
-        if ( (pal = cthrd.GetPalFromList(ipv4))) {
-                cthrd.DelPalFromList(ipv4);
+        if (g_mwin->PaltreeContainItem(ipv4))
+                g_mwin->DelItemFromPaltree(ipv4);
+        g_cthrd->Lock();
+        if ( (pal = g_cthrd->GetPalFromList(ipv4))) {
+                g_cthrd->DelPalFromList(ipv4);
                 FLAG_CLR(pal->flags, 1);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->Unlock();
         gdk_threads_leave();
 }
 
@@ -220,31 +224,31 @@ void UdpData::SomeoneAnsentry()
         /* 若好友不兼容iptux协议，则需转码 */
         ptr = iptux_skip_string(buf, size, 3);
         if (!ptr || *ptr == '\0')
-                ConvertEncode(progdt.encode);
+                ConvertEncode(g_progdt->encode);
 
         /* 加入或更新好友列表 */
         gdk_threads_enter();
-        pthread_mutex_lock(cthrd.GetMutex());
-        if ( (pal = cthrd.GetPalFromList(ipv4))) {
+        g_cthrd->Lock();
+        if ( (pal = g_cthrd->GetPalFromList(ipv4))) {
                 UpdatePalInfo(pal);
-                cthrd.UpdatePalToList(ipv4);
+                g_cthrd->UpdatePalToList(ipv4);
         } else {
                 pal = CreatePalInfo();
-                cthrd.AttachPalToList(pal);
+                g_cthrd->AttachPalToList(pal);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
-        if (mwin.PaltreeContainItem(ipv4))
-                mwin.UpdateItemToPaltree(ipv4);
+        g_cthrd->Unlock();
+        if (g_mwin->PaltreeContainItem(ipv4))
+                g_mwin->UpdateItemToPaltree(ipv4);
         else
-                mwin.AttachItemToPaltree(ipv4);
+                g_mwin->AttachItemToPaltree(ipv4);
         gdk_threads_leave();
 
         /* 更新本大爷的数据信息 */
         if (FLAG_ISSET(pal->flags, 0)) {
                 pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
                 pthread_detach(pid);
-        } else if (strcasecmp(progdt.encode, pal->encode) != 0)
-                cmd.SendAnsentry(cthrd.UdpSockQuote(), pal);
+        } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0)
+                cmd.SendAnsentry(g_cthrd->UdpSockQuote(), pal);
 }
 
 /**
@@ -256,26 +260,32 @@ void UdpData::SomeoneAbsence()
         const char *ptr;
 
         /* 若好友不兼容iptux协议，则需转码 */
-        pal = cthrd.GetPalFromList(ipv4);       //利用好友链表只增不减的特性，无须加锁
+        pal = g_cthrd->GetPalFromList(ipv4);       //利用好友链表只增不减的特性，无须加锁
         ptr = iptux_skip_string(buf, size, 3);
-        if (!ptr || *ptr == '\0')
-                ConvertEncode(pal ? pal->encode : progdt.encode);
+        if (!ptr || *ptr == '\0') {
+          if(pal) {
+            string s(pal->encode);
+            ConvertEncode(s);
+          } else {
+            ConvertEncode(g_progdt->encode);
+          }
+        }
 
         /* 加入或更新好友列表 */
         gdk_threads_enter();
-        pthread_mutex_lock(cthrd.GetMutex());
+        g_cthrd->Lock();
         if (pal) {
                 UpdatePalInfo(pal);
-                cthrd.UpdatePalToList(ipv4);
+                g_cthrd->UpdatePalToList(ipv4);
         } else {
                 pal = CreatePalInfo();
-                cthrd.AttachPalToList(pal);
+                g_cthrd->AttachPalToList(pal);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
-        if (mwin.PaltreeContainItem(ipv4))
-                mwin.UpdateItemToPaltree(ipv4);
+        g_cthrd->Unlock();
+        if (g_mwin->PaltreeContainItem(ipv4))
+                g_mwin->UpdateItemToPaltree(ipv4);
         else
-                mwin.AttachItemToPaltree(ipv4);
+                g_mwin->AttachItemToPaltree(ipv4);
         gdk_threads_leave();
 }
 
@@ -295,9 +305,14 @@ void UdpData::SomeoneSendmsg()
         GtkWidget *window;
 
         /* 如果对方兼容iptux协议，则无须再转换编码 */
-        pal = cthrd.GetPalFromList(ipv4);
-        if (!pal || !FLAG_ISSET(pal->flags, 0))
-                ConvertEncode(pal ? pal->encode : progdt.encode);
+        pal = g_cthrd->GetPalFromList(ipv4);
+        if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+          if(pal) {
+            ConvertEncode(pal->encode);
+          } else {
+            ConvertEncode(g_progdt->encode);
+          }
+        }
         /* 确保好友在线，并对编码作出适当调整 */
         pal = AssertPalOnline();
         if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
@@ -309,7 +324,7 @@ void UdpData::SomeoneSendmsg()
         commandno = iptux_get_dec_number(buf, ':', 4);
         packetno = iptux_get_dec_number(buf, ':', 1);
         if (commandno & IPMSG_SENDCHECKOPT)
-                cmd.SendReply(cthrd.UdpSockQuote(), pal, packetno);
+                cmd.SendReply(g_cthrd->UdpSockQuote(), pal, packetno);
         if (packetno <= pal->packetn)
                 return;
         pal->packetn = packetno;
@@ -325,14 +340,14 @@ void UdpData::SomeoneSendmsg()
         }
         g_free(text);
         /*/* 注册消息 */
-        pthread_mutex_lock(cthrd.GetMutex());
+        g_cthrd->Lock();
 //        if ((commandno & IPMSG_BROADCASTOPT) || (commandno & IPMSG_MULTICASTOPT))
-//                grpinf = cthrd.GetPalBroadcastItem(pal);
+//                grpinf = g_cthrd->GetPalBroadcastItem(pal);
 //        else
-                grpinf = cthrd.GetPalRegularItem(pal);
-        if (!grpinf->dialog && !cthrd.MsglineContainItem(grpinf))
-                cthrd.PushItemToMsgline(grpinf);
-        pthread_mutex_unlock(cthrd.GetMutex());
+                grpinf = g_cthrd->GetPalRegularItem(pal);
+        if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
+                g_cthrd->PushItemToMsgline(grpinf);
+        g_cthrd->Unlock();
 
         /* 标记位处理 先处理底层数据，后面显示窗口*/
         if (commandno & IPMSG_FILEATTACHOPT) {
@@ -348,12 +363,12 @@ void UdpData::SomeoneSendmsg()
         if(grpinf->dialog)
             dlgpr->ShowDialogPeer(dlgpr);
         /* 是否直接弹出聊天窗口 */
-        if (FLAG_ISSET(progdt.flags, 7)) {
+        if (FLAG_ISSET(g_progdt->flags, 7)) {
                 gdk_threads_enter();
                 if (!(grpinf->dialog)) {
 //                     switch (grpinf->type) {
 //                     case GROUP_BELONG_TYPE_REGULAR:
-                          DialogPeer::PeerDialogEntry(grpinf);
+                          DialogPeer::PeerDialogEntry(config, grpinf, *g_progdt);
 //                          break;
 //                     case GROUP_BELONG_TYPE_SEGMENT:
 //                     case GROUP_BELONG_TYPE_GROUP:
@@ -369,8 +384,8 @@ void UdpData::SomeoneSendmsg()
         }
 
         /* 播放提示音 */
-        if (FLAG_ISSET(progdt.sndfgs, 1))
-                sndsys.Playing(progdt.msgtip);
+        if (FLAG_ISSET(g_progdt->sndfgs, 1))
+                g_sndsys->Playing(g_progdt->msgtip);
 }
 
 /**
@@ -381,7 +396,7 @@ void UdpData::SomeoneRecvmsg()
         uint32_t packetno;
         PalInfo *pal;
 
-        if ( (pal = cthrd.GetPalFromList(ipv4))) {
+        if ( (pal = g_cthrd->GetPalFromList(ipv4))) {
                 packetno = iptux_get_dec_number(buf, ':', 5);
                 if (packetno == pal->rpacketn)
                         pal->rpacketn = 0;      //标记此包编号已经被回复
@@ -399,15 +414,15 @@ void UdpData::SomeoneAskShared()
         const char *limit;
         char *passwd;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4)))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4)))
                 return;
 
-        limit = cthrd.GetAccessPublicLimit();
+        limit = g_cthrd->GetAccessPublicLimit();
         if (!limit || *limit == '\0') {
                 pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
                 pthread_detach(pid);
         } else if (!(iptux_get_dec_number(buf, ':', 4) & IPTUX_PASSWDOPT)) {
-                cmd.SendFileInfo(cthrd.UdpSockQuote(), pal,
+                cmd.SendFileInfo(g_cthrd->UdpSockQuote(), pal,
                          IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
         } else if ( (passwd = ipmsg_get_attach(buf, ':', 5))) {
                 if (strcmp(passwd, limit) == 0) {
@@ -426,7 +441,7 @@ void UdpData::SomeoneSendIcon()
         PalInfo *pal;
         char *iconfile;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4)) || FLAG_ISSET(pal->flags, 2))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4)) || FLAG_ISSET(pal->flags, 2))
                 return;
 
         /* 接收并更新数据 */
@@ -434,10 +449,10 @@ void UdpData::SomeoneSendIcon()
                 g_free(pal->iconfile);
                 pal->iconfile = iconfile;
                 gdk_threads_enter();
-                pthread_mutex_lock(cthrd.GetMutex());
-                cthrd.UpdatePalToList(ipv4);
-                pthread_mutex_unlock(cthrd.GetMutex());
-                mwin.UpdateItemToPaltree(ipv4);
+                g_cthrd->Lock();
+                g_cthrd->UpdatePalToList(ipv4);
+                g_cthrd->Unlock();
+                g_mwin->UpdateItemToPaltree(ipv4);
                 gdk_threads_leave();
         }
 }
@@ -450,7 +465,7 @@ void UdpData::SomeoneSendSign()
         PalInfo *pal;
         char *sign;
 
-        if (!(pal = cthrd.GetPalFromList(ipv4)))
+        if (!(pal = g_cthrd->GetPalFromList(ipv4)))
                 return;
 
         /* 若好友不兼容iptux协议，则需转码 */
@@ -466,10 +481,10 @@ void UdpData::SomeoneSendSign()
                 g_free(pal->sign);
                 pal->sign = sign;
                 gdk_threads_enter();
-                pthread_mutex_lock(cthrd.GetMutex());
-                cthrd.UpdatePalToList(ipv4);
-                pthread_mutex_unlock(cthrd.GetMutex());
-                mwin.UpdateItemToPaltree(ipv4);
+                g_cthrd->Lock();
+                g_cthrd->UpdatePalToList(ipv4);
+                g_cthrd->Unlock();
+                g_mwin->UpdateItemToPaltree(ipv4);
                 gdk_threads_leave();
         }
 }
@@ -485,9 +500,14 @@ void UdpData::SomeoneBcstmsg()
         char *text;
 
         /* 如果对方兼容iptux协议，则无须再转换编码 */
-        pal = cthrd.GetPalFromList(ipv4);
-        if (!pal || !FLAG_ISSET(pal->flags, 0))
-                ConvertEncode(pal ? pal->encode : progdt.encode);
+        pal = g_cthrd->GetPalFromList(ipv4);
+        if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+          if(pal) {
+            ConvertEncode(pal->encode);
+          } else {
+            ConvertEncode(g_progdt->encode);
+          }
+        }
         /* 确保好友在线，并对编码作出适当调整 */
         pal = AssertPalOnline();
         if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
@@ -522,31 +542,31 @@ void UdpData::SomeoneBcstmsg()
                         break;
                 }
                 /*/* 注册消息 */
-                pthread_mutex_lock(cthrd.GetMutex());
+                g_cthrd->Lock();
                 switch (GET_OPT(commandno)) {
                 case IPTUX_BROADCASTOPT:
-                        grpinf = cthrd.GetPalBroadcastItem(pal);
+                        grpinf = g_cthrd->GetPalBroadcastItem(pal);
                         break;
                 case IPTUX_GROUPOPT:
-                        grpinf = cthrd.GetPalGroupItem(pal);
+                        grpinf = g_cthrd->GetPalGroupItem(pal);
                         break;
                 case IPTUX_SEGMENTOPT:
-                        grpinf = cthrd.GetPalSegmentItem(pal);
+                        grpinf = g_cthrd->GetPalSegmentItem(pal);
                         break;
                 case IPTUX_REGULAROPT:
                 default:
-                        grpinf = cthrd.GetPalRegularItem(pal);
+                        grpinf = g_cthrd->GetPalRegularItem(pal);
                         break;
                 }
-                if (!grpinf->dialog && !cthrd.MsglineContainItem(grpinf))
-                        cthrd.PushItemToMsgline(grpinf);
-                pthread_mutex_unlock(cthrd.GetMutex());
+                if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
+                        g_cthrd->PushItemToMsgline(grpinf);
+                g_cthrd->Unlock();
         }
         g_free(text);
 
         /* 播放提示音 */
-        if (FLAG_ISSET(progdt.sndfgs, 1))
-                sndsys.Playing(progdt.msgtip);
+        if (FLAG_ISSET(g_progdt->sndfgs, 1))
+                g_sndsys->Playing(g_progdt->msgtip);
 }
 
 /**
@@ -559,7 +579,7 @@ PalInfo *UdpData::CreatePalInfo()
 
         pal = new PalInfo;
         pal->ipv4 = ipv4;
-        pal->segdes = progdt.FindNetSegDescription(ipv4);
+        pal->segdes = g_progdt->FindNetSegDescription(ipv4);
         if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
                 pal->version = g_strdup("?");
         if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
@@ -572,7 +592,7 @@ PalInfo *UdpData::CreatePalInfo()
         pal->photo = NULL;
         pal->sign = NULL;
         if (!(pal->iconfile = GetPalIcon()))
-                pal->iconfile = g_strdup(progdt.palicon);
+                pal->iconfile = g_strdup(g_progdt->palicon);
         if ( (pal->encode = GetPalEncode()))
                 FLAG_SET(pal->flags, 0);
         else
@@ -591,7 +611,7 @@ PalInfo *UdpData::CreatePalInfo()
 void UdpData::UpdatePalInfo(PalInfo *pal)
 {
         g_free(pal->segdes);
-        pal->segdes = progdt.FindNetSegDescription(ipv4);
+        pal->segdes = g_progdt->FindNetSegDescription(ipv4);
         g_free(pal->version);
         if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
                 pal->version = g_strdup("?");
@@ -609,7 +629,7 @@ void UdpData::UpdatePalInfo(PalInfo *pal)
                 pal->group = GetPalGroup();
                 g_free(pal->iconfile);
                 if (!(pal->iconfile = GetPalIcon()))
-                        pal->iconfile = g_strdup(progdt.palicon);
+                        pal->iconfile = g_strdup(g_progdt->palicon);
                 FLAG_CLR(pal->flags, 0);
                 g_free(pal->encode);
                 if ( (pal->encode = GetPalEncode()))
@@ -643,15 +663,19 @@ void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg
         para.dtlist = g_slist_append(NULL, chip);
 
         /* 交给某人处理吧 */
-        cthrd.InsertMessage(&para);
+        g_cthrd->InsertMessage(&para);
+}
+
+void UdpData::ConvertEncode(const char* enc) {
+  string encode(enc);
+  ConvertEncode(encode);
 }
 
 /**
  * 将缓冲区中的数据转换为utf8编码.
  * @param enc 原数据首选编码
  */
-void UdpData::ConvertEncode(const char *enc)
-{
+void UdpData::ConvertEncode(const string& enc) {
         char *ptr;
         size_t len;
 
@@ -668,11 +692,11 @@ void UdpData::ConvertEncode(const char *enc)
          * if (g_utf8_validate(buf, -1, NULL)) {encode = g_strdup("utf-8")} \n
          * e.g. 系统编码为GB18030的xx发送来纯ASCII字符串 \n
          */
-        if (enc && strcasecmp(enc, "utf-8") != 0
-                 && (ptr = convert_encode(buf, "utf-8", enc)))
-                encode = g_strdup(enc);
+        if (!enc.empty() && strcasecmp(enc.c_str(), "utf-8") != 0
+                 && (ptr = convert_encode(buf, "utf-8", enc.c_str())))
+                encode = g_strdup(enc.c_str());
         else
-                ptr = iptux_string_validate(buf, progdt.codeset, &encode);
+                ptr = iptux_string_validate(buf, g_progdt->codeset, &encode);
         if (ptr) {
                 len = strlen(ptr);
                 size = len < MAX_UDPLEN ? len : MAX_UDPLEN;
@@ -778,20 +802,20 @@ PalInfo *UdpData::AssertPalOnline()
 {
         PalInfo *pal;
 
-        if ( (pal = cthrd.GetPalFromList(ipv4))) {
+        if ( (pal = g_cthrd->GetPalFromList(ipv4))) {
                 /* 既然好友不在线，那么他自然不在列表中 */
                 if (!FLAG_ISSET(pal->flags, 1)) {
                         FLAG_SET(pal->flags, 1);
                         gdk_threads_enter();
-                        pthread_mutex_lock(cthrd.GetMutex());
-                        cthrd.UpdatePalToList(ipv4);
-                        pthread_mutex_unlock(cthrd.GetMutex());
-                        mwin.AttachItemToPaltree(ipv4);
+                        g_cthrd->Lock();
+                        g_cthrd->UpdatePalToList(ipv4);
+                        g_cthrd->Unlock();
+                        g_mwin->AttachItemToPaltree(ipv4);
                         gdk_threads_leave();
                 }
         } else {
                 SomeoneLost();
-                pal = cthrd.GetPalFromList(ipv4);
+                pal = g_cthrd->GetPalFromList(ipv4);
         }
 
         return pal;
@@ -814,7 +838,7 @@ void UdpData::RecvPalFile()
         if ((commandno & IPTUX_SHAREDOPT) || (ptr && *ptr != '\0')) {
                 para = NULL;
                 g_datalist_init(&para);
-                g_datalist_set_data(&para, "palinfo", cthrd.GetPalFromList(ipv4));
+                g_datalist_set_data(&para, "palinfo", g_cthrd->GetPalFromList(ipv4));
                 g_datalist_set_data_full(&para, "extra-data", g_strdup(ptr),
                                                  GDestroyNotify(g_free));
                 g_datalist_set_data(&para, "packetno", GUINT_TO_POINTER(packetno));
@@ -838,7 +862,7 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal)
         gdk_threads_leave();
         if (passwd && *passwd != '\0') {
                 epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
-                cmd.SendAskShared(cthrd.UdpSockQuote(), pal, IPTUX_PASSWDOPT, epasswd);
+                cmd.SendAskShared(g_cthrd->UdpSockQuote(), pal, IPTUX_PASSWDOPT, epasswd);
                 g_free(epasswd);
         }
         g_free(passwd);
@@ -853,7 +877,7 @@ void UdpData::ThreadAskSharedFile(PalInfo *pal)
         SendFile sfile;
         bool permit;
 
-        if (FLAG_ISSET(progdt.flags, 0)) {
+        if (FLAG_ISSET(g_progdt->flags, 0)) {
                 gdk_threads_enter();
                 permit = pop_request_shared_file(pal);
                 gdk_threads_leave();

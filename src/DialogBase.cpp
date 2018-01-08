@@ -12,6 +12,9 @@
 //
 
 #include "DialogBase.h"
+
+#include <sys/stat.h>
+
 #include "DialogPeer.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
@@ -25,13 +28,11 @@
 #include "support.h"
 #include "utils.h"
 #include "AnalogFS.h"
+#include "global.h"
 
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-
-DialogBase::DialogBase(GroupInfo *grp)
-        :widset(NULL), mdlset(NULL),dtset(NULL), accel(NULL), grpinf(grp),
+DialogBase::DialogBase(GroupInfo *grp, ProgramData& progdt)
+        :progdt(progdt),
+        widset(NULL), mdlset(NULL),dtset(NULL), accel(NULL), grpinf(grp),
          totalsendsize(0)
 {
         InitSublayerGeneral();
@@ -136,12 +137,10 @@ void DialogBase::OnNewMessageComing()
  */
 void DialogBase::NotifyUser()
 {
-#if GTK_CHECK_VERSION(2,8,0)
     GtkWindow *window;
     window = GTK_WINDOW(g_datalist_get_data(&widset, "window-widget"));
     if (!gtk_window_has_toplevel_focus(window))
         gtk_window_set_urgency_hint(window, TRUE);
-#endif
 }
 
 
@@ -189,7 +188,7 @@ void DialogBase::AttachEnclosure(const GSList *list)
             pallist = GetSelPal();
             while(pallist) {
                 file = new FileInfo;
-                file->fileid = cthrd.PrnQuote()++;
+                file->fileid = g_cthrd->PrnQuote()++;
                 /* file->packetn = 0;//没必要设置此字段 */
                 file->fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR :
                                                          IPMSG_FILE_DIR;
@@ -199,9 +198,9 @@ void DialogBase::AttachEnclosure(const GSList *list)
                 file->filenum = filenum;
                 file->fileown = (PalInfo *)(pallist->data);
                 /* 加入文件信息到中心节点 */
-                pthread_mutex_lock(cthrd.GetMutex());
-                cthrd.AttachFileToPrivate(file);
-                pthread_mutex_unlock(cthrd.GetMutex());
+                g_cthrd->Lock();
+                g_cthrd->AttachFileToPrivate(file);
+                g_cthrd->Unlock();
                 /* 添加数据 */
                 gtk_list_store_append(GTK_LIST_STORE(model), &iter);
                 gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf,1, filename,
@@ -499,7 +498,7 @@ void DialogBase::FeedbackMsg(const gchar *msg)
         para.dtlist = g_slist_append(NULL, chip);
 
         /* 交给某人处理吧 */
-        cthrd.InsertMsgToGroupInfoItem(grpinf, &para);
+        g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
 }
 
 /**
@@ -565,10 +564,8 @@ void DialogBase::DialogDestory(DialogBase *dialog)
  */
 gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event)
 {
-#if GTK_CHECK_VERSION(2,8,0)
     if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
         gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
-#endif
     return FALSE;
 }
 
@@ -589,9 +586,8 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
         GtkWidget *widget;
         GSList *list;
 
-        if (data->length <= 0 || data->format != 8) {
-                gtk_drag_finish(context, FALSE, FALSE, time);
-                return;
+        if(!ValidateDragData(data, context, time)) {
+          return;
         }
 
         list = selection_data_get_path(data);   //获取所有文件
@@ -729,7 +725,7 @@ void DialogBase::RemoveSelectedEnclosure(GtkWidget *widget)
                                 (GtkTreePath *)g_list_nth(list, 0)->data);
         gtk_tree_model_get(model, &iter,4,&file, -1);
         dlg->totalsendsize -= file->filesize;
-        cthrd.DelFileFromPrivate(file->fileid);
+        g_cthrd->DelFileFromPrivate(file->fileid);
         list = g_list_next(list);
     }
     g_list_free(list);
@@ -913,5 +909,5 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp)
  */
 void DialogBase::OpenTransDlg(DialogBase *dlgpr)
 {
-    mwin.OpenTransWindow();
+    g_mwin->OpenTransWindow();
 }

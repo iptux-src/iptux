@@ -74,10 +74,6 @@ GtkWidget *HelpDialog::CreateAboutDialog()
         GtkWidget *dialog;
 
         dialog = gtk_about_dialog_new();
-        gtk_about_dialog_set_email_hook(
-                 GtkAboutDialogActivateLinkFunc(DialogOpenEmail), NULL, NULL);
-        gtk_about_dialog_set_url_hook(
-                 GtkAboutDialogActivateLinkFunc(DialogOpenUrl), NULL, NULL);
         gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), _("iptux"));
         gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
         gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
@@ -134,7 +130,7 @@ GtkWidget *HelpDialog::CreateMoreDialog()
 
         frame = gtk_frame_new(NULL);
         gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), frame, TRUE, TRUE, 0);
         gtk_container_set_border_width(GTK_CONTAINER(frame), 3);
 
         notebook = gtk_notebook_new();
@@ -179,40 +175,6 @@ void HelpDialog::RunHelpDialog(GtkWidget **dialog)
         gtk_window_set_skip_taskbar_hint(GTK_WINDOW(*dialog), TRUE);
         gtk_window_set_skip_pager_hint(GTK_WINDOW(*dialog), TRUE);
         gtk_widget_show_all(*dialog);
-}
-
-/**
- * 打开email.
- * @param dialog 对话框
- * @param link email
- */
-void HelpDialog::DialogOpenEmail(GtkWidget *dialog, const gchar *link)
-{
-        const char *prefix = "mailto:";
-        gchar *ptr;
-
-        if (strncasecmp(link, prefix, strlen(prefix)) != 0)
-                ptr = g_strdup_printf("%s%s", prefix, link);
-        else
-                ptr = g_strdup(link);
-#if GTK_CHECK_VERSION(2,14,0)
-        if (!gtk_show_uri(NULL, ptr, GDK_CURRENT_TIME, NULL))
-#endif
-                iptux_open_url(ptr);
-        g_free(ptr);
-}
-
-/**
- * 打开URL.
- * @param dialog 对话框
- * @param link URL
- */
-void HelpDialog::DialogOpenUrl(GtkWidget *dialog, const gchar *link)
-{
-#if GTK_CHECK_VERSION(2,14,0)
-        if (!gtk_show_uri(NULL, link, GDK_CURRENT_TIME, NULL))
-#endif
-                iptux_open_url(link);
 }
 
 /**

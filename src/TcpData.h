@@ -12,6 +12,7 @@
 #ifndef TCPDATA_H
 #define TCPDATA_H
 
+#include "ipmsg.h"
 #include "mess.h"
 
 class TcpData {

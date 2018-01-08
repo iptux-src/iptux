@@ -10,9 +10,14 @@
 //
 //
 #include "LogSystem.h"
+
+#include <fcntl.h>
+
+#include "deplib.h"
 #include "ProgramData.h"
 #include "utils.h"
-extern ProgramData progdt;
+#include "ipmsg.h"
+#include "global.h"
 
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER   "-------------------------------------"
@@ -44,7 +49,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...)
         gchar *log, *msg, *ptr;
         va_list ap;
 
-        if (!FLAG_ISSET(progdt.flags, 2))
+        if (!FLAG_ISSET(g_progdt->flags, 2))
                 return;
 
         PalInfo *pal = msgpara->pal;
@@ -58,7 +63,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...)
                                             pal->name, pal->user, pal->host);
                 else
                         ptr = getformattime(TRUE, _("Send-Broadcast"));
-        } else 
+        } else
                 return;
 
         va_start(ap, fmt);
@@ -77,7 +82,7 @@ void LogSystem::SystemLog(const char *fmt, ...)
         gchar *log, *msg, *ptr;
         va_list ap;
 
-        if (!FLAG_ISSET(progdt.flags, 2))
+        if (!FLAG_ISSET(g_progdt->flags, 2))
                 return;
 
         ptr = getformattime(TRUE, _("User:%s Host:%s"), g_get_user_name(), g_get_host_name());

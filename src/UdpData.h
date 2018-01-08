@@ -12,14 +12,18 @@
 #ifndef UDPDATA_H
 #define UDPDATA_H
 
+#include <string>
+
 #include "mess.h"
+#include "IptuxConfig.h"
+#include "ipmsg.h"
 
 class UdpData {
 public:
-        UdpData();
+        UdpData(IptuxConfig& config);
         ~UdpData();
 
-        static void UdpDataEntry(in_addr_t ipv4, const char buf[], size_t size);
+        static void UdpDataEntry(IptuxConfig& config, in_addr_t ipv4, const char buf[], size_t size);
 private:
         void DispatchUdpData();
 
@@ -39,7 +43,8 @@ private:
         void UpdatePalInfo(PalInfo *pal);
 
         void InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg);
-        void ConvertEncode(const char *enc);
+        void ConvertEncode(const std::string& enc);
+        void ConvertEncode(const char* enc);
         char *GetPalGroup();
         char *GetPalIcon();
         char *GetPalEncode();
@@ -47,6 +52,7 @@ private:
         PalInfo *AssertPalOnline();
         void RecvPalFile();
 
+        IptuxConfig& config;
         in_addr_t ipv4;                 //数据来自
         size_t size;                    //缓冲区数据有效长度
         char buf[MAX_UDPLEN];   //数据缓冲区

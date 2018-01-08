@@ -10,6 +10,7 @@
 //
 //
 #include "DialogGroup.h"
+
 #include "DialogPeer.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
@@ -22,20 +23,18 @@
 #include "output.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
+#include "global.h"
+
 
 /**
  * 类构造函数.
  * @param grp 群组信息
  */
-DialogGroup::DialogGroup(GroupInfo *grp)
-    :DialogBase(grp)
+DialogGroup::DialogGroup(GroupInfo *grp, IptuxConfig& config, ProgramData& progdt)
+    :DialogBase(grp, progdt),
+    config(config)
 {
         InitSublayerSpecify();
-        ReadUILayout();
 }
 
 /**
@@ -50,12 +49,12 @@ DialogGroup::~DialogGroup()
  * 群组对话框入口.
  * @param grpinf 群组信息
  */
-void DialogGroup::GroupDialogEntry(GroupInfo *grpinf)
+void DialogGroup::GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, ProgramData& progdt)
 {
         DialogGroup *dlggrp;
         GtkWidget *window, *widget;
 
-        dlggrp = new DialogGroup(grpinf);
+        dlggrp = new DialogGroup(grpinf, config, progdt);
         window = dlggrp->CreateMainWindow();
         gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
         gtk_widget_show_all(window);
@@ -65,12 +64,12 @@ void DialogGroup::GroupDialogEntry(GroupInfo *grpinf)
                                          "input-textview-widget"));
         gtk_widget_grab_focus(widget);
         /* 从消息队列中移除 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        if (cthrd.MsglineContainItem(grpinf)) {
-                mwin.MakeItemBlinking(grpinf, FALSE);
-                cthrd.PopItemFromMsgline(grpinf);
+        g_cthrd->Lock();
+        if (g_cthrd->MsglineContainItem(grpinf)) {
+                g_mwin->MakeItemBlinking(grpinf, FALSE);
+                g_cthrd->PopItemFromMsgline(grpinf);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->Unlock();
 
         /* delete dlggrp;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }
@@ -193,74 +192,16 @@ void DialogGroup::InitSublayerSpecify()
 }
 
 
-
-/**
- * 读取对话框的UI布局数据.
- */
-void DialogGroup::ReadUILayout()
-{
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = gconf_client_get_int(client, GCONF_PATH "/group_window_width", NULL);
-        numeric = numeric ? numeric : 550;
-        g_datalist_set_data(&dtset, "window-width", GINT_TO_POINTER(numeric));
-        numeric = gconf_client_get_int(client, GCONF_PATH "/group_window_height", NULL);
-        numeric = numeric ? numeric : 500;
-        g_datalist_set_data(&dtset, "window-height", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/group_main_paned_divide", NULL);
-        numeric = numeric ? numeric : 150;
-        g_datalist_set_data(&dtset, "main-paned-divide", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/group_historyinput_paned_divide", NULL);
-        numeric = numeric ? numeric : 320;
-        g_datalist_set_data(&dtset, "historyinput-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/group_memberenclosure_paned_divide", NULL);
-        numeric = numeric ? numeric : 320;
-        g_datalist_set_data(&dtset, "memberenclosure-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        g_object_unref(client);
-}
-
 /**
  * 写出对话框的UI布局数据.
  */
 void DialogGroup::SaveUILayout()
 {
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
-        gconf_client_set_int(client, GCONF_PATH "/group_window_width", numeric, NULL);
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
-        gconf_client_set_int(client, GCONF_PATH "/group_window_height", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/group_main_paned_divide",
-                                                         numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "historyinput-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/group_historyinput_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "memberenclosure-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/group_memberenclosure_paned_divide",
-                                                                         numeric, NULL);
-
-        g_object_unref(client);
+  config.SetInt("group_window_width", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
+  config.SetInt("group_window_height", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
+  config.SetInt("group_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide")));
+  config.SetInt("group_historyinput_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide")));
+  config.SetInt("group_memberenclosure_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "memberenclosure-paned-divide")));
 }
 
 /**
@@ -271,14 +212,13 @@ GtkWidget *DialogGroup::CreateMainWindow()
 {
         char buf[MAX_BUFLEN];
         GtkWidget *window;
-        gint width, height;
 
         window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
         gtk_window_set_title(GTK_WINDOW(window), buf);
-        width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
-        height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
-        gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+        gtk_window_set_default_size(GTK_WINDOW(window),
+          config.GetInt("group_window_width", 500),
+          config.GetInt("group_window_height", 350));
         gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
         g_datalist_set_data(&widset, "window-widget", window);
@@ -286,7 +226,7 @@ GtkWidget *DialogGroup::CreateMainWindow()
         grpinf->dialog = window;
 
         MainWindowSignalSetup(window);
-        
+
         return window;
 }
 
@@ -382,7 +322,7 @@ GtkWidget *DialogGroup::CreateMemberArea()
         gtk_container_add(GTK_CONTAINER(sw), widget);
         g_signal_connect(widget, "button-press-event", G_CALLBACK(PopupPickMenu), NULL);
         g_signal_connect(widget, "row-activated",
-                         G_CALLBACK(MembertreeItemActivated), NULL);
+                         G_CALLBACK(MembertreeItemActivated), this);
         g_datalist_set_data(&widset, "member-treeview-widget", widget);
 
         return frame;
@@ -424,7 +364,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model)
         char *file;
 
         theme = gtk_icon_theme_get_default();
-        pthread_mutex_lock(cthrd.GetMutex());
+        g_cthrd->Lock();
         tlist = grpinf->member;
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
@@ -439,7 +379,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model)
                         g_object_unref(pixbuf);
                 tlist = g_slist_next(tlist);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->Unlock();
 }
 
 /**
@@ -625,10 +565,10 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg)
                                         opttype = IPTUX_REGULAROPT;
                                         break;
                                 }
-                                cmd.SendUnitMsg(cthrd.UdpSockQuote(), pal,
+                                cmd.SendUnitMsg(g_cthrd->UdpSockQuote(), pal,
                                                          opttype, msg);
                         } else
-                                cmd.SendGroupMsg(cthrd.UdpSockQuote(), pal, msg);
+                                cmd.SendGroupMsg(g_cthrd->UdpSockQuote(), pal, msg);
                 }
         } while (gtk_tree_model_iter_next(model, &iter));
 }
@@ -764,8 +704,10 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget *treeview, GdkEventButton *event)
  * @param path path
  * @param column column
  */
-void DialogGroup::MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                         GtkTreeViewColumn *column)
+void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
+        GtkTreePath *path,
+        GtkTreeViewColumn *column,
+        DialogGroup* self)
 {
         GtkTreeModel *model;
         GtkTreeIter iter;
@@ -775,11 +717,11 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, 3, &pal, -1);
-        if ( (grpinf = cthrd.GetPalRegularItem(pal))) {
+        if ( (grpinf = g_cthrd->GetPalRegularItem(pal))) {
                 if ( (grpinf->dialog))
                         gtk_window_present(GTK_WINDOW(grpinf->dialog));
                 else
-                        DialogPeer::PeerDialogEntry(grpinf);
+                        DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
         }
 }
 
@@ -807,7 +749,7 @@ bool DialogGroup::SendTextMsg()
 
         msgpara.stype = MESSAGE_SOURCE_TYPE_SELF;
         msgpara.pal = NULL;
-        lgsys.CommunicateLog(&msgpara, "[STRING]%s", msg);
+        g_lgsys->CommunicateLog(&msgpara, "[STRING]%s", msg);
         g_free(msg);
 
         return true;

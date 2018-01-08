@@ -12,6 +12,7 @@
 #ifndef RECVFILEDATA_H
 #define RECVFILEDATA_H
 
+#include "ipmsg.h"
 #include "mess.h"
 
 class RecvFileData: public TransAbstract

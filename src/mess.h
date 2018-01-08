@@ -9,15 +9,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef UDT_H
-#define UDT_H
+#ifndef MESS_H
+#define MESS_H
 
-#include "sys.h"
-#include "net.h"
-#include "deplib.h"
-#include "ipmsg.h"
+#include <arpa/inet.h>
 
-/***************偶是可爱的分割线(枚举变量)*****************/
+#include <gtk/gtk.h>
+#include <json/json.h>
 
 /**
  * 消息来源类型.
@@ -145,12 +143,15 @@ public:
  */
 class NetSegment {
 public:
-        NetSegment();
-        ~NetSegment();
+  NetSegment();
+  ~NetSegment();
 
-        char *startip;  ///< IP起始地址 *
-        char *endip;    ///< IP终止地址 *
-        char *description;      ///< 此IP段描述
+  char *startip;  ///< IP起始地址 *
+  char *endip;    ///< IP终止地址 *
+  char *description;      ///< 此IP段描述
+
+  Json::Value ToJsonValue() const;
+  static NetSegment* NewFromJsonValue(const Json::Value& value);
 };
 
 /***************偶是可爱的分割线(抽象类)*****************/

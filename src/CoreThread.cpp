@@ -9,8 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "CoreThread.h"
+
+#include <inttypes.h>
+#include <sys/stat.h>
+
+#include "config.h"
 #include "ProgramData.h"
 #include "MainWindow.h"
 #include "LogSystem.h"
@@ -20,18 +24,22 @@
 #include "output.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
+#include "global.h"
+
+using namespace std;
+
+static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
+static const char* CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 
 /**
  * 类构造函数.
  */
-CoreThread::CoreThread():tcpsock(-1), udpsock(-1), server(true),
- pallist(NULL), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
+CoreThread::CoreThread(IptuxConfig& config):
+    config(config),
+    tcpsock(-1), udpsock(-1), server(true),
+ pallist(nullptr), rgllist(NULL), sgmlist(NULL), grplist(NULL), brdlist(NULL),
  blacklist(NULL), pbn(1), prn(MAX_SHAREDFILE), pblist(NULL), prlist(NULL),
- ecsList(NULL),passwd(NULL)
+ ecsList(NULL)
 {
         g_queue_init(&msgline);
         pthread_mutex_init(&mutex, NULL);
@@ -72,26 +80,21 @@ void CoreThread::CoreThreadEntry()
  */
 void CoreThread::WriteSharedData()
 {
-        GConfClient *client;
-        GSList *list, *tlist;
+        GSList *tlist;
 
-        list = NULL;
         /* 获取共享文件链表 */
+        vector<string> sharedFileList;
         tlist = pblist;
         while (tlist) {
-                list = g_slist_append(list, ((FileInfo *)tlist->data)->filepath);
-                tlist = g_slist_next(tlist);
+            sharedFileList.push_back(string(((FileInfo *)tlist->data)->filepath));
+            tlist = g_slist_next(tlist);
         }
         /* 写出数据 */
-        client = gconf_client_get_default();
-        gconf_client_set_list(client, GCONF_PATH "/shared_file_list",
-                                         GCONF_VALUE_STRING, list, NULL);
-        if (passwd)
-                gconf_client_set_string(client, GCONF_PATH "/access_shared_limit",
-                                                                 passwd, NULL);
-        g_object_unref(client);
-        /* 释放链表 */
-        g_slist_free(list);
+        config.SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
+        if (!passwd.empty()) {
+          config.SetString(CONFIG_ACCESS_SHARED_LIMIT, passwd);
+        }
+        config.Save();
 }
 
 /**
@@ -103,14 +106,6 @@ GSList *CoreThread::GetPalList()
         return pallist;
 }
 
-/**
- * 获取锁.
- * @return 锁
- */
-pthread_mutex_t *CoreThread::GetMutex()
-{
-        return &mutex;
-}
 
 /**
  * 插入消息(UI线程安全).
@@ -184,11 +179,11 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para)
                         InsertStringToBuffer(grpinf->buffer, data);
                         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
                         gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-                        lgsys.CommunicateLog(para, "[STRING]%s", data);
+                        g_lgsys->CommunicateLog(para, "[STRING]%s", data);
                         break;
                 case MESSAGE_CONTENT_TYPE_PICTURE:
                         InsertPixbufToBuffer(grpinf->buffer, data);
-                        lgsys.CommunicateLog(para, "[PICTURE]%s", data);
+                        g_lgsys->CommunicateLog(para, "[PICTURE]%s", data);
                         break;
                 default:
                         break;
@@ -220,12 +215,13 @@ void CoreThread::SendFeatureData(PalInfo *pal)
         const gchar *env;
         int sock;
 
-        if (*progdt.sign != '\0')
-                cmd.SendMySign(cthrd.udpsock, pal);
+        if (!g_progdt->sign.empty()) {
+                cmd.SendMySign(g_cthrd->udpsock, pal);
+        }
         env = g_get_user_config_dir();
-        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, progdt.myicon);
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env, g_progdt->myicon.c_str());
         if (access(path, F_OK) == 0)
-                cmd.SendMyIcon(cthrd.udpsock, pal);
+                cmd.SendMyIcon(g_cthrd->udpsock, pal);
         snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
         if (access(path, F_OK) == 0) {
                 if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -246,7 +242,7 @@ void CoreThread::SendBroadcastExit(PalInfo *pal)
 {
         Command cmd;
 
-        cmd.SendExit(cthrd.udpsock, pal);
+        cmd.SendExit(g_cthrd->udpsock, pal);
 }
 
 /**
@@ -259,19 +255,19 @@ void CoreThread::UpdateMyInfo()
         PalInfo *pal;
         GSList *tlist;
 
-        pthread_mutex_lock(&cthrd.mutex);
-        tlist = cthrd.pallist;
+        pthread_mutex_lock(&g_cthrd->mutex);
+        tlist = g_cthrd->pallist;
         while (tlist) {
                 pal = (PalInfo *)tlist->data;
                 if (FLAG_ISSET(pal->flags, 1))
-                        cmd.SendAbsence(cthrd.udpsock, pal);
+                        cmd.SendAbsence(g_cthrd->udpsock, pal);
                 if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
                         pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
                         pthread_detach(pid);
                 }
                 tlist = g_slist_next(tlist);
         }
-        pthread_mutex_unlock(&cthrd.mutex);
+        pthread_mutex_unlock(&g_cthrd->mutex);
 }
 
 /**
@@ -819,7 +815,7 @@ FileInfo *CoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,uint32_t fil
  */
 const char *CoreThread::GetAccessPublicLimit()
 {
-        return passwd;
+        return passwd.c_str();
 }
 
 /**
@@ -828,8 +824,11 @@ const char *CoreThread::GetAccessPublicLimit()
  */
 void CoreThread::SetAccessPublicLimit(const char *limit)
 {
-        g_free(passwd);
-        passwd = g_strdup(limit);
+    if(limit == NULL) {
+        passwd = "";
+    } else {
+        passwd = string(limit);
+    }
 }
 
 /**
@@ -880,7 +879,6 @@ void CoreThread::ClearSublayer()
         for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
                 delete (FileInfo *)tlist->data;
         g_slist_free(prlist);
-        g_free(passwd);
 
         for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
                 delete (FileInfo *)tlist->data;
@@ -929,24 +927,17 @@ void CoreThread::InitThemeSublayerData()
  */
 void CoreThread::ReadSharedData()
 {
-        GConfClient *client;
-        GSList *list, *tlist;
         FileInfo *file;
         struct stat st;
 
         /* 读取共享文件数据 */
-        client = gconf_client_get_default();
-        list = gconf_client_get_list(client, GCONF_PATH "/shared_file_list",
-                                                 GCONF_VALUE_STRING, NULL);
-        passwd = gconf_client_get_string(client, GCONF_PATH "/access_shared_limit", NULL);
-        g_object_unref(client);
+        vector<string> sharedFileList = config.GetStringList(CONFIG_SHARED_FILE_LIST);
+        passwd = g_strdup(config.GetString(CONFIG_ACCESS_SHARED_LIMIT).c_str());
 
         /* 分析数据并加入文件链表 */
-        for(tlist = list; tlist; tlist = g_slist_next(tlist)) {
-                if (stat((char *)tlist->data, &st) == -1
+        for(size_t i = 0; i < sharedFileList.size(); ++i) {
+                if (stat(sharedFileList[i].c_str(), &st) == -1
                          || !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
-                        g_free(tlist->data);
-                        tlist->data = NULL;
                         continue;
                 }
                 /* 加入文件信息到链表 */
@@ -958,9 +949,8 @@ void CoreThread::ReadSharedData()
                                                          IPMSG_FILE_DIR;
                 /* file->filesize = 0;//我可不愿意程序启动时在这儿卡住 */
                 /* file->fileown = NULL;//没必要设置此字段 */
-                file->filepath = (char *)tlist->data;
+                file->filepath = strdup(sharedFileList[i].c_str());
         }
-        g_slist_free(list);
 }
 
 /**
@@ -985,7 +975,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para)
                 g_free(header);
                 break;
         case MESSAGE_SOURCE_TYPE_SELF:
-                header = getformattime(FALSE, "%s", progdt.nickname);
+                header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
                 gtk_text_buffer_get_end_iter(buffer, &iter);
                 gtk_text_buffer_insert_with_tags_by_name(buffer, &iter,
                                          header, -1, "me-color", NULL);
@@ -1022,7 +1012,7 @@ void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string)
         urlendp = 0;
         matchinfo = NULL;
         gtk_text_buffer_get_end_iter(buffer, &iter);
-        g_regex_match_full(progdt.urlregex, string, -1, 0, GRegexMatchFlags(0),
+        g_regex_match_full(g_progdt->urlregex, string, -1, 0, GRegexMatchFlags(0),
                                                          &matchinfo, NULL);
         while (g_match_info_matches(matchinfo))
         {
@@ -1100,7 +1090,7 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_REGULAR;
         grpinf->name = g_strdup(pal->name);
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         rgllist = g_slist_append(rgllist, grpinf);
 
@@ -1126,7 +1116,7 @@ GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
         grpinf->name = name;
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -1152,7 +1142,7 @@ GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_GROUP;
         grpinf->name = name;
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         grplist = g_slist_append(grplist, grpinf);
 
@@ -1176,7 +1166,7 @@ GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal)
         grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
         grpinf->name = name;
         grpinf->member = NULL;
-        grpinf->buffer = gtk_text_buffer_new(progdt.table);
+        grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
         grpinf->dialog = NULL;
         brdlist = g_slist_append(brdlist, grpinf);
 
@@ -1224,21 +1214,21 @@ void CoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal)
  * 监听UDP服务端口.
  * @param pcthrd 核心类
  */
-void CoreThread::RecvUdpData(CoreThread *pcthrd)
+void CoreThread::RecvUdpData(CoreThread* self)
 {
         struct sockaddr_in addr;
         socklen_t len;
         char buf[MAX_UDPLEN];
         ssize_t size;
 
-        while (pcthrd->server) {
+        while (self->server) {
                 len = sizeof(addr);
-                if ((size = recvfrom(pcthrd->udpsock, buf, MAX_UDPLEN, 0,
+                if ((size = recvfrom(self->udpsock, buf, MAX_UDPLEN, 0,
                                  (struct sockaddr *)&addr, &len)) == -1)
                         continue;
                 if (size != MAX_UDPLEN)
                         buf[size] = '\0';
-                UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+                UdpData::UdpDataEntry(self->config, addr.sin_addr.s_addr, buf, size);
         }
 }
 
@@ -1274,7 +1264,7 @@ gboolean CoreThread::WatchCoreStatus(CoreThread *pcthrd)
         pthread_mutex_lock(&pcthrd->mutex);
         tlist = pcthrd->msgline.head;
         while (tlist) {
-                mwin.MakeItemBlinking((GroupInfo *)tlist->data, true);
+                g_mwin->MakeItemBlinking((GroupInfo *)tlist->data, true);
                 tlist = g_list_next(tlist);
         }
         pthread_mutex_unlock(&pcthrd->mutex);
@@ -1313,4 +1303,12 @@ void CoreThread::PopItemFromEnclosureList(FileInfo *file)
 {
     ecsList = g_slist_remove(ecsList, file);
     delete file;
+}
+
+void CoreThread::Lock() {
+  pthread_mutex_lock(&mutex);
+}
+
+void CoreThread::Unlock() {
+  pthread_mutex_unlock(&mutex);
 }

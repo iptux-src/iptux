@@ -15,7 +15,13 @@
 #ifndef __APPLE__
   #include <sys/vfs.h>
 #endif
+#include <errno.h>
+#include <string.h>
+#include <inttypes.h>
 
+#include "ipmsg.h"
+
+using namespace std;
 
 /**
  * 对两个主机序的ipv4地址进行排序.
@@ -42,7 +48,7 @@ void ipv4_order(in_addr_t *ip1, in_addr_t *ip2)
  * @note 若(string)为utf8编码，或(codeset)中不存在(string)的正确编码，函数将返回NULL
  * @see iptux_string_validate_copy()
  */
-char *iptux_string_validate(const char *string, const char *codeset, char **encode)
+char *iptux_string_validate(const char *s, const string& codeset, char **encode)
 {
         const char *pptr, *ptr;
         char *tstring, *cset;
@@ -50,9 +56,9 @@ char *iptux_string_validate(const char *string, const char *codeset, char **enco
 
         *encode = NULL; //设置字符集编码未知
         tstring = NULL; //设置utf8有效串尚未成功获取
-        if (!g_utf8_validate(string, -1, NULL) && codeset) {
+        if (!g_utf8_validate(s, -1, NULL) && !codeset.empty()) {
                 cset = NULL;
-                ptr = codeset;
+                ptr = codeset.c_str();
                 do {
                         if (*(pptr = ptr + strspn(ptr, ",;\x20\t")) == '\0')
                                 break;
@@ -62,7 +68,7 @@ char *iptux_string_validate(const char *string, const char *codeset, char **enco
                         cset = g_strndup(pptr, ptr - pptr);
                         if (strcasecmp(cset, "utf-8") == 0)
                                 continue;
-                } while (!(tstring = g_convert(string, -1, "utf-8", cset,
+                } while (!(tstring = g_convert(s, -1, "utf-8", cset,
                                                  &rbytes, &wbytes, NULL)));
                 *encode = cset;
         }
@@ -584,4 +590,25 @@ char *ipmsg_get_pathname_full(const char *path, const char *name)
     strcat(filename,"/");
     strcat(filename,name);
     return g_strdup(filename);
+}
+
+void FLAG_SET(uint8_t& num, int bit) {
+  ((num)|=(1<<(bit)));
+}
+
+void FLAG_SET(uint8_t& num, int bit, bool value) {
+  if(value) {
+    ((num)|=(1<<(bit)));
+  } else {
+    ((num)&=(~(1<<(bit))));
+  }
+}
+
+bool ValidateDragData(GtkSelectionData* data, GdkDragContext* context, guint time) {
+  if (gtk_selection_data_get_length(data) <= 0
+      || gtk_selection_data_get_format(data) != 8) {
+    gtk_drag_finish(context, FALSE, FALSE, time);
+    return false;
+  }
+  return true;
 }

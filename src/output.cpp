@@ -10,7 +10,6 @@
 //
 //
 #include "output.h"
-#include "sys.h"
 
 /**
  * 弹出消息提示.

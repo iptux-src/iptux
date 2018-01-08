@@ -11,6 +11,9 @@
 //
 //
 #include "DialogPeer.h"
+
+#include <inttypes.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -24,17 +27,18 @@
 #include "support.h"
 #include "utils.h"
 #include "dialog.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
+#include "global.h"
+
 
 /**
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(GroupInfo *grp):DialogBase(grp),
-  torcvsize(0),rcvdsize(0)
+DialogPeer::DialogPeer(IptuxConfig& config, GroupInfo *grp, ProgramData& progdt)
+        :DialogBase(grp, progdt),
+        config(config),
+        torcvsize(0),
+        rcvdsize(0)
 {
         ReadUILayout();
 }
@@ -55,12 +59,12 @@ DialogPeer::~DialogPeer()
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(GroupInfo *grpinf)
+void DialogPeer::PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf, ProgramData& progdt)
 {
         DialogPeer *dlgpr;
         GtkWidget *window, *widget;
 
-        dlgpr = new DialogPeer(grpinf);
+        dlgpr = new DialogPeer(config, grpinf, progdt);
         window = dlgpr->CreateMainWindow();
         gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
         gtk_widget_show_all(window);
@@ -71,12 +75,12 @@ void DialogPeer::PeerDialogEntry(GroupInfo *grpinf)
         gtk_widget_grab_focus(widget);
 
         /* 从消息队列中移除 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        if (cthrd.MsglineContainItem(grpinf)) {
-                mwin.MakeItemBlinking(grpinf, FALSE);
-                cthrd.PopItemFromMsgline(grpinf);
+        g_cthrd->Lock();
+        if (g_cthrd->MsglineContainItem(grpinf)) {
+                g_mwin->MakeItemBlinking(grpinf, FALSE);
+                g_cthrd->PopItemFromMsgline(grpinf);
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->Unlock();
 
         /* delete dlgpr;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }
@@ -129,48 +133,16 @@ void DialogPeer::ClearAllPalData()
 */
 void DialogPeer::ReadUILayout()
 {
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = gconf_client_get_int(client, GCONF_PATH "/peer_window_width", NULL);
-        numeric = numeric ? numeric : 570;
-        g_datalist_set_data(&dtset, "window-width", GINT_TO_POINTER(numeric));
-        numeric = gconf_client_get_int(client, GCONF_PATH "/peer_window_height", NULL);
-        numeric = numeric ? numeric : 420;
-        g_datalist_set_data(&dtset, "window-height", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_main_paned_divide", NULL);
-        numeric = numeric ? numeric : 375;
-        g_datalist_set_data(&dtset, "main-paned-divide", GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_historyinput_paned_divide", NULL);
-        numeric = numeric ? numeric : 255;
-        g_datalist_set_data(&dtset, "historyinput-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_infoenclosure_paned_divide", NULL);
-        numeric = numeric ? numeric : 255;
-        g_datalist_set_data(&dtset, "infoenclosure-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_enclosure_paned_divide", NULL);
-        numeric = numeric ? numeric : 280;
-        g_datalist_set_data(&dtset, "enclosure-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        numeric = gconf_client_get_int(client,
-                         GCONF_PATH "/peer_file_recieve_paned_divide", NULL);
-        numeric = numeric ? numeric : 140;
-        g_datalist_set_data(&dtset, "file-receive-paned-divide",
-                                         GINT_TO_POINTER(numeric));
-
-        g_object_unref(client);
+  g_datalist_set_data(&dtset, "window-width", GINT_TO_POINTER(config.GetInt("peer_window_width", 570)));
+  g_datalist_set_data(&dtset, "window-height", GINT_TO_POINTER(config.GetInt("peer_window_height", 420)));
+  g_datalist_set_data(&dtset, "main-paned-divide", GINT_TO_POINTER(config.GetInt("peer_main_paned_divide", 375)));
+  g_datalist_set_data(&dtset, "historyinput-paned-divide", GINT_TO_POINTER(config.GetInt("peer_historyinput_paned_divide", 255)));
+  g_datalist_set_data(&dtset, "infoenclosure-paned-divide",
+    GINT_TO_POINTER(config.GetInt("peer_infoenclosure_paned_divide", 255)));
+  g_datalist_set_data(&dtset, "enclosure-paned-divide",
+    GINT_TO_POINTER(config.GetInt("peer_enclosure_paned_divide", 280)));
+  g_datalist_set_data(&dtset, "file-receive-paned-divide",
+    GINT_TO_POINTER(config.GetInt("peer_file_recieve_paned_divide", 140)));
 }
 
 /**
@@ -178,38 +150,14 @@ void DialogPeer::ReadUILayout()
  */
 void DialogPeer::WriteUILayout()
 {
-        GConfClient *client;
-        gint numeric;
-
-        client = gconf_client_get_default();
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_window_width", numeric, NULL);
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_window_height", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_main_paned_divide", numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "historyinput-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_historyinput_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,
-                                 "infoenclosure-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_infoenclosure_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,"enclosure-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_enclosure_paned_divide",
-                                                                 numeric, NULL);
-
-        numeric = GPOINTER_TO_INT(g_datalist_get_data(&dtset,"file-receive-paned-divide"));
-        gconf_client_set_int(client, GCONF_PATH "/peer_file_recieve_paned_divide",
-                                                                 numeric, NULL);
-
-        g_object_unref(client);
+  config.SetInt("peer_window_width", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
+  config.SetInt("peer_window_height", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
+  config.SetInt("peer_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide")));
+  config.SetInt("peer_historyinput_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide")));
+  config.SetInt("peer_infoenclosure_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "infoenclosure-paned-divide")));
+  config.SetInt("peer_enclosure_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "enclosure-paned-divide")));
+  config.SetInt("peer_file_recieve_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(&dtset, "file-receive-paned-divide")));
+  config.Save();
 }
 
 
@@ -593,14 +541,14 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist)
         if (grpinf->member)
                 para.pal = (PalInfo *)grpinf->member->data;
         else
-                para.pal = cthrd.GetPalFromList(grpinf->grpid);
+                para.pal = g_cthrd->GetPalFromList(grpinf->grpid);
 
         para.stype = MESSAGE_SOURCE_TYPE_SELF;
         para.btype = grpinf->type;
         para.dtlist = (GSList *)dtlist;
 
         /* 交给某人处理吧 */
-        cthrd.InsertMsgToGroupInfoItem(grpinf, &para);
+        g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
         para.dtlist = NULL;     //防止参数数据被修改
 }
 
@@ -615,7 +563,7 @@ MsgPara *DialogPeer::PackageMsg(GSList *dtlist)
 
         para = new MsgPara;
         if (!(grpinf->member))
-                para->pal = cthrd.GetPalFromList(grpinf->grpid);
+                para->pal = g_cthrd->GetPalFromList(grpinf->grpid);
         else
                 para->pal = (PalInfo *)grpinf->member->data;
         para->stype = MESSAGE_SOURCE_TYPE_SELF;
@@ -646,9 +594,8 @@ void DialogPeer::DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
         GSList *list, *flist, *tlist;
         gint position;
 
-        if (data->length <= 0 || data->format != 8) {
-                gtk_drag_finish(context, FALSE, FALSE, time);
-                return;
+        if(!ValidateDragData(data, context, time)) {
+          return;
         }
 
         /* 获取(text-buffer)的当前插入点 */
@@ -697,11 +644,11 @@ void DialogPeer::AskSharedFiles(GroupInfo *grpinf)
         PalInfo *pal;
 
         if (!(grpinf->member))
-                pal = cthrd.GetPalFromList(grpinf->grpid);
+                pal = g_cthrd->GetPalFromList(grpinf->grpid);
         else
                 pal = (PalInfo *)grpinf->member->data;
 
-        cmd.SendAskShared(cthrd.UdpSockQuote(), pal, 0, NULL);
+        cmd.SendAskShared(g_cthrd->UdpSockQuote(), pal, 0, NULL);
 }
 
 /**
@@ -754,7 +701,7 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para)
                 switch (((ChipData *)tlist->data)->type) {
                 case MESSAGE_CONTENT_TYPE_STRING:
                         /* 文本类型 */
-                        cmd.SendMessage(cthrd.UdpSockQuote(), para->pal, ptr);
+                        cmd.SendMessage(g_cthrd->UdpSockQuote(), para->pal, ptr);
                         break;
                 case MESSAGE_CONTENT_TYPE_PICTURE:
                         /* 图片类型 */
@@ -842,7 +789,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea()
     gtk_box_pack_start(GTK_BOX(hbox),pbar,TRUE,TRUE,0);
     button = gtk_button_new_with_label(_("Accept"));
     g_signal_connect_swapped(button, "clicked",
-                     G_CALLBACK(ReceiveFile), this);
+                     G_CALLBACK(onAcceptButtonClicked), this);
     g_datalist_set_data(&widset, "file-receive-accept-button", button);
     gtk_box_pack_start(GTK_BOX(hbox),button,FALSE,TRUE,0);
     button = gtk_button_new_with_label(_("Refuse"));
@@ -1029,7 +976,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
     GtkTreeModel *mdltorcv,*mdlrcvd,*mdltmp;
     GSList *ecslist;
     GtkWidget *widget,*hpaned,*pbar;
-    float progress;
+    float progress = 0.0;
     GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
     FileInfo *file;
     gchar *filesize,*path;
@@ -1048,7 +995,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
     gtk_list_store_clear(GTK_LIST_STORE(mdltorcv));
     mdlrcvd = (GtkTreeModel*)g_datalist_get_data(&(dlgpr->mdlset), "file-received-model");
     gtk_list_store_clear(GTK_LIST_STORE(mdlrcvd));
-    ecslist = cthrd.GetPalEnclosure(palinfor);
+    ecslist = g_cthrd->GetPalEnclosure(palinfor);
     if(ecslist) {
         //只要有该好友的接收文件信息(不分待接收和未接收)，就显示
         hpaned = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset), "main-paned"));
@@ -1125,7 +1072,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr)
             g_object_unref(dpixbuf);
 
     if(receiving > 0)
-        dlgpr->ReceiveFile(dlgpr);
+        dlgpr->onAcceptButtonClicked(dlgpr);
 }
 /**
  * 显示窗口事件响应函数.
@@ -1136,7 +1083,7 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr)
 {
     GtkTreeModel *model;
     GtkWidget *pbar,*button;
-    float progress;
+    float progress = 0.0;
     FileInfo *file;
     GtkTreeIter iter;
     GtkIconTheme *theme;
@@ -1216,26 +1163,25 @@ void DialogPeer::ShowDialogPeer(DialogPeer *dlgpr)
  *@param dlgpr 对话框类
  *
  */
-void DialogPeer::ReceiveFile(DialogPeer *dlgpr)
+void DialogPeer::onAcceptButtonClicked(DialogPeer* self)
 {
     GtkWidget *widget;
     GtkTreeModel *model;
     GtkTreeIter iter;
-    gchar *filename, *filepath;
+    gchar *filename;
     FileInfo *file;
     pthread_t pid;
 
-    filepath = pop_save_path(GTK_WIDGET(dlgpr->grpinf->dialog));
-    g_free(progdt.path);
-    progdt.path = filepath;
+    const gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog));
+    self->progdt.path = filepath;
     /* 考察数据集中是否存在项 */
-    widget = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset), "file-to-receive-treeview-widget"));
+    widget = GTK_WIDGET(g_datalist_get_data(&(self->widset), "file-to-receive-treeview-widget"));
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
     if(!model)
         return;
     if (!gtk_tree_model_get_iter_first(model, &iter))
             return;
-    dlgpr->torcvsize = 0;
+    self->torcvsize = 0;
     /* 将选中的项投入文件数据接收类 */
     do {
             gtk_tree_model_get(model, &iter,2, &filename,
@@ -1247,10 +1193,10 @@ void DialogPeer::ReceiveFile(DialogPeer *dlgpr)
             pthread_create(&pid, NULL, ThreadFunc(ThreadRecvFile), file);
             pthread_detach(pid);
             g_free(filename);
-            dlgpr->torcvsize += file->filesize;
+            self->torcvsize += file->filesize;
     } while (gtk_tree_model_iter_next(model, &iter));
-    dlgpr->rcvdsize = 0;
-    dlgpr->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), dlgpr);
+    self->rcvdsize = 0;
+    self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
 }
 /**
  * 接收文件数据.
@@ -1298,7 +1244,7 @@ void DialogPeer::RemoveSelectedRcv(GtkWidget *widget)
     while(list) {
         gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, (GtkTreePath *)g_list_nth(list, 0)->data);
         gtk_tree_model_get(model, &iter,5,&file, -1);
-        cthrd.PopItemFromEnclosureList(file);
+        g_cthrd->PopItemFromEnclosureList(file);
         list = g_list_next(list);
     }
     g_list_free(list);

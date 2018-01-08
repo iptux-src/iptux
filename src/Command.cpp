@@ -10,13 +10,21 @@
 //
 //
 #include "Command.h"
+
+#include <inttypes.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "wrapper.h"
 #include "support.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
+#include "deplib.h"
+#include "global.h"
+
+using namespace std;
+
 uint32_t Command::packetn = 1;
 
 /**
@@ -42,9 +50,9 @@ void Command::BroadCast(int sock)
         struct sockaddr_in addr;
         GSList *list, *tlist;
 
-        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, progdt.nickname);
-        ConvertEncode(progdt.encode);
-        CreateIptuxExtra(progdt.encode);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, g_progdt->nickname.c_str());
+        ConvertEncode(g_progdt->encode);
+        CreateIptuxExtra(g_progdt->encode);
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
@@ -71,17 +79,17 @@ void Command::DialUp(int sock)
         GSList *list, *tlist;
 
         CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                                                         progdt.nickname);
-        ConvertEncode(progdt.encode);
-        CreateIptuxExtra(progdt.encode);
+                                                         g_progdt->nickname.c_str());
+        ConvertEncode(g_progdt->encode);
+        CreateIptuxExtra(g_progdt->encode);
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
         addr.sin_port = htons(IPTUX_DEFAULT_PORT);
         //与某些代码片段的获取网段描述相冲突，必须复制出来使用
-        pthread_mutex_lock(&progdt.mutex);
-        list = progdt.CopyNetSegment();
-        pthread_mutex_unlock(&progdt.mutex);
+        g_progdt->Lock();
+        list = g_progdt->CopyNetSegment();
+        g_progdt->Unlock();
         tlist = list;
         while (tlist) {
                 pns = (NetSegment *)tlist->data;
@@ -114,7 +122,7 @@ void Command::SendAnsentry(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, progdt.nickname);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, g_progdt->nickname.c_str());
         ConvertEncode(pal->encode);
         CreateIptuxExtra(pal->encode);
 
@@ -155,7 +163,7 @@ void Command::SendAbsence(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE, progdt.nickname);
+        CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE, g_progdt->nickname.c_str());
         ConvertEncode(pal->encode);
         CreateIptuxExtra(pal->encode);
 
@@ -177,9 +185,9 @@ void Command::SendDetectPacket(int sock, in_addr_t ipv4)
         struct sockaddr_in addr;
 
         CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                                                         progdt.nickname);
-        ConvertEncode(progdt.encode);
-        CreateIptuxExtra(progdt.encode);
+                                                         g_progdt->nickname.c_str());
+        ConvertEncode(g_progdt->encode);
+        CreateIptuxExtra(g_progdt->encode);
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
@@ -432,7 +440,7 @@ void Command::SendMySign(int sock, PalInfo *pal)
 {
         struct sockaddr_in addr;
 
-        CreateCommand(IPTUX_SENDSIGN, progdt.sign);
+        CreateCommand(IPTUX_SENDSIGN, g_progdt->sign.c_str());
         ConvertEncode(pal->encode);
 
         bzero(&addr, sizeof(addr));
@@ -494,7 +502,7 @@ void Command::FeedbackError(PalInfo *pal, GroupBelongType btype, const char *err
         para.dtlist = g_slist_append(NULL, chip);
 
         /* 交给某人处理吧 */
-        cthrd.InsertMessage(&para);
+        g_cthrd->InsertMessage(&para);
 }
 
 /**
@@ -518,12 +526,16 @@ void Command::SendSublayerData(int sock, int fd)
  * 将缓冲区中的字符串转换为指定的编码.
  * @param encode 字符集编码
  */
-void Command::ConvertEncode(const char *encode)
+void Command::ConvertEncode(const string& encode)
 {
         char *ptr;
 
-        if (encode && strcasecmp(encode, "utf-8") != 0
-                 && (ptr = convert_encode(buf, encode, "utf-8"))) {
+        if(encode.empty()) {
+          return;
+        }
+
+        if (strcasecmp(encode.c_str(), "utf-8") != 0
+                 && (ptr = convert_encode(buf, encode.c_str(), "utf-8"))) {
                 size = strlen(ptr) + 1;
                 memcpy(buf, ptr, size);
                 g_free(ptr);
@@ -596,21 +608,21 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode)
  * 创建iptux程序独有的扩展数据.
  * @param encode 字符集编码
  */
-void Command::CreateIptuxExtra(const char *encode)
+void Command::CreateIptuxExtra(const string& encode)
 {
         char *pptr, *ptr;
 
         pptr = buf + size;
-        if (encode && strcasecmp(encode, "utf-8") != 0
-                 && (ptr = convert_encode(progdt.mygroup, encode, "utf-8"))) {
+        if (!encode.empty() && strcasecmp(encode.c_str(), "utf-8") != 0
+                 && (ptr = convert_encode(g_progdt->mygroup.c_str(), encode.c_str(), "utf-8"))) {
                 snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
                 g_free(ptr);
         } else
-                snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.mygroup);
+                snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->mygroup.c_str());
         size += strlen(pptr) + 1;
 
         pptr = buf + size;
-        snprintf(pptr, MAX_UDPLEN - size, "%s", progdt.myicon);
+        snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->myicon.c_str());
         size += strlen(pptr) + 1;
 
         pptr = buf + size;

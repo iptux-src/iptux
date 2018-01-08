@@ -10,12 +10,12 @@
 //
 //
 #include "dialog.h"
+
 #include "MainWindow.h"
 #include "ProgramData.h"
 #include "callback.h"
 #include "output.h"
-extern MainWindow mwin;
-extern ProgramData progdt;
+#include "global.h"
 
 /**
  * 弹出请求程序退出的对话框.
@@ -26,7 +26,7 @@ bool pop_request_quit()
         GtkWidget *dialog;
         gint result;
 
-        dialog = gtk_message_dialog_new(GTK_WINDOW(mwin.ObtainWindow()),
+        dialog = gtk_message_dialog_new(GTK_WINDOW(g_mwin->ObtainWindow()),
                                  GTK_DIALOG_MODAL,
                                  GTK_MESSAGE_QUESTION,
                                  GTK_BUTTONS_OK_CANCEL,
@@ -55,7 +55,7 @@ bool pop_request_shared_file(PalInfo *pal)
         gint result;
 
         dialog = gtk_dialog_new_with_buttons(_("Request Shared Resources"),
-                                         GTK_WINDOW(mwin.ObtainWindow()),
+                                         GTK_WINDOW(g_mwin->ObtainWindow()),
                                          GTK_DIALOG_MODAL,
                                          _("Agree"), GTK_RESPONSE_ACCEPT,
                                          _("Refuse"), GTK_RESPONSE_CANCEL, NULL);
@@ -63,7 +63,7 @@ bool pop_request_shared_file(PalInfo *pal)
         gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
         box = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), box, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), box, TRUE, TRUE, 0);
 
         image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
         gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
@@ -101,7 +101,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal)
         gint result;
 
         dialog = gtk_dialog_new_with_buttons(_("Access Password"),
-                                 GTK_WINDOW(mwin.ObtainWindow()),
+                                 GTK_WINDOW(g_mwin->ObtainWindow()),
                                  GTK_DIALOG_MODAL,
                                  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -110,7 +110,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal)
         frame = gtk_frame_new(_("Please input the password for "
                                  "the shared files behind"));
         gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), frame, FALSE, FALSE, 0);
         box = gtk_hbox_new(FALSE, 0);
         gtk_container_add(GTK_CONTAINER(frame), box);
 
@@ -168,7 +168,7 @@ char *pop_password_settings(GtkWidget *parent)
         gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
         hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox,
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), hbox,
                                                    FALSE, FALSE, 0);
         passwd = gtk_label_new(_("Password: "));
         gtk_box_pack_start(GTK_BOX(hbox), passwd, FALSE, FALSE, 0);
@@ -177,7 +177,7 @@ char *pop_password_settings(GtkWidget *parent)
         gtk_entry_set_visibility(GTK_ENTRY(passwd), FALSE);
         gtk_box_pack_start(GTK_BOX(hbox), passwd, TRUE, TRUE, 0);
         hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), hbox, FALSE, FALSE, 0);
         repeat = gtk_label_new(_("Repeat: "));
         gtk_box_pack_start(GTK_BOX(hbox), repeat, FALSE, FALSE, 0);
         repeat = gtk_entry_new();
@@ -218,9 +218,9 @@ mark:   switch (result = gtk_dialog_run(GTK_DIALOG(dialog))) {
  * @param parent parent window
  * @return path string
  */
-char *pop_save_path(GtkWidget *parent)
+const char* pop_save_path(GtkWidget *parent)
 {
-    char *path;
+    const char *path;
     GtkWidget *dialog;
 
     dialog = gtk_file_chooser_dialog_new (_("Please select a folder to save files."),
@@ -229,11 +229,10 @@ char *pop_save_path(GtkWidget *parent)
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                           NULL);
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),progdt.path);
-    path = progdt.path;
-    if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-    {
-        path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER (dialog));
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), g_progdt->path.c_str());
+    path = g_progdt->path.c_str();
+    if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+      path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER (dialog));
     }
     gtk_widget_destroy (dialog);
     return path;

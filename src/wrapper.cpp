@@ -10,6 +10,10 @@
 //
 //
 #include "wrapper.h"
+
+#include <errno.h>
+#include <inttypes.h>
+
 #include "deplib.h"
 
 /**

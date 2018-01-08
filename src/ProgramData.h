@@ -12,9 +12,9 @@
 #ifndef PROGRAMDATA_H
 #define PROGRAMDATA_H
 
-#include "sys.h"
 #include "net.h"
 #include "deplib.h"
+#include "IptuxConfig.h"
 
 /* flags
 // 消息(:7);当有消息时自动打开聊天窗口
@@ -32,22 +32,24 @@
 */
 class ProgramData {
 public:
-        ProgramData();
+        explicit ProgramData(IptuxConfig& config);
         ~ProgramData();
 
         void InitSublayer();
         void WriteProgData();
         GSList *CopyNetSegment();
         char *FindNetSegDescription(in_addr_t ipv4);
+        void Lock();
+        void Unlock();
 
-        char *nickname; //昵称 *
-        char *mygroup;  //所属群组 *
-        char *myicon;           //个人头像 *
-        char *path;             //存档路径 *
-        char *sign;             //个性签名 *
+        std::string nickname; //昵称 *
+        std::string mygroup;  //所属群组 *
+        std::string myicon;           //个人头像 *
+        std::string path;             //存档路径 *
+        std::string sign;             //个性签名 *
 
-        char *codeset;          //候选编码 *
-        char *encode;           //默认通信编码 *
+        std::string codeset;          //候选编码 *
+        std::string encode;           //默认通信编码 *
         char *palicon;          //默认头像 *
         char *font;             //面板字体 *
         uint8_t flags;          //6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
@@ -63,9 +65,13 @@ public:
         GdkCursor *xcursor, *lcursor;   //光标
         GtkTextTagTable *table; //tag table
 
-        guint cnxnid;           //GConfClient连接ID
         struct timeval timestamp;       //程序数据时间戳
+
+private:
+        IptuxConfig& config;
         pthread_mutex_t mutex;  //锁
+
+
 private:
         void ReadProgData();
         void AddGconfNotify();
@@ -74,11 +80,8 @@ private:
         void CreateCursor();
         void CreateTagTable();
 
-        void WriteNetSegment(GConfClient *client);
-        void ReadNetSegment(GConfClient *client);
-private:
-        static void GconfNotifyFunc(GConfClient *client, guint cnxnid,
-                                 GConfEntry *entry, ProgramData *progdt);
+        void WriteNetSegment();
+        void ReadNetSegment();
 };
 
 #endif

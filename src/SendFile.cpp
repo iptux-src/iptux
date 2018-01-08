@@ -10,12 +10,16 @@
 //
 //
 #include "SendFile.h"
+
+#include <inttypes.h>
+#include <string.h>
+
 #include "SendFileData.h"
 #include "CoreThread.h"
 #include "Command.h"
 #include "AnalogFS.h"
 #include "utils.h"
-extern CoreThread cthrd;
+#include "global.h"
 
 SendFile::SendFile()
 {
@@ -33,10 +37,10 @@ void SendFile::SendSharedInfoEntry(PalInfo *pal)
 {
         GSList *list;
 
-        pthread_mutex_lock(cthrd.GetMutex());
-        list = cthrd.GetPublicFileList();
+        g_cthrd->Lock();
+        list = g_cthrd->GetPublicFileList();
         SendFileInfo(pal, IPTUX_SHAREDOPT, list);
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->Unlock();
 }
 
 /**
@@ -79,24 +83,24 @@ void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach)
         /* 检查文件属性是否匹配 */
 
         fileid = iptux_get_hex_number(attach, ':', 1);
-        file = (FileInfo *)cthrd.GetFileFromAll(fileid);
+        file = (FileInfo *)g_cthrd->GetFileFromAll(fileid);
 	/* 兼容windows版信鸽(IPMSG) ,这里的信鸽不是飞鸽传书(IPMSG)*/
 	if(!file) {
                 fileid = iptux_get_dec_number(attach, ':', 1);
-		file = (FileInfo *)cthrd.GetFileFromAll(fileid);
+		file = (FileInfo *)g_cthrd->GetFileFromAll(fileid);
 	}
 	/* 兼容adroid版信鸽(IPMSG) */
 	if(!file) {
                 fileid = iptux_get_hex_number(attach, ':', 0);
                 filectime = iptux_get_dec_number(attach, ':', 1);
-                file = (FileInfo *)cthrd.GetFileFromAllWithPacketN(fileid,filectime);
+                file = (FileInfo *)g_cthrd->GetFileFromAllWithPacketN(fileid,filectime);
 	}
         if (!file || GET_MODE(file->fileattr) != GET_MODE(fileattr))
                 return;
         /* 检查好友数据是否存在 */
         len = sizeof(addr);
         getpeername(sock, (struct sockaddr *)&addr, &len);
-        if (!(pal = cthrd.GetPalFromList(addr.sin_addr.s_addr)))
+        if (!(pal = g_cthrd->GetPalFromList(addr.sin_addr.s_addr)))
                 return;
 
         /* 发送文件数据 */
@@ -138,9 +142,14 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist)
                 }
                 name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
                 file->packetn =  cmd.Packetn();
-                snprintf(ptr, MAX_UDPLEN - len, "%" PRIu32 ":%s:%" PRIx64 ":%"
-                                 PRIx32 ":%" PRIx32 ":\a", file->fileid, name,
-                                 file->filesize, file->filectime, file->fileattr);
+                snprintf(ptr,
+                  MAX_UDPLEN - len,
+                  "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a",
+                  file->fileid,
+                  name,
+                  file->filesize,
+                  file->filectime,
+                  file->fileattr);
                 g_free(name);
                 len += strlen(ptr);
                 ptr = buf + len;
@@ -148,7 +157,7 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist)
         }
 
         /* 发送文件信息 */
-        cmd.SendFileInfo(cthrd.UdpSockQuote(), pal, opttype, buf);
+        cmd.SendFileInfo(g_cthrd->UdpSockQuote(), pal, opttype, buf);
 }
 
 /**
@@ -164,7 +173,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist)
         char buf[MAX_UDPLEN];
         size_t len;
         char *ptr, *name;
-        GSList *tlist,*pallist,*filelist;
+        GSList *pallist,*filelist;
         FileInfo *file;
 
         /* 初始化 */
@@ -195,7 +204,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist)
                     }
                     filelist = g_slist_next(filelist);
             }
-            cmd.SendFileInfo(cthrd.UdpSockQuote(), (PalInfo *)pallist->data,
+            cmd.SendFileInfo(g_cthrd->UdpSockQuote(), (PalInfo *)pallist->data,
                                                              opttype, buf);
             pallist = g_slist_next(pallist);
         }

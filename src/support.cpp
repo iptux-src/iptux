@@ -9,8 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "support.h"
+
+#include <getopt.h>
+#include <sys/stat.h>
+
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
@@ -19,11 +23,9 @@
 #include "dialog.h"
 #include "utils.h"
 #include "output.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
-extern MainWindow mwin;
-extern LogSystem lgsys;
-extern SoundSystem sndsys;
+#include "ipmsg.h"
+#include "global.h"
+
 /**
  * 程序必要初始化.
  */
@@ -32,9 +34,9 @@ void iptux_init()
         bind_iptux_port();
         init_iptux_environment();
 
-        progdt.InitSublayer();
-        lgsys.InitSublayer();
-        sndsys.InitSublayer();
+        g_progdt->InitSublayer();
+        g_lgsys->InitSublayer();
+        g_sndsys->InitSublayer();
 
         signal(SIGPIPE, SIG_IGN);
         signal(SIGHUP, iptux_quit);
@@ -42,7 +44,7 @@ void iptux_init()
         signal(SIGQUIT, iptux_quit);
         signal(SIGTERM, iptux_quit);
 
-        lgsys.SystemLog(_("Loading the process successfully!"));
+        g_lgsys->SystemLog(_("Loading the process successfully!"));
 }
 
 /**
@@ -50,7 +52,7 @@ void iptux_init()
  */
 void iptux_gui_quit()
 {
-        if (mwin.TransmissionActive() && !pop_request_quit())
+        if (g_mwin->TransmissionActive() && !pop_request_quit())
                 return;
         gtk_main_quit();
         iptux_quit(0);
@@ -61,7 +63,7 @@ void iptux_gui_quit()
  */
 void iptux_quit(int _ignore)
 {
-        lgsys.SystemLog(_("The process is about to quit!"));
+        g_lgsys->SystemLog(_("The process is about to quit!"));
         exit(0);
 }
 
@@ -165,7 +167,9 @@ void bind_iptux_port()
         socket_enable_reuse(udpsock);
         socket_enable_broadcast(udpsock);
         if ((tcpsock == -1) || (udpsock == -1)) {
-                pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+                g_warning(_("Fatal Error!! Failed to create new socket!\n%s"),
+                                                         strerror(errno));
+                pop_warning(NULL, _("Fatal Error!!\nFailed to create new socket!\n%s"),
                                                          strerror(errno));
                 exit(1);
         }
@@ -178,13 +182,15 @@ void bind_iptux_port()
                  || bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
                 close(tcpsock);
                 close(udpsock);
-                pop_error(_("Fatal Error!!\nFailed to bind the TCP/UDP port(2425)!\n%s"),
+                g_warning(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
+                                                                         strerror(errno));
+                pop_warning(NULL, _("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
                                                                          strerror(errno));
                 exit(1);
         }
 
-        cthrd.TcpSockQuote() = tcpsock;
-        cthrd.UdpSockQuote() = udpsock;
+        g_cthrd->TcpSockQuote() = tcpsock;
+        g_cthrd->UdpSockQuote() = udpsock;
 
 }
 

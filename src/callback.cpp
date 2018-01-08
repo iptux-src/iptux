@@ -10,28 +10,17 @@
 //
 //
 #include "callback.h"
+
+#include <string.h>
+
+#include <gdk/gdkkeysyms.h>
+
+#include "global.h"
+#include "ipmsg.h"
 #include "ProgramData.h"
 #include "StatusIcon.h"
 #include "MainWindow.h"
 #include "support.h"
-extern ProgramData progdt;
-extern StatusIcon sicon;
-extern MainWindow mwin;
-
-/**
- * 改变UI的外观.
- * @return Gtk+库所需
- */
-gboolean alter_interface_mode()
-{
-        sicon.AlterStatusIconMode();
-        if(sicon.IsEmbedded())
-            mwin.AlterWindowMode();
-        else
-            gtk_main_quit();
-
-        return TRUE;
-}
 
 /**
  * 给entry控件设置提示信息.
@@ -217,10 +206,9 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter)
         while (tmp) {
                 tag = (GtkTextTag *)tmp->data;
                 if ( (url = (gchar *)g_object_get_data(G_OBJECT(tag), "url"))) {
-#if GTK_CHECK_VERSION(2,14,0)
-                        if (!gtk_show_uri(NULL, url, GDK_CURRENT_TIME, NULL))
-#endif
+                        if (!gtk_show_uri(NULL, url, GDK_CURRENT_TIME, NULL)) {
                                 iptux_open_url(url);
+                        }
                         break;
                 }
                 tmp = tmp->next;
@@ -228,7 +216,7 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter)
         g_slist_free(tags);
 }
 
-void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y)
+void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y, ProgramData& progdt)
 {
         GdkWindow *window;
         GSList *tags, *tmp;
@@ -314,8 +302,8 @@ gboolean textview_motion_notify_event(GtkWidget *textview, GdkEventMotion *event
 
         gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                  GTK_TEXT_WINDOW_WIDGET, event->x, event->y, &x, &y);
-        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y);
-        gdk_window_get_pointer(textview->window, NULL, NULL, NULL);
+        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, *g_progdt);
+        gdk_window_get_pointer(gtk_widget_get_window(textview), NULL, NULL, NULL);
 
         return FALSE;
 }
@@ -324,10 +312,10 @@ gboolean textview_visibility_notify_event(GtkWidget *textview, GdkEventVisibilit
 {
         gint wx, wy, bx, by;
 
-        gdk_window_get_pointer(textview->window, &wx, &wy, NULL);
+        gdk_window_get_pointer(gtk_widget_get_window(textview), &wx, &wy, NULL);
         gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                          GTK_TEXT_WINDOW_WIDGET, wx, wy, &bx, &by);
-        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by);
+        textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by, *g_progdt);
 
         return FALSE;
 }

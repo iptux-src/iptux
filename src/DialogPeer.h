@@ -15,13 +15,14 @@
 
 #include "mess.h"
 #include "DialogBase.h"
+#include "IptuxConfig.h"
 
 class DialogPeer: public DialogBase {
 public:
-        DialogPeer(GroupInfo *grp);
+        DialogPeer(IptuxConfig& config, GroupInfo* grp, ProgramData& progdt);
         virtual ~DialogPeer();
 
-        static void PeerDialogEntry(GroupInfo *grpinf);
+        static void PeerDialogEntry(IptuxConfig& config, GroupInfo *grpinf, ProgramData& progdt);
 
         virtual void UpdatePalData(PalInfo *pal);
         virtual void InsertPalData(PalInfo *pal);
@@ -63,7 +64,7 @@ private:
         static void AskSharedFiles(GroupInfo *grpinf);
         static void InsertPicture(DialogPeer *dlgpr);
         static void DialogPeerDestroy(DialogPeer *dlgpr);
-        static void ReceiveFile(DialogPeer *dlgpr);
+        static void onAcceptButtonClicked(DialogPeer *dlgpr);
         static void ThreadRecvFile(FileInfo *file);
         static void ShowInfoEnclosure(DialogPeer *dlgpr);
         static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
@@ -73,6 +74,7 @@ private:
 private:
         static void ThreadSendTextMsg(MsgPara *para);
 protected:
+        IptuxConfig& config;
         int64_t torcvsize;  //总计待接收大小(包括已接收)
         int64_t rcvdsize;   //总计已接收大小
         guint timerrcv;     //接收文件界面更新计时器ID

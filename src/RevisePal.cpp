@@ -9,14 +9,18 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "RevisePal.h"
+
+#include <inttypes.h>
+
+#include "ipmsg.h"
+#include "config.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
 #include "callback.h"
 #include "utils.h"
-extern CoreThread cthrd;
-extern MainWindow mwin;
+#include "global.h"
+
 
 /**
  * 类构造函数.
@@ -46,7 +50,7 @@ void RevisePal::ReviseEntry(PalInfo *pal)
 
         /* 创建对话框 */
         dialog = rpal.CreateMainDialog();
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox),
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                          rpal.CreateAllArea(), TRUE, TRUE, 0);
         rpal.SetAllValue();
 
@@ -96,7 +100,7 @@ GtkWidget *RevisePal::CreateMainDialog()
         GtkWidget *dialog;
 
         dialog = gtk_dialog_new_with_buttons(_("Change Pal's Information"),
-                         GTK_WINDOW(mwin.ObtainWindow()), GTK_DIALOG_MODAL,
+                         GTK_WINDOW(g_mwin->ObtainWindow()), GTK_DIALOG_MODAL,
                          GTK_STOCK_OK, GTK_RESPONSE_OK,
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -287,10 +291,10 @@ void RevisePal::ApplyReviseData()
         FLAG_SET(pal->flags, 2);
 
         /* 更新好友信息 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        cthrd.UpdatePalToList(pal->ipv4);
-        pthread_mutex_unlock(cthrd.GetMutex());
-        mwin.UpdateItemToPaltree(pal->ipv4);
+        g_cthrd->Lock();
+        g_cthrd->UpdatePalToList(pal->ipv4);
+        g_cthrd->Unlock();
+        g_mwin->UpdateItemToPaltree(pal->ipv4);
 }
 
 /**

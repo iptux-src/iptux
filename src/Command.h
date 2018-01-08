@@ -12,6 +12,9 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <string>
+
+#include "ipmsg.h"
 #include "mess.h"
 
 class Command {
@@ -41,10 +44,10 @@ public:
 private:
         void FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error);
         void SendSublayerData(int sock, int fd);
-        void ConvertEncode(const char *encode);
+        void ConvertEncode(const std::string& encode);
         void CreateCommand(uint32_t command, const char *attach);
         void CreateIpmsgExtra(const char *extra, const char *encode);
-        void CreateIptuxExtra(const char *encode);
+        void CreateIptuxExtra(const std::string& encode);
         void CreateIconExtra();
 
         size_t size;                    //当前已使用缓冲区的长度

@@ -10,11 +10,12 @@
 //
 //
 #include "DetectPal.h"
+
 #include "CoreThread.h"
 #include "Command.h"
 #include "callback.h"
 #include "output.h"
-extern CoreThread cthrd;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -43,7 +44,7 @@ void DetectPal::DetectEntry(GtkWidget *parent)
 
         /* 创建对话框窗体 */
         dialog = dpal.CreateMainDialog(parent);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox),
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                          dpal.CreateInputArea(), TRUE, TRUE, 0);
 
         /* 运行对话框 */
@@ -123,7 +124,7 @@ void DetectPal::SendDetectPacket()
                 return;
         }
 
-        cmd.SendDetectPacket(cthrd.UdpSockQuote(), ipv4);
+        cmd.SendDetectPacket(g_cthrd->UdpSockQuote(), ipv4);
         pop_info(parent, _("The notification has been sent to %s."), text);
         gtk_entry_set_text(GTK_ENTRY(widget), "");
 }

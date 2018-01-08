@@ -10,14 +10,16 @@
 //
 //
 #include "ShareFile.h"
+
+#include <sys/stat.h>
+
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "AnalogFS.h"
 #include "support.h"
 #include "dialog.h"
 #include "utils.h"
-extern ProgramData progdt;
-extern CoreThread cthrd;
+#include "global.h"
 
 /**
  * 类构造函数.
@@ -46,7 +48,7 @@ void ShareFile::ShareEntry(GtkWidget *parent)
 
         /* 创建对话框 */
         dialog = sfile.CreateMainDialog(parent);
-        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox),
+        gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                          sfile.CreateAllArea(), TRUE, TRUE, 0);
 
         /* 运行对话框 */
@@ -208,7 +210,7 @@ void ShareFile::FillFileModel(GtkTreeModel *model)
         dpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_DIRECTORY);
 
         /* 将现在的共享文件填入model */
-        tlist = cthrd.GetPublicFileList();
+        tlist = g_cthrd->GetPublicFileList();
         while (tlist) {
                 file = (FileInfo *)tlist->data;
                 /* 获取文件大小 */
@@ -307,16 +309,16 @@ void ShareFile::ApplySharedData()
         struct stat st;
 
         /* 更新共享文件链表 */
-        pthread_mutex_lock(cthrd.GetMutex());
-        cthrd.ClearFileFromPublic();
-        cthrd.PbnQuote() = 1;
+        g_cthrd->Lock();
+        g_cthrd->ClearFileFromPublic();
+        g_cthrd->PbnQuote() = 1;
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "file-treeview-widget"));
         model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
         if (gtk_tree_model_get_iter_first(model, &iter)) {
                 do {
                         gtk_tree_model_get(model, &iter, 1, &filepath, 4, &fileattr, -1);
                         file = new FileInfo;
-                        file->fileid = cthrd.PbnQuote()++;
+                        file->fileid = g_cthrd->PbnQuote()++;
                         /* file->packetn = 0;//没必要设置此字段 */
                         file->fileattr = fileattr;
                         /* file->filesize = 0;//我喜欢延后处理 */
@@ -324,18 +326,18 @@ void ShareFile::ApplySharedData()
                         file->filepath = filepath;
                         if (afs.stat(filepath, &st) == 0)
                             file->filectime = st.st_ctime;
-                        cthrd.AttachFileToPublic(file);
+                        g_cthrd->AttachFileToPublic(file);
                 } while (gtk_tree_model_iter_next(model, &iter));
         }
-        pthread_mutex_unlock(cthrd.GetMutex());
+        g_cthrd->Unlock();
 
         /* 更新密码 */
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "password-button-widget"));
         passwd = (const gchar *)g_object_get_data(G_OBJECT(widget), "password");
-        cthrd.SetAccessPublicLimit(passwd);
+        g_cthrd->SetAccessPublicLimit(passwd);
 
         /* 写出共享文件 */
-        cthrd.WriteSharedData();
+        g_cthrd->WriteSharedData();
 }
 
 /**
@@ -539,10 +541,8 @@ void ShareFile::DragDataReceived(ShareFile *sfile, GdkDragContext *context,
                                  guint info, guint time)
 {
         GSList *list;
-
-        if (data->length <= 0 || data->format != 8) {
-                gtk_drag_finish(context, FALSE, FALSE, time);
-                return;
+        if(!ValidateDragData(data, context, time)) {
+          return;
         }
 
         list = selection_data_get_path(data);

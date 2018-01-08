@@ -1,4 +1,4 @@
-pkg_check_modules (IPTUX REQUIRED glib-2.0>=2.32.0 gthread-2.0>=2.14.0 gtk+-2.0>=2.12.0 gconf-2.0>=2.4.0)
+pkg_check_modules (IPTUX REQUIRED glib-2.0>=2.32.0 gthread-2.0>=2.14.0 gtk+-2.0>=2.16.0 jsoncpp>=1.0)
 include_directories("${PROJECT_BINARY_DIR}" "${IPTUX_INCLUDE_DIRS}")
 link_libraries("${IPTUX_LIBRARIES}")
 link_libraries("${Intl_LIBRARIES}")
@@ -20,6 +20,7 @@ add_executable (iptux
 	DialogPeer.cpp
 	HelpDialog.cpp
 	iptux.cpp
+	IptuxConfig.cpp
 	LogSystem.cpp
 	MainWindow.cpp
 	mess.cpp
@@ -38,6 +39,7 @@ add_executable (iptux
 	UdpData.cpp
 	utils.cpp
 	wrapper.cpp
+	WindowConfig.cpp
 	)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

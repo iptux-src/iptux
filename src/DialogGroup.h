@@ -14,13 +14,15 @@
 
 #include "mess.h"
 #include "DialogBase.h"
+#include "IptuxConfig.h"
+#include "ProgramData.h"
 
 class DialogGroup: public DialogBase {
 public:
-        DialogGroup(GroupInfo *grp);
+        DialogGroup(GroupInfo *grp, IptuxConfig& config, ProgramData& progdt);
         virtual ~DialogGroup();
 
-        static void GroupDialogEntry(GroupInfo *grpinf);
+        static void GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, ProgramData& progdt);
 
         virtual void UpdatePalData(PalInfo *pal);
         virtual void InsertPalData(PalInfo *pal);
@@ -28,6 +30,7 @@ public:
         virtual void ClearAllPalData();
         virtual GSList *GetSelPal();
 private:
+        IptuxConfig& config;
         virtual void InitSublayerSpecify();
         void ReadUILayout();
         void SaveUILayout();
@@ -63,8 +66,10 @@ private:
                                          gint x, gint y, GtkSelectionData *data,
                                          guint info, guint time);
         static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
-        static void MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                                         GtkTreeViewColumn *column);
+        static void MembertreeItemActivated(GtkWidget *treeview, 
+                GtkTreePath *path,
+                GtkTreeViewColumn *column,
+                DialogGroup* self);
         static void SendMessage(DialogGroup *dlggrp);
 };
 

@@ -13,6 +13,7 @@
 #ifndef ANALOGFS_H
 #define ANALOGFS_H
 
+#include "ipmsg.h"
 #include "mess.h"
 
 class AnalogFS {

@@ -16,10 +16,11 @@
 #define DIALOGBASE_H
 
 #include "mess.h"
+#include "ProgramData.h"
 
 class DialogBase: public SessionAbstract {
 public:
-        DialogBase(GroupInfo *grp);
+        DialogBase(GroupInfo *grp, ProgramData& progdt);
         virtual ~DialogBase();
 
 protected:
@@ -71,7 +72,7 @@ protected:
         static void RemoveSelectedEnclosure(GtkWidget *widget);
         static void OpenTransDlg(DialogBase *dlgpr);
 protected:
-
+        ProgramData& progdt;
         GData *widset;          //窗体集
         GData *mdlset;          //数据model集
         GData *dtset;           //通用数据集
