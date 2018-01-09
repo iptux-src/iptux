@@ -62,8 +62,9 @@ void DialogBase::InitSublayerGeneral()
  */
 void DialogBase::ClearSublayerGeneral()
 {
-        if (FLAG_ISSET(progdt.flags, 3))
-                ClearHistoryTextView();
+  if(progdt.IsAutoCleanChatHistory()) {
+    ClearHistoryTextView();
+  }
         grpinf->dialog = NULL;
         g_datalist_clear(&widset);
         g_datalist_clear(&mdlset);
@@ -289,7 +290,7 @@ GtkWidget *DialogBase::CreateInputArea()
                          G_CALLBACK(gtk_widget_destroy), window);
         button = gtk_button_new_with_label(_("Send"));
         gtk_widget_add_accelerator(button, "clicked", accel, GDK_Return,
-                 FLAG_ISSET(progdt.flags, 4) ? GdkModifierType(0) : GDK_CONTROL_MASK,
+                 progdt.IsEnterSendMessage() ? GdkModifierType(0) : GDK_CONTROL_MASK,
                  GTK_ACCEL_VISIBLE);
         gtk_box_pack_end(GTK_BOX(hbb), button, FALSE, FALSE, 0);
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(SendMessage), this);

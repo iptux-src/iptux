@@ -24,9 +24,9 @@ using namespace std;
  * 类构造函数.
  */
 ProgramData::ProgramData(IptuxConfig& config):
- palicon(NULL), font(NULL), flags(0), transtip(NULL), msgtip(NULL),
+ palicon(NULL), font(NULL), transtip(NULL), msgtip(NULL),
  volume(1.0), sndfgs(~0), netseg(NULL), urlregex(NULL), xcursor(NULL),
- lcursor(NULL), table(NULL), config(config)
+ lcursor(NULL), table(NULL), config(config), flags(0)
 {
         gettimeofday(&timestamp, NULL);
         pthread_mutex_init(&mutex, NULL);
@@ -103,7 +103,7 @@ void ProgramData::WriteProgData()
         config.SetBool("transnd_support", FLAG_ISSET(sndfgs, 2));
         config.SetBool("msgsnd_support", FLAG_ISSET(sndfgs, 1));
         config.SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
-        
+
         config.Save();
 
         WriteNetSegment();
@@ -296,7 +296,7 @@ void ProgramData::CreateTagTable()
 void ProgramData::WriteNetSegment()
 {
   vector<Json::Value> jsons;
-  
+
   pthread_mutex_lock(&mutex);
   GSList* tlist = netseg;
   while (tlist) {
@@ -327,4 +327,39 @@ void ProgramData::Lock() {
 
 void ProgramData::Unlock() {
   pthread_mutex_unlock(&mutex);
+}
+
+bool ProgramData::IsAutoOpenCharDialog() const {
+  return FLAG_ISSET(flags, 7);
+}
+
+bool ProgramData::IsAutoHidePanelAfterLogin() const {
+  return FLAG_ISSET(flags, 6);
+}
+
+bool ProgramData::IsAutoOpenFileTrans() const {
+  return FLAG_ISSET(flags, 5);
+}
+bool ProgramData::IsEnterSendMessage() const {
+    return FLAG_ISSET(flags, 4);
+}
+bool ProgramData::IsAutoCleanChatHistory() const {
+    return FLAG_ISSET(flags, 3);
+}
+bool ProgramData::IsSaveChatHistory() const {
+    return FLAG_ISSET(flags, 2);
+}
+bool ProgramData::IsUsingBlacklist() const {
+    return FLAG_ISSET(flags, 1);
+}
+bool ProgramData::IsFilterFileShareRequest() const {
+    return FLAG_ISSET(flags, 0);
+}
+
+void ProgramData::SetFlag(int idx, bool flag) {
+  if(flag) {
+    FLAG_SET(flags, idx);
+  } else {
+    FLAG_CLR(flags, idx);
+  }
 }

@@ -55,8 +55,9 @@ void RecvFileData::RecvFileDataEntry()
         gdk_threads_enter();
         CreateUIPara();
         g_mwin->UpdateItemToTransTree(&para);
-        if (FLAG_ISSET(g_progdt->flags, 5))
+        if(g_progdt->IsAutoOpenFileTrans()) {
                 g_mwin->OpenTransWindow();
+        }
         gdk_threads_leave();
 
         /* 分类处理 */

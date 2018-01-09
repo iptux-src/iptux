@@ -49,8 +49,9 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...)
         gchar *log, *msg, *ptr;
         va_list ap;
 
-        if (!FLAG_ISSET(g_progdt->flags, 2))
-                return;
+        if(!g_progdt->IsSaveChatHistory()) {
+          return;
+        }
 
         PalInfo *pal = msgpara->pal;
 
@@ -82,9 +83,9 @@ void LogSystem::SystemLog(const char *fmt, ...)
         gchar *log, *msg, *ptr;
         va_list ap;
 
-        if (!FLAG_ISSET(g_progdt->flags, 2))
-                return;
-
+        if(!g_progdt->IsSaveChatHistory()) {
+          return;
+        }
         ptr = getformattime(TRUE, _("User:%s Host:%s"), g_get_user_name(), g_get_host_name());
         va_start(ap, fmt);
         msg = g_strdup_vprintf(fmt, ap);
