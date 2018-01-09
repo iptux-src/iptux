@@ -23,6 +23,7 @@
 
 #include <libintl.h>
 
+#include "ipmsg.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "StatusIcon.h"
@@ -82,7 +83,8 @@ int main(int argc, char *argv[])
         gdk_threads_enter();
         gtk_init(&argc, &argv);
 
-        iptux_init();
+        int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
+        iptux_init(port);
         sicon.CreateStatusIcon();
         mwin.CreateWindow();
         cthrd.CoreThreadEntry();
