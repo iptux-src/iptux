@@ -5,6 +5,7 @@
 * [#61] switch from autotools to cmake.
 * [#67] improve compile under MacOS, thanks to @jiegec.
 * [#70] switch config system from gconf to jsoncpp1.
+* [#74] fix critial warning on peer window.
 
 # 0.6.4 (2017-08-22)
 

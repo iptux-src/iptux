@@ -31,11 +31,12 @@
 #include "global.h"
 
 DialogBase::DialogBase(GroupInfo *grp, ProgramData& progdt)
-        :progdt(progdt),
-        widset(NULL), mdlset(NULL),dtset(NULL), accel(NULL), grpinf(grp),
-         totalsendsize(0)
+  :progdt(progdt),
+  widset(NULL), mdlset(NULL),dtset(NULL), accel(NULL), grpinf(grp),
+  totalsendsize(0),
+  timersend(0)
 {
-        InitSublayerGeneral();
+  InitSublayerGeneral();
 }
 
 DialogBase::~DialogBase()

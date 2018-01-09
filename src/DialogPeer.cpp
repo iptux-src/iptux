@@ -38,7 +38,8 @@ DialogPeer::DialogPeer(IptuxConfig& config, GroupInfo *grp, ProgramData& progdt)
         :DialogBase(grp, progdt),
         config(config),
         torcvsize(0),
-        rcvdsize(0)
+        rcvdsize(0),
+        timerrcv(0)
 {
         ReadUILayout();
 }
