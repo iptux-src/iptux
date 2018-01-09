@@ -156,7 +156,6 @@
 #define GET_OPT(command)                (command & 0xffffff00UL)
 
 /* header */
-#define IPTUX_VERSION                   "1_iptux_0#5#2"
 #define IPTUX_DEFAULT_PORT              IPMSG_PORT
 
 /* command */
