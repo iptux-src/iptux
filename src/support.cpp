@@ -26,12 +26,14 @@
 #include "ipmsg.h"
 #include "global.h"
 
+static void bind_iptux_port(int port);
+
 /**
  * 程序必要初始化.
  */
-void iptux_init()
+void iptux_init(int port)
 {
-        bind_iptux_port();
+        bind_iptux_port(port);
         init_iptux_environment();
 
         g_progdt->InitSublayer();
@@ -156,7 +158,7 @@ void iptux_open_url(const char *url)
 /**
  * 绑定iptux程序的服务监听端口.
  */
-void bind_iptux_port()
+void bind_iptux_port(int port)
 {
         struct sockaddr_in addr;
         int tcpsock, udpsock;
@@ -176,15 +178,15 @@ void bind_iptux_port()
 
         bzero(&addr, sizeof(addr));
         addr.sin_family = AF_INET;
-        addr.sin_port = htons(IPTUX_DEFAULT_PORT);
+        addr.sin_port = htons(port);
         addr.sin_addr.s_addr = htonl(INADDR_ANY);
         if (bind(tcpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1
                  || bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
                 close(tcpsock);
                 close(udpsock);
-                g_warning(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
+                g_warning(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), port,
                                                                          strerror(errno));
-                pop_warning(NULL, _("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"), IPTUX_DEFAULT_PORT,
+                pop_warning(NULL, _("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"), port,
                                                                          strerror(errno));
                 exit(1);
         }

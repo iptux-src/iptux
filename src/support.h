@@ -14,7 +14,7 @@
 
 #include "mess.h"
 
-void iptux_init();
+void iptux_init(int port);
 void iptux_gui_quit();
 void iptux_quit(int);
 
@@ -24,7 +24,6 @@ void print_usage();
 void print_stun();
 
 void iptux_open_url(const char *url);
-void bind_iptux_port();
 void init_iptux_environment();
 
 void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height);
