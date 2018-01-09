@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
+#include "config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "wrapper.h"
