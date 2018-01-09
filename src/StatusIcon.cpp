@@ -52,7 +52,7 @@ void StatusIcon::CreateStatusIcon()
 {
         GdkScreen *screen;
 
-        if (FLAG_ISSET(g_progdt->flags, 6)) {
+        if (g_progdt->IsAutoHidePanelAfterLogin()) {
                 statusicon = gtk_status_icon_new_from_stock("iptux-logo-hide");
                 g_object_set_data(G_OBJECT(statusicon), "show", GINT_TO_POINTER(FALSE));
         } else {

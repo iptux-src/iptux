@@ -42,6 +42,16 @@ public:
         void Lock();
         void Unlock();
 
+        bool IsAutoOpenCharDialog() const;
+        bool IsAutoHidePanelAfterLogin() const;
+        bool IsAutoOpenFileTrans() const;
+        bool IsEnterSendMessage() const;
+        bool IsAutoCleanChatHistory() const;
+        bool IsSaveChatHistory() const;
+        bool IsUsingBlacklist() const;
+        bool IsFilterFileShareRequest() const;
+        void SetFlag(int idx, bool flag);
+
         std::string nickname; //昵称 *
         std::string mygroup;  //所属群组 *
         std::string myicon;           //个人头像 *
@@ -52,7 +62,6 @@ public:
         std::string encode;           //默认通信编码 *
         char *palicon;          //默认头像 *
         char *font;             //面板字体 *
-        uint8_t flags;          //6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
 
         char *transtip;         //传输完成提示声音 *
         char *msgtip;           //消息到来提示声音 *
@@ -70,7 +79,7 @@ public:
 private:
         IptuxConfig& config;
         pthread_mutex_t mutex;  //锁
-
+        uint8_t flags;          //6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
 
 private:
         void ReadProgData();

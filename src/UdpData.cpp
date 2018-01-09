@@ -75,7 +75,7 @@ void UdpData::DispatchUdpData()
 
         /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
         /* 嘿嘿，那就不要怪偶心狠手辣了 */
-        if (FLAG_ISSET(g_progdt->flags, 1) && g_cthrd->BlacklistContainItem(ipv4))
+        if (g_progdt->IsUsingBlacklist() && g_cthrd->BlacklistContainItem(ipv4))
                 return;
 
         /* 决定消息去向 */
@@ -363,7 +363,7 @@ void UdpData::SomeoneSendmsg()
         if(grpinf->dialog)
             dlgpr->ShowDialogPeer(dlgpr);
         /* 是否直接弹出聊天窗口 */
-        if (FLAG_ISSET(g_progdt->flags, 7)) {
+        if (g_progdt->IsAutoOpenCharDialog()) {
                 gdk_threads_enter();
                 if (!(grpinf->dialog)) {
 //                     switch (grpinf->type) {
@@ -877,7 +877,7 @@ void UdpData::ThreadAskSharedFile(PalInfo *pal)
         SendFile sfile;
         bool permit;
 
-        if (FLAG_ISSET(g_progdt->flags, 0)) {
+        if (g_progdt->IsFilterFileShareRequest()) {
                 gdk_threads_enter();
                 permit = pop_request_shared_file(pal);
                 gdk_threads_leave();

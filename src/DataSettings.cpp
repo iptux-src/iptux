@@ -558,29 +558,21 @@ void DataSettings::SetSystemValue()
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
         gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), g_progdt->font);
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                     FLAG_ISSET(g_progdt->flags, 7));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsAutoOpenCharDialog());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 6));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsAutoHidePanelAfterLogin());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "transmission-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 5));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsAutoOpenFileTrans());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "enterkey-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 4));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsEnterSendMessage());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 3));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsAutoCleanChatHistory());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "log-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 2));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsSaveChatHistory());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "blacklist-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 1));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsUsingBlacklist());
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 FLAG_ISSET(g_progdt->flags, 0));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), g_progdt->IsFilterFileShareRequest());
 }
 
 /**
@@ -1017,52 +1009,21 @@ void DataSettings::ObtainSystemValue()
         g_progdt->font = g_strdup(gtk_font_button_get_font_name(GTK_FONT_BUTTON(widget)));
 
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-            FLAG_SET(g_progdt->flags, 7);
-        else
-            FLAG_CLR(g_progdt->flags, 7);
-
+        g_progdt->SetFlag(7, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 6);
-        else
-                FLAG_CLR(g_progdt->flags, 6);
-
+        g_progdt->SetFlag(6, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "transmission-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 5);
-        else
-                FLAG_CLR(g_progdt->flags, 5);
-
+        g_progdt->SetFlag(5, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "enterkey-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 4);
-        else
-                FLAG_CLR(g_progdt->flags, 4);
-
+        g_progdt->SetFlag(4, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 3);
-        else
-                FLAG_CLR(g_progdt->flags, 3);
-
+        g_progdt->SetFlag(3, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "log-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 2);
-        else
-                FLAG_CLR(g_progdt->flags, 2);
-
+        g_progdt->SetFlag(2, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "blacklist-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 1);
-        else
-                FLAG_CLR(g_progdt->flags, 1);
-
+        g_progdt->SetFlag(1, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
-        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-                FLAG_SET(g_progdt->flags, 0);
-        else
-                FLAG_CLR(g_progdt->flags, 0);
+        g_progdt->SetFlag(0, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
 
 /**

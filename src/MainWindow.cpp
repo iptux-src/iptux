@@ -75,9 +75,10 @@ void MainWindow::CreateWindow()
         /* 隐藏好友清单 */
         widget = GTK_WIDGET(g_datalist_get_data(&widset, "pallist-box-widget"));
         gtk_widget_hide(widget);
-        /* 如果需要隐藏主窗口，则隐藏 */
-        if (FLAG_ISSET(progdt.flags, 6))
+
+        if(progdt.IsAutoHidePanelAfterLogin()) {
                 gtk_widget_hide(window);
+        }
 
         /* 创建传输窗口 */
         window = CreateTransWindow();
