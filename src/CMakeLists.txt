@@ -7,7 +7,7 @@ if(GST_FOUND)
 	link_libraries("${GST_LIBRARIES}")
 endif(GST_FOUND)
 
-add_library(iptuxgui
+add_library(iptux
 	STATIC
 	AnalogFS.cpp
 	callback.cpp
@@ -42,13 +42,13 @@ add_library(iptuxgui
 	WindowConfig.cpp
 	)
 
-add_executable (iptux
+add_executable (iptuxbin
 	iptux.cpp
 	)
-
+set_target_properties(iptuxbin PROPERTIES OUTPUT_NAME iptux)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(iptux iptuxgui Threads::Threads)
+target_link_libraries(iptuxbin iptux Threads::Threads)
 
-install (TARGETS iptux DESTINATION bin)
+install (TARGETS iptuxbin DESTINATION bin)
