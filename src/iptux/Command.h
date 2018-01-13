@@ -9,13 +9,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef COMMAND_H
-#define COMMAND_H
+#ifndef IPTUX_COMMAND_H
+#define IPTUX_COMMAND_H
 
 #include <string>
 
-#include "ipmsg.h"
-#include "mess.h"
+#include "iptux/ipmsg.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class Command {
 public:
@@ -58,5 +60,7 @@ public:
                         return packetn;
                 }
 };
+
+}
 
 #endif

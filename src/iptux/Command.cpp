@@ -15,16 +15,18 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
-#include "config.h"
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "wrapper.h"
-#include "support.h"
-#include "utils.h"
-#include "deplib.h"
-#include "global.h"
+#include "iptux/config.h"
+#include "iptux/ProgramData.h"
+#include "iptux/CoreThread.h"
+#include "iptux/wrapper.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/deplib.h"
+#include "iptux/global.h"
 
 using namespace std;
+
+namespace iptux {
 
 uint32_t Command::packetn = 1;
 
@@ -649,4 +651,6 @@ void Command::CreateIconExtra()
         close(fd);
         if (len != -1)
                 size += len;
+}
+
 }
