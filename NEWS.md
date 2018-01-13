@@ -2,6 +2,7 @@
 
 * [?] fix build guide in `README.md` and homebrew.
 * [#80] honor the default `CMAKE_C_FLAGS` and `CMAKE_CXX_FLAGS`, thanks to @hosiet.
+* [#81] fix crash on status icon click.
 
 # 0.7.0 (2018-01-10)
 

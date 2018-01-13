@@ -62,7 +62,7 @@ void StatusIcon::CreateStatusIcon()
         screen = gdk_screen_get_default();
         gtk_status_icon_set_screen(statusicon, screen);
 
-        g_signal_connect(statusicon, "activate", G_CALLBACK(StatusIconActivate), this);
+        g_signal_connect_swapped(statusicon, "activate", G_CALLBACK(StatusIconActivate), this);
         g_signal_connect(statusicon, "popup-menu", G_CALLBACK(onPopupMenu), NULL);
         g_object_set(statusicon, "has-tooltip", TRUE, NULL);
         g_signal_connect(statusicon, "query-tooltip",
