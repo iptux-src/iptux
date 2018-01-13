@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef OUTPUT_H
-#define OUTPUT_H
+#ifndef IPTUX_OUTPUT_H
+#define IPTUX_OUTPUT_H
 
-#include "deplib.h"
+#include <gtk/gtk.h>
+
+namespace iptux {
 
 /* 警告信息输出 */
 #ifndef WARNING
@@ -38,5 +40,7 @@
 void pop_info(GtkWidget *parent, const gchar *format, ...);
 void pop_warning(GtkWidget *parent, const gchar *format, ...);
 void pop_error(const gchar *format, ...);
+
+}
 
 #endif

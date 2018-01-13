@@ -1,9 +1,12 @@
-#ifndef IPTUX_CONFIG_H
-#define IPTUX_CONFIG_H
+#ifndef IPTUX_IPTUX_CONFIG_H
+#define IPTUX_IPTUX_CONFIG_H
 
 #include <string>
 #include <vector>
+
 #include <json/json.h>
+
+namespace iptux {
 
 class IptuxConfig {
 public:
@@ -37,5 +40,7 @@ private:
 	std::string fname;
 	Json::Value root;
 };
+
+}
 
 #endif

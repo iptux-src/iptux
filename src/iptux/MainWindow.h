@@ -9,13 +9,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef IPTUX_MAINWINDOW_H
+#define IPTUX_MAINWINDOW_H
 
-#include "mess.h"
-#include "IptuxConfig.h"
-#include "ProgramData.h"
-#include "WindowConfig.h"
+#include "iptux/IptuxConfig.h"
+#include "iptux/ProgramData.h"
+#include "iptux/WindowConfig.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class StatusIcon;
 
@@ -162,5 +164,7 @@ private:
                                                          MainWindow* self);
   static gboolean onDeleteEvent(MainWindow* self);
 };
+
+}
 
 #endif

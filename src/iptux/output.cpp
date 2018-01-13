@@ -11,6 +11,10 @@
 //
 #include "output.h"
 
+#include "iptux/deplib.h"
+
+namespace iptux {
+
 /**
  * 弹出消息提示.
  * @param parent parent window
@@ -84,3 +88,4 @@ void pop_error(const gchar *format, ...)
         gtk_widget_destroy(dialog);
 }
 
+}

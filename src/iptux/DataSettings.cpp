@@ -21,6 +21,7 @@
 #include "iptux/utils.h"
 #include "iptux/ipmsg.h"
 #include "iptux/global.h"
+#include "iptux/deplib.h"
 
 using namespace std;
 

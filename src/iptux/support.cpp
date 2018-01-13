@@ -12,7 +12,9 @@
 #include "support.h"
 
 #include <getopt.h>
+#include <net/if.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 
 #include "config.h"
 #include "ProgramData.h"
@@ -25,6 +27,9 @@
 #include "output.h"
 #include "ipmsg.h"
 #include "global.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 static void bind_iptux_port(int port);
 
@@ -518,4 +523,6 @@ char *get_sys_host_addr_string(int sock)
         g_slist_free(list);
 
         return buf;
+}
+
 }

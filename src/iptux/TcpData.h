@@ -9,11 +9,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef TCPDATA_H
-#define TCPDATA_H
+#ifndef IPTUX_TCPDATA_H
+#define IPTUX_TCPDATA_H
 
-#include "ipmsg.h"
-#include "mess.h"
+#include "iptux/ipmsg.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class TcpData {
 public:
@@ -35,5 +37,7 @@ private:
         size_t size;    //缓冲区已使用长度
         char buf[MAX_SOCKLEN];  //缓冲区
 };
+
+}
 
 #endif

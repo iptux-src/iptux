@@ -13,14 +13,15 @@
 
 #include <fcntl.h>
 
-#include "deplib.h"
-#include "ProgramData.h"
-#include "utils.h"
-#include "ipmsg.h"
-#include "global.h"
+#include "iptux/utils.h"
+#include "iptux/ipmsg.h"
+#include "iptux/global.h"
+#include "iptux/deplib.h"
 
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER   "-------------------------------------"
+
+namespace iptux {
 
 LogSystem::LogSystem():fdc(-1), fds(-1)
 {
@@ -97,4 +98,6 @@ void LogSystem::SystemLog(const char *fmt, ...)
 
         write(fds, log, strlen(log));
         g_free(log);
+}
+
 }

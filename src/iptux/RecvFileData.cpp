@@ -15,16 +15,16 @@
 #include <sys/time.h>
 #include <fcntl.h>
 
-#include "ProgramData.h"
-#include "MainWindow.h"
-#include "LogSystem.h"
-#include "SoundSystem.h"
-#include "AnalogFS.h"
-#include "Command.h"
-#include "wrapper.h"
-#include "output.h"
-#include "utils.h"
-#include "global.h"
+#include "iptux/AnalogFS.h"
+#include "iptux/Command.h"
+#include "iptux/wrapper.h"
+#include "iptux/output.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
+#include "iptux/ipmsg.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -448,4 +448,6 @@ void RecvFileData::UpdateUIParaToOver()
                 file->finishedsize = file->filesize;
         }
         g_datalist_set_data(&para, "data", NULL);
+}
+
 }

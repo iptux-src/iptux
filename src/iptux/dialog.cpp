@@ -14,6 +14,7 @@
 #include "iptux/callback.h"
 #include "iptux/output.h"
 #include "iptux/global.h"
+#include "iptux/deplib.h"
 
 namespace iptux {
 

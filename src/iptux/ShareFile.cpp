@@ -13,13 +13,14 @@
 
 #include <sys/stat.h>
 
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "AnalogFS.h"
-#include "support.h"
-#include "dialog.h"
-#include "utils.h"
-#include "global.h"
+#include "iptux/AnalogFS.h"
+#include "iptux/support.h"
+#include "iptux/dialog.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -579,4 +580,6 @@ gint ShareFile::FileTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
         g_free(bfilepath);
 
         return result;
+}
+
 }

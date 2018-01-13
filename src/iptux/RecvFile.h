@@ -11,10 +11,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef RECVFILE_H
-#define RECVFILE_H
+#ifndef IPTUX_RECVFILE_H
+#define IPTUX_RECVFILE_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class RecvFile {
 public:
@@ -25,5 +27,7 @@ private:
         void ParseFilePara(GData **para);
         FileInfo *DivideFileinfo(char **extra);
 };
+
+}
 
 #endif

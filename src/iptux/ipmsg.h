@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#if !defined(IPMSG_H)
-#define IPMSG_H
+#if !defined(IPTUX_IPMSG_H)
+#define IPTUX_IPMSG_H
 #define IPMSG_VERSION                   0x001
 #define IPMSG_PORT                      0x979
 
@@ -146,14 +146,11 @@
 #define IPMSG_FILE_ALIASFNAME   0x00000040UL    // alias fname
 #define IPMSG_FILE_UNICODEFNAME         0x00000041UL    // UNICODE fname
 
-#define FILELIST_SEPARATOR              '\a'
-#define HOSTLIST_SEPARATOR              '\a'
-#define HOSTLIST_DUMMY          "\b"
 #define HLIST_ENTRY_SEPARATOR   ':'
 
 /* macro */
-#define GET_MODE(command)               (command & 0x000000ffUL)
-#define GET_OPT(command)                (command & 0xffffff00UL)
+#define GET_MODE(command)               ((command) & 0x000000ffUL)
+#define GET_OPT(command)                ((command) & 0xffffff00UL)
 
 /* header */
 #define IPTUX_DEFAULT_PORT              IPMSG_PORT

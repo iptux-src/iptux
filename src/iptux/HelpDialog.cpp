@@ -10,13 +10,18 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "config.h"
 #include "HelpDialog.h"
-#include "support.h"
+
+#include "iptux/config.h"
+#include "iptux/support.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 /* 静态变量初始化 */
-GtkWidget *HelpDialog::about = NULL;
-GtkWidget *HelpDialog::more = NULL;
+GtkWidget* HelpDialog::about = NULL;
+GtkWidget* HelpDialog::more = NULL;
+
 HelpDialog::HelpDialog()
 {
 }
@@ -184,4 +189,6 @@ void HelpDialog::RunHelpDialog(GtkWidget **dialog)
 void HelpDialog::DialogDestroy(GtkWidget **dialog)
 {
         *dialog = NULL;
+}
+
 }

@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SENDFILE_H
-#define SENDFILE_H
+#ifndef IPTUX_SENDFILE_H
+#define IPTUX_SENDFILE_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class SendFile {
 public:
@@ -28,5 +30,7 @@ private:
         void BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist);
         void ThreadSendFile(int sock, FileInfo *file);
 };
+
+}
 
 #endif

@@ -6,9 +6,9 @@
 #include <glib/gstdio.h>
 #include <json/json.h>
 
-#include "deplib.h"
-
 using namespace std;
+
+namespace iptux {
 
 IptuxConfig::IptuxConfig(string& fname)
 	: fname(fname) {
@@ -137,3 +137,6 @@ IptuxConfig& IptuxConfig::Save() {
 	}
 	return *this;
 }
+
+}
+

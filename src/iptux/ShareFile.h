@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SHAREFILE_H
-#define SHAREFILE_H
+#ifndef IPTUX_SHAREFILE_H
+#define IPTUX_SHAREFILE_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class ShareFile {
 public:
@@ -51,5 +53,7 @@ private:
         static gint FileTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
                                                          GtkTreeIter *b);
 };
+
+}
 
 #endif

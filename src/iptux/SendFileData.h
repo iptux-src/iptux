@@ -9,11 +9,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SENDFILEDATA_H
-#define SENDFILEDATA_H
+#ifndef IPTUX_SENDFILEDATA_H
+#define IPTUX_SENDFILEDATA_H
 
-#include "ipmsg.h"
-#include "mess.h"
+#include "iptux/ipmsg.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class SendFileData: public TransAbstract
 {
@@ -40,5 +42,7 @@ private:
         char buf[MAX_SOCKLEN];  //数据缓冲区
         struct timeval tasktime, filetime;      //任务开始时间&文件开始时间
 };
+
+}
 
 #endif

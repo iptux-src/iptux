@@ -13,12 +13,15 @@
 
 #include <sys/time.h>
 
-#include "config.h"
-#include "CoreThread.h"
-#include "ipmsg.h"
-#include "utils.h"
+#include "iptux/config.h"
+#include "iptux/CoreThread.h"
+#include "iptux/ipmsg.h"
+#include "iptux/utils.h"
+#include "iptux/deplib.h"
 
 using namespace std;
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -362,4 +365,6 @@ void ProgramData::SetFlag(int idx, bool flag) {
   } else {
     FLAG_CLR(flags, idx);
   }
+}
+
 }

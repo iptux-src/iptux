@@ -9,13 +9,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef MESS_H
-#define MESS_H
+#ifndef IPTUX_MESS_H
+#define IPTUX_MESS_H
 
 #include <arpa/inet.h>
 
 #include <gtk/gtk.h>
 #include <json/json.h>
+
+namespace iptux {
 
 /**
  * 消息来源类型.
@@ -193,5 +195,7 @@ public:
         virtual GData **GetTransFilePara() = 0; ///< 获取更新UI的数据
         virtual void TerminateTrans() = 0;      ///< 终止过程处理
 };
+
+}
 
 #endif

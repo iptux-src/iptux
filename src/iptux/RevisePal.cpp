@@ -13,14 +13,16 @@
 
 #include <inttypes.h>
 
-#include "ipmsg.h"
-#include "config.h"
-#include "CoreThread.h"
-#include "MainWindow.h"
-#include "callback.h"
-#include "utils.h"
-#include "global.h"
+#include "iptux/ipmsg.h"
+#include "iptux/config.h"
+#include "iptux/CoreThread.h"
+#include "iptux/MainWindow.h"
+#include "iptux/callback.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
+#include "iptux/deplib.h"
 
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -436,4 +438,6 @@ void RevisePal::AddNewIcon(GtkWidget *button, GData **widset)
         active = IconfileGetItemPos(model, filename);
         gtk_combo_box_set_active(GTK_COMBO_BOX(combo), active);
         g_free(filename);
+}
+
 }

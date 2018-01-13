@@ -9,15 +9,17 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SOUNDSYSTEM_H
-#define SOUNDSYSTEM_H
+#ifndef IPTUX_SOUNDSYSTEM_H
+#define IPTUX_SOUNDSYSTEM_H
 
 #include "config.h"
 #ifdef GST_FOUND
 # include <gst/gst.h>
 #endif
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class SoundSystem
 {
@@ -40,5 +42,7 @@ private:
         static void EosMessageOccur(SoundSystem *sndsys);
 #endif
 };
+
+}
 
 #endif

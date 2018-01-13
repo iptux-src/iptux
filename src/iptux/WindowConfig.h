@@ -1,8 +1,11 @@
-#ifndef WINDOW_CONFIG_H
-#define WINDOW_CONFIG_H
+#ifndef IPTUX_WINDOW_CONFIG_H
+#define IPTUX_WINDOW_CONFIG_H
 
 #include <string>
-#include "IptuxConfig.h"
+
+#include "iptux/IptuxConfig.h"
+
+namespace iptux {
 
 class WindowConfig {
 public:
@@ -42,5 +45,7 @@ private:
     int height;
     std::string prefix;
 };
+
+}
 
 #endif

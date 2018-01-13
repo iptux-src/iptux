@@ -12,7 +12,7 @@
 #ifndef IPTUX_DETECTPAL_H
 #define IPTUX_DETECTPAL_H
 
-#include "iptux/deplib.h"
+#include <gtk/gtk.h>
 
 namespace iptux {
 

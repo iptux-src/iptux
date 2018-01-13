@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef LOGSYSTEM_H
-#define LOGSYSTEM_H
+#ifndef IPTUX_LOGSYSTEM_H
+#define IPTUX_LOGSYSTEM_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class LogSystem {
 public:
@@ -25,5 +27,7 @@ public:
 private:
         int fdc, fds;
 };
+
+}
 
 #endif

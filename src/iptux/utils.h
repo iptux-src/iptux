@@ -9,12 +9,14 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef IPTUX_UTILS_H
+#define IPTUX_UTILS_H
 
 #include <string>
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 #define difftimeval(val2,val1) \
         ((((val2).tv_sec-(val1).tv_sec)*1000000 \
@@ -67,4 +69,6 @@ char *iptux_erase_filename_suffix(const char *filename);
 char *ipmsg_get_pathname_full(const char *path, const char *name);
 
 bool ValidateDragData(GtkSelectionData* data, GdkDragContext* context, guint time);
+
+}
 #endif

@@ -13,6 +13,7 @@
 #include "DialogPeer.h"
 
 #include <inttypes.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "iptux/Command.h"
 #include "iptux/SendFile.h"
@@ -24,6 +25,7 @@
 #include "iptux/utils.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
+#include "iptux/deplib.h"
 
 namespace iptux {
 

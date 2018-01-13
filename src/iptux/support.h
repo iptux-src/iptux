@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SUPPORT_H
-#define SUPPORT_H
+#ifndef IPTUX_SUPPORT_H
+#define IPTUX_SUPPORT_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 void iptux_init(int port);
 void iptux_gui_quit();
@@ -39,5 +41,7 @@ void socket_enable_reuse(int sock);
 GSList *get_sys_broadcast_addr(int sock);
 GSList *get_sys_host_addr(int sock);
 char *get_sys_host_addr_string(int sock);
+
+}
 
 #endif

@@ -12,11 +12,11 @@
 #include "SoundSystem.h"
 
 #ifdef HAVE_GST
-#include "ProgramData.h"
-#include "output.h"
-#include "utils.h"
-extern ProgramData progdt;
+#include "iptux/ProgramData.h"
+#include "iptux/output.h"
+#include "iptux/utils.h"
 
+namespace iptux {
 /**
  * 类构造函数.
  */
@@ -171,7 +171,11 @@ void SoundSystem::EosMessageOccur(SoundSystem *sndsys)
         gst_element_unlink(decode, volume);
         sndsys->persist = false;
 }
+}
+
 #else
+namespace iptux {
+
 SoundSystem::SoundSystem()
 {}
 SoundSystem::~SoundSystem()
@@ -184,4 +188,6 @@ void SoundSystem::Playing(const char *file)
 {}
 void SoundSystem::Stop()
 {}
+
+}
 #endif

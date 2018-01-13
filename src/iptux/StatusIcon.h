@@ -9,12 +9,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef STATUSICON_H
-#define STATUSICON_H
+#ifndef IPTUX_STATUSICON_H
+#define IPTUX_STATUSICON_H
 
-#include "mess.h"
-#include "IptuxConfig.h"
-#include "MainWindow.h"
+#include "iptux/IptuxConfig.h"
+#include "iptux/MainWindow.h"
+
+namespace iptux {
 
 class StatusIcon {
 public:
@@ -47,5 +48,7 @@ private:
                                             gboolean key, GtkTooltip *tooltip);
   static gboolean onActivate(StatusIcon* self);
 };
+
+}
 
 #endif

@@ -29,8 +29,11 @@
 #include "dialog.h"
 #include "utils.h"
 #include "global.h"
+#include "iptux/deplib.h"
 
 using namespace std;
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -885,4 +888,6 @@ void UdpData::ThreadAskSharedFile(PalInfo *pal)
                         sfile.SendSharedInfoEntry(pal);
         } else
                 sfile.SendSharedInfoEntry(pal);
+}
+
 }

@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef REVISEPAL_H
-#define REVISEPAL_H
+#ifndef IPTUX_REVISEPAL_H
+#define IPTUX_REVISEPAL_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class RevisePal {
 public:
@@ -42,5 +44,7 @@ private:
 private:
         static void AddNewIcon(GtkWidget *button, GData **widset);
 };
+
+}
 
 #endif

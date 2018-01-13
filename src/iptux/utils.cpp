@@ -19,9 +19,11 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "ipmsg.h"
+#include "iptux/ipmsg.h"
 
 using namespace std;
+
+namespace iptux {
 
 /**
  * 对两个主机序的ipv4地址进行排序.
@@ -611,4 +613,6 @@ bool ValidateDragData(GtkSelectionData* data, GdkDragContext* context, guint tim
     return false;
   }
   return true;
+}
+
 }

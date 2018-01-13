@@ -20,6 +20,7 @@
 #include "iptux/support.h"
 #include "iptux/utils.h"
 #include "iptux/global.h"
+#include "iptux/deplib.h"
 
 namespace iptux {
 

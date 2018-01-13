@@ -11,9 +11,6 @@
 //
 #include "StatusIcon.h"
 
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "MainWindow.h"
 #include "DialogPeer.h"
 #include "DialogGroup.h"
 #include "DataSettings.h"
@@ -23,6 +20,9 @@
 #include "support.h"
 #include "utils.h"
 #include "global.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -272,4 +272,4 @@ gboolean StatusIcon::AlterInterfaceMode()
   return TRUE;
 }
 
-
+}

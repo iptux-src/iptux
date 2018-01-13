@@ -9,12 +9,14 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROGRAMDATA_H
-#define PROGRAMDATA_H
+#ifndef IPTUX_PROGRAMDATA_H
+#define IPTUX_PROGRAMDATA_H
 
-#include "net.h"
-#include "deplib.h"
-#include "IptuxConfig.h"
+#include <gtk/gtk.h>
+
+#include "iptux/IptuxConfig.h"
+
+namespace iptux {
 
 /* flags
 // 消息(:7);当有消息时自动打开聊天窗口
@@ -92,5 +94,7 @@ private:
         void WriteNetSegment();
         void ReadNetSegment();
 };
+}
+
 
 #endif

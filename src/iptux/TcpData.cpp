@@ -14,12 +14,13 @@
 #include <fcntl.h>
 #include <inttypes.h>
 
-#include "CoreThread.h"
-#include "MainWindow.h"
 #include "SendFile.h"
 #include "wrapper.h"
 #include "utils.h"
 #include "global.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -222,4 +223,6 @@ void TcpData::RecvMsgPic(PalInfo *pal, const char *path)
 
         /* 交给某人处理吧 */
         g_cthrd->InsertMessage(&para);
+}
+
 }

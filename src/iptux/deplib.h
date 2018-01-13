@@ -14,12 +14,6 @@
 
 #include "config.h"
 
-#ifdef GST_FOUND
-#include <gst/gst.h>
-#endif
-
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
 #undef _
 #include <glib/gi18n.h>
 

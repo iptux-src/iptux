@@ -13,23 +13,28 @@
 
 #include <inttypes.h>
 
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "DialogPeer.h"
-#include "DialogGroup.h"
-#include "DataSettings.h"
-#include "Command.h"
-#include "DetectPal.h"
-#include "ShareFile.h"
-#include "RevisePal.h"
-#include "HelpDialog.h"
-#include "callback.h"
-#include "support.h"
-#include "utils.h"
-#include "StatusIcon.h"
-#include "global.h"
+#include <gdk/gdkkeysyms.h>
 
-#define TRANS_TREE_MAX 14
+#include "iptux/DialogPeer.h"
+#include "iptux/DialogGroup.h"
+#include "iptux/DataSettings.h"
+#include "iptux/Command.h"
+#include "iptux/DetectPal.h"
+#include "iptux/ShareFile.h"
+#include "iptux/RevisePal.h"
+#include "iptux/HelpDialog.h"
+#include "iptux/callback.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/StatusIcon.h"
+#include "iptux/global.h"
+#include "iptux/deplib.h"
+
+
+namespace iptux {
+
+static const int TRANS_TREE_MAX = 14;
+
 
 /**
  * 类构造函数.
@@ -2594,4 +2599,6 @@ void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
 
 gboolean MainWindow::onDeleteEvent(MainWindow* self) {
   return self->statusIcon->AlterInterfaceMode();
+}
+
 }

@@ -9,14 +9,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef RECVFILEDATA_H
-#define RECVFILEDATA_H
+#ifndef IPTUX_RECVFILEDATA_H
+#define IPTUX_RECVFILEDATA_H
 
-#include "ipmsg.h"
-#include "mess.h"
+#include "iptux/mess.h"
+#include "iptux/ipmsg.h"
 
-class RecvFileData: public TransAbstract
-{
+namespace iptux {
+
+class RecvFileData: public TransAbstract {
 public:
         RecvFileData(FileInfo *fl);
         ~RecvFileData();
@@ -39,5 +40,7 @@ private:
         char buf[MAX_SOCKLEN];  //数据缓冲区
         struct timeval tasktime, filetime;      //任务开始时间&文件开始时间
 };
+
+}
 
 #endif

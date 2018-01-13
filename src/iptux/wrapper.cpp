@@ -13,8 +13,14 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <unistd.h>
+#include <cstdio>
 
-#include "deplib.h"
+#include "iptux/deplib.h"
+
+using namespace std;
+
+namespace iptux {
 
 /**
  * 写出数据.
@@ -213,4 +219,6 @@ mark:           if ((size = read(fd, (char *)buf + offset, count - offset)) == -
         }
 
         return offset;
+}
+
 }

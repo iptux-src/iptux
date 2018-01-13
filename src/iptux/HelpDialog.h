@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef HelpDialog_H
-#define HelpDialog_H
+#ifndef IPTUX_HELP_DIALOG_H
+#define IPTUX_HELP_DIALOG_H
 
-#include "deplib.h"
+#include <gtk/gtk.h>
+
+namespace iptux {
 
 class HelpDialog {
 public:
@@ -30,9 +32,9 @@ private:
         static GtkWidget *more;
 //回调处理部分
 private:
-        static void DialogOpenEmail(GtkWidget *dialog, const gchar *link);
-        static void DialogOpenUrl(GtkWidget *dialog, const gchar *link);
         static void DialogDestroy(GtkWidget **dialog);
 };
+
+}
 
 #endif

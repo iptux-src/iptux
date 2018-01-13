@@ -10,7 +10,11 @@
 //
 //
 #include "mess.h"
-#include "utils.h"
+
+#include "iptux/utils.h"
+
+namespace iptux {
+
 
 PalInfo::PalInfo():ipv4(0), segdes(NULL), version(NULL), user(NULL), host(NULL),
  name(NULL), group(NULL), photo(NULL), sign(NULL), iconfile(NULL), encode(NULL),
@@ -100,3 +104,5 @@ TransAbstract::TransAbstract()
 {}
 TransAbstract::~TransAbstract()
 {}
+
+}

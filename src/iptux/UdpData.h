@@ -9,18 +9,20 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef UDPDATA_H
-#define UDPDATA_H
+#ifndef IPTUX_UDPDATA_H
+#define IPTUX_UDPDATA_H
 
 #include <string>
 
-#include "mess.h"
-#include "IptuxConfig.h"
-#include "ipmsg.h"
+#include "iptux/mess.h"
+#include "iptux/IptuxConfig.h"
+#include "iptux/ipmsg.h"
+
+namespace iptux {
 
 class UdpData {
 public:
-        UdpData(IptuxConfig& config);
+        explicit UdpData(IptuxConfig& config);
         ~UdpData();
 
         static void UdpDataEntry(IptuxConfig& config, in_addr_t ipv4, const char buf[], size_t size);
@@ -61,5 +63,7 @@ private:
         static void ThreadAskSharedPasswd(PalInfo *pal);
         static void ThreadAskSharedFile(PalInfo *pal);
 };
+
+}
 
 #endif

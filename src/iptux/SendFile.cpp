@@ -14,12 +14,14 @@
 #include <inttypes.h>
 #include <string.h>
 
-#include "SendFileData.h"
-#include "CoreThread.h"
-#include "Command.h"
-#include "AnalogFS.h"
-#include "utils.h"
-#include "global.h"
+#include "iptux/SendFileData.h"
+#include "iptux/CoreThread.h"
+#include "iptux/Command.h"
+#include "iptux/AnalogFS.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
+
+namespace iptux {
 
 SendFile::SendFile()
 {
@@ -219,4 +221,6 @@ void SendFile::ThreadSendFile(int sock, FileInfo *file)
 {
         SendFileData sfdt(sock, file);
         sfdt.SendFileDataEntry();
+}
+
 }

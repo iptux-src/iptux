@@ -11,14 +11,16 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "CoreThread.h"
 
 #include "RecvFile.h"
-#include "RecvFileData.h"
-#include "ProgramData.h"
-#include "callback.h"
-#include "utils.h"
-#include "global.h"
+
+#include "iptux/RecvFileData.h"
+#include "iptux/ProgramData.h"
+#include "iptux/callback.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -95,4 +97,6 @@ FileInfo *RecvFile::DivideFileinfo(char **extra)
                 (*extra)++;
 
         return file;
+}
+
 }
