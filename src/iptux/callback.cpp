@@ -15,12 +15,14 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include "global.h"
-#include "ipmsg.h"
-#include "ProgramData.h"
-#include "StatusIcon.h"
-#include "MainWindow.h"
-#include "support.h"
+#include "iptux/global.h"
+#include "iptux/ipmsg.h"
+#include "iptux/ProgramData.h"
+#include "iptux/StatusIcon.h"
+#include "iptux/MainWindow.h"
+#include "iptux/support.h"
+
+namespace iptux {
 
 /**
  * 给entry控件设置提示信息.
@@ -318,4 +320,6 @@ gboolean textview_visibility_notify_event(GtkWidget *textview, GdkEventVisibilit
         textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by, *g_progdt);
 
         return FALSE;
+}
+
 }

@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CALLBACK_H
-#define CALLBACK_H
+#ifndef IPTUX_CALLBACK_H
+#define IPTUX_CALLBACK_H
 
 #include "mess.h"
+
+namespace iptux {
 
 /* entry */
 gboolean entry_query_tooltip(GtkWidget *entry, gint x, gint y,
@@ -36,5 +38,7 @@ gboolean textview_key_press_event(GtkWidget *textview, GdkEventKey *event);
 void textview_event_after(GtkWidget *textview, GdkEvent *ev);
 gboolean textview_motion_notify_event(GtkWidget *textview, GdkEventMotion *event);
 gboolean textview_visibility_notify_event(GtkWidget *textview, GdkEventVisibility *event);
+
+}
 
 #endif
