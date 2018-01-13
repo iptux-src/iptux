@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DATASETTINGS_H
-#define DATASETTINGS_H
+#ifndef IPTUX_DATASETTINGS_H
+#define IPTUX_DATASETTINGS_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class DataSettings {
 public:
@@ -85,5 +87,7 @@ private:
         static void ExportNetSegment(DataSettings *dset);
         static void ClearNetSegment(GData **mdlset);
 };
+
+}
 
 #endif

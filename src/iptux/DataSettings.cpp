@@ -11,18 +11,20 @@
 //
 #include "DataSettings.h"
 
-#include "config.h"
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "SoundSystem.h"
-#include "callback.h"
-#include "output.h"
-#include "support.h"
-#include "utils.h"
-#include "ipmsg.h"
-#include "global.h"
+#include "iptux/config.h"
+#include "iptux/ProgramData.h"
+#include "iptux/CoreThread.h"
+#include "iptux/SoundSystem.h"
+#include "iptux/callback.h"
+#include "iptux/output.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/ipmsg.h"
+#include "iptux/global.h"
 
 using namespace std;
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -1661,4 +1663,6 @@ void DataSettings::ClearNetSegment(GData **mdlset)
 
         model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "network-model"));
         gtk_list_store_clear(GTK_LIST_STORE(model));
+}
+
 }
