@@ -9,10 +9,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DETECTPAL_H
-#define DETECTPAL_H
+#ifndef IPTUX_DETECTPAL_H
+#define IPTUX_DETECTPAL_H
 
-#include "deplib.h"
+#include "iptux/deplib.h"
+
+namespace iptux {
 
 class DetectPal {
 public:
@@ -27,5 +29,7 @@ private:
 
         GData *widset;
 };
+
+}
 
 #endif

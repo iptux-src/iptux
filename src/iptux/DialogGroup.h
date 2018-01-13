@@ -9,13 +9,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DIALOGGROUP_H
-#define DIALOGGROUP_H
+#ifndef IPTUX_DIALOGGROUP_H
+#define IPTUX_DIALOGGROUP_H
 
-#include "mess.h"
-#include "DialogBase.h"
-#include "IptuxConfig.h"
-#include "ProgramData.h"
+#include "iptux/mess.h"
+#include "iptux/DialogBase.h"
+#include "iptux/IptuxConfig.h"
+#include "iptux/ProgramData.h"
+
+namespace iptux {
 
 class DialogGroup: public DialogBase {
 public:
@@ -72,5 +74,7 @@ private:
                 DialogGroup* self);
         static void SendMessage(DialogGroup *dlggrp);
 };
+
+}
 
 #endif

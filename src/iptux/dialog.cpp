@@ -11,11 +11,11 @@
 //
 #include "dialog.h"
 
-#include "MainWindow.h"
-#include "ProgramData.h"
-#include "callback.h"
-#include "output.h"
-#include "global.h"
+#include "iptux/callback.h"
+#include "iptux/output.h"
+#include "iptux/global.h"
+
+namespace iptux {
 
 /**
  * 弹出请求程序退出的对话框.
@@ -236,4 +236,6 @@ const char* pop_save_path(GtkWidget *parent)
     }
     gtk_widget_destroy (dialog);
     return path;
+}
+
 }

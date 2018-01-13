@@ -11,11 +11,13 @@
 //
 #include "DetectPal.h"
 
-#include "CoreThread.h"
-#include "Command.h"
-#include "callback.h"
-#include "output.h"
-#include "global.h"
+#include "iptux/CoreThread.h"
+#include "iptux/Command.h"
+#include "iptux/callback.h"
+#include "iptux/output.h"
+#include "iptux/global.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -127,4 +129,6 @@ void DetectPal::SendDetectPacket()
         cmd.SendDetectPacket(g_cthrd->UdpSockQuote(), ipv4);
         pop_info(parent, _("The notification has been sent to %s."), text);
         gtk_entry_set_text(GTK_ENTRY(widget), "");
+}
+
 }

@@ -14,21 +14,18 @@
 
 #include <inttypes.h>
 
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "MainWindow.h"
-#include "LogSystem.h"
-#include "Command.h"
-#include "SendFile.h"
-#include "RecvFileData.h"
-#include "HelpDialog.h"
-#include "output.h"
-#include "callback.h"
-#include "support.h"
-#include "utils.h"
-#include "dialog.h"
-#include "global.h"
+#include "iptux/Command.h"
+#include "iptux/SendFile.h"
+#include "iptux/RecvFileData.h"
+#include "iptux/HelpDialog.h"
+#include "iptux/output.h"
+#include "iptux/callback.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/dialog.h"
+#include "iptux/global.h"
 
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -1279,4 +1276,6 @@ gint DialogPeer::RcvTreePopup(GtkWidget *treeview,GdkEvent *event)
         }
     }
     return FALSE;
+}
+
 }

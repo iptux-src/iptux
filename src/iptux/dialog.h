@@ -9,14 +9,19 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef IPTUX_DIALOG_H
+#define IPTUX_DIALOG_H
 
-#include "mess.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 bool pop_request_quit();
 bool pop_request_shared_file(PalInfo *pal);
 char *pop_obtain_shared_passwd(PalInfo *pal);
 char *pop_password_settings(GtkWidget *parent);
 const char *pop_save_path(GtkWidget *parent);
+
+}
+
 #endif

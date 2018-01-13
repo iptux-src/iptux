@@ -11,19 +11,17 @@
 //
 #include "DialogGroup.h"
 
-#include "DialogPeer.h"
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "MainWindow.h"
-#include "LogSystem.h"
-#include "Command.h"
-#include "SendFile.h"
-#include "HelpDialog.h"
-#include "callback.h"
-#include "output.h"
-#include "support.h"
-#include "utils.h"
-#include "global.h"
+#include "iptux/DialogPeer.h"
+#include "iptux/Command.h"
+#include "iptux/SendFile.h"
+#include "iptux/HelpDialog.h"
+#include "iptux/callback.h"
+#include "iptux/output.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
+
+namespace iptux {
 
 
 /**
@@ -792,4 +790,6 @@ GSList *DialogGroup::GetSelPal()
                     plist = g_slist_append(plist, pal);
     } while (gtk_tree_model_iter_next(model, &iter));
     return plist;
+}
+
 }

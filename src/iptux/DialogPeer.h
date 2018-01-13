@@ -10,12 +10,14 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DIALOGPEER_H
-#define DIALOGPEER_H
+#ifndef IPTUX_DIALOGPEER_H
+#define IPTUX_DIALOGPEER_H
 
-#include "mess.h"
-#include "DialogBase.h"
-#include "IptuxConfig.h"
+#include "iptux/mess.h"
+#include "iptux/DialogBase.h"
+#include "iptux/IptuxConfig.h"
+
+namespace iptux {
 
 class DialogPeer: public DialogBase {
 public:
@@ -79,5 +81,7 @@ protected:
         int64_t rcvdsize;   //总计已接收大小
         guint timerrcv;     //接收文件界面更新计时器ID
 };
+
+}
 
 #endif

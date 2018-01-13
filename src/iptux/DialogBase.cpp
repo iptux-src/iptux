@@ -15,20 +15,18 @@
 
 #include <sys/stat.h>
 
-#include "DialogPeer.h"
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "MainWindow.h"
-#include "LogSystem.h"
-#include "Command.h"
-#include "SendFile.h"
-#include "HelpDialog.h"
-#include "callback.h"
-#include "output.h"
-#include "support.h"
-#include "utils.h"
-#include "AnalogFS.h"
-#include "global.h"
+#include "iptux/LogSystem.h"
+#include "iptux/Command.h"
+#include "iptux/SendFile.h"
+#include "iptux/HelpDialog.h"
+#include "iptux/callback.h"
+#include "iptux/output.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/AnalogFS.h"
+#include "iptux/global.h"
+
+namespace iptux {
 
 DialogBase::DialogBase(GroupInfo *grp, ProgramData& progdt)
   :progdt(progdt),
@@ -912,4 +910,6 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp)
 void DialogBase::OpenTransDlg(DialogBase *dlgpr)
 {
     g_mwin->OpenTransWindow();
+}
+
 }

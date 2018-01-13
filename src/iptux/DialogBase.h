@@ -12,11 +12,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DIALOGBASE_H
-#define DIALOGBASE_H
+#ifndef IPTUX_DIALOGBASE_H
+#define IPTUX_DIALOGBASE_H
 
-#include "mess.h"
-#include "ProgramData.h"
+#include "iptux/mess.h"
+#include "iptux/ProgramData.h"
+
+namespace iptux {
 
 class DialogBase: public SessionAbstract {
 public:
@@ -82,5 +84,7 @@ protected:
         struct timeval lasktime;      //上一次更新UI的时间
         guint timersend;  // 发送文件界面更新计时器ID
 };
+
+}
 
 #endif
