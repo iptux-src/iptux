@@ -9,10 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DEPLIB_H
-#define DEPLIB_H
-
-#include "config.h"
+#ifndef IPTUX_DEPLIB_H
+#define IPTUX_DEPLIB_H
 
 #undef _
 #include <glib/gi18n.h>

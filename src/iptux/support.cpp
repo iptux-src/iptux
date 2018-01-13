@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 
-#include "config.h"
+#include "iptux/config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"

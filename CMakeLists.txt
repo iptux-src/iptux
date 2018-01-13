@@ -25,7 +25,7 @@ pkg_check_modules(GST gstreamer-1.0>=1.0)
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/src/iptux/config.h.in"
-  "${PROJECT_BINARY_DIR}/iptux/config.h"
+  "${PROJECT_BINARY_DIR}/src/iptux/config.h"
   )
 
 add_subdirectory(src)

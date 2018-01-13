@@ -12,7 +12,7 @@
 #ifndef IPTUX_SOUNDSYSTEM_H
 #define IPTUX_SOUNDSYSTEM_H
 
-#include "config.h"
+#include "iptux/config.h"
 #ifdef GST_FOUND
 # include <gst/gst.h>
 #endif

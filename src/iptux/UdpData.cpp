@@ -15,7 +15,7 @@
 #include <inttypes.h>
 #include <fcntl.h>
 
-#include "config.h"
+#include "iptux/config.h"
 #include "ProgramData.h"
 #include "CoreThread.h"
 #include "MainWindow.h"
