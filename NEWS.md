@@ -1,3 +1,7 @@
+# 0.7.1 (2018-XX-XX)
+
+* [?] fix build guide in `README.md` and homebrew.
+
 # 0.7.0 (2018-01-10)
 
 * [#33] refactor src/AnalogFS.cpp to make the bug log has more information.
