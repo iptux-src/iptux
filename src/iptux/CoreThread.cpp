@@ -14,19 +14,21 @@
 #include <inttypes.h>
 #include <sys/stat.h>
 
-#include "config.h"
-#include "ProgramData.h"
-#include "MainWindow.h"
-#include "LogSystem.h"
-#include "UdpData.h"
-#include "TcpData.h"
-#include "Command.h"
-#include "output.h"
-#include "support.h"
-#include "utils.h"
-#include "global.h"
+#include "iptux/config.h"
+#include "iptux/ProgramData.h"
+#include "iptux/MainWindow.h"
+#include "iptux/LogSystem.h"
+#include "iptux/UdpData.h"
+#include "iptux/TcpData.h"
+#include "iptux/Command.h"
+#include "iptux/output.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/global.h"
 
 using namespace std;
+
+namespace iptux {
 
 static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
 static const char* CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
@@ -1311,4 +1313,6 @@ void CoreThread::Lock() {
 
 void CoreThread::Unlock() {
   pthread_mutex_unlock(&mutex);
+}
+
 }

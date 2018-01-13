@@ -14,11 +14,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CORETHREAD_H
-#define CORETHREAD_H
+#ifndef IPTUX_CORETHREAD_H
+#define IPTUX_CORETHREAD_H
 
-#include "mess.h"
-#include "IptuxConfig.h"
+#include "iptux/mess.h"
+#include "iptux/IptuxConfig.h"
+
+namespace iptux {
 
 /**
  * @note 请保证插入或更新某成员时，底层优先于UI；删除某成员时，UI优先于底层，
@@ -128,13 +130,21 @@ private:
 public:
         inline int &TcpSockQuote() {
                 return tcpsock;
-        } inline int &UdpSockQuote() {
+        } 
+
+        inline int &UdpSockQuote() {
                 return udpsock;
-        } inline uint32_t &PbnQuote() {
+        } 
+
+        inline uint32_t &PbnQuote() {
                 return pbn;
-        } inline uint32_t &PrnQuote() {
+        } 
+
+        inline uint32_t &PrnQuote() {
                 return prn;
         }
 };
+
+}
 
 #endif
