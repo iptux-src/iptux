@@ -2,8 +2,8 @@ require 'formula'
 
 class Iptux < Formula
   homepage 'https://github.com/iptux-src/iptux'
-  url 'https://github.com/iptux-src/iptux/archive/v0.7.0.tar.gz'
-  sha256 '559c6c7f35e1379d20cf24d7f03a413b1f4ec0f5be329913a8b8db1aec5a2b66'
+  url 'https://github.com/iptux-src/iptux/archive/v0.7.1.tar.gz'
+  sha256 'ea2af24e53ffd444a6c9693bba1de4a04d42cdc54fc4c513c15095a1ce395e00'
 
   depends_on :x11
   depends_on 'gettext'
