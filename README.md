@@ -15,13 +15,19 @@
 sudo apt-get install iptux
 ```
 
+### Mac OS X
+
+```
+brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
+```
+
 
 ## Build from source
 
 ### Linux (Debian and Ubuntu)
 
 ```
-sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgstreamer1.0-dev g++ make cmake
+sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ make cmake
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make
@@ -32,7 +38,7 @@ iptux
 ### Mac OS X
 
 ```
-brew install gettext gtk+ cmake
+brew install gettext gtk+ cmake jsoncpp gstreamer
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make
