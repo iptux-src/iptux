@@ -10,11 +10,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef ANALOGFS_H
-#define ANALOGFS_H
+#ifndef IPTUX_ANALOGFS_H
+#define IPTUX_ANALOGFS_H
 
-#include "ipmsg.h"
-#include "mess.h"
+#include <sys/stat.h>
+
+#include "iptux/ipmsg.h"
+#include "iptux/mess.h"
+
+namespace iptux {
 
 class AnalogFS {
 public:
@@ -24,7 +28,7 @@ public:
         int chdir(const char *dir);
         int open(const char *fn, int flags);
         int open(const char *fn, int flags, mode_t mode);
-        int stat(const char *fn, struct stat *st);
+        int stat(const char *fn, struct ::stat *st);
         int mkdir(const char *dir, mode_t mode);
         int64_t ftwsize(const char *dir);
         DIR *opendir(const char *dir);
@@ -37,5 +41,7 @@ public:
                         return path;
                 }
 };
+
+}
 
 #endif

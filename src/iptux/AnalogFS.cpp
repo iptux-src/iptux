@@ -14,9 +14,11 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#include "output.h"
-#include "utils.h"
-#include "ipmsg.h"
+#include "iptux/output.h"
+#include "iptux/utils.h"
+#include "iptux/ipmsg.h"
+
+namespace iptux {
 
 /**
  * 类构造函数.
@@ -103,15 +105,16 @@ int AnalogFS::open(const char *fn, int flags, mode_t mode)
  * @param st a stat64 struct
  * @return 成功与否
  */
-int AnalogFS::stat(const char *fn, struct stat *st)
+int AnalogFS::stat(const char *fn, struct ::stat *st)
 {
   char tpath[MAX_PATHLEN];
   int result;
 
   strcpy(tpath, path);
   mergepath(tpath, fn);
-  if ((result = ::stat(tpath, st)) != 0)
+  if ((result = ::stat(tpath, st)) != 0) {
     pwarning(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
+  }
 
   return result;
 }
@@ -243,4 +246,6 @@ int AnalogFS::mergepath(char tpath[], const char *npath)
   snprintf(tpath, MAX_PATHLEN, "%s", npath);
 
   return 0;
+}
+
 }
