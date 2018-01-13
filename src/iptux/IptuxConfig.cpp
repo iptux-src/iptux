@@ -1,6 +1,7 @@
 #include "IptuxConfig.h"
 
 #include <fstream>
+#include <cstring>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -83,7 +84,7 @@ vector<string> IptuxConfig::GetStringList(const string& key) const {
     return res;
   }
   if(value.isArray()) {
-    for(int i = 0; i < value.size(); ++i) {
+    for(size_t i = 0; i < value.size(); ++i) {
       res.push_back(value.get(i, "").asString());
     }
   }
@@ -109,8 +110,8 @@ vector<Json::Value> IptuxConfig::GetVector(const string& key) const {
     return res;
   }
   if(value.isArray()) {
-    for(int i = 0; i < value.size(); ++i) {
-      res.push_back(value[i]);
+    for(size_t i = 0; i < value.size(); ++i) {
+      res.push_back(value[int(i)]);
     }
   }
   return res;

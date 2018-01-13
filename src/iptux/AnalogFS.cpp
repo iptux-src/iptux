@@ -11,12 +11,15 @@
 //
 #include "AnalogFS.h"
 
+#include <cstring>
 #include <fcntl.h>
 #include <sys/stat.h>
 
 #include "iptux/output.h"
 #include "iptux/utils.h"
 #include "iptux/ipmsg.h"
+
+using namespace std;
 
 namespace iptux {
 

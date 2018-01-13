@@ -14,11 +14,15 @@
 
 #include "RecvFile.h"
 
+#include <cstring>
+
 #include "iptux/RecvFileData.h"
 #include "iptux/ProgramData.h"
 #include "iptux/callback.h"
 #include "iptux/utils.h"
 #include "iptux/global.h"
+
+using namespace std;
 
 namespace iptux {
 

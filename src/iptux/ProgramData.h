@@ -12,6 +12,8 @@
 #ifndef IPTUX_PROGRAMDATA_H
 #define IPTUX_PROGRAMDATA_H
 
+#include <netinet/in.h>
+
 #include <gtk/gtk.h>
 
 #include "iptux/IptuxConfig.h"
