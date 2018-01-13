@@ -1,0 +1,27 @@
+//
+// C++ Interface: dialog
+//
+// Description:
+// 常见对话框构建
+//
+// Author: Jally <jallyx@163.com>, (C) 2009
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+#ifndef IPTUX_DIALOG_H
+#define IPTUX_DIALOG_H
+
+#include "iptux/mess.h"
+
+namespace iptux {
+
+bool pop_request_quit();
+bool pop_request_shared_file(PalInfo *pal);
+char *pop_obtain_shared_passwd(PalInfo *pal);
+char *pop_password_settings(GtkWidget *parent);
+const char *pop_save_path(GtkWidget *parent);
+
+}
+
+#endif

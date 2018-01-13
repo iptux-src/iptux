@@ -76,7 +76,7 @@ config.h
 config.log
 config.status
 po/POTFILES
-src/iptux
+src/main/iptux
 stamp-h1
 autom4te.cache
 *.gmo

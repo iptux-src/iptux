@@ -24,8 +24,8 @@ endif(NOT Intl_FOUND)
 pkg_check_modules(GST gstreamer-1.0>=1.0)
 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/config.h.in"
-  "${PROJECT_BINARY_DIR}/config.h"
+  "${PROJECT_SOURCE_DIR}/src/iptux/config.h.in"
+  "${PROJECT_BINARY_DIR}/src/iptux/config.h"
   )
 
 add_subdirectory(src)
