@@ -23,14 +23,14 @@
 
 #include <libintl.h>
 
-#include "ipmsg.h"
-#include "ProgramData.h"
-#include "CoreThread.h"
-#include "StatusIcon.h"
-#include "MainWindow.h"
-#include "LogSystem.h"
-#include "SoundSystem.h"
-#include "support.h"
+#include "iptux/ipmsg.h"
+#include "iptux/ProgramData.h"
+#include "iptux/CoreThread.h"
+#include "iptux/StatusIcon.h"
+#include "iptux/MainWindow.h"
+#include "iptux/LogSystem.h"
+#include "iptux/SoundSystem.h"
+#include "iptux/support.h"
 
 using namespace std;
 
