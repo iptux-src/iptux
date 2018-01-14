@@ -1,6 +1,16 @@
 #include "gtest/gtest.h"
 
-TEST(sample_test_case, sample_test)
+#include "iptux/utils.h"
+
+using namespace iptux;
+
+TEST(FLAG_SET, Utils)
 {
-    EXPECT_EQ(1, 1);
+  uint8_t a = 1;
+  FLAG_SET(a, 0, false);
+  EXPECT_EQ(a, 0);
+
+  a = 1;
+  FLAG_SET(a, 1, true);
+  EXPECT_EQ(a, 3);
 }
