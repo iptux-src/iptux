@@ -72,7 +72,7 @@ GtkWidget *DetectPal::CreateMainDialog(GtkWidget *parent)
         GtkWidget *dialog;
 
         dialog = gtk_dialog_new_with_buttons(_("Detect pals"), GTK_WINDOW(parent),
-                         GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_NO_SEPARATOR),
+                         GtkDialogFlags(GTK_DIALOG_MODAL),
                          _("Detect"), GTK_RESPONSE_ACCEPT,
                          _("Cancel"), GTK_RESPONSE_CANCEL, NULL);
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);

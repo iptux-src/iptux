@@ -258,8 +258,8 @@ gboolean textview_key_press_event(GtkWidget *textview, GdkEventKey *event)
         gint position;
 
         switch (event->keyval) {
-        case GDK_Return:
-        case GDK_KP_Enter:
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
                 buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
                 g_object_get(buffer, "cursor-position", &position, NULL);
                 gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
