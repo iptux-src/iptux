@@ -16,6 +16,13 @@
 
 namespace iptux {
 
+#define LOG_DEBUG(format,...) DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_DEBUG, (format), ##__VA_ARGS__)
+#define LOG_INFO(format,...) DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_INFO, (format), ##__VA_ARGS__)
+#define LOG_WARN(format,...) DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_WARNING, (format), ##__VA_ARGS__)
+#define LOG_CRIT(format,...) DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_CRITICAL, (format), ##__VA_ARGS__)
+#define LOG_ERROR(format,...) DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_ERROR, (format), ##__VA_ARGS__)
+
+
 /* 警告信息输出 */
 #ifndef WARNING
 #define pwarning(format,...) /*warnx(format,##__VA_ARGS__)*/
@@ -23,19 +30,7 @@ namespace iptux {
 #define pwarning(format,...) warnx(format,##__VA_ARGS__)
 #endif
 
-/* 常规消息输出 */
-#ifndef MESSAGE
-#define pmessage(format,...) /*printf(format,##__VA_ARGS__)*/
-#else
-#define pmessage(format,...) printf(format,##__VA_ARGS__)
-#endif
-
-/* 程序执行踪迹输出，用于调试 */
-#ifndef TRACE
-#define ptrace(format,...) /*printf(format,##__VA_ARGS__)*/
-#else
-#define ptrace(format,...) printf(format,##__VA_ARGS__)
-#endif
+void DoLog(const char* fname, int line, const char* func, GLogLevelFlags level, const char* format, ...);
 
 void pop_info(GtkWidget *parent, const gchar *format, ...);
 void pop_warning(GtkWidget *parent, const gchar *format, ...);
