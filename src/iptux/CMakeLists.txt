@@ -45,6 +45,7 @@ add_library(iptux
 
 add_executable(libiptux_test
 	UtilsTest.cpp
+	TestMain.cpp
 	)
 target_link_libraries(libiptux_test gtest)
 add_test(NAME MyTest COMMAND libiptux_test)
