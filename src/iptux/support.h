@@ -20,11 +20,6 @@ void iptux_init(int port);
 void iptux_gui_quit();
 void iptux_quit(int);
 
-void analysis_parameter(int argc, char *const argv[]);
-void print_version();
-void print_usage();
-void print_stun();
-
 void iptux_open_url(const char *url);
 void init_iptux_environment();
 
