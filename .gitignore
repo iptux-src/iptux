@@ -90,3 +90,19 @@ CMakeFiles
 
 install_manifest.txt
 build
+test/googletest-prefix
+
+CTestTestfile.cmake
+
+src/googletest-download/CMakeLists.txt
+
+src/googletest-download/googletest-prefix
+
+src/googletest-src
+
+src/Test
+
+src/Testing
+
+Testing
+src/iptux/libiptux_test

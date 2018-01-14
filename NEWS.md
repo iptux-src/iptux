@@ -1,3 +1,7 @@
+# 0.7.2 (2018-XX-XX)
+
+* [?] introduce gtest.
+
 # 0.7.1 (2018-01-14)
 
 * [?] fix build guide in `README.md` and homebrew.
