@@ -28,10 +28,9 @@ configure_file (
   "${PROJECT_BINARY_DIR}/src/iptux/config.h"
   )
 
+enable_testing()
 add_subdirectory(src)
 add_subdirectory(po)
 add_subdirectory(pixmaps)
 add_subdirectory(sound)
 add_subdirectory(desktop)
-enable_testing()
-add_subdirectory(test)

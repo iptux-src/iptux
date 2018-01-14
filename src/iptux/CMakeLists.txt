@@ -41,3 +41,10 @@ add_library(iptux
 	wrapper.cpp
 	WindowConfig.cpp
 	)
+
+
+add_executable(libiptux_test
+	UtilsTest.cpp
+	)
+target_link_libraries(libiptux_test gtest)
+add_test(NAME MyTest COMMAND libiptux_test)

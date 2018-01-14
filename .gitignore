@@ -94,14 +94,14 @@ test/googletest-prefix
 
 CTestTestfile.cmake
 
-test/googletest-download/CMakeLists.txt
+src/googletest-download/CMakeLists.txt
 
-test/googletest-download/googletest-prefix
+src/googletest-download/googletest-prefix
 
-test/googletest-src
+src/googletest-src
 
-test/Test
+src/Test
 
-test/Testing
+src/Testing
 
 Testing
