@@ -1,6 +1,7 @@
 # 0.7.2 (2018-XX-XX)
 
 * [?] introduce gtest.
+* [?] support specify config from command line.
 
 # 0.7.1 (2018-01-14)
 
