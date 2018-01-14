@@ -156,7 +156,7 @@ GtkWidget *DataSettings::CreateMainDialog(GtkWidget *parent)
 
         dialog = gtk_dialog_new_with_buttons(_("Preferences"),
                          GTK_WINDOW(parent),
-                         GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_NO_SEPARATOR),
+                         GtkDialogFlags(GTK_DIALOG_MODAL),
                          GTK_STOCK_OK, GTK_RESPONSE_OK,
                          GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);

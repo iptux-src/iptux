@@ -128,7 +128,7 @@ GtkWidget *HelpDialog::CreateMoreDialog()
         gint page;
 
         dialog = gtk_dialog_new_with_buttons(_("More About Iptux"), NULL,
-                                 GTK_DIALOG_NO_SEPARATOR,
+                                 GtkDialogFlags(0),
                                  GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
         gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
         gtk_widget_set_size_request(dialog, 500, 350);

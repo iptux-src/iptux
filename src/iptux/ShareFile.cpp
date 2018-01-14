@@ -104,7 +104,7 @@ GtkWidget *ShareFile::CreateMainDialog(GtkWidget *parent)
 
         dialog = gtk_dialog_new_with_buttons(_("Shared Files Management"),
                          GTK_WINDOW(parent),
-                         GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_NO_SEPARATOR),
+                         GtkDialogFlags(GTK_DIALOG_MODAL),
                          _("OK"), GTK_RESPONSE_OK,
                          _("Apply"), GTK_RESPONSE_APPLY,
                          _("Cancel"), GTK_RESPONSE_CANCEL, NULL);

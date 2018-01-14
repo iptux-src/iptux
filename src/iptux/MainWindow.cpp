@@ -779,7 +779,7 @@ GtkWidget *MainWindow::CreateFileMenu()
         g_signal_connect_swapped(menuitem, "activate",
                          G_CALLBACK(DetectPal::DetectEntry), window);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                         GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+                         GDK_KEY_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
         menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Find"));
@@ -789,7 +789,7 @@ GtkWidget *MainWindow::CreateFileMenu()
         g_signal_connect_swapped(menuitem, "activate",
                          G_CALLBACK(ShowPallistArea), &widset);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                         GDK_F, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+                         GDK_KEY_F, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
         menuitem = gtk_separator_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -891,7 +891,7 @@ GtkWidget *MainWindow::CreateToolMenu()
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
         g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(UpdatePalTree), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                          GDK_F5, GdkModifierType(0), GTK_ACCEL_VISIBLE);
+                          GDK_KEY_F5, GdkModifierType(0), GTK_ACCEL_VISIBLE);
 
         return menushell;
 }
@@ -2408,7 +2408,7 @@ void MainWindow::HidePallistArea(GData **widset)
  */
 gboolean MainWindow::ClearPallistEntry(GtkWidget *entry, GdkEventKey *event)
 {
-        if (event->keyval != GDK_Escape)
+        if (event->keyval != GDK_KEY_Escape)
                 return FALSE;
         gtk_editable_delete_text(GTK_EDITABLE(entry), 0, -1);
         return TRUE;

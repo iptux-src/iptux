@@ -190,7 +190,7 @@ GtkWidget *DialogPeer::CreateMainWindow()
         g_object_set_data(G_OBJECT(window),"dialog",this);
 
         MainWindowSignalSetup(window);
-        g_signal_connect_swapped(GTK_OBJECT(window), "show",
+        g_signal_connect_swapped(GTK_WIDGET(window), "show",
                         G_CALLBACK(ShowDialogPeer), this);
         return window;
 }
@@ -316,20 +316,20 @@ GtkWidget *DialogPeer::CreateFileMenu()
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
         g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+                                   GDK_KEY_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
         menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
         g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder), this);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+                                   GDK_KEY_D, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
         menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
         g_signal_connect_swapped(menuitem, "activate",
                              G_CALLBACK(AskSharedFiles), grpinf);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+                                   GDK_KEY_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
         menuitem = gtk_tearoff_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -339,7 +339,7 @@ GtkWidget *DialogPeer::CreateFileMenu()
         g_signal_connect_swapped(menuitem, "activate",
                                  G_CALLBACK(gtk_widget_destroy), window);
         gtk_widget_add_accelerator(menuitem, "activate", accel,
-                                   GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+                                   GDK_KEY_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
         g_datalist_set_data(&widset, "file-menu",menu);
         return menushell;
@@ -885,17 +885,9 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model)
         gtk_tree_view_column_set_resizable(column, TRUE);
         gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-        g_signal_connect_swapped(GTK_OBJECT(view), "button_press_event",
+        g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
                         G_CALLBACK(RcvTreePopup), view);
 
-//        //增加一列用来标记拒绝接收的文件，删除时用的
-//        cell = gtk_cell_renderer_text_new();
-//        column = gtk_tree_view_column_new_with_attributes("tag",cell,"text",5,NULL);
-//        gtk_tree_view_column_set_visible(column,FALSE);
-//        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-
-//        g_signal_connect_swapped(GTK_OBJECT(view), "button_press_event",
-//                    G_CALLBACK(EncosureTreePopup), this);
         return view;
 }
 /**
@@ -948,7 +940,7 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model)
     gtk_tree_view_column_set_resizable(column, TRUE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-    g_signal_connect_swapped(GTK_OBJECT(view), "button_press_event",
+    g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
                     G_CALLBACK(RcvTreePopup), view);
     return view;
 }
