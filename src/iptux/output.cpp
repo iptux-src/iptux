@@ -11,7 +11,11 @@
 //
 #include "output.h"
 
+#include <string>
+
 #include "iptux/deplib.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -87,5 +91,25 @@ void pop_error(const gchar *format, ...)
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
 }
+
+string pretty_fname(const string& fname) {
+  size_t pos = fname.rfind("/src/");
+  if(pos == string::npos) {
+    return fname;
+  } else {
+    return fname.substr(pos+5);
+  }
+}
+
+
+void DoLog(const char* fname, int line, const char* func, GLogLevelFlags level, const char* format, ...) {
+  va_list ap;
+  va_start(ap, format);
+  gchar* msg = g_strdup_vprintf(format, ap);
+  va_end(ap);
+  g_log("iptux", level, "%s:%d:%s:%s", pretty_fname(fname).c_str(), line, func, msg);
+  g_free(msg);
+}
+
 
 }
