@@ -90,3 +90,18 @@ CMakeFiles
 
 install_manifest.txt
 build
+test/googletest-prefix
+
+CTestTestfile.cmake
+
+test/googletest-download/CMakeLists.txt
+
+test/googletest-download/googletest-prefix
+
+test/googletest-src
+
+test/Test
+
+test/Testing
+
+Testing
