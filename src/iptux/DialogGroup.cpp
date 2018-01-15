@@ -48,7 +48,7 @@ DialogGroup::~DialogGroup()
  * 群组对话框入口.
  * @param grpinf 群组信息
  */
-void DialogGroup::GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, ProgramData& progdt)
+void DialogGroup::GroupDialogEntry(IptuxConfig& config, GroupInfo *grpinf, ProgramData& progdt)
 {
         DialogGroup *dlggrp;
         GtkWidget *window, *widget;

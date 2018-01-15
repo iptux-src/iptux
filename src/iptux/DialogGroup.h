@@ -24,7 +24,7 @@ public:
         DialogGroup(GroupInfo *grp, IptuxConfig& config, ProgramData& progdt);
         virtual ~DialogGroup();
 
-        static void GroupDialogEntry(GroupInfo *grpinf, IptuxConfig& config, ProgramData& progdt);
+        static void GroupDialogEntry(IptuxConfig& config, GroupInfo *grpinf, ProgramData& progdt);
 
         virtual void UpdatePalData(PalInfo *pal);
         virtual void InsertPalData(PalInfo *pal);
@@ -68,7 +68,7 @@ private:
                                          gint x, gint y, GtkSelectionData *data,
                                          guint info, guint time);
         static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
-        static void MembertreeItemActivated(GtkWidget *treeview, 
+        static void MembertreeItemActivated(GtkWidget *treeview,
                 GtkTreePath *path,
                 GtkTreeViewColumn *column,
                 DialogGroup* self);

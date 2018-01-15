@@ -1531,13 +1531,13 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf)
         switch (grpinf->type) {
         case GROUP_BELONG_TYPE_REGULAR:
                 g_signal_connect_swapped(menuitem, "activate",
-                         G_CALLBACK(DialogPeer::PeerDialogEntry), grpinf);
+                         G_CALLBACK(onPaltreePopupMenuSendMessageActivateRegular), grpinf);
                 break;
         case GROUP_BELONG_TYPE_SEGMENT:
         case GROUP_BELONG_TYPE_GROUP:
         case GROUP_BELONG_TYPE_BROADCAST:
                 g_signal_connect_swapped(menuitem, "activate",
-                         G_CALLBACK(DialogGroup::GroupDialogEntry), grpinf);
+                         G_CALLBACK(onPaltreePopupMenuSendMessageActivateGroup), grpinf);
                 break;
         default:
                 gtk_widget_set_sensitive(menuitem, FALSE);
@@ -2116,7 +2116,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview,
         case GROUP_BELONG_TYPE_SEGMENT:
         case GROUP_BELONG_TYPE_GROUP:
         case GROUP_BELONG_TYPE_BROADCAST:
-                DialogGroup::GroupDialogEntry(grpinf, self->config, self->progdt);
+                DialogGroup::GroupDialogEntry(self->config, grpinf, self->progdt);
         default:
                 break;
         }
@@ -2251,7 +2251,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *co
                 case GROUP_BELONG_TYPE_SEGMENT:
                 case GROUP_BELONG_TYPE_GROUP:
                 case GROUP_BELONG_TYPE_BROADCAST:
-                        DialogGroup::GroupDialogEntry(grpinf, self->config, self->progdt);
+                        DialogGroup::GroupDialogEntry(self->config, grpinf, self->progdt);
                 default:
                         break;
                 }
@@ -2600,5 +2600,14 @@ void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
 gboolean MainWindow::onDeleteEvent(MainWindow* self) {
   return self->statusIcon->AlterInterfaceMode();
 }
+
+void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(GroupInfo* groupInfo) {
+  DialogPeer::PeerDialogEntry(g_mwin->getConfig(), groupInfo, *g_progdt);
+}
+
+void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(GroupInfo* groupInfo) {
+  DialogGroup::GroupDialogEntry(g_mwin->getConfig(), groupInfo, *g_progdt);
+}
+
 
 }
