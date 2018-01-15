@@ -3,6 +3,7 @@
 * [?] introduce gtest.
 * [?] support specify config from command line.
 * [#92] clean the icon namespace.
+* [?] update po/iptux.pot, update zh_CN translation.
 
 # 0.7.1 (2018-01-14)
 
