@@ -90,5 +90,5 @@ xgettext \
   --from-code=utf-8 \
   --package-name=iptux \
   --msgid-bugs-address=https://github.com/iptux-src/iptux/issues/new \
-  --package-version=0.7.2
+  --package-version=0.7.3
 ```

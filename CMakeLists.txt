@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.1)
 project (iptux
-	VERSION 0.7.2)
+	VERSION 0.7.3)
 
 set (CMAKE_CXX_STANDARD 11)
 if (APPLE AND EXISTS /usr/local/opt/gettext)
