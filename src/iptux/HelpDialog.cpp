@@ -91,7 +91,7 @@ GtkWidget *HelpDialog::CreateAboutDialog()
         gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), authors);
         gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(dialog), artists);
         gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(dialog), translators);
-        gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(dialog), "ip-tux");
+        gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(dialog), "iptux");
 
         return dialog;
 }
