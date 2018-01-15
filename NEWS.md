@@ -1,6 +1,7 @@
 # 0.7.3 (2018-XX-XX)
 
 * [#98] fix typo, thanks to @hosiet.
+* [#100] fix crash on the context menu of statusicon.
 
 # 0.7.2 (2018-01-16)
 
