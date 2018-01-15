@@ -53,6 +53,10 @@ public:
           return progdt;
         }
 
+        IptuxConfig& getConfig() {
+          return config;
+        }
+
         void SetStatusIcon(StatusIcon* statusIcon) {
           this->statusIcon = statusIcon;
         }
@@ -60,7 +64,7 @@ private:
   IptuxConfig& config;
   ProgramData& progdt;
   StatusIcon* statusIcon;
-  
+
   GData *widset;          //窗体集
   GData *mdlset;          //数据model集
   //GData *dtset;           //通用数据集
@@ -134,6 +138,8 @@ private:
         static void onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
                                                  GtkTreeViewColumn *column, MainWindow* self);
         static gboolean PaltreePopupMenu(GtkWidget *treeview, GdkEventButton *event);
+        static void onPaltreePopupMenuSendMessageActivateRegular(GroupInfo* groupInfo);
+        static void onPaltreePopupMenuSendMessageActivateGroup(GroupInfo* groupInfo);
         static gboolean PaltreeChangeStatus(GtkWidget *treeview, GdkEventButton *event);
         static void PaltreeDragDataReceived(GtkWidget *treeview, GdkDragContext *context,
                                          gint x, gint y, GtkSelectionData *data,
