@@ -534,7 +534,7 @@ GtkWidget *MainWindow::CreateMainWindow()
                 windowConfig.GetWidth(),
                 windowConfig.GetHeight());
         gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
-        gtk_window_set_default_icon_name("ip-tux");
+        gtk_window_set_default_icon_name("iptux");
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
         g_datalist_set_data(&widset, "window-widget", window);

@@ -2,6 +2,7 @@
 
 * [?] introduce gtest.
 * [?] support specify config from command line.
+* [#92] clean the icon namespace.
 
 # 0.7.1 (2018-01-14)
 

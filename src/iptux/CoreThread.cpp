@@ -910,13 +910,13 @@ void CoreThread::InitThemeSublayerData()
 
         factory = gtk_icon_factory_new();
         gtk_icon_factory_add_default(factory);
-        if ( (pixbuf = gtk_icon_theme_load_icon(theme, "ip-tux", 64,
+        if ( (pixbuf = gtk_icon_theme_load_icon(theme, "iptux", 64,
                                  GtkIconLookupFlags(0), NULL))) {
                 set = gtk_icon_set_new_from_pixbuf(pixbuf);
                 gtk_icon_factory_add(factory, "iptux-logo-show", set);
                 g_object_unref(pixbuf);
         }
-        if ( (pixbuf = gtk_icon_theme_load_icon(theme, "i-tux", 64,
+        if ( (pixbuf = gtk_icon_theme_load_icon(theme, "iptux-i", 64,
                                  GtkIconLookupFlags(0), NULL))) {
                 set = gtk_icon_set_new_from_pixbuf(pixbuf);
                 gtk_icon_factory_add(factory, "iptux-logo-hide", set);
