@@ -17,6 +17,7 @@ void WindowConfig::LoadFromConfig(IptuxConfig& config) {
 void WindowConfig::SaveToConfig(IptuxConfig& config) {
     config.SetInt(prefix + "_width", width);
     config.SetInt(prefix + "_height", height);
+    config.Save();
 }
 
 }
