@@ -78,3 +78,17 @@ iptux
 
 ## TODO
 错误不可避免，请发送错误报告到 https://github.com/iptux-src/iptux/issues
+
+## How to update `po/iptux.pot`
+
+```
+xgettext \
+  --output=po/iptux.pot \
+  --files-from=po/POTFILES.in \
+  --language=C++ \
+  --keyword=_ \
+  --from-code=utf-8 \
+  --package-name=iptux \
+  --package-version=0.7.1 \
+  --msgid-bugs-address=https://github.com/iptux-src/iptux/issues/new
+```
