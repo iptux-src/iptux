@@ -1,11 +1,11 @@
-# 0.7.2 (2018-XX-XX)
+# 0.7.2 (2018-01-16)
 
 * [?] fix crash when clicking on the popup menu of the mainwindow.
 
 * [?] introduce gtest.
 * [?] support specify config from command line.
 * [#92] clean the icon namespace.
-* [?] update po/iptux.pot, update zh_CN translation.
+* [?] update po/iptux.pot, update `zh_CN` translation.
 
 # 0.7.1 (2018-01-14)
 

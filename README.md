@@ -89,6 +89,6 @@ xgettext \
   --keyword=_ \
   --from-code=utf-8 \
   --package-name=iptux \
-  --package-version=0.7.1 \
+  --package-version=0.7.2 \
   --msgid-bugs-address=https://github.com/iptux-src/iptux/issues/new
 ```
