@@ -63,7 +63,7 @@ void StatusIcon::CreateStatusIcon()
         gtk_status_icon_set_screen(statusicon, screen);
 
         g_signal_connect_swapped(statusicon, "activate", G_CALLBACK(StatusIconActivate), this);
-        g_signal_connect(statusicon, "popup-menu", G_CALLBACK(onPopupMenu), NULL);
+        g_signal_connect_swapped(statusicon, "popup-menu", G_CALLBACK(onPopupMenu), this);
         g_object_set(statusicon, "has-tooltip", TRUE, NULL);
         g_signal_connect(statusicon, "query-tooltip",
                          G_CALLBACK(StatusIconQueryTooltip), NULL);
@@ -103,7 +103,7 @@ GtkWidget* StatusIcon::CreatePopupMenu()
         image = gtk_image_new_from_icon_name("menu-board", GTK_ICON_SIZE_MENU);
         gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-        g_signal_connect(menuitem, "activate", G_CALLBACK(onActivate), this);
+        g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(onActivate), this);
 
         menuitem = gtk_separator_menu_item_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -202,8 +202,7 @@ void StatusIcon::StatusIconActivate(StatusIcon* self)
  * @param button the button that was pressed
  * @param time the timestamp of the event that triggered the signal emission
  */
-void StatusIcon::onPopupMenu(GtkStatusIcon *statusicon, guint button, guint time, StatusIcon* self)
-{
+void StatusIcon::onPopupMenu(StatusIcon* self, guint button, guint time) {
         GtkWidget *menu;
 
         menu = self->CreatePopupMenu();
