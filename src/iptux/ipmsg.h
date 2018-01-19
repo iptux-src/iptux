@@ -102,7 +102,7 @@
 #define IPMSG_SIGN_MD5          0x10000000UL
 #define IPMSG_SIGN_SHA1         0x20000000UL
 
-/* compatibilty for Win beta version */
+/* compatibility for Win beta version */
 #define IPMSG_RC2_40OLD         0x00000010UL    // for beta1-4 only
 #define IPMSG_RC2_128OLD                0x00000040UL    // for beta1-4 only
 #define IPMSG_BLOWFISH_128OLD   0x00000400UL    // for beta1-4 only

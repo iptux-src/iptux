@@ -39,7 +39,7 @@ void pop_info(GtkWidget *parent, const gchar *format, ...)
                          GTK_BUTTONS_OK, NULL);
         gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
         g_free(msg);
-        gtk_window_set_title(GTK_WINDOW(dialog), _("Infomation"));
+        gtk_window_set_title(GTK_WINDOW(dialog), _("Information"));
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
 }

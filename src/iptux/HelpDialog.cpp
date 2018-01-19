@@ -101,7 +101,7 @@ GtkWidget *HelpDialog::CreateAboutDialog()
  */
 GtkWidget *HelpDialog::CreateMoreDialog()
 {
-        char *labels[] = {_("Help"), _("Contributers"), _("..."), NULL};
+        char *labels[] = {_("Help"), _("Contributors"), _("..."), NULL};
         char *text[] = {
                 _("Project Home: \nhttps://github.com/iptux-src/iptux\n\n"
                   "User and Developer Group: \nhttps://groups.google.com/group/iptux/\n\n"

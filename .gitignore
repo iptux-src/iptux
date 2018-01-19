@@ -106,3 +106,4 @@ src/Testing
 
 Testing
 src/iptux/libiptux_test
+*.cbp
