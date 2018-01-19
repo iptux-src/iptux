@@ -43,7 +43,7 @@ private:
 private:
   static void ShowTransWindow(StatusIcon* self);
   static void StatusIconActivate(StatusIcon* self);
-  static void onPopupMenu(GtkStatusIcon *statusicon, guint button, guint time, StatusIcon* self);
+  static void onPopupMenu(StatusIcon* self, guint button, guint time);
   static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
                                             gboolean key, GtkTooltip *tooltip);
   static gboolean onActivate(StatusIcon* self);
