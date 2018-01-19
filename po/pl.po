@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2018-01-16 00:14+0800\n"
+"POT-Creation-Date: 2018-01-19 23:27+0800\n"
 "PO-Revision-Date: 2010-07-29 13:29+0000\n"
 "Last-Translator: Twojwujaszek <twojwujaszek@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -280,7 +280,8 @@ msgid "Confirm Exit"
 msgstr "Potwierdz zamknięcie"
 
 #: src/iptux/HelpDialog.cpp:104
-msgid "Contributers"
+#, fuzzy
+msgid "Contributors"
 msgstr "Uczestnicy"
 
 #: src/iptux/MainWindow.cpp:1183
@@ -505,7 +506,8 @@ msgid "Info."
 msgstr "Info."
 
 #: src/iptux/output.cpp:42
-msgid "Infomation"
+#, fuzzy
+msgid "Information"
 msgstr "Infomacje"
 
 #: src/iptux/DialogPeer.cpp:361

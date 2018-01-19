@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2018-01-16 00:14+0800\n"
+"POT-Creation-Date: 2018-01-19 23:27+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -277,7 +277,7 @@ msgid "Confirm Exit"
 msgstr "確認退出"
 
 #: src/iptux/HelpDialog.cpp:104
-msgid "Contributers"
+msgid "Contributors"
 msgstr "貢獻者"
 
 #: src/iptux/MainWindow.cpp:1183
@@ -503,7 +503,7 @@ msgid "Info."
 msgstr "資訊"
 
 #: src/iptux/output.cpp:42
-msgid "Infomation"
+msgid "Information"
 msgstr "資訊"
 
 #: src/iptux/DialogPeer.cpp:361
