@@ -1,3 +1,7 @@
+# 0.7.3 (2018-XX-XX)
+
+* [#98] fix typo, thanks to @hosiet.
+
 # 0.7.2 (2018-01-16)
 
 * [?] fix crash when clicking on the popup menu of the mainwindow.
