@@ -18,37 +18,37 @@
 namespace iptux {
 
 class StatusIcon {
-public:
+ public:
   StatusIcon(IptuxConfig& config, MainWindow& mwin);
   ~StatusIcon();
 
   void CreateStatusIcon();
-	gboolean IsEmbedded();
+  gboolean IsEmbedded();
   void AlterStatusIconMode();
   gboolean AlterInterfaceMode();
-private:
+
+ private:
   IptuxConfig& config;
   MainWindow& mwin;
-  GtkStatusIcon *statusicon;
+  GtkStatusIcon* statusicon;
   guint timerid;
-	gboolean embedded;
+  gboolean embedded;
 
-private:
-  ProgramData& getProgramData() {
-    return mwin.GetProgramData();
-  }
-  static gboolean UpdateUI(StatusIcon *sicon);
+ private:
+  ProgramData& getProgramData() { return mwin.GetProgramData(); }
+  static gboolean UpdateUI(StatusIcon* sicon);
   GtkWidget* CreatePopupMenu();
-//回调处理部分
-private:
+  //回调处理部分
+ private:
   static void ShowTransWindow(StatusIcon* self);
   static void StatusIconActivate(StatusIcon* self);
   static void onPopupMenu(StatusIcon* self, guint button, guint time);
-  static gboolean StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x, gint y,
-                                            gboolean key, GtkTooltip *tooltip);
+  static gboolean StatusIconQueryTooltip(GtkStatusIcon* statusicon, gint x,
+                                         gint y, gboolean key,
+                                         GtkTooltip* tooltip);
   static gboolean onActivate(StatusIcon* self);
 };
 
-}
+}  // namespace iptux
 
 #endif

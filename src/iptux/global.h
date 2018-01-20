@@ -2,10 +2,10 @@
 #define IPTUX_GLOBAL_H
 
 #include "iptux/CoreThread.h"
+#include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
 #include "iptux/ProgramData.h"
 #include "iptux/SoundSystem.h"
-#include "iptux/LogSystem.h"
 
 namespace iptux {
 
@@ -15,7 +15,6 @@ extern MainWindow* g_mwin;
 extern SoundSystem* g_sndsys;
 extern LogSystem* g_lgsys;
 
-}
+}  // namespace iptux
 
 #endif
-

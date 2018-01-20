@@ -17,43 +17,44 @@
 namespace iptux {
 
 class ShareFile {
-public:
-        ShareFile();
-        ~ShareFile();
+ public:
+  ShareFile();
+  ~ShareFile();
 
-        static void ShareEntry(GtkWidget *parent);
-private:
-        void InitSublayer();
-        void ClearSublayer();
+  static void ShareEntry(GtkWidget *parent);
 
-        GtkWidget *CreateMainDialog(GtkWidget *parent);
-        GtkWidget *CreateAllArea();
+ private:
+  void InitSublayer();
+  void ClearSublayer();
 
-        GtkTreeModel *CreateFileModel();
-        void FillFileModel(GtkTreeModel *model);
-        GtkWidget *CreateFileTree(GtkTreeModel *model);
+  GtkWidget *CreateMainDialog(GtkWidget *parent);
+  GtkWidget *CreateAllArea();
 
-        void ApplySharedData();
-        void AttachSharedFiles(GSList *list);
-        GSList *PickSharedFile(uint32_t fileattr);
+  GtkTreeModel *CreateFileModel();
+  void FillFileModel(GtkTreeModel *model);
+  GtkWidget *CreateFileTree(GtkTreeModel *model);
 
-        GData *widset;
-        GData *mdlset;
-//回调处理部分
-private:
-        static void AddRegular(ShareFile *sfile);
-        static void AddFolder(ShareFile *sfile);
-        static void DeleteFiles(GData **widset);
-        static void SetPassword(GData **widset);
-        static void ClearPassword(GData **widset);
+  void ApplySharedData();
+  void AttachSharedFiles(GSList *list);
+  GSList *PickSharedFile(uint32_t fileattr);
 
-        static void DragDataReceived(ShareFile *sfile, GdkDragContext *context,
-                                         gint x, gint y, GtkSelectionData *data,
-                                         guint info, guint time);
-        static gint FileTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                                         GtkTreeIter *b);
+  GData *widset;
+  GData *mdlset;
+  //回调处理部分
+ private:
+  static void AddRegular(ShareFile *sfile);
+  static void AddFolder(ShareFile *sfile);
+  static void DeleteFiles(GData **widset);
+  static void SetPassword(GData **widset);
+  static void ClearPassword(GData **widset);
+
+  static void DragDataReceived(ShareFile *sfile, GdkDragContext *context,
+                               gint x, gint y, GtkSelectionData *data,
+                               guint info, guint time);
+  static gint FileTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
+                                  GtkTreeIter *b);
 };
 
-}
+}  // namespace iptux
 
 #endif

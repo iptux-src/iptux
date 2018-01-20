@@ -8,44 +8,38 @@
 namespace iptux {
 
 class WindowConfig {
-public:
-    WindowConfig(int defaultWidth, int defaultHeight, std::string prefix) 
-    {
-        this->width = defaultWidth;
-        this->height = defaultHeight;
-        this->prefix = prefix;
-    }
+ public:
+  WindowConfig(int defaultWidth, int defaultHeight, std::string prefix) {
+    this->width = defaultWidth;
+    this->height = defaultHeight;
+    this->prefix = prefix;
+  }
 
-    virtual ~WindowConfig() {
-    }
+  virtual ~WindowConfig() {}
 
-    int GetWidth() const {
-        return width;
-    }
+  int GetWidth() const { return width; }
 
-    WindowConfig& SetWidth(int width) {
-        this->width = width;
-        return *this;
-    } 
+  WindowConfig& SetWidth(int width) {
+    this->width = width;
+    return *this;
+  }
 
-    int GetHeight() const {
-        return height;
-    }
+  int GetHeight() const { return height; }
 
-    WindowConfig& SetHeight(int height) {
-        this->height = height;
-        return *this;
-    }
+  WindowConfig& SetHeight(int height) {
+    this->height = height;
+    return *this;
+  }
 
+  void LoadFromConfig(IptuxConfig& config);
+  void SaveToConfig(IptuxConfig& config);
 
-    void LoadFromConfig(IptuxConfig& config);
-    void SaveToConfig(IptuxConfig& config);
-private:
-    int width;
-    int height;
-    std::string prefix;
+ private:
+  int width;
+  int height;
+  std::string prefix;
 };
 
-}
+}  // namespace iptux
 
 #endif

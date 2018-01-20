@@ -12,35 +12,36 @@
 #ifndef IPTUX_RECVFILEDATA_H
 #define IPTUX_RECVFILEDATA_H
 
-#include "iptux/mess.h"
 #include "iptux/ipmsg.h"
+#include "iptux/mess.h"
 
 namespace iptux {
 
-class RecvFileData: public TransAbstract {
-public:
-        RecvFileData(FileInfo *fl);
-        ~RecvFileData();
+class RecvFileData : public TransAbstract {
+ public:
+  RecvFileData(FileInfo *fl);
+  ~RecvFileData();
 
-        void RecvFileDataEntry();
-        virtual GData **GetTransFilePara();
-        virtual void TerminateTrans();
-private:
-        void CreateUIPara();
-        void RecvRegularFile();
-        void RecvDirFiles();
+  void RecvFileDataEntry();
+  virtual GData **GetTransFilePara();
+  virtual void TerminateTrans();
 
-        int64_t RecvData(int sock, int fd, int64_t filesize, int64_t offset);
-        void UpdateUIParaToOver();
+ private:
+  void CreateUIPara();
+  void RecvRegularFile();
+  void RecvDirFiles();
 
-        FileInfo *file;         //文件信息
-        GData *para;            //UI参考数据
-        bool terminate;         //终止标志(也作处理结果标识)
-        int64_t sumsize;        //文件(目录)总大小
-        char buf[MAX_SOCKLEN];  //数据缓冲区
-        struct timeval tasktime, filetime;      //任务开始时间&文件开始时间
+  int64_t RecvData(int sock, int fd, int64_t filesize, int64_t offset);
+  void UpdateUIParaToOver();
+
+  FileInfo *file;                     //文件信息
+  GData *para;                        // UI参考数据
+  bool terminate;                     //终止标志(也作处理结果标识)
+  int64_t sumsize;                    //文件(目录)总大小
+  char buf[MAX_SOCKLEN];              //数据缓冲区
+  struct timeval tasktime, filetime;  //任务开始时间&文件开始时间
 };
 
-}
+}  // namespace iptux
 
 #endif

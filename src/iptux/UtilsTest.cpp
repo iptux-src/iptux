@@ -4,8 +4,7 @@
 
 using namespace iptux;
 
-TEST(FLAG_SET, Utils)
-{
+TEST(FLAG_SET, Utils) {
   uint8_t a = 1;
   FLAG_SET(a, 0, false);
   EXPECT_EQ(a, 0);
