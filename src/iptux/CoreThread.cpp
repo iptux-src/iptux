@@ -39,8 +39,8 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
  */
 CoreThread::CoreThread(IptuxConfig &config)
     : config(config),
-      tcpsock(-1),
-      udpsock(-1),
+      tcpSock(-1),
+      udpSock(-1),
       server(true),
       pallist(nullptr),
       rgllist(NULL),
@@ -201,8 +201,8 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
   Command cmd;
 
-  cmd.BroadCast(pcthrd->udpsock);
-  cmd.DialUp(pcthrd->udpsock);
+  cmd.BroadCast(pcthrd->udpSock);
+  cmd.DialUp(pcthrd->udpSock);
 }
 
 /**
@@ -216,12 +216,12 @@ void CoreThread::SendFeatureData(PalInfo *pal) {
   int sock;
 
   if (!g_progdt->sign.empty()) {
-    cmd.SendMySign(g_cthrd->udpsock, pal);
+    cmd.SendMySign(g_cthrd->udpSock, pal);
   }
   env = g_get_user_config_dir();
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
            g_progdt->myicon.c_str());
-  if (access(path, F_OK) == 0) cmd.SendMyIcon(g_cthrd->udpsock, pal);
+  if (access(path, F_OK) == 0) cmd.SendMyIcon(g_cthrd->udpSock, pal);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -241,7 +241,7 @@ void CoreThread::SendFeatureData(PalInfo *pal) {
 void CoreThread::SendBroadcastExit(PalInfo *pal) {
   Command cmd;
 
-  cmd.SendExit(g_cthrd->udpsock, pal);
+  cmd.SendExit(g_cthrd->udpSock, pal);
 }
 
 /**
@@ -257,7 +257,7 @@ void CoreThread::UpdateMyInfo() {
   tlist = g_cthrd->pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
-    if (FLAG_ISSET(pal->flags, 1)) cmd.SendAbsence(g_cthrd->udpsock, pal);
+    if (FLAG_ISSET(pal->flags, 1)) cmd.SendAbsence(g_cthrd->udpSock, pal);
     if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
       pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
       pthread_detach(pid);
@@ -792,8 +792,8 @@ void CoreThread::ClearSublayer() {
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
   g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
-  shutdown(tcpsock, SHUT_RDWR);
-  shutdown(udpsock, SHUT_RDWR);
+  shutdown(tcpSock, SHUT_RDWR);
+  shutdown(udpSock, SHUT_RDWR);
   server = false;
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
@@ -1148,7 +1148,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
 
   while (self->server) {
     len = sizeof(addr);
-    if ((size = recvfrom(self->udpsock, buf, MAX_UDPLEN, 0,
+    if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
@@ -1164,9 +1164,9 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
   pthread_t pid;
   int subsock;
 
-  listen(pcthrd->tcpsock, 5);
+  listen(pcthrd->tcpSock, 5);
   while (pcthrd->server) {
-    if ((subsock = accept(pcthrd->tcpsock, NULL, NULL)) == -1) continue;
+    if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
     pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
                    GINT_TO_POINTER(subsock));
     pthread_detach(pid);

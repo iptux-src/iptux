@@ -106,7 +106,8 @@ class CoreThread {
   void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
-  int tcpsock, udpsock;  //程序的服务监听套接口
+  int tcpSock;
+  int udpSock;
   bool server;           //程序是否正在服务
 
   GSList *pallist;  //好友链表(成员不能被删除)
@@ -130,15 +131,15 @@ class CoreThread {
   //内联成员函数
  public:
   inline void setTcpSock(int tcpsock) {
-    this->tcpsock = tcpsock;
+    this->tcpSock = tcpsock;
   }
 
   inline void setUdpSock(int udpsock) {
-    this->udpsock = udpsock;
+    this->udpSock = udpsock;
   }
 
   inline int getUdpSock() const {
-    return udpsock;
+    return udpSock;
   }
 
   inline uint32_t &PbnQuote() { return pbn; }
