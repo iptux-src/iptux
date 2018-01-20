@@ -135,7 +135,63 @@ static void dealLog(const IptuxConfig& config) {
   }
 }
 
-int main(int argc, char* argv[]) {
+static void
+activate (GtkApplication* app,
+          IptuxConfig& config) {
+  ProgramData progdt(config);
+  MainWindow mwin(config, progdt);
+  CoreThread cthrd(config);
+  StatusIcon sicon(config, mwin);
+  LogSystem lgsys;
+  SoundSystem sndsys;
+
+  g_progdt = &progdt;
+  g_cthrd = &cthrd;
+  g_mwin = &mwin;
+  g_sndsys = &sndsys;
+  g_lgsys = &lgsys;
+
+  mwin.SetStatusIcon(&sicon);
+
+  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
+  iptux_init(port);
+  sicon.CreateStatusIcon();
+  mwin.CreateWindow();
+  cthrd.CoreThreadEntry();
+}
+
+int main(int argc, char** argv) {
+  setlocale(LC_ALL, "");
+  bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
+  bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+  textdomain(GETTEXT_PACKAGE);
+
+  GError* error = NULL;
+  GOptionContext* context;
+
+  context = g_option_context_new(_("- A software for sharing in LAN"));
+  g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
+  if (!g_option_context_parse(context, &argc, &argv, &error)) {
+    g_print(_("option parsing failed: %s\n"), error->message);
+    exit(1);
+  }
+  if (version) {
+    printf("iptux: " VERSION "\n");
+    exit(0);
+  }
+  string configPath = configFilename ? configFilename : getConfigPath();
+  IptuxConfig config(configPath);
+  dealLog(config);
+
+  GtkApplication* app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
+  g_signal_connect (app, "activate", G_CALLBACK (activate), &config);
+  int status = g_application_run (G_APPLICATION (app), argc, argv);
+  g_object_unref (app);
+
+  return status;
+}
+
+int main2(int argc, char* argv[]) {
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
