@@ -118,7 +118,7 @@ void DetectPal::SendDetectPacket() {
     return;
   }
 
-  cmd.SendDetectPacket(g_cthrd->UdpSockQuote(), ipv4);
+  cmd.SendDetectPacket(g_cthrd->getUdpSock(), ipv4);
   pop_info(parent, _("The notification has been sent to %s."), text);
   gtk_entry_set_text(GTK_ENTRY(widget), "");
 }

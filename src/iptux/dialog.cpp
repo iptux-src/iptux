@@ -58,7 +58,7 @@ bool pop_request_shared_file(PalInfo *pal) {
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
-  box = gtk_hbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      box, TRUE, TRUE, 0);
 

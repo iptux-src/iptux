@@ -1944,7 +1944,7 @@ void MainWindow::UpdatePalTree(MainWindow *mwin) {
 void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
   Command cmd;
 
-  cmd.SendAskShared(g_cthrd->UdpSockQuote(), (PalInfo *)grpinf->member->data, 0,
+  cmd.SendAskShared(g_cthrd->getUdpSock(), (PalInfo *)grpinf->member->data, 0,
                     NULL);
 }
 

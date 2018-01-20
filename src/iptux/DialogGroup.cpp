@@ -545,9 +545,9 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
             opttype = IPTUX_REGULAROPT;
             break;
         }
-        cmd.SendUnitMsg(g_cthrd->UdpSockQuote(), pal, opttype, msg);
+        cmd.SendUnitMsg(g_cthrd->getUdpSock(), pal, opttype, msg);
       } else
-        cmd.SendGroupMsg(g_cthrd->UdpSockQuote(), pal, msg);
+        cmd.SendGroupMsg(g_cthrd->getUdpSock(), pal, msg);
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 }

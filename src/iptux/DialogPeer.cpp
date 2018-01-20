@@ -649,7 +649,7 @@ void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
   else
     pal = (PalInfo *)grpinf->member->data;
 
-  cmd.SendAskShared(g_cthrd->UdpSockQuote(), pal, 0, NULL);
+  cmd.SendAskShared(g_cthrd->getUdpSock(), pal, 0, NULL);
 }
 
 /**
@@ -700,7 +700,7 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
     switch (((ChipData *)tlist->data)->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         /* 文本类型 */
-        cmd.SendMessage(g_cthrd->UdpSockQuote(), para->pal, ptr);
+        cmd.SendMessage(g_cthrd->getUdpSock(), para->pal, ptr);
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         /* 图片类型 */

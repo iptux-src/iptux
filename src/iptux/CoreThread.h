@@ -129,9 +129,17 @@ class CoreThread {
   static gboolean WatchCoreStatus(CoreThread *pcthrd);
   //内联成员函数
  public:
-  inline int &TcpSockQuote() { return tcpsock; }
+  inline void setTcpSock(int tcpsock) {
+    this->tcpsock = tcpsock;
+  }
 
-  inline int &UdpSockQuote() { return udpsock; }
+  inline void setUdpSock(int udpsock) {
+    this->udpsock = udpsock;
+  }
+
+  inline int getUdpSock() const {
+    return udpsock;
+  }
 
   inline uint32_t &PbnQuote() { return pbn; }
 

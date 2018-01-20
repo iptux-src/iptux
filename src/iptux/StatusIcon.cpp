@@ -223,7 +223,7 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x,
   if ((len = g_cthrd->GetMsglineItems())) {
     msgstr = g_strdup_printf(_("To be read: %u messages"), len);
   } else {
-    msgstr = get_sys_host_addr_string(g_cthrd->UdpSockQuote());
+    msgstr = get_sys_host_addr_string(g_cthrd->getUdpSock());
     msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
   }
   g_cthrd->Unlock();
