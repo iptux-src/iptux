@@ -139,7 +139,7 @@ static void
 activate (GtkApplication* app,
           IptuxConfig& config) {
   g_progdt = new ProgramData(config);
-  g_mwin = new MainWindow(config, *g_progdt);
+  g_mwin = new MainWindow(app, config, *g_progdt);
   g_cthrd = new CoreThread(config);
   StatusIcon* sicon = new StatusIcon(config, *g_mwin);
   g_sndsys = new SoundSystem();
@@ -183,56 +183,4 @@ int main(int argc, char** argv) {
   g_object_unref (app);
 
   return status;
-}
-
-int main2(int argc, char* argv[]) {
-  setlocale(LC_ALL, "");
-  bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
-  bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-  textdomain(GETTEXT_PACKAGE);
-
-  GError* error = NULL;
-  GOptionContext* context;
-
-  context = g_option_context_new(_("- A software for sharing in LAN"));
-  g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
-  g_option_context_add_group(context, gtk_get_option_group(TRUE));
-  if (!g_option_context_parse(context, &argc, &argv, &error)) {
-    g_print(_("option parsing failed: %s\n"), error->message);
-    exit(1);
-  }
-  if (version) {
-    printf("iptux: " VERSION "\n");
-    exit(0);
-  }
-  string configPath = configFilename ? configFilename : getConfigPath();
-  IptuxConfig config(configPath);
-  dealLog(config);
-  ProgramData progdt(config);
-  MainWindow mwin(config, progdt);
-  CoreThread cthrd(config);
-  StatusIcon sicon(config, mwin);
-  LogSystem lgsys;
-  SoundSystem sndsys;
-
-  g_progdt = &progdt;
-  g_cthrd = &cthrd;
-  g_mwin = &mwin;
-  g_sndsys = &sndsys;
-  g_lgsys = &lgsys;
-
-  mwin.SetStatusIcon(&sicon);
-
-  gdk_threads_init();
-  gdk_threads_enter();
-  gtk_init(&argc, &argv);
-
-  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
-  iptux_init(port);
-  sicon.CreateStatusIcon();
-  mwin.CreateWindow();
-  cthrd.CoreThreadEntry();
-  gtk_main();
-  gdk_threads_leave();
-  return 0;
 }

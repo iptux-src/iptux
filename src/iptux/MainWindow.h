@@ -28,7 +28,7 @@ class StatusIcon;
  */
 class MainWindow {
  public:
-  MainWindow(IptuxConfig &config, ProgramData &progdt);
+  MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &progdt);
   ~MainWindow();
 
   void CreateWindow();
@@ -53,6 +53,7 @@ class MainWindow {
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
 
  private:
+  GtkApplication* app;
   IptuxConfig &config;
   ProgramData &progdt;
   StatusIcon *statusIcon;
