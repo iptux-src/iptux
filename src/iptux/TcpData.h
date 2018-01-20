@@ -18,26 +18,27 @@
 namespace iptux {
 
 class TcpData {
-public:
-        TcpData();
-        ~TcpData();
+ public:
+  TcpData();
+  ~TcpData();
 
-        static void TcpDataEntry(int sock);
-private:
-        void DispatchTcpData();
+  static void TcpDataEntry(int sock);
 
-        void RequestData(uint32_t fileattr);
-        void RecvSublayer(uint32_t cmdopt);
+ private:
+  void DispatchTcpData();
 
-        void RecvSublayerData(int fd, size_t len);
-        void RecvPhotoPic(PalInfo *pal, const char *path);
-        void RecvMsgPic(PalInfo *pal, const char *path);
+  void RequestData(uint32_t fileattr);
+  void RecvSublayer(uint32_t cmdopt);
 
-        int sock;       //数据交流套接口
-        size_t size;    //缓冲区已使用长度
-        char buf[MAX_SOCKLEN];  //缓冲区
+  void RecvSublayerData(int fd, size_t len);
+  void RecvPhotoPic(PalInfo *pal, const char *path);
+  void RecvMsgPic(PalInfo *pal, const char *path);
+
+  int sock;               //数据交流套接口
+  size_t size;            //缓冲区已使用长度
+  char buf[MAX_SOCKLEN];  //缓冲区
 };
 
-}
+}  // namespace iptux
 
 #endif

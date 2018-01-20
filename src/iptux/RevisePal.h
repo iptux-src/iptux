@@ -17,34 +17,36 @@
 namespace iptux {
 
 class RevisePal {
-public:
-        RevisePal(PalInfo *pl);
-        ~RevisePal();
+ public:
+  RevisePal(PalInfo *pl);
+  ~RevisePal();
 
-        static void ReviseEntry(PalInfo *pal);
-private:
-        void InitSublayer();
-        void ClearSublayer();
+  static void ReviseEntry(PalInfo *pal);
 
-        GtkWidget *CreateMainDialog();
-        GtkWidget *CreateAllArea();
-        void SetAllValue();
-        void ApplyReviseData();
+ private:
+  void InitSublayer();
+  void ClearSublayer();
 
-        GtkTreeModel *CreateIconModel();
-        void FillIconModel(GtkTreeModel *model);
-        GtkWidget *CreateIconTree(GtkTreeModel *model);
+  GtkWidget *CreateMainDialog();
+  GtkWidget *CreateAllArea();
+  void SetAllValue();
+  void ApplyReviseData();
 
-        GData *widset;
-        GData *mdlset;
-        PalInfo *pal;
-private:
-        static gint IconfileGetItemPos(GtkTreeModel *model, const char *pathname);
-//回调处理部分
-private:
-        static void AddNewIcon(GtkWidget *button, GData **widset);
+  GtkTreeModel *CreateIconModel();
+  void FillIconModel(GtkTreeModel *model);
+  GtkWidget *CreateIconTree(GtkTreeModel *model);
+
+  GData *widset;
+  GData *mdlset;
+  PalInfo *pal;
+
+ private:
+  static gint IconfileGetItemPos(GtkTreeModel *model, const char *pathname);
+  //回调处理部分
+ private:
+  static void AddNewIcon(GtkWidget *button, GData **widset);
 };
 
-}
+}  // namespace iptux
 
 #endif

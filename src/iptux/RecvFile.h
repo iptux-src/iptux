@@ -19,15 +19,16 @@
 namespace iptux {
 
 class RecvFile {
-public:
-        RecvFile();
-        ~RecvFile();
-        static void RecvEntry(GData *para);
-private:
-        void ParseFilePara(GData **para);
-        FileInfo *DivideFileinfo(char **extra);
+ public:
+  RecvFile();
+  ~RecvFile();
+  static void RecvEntry(GData *para);
+
+ private:
+  void ParseFilePara(GData **para);
+  FileInfo *DivideFileinfo(char **extra);
 };
 
-}
+}  // namespace iptux
 
 #endif

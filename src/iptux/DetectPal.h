@@ -17,19 +17,20 @@
 namespace iptux {
 
 class DetectPal {
-public:
-        DetectPal();
-        ~DetectPal();
+ public:
+  DetectPal();
+  ~DetectPal();
 
-        static void DetectEntry(GtkWidget *parent);
-private:
-        GtkWidget *CreateMainDialog(GtkWidget *parent);
-        GtkWidget *CreateInputArea();
-        void SendDetectPacket();
+  static void DetectEntry(GtkWidget *parent);
 
-        GData *widset;
+ private:
+  GtkWidget *CreateMainDialog(GtkWidget *parent);
+  GtkWidget *CreateInputArea();
+  void SendDetectPacket();
+
+  GData *widset;
 };
 
-}
+}  // namespace iptux
 
 #endif

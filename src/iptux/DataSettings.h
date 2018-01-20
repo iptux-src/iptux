@@ -17,77 +17,79 @@
 namespace iptux {
 
 class DataSettings {
-public:
-        DataSettings();
-        ~DataSettings();
+ public:
+  DataSettings();
+  ~DataSettings();
 
-        static void ResetDataEntry(GtkWidget *parent);
-private:
-        void InitSublayer();
-        void ClearSublayer();
+  static void ResetDataEntry(GtkWidget *parent);
 
-        GtkWidget *CreateMainDialog(GtkWidget *parent);
-        GtkWidget *CreatePersonal();
-        GtkWidget *CreateSystem();
-        GtkWidget *CreateSound();
-        GtkWidget *CreateNetwork();
+ private:
+  void InitSublayer();
+  void ClearSublayer();
 
-        void SetPersonalValue();
-        void SetSystemValue();
-        void SetSoundValue();
-        void SetNetworkValue();
+  GtkWidget *CreateMainDialog(GtkWidget *parent);
+  GtkWidget *CreatePersonal();
+  GtkWidget *CreateSystem();
+  GtkWidget *CreateSound();
+  GtkWidget *CreateNetwork();
 
-        GtkTreeModel *CreateIconModel();
-        GtkTreeModel *CreateSndModel();
-        GtkTreeModel *CreateNetworkModel();
-        void FillIconModel(GtkTreeModel *model);
-        void FillSndModel(GtkTreeModel *model);
-        void FillNetworkModel(GtkTreeModel *model);
-        GtkWidget *CreateIconTree(GtkTreeModel *model);
-        GtkWidget *CreateSndTree(GtkTreeModel *model);
-        GtkWidget *CreateNetworkTree(GtkTreeModel *model);
+  void SetPersonalValue();
+  void SetSystemValue();
+  void SetSoundValue();
+  void SetNetworkValue();
 
-        GtkWidget *CreateArchiveChooser();
-        GtkWidget *CreateFontChooser();
-        GtkWidget *CreateSndChooser();
+  GtkTreeModel *CreateIconModel();
+  GtkTreeModel *CreateSndModel();
+  GtkTreeModel *CreateNetworkModel();
+  void FillIconModel(GtkTreeModel *model);
+  void FillSndModel(GtkTreeModel *model);
+  void FillNetworkModel(GtkTreeModel *model);
+  GtkWidget *CreateIconTree(GtkTreeModel *model);
+  GtkWidget *CreateSndTree(GtkTreeModel *model);
+  GtkWidget *CreateNetworkTree(GtkTreeModel *model);
 
-        GData *widset;          //窗体集
-        GData *mdlset;          //数据model集
-private:
-        void ObtainPersonalValue();
-        void ObtainSystemValue();
-        void ObtainSoundValue();
-        void ObtainNetworkValue();
+  GtkWidget *CreateArchiveChooser();
+  GtkWidget *CreateFontChooser();
+  GtkWidget *CreateSndChooser();
 
-        void WriteNetSegment(const char *filename, GSList *list);
-        void ReadNetSegment(const char *filename, GSList **list);
+  GData *widset;  //窗体集
+  GData *mdlset;  //数据model集
+ private:
+  void ObtainPersonalValue();
+  void ObtainSystemValue();
+  void ObtainSoundValue();
+  void ObtainNetworkValue();
 
-        static GtkWidget *CreatePopupMenu(GtkTreeModel *model);
-        static gint IconfileGetItemPos(GtkTreeModel *model, const char *pathname);
-//回调处理部分
-private:
-        static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
-        static void AddNewIcon(GtkWidget *button, GData **widset);
-        static void ChoosePhoto(GData **widset);
+  void WriteNetSegment(const char *filename, GSList *list);
+  void ReadNetSegment(const char *filename, GSList **list);
 
-        static void AdjustSensitive(GtkWidget *chkbutton, GtkWidget *widget);
-        static void AdjustVolume(GtkWidget *hscale);
-        static void SndtreeSelectItemChanged(GtkTreeSelection *selection, GData **widset);
-        static void ChooserResetSndtree(GtkWidget *chooser, GData **widset);
-        static void PlayTesting(GData **widset);
-        static void StopTesting();
+  static GtkWidget *CreatePopupMenu(GtkTreeModel *model);
+  static gint IconfileGetItemPos(GtkTreeModel *model, const char *pathname);
+  //回调处理部分
+ private:
+  static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
+  static void AddNewIcon(GtkWidget *button, GData **widset);
+  static void ChoosePhoto(GData **widset);
 
-        static gint NetworkTreeCompareFunc(GtkTreeModel *model,
-                                 GtkTreeIter *a, GtkTreeIter *b);
-        static void ClickAddIpseg(GData **widset);
-        static void ClickDelIpseg(GData **widset);
-        static void CellEditText(GtkCellRendererText *renderer, gchar *path,
-                                 gchar *newtext, GtkTreeModel *model);
-        static void ImportNetSegment(DataSettings *dset);
-        static void ExportNetSegment(DataSettings *dset);
-        static void ClearNetSegment(GData **mdlset);
+  static void AdjustSensitive(GtkWidget *chkbutton, GtkWidget *widget);
+  static void AdjustVolume(GtkWidget *hscale);
+  static void SndtreeSelectItemChanged(GtkTreeSelection *selection,
+                                       GData **widset);
+  static void ChooserResetSndtree(GtkWidget *chooser, GData **widset);
+  static void PlayTesting(GData **widset);
+  static void StopTesting();
+
+  static gint NetworkTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
+                                     GtkTreeIter *b);
+  static void ClickAddIpseg(GData **widset);
+  static void ClickDelIpseg(GData **widset);
+  static void CellEditText(GtkCellRendererText *renderer, gchar *path,
+                           gchar *newtext, GtkTreeModel *model);
+  static void ImportNetSegment(DataSettings *dset);
+  static void ExportNetSegment(DataSettings *dset);
+  static void ClearNetSegment(GData **mdlset);
 };
 
-}
+}  // namespace iptux
 
 #endif

@@ -17,17 +17,18 @@
 namespace iptux {
 
 class LogSystem {
-public:
-        LogSystem();
-        ~LogSystem();
+ public:
+  LogSystem();
+  ~LogSystem();
 
-        void InitSublayer();
-        void CommunicateLog(MsgPara *msgpara, const char *fmt, ...);
-        void SystemLog(const char *fmt, ...);
-private:
-        int fdc, fds;
+  void InitSublayer();
+  void CommunicateLog(MsgPara *msgpara, const char *fmt, ...);
+  void SystemLog(const char *fmt, ...);
+
+ private:
+  int fdc, fds;
 };
 
-}
+}  // namespace iptux
 
 #endif
