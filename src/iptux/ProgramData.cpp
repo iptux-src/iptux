@@ -33,7 +33,6 @@ ProgramData::ProgramData(IptuxConfig &config)
       msgtip(NULL),
       volume(1.0),
       sndfgs(~0),
-      netseg(NULL),
       urlregex(NULL),
       xcursor(NULL),
       lcursor(NULL),
