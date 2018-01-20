@@ -713,16 +713,13 @@ void DataSettings::FillSndModel(GtkTreeModel *model) {
  */
 void DataSettings::FillNetworkModel(GtkTreeModel *model) {
   GtkTreeIter iter;
-  GSList *tlist;
   NetSegment *pns;
 
-  tlist = g_progdt->netseg;
-  while (tlist) {
-    pns = (NetSegment *)tlist->data;
+  for(int i = 0; i < g_progdt->netseg.size(); ++i) {
+    pns = &g_progdt->netseg[i];
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns->startip, 1,
-                       pns->endip, 2, pns->description, -1);
-    tlist = g_slist_next(tlist);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns->startip.c_str(), 1,
+                       pns->endip.c_str(), 2, pns->description.c_str(), -1);
   }
 }
 
@@ -1066,22 +1063,18 @@ void DataSettings::ObtainNetworkValue() {
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  NetSegment *ns;
   GSList *tlist;
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   g_progdt->Lock();
-  for (tlist = g_progdt->netseg; tlist; tlist = g_slist_next(tlist))
-    delete (NetSegment *)tlist->data;
-  g_slist_free(g_progdt->netseg);
-  g_progdt->netseg = NULL;
+  g_progdt->netseg.clear();
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
-      ns = new NetSegment;
-      gtk_tree_model_get(model, &iter, 0, &ns->startip, 1, &ns->endip, 2,
-                         &ns->description, -1);
-      g_progdt->netseg = g_slist_append(g_progdt->netseg, ns);
+      NetSegment ns;
+      gtk_tree_model_get(model, &iter, 0, &ns.startip, 1, &ns.endip, 2,
+                         &ns.description, -1);
+      g_progdt->netseg.push_back (ns);
     } while (gtk_tree_model_iter_next(model, &iter));
   }
   g_progdt->Unlock();
@@ -1109,8 +1102,8 @@ void DataSettings::WriteNetSegment(const char *filename, GSList *list) {
   tlist = list;
   while (tlist) {
     pns = (NetSegment *)tlist->data;
-    fprintf(stream, "\n%s - %s //%s", pns->startip, pns->endip,
-            pns->description ? pns->description : "");
+    fprintf(stream, "\n%s - %s //%s", pns->startip.c_str(), pns->endip.c_str(),
+            pns->description.c_str());
     tlist = g_slist_next(tlist);
   }
   fclose(stream);
@@ -1557,8 +1550,8 @@ void DataSettings::ImportNetSegment(DataSettings *dset) {
       while (tlist) {
         pns = (NetSegment *)tlist->data;
         gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns->startip, 1,
-                           pns->endip, 2, pns->description, -1);
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns->startip.c_str(), 1,
+                           pns->endip.c_str(), 2, pns->description.c_str(), -1);
         tlist = g_slist_next(tlist);
       }
       for (tlist = list; tlist; tlist = g_slist_next(tlist))

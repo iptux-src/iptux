@@ -13,9 +13,11 @@
 #define IPTUX_MESS_H
 
 #include <arpa/inet.h>
+#include <string>
 
 #include <gtk/gtk.h>
 #include <json/json.h>
+
 
 namespace iptux {
 
@@ -148,12 +150,12 @@ class NetSegment {
   NetSegment();
   ~NetSegment();
 
-  char *startip;      ///< IP起始地址 *
-  char *endip;        ///< IP终止地址 *
-  char *description;  ///< 此IP段描述
+  std::string startip;      ///< IP起始地址 *
+  std::string endip;        ///< IP终止地址 *
+  std::string description;  ///< 此IP段描述
 
   Json::Value ToJsonValue() const;
-  static NetSegment *NewFromJsonValue(const Json::Value &value);
+  static NetSegment fromJsonValue(Json::Value &value);
 };
 
 /***************偶是可爱的分割线(抽象类)*****************/

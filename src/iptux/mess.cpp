@@ -80,12 +80,8 @@ MsgPara::~MsgPara() {
 ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data(NULL) {}
 ChipData::~ChipData() { g_free(data); }
 
-NetSegment::NetSegment() : startip(NULL), endip(NULL), description(NULL) {}
-NetSegment::~NetSegment() {
-  g_free(startip);
-  g_free(endip);
-  g_free(description);
-}
+NetSegment::NetSegment() {}
+NetSegment::~NetSegment() {}
 
 Json::Value NetSegment::ToJsonValue() const {
   Json::Value value;
@@ -95,12 +91,11 @@ Json::Value NetSegment::ToJsonValue() const {
   return value;
 }
 
-// static
-NetSegment* NetSegment::NewFromJsonValue(const Json::Value& value) {
-  NetSegment* res = new NetSegment();
-  res->startip = g_strdup(value["startip"].asString().c_str());
-  res->endip = g_strdup(value["startip"].asString().c_str());
-  res->description = g_strdup(value["startip"].asString().c_str());
+NetSegment NetSegment::fromJsonValue(Json::Value &value) {
+  NetSegment res;
+  res.startip = value["startip"].asString();
+  res.endip = value["startip"].asString();
+  res.description = value["startip"].asString();
   return res;
 }
 

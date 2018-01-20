@@ -17,6 +17,7 @@
 #include <gtk/gtk.h>
 
 #include "iptux/IptuxConfig.h"
+#include "iptux/mess.h"
 
 namespace iptux {
 
@@ -41,7 +42,7 @@ class ProgramData {
 
   void InitSublayer();
   void WriteProgData();
-  GSList *CopyNetSegment();
+  std::vector<NetSegment> CopyNetSegment();
   char *FindNetSegDescription(in_addr_t ipv4);
   void Lock();
   void Unlock();
@@ -72,7 +73,7 @@ class ProgramData {
   double volume;   //音量控制
   uint8_t sndfgs;  // 2 传输:1 消息:0 声音
 
-  GSList *netseg;  //需要通知登录的IP段
+  std::vector<NetSegment> netseg;  //需要通知登录的IP段
 
   GRegex *urlregex;              // URL正则表达式
   GdkCursor *xcursor, *lcursor;  //光标

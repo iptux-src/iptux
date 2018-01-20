@@ -54,10 +54,6 @@ ProgramData::~ProgramData() {
   g_free(msgtip);
   g_free(transtip);
 
-  for (GSList *tlist = netseg; tlist; tlist = g_slist_next(tlist))
-    delete (NetSegment *)tlist->data;
-  g_slist_free(netseg);
-
   if (urlregex) g_regex_unref(urlregex);
   if (xcursor) gdk_cursor_unref(xcursor);
   if (lcursor) gdk_cursor_unref(lcursor);
@@ -118,23 +114,8 @@ void ProgramData::WriteProgData() {
  * 深拷贝一份网段数据.
  * @return 网段数据
  */
-GSList *ProgramData::CopyNetSegment() {
-  NetSegment *ns, *pns;
-  GSList *tlist, *nseg;
-
-  nseg = NULL;
-  tlist = netseg;
-  while (tlist) {
-    pns = (NetSegment *)tlist->data;
-    ns = new NetSegment;
-    nseg = g_slist_append(nseg, ns);
-    ns->startip = g_strdup(pns->startip);
-    ns->endip = g_strdup(pns->endip);
-    ns->description = g_strdup(pns->description);
-    tlist = g_slist_next(tlist);
-  }
-
-  return nseg;
+vector<NetSegment> ProgramData::CopyNetSegment() {
+  return netseg;
 }
 
 /**
@@ -145,24 +126,21 @@ GSList *ProgramData::CopyNetSegment() {
 char *ProgramData::FindNetSegDescription(in_addr_t ipv4) {
   in_addr_t startip, endip;
   NetSegment *pns;
-  GSList *tlist;
   char *description;
 
   ipv4 = ntohl(ipv4);
   description = NULL;
-  tlist = netseg;
-  while (tlist) {
-    pns = (NetSegment *)tlist->data;
-    inet_pton(AF_INET, pns->startip, &startip);
+  for(int i = 0; i < netseg.size(); ++i) {
+    pns = &netseg[i];
+    inet_pton(AF_INET, pns->startip.c_str(), &startip);
     startip = ntohl(startip);
-    inet_pton(AF_INET, pns->endip, &endip);
+    inet_pton(AF_INET, pns->endip.c_str(), &endip);
     endip = ntohl(endip);
     ipv4_order(&startip, &endip);
     if (ipv4 >= startip && ipv4 <= endip) {
-      description = g_strdup(pns->description);
+      description = g_strdup(pns->description.c_str());
       break;
     }
-    tlist = g_slist_next(tlist);
   }
 
   return description;
@@ -296,11 +274,8 @@ void ProgramData::WriteNetSegment() {
   vector<Json::Value> jsons;
 
   pthread_mutex_lock(&mutex);
-  GSList *tlist = netseg;
-  while (tlist) {
-    NetSegment *pns = (NetSegment *)tlist->data;
-    jsons.push_back(pns->ToJsonValue());
-    tlist = g_slist_next(tlist);
+  for(int i = 0; i < netseg.size(); ++i) {
+    jsons.push_back(netseg[i].ToJsonValue());
   }
   pthread_mutex_unlock(&mutex);
   config.SetVector("scan_net_segement", jsons);
@@ -313,8 +288,7 @@ void ProgramData::WriteNetSegment() {
 void ProgramData::ReadNetSegment() {
   vector<Json::Value> values = config.GetVector("scan_net_segment");
   for (size_t i = 0; i < values.size(); ++i) {
-    NetSegment *segment = NetSegment::NewFromJsonValue(values[i]);
-    netseg = g_slist_append(netseg, segment);
+    netseg.push_back(NetSegment::fromJsonValue(values[i]));
   }
 }
 
