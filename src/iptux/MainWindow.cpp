@@ -559,12 +559,12 @@ GtkWidget *MainWindow::CreateTransWindow() {
 GtkWidget *MainWindow::CreateAllArea() {
   GtkWidget *box, *paned;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);
 
-  paned = gtk_vpaned_new();
+  paned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(paned), "position-name",
                     (gpointer) "mwin-main-paned-divide");
   gtk_paned_set_position(GTK_PANED(paned),
@@ -640,7 +640,10 @@ GtkWidget *MainWindow::CreateToolBar() {
   g_object_set(toolbar, "icon-size", 1, NULL);
   gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
-  toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
+  toolitem = gtk_tool_button_new(
+    gtk_image_new_from_icon_name(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_SMALL_TOOLBAR),
+    "Go previous"
+  );
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toolitem, -1);
   g_signal_connect_swapped(toolitem, "clicked", G_CALLBACK(GoPrevTreeModel),
                            this);
@@ -652,7 +655,7 @@ GtkWidget *MainWindow::CreateToolBar() {
   gtk_container_add(GTK_CONTAINER(toolitem), widget);
   g_datalist_set_data(&widset, "online-label-widget", widget);
 
-  toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+  toolitem = gtk_tool_button_new_from_stock("go-next");
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toolitem, -1);
   g_signal_connect_swapped(toolitem, "clicked", G_CALLBACK(GoNextTreeModel),
                            this);
