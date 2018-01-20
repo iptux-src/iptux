@@ -22,6 +22,6 @@ char *pop_obtain_shared_passwd(PalInfo *pal);
 char *pop_password_settings(GtkWidget *parent);
 const char *pop_save_path(GtkWidget *parent);
 
-}
+}  // namespace iptux
 
 #endif

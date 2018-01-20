@@ -9,16 +9,17 @@
 namespace iptux {
 
 class IptuxConfig {
-public:
-	explicit IptuxConfig(std::string& fname);
-	~IptuxConfig();
+ public:
+  explicit IptuxConfig(std::string& fname);
+  ~IptuxConfig();
 
-	int GetInt(const std::string& key) const;
-	int GetInt(const std::string& key, int defaultValue) const;
-	void SetInt(const std::string& key, int value);
+  int GetInt(const std::string& key) const;
+  int GetInt(const std::string& key, int defaultValue) const;
+  void SetInt(const std::string& key, int value);
 
   std::string GetString(const std::string& key) const;
-  std::string GetString(const std::string& key, const std::string& defaultValue) const;
+  std::string GetString(const std::string& key,
+                        const std::string& defaultValue) const;
   void SetString(const std::string& key, const std::string& value);
 
   bool GetBool(const std::string& key) const;
@@ -30,17 +31,19 @@ public:
   void SetDouble(const std::string& key, double value);
 
   std::vector<std::string> GetStringList(const std::string& key) const;
-  void SetStringList(const std::string& key, const std::vector<std::string>& value);
+  void SetStringList(const std::string& key,
+                     const std::vector<std::string>& value);
 
   std::vector<Json::Value> GetVector(const std::string& key) const;
   void SetVector(const std::string& key, const std::vector<Json::Value>& value);
 
-	IptuxConfig& Save();
-private:
-	std::string fname;
-	Json::Value root;
+  IptuxConfig& Save();
+
+ private:
+  std::string fname;
+  Json::Value root;
 };
 
-}
+}  // namespace iptux
 
 #endif

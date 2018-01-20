@@ -17,8 +17,8 @@
 namespace iptux {
 
 /* entry */
-gboolean entry_query_tooltip(GtkWidget *entry, gint x, gint y,
-                         gboolean key, GtkTooltip *tooltip, char *text);
+gboolean entry_query_tooltip(GtkWidget *entry, gint x, gint y, gboolean key,
+                             GtkTooltip *tooltip, char *text);
 void entry_insert_numeric(GtkWidget *entry, gchar *text, gint length);
 
 /* file-chooser */
@@ -36,9 +36,11 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter);
 void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y);
 gboolean textview_key_press_event(GtkWidget *textview, GdkEventKey *event);
 void textview_event_after(GtkWidget *textview, GdkEvent *ev);
-gboolean textview_motion_notify_event(GtkWidget *textview, GdkEventMotion *event);
-gboolean textview_visibility_notify_event(GtkWidget *textview, GdkEventVisibility *event);
+gboolean textview_motion_notify_event(GtkWidget *textview,
+                                      GdkEventMotion *event);
+gboolean textview_visibility_notify_event(GtkWidget *textview,
+                                          GdkEventVisibility *event);
 
-}
+}  // namespace iptux
 
 #endif

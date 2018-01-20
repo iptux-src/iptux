@@ -19,20 +19,20 @@
  ***************************************************************************/
 #include <string>
 
-#include <libintl.h>
 #include <glib.h>
+#include <libintl.h>
 
-#include "iptux/config.h"
-#include "iptux/ipmsg.h"
-#include "iptux/ProgramData.h"
 #include "iptux/CoreThread.h"
-#include "iptux/StatusIcon.h"
-#include "iptux/MainWindow.h"
 #include "iptux/LogSystem.h"
+#include "iptux/MainWindow.h"
+#include "iptux/ProgramData.h"
 #include "iptux/SoundSystem.h"
-#include "iptux/support.h"
+#include "iptux/StatusIcon.h"
+#include "iptux/config.h"
 #include "iptux/deplib.h"
+#include "iptux/ipmsg.h"
 #include "iptux/output.h"
+#include "iptux/support.h"
 
 using namespace std;
 using namespace iptux;
@@ -43,18 +43,14 @@ CoreThread* g_cthrd;
 MainWindow* g_mwin;
 SoundSystem* g_sndsys;
 LogSystem* g_lgsys;
-}
+}  // namespace iptux
 
 string getConfigPath() {
-        const char* res1 =  g_build_path("/",
-                g_getenv("HOME"),
-                ".iptux",
-                "config.json",
-                NULL
-                );
-        string res2(res1);
-        g_free(gpointer(res1));
-        return res2;
+  const char* res1 =
+      g_build_path("/", g_getenv("HOME"), ".iptux", "config.json", NULL);
+  string res2(res1);
+  g_free(gpointer(res1));
+  return res2;
 }
 
 static gboolean version = FALSE;
@@ -62,98 +58,100 @@ static gchar* configFilename = nullptr;
 static gchar* log = nullptr;
 static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 
-static GOptionEntry entries[] =
-{
-  { "version", 'v', 0, G_OPTION_ARG_NONE, &version, "Output version information and exit", NULL },
-  { "config", 'c', 0, G_OPTION_ARG_FILENAME, &configFilename, "Specify config path", "CONFIG_PATH"},
-  { "log", 'l', 0, G_OPTION_ARG_STRING, &log, "Specify log level: DEBUG, INFO, WARN, default is WARN", "LEVEL"},
-  { NULL }
-};
+static GOptionEntry entries[] = {
+    {"version", 'v', 0, G_OPTION_ARG_NONE, &version,
+     "Output version information and exit", NULL},
+    {"config", 'c', 0, G_OPTION_ARG_FILENAME, &configFilename,
+     "Specify config path", "CONFIG_PATH"},
+    {"log", 'l', 0, G_OPTION_ARG_STRING, &log,
+     "Specify log level: DEBUG, INFO, WARN, default is WARN", "LEVEL"},
+    {NULL}};
 
 static string nowAsString() {
   time_t rawtime;
-  struct tm * timeinfo;
+  struct tm* timeinfo;
   char buffer[80];
 
-  time (&rawtime);
+  time(&rawtime);
   timeinfo = localtime(&rawtime);
 
-  strftime(buffer,sizeof(buffer),"%Y-%m-%d %H:%M:%S",timeinfo);
+  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
   return buffer;
 }
 
 static const char* logLevelAsString(GLogLevelFlags logLevel) {
-  switch(logLevel) {
-  case G_LOG_LEVEL_DEBUG:
-    return "DEBUG";
-  case G_LOG_LEVEL_INFO:
-    return "INFO ";
-  case G_LOG_LEVEL_MESSAGE:
-    return "MESSA";
-  case G_LOG_LEVEL_WARNING:
-    return "WARN ";
-  case G_LOG_LEVEL_ERROR:
-    return "ERROR";
-  default:
-    return "UNKNO";
+  switch (logLevel) {
+    case G_LOG_LEVEL_DEBUG:
+      return "DEBUG";
+    case G_LOG_LEVEL_INFO:
+      return "INFO ";
+    case G_LOG_LEVEL_MESSAGE:
+      return "MESSA";
+    case G_LOG_LEVEL_WARNING:
+      return "WARN ";
+    case G_LOG_LEVEL_ERROR:
+      return "ERROR";
+    default:
+      return "UNKNO";
   }
 }
 
-
-static void logHandler(const gchar *log_domain,
-                     GLogLevelFlags log_level,
-                     const gchar *message,
-                     gpointer user_data )
+static void logHandler(const gchar* log_domain, GLogLevelFlags log_level,
+                       const gchar* message, gpointer user_data)
 
 {
-  if(log_level > logLevel) {
+  if (log_level > logLevel) {
     return;
   }
 
-  fprintf(stderr, "[%s][%s][%s]%s\n", nowAsString().c_str(), log_domain, logLevelAsString(log_level), message);
+  fprintf(stderr, "[%s][%s][%s]%s\n", nowAsString().c_str(), log_domain,
+          logLevelAsString(log_level), message);
 }
 
 static void dealLog(const IptuxConfig& config) {
   string logStr = "WARN";
 
-  if(!config.GetString("log_level").empty()) {
+  if (!config.GetString("log_level").empty()) {
     logStr = config.GetString("log_level");
   }
 
-  if(log != nullptr) {
+  if (log != nullptr) {
     logStr = log;
   }
 
-  g_log_set_handler ("iptux", GLogLevelFlags(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), logHandler, NULL);
+  g_log_set_handler("iptux",
+                    GLogLevelFlags(G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL |
+                                   G_LOG_FLAG_RECURSION),
+                    logHandler, NULL);
 
-  if(logStr == "DEBUG") {
+  if (logStr == "DEBUG") {
     logLevel = G_LOG_LEVEL_DEBUG;
-  } else if(logStr == "INFO") {
+  } else if (logStr == "INFO") {
     logLevel = G_LOG_LEVEL_INFO;
-  } else if(logStr == "WARN") {
+  } else if (logStr == "WARN") {
     logLevel = G_LOG_LEVEL_WARNING;
   } else {
     LOG_ERROR("unknown log level: %s", log);
   }
 }
 
-int main (int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
   textdomain(GETTEXT_PACKAGE);
 
-  GError *error = NULL;
-  GOptionContext *context;
+  GError* error = NULL;
+  GOptionContext* context;
 
   context = g_option_context_new(_("- A software for sharing in LAN"));
-  g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
-  g_option_context_add_group (context, gtk_get_option_group (TRUE));
-  if (!g_option_context_parse (context, &argc, &argv, &error)) {
+  g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
+  g_option_context_add_group(context, gtk_get_option_group(TRUE));
+  if (!g_option_context_parse(context, &argc, &argv, &error)) {
     g_print(_("option parsing failed: %s\n"), error->message);
-    exit (1);
+    exit(1);
   }
-  if(version) {
+  if (version) {
     printf("iptux: " VERSION "\n");
     exit(0);
   }
@@ -173,19 +171,18 @@ int main (int argc, char *argv[]) {
   g_sndsys = &sndsys;
   g_lgsys = &lgsys;
 
-
   mwin.SetStatusIcon(&sicon);
 
-        gdk_threads_init();
-        gdk_threads_enter();
-        gtk_init(&argc, &argv);
+  gdk_threads_init();
+  gdk_threads_enter();
+  gtk_init(&argc, &argv);
 
-        int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
-        iptux_init(port);
-        sicon.CreateStatusIcon();
-        mwin.CreateWindow();
-        cthrd.CoreThreadEntry();
-        gtk_main();
-        gdk_threads_leave();
-        return 0;
+  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
+  iptux_init(port);
+  sicon.CreateStatusIcon();
+  mwin.CreateWindow();
+  cthrd.CoreThreadEntry();
+  gtk_main();
+  gdk_threads_leave();
+  return 0;
 }

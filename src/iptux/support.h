@@ -37,6 +37,6 @@ GSList *get_sys_broadcast_addr(int sock);
 GSList *get_sys_host_addr(int sock);
 char *get_sys_host_addr_string(int sock);
 
-}
+}  // namespace iptux
 
 #endif
