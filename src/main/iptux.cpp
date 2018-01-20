@@ -138,26 +138,20 @@ static void dealLog(const IptuxConfig& config) {
 static void
 activate (GtkApplication* app,
           IptuxConfig& config) {
-  ProgramData progdt(config);
-  MainWindow mwin(config, progdt);
-  CoreThread cthrd(config);
-  StatusIcon sicon(config, mwin);
-  LogSystem lgsys;
-  SoundSystem sndsys;
+  g_progdt = new ProgramData(config);
+  g_mwin = new MainWindow(config, *g_progdt);
+  g_cthrd = new CoreThread(config);
+  StatusIcon* sicon = new StatusIcon(config, *g_mwin);
+  g_sndsys = new SoundSystem();
+  g_lgsys = new LogSystem();
 
-  g_progdt = &progdt;
-  g_cthrd = &cthrd;
-  g_mwin = &mwin;
-  g_sndsys = &sndsys;
-  g_lgsys = &lgsys;
-
-  mwin.SetStatusIcon(&sicon);
+  g_mwin->SetStatusIcon(sicon);
 
   int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
   iptux_init(port);
-  sicon.CreateStatusIcon();
-  mwin.CreateWindow();
-  cthrd.CoreThreadEntry();
+  sicon->CreateStatusIcon();
+  g_mwin->CreateWindow();
+  g_cthrd->CoreThreadEntry();
 }
 
 int main(int argc, char** argv) {
