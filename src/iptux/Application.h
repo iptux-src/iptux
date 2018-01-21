@@ -18,7 +18,11 @@ private:
   GtkApplication* app;
 
 private:
+  static void onStartup (Application& self);
   static void onActivate (Application& self);
+  static void onQuit (GSimpleAction *action,
+                      GVariant      *parameter,
+                      gpointer       user_data);
 };
 
 }
