@@ -10,6 +10,7 @@ endif(GST_FOUND)
 add_library(iptux
 	STATIC
 	AnalogFS.cpp
+	Application.cpp
 	callback.cpp
 	Command.cpp
 	CoreThread.cpp

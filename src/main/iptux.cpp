@@ -22,17 +22,13 @@
 #include <glib.h>
 #include <libintl.h>
 
+#include "iptux/Application.h"
 #include "iptux/CoreThread.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
-#include "iptux/ProgramData.h"
 #include "iptux/SoundSystem.h"
-#include "iptux/StatusIcon.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
-#include "iptux/ipmsg.h"
 #include "iptux/output.h"
-#include "iptux/support.h"
 
 using namespace std;
 using namespace iptux;
@@ -135,25 +131,6 @@ static void dealLog(const IptuxConfig& config) {
   }
 }
 
-static void
-activate (GtkApplication* app,
-          IptuxConfig& config) {
-  g_progdt = new ProgramData(config);
-  g_mwin = new MainWindow(app, config, *g_progdt);
-  g_cthrd = new CoreThread(config);
-  StatusIcon* sicon = new StatusIcon(config, *g_mwin);
-  g_sndsys = new SoundSystem();
-  g_lgsys = new LogSystem();
-
-  g_mwin->SetStatusIcon(sicon);
-
-  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
-  iptux_init(port);
-  sicon->CreateStatusIcon();
-  g_mwin->CreateWindow();
-  g_cthrd->CoreThreadEntry();
-}
-
 int main(int argc, char** argv) {
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
@@ -177,10 +154,6 @@ int main(int argc, char** argv) {
   IptuxConfig config(configPath);
   dealLog(config);
 
-  GtkApplication* app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (activate), &config);
-  int status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
-
-  return status;
+  Application app(config);
+  return app.run(argc, argv);
 }
