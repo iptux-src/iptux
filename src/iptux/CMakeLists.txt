@@ -50,7 +50,7 @@ add_executable(libiptux_test
 	)
 if(GTEST_FOUND)
 	include_directories(${GTEST_INCLUDE_DIRS})
-	target_link_libraries(libiptux_test ${GTEST_BOTH_LIBRARIES} iptux)
+	target_link_libraries(libiptux_test ${GTEST_BOTH_LIBRARIES} iptux pthread)
 else()
 	target_link_libraries(libiptux_test gtest iptux)
 endif()
