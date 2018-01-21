@@ -23,23 +23,12 @@
 #include <libintl.h>
 
 #include "iptux/Application.h"
-#include "iptux/CoreThread.h"
-#include "iptux/LogSystem.h"
-#include "iptux/MainWindow.h"
 #include "iptux/SoundSystem.h"
 #include "iptux/deplib.h"
 #include "iptux/output.h"
 
 using namespace std;
 using namespace iptux;
-
-namespace iptux {
-ProgramData* g_progdt;
-CoreThread* g_cthrd;
-MainWindow* g_mwin;
-SoundSystem* g_sndsys;
-LogSystem* g_lgsys;
-}  // namespace iptux
 
 string getConfigPath() {
   const char* res1 =

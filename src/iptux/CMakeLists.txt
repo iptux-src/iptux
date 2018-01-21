@@ -20,6 +20,7 @@ add_library(iptux
 	DialogBase.cpp
 	DialogGroup.cpp
 	DialogPeer.cpp
+    global.cpp
 	HelpDialog.cpp
 	IptuxConfig.cpp
 	LogSystem.cpp
