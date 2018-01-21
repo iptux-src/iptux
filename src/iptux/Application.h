@@ -20,9 +20,8 @@ private:
 private:
   static void onStartup (Application& self);
   static void onActivate (Application& self);
-  static void onQuit (GSimpleAction *action,
-                      GVariant      *parameter,
-                      gpointer       user_data);
+  static void onQuit (GSimpleAction *action, GVariant *parameter, Application& self);
+  static void onAbout (GSimpleAction *action, GVariant *parameter, Application& self);
 };
 
 }
