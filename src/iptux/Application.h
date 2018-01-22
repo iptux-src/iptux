@@ -6,6 +6,7 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/ProgramData.h"
 #include "MainWindow.h"
+#include "ShareFile.h"
 
 namespace iptux {
 
@@ -22,6 +23,7 @@ private:
 
   GtkApplication* app;
   MainWindow* window;
+  ShareFile* shareFile;
 
 private:
   static void onStartup (Application& self);

@@ -18,12 +18,15 @@ namespace iptux {
 
 class ShareFile {
  public:
-  ShareFile();
   ~ShareFile();
 
-  static void ShareEntry(GtkWidget *parent);
+  static ShareFile* newShareFile(GtkWidget* parent);
+
+  void run();
 
  private:
+  ShareFile();
+
   void InitSublayer();
   void ClearSublayer();
 
@@ -37,6 +40,9 @@ class ShareFile {
   void ApplySharedData();
   void AttachSharedFiles(GSList *list);
   GSList *PickSharedFile(uint32_t fileattr);
+
+private:
+  GtkWidget* dialog;
 
   GData *widset;
   GData *mdlset;

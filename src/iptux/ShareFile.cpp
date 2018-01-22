@@ -36,30 +36,32 @@ ShareFile::~ShareFile() { ClearSublayer(); }
  * 共享文件浏览、更新入口.
  * @param parent 父窗口指针
  */
-void ShareFile::ShareEntry(GtkWidget *parent) {
-  ShareFile sfile;
-  GtkWidget *dialog;
+ShareFile* ShareFile::newShareFile(GtkWidget *parent) {
+  ShareFile *sfile = new ShareFile();
 
   /* 创建对话框 */
-  dialog = sfile.CreateMainDialog(parent);
-  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                     sfile.CreateAllArea(), TRUE, TRUE, 0);
+  sfile->dialog = sfile->CreateMainDialog(parent);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(sfile->dialog))),
+                     sfile->CreateAllArea(), TRUE, TRUE, 0);
+  return sfile;
+}
 
+void ShareFile::run() {
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
 mark:
   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:
-      sfile.ApplySharedData();
+      ApplySharedData();
       break;
     case GTK_RESPONSE_APPLY:
-      sfile.ApplySharedData();
+      ApplySharedData();
       goto mark;
     case GTK_RESPONSE_CANCEL:
     default:
       break;
   }
-  gtk_widget_destroy(dialog);
+  gtk_widget_hide(dialog);
 }
 
 /**

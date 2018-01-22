@@ -65,7 +65,8 @@ typedef void (* GActionCallback) (GSimpleAction *action,
 namespace iptux {
 
 Application::Application(IptuxConfig& config)
-: config(config) {
+: config(config),
+  shareFile(nullptr) {
   data = new ProgramData(config);
   app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
@@ -80,6 +81,7 @@ Application::~Application() {
   g_object_unref(app);
   delete data;
   delete window;
+  delete shareFile;
 }
 
 int Application::run(int argc, char** argv) {
@@ -140,6 +142,9 @@ void Application::onToolsTransmission(void *, void *, Application &self) {
 }
 
 void Application::onToolsSharedManagement(void *, void *, Application &self) {
-  ShareFile::ShareEntry(GTK_WIDGET(self.window->getWindow()));
+  if(!self.shareFile) {
+    self.shareFile = ShareFile::newShareFile(GTK_WIDGET(self.window->getWindow()));
+  }
+  self.shareFile->run();
 }
 }

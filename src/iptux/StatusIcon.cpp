@@ -124,8 +124,6 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_icon_name("menu-share", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(ShareFile::ShareEntry), window);
 
   menuitem = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
