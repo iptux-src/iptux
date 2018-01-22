@@ -1,3 +1,25 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [iptux: 飞鸽传书 GNU/Linux 版](#iptux-%E9%A3%9E%E9%B8%BD%E4%BC%A0%E4%B9%A6-gnulinux-%E7%89%88)
+  - [Install](#install)
+    - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu)
+    - [Mac OS X](#mac-os-x)
+  - [Build from source](#build-from-source)
+    - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu-1)
+    - [Mac OS X](#mac-os-x-1)
+  - [贡献](#%E8%B4%A1%E7%8C%AE)
+  - [声明](#%E5%A3%B0%E6%98%8E)
+  - [基本](#%E5%9F%BA%E6%9C%AC)
+  - [提高](#%E6%8F%90%E9%AB%98)
+  - [相关](#%E7%9B%B8%E5%85%B3)
+  - [必须](#%E5%BF%85%E9%A1%BB)
+  - [TODO](#todo)
+  - [How to update `po/iptux.pot`](#how-to-update-poiptuxpot)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # iptux: 飞鸽传书 GNU/Linux 版
 
 [![Build Status](https://travis-ci.org/iptux-src/iptux.png?branch=master)](https://travis-ci.org/iptux-src/iptux)
