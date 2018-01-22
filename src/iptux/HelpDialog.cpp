@@ -52,6 +52,11 @@ void HelpDialog::MoreEntry() {
     gtk_window_present(GTK_WINDOW(more));
 }
 
+void HelpDialog::onFaq() {
+  const char *faq = _("http://code.google.com/p/iptux/wiki/FAQ?wl=en");
+  iptux_open_url(faq);
+}
+
 /**
  * 创建关于对话框.
  */

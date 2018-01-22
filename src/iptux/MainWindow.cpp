@@ -13,8 +13,6 @@
 
 #include <inttypes.h>
 
-#include <gdk/gdkkeysyms.h>
-
 #include "iptux/Command.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
@@ -39,6 +37,7 @@ static const int TRANS_TREE_MAX = 14;
  */
 MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &progdt)
     : app(app),
+      window(nullptr),
       config(config),
       progdt(progdt),
       widset(NULL),
@@ -55,11 +54,14 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
  */
 MainWindow::~MainWindow() { ClearSublayer(); }
 
+GtkWidget* MainWindow::getWindow() {
+  return window;
+}
+
 /**
  * 创建程序主窗口入口.
  */
 void MainWindow::CreateWindow() {
-  GtkWidget *window;
   GtkWidget *widget;
 
   InitSublayer();
@@ -373,7 +375,7 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
 /**
  * 打开文件传输窗口.
  */
-void MainWindow::OpenTransWindow() { ShowTransWindow(&widset); }
+void MainWindow::OpenTransWindow() { ShowTransWindow(this); }
 
 /**
  * 更新文件传输树(trans-tree)的指定项.
@@ -510,8 +512,6 @@ GtkWidget *MainWindow::CreateMainWindow() {
       GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE | GDK_HINT_BASE_SIZE |
       /*GDK_HINT_RESIZE_INC |*/ GDK_HINT_WIN_GRAVITY | GDK_HINT_USER_POS |
       GDK_HINT_USER_SIZE);
-  GtkWidget *window;
-
   window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
   gtk_window_set_default_size(GTK_WINDOW(window), windowConfig.GetWidth(),
@@ -622,7 +622,6 @@ GtkWidget *MainWindow::CreateMenuBar() {
   menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateHelpMenu());
 
   return menubar;
 }
@@ -818,7 +817,7 @@ GtkWidget *MainWindow::CreateToolMenu() {
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowTransWindow),
-                           &widset);
+                           this);
 
   /* 文件共享 */
   NO_OPERATION_C
@@ -881,37 +880,6 @@ GtkWidget *MainWindow::CreateToolMenu() {
                            this);
   gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_F5,
                              GdkModifierType(0), GTK_ACCEL_VISIBLE);
-
-  return menushell;
-}
-
-/**
- * 创建帮助菜单.
- * @return 菜单
- */
-GtkWidget *MainWindow::CreateHelpMenu() {
-  const char *faq = _("http://code.google.com/p/iptux/wiki/FAQ?wl=en");
-  GtkWidget *menushell;
-  GtkWidget *menu, *menuitem;
-
-  menushell = gtk_menu_item_new_with_mnemonic(_("_Help"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(HelpDialog::AboutEntry),
-                   NULL);
-
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_More"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(HelpDialog::MoreEntry),
-                   NULL);
-
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_FAQ"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(iptux_open_url),
-                           (gpointer)faq);
 
   return menushell;
 }
@@ -1773,14 +1741,14 @@ gboolean MainWindow::TransPopupMenu(GtkWidget *treeview,
  * 显示文件传输窗口.
  * @param widset widget set
  */
-void MainWindow::ShowTransWindow(GData **widset) {
+void MainWindow::ShowTransWindow(MainWindow* self) {
   GtkWidget *widget;
   guint timerid;
 
-  widget = GTK_WIDGET(g_datalist_get_data(widset, "trans-window-widget"));
+  widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "trans-window-widget"));
   gtk_widget_show(widget);
   gtk_window_present(GTK_WINDOW(widget));
-  widget = GTK_WIDGET(g_datalist_get_data(widset, "trans-treeview-widget"));
+  widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "trans-treeview-widget"));
   timerid = gdk_threads_add_timeout(200, GSourceFunc(UpdateTransUI), widget);
   g_object_set_data(G_OBJECT(widget), "update-timer-id",
                     GUINT_TO_POINTER(timerid));

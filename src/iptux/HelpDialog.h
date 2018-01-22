@@ -23,6 +23,7 @@ class HelpDialog {
 
   static void AboutEntry();
   static void MoreEntry();
+  static void onFaq();
 
  private:
   GtkWidget *CreateAboutDialog();

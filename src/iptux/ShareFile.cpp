@@ -95,7 +95,7 @@ GtkWidget *ShareFile::CreateMainDialog(GtkWidget *parent) {
 
   dialog = gtk_dialog_new_with_buttons(
       _("Shared Files Management"), GTK_WINDOW(parent),
-      GtkDialogFlags(GTK_DIALOG_MODAL), _("OK"), GTK_RESPONSE_OK, _("Apply"),
+      GTK_DIALOG_MODAL, _("OK"), GTK_RESPONSE_OK, _("Apply"),
       GTK_RESPONSE_APPLY, _("Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
@@ -120,7 +120,7 @@ GtkWidget *ShareFile::CreateAllArea() {
   GtkWidget *sw, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_hbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   /* 加入文件树 */
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -134,8 +134,8 @@ GtkWidget *ShareFile::CreateAllArea() {
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "file-treeview-widget", widget);
 
-  /* 加入N多垃圾按钮 */
-  vbox = gtk_vbox_new(FALSE, 0);
+  /* 加入N多按钮 */
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(box), vbox, FALSE, FALSE, 0);
   button = gtk_button_new_with_label(_("Add Files"));
   gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
@@ -469,10 +469,8 @@ void ShareFile::DeleteFiles(GData **widset) {
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-  mark:
     if (gtk_tree_selection_iter_is_selected(selection, &iter)) {
-      if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
-      break;
+      gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 }

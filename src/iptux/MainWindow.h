@@ -31,6 +31,8 @@ class MainWindow {
   MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &progdt);
   ~MainWindow();
 
+  GtkWidget* getWindow();
+
   void CreateWindow();
   void AlterWindowMode();
   GtkWidget *ObtainWindow();
@@ -54,6 +56,7 @@ class MainWindow {
 
  private:
   GtkApplication* app;
+  GtkWidget* window;
   IptuxConfig &config;
   ProgramData &progdt;
   StatusIcon *statusIcon;
@@ -82,7 +85,6 @@ class MainWindow {
 
   GtkWidget *CreateFileMenu();
   GtkWidget *CreateToolMenu();
-  GtkWidget *CreateHelpMenu();
 
   GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();
@@ -106,15 +108,18 @@ class MainWindow {
   static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-  //回调处理部分
+
+ public:
+  static void ShowTransWindow(MainWindow* self);
+
  private:
+  //回调处理部分
   static gboolean UpdateUI(MainWindow *mwin);
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);
 
   static gboolean UpdateTransUI(GtkWidget *treeview);
   static gboolean TransPopupMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void ShowTransWindow(GData **widset);
   static void HideTransWindow(GData **widset);
   static void ClearTransWindow(GData **widset);
   static void TerminateTransTask(GtkTreeModel *model);
