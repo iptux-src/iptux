@@ -86,6 +86,7 @@ vector<string> IptuxConfig::GetStringList(const string& key) const {
 
 void IptuxConfig::SetStringList(const string& key,
                                 const vector<string>& value) {
+  root[key] = Json::arrayValue;
   for (size_t i = 0; i < value.size(); ++i) {
     root[key][int(i)] = value[i];
   }

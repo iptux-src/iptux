@@ -1,3 +1,7 @@
+# 0.7.4 (2018-XX-XX)
+
+* [#?] fix bug in save share management.
+
 # 0.7.3 (2018-01-20)
 
 * [#98] fix typo, thanks to @hosiet.

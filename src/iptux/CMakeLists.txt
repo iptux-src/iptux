@@ -44,6 +44,7 @@ add_library(iptux
 
 
 add_executable(libiptux_test
+    IptuxConfigTest.cpp
 	UtilsTest.cpp
 	TestMain.cpp
 	)
