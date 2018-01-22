@@ -44,6 +44,8 @@ brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/i
 
 ### Linux (Debian and Ubuntu)
 
+* for Ubuntu 14.04, please download from https://github.com/iptux-src/iptux/releases/tag/v0.6.4
+
 ```
 sudo apt-get install git libgtk2.0-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ make cmake
 git clone git://github.com/iptux-src/iptux.git
