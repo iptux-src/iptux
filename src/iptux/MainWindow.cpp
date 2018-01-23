@@ -11,6 +11,7 @@
 //
 #include "MainWindow.h"
 
+#include <string>
 #include <inttypes.h>
 
 #include "iptux/Command.h"
@@ -27,6 +28,9 @@
 #include "iptux/global.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
+#include "iptux/output.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -77,8 +81,9 @@ void MainWindow::CreateWindow() {
   gtk_widget_show_all(window);
 
 
-  GActionEntry win_entries[] =  {
+  GActionEntry win_entries[] = {
       { "refresh", G_ACTION_CALLBACK(onRefresh)},
+      { "sort_type", G_ACTION_CALLBACK(onSortType), "s" },
   };
 
   add_accelerator(app, "win.refresh", "F5");
@@ -865,26 +870,6 @@ GtkWidget *MainWindow::CreateToolMenu() {
   gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
   g_signal_connect(menuitem, "toggled", G_CALLBACK(SetPaltreeSortFunc),
                    &mdlset);
-  /*/* 分割符 */
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  /*/* 升序 */
-  NO_OPERATION_C
-  menuitem = gtk_radio_menu_item_new_with_label(NULL, _("Ascending"));
-  g_object_set_data(G_OBJECT(menuitem), "sort-type",
-                    GINT_TO_POINTER(GTK_SORT_ASCENDING));
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetPaltreeSortType),
-                   &mdlset);
-  /*/* 降序 */
-  menuitem = gtk_radio_menu_item_new_with_label_from_widget(
-      GTK_RADIO_MENU_ITEM(menuitem), _("Descending"));
-  g_object_set_data(G_OBJECT(menuitem), "sort-type",
-                    GINT_TO_POINTER(GTK_SORT_DESCENDING));
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetPaltreeSortType),
-                   &mdlset);
-
   return menushell;
 }
 
@@ -1918,6 +1903,40 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
   pthread_detach(pid);
 }
 
+void MainWindow::onSortType(void *, GVariant *value, MainWindow &self) {
+  string sortType = g_variant_get_string(value, nullptr);
+
+  GtkSortType type;
+
+  if(sortType == "ascending") {
+    type = GTK_SORT_ASCENDING;
+  } else if(sortType == "descending") {
+    type = GTK_SORT_DESCENDING;
+  } else {
+    LOG_WARN("unknown sorttype: %s", sortType.c_str());
+    return;
+  }
+
+  GtkTreeModel *model;
+
+  model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "regular-paltree-model"));
+  gtk_tree_sortable_set_sort_column_id(
+      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+
+  model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "segment-paltree-model"));
+  gtk_tree_sortable_set_sort_column_id(
+      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+
+  model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "group-paltree-model"));
+  gtk_tree_sortable_set_sort_column_id(
+      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+
+  model =
+      GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
+  gtk_tree_sortable_set_sort_column_id(
+      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+}
+
 /**
  * 请求此好友的共享文件.
  * @param grpinf 好友群组信息
@@ -2249,33 +2268,6 @@ void MainWindow::SetPaltreeSortFunc(GtkWidget *menuitem, GData **mdlset) {
       GTK_TREE_MODEL(g_datalist_get_data(mdlset, "broadcast-paltree-model"));
   gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
                                           NULL);
-}
-
-/**
- * 设置好友树(paltree)的排序方式.
- * @param menuitem radio-menu-item
- * @param mdlset model set
- */
-void MainWindow::SetPaltreeSortType(GtkWidget *menuitem, GData **mdlset) {
-  GtkSortType type;
-  GtkTreeModel *model;
-
-  if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) return;
-  type = (GtkSortType)GPOINTER_TO_INT(
-      g_object_get_data(G_OBJECT(menuitem), "sort-type"));
-  model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "regular-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
-  model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "segment-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
-  model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "group-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
-  model =
-      GTK_TREE_MODEL(g_datalist_get_data(mdlset, "broadcast-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
 }
 
 /**
