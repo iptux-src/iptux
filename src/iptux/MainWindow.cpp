@@ -588,7 +588,6 @@ GtkWidget *MainWindow::CreateAllArea() {
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-  gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);
 
   paned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
@@ -637,19 +636,6 @@ GtkWidget *MainWindow::CreateTransArea() {
                            &widset);
 
   return box;
-}
-
-/**
- * 创建菜单条.
- * @return 菜单条
- */
-GtkWidget *MainWindow::CreateMenuBar() {
-  GtkWidget *menubar;
-
-  menubar = gtk_menu_bar_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
-
-  return menubar;
 }
 
 /**
@@ -767,22 +753,6 @@ GtkWidget *MainWindow::CreatePallistArea() {
   g_datalist_set_data(&widset, "pallist-entry-widget", widget);
 
   return box;
-}
-
-/**
- * 创建文件菜单.
- * @return 菜单
- */
-GtkWidget *MainWindow::CreateFileMenu() {
-  GtkWidget *menushell, *window;
-  GtkWidget *menu, *menuitem;
-  GtkWidget *image;
-
-  menushell = gtk_menu_item_new_with_mnemonic(_("_File"));
-  window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-  return menushell;
 }
 
 /**

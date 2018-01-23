@@ -78,12 +78,9 @@ class MainWindow {
   GtkWidget *CreateAllArea();
   GtkWidget *CreateTransArea();
 
-  GtkWidget *CreateMenuBar();
   GtkWidget *CreateToolBar();
   GtkWidget *CreatePaltreeArea();
   GtkWidget *CreatePallistArea();
-
-  GtkWidget *CreateFileMenu();
 
   GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();
