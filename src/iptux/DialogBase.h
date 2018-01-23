@@ -39,7 +39,6 @@ class DialogBase : public SessionAbstract {
   GtkWidget *CreateInputArea();
   virtual GtkWidget *CreateHistoryArea();
   virtual GtkWidget *CreateFileMenu();
-  virtual GtkWidget *CreateHelpMenu();
   virtual GtkWidget *CreateFileSendArea();
   virtual GtkWidget *CreateFileSendTree(GtkTreeModel *model);
   virtual GSList *GetSelPal() { return NULL; };

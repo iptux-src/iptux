@@ -282,7 +282,6 @@ GtkWidget *DialogGroup::CreateMenuBar() {
   menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateHelpMenu());
 
   return menubar;
 }

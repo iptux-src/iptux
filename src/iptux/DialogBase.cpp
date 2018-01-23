@@ -379,26 +379,6 @@ GtkWidget *DialogBase::CreateFileMenu() {
 }
 
 /**
- * 创建帮助菜单.
- * @return 菜单
- */
-GtkWidget *DialogBase::CreateHelpMenu() {
-  GtkWidget *menushell;
-  GtkWidget *menu, *menuitem;
-
-  menushell = gtk_menu_item_new_with_mnemonic(_("_Help"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(HelpDialog::AboutEntry),
-                   NULL);
-
-  return menushell;
-}
-
-/**
  * 选择附件.
  * @param fileattr 文件类型
  * @return 文件链表

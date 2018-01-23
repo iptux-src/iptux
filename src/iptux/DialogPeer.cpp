@@ -214,13 +214,13 @@ GtkWidget *DialogPeer::CreateAllArea() {
   GtkWidget *hpaned, *vpaned;
   gint position;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   /* 加入菜单条 */
   gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
 
   /* 加入主区域 */
-  hpaned = gtk_hpaned_new();
+  hpaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
   g_datalist_set_data(&widset, "main-paned", hpaned);
   g_object_set_data(G_OBJECT(hpaned), "position-name",
                     (gpointer) "main-paned-divide");
@@ -230,7 +230,7 @@ GtkWidget *DialogPeer::CreateAllArea() {
   g_signal_connect(hpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
   /*/* 加入聊天历史记录&输入区域 */
-  vpaned = gtk_vpaned_new();
+  vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
                     (gpointer) "historyinput-paned-divide");
   position =
@@ -242,7 +242,7 @@ GtkWidget *DialogPeer::CreateAllArea() {
   gtk_paned_pack1(GTK_PANED(vpaned), CreateHistoryArea(), TRUE, TRUE);
   gtk_paned_pack2(GTK_PANED(vpaned), CreateInputArea(), FALSE, TRUE);
   /* 加入好友信息&附件区域 */
-  vpaned = gtk_vpaned_new();
+  vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
                     (gpointer) "infoenclosure-paned-divide");
   position = GPOINTER_TO_INT(
@@ -267,7 +267,6 @@ GtkWidget *DialogPeer::CreateMenuBar() {
   menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateHelpMenu());
 
   return menubar;
 }
@@ -339,7 +338,7 @@ GtkWidget *DialogPeer::CreateFileMenu() {
   gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_R,
                              GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
-  menuitem = gtk_tearoff_menu_item_new();
+  menuitem = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
   menuitem = gtk_menu_item_new_with_label(_("Close"));
@@ -735,7 +734,7 @@ GtkWidget *DialogPeer::CreateFileArea() {
   frame = gtk_frame_new(_("Enclosure."));
   g_datalist_set_data(&widset, "file-enclosure-frame-widget", frame);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-  vpaned = gtk_vpaned_new();
+  vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
                     (gpointer) "enclosure-paned-divide");
   position =
@@ -756,7 +755,7 @@ GtkWidget *DialogPeer::CreateFileArea() {
 GtkWidget *DialogPeer::CreateFileReceiveArea() {
   GtkWidget *vpaned;
   gint position;
-  vpaned = gtk_vpaned_new();
+  vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_datalist_set_data(&widset, "file-receive-paned-widget", vpaned);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
                     (gpointer) "file-receive-paned-divide");
@@ -782,7 +781,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea() {
   pbar = gtk_progress_bar_new();
   g_datalist_set_data(&widset, "file-receive-progress-bar-widget", pbar);
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), _("Receiving progress."));
-  hbox = gtk_hbox_new(FALSE, 1);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
   gtk_box_pack_start(GTK_BOX(hbox), pbar, TRUE, TRUE, 0);
   button = gtk_button_new_with_label(_("Accept"));
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(onAcceptButtonClicked),
@@ -797,7 +796,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea() {
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg), NULL);
-  vbox = gtk_vbox_new(FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
