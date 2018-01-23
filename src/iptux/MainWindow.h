@@ -84,7 +84,6 @@ class MainWindow {
   GtkWidget *CreatePallistArea();
 
   GtkWidget *CreateFileMenu();
-  GtkWidget *CreateToolMenu();
 
   GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();

@@ -644,7 +644,6 @@ GtkWidget *MainWindow::CreateMenuBar() {
 
   menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
 
   return menubar;
 }
@@ -807,47 +806,6 @@ GtkWidget *MainWindow::CreateFileMenu() {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect(menuitem, "activate", G_CALLBACK(iptux_gui_quit), NULL);
 
-  return menushell;
-}
-
-/**
- * 创建工具菜单.
- * @return 菜单
- */
-GtkWidget *MainWindow::CreateToolMenu() {
-  GtkWidget *menushell, *window;
-  GtkWidget *menu, *submenu, *menuitem;
-  GtkWidget *image;
-
-  window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  menushell = gtk_menu_item_new_with_mnemonic(_("_Tools"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  /* 参数设置 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Preferences"));
-  image = gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DataSettings::ResetDataEntry), window);
-
-  /* 文件传输 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Transmission"));
-  image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowTransWindow),
-                           this);
-
-  /* 文件共享 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Shared Management"));
-  image = gtk_image_new_from_icon_name("menu-share", GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   return menushell;
 }
 
