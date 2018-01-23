@@ -86,10 +86,12 @@ void MainWindow::CreateWindow() {
       { "sort_type", G_ACTION_CALLBACK(onSortType), "s" },
       { "sort_by", G_ACTION_CALLBACK(onSortBy), "s" },
       { "detect", G_ACTION_CALLBACK(onDetect)},
+      { "find", G_ACTION_CALLBACK(onFind)},
   };
 
   add_accelerator(app, "win.refresh", "F5");
   add_accelerator(app, "win.detect", "<Primary>D");
+  add_accelerator(app, "win.find", "<Primary>F");
 
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -780,16 +782,6 @@ GtkWidget *MainWindow::CreateFileMenu() {
   window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Find"));
-  image = gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowPallistArea),
-                           &widset);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_F,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-  
   return menushell;
 }
 
@@ -2209,14 +2201,14 @@ gint MainWindow::PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
  * 显示好友清单区域.
  * @param widset widget set
  */
-void MainWindow::ShowPallistArea(GData **widset) {
+void MainWindow::onFind(void*, void*, MainWindow&self) {
   GtkWidget *widget;
 
-  widget = GTK_WIDGET(g_datalist_get_data(widset, "pallist-box-widget"));
+  widget = GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-box-widget"));
   gtk_widget_show(widget);
-  widget = GTK_WIDGET(g_datalist_get_data(widset, "pallist-entry-widget"));
+  widget = GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-entry-widget"));
   gtk_widget_grab_focus(widget);
-  PallistEntryChanged(widget, widset);
+  PallistEntryChanged(widget, &self.widset);
 }
 
 /**
