@@ -1,6 +1,7 @@
 # 0.7.4 (2018-XX-XX)
 
 * [#?] fix bug in save share management.
+* [#97] don't download googletest if already installed.
 
 # 0.7.3 (2018-01-20)
 
