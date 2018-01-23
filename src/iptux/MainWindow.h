@@ -172,6 +172,7 @@ class MainWindow {
                                  MainWindow *self);
   static gboolean onDeleteEvent(MainWindow *self);
   static void onRefresh (void *, void *, MainWindow& self);
+  static void onDetect (void *, void *, MainWindow& self);
   static void onSortType (void *, GVariant* value, MainWindow& self);
   static void onSortBy (void *, GVariant* value, MainWindow& self);
 };

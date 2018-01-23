@@ -85,9 +85,11 @@ void MainWindow::CreateWindow() {
       { "refresh", G_ACTION_CALLBACK(onRefresh)},
       { "sort_type", G_ACTION_CALLBACK(onSortType), "s" },
       { "sort_by", G_ACTION_CALLBACK(onSortBy), "s" },
+      { "detect", G_ACTION_CALLBACK(onDetect)},
   };
 
   add_accelerator(app, "win.refresh", "F5");
+  add_accelerator(app, "win.detect", "<Primary>D");
 
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -779,15 +781,6 @@ GtkWidget *MainWindow::CreateFileMenu() {
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
 
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Detect"));
-  image = gtk_image_new_from_icon_name("menu-detect", GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DetectPal::DetectEntry), window);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_D,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
   menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Find"));
   image = gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
@@ -796,16 +789,7 @@ GtkWidget *MainWindow::CreateFileMenu() {
                            &widset);
   gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_F,
                              GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
-  image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(iptux_gui_quit), NULL);
-
+  
   return menushell;
 }
 
@@ -1838,6 +1822,11 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
   pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendNotifyToAll), g_cthrd);
   pthread_detach(pid);
 }
+
+void MainWindow::onDetect(void*, void*, MainWindow& self) {
+  DetectPal::DetectEntry(self.window);
+}
+
 
 void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
   string sortBy = g_variant_get_string(value, nullptr);
