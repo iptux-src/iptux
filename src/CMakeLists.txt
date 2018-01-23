@@ -1,5 +1,5 @@
 find_package(GTest)
-if(!GTEST_FOUND)
+if(NOT GTEST_FOUND)
 	configure_file(googletest-download/CMakeLists.txt.in googletest-download/CMakeLists.txt)
 	execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
 		WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/googletest-download" )
