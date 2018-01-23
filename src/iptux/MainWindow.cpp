@@ -84,6 +84,7 @@ void MainWindow::CreateWindow() {
   GActionEntry win_entries[] = {
       { "refresh", G_ACTION_CALLBACK(onRefresh)},
       { "sort_type", G_ACTION_CALLBACK(onSortType), "s" },
+      { "sort_by", G_ACTION_CALLBACK(onSortBy), "s" },
   };
 
   add_accelerator(app, "win.refresh", "F5");
@@ -847,29 +848,6 @@ GtkWidget *MainWindow::CreateToolMenu() {
   image = gtk_image_new_from_icon_name("menu-share", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  /* 群组成员排序 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Sort"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  submenu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-  /*/* 按昵称排序 */
-  NO_OPERATION_C
-  menuitem = gtk_radio_menu_item_new_with_label(NULL, _("By Nickname"));
-  g_object_set_data(G_OBJECT(menuitem), "compare-func",
-                    (gpointer)PaltreeCompareByNameFunc);
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetPaltreeSortFunc),
-                   &mdlset);
-  /*/* 按IP地址排序 */
-  menuitem = gtk_radio_menu_item_new_with_label_from_widget(
-      GTK_RADIO_MENU_ITEM(menuitem), _("By IP"));
-  g_object_set_data(G_OBJECT(menuitem), "compare-func",
-                    (gpointer)PaltreeCompareByIPFunc);
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetPaltreeSortFunc),
-                   &mdlset);
   return menushell;
 }
 
@@ -1903,6 +1881,43 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
   pthread_detach(pid);
 }
 
+void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
+  string sortBy = g_variant_get_string(value, nullptr);
+
+  GtkTreeIterCompareFunc func;
+
+  if(sortBy == "nickname") {
+    func = (GtkTreeIterCompareFunc)PaltreeCompareByNameFunc;
+  } else if(sortBy == "ip") {
+    func = (GtkTreeIterCompareFunc)PaltreeCompareByIPFunc;
+  } else {
+    LOG_WARN("unknown sort by: %s", sortBy.c_str());
+    return;
+  }
+
+
+  GtkTreeModel *model;
+
+  model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "regular-paltree-model"));
+  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
+                                          NULL);
+
+  model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "segment-paltree-model"));
+  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
+                                          NULL);
+
+  model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "group-paltree-model"));
+  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
+                                          NULL);
+
+  model =
+      GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
+  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
+                                          NULL);
+
+}
+
+
 void MainWindow::onSortType(void *, GVariant *value, MainWindow &self) {
   string sortType = g_variant_get_string(value, nullptr);
 
@@ -2241,33 +2256,6 @@ gint MainWindow::PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
     result = 0;
 
   return result;
-}
-
-/**
- * 设置好友树(paltree)的比较函数.
- * @param menuitem radio-menu-item
- * @param mdlset model set
- */
-void MainWindow::SetPaltreeSortFunc(GtkWidget *menuitem, GData **mdlset) {
-  GtkTreeIterCompareFunc func;
-  GtkTreeModel *model;
-
-  if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) return;
-  func = (GtkTreeIterCompareFunc)(
-      g_object_get_data(G_OBJECT(menuitem), "compare-func"));
-  model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "regular-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
-  model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "segment-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
-  model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "group-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
-  model =
-      GTK_TREE_MODEL(g_datalist_get_data(mdlset, "broadcast-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
 }
 
 /**
