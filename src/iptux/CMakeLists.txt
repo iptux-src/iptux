@@ -48,5 +48,10 @@ add_executable(libiptux_test
 	UtilsTest.cpp
 	TestMain.cpp
 	)
-target_link_libraries(libiptux_test gtest iptux)
+if(GTEST_FOUND)
+	include_directories(${GTEST_INCLUDE_DIRS})
+	target_link_libraries(libiptux_test ${GTEST_BOTH_LIBRARIES} iptux)
+else()
+	target_link_libraries(libiptux_test gtest iptux)
+endif()
 add_test(NAME libiptux_test COMMAND libiptux_test)
