@@ -128,7 +128,6 @@ class MainWindow {
   static void OpenContainingFolder(GtkTreeModel *model);
   static void OpenThisFile(GtkTreeModel *model);
 
-  static void UpdatePalTree(MainWindow *mwin);
   static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
   static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
@@ -175,6 +174,7 @@ class MainWindow {
   static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                  MainWindow *self);
   static gboolean onDeleteEvent(MainWindow *self);
+  static void onRefresh (void *, void *, MainWindow& self);
 };
 
 }  // namespace iptux

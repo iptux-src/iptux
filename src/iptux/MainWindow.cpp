@@ -58,6 +58,11 @@ GtkWidget* MainWindow::getWindow() {
   return window;
 }
 
+typedef void (* GActionCallback) (GSimpleAction *action,
+                                  GVariant      *parameter,
+                                  gpointer       user_data) ;
+#define	G_ACTION_CALLBACK(f)			 ((GActionCallback) (f))
+
 /**
  * 创建程序主窗口入口.
  */
@@ -70,6 +75,18 @@ void MainWindow::CreateWindow() {
   window = CreateMainWindow();
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
+
+
+  GActionEntry win_entries[] =  {
+      { "refresh", G_ACTION_CALLBACK(onRefresh)},
+  };
+
+  add_accelerator(app, "win.refresh", "F5");
+
+  g_action_map_add_action_entries (G_ACTION_MAP (window),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   this);
+
   /* 聚焦到好友树(paltree)区域 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "paltree-treeview-widget"));
   gtk_widget_grab_focus(widget);
@@ -867,17 +884,6 @@ GtkWidget *MainWindow::CreateToolMenu() {
   gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
   g_signal_connect(menuitem, "toggled", G_CALLBACK(SetPaltreeSortType),
                    &mdlset);
-
-  /* 更新成员 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Update"));
-  image = gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(UpdatePalTree),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_F5,
-                             GdkModifierType(0), GTK_ACCEL_VISIBLE);
 
   return menushell;
 }
@@ -1898,7 +1904,9 @@ void MainWindow::ClearTransTask(GtkTreeModel *model) {
  * 更新好友树.
  * @param mwin 主窗口类
  */
-void MainWindow::UpdatePalTree(MainWindow *mwin) {
+void MainWindow::onRefresh(void*, void*, MainWindow& self) {
+  auto mwin = &self;
+
   pthread_t pid;
 
   g_cthrd->Lock();

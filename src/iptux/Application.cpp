@@ -30,10 +30,38 @@ static const char* menuUi = "<?xml version=\"1.0\"?>\n"
     "        <attribute name=\"label\" translatable=\"yes\">_Transmission</attribute>\n"
     "        <attribute name=\"action\">app.tools.transmission</attribute>\n"
     "      </item>\n"
-    "      <item>\n"
-    "        <attribute name=\"label\" translatable=\"yes\">_Shared Management</attribute>\n"
-    "        <attribute name=\"action\">app.tools.shared_management</attribute>\n"
-    "      </item>\n"
+    "      <item>"
+    "        <attribute name='label' translatable='yes'>_Shared Management</attribute>"
+    "        <attribute name='action'>app.tools.shared_management</attribute>"
+    "      </item>"
+    "      <submenu>"
+    "        <attribute name='label' translatable='yes'>Sort</attribute>"
+    "        <section>"
+    "        <item>"
+    "          <attribute name='label' translatable='yes'>By Nickname</attribute>"
+    "          <attribute name='action'>app.tools.sort.by_nickname</attribute>"
+    "        </item>"
+    "        <item>"
+    "          <attribute name='label' translatable='yes'>By IP</attribute>"
+    "          <attribute name='action'>app.tools.sort.by_ip</attribute>"
+    "        </item>"
+    "        </section>"
+    "        <section>"
+    "        <item>"
+    "          <attribute name='label' translatable='yes'>Ascending</attribute>"
+    "          <attribute name='action'>app.tools.sort.ascending</attribute>"
+    "        </item>"
+    "        <item>"
+    "          <attribute name='label' translatable='yes'>Descending</attribute>"
+    "          <attribute name='action'>app.tools.sort.descending</attribute>"
+    "        </item>"
+    "        </section>"
+    "      </submenu>"
+    "      <item>"
+    "        <attribute name='label' translatable='yes'>_Refresh</attribute>"
+    "        <attribute name='action'>win.refresh</attribute>"
+    "        <attribute name='icon'>view-refresh</attribute>"
+    "      </item>"
     "    </section>"
     "  </submenu>"
     "  <submenu>"
@@ -97,10 +125,6 @@ void Application::onStartup(Application& self) {
       { "help.faq", G_ACTION_CALLBACK(HelpDialog::onFaq), NULL, NULL, NULL },
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL },
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL },
-  };
-
-  GActionEntry window_entries[] =  {
-      { "tools.transmission", G_ACTION_CALLBACK(MainWindow::ShowTransWindow), NULL, NULL, NULL },
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),
