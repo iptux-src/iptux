@@ -94,6 +94,7 @@ void IptuxConfig::SetStringList(const string& key,
 
 void IptuxConfig::SetVector(const string& key,
                             const vector<Json::Value>& value) {
+  root[key] = Json::arrayValue;
   for (size_t i = 0; i < value.size(); ++i) {
     root[key][int(i)] = value[i];
   }
