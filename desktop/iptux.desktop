@@ -17,6 +17,6 @@ Keywords[es]=chat;hablar;im;mensajería instantánea;mensaje;talk;message;ipmsg;
 Exec=iptux
 Terminal=false
 Type=Application
-Icon=ip-tux
+Icon=iptux
 StartupNotify=true
 Categories=GTK;Network;InstantMessaging;

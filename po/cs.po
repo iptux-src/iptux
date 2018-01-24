@@ -1,0 +1,1152 @@
+# Czech translation for iptux
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the iptux package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: iptux\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2015-10-09 05:32+0800\n"
+"PO-Revision-Date: 2013-04-15 18:07+0000\n"
+"Last-Translator: Jakub Jezbera <Unknown>\n"
+"Language-Team: Czech <cs@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
+"X-Generator: Launchpad (build 18532)\n"
+
+#: src/AnalogFS.cpp:84 src/AnalogFS.cpp:89
+#, c-format
+msgid "Open() file \"%s\" failed, %s"
+msgstr ""
+
+#: src/AnalogFS.cpp:109
+#, c-format
+msgid "Stat64() file \"%s\" failed, %s"
+msgstr ""
+
+#: src/AnalogFS.cpp:130
+#, c-format
+msgid "Mkdir() directory \"%s\" failed, %s"
+msgstr ""
+
+#. Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
+#: src/AnalogFS.cpp:149
+#, c-format
+msgid "stat file \"%s\" failed: %s"
+msgstr ""
+
+#: src/AnalogFS.cpp:161
+#, c-format
+msgid "opendir on \"%s\" failed: %s"
+msgstr ""
+
+#: src/AnalogFS.cpp:207
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s"
+msgstr ""
+
+#: src/Command.cpp:221
+msgid "Your pal didn't receive the packet. He or she is offline maybe."
+msgstr "Váš partner nepřijímá pakety. On nebo ona je možná odpojen(a)."
+
+#: src/CoreThread.cpp:231 src/DialogPeer.cpp:762 src/RecvFileData.cpp:152
+#: src/RecvFileData.cpp:212 src/support.cpp:166
+#, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to create new socket!\n"
+"%s"
+msgstr ""
+"Fatální chyba!!\n"
+"Selhání při vytváření nového socketu!\n"
+"%s"
+
+#: src/CoreThread.cpp:556 src/CoreThread.cpp:581 src/CoreThread.cpp:1121
+#: src/CoreThread.cpp:1147
+msgid "Others"
+msgstr "Ostatní"
+
+#: src/CoreThread.cpp:980 src/RecvFileData.cpp:133 src/RecvFileData.cpp:265
+#: src/SendFileData.cpp:134 src/SendFileData.cpp:221 src/ShareFile.cpp:228
+#: src/ShareFile.cpp:386
+msgid "unknown"
+msgstr "neznámé"
+
+#: src/CoreThread.cpp:994
+msgid "<ERROR>"
+msgstr "<CHYBA>"
+
+#: src/CoreThread.cpp:1171
+msgid "Broadcast"
+msgstr "Vysílání"
+
+#: src/DataSettings.cpp:56
+msgid "Personal"
+msgstr "Osobní"
+
+#: src/DataSettings.cpp:58
+msgid "System"
+msgstr "Systém"
+
+#: src/DataSettings.cpp:61
+msgid "Sound"
+msgstr "Zvuk"
+
+#: src/DataSettings.cpp:64
+msgid "Network"
+msgstr "Síť"
+
+#: src/DataSettings.cpp:148
+msgid "Preferences"
+msgstr "Předvolby"
+
+#: src/DataSettings.cpp:178
+msgid "Your nickname:"
+msgstr "Vaše přezdívka:"
+
+#: src/DataSettings.cpp:184
+msgid "Please input your nickname!"
+msgstr "Prosím zadejte vaši přezdívku!"
+
+#: src/DataSettings.cpp:189
+msgid "Your group name:"
+msgstr "Název vaší skupiny:"
+
+#: src/DataSettings.cpp:195
+msgid "Please input your group name!"
+msgstr "Prosím zadejte název vaší skupiny!"
+
+#: src/DataSettings.cpp:200
+msgid "Your face picture:"
+msgstr "Váš profilový obrázek:"
+
+#: src/DataSettings.cpp:213
+msgid "Save files to: "
+msgstr "Uložit soubory do: "
+
+#: src/DataSettings.cpp:223
+msgid "Photo"
+msgstr "Fotografie"
+
+#: src/DataSettings.cpp:235
+msgid "Signature"
+msgstr "Podpis"
+
+#: src/DataSettings.cpp:266
+msgid "Candidate network coding:"
+msgstr ""
+
+#: src/DataSettings.cpp:272
+msgid "Candidate network coding"
+msgstr ""
+
+#: src/DataSettings.cpp:277
+msgid "Preference network coding:"
+msgstr "Předvolby síťového kódování:"
+
+#: src/DataSettings.cpp:283
+msgid ""
+"Preference network coding (You should be aware of what you are doing if you "
+"want to modify it.)"
+msgstr ""
+
+#: src/DataSettings.cpp:289
+msgid "Pal's default face picture:"
+msgstr "Partnerův základní avatar:"
+
+#: src/DataSettings.cpp:302
+msgid "Panel font:"
+msgstr "Font panelu:"
+
+#: src/DataSettings.cpp:310
+msgid "Automatically open the chat dialog"
+msgstr ""
+
+#: src/DataSettings.cpp:315
+msgid "Automatically hide the panel after login"
+msgstr "Automaticky skrýt panel po přihlášení"
+
+#: src/DataSettings.cpp:320
+msgid "Automatically open the File Transmission Management"
+msgstr "Automaticky otevřít Správce přenosu souborů"
+
+#: src/DataSettings.cpp:325
+msgid "Use the 'Enter' key to send message"
+msgstr "Používat klávesu 'Enter' k odeslání zprávy"
+
+#: src/DataSettings.cpp:330
+msgid "Automatically clean up the chat history"
+msgstr "Automaticky smazat historii diskuze"
+
+#: src/DataSettings.cpp:335
+msgid "Save the chat history"
+msgstr "Uložit historii diskuze"
+
+#: src/DataSettings.cpp:340
+msgid "Use the Blacklist (NOT recommended)"
+msgstr "Použít Černou listinu (Nedoporučeno!)"
+
+#: src/DataSettings.cpp:345
+msgid "Filter the request of sharing files"
+msgstr "Filtrovat žádosti o sdílení souborů"
+
+#: src/DataSettings.cpp:367
+msgid "Activate the sound support"
+msgstr "Aktivovat podporu zvuku"
+
+#: src/DataSettings.cpp:374
+msgid "Volume Control: "
+msgstr "Ovládání hlasitosi: "
+
+#: src/DataSettings.cpp:383
+msgid "Sound Event"
+msgstr "Zvuková událost"
+
+#: src/DataSettings.cpp:411
+msgid "Test"
+msgstr "Test"
+
+#: src/DataSettings.cpp:414
+msgid "Stop"
+msgstr "Zastavit"
+
+#: src/DataSettings.cpp:437
+msgid "From:"
+msgstr "Od:"
+
+#: src/DataSettings.cpp:443
+msgid "Beginning of the IP(v4) section"
+msgstr "Začátek sekce IP(v4)"
+
+#: src/DataSettings.cpp:446
+msgid "To:"
+msgstr "Pro:"
+
+#: src/DataSettings.cpp:452
+msgid "End of the IP(v4) section"
+msgstr "Konec sekce IP(v4)"
+
+#: src/DataSettings.cpp:459
+msgid "Add"
+msgstr "Přidat"
+
+#: src/DataSettings.cpp:463
+msgid "Delete"
+msgstr "Smazat"
+
+#: src/DataSettings.cpp:469
+msgid "Added IP(v4) Section:"
+msgstr ""
+
+#: src/DataSettings.cpp:488
+msgid "Import"
+msgstr "Importovat"
+
+#: src/DataSettings.cpp:491
+msgid "Export"
+msgstr "Exportovat"
+
+#: src/DataSettings.cpp:494
+msgid "Clear"
+msgstr "Vyčistit"
+
+#: src/DataSettings.cpp:709
+msgid "Transfer finished"
+msgstr "Přenos dokončen"
+
+#: src/DataSettings.cpp:714
+msgid "Message received"
+msgstr "Obdržená zpráva"
+
+#: src/DataSettings.cpp:775
+msgid "Play"
+msgstr "Přehrát"
+
+#: src/DataSettings.cpp:782
+msgid "Event"
+msgstr "Událost"
+
+#: src/DataSettings.cpp:816
+msgid "From"
+msgstr "Od"
+
+#: src/DataSettings.cpp:822
+msgid "To"
+msgstr "Pro"
+
+#: src/DataSettings.cpp:830
+msgid "Description"
+msgstr "Popis"
+
+#: src/DataSettings.cpp:847
+msgid "Please select download folder"
+msgstr "Prosím zvolte složku pro stahování"
+
+#: src/DataSettings.cpp:869
+msgid "Select Font"
+msgstr "Vybrat font"
+
+#: src/DataSettings.cpp:882
+msgid "Please select a sound file"
+msgstr "Prosím vyberte zvukový soubor"
+
+#: src/DataSettings.cpp:1157 src/DataSettings.cpp:1189
+#, c-format
+msgid ""
+"Fopen() file \"%s\" failed!\n"
+"%s"
+msgstr ""
+
+#: src/DataSettings.cpp:1238 src/DialogGroup.cpp:647
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: src/DataSettings.cpp:1243 src/DialogGroup.cpp:652
+msgid "Reverse Select"
+msgstr "Obrátit výběr"
+
+#: src/DataSettings.cpp:1248 src/DialogGroup.cpp:657
+msgid "Clear Up"
+msgstr "Vyčistit"
+
+#: src/DataSettings.cpp:1342 src/RevisePal.cpp:426
+msgid "Please select a face picture"
+msgstr "Prosím vyberte profilový obrázek"
+
+#: src/DataSettings.cpp:1365
+msgid "Please select a personal photo"
+msgstr "Prosím vyberte osobní fotografii"
+
+#: src/DataSettings.cpp:1509 src/DataSettings.cpp:1516 src/DetectPal.cpp:122
+#, c-format
+msgid ""
+"\n"
+"Illegal IP(v4) address: %s!"
+msgstr ""
+"\n"
+"Neplatná IP(v4) adresa: %s!"
+
+#: src/DataSettings.cpp:1614
+msgid "Please select a file to import data"
+msgstr "Prosím vyberte soubor pro import dat"
+
+#: src/DataSettings.cpp:1662
+msgid "Save data to file"
+msgstr "Uložit data do souboru"
+
+#: src/DetectPal.cpp:70
+msgid "Detect pals"
+msgstr "Detekovat partnery"
+
+#: src/DetectPal.cpp:72
+msgid "Detect"
+msgstr "Rozpoznat"
+
+#: src/DetectPal.cpp:73 src/ShareFile.cpp:107
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src/DetectPal.cpp:91
+msgid "Please input an IP address (IPv4 only):"
+msgstr "Prosím zadejte IP adresu (pouze IPv4):"
+
+#: src/DetectPal.cpp:99
+msgid "Please input an IP address (IPv4 only)!"
+msgstr "Prosím zadejte IP adresu (pouze IPv4)!"
+
+#: src/DetectPal.cpp:127
+#, c-format
+msgid "The notification has been sent to %s."
+msgstr "Bylo zasláno upozornění pro %s."
+
+#: src/dialog.cpp:34
+msgid ""
+"File transfer has not been completed.\n"
+"Are you sure to cancel and quit?"
+msgstr ""
+"Přenos souboru nebyl dokončen.\n"
+"Opravdu chcete odejít?"
+
+#: src/dialog.cpp:37
+msgid "Confirm Exit"
+msgstr "Potvrďte ukončení"
+
+#: src/dialog.cpp:57 src/DialogPeer.cpp:379 src/MainWindow.cpp:1597
+msgid "Request Shared Resources"
+msgstr "Zažádat sdílení zdrojů"
+
+#: src/dialog.cpp:60
+msgid "Agree"
+msgstr "Souhlasím"
+
+#: src/dialog.cpp:61 src/DialogPeer.cpp:848
+msgid "Refuse"
+msgstr "Odmítnout"
+
+#: src/dialog.cpp:74
+#, c-format
+msgid ""
+"Your pal (%s)[%s]\n"
+"is requesting to get your shared resources,\n"
+"Do you agree?"
+msgstr ""
+
+#: src/dialog.cpp:103
+msgid "Access Password"
+msgstr "Přístupové heslo"
+
+#: src/dialog.cpp:110
+msgid "Please input the password for the shared files behind"
+msgstr "Prosím zadejte heslo pro sdílené soubory"
+
+#: src/dialog.cpp:123
+#, c-format
+msgid "(%s)[%s]Password:"
+msgstr "(%s)[%s]Heslo:"
+
+#: src/dialog.cpp:140 src/dialog.cpp:200
+msgid ""
+"\n"
+"Empty Password!"
+msgstr ""
+"\n"
+"Prázdné heslo!"
+
+#: src/dialog.cpp:163
+msgid "Enter a New Password"
+msgstr "Zadat nové heslo"
+
+#: src/dialog.cpp:173
+msgid "Password: "
+msgstr "Heslo: "
+
+#: src/dialog.cpp:181
+msgid "Repeat: "
+msgstr "Zopakovat: "
+
+#: src/dialog.cpp:195
+msgid ""
+"\n"
+"Password Mismatched!"
+msgstr ""
+"\n"
+"Neshoda hesel!"
+
+#: src/dialog.cpp:226
+msgid "Please select a folder to save files."
+msgstr "Vyberte prosím složku do které chcete uložit soubory."
+
+#: src/DialogGroup.cpp:277
+#, c-format
+msgid "Talk with the group %s"
+msgstr "Hovořit se skupinou %s"
+
+#: src/DialogGroup.cpp:371
+msgid "Member"
+msgstr "Člen"
+
+#: src/DialogGroup.cpp:465
+msgid "Send"
+msgstr "Odeslat"
+
+#: src/DialogGroup.cpp:472
+msgid "Pals"
+msgstr "Partneři"
+
+#: src/DialogGroup.cpp:495 src/DialogPeer.cpp:409 src/MainWindow.cpp:865
+msgid "_Tools"
+msgstr "_Nástroje"
+
+#: src/DialogGroup.cpp:501 src/DialogPeer.cpp:417
+msgid "Clear Buffer"
+msgstr ""
+
+#: src/DialogGroup.cpp:508
+msgid "Sort"
+msgstr "Třídit"
+
+#: src/DialogGroup.cpp:514 src/MainWindow.cpp:904
+msgid "By Nickname"
+msgstr "Podle přezdívky"
+
+#: src/DialogGroup.cpp:521 src/MainWindow.cpp:911
+msgid "By IP"
+msgstr "Podle IP"
+
+#: src/DialogGroup.cpp:531 src/MainWindow.cpp:921
+msgid "Ascending"
+msgstr "Vzestupně"
+
+#: src/DialogGroup.cpp:538 src/MainWindow.cpp:928
+msgid "Descending"
+msgstr "Sestupně"
+
+#: src/DialogPeer.cpp:231
+#, c-format
+msgid "Talk with %s(%s) IP:%s"
+msgstr "Komunikace s %s(%s) IP:%s"
+
+#: src/DialogPeer.cpp:329
+msgid "Info."
+msgstr "Informace."
+
+#: src/DialogPeer.cpp:363 src/MainWindow.cpp:819
+msgid "_File"
+msgstr "_Soubor"
+
+#: src/DialogPeer.cpp:367
+msgid "Attach File"
+msgstr "Přiložit soubor"
+
+#: src/DialogPeer.cpp:373
+msgid "Attach Folder"
+msgstr "Přiložit složku"
+
+#: src/DialogPeer.cpp:389
+msgid "Close"
+msgstr "Zavřít"
+
+#: src/DialogPeer.cpp:413
+msgid "Insert Picture"
+msgstr "Vložit obrázek"
+
+#: src/DialogPeer.cpp:438 src/MainWindow.cpp:1653
+#, c-format
+msgid "Version: %s\n"
+msgstr "Verze: %s\n"
+
+#: src/DialogPeer.cpp:442 src/MainWindow.cpp:1657
+#, c-format
+msgid "Nickname: %s@%s\n"
+msgstr "Přezdívka: %s@%s\n"
+
+#: src/DialogPeer.cpp:444 src/MainWindow.cpp:1659
+#, c-format
+msgid "Nickname: %s\n"
+msgstr "Přezdívka: %s\n"
+
+#: src/DialogPeer.cpp:447 src/MainWindow.cpp:1662
+#, c-format
+msgid "User: %s\n"
+msgstr "Uživatel: %s\n"
+
+#: src/DialogPeer.cpp:450 src/MainWindow.cpp:1665
+#, c-format
+msgid "Host: %s\n"
+msgstr ""
+
+#: src/DialogPeer.cpp:455 src/MainWindow.cpp:1670
+#, c-format
+msgid "Address: %s(%s)\n"
+msgstr "Adresa: %s(%s)\n"
+
+#: src/DialogPeer.cpp:457 src/MainWindow.cpp:1672
+#, c-format
+msgid "Address: %s\n"
+msgstr "Adresa: %s\n"
+
+#: src/DialogPeer.cpp:461 src/MainWindow.cpp:1676
+#, c-format
+msgid "Compatibility: Microsoft\n"
+msgstr "Kompatibilita: Microsoft\n"
+
+#: src/DialogPeer.cpp:463 src/MainWindow.cpp:1678
+#, c-format
+msgid "Compatibility: GNU/Linux\n"
+msgstr "Kompatibilita: GNU/Linux\n"
+
+#: src/DialogPeer.cpp:466 src/MainWindow.cpp:1681
+#, c-format
+msgid "System coding: %s\n"
+msgstr "Systémové kódování: %s\n"
+
+#: src/DialogPeer.cpp:470 src/MainWindow.cpp:1685
+msgid "Signature:\n"
+msgstr "Podpis:\n"
+
+#: src/DialogPeer.cpp:477
+msgid ""
+"\n"
+"Photo:\n"
+msgstr ""
+"\n"
+"Fotografie:\n"
+
+#: src/DialogPeer.cpp:722
+msgid "Please select a picture to insert the buffer"
+msgstr ""
+
+#: src/DialogPeer.cpp:789
+msgid "Enclosure."
+msgstr ""
+
+#: src/DialogPeer.cpp:836
+msgid "File to be receive."
+msgstr ""
+
+#: src/DialogPeer.cpp:840
+msgid "Receiving progress."
+msgstr "Stav přenosu."
+
+#: src/DialogPeer.cpp:843
+msgid "Accept"
+msgstr "Přijmout"
+
+#: src/DialogPeer.cpp:853
+msgid "Detail"
+msgstr ""
+
+#: src/DialogPeer.cpp:884
+msgid "File received."
+msgstr "Soubor přenesen."
+
+#: src/DialogPeer.cpp:926 src/DialogPeer.cpp:990
+msgid "Source"
+msgstr "Zdroj"
+
+#: src/DialogPeer.cpp:932
+msgid "SaveAs"
+msgstr "Uložit jako"
+
+#: src/DialogPeer.cpp:937 src/DialogPeer.cpp:1000 src/MainWindow.cpp:1213
+#: src/ShareFile.cpp:280
+msgid "Size"
+msgstr "Velikost"
+
+#: src/DialogPeer.cpp:995
+msgid "Name"
+msgstr "Název"
+
+#: src/DialogPeer.cpp:1096 src/DialogPeer.cpp:1169
+#, c-format
+msgid "Receiving Progress."
+msgstr "Stav přenosu."
+
+#: src/DialogPeer.cpp:1099 src/DialogPeer.cpp:1172
+#, c-format
+msgid "%s to Receive."
+msgstr ""
+
+#: src/DialogPeer.cpp:1103 src/DialogPeer.cpp:1176
+#, c-format
+msgid "%s Of %s Received."
+msgstr ""
+
+#: src/DialogPeer.cpp:1109
+#, c-format
+msgid "Mission Completed!"
+msgstr ""
+
+#: src/DialogPeer.cpp:1321
+msgid "Remove Selected"
+msgstr "Smazat vybrané"
+
+#: src/HelpDialog.cpp:61 src/HelpDialog.cpp:66
+msgid "Jally <jallyx@163.com>"
+msgstr "Jally <jallyx@163.com>"
+
+#: src/HelpDialog.cpp:62 src/HelpDialog.cpp:68
+msgid "ManPT <pentie@gmail.com>"
+msgstr "ManPT <pantie@gmail.com>"
+
+#: src/HelpDialog.cpp:67
+msgid "LiWeijian <weijian_li88@qq.com>"
+msgstr "LiWeijian <weijian_li88@qq.com>"
+
+#: src/HelpDialog.cpp:71
+msgid ""
+"alick <alick9188@163.com>\n"
+"ManPT <pentie@gmail.com>"
+msgstr ""
+"alick <alick9188@163.com>\n"
+"ManPT <pentie@gmail.com>"
+
+#: src/HelpDialog.cpp:80 src/MainWindow.cpp:576 src/StatusIcon.cpp:106
+#: src/StatusIcon.cpp:277
+msgid "iptux"
+msgstr "iptux"
+
+#: src/HelpDialog.cpp:85
+msgid "A GTK+ based LAN Messenger."
+msgstr "LAN komunikátor založený na GTK+"
+
+#: src/HelpDialog.cpp:102
+msgid "Help"
+msgstr "Pomoc"
+
+#: src/HelpDialog.cpp:102
+msgid "Contributers"
+msgstr "Přispěvatelé"
+
+#: src/HelpDialog.cpp:102 src/HelpDialog.cpp:120
+msgid "..."
+msgstr "..."
+
+#: src/HelpDialog.cpp:104
+msgid ""
+"Project Home: \n"
+"https://github.com/iptux-src/iptux\n"
+"\n"
+"User and Developer Group: \n"
+"https://groups.google.com/group/iptux/\n"
+"\n"
+"Note that you can get help form the project wiki page.\n"
+"\n"
+"If you find no solutions in any of the existed documents, feel free to drop "
+"a email at iptux@googlegroups.com, lots of users and developers would be "
+"glade to help about your problems."
+msgstr ""
+
+#: src/HelpDialog.cpp:110
+msgid ""
+"It's an honor that iptux was contributed voluntarilly by many people. "
+"Without your help, iptux could never make it.\n"
+"\n"
+"Especially, Here's some we would like to thank much:\n"
+"\n"
+"ChenGang\n"
+"<liangsuilong@gmail.com>\n"
+"<lidaobing@gmail.com>\n"
+"<mdjhu@sina.com>\n"
+"<omegao.hu@gmail.com>\n"
+"<syranosun@gmail.com>\n"
+"..."
+msgstr ""
+
+#: src/HelpDialog.cpp:128
+msgid "More About Iptux"
+msgstr "Více o Iptux"
+
+#: src/LogSystem.cpp:53
+#, c-format
+msgid "Recevied-From: Nickname:%s User:%s Host:%s"
+msgstr "Obdrženo od: Přezdívka:%s Uživatel:%s Počítač:%s"
+
+#: src/LogSystem.cpp:57
+#, c-format
+msgid "Send-To: Nickname:%s User:%s Host:%s"
+msgstr ""
+
+#: src/LogSystem.cpp:60
+msgid "Send-Broadcast"
+msgstr ""
+
+#: src/LogSystem.cpp:83
+#, c-format
+msgid "User:%s Host:%s"
+msgstr "Uživatel:%s Počítač:%s"
+
+#: src/MainWindow.cpp:603
+msgid "Files Transmission Management"
+msgstr "Manažer přenosu souborů"
+
+#: src/MainWindow.cpp:718
+msgid "Pals Online: 0"
+msgstr "Partnerů online: 0"
+
+#: src/MainWindow.cpp:801
+msgid "Search Pals"
+msgstr "Vyhledat partnery"
+
+#: src/MainWindow.cpp:824 src/StatusIcon.cpp:185
+msgid "_Detect"
+msgstr "_Zjistit"
+
+#: src/MainWindow.cpp:833
+msgid "_Find"
+msgstr "_Najít"
+
+#: src/MainWindow.cpp:845 src/StatusIcon.cpp:194
+msgid "_Quit"
+msgstr "_Odejít"
+
+#: src/MainWindow.cpp:871 src/StatusIcon.cpp:164
+msgid "_Preferences"
+msgstr "_Předvolby"
+
+#: src/MainWindow.cpp:880 src/StatusIcon.cpp:156
+msgid "_Transmission"
+msgstr "_Přenosy"
+
+#: src/MainWindow.cpp:889 src/StatusIcon.cpp:173
+msgid "_Shared Management"
+msgstr "Správa _sdílení"
+
+#: src/MainWindow.cpp:898
+msgid "_Sort"
+msgstr "_Třídit"
+
+#: src/MainWindow.cpp:936
+msgid "_Update"
+msgstr "_Aktualizovat"
+
+#: src/MainWindow.cpp:953
+msgid "http://code.google.com/p/iptux/wiki/FAQ?wl=en"
+msgstr ""
+
+#: src/MainWindow.cpp:957
+msgid "_Help"
+msgstr "_Pomoc"
+
+#: src/MainWindow.cpp:965
+msgid "_More"
+msgstr "_Více"
+
+#: src/MainWindow.cpp:969
+msgid "_FAQ"
+msgstr "_FAQ"
+
+#: src/MainWindow.cpp:1121
+msgid "Nickname"
+msgstr "Ptřezdívka"
+
+#: src/MainWindow.cpp:1132
+msgid "Group"
+msgstr "Skupina"
+
+#: src/MainWindow.cpp:1138 src/MainWindow.cpp:1201
+msgid "IPv4"
+msgstr "IPv4"
+
+#: src/MainWindow.cpp:1144
+msgid "User"
+msgstr "Uživatel"
+
+#: src/MainWindow.cpp:1150
+msgid "Host"
+msgstr "Počítač"
+
+#: src/MainWindow.cpp:1183
+msgid "State"
+msgstr "Status"
+
+#: src/MainWindow.cpp:1189
+msgid "Task"
+msgstr "Úkol"
+
+#: src/MainWindow.cpp:1195
+msgid "Peer"
+msgstr ""
+
+#: src/MainWindow.cpp:1207
+msgid "Filename"
+msgstr "Název souboru"
+
+#: src/MainWindow.cpp:1219
+msgid "Completed"
+msgstr "Dokončeno"
+
+#: src/MainWindow.cpp:1225
+msgid "Progress"
+msgstr "Postup"
+
+#: src/MainWindow.cpp:1231
+msgid "Cost"
+msgstr "Náklady"
+
+#: src/MainWindow.cpp:1237
+msgid "Remaining"
+msgstr "Zbývá"
+
+#: src/MainWindow.cpp:1243
+msgid "Rate"
+msgstr "Rychlost"
+
+#: src/MainWindow.cpp:1534
+msgid "Open This File"
+msgstr "Otevřít tento soubor"
+
+#: src/MainWindow.cpp:1540
+msgid "Open Containing Folder"
+msgstr "Otevřít složku"
+
+#: src/MainWindow.cpp:1546
+msgid "Terminate Task"
+msgstr "Ukončit úkol"
+
+#: src/MainWindow.cpp:1551
+msgid "Terminate All"
+msgstr "Ukončit vše"
+
+#: src/MainWindow.cpp:1556
+msgid "Clear Tasklist"
+msgstr "Vyčistit seznam úkolů"
+
+#: src/MainWindow.cpp:1577
+msgid "Send Message"
+msgstr "Odeslat zprávu"
+
+#: src/MainWindow.cpp:1611
+msgid "Change Info."
+msgstr "Změnit informace"
+
+#: src/MainWindow.cpp:1626
+msgid "Delete Pal"
+msgstr "Smazat partnera"
+
+#: src/MainWindow.cpp:1715
+#, c-format
+msgid "Pals Online: %<PRIu32>"
+msgstr ""
+
+#: src/MainWindow.cpp:1946
+msgid "The file you want to open not exist!"
+msgstr "Soubor, který chcete otevřít neexistuje!"
+
+#: src/MainWindow.cpp:1975
+msgid "The path you want to open not exist!"
+msgstr "Složka, kterou chcete otevřít neexistuje!"
+
+#: src/output.cpp:35
+msgid "Infomation"
+msgstr "Informace"
+
+#: src/output.cpp:60
+msgid "Warning"
+msgstr "Varování"
+
+#: src/output.cpp:83
+msgid "Error"
+msgstr "Chyba"
+
+#: src/ProgramData.cpp:216
+msgid "utf-16"
+msgstr "utf-16"
+
+#: src/ProgramData.cpp:219
+msgid "utf-8"
+msgstr "utf-8"
+
+#: src/RecvFileData.cpp:117
+msgid "receive"
+msgstr ""
+
+#: src/RecvFileData.cpp:184
+#, c-format
+msgid "Failed to receive the file \"%s\" from %s!"
+msgstr "Selhání při získávání souboru \"%s\" od %s!"
+
+#: src/RecvFileData.cpp:187
+#, c-format
+msgid "Receive the file \"%s\" from %s successfully!"
+msgstr "Soubor \"%s\" od %s přenesen úspěšně!"
+
+#: src/RecvFileData.cpp:332
+#, c-format
+msgid "Failed to receive the directory \"%s\" from %s!"
+msgstr ""
+
+#: src/RecvFileData.cpp:335
+#, c-format
+msgid "Receive the directory \"%s\" from %s successfully!"
+msgstr ""
+
+#: src/RevisePal.cpp:97
+msgid "Change Pal's Information"
+msgstr "Změnit informace o partnerovi"
+
+#: src/RevisePal.cpp:125
+msgid "Pal's nickname:"
+msgstr "Partnerova přezdívka:"
+
+#: src/RevisePal.cpp:131
+msgid "Please input pal's new nickname!"
+msgstr "Prosím zadejte novou partnerovu přezdívku!"
+
+#: src/RevisePal.cpp:137
+msgid "Pal's group name:"
+msgstr "Název partnerovy skupiny:"
+
+#: src/RevisePal.cpp:143
+msgid "Please input pal's new group name!"
+msgstr ""
+
+#: src/RevisePal.cpp:149
+msgid "System coding:"
+msgstr "Systémové kódování:"
+
+#: src/RevisePal.cpp:155
+msgid "Be SURE to know what you are doing!"
+msgstr "Ujistěte se, že víte co děláte!"
+
+#: src/RevisePal.cpp:161
+msgid "Pal's face picture:"
+msgstr ""
+
+#: src/RevisePal.cpp:175
+msgid "Be compatible with iptux's protocol (DANGEROUS)"
+msgstr ""
+
+#: src/SendFileData.cpp:117
+msgid "send"
+msgstr "odesláno"
+
+#: src/SendFileData.cpp:162
+#, c-format
+msgid "Failed to send the file \"%s\" to %s!"
+msgstr ""
+
+#: src/SendFileData.cpp:165
+#, c-format
+msgid "Send the file \"%s\" to %s successfully!"
+msgstr "Odeslání souboru \"%s\" pro %s bylo úspěšné!"
+
+#: src/SendFileData.cpp:290
+#, c-format
+msgid "Failed to send the directory \"%s\" to %s!"
+msgstr ""
+
+#: src/SendFileData.cpp:293
+#, c-format
+msgid "Send the directory \"%s\" to %s successfully!"
+msgstr ""
+
+#: src/ShareFile.cpp:102
+msgid "Shared Files Management"
+msgstr ""
+
+#: src/ShareFile.cpp:105
+msgid "OK"
+msgstr "OK"
+
+#: src/ShareFile.cpp:106
+msgid "Apply"
+msgstr "Použít"
+
+#: src/ShareFile.cpp:150
+msgid "Add Files"
+msgstr "Přidat soubory"
+
+#: src/ShareFile.cpp:153
+msgid "Add Folders"
+msgstr "Přidat složky"
+
+#: src/ShareFile.cpp:156
+msgid "Delete Resources"
+msgstr "Smazat zdroje"
+
+#: src/ShareFile.cpp:159
+msgid "Clear Password"
+msgstr "Smazat heslo"
+
+#: src/ShareFile.cpp:162
+msgid "Set Password"
+msgstr "Nastavit heslo"
+
+#: src/ShareFile.cpp:220 src/ShareFile.cpp:378
+msgid "regular"
+msgstr ""
+
+#: src/ShareFile.cpp:224 src/ShareFile.cpp:382
+msgid "directory"
+msgstr "složka"
+
+#: src/ShareFile.cpp:270
+msgid "File"
+msgstr "Soubor"
+
+#: src/ShareFile.cpp:286
+msgid "Type"
+msgstr "Druh"
+
+#: src/ShareFile.cpp:422
+msgid "Choose the files to share"
+msgstr "Vyberte soubory ke sdílení"
+
+#: src/ShareFile.cpp:425
+msgid "Choose the folders to share"
+msgstr "Vybrat složky ke sdílení"
+
+#: src/SoundSystem.cpp:153
+#, c-format
+msgid "Failed to play the prompt tone, %s\n"
+msgstr ""
+
+#: src/StatusIcon.cpp:102 src/StatusIcon.cpp:274
+#, c-format
+msgid "To be read: %u messages"
+msgstr ""
+
+#: src/StatusIcon.cpp:143
+msgid "_Hide"
+msgstr "_Skrýt"
+
+#: src/StatusIcon.cpp:145
+msgid "_Show"
+msgstr "_Zobrazit"
+
+#: src/support.cpp:44
+msgid "Loading the process successfully!"
+msgstr ""
+
+#: src/support.cpp:63
+msgid "The process is about to quit!"
+msgstr ""
+
+#: src/support.cpp:102
+#, c-format
+msgid "iptux: A software for sharing in LAN\n"
+msgstr "iptux: Software pro sdílení v síti LAN\n"
+
+#: src/support.cpp:103
+#, c-format
+msgid ""
+"\t-h --help\n"
+"\t\tdisplay this help and exit\n"
+msgstr ""
+
+#: src/support.cpp:104
+#, c-format
+msgid ""
+"\t-v --version\n"
+"\t\toutput version information and exit\n"
+msgstr ""
+
+#: src/support.cpp:120
+#, c-format
+msgid "What do you want to do?\n"
+msgstr "Co chcete dělat?\n"
+
+#: src/support.cpp:149
+msgid "Can't find any available web browser!\n"
+msgstr ""
+
+#: src/support.cpp:179
+#, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to bind the TCP/UDP port(2425)!\n"
+"%s"
+msgstr ""
+
+#: src/UdpData.cpp:133 src/UdpData.cpp:134 src/UdpData.cpp:569
+#: src/UdpData.cpp:606
+msgid "mysterious"
+msgstr "záhadný"
+
+#: src/uninstall/utils.cpp:23
+msgid "The user is not privileged!\n"
+msgstr "Uživatel nemá oprávnění!\n"
+
+#: src/uninstall/utils.cpp:34
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s\n"
+msgstr ""
+
+#: src/uninstall/utils.cpp:45
+#, c-format
+msgid "Stat() file \"%s\" failed, %s\n"
+msgstr ""
+
+#: src/uninstall/utils.cpp:51 src/uninstall/utils.cpp:67
+#, c-format
+msgid "Unlink() file \"%s\" failed, %s\n"
+msgstr ""
+
+#: src/uninstall/utils.cpp:61
+#, c-format
+msgid "Rmdir() directory \"%s\" failed, %s\n"
+msgstr ""
