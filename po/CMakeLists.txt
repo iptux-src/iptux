@@ -1,14 +1,14 @@
 GETTEXT_CREATE_TRANSLATIONS(iptux.pot
-	ALL
-	de.po
-	en_GB.po
-	es.po
+    ALL
+    de.po
+    en_GB.po
+    es.po
     fr.po
     gl.po
     it.po
     lb.po
-	pl.po
+    pl.po
     pt_BR.po
     ru.po
-	zh_CN.po
-	zh_TW.po)
+    zh_CN.po
+    zh_TW.po)
