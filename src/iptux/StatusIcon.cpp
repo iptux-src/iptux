@@ -87,63 +87,78 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   window = mwin.ObtainWindow();
   menu = gtk_menu_new();
 
-  /* 显示&隐藏面板 */
-  if (g_object_get_data(G_OBJECT(statusicon), "show"))
-    menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Hide"));
-  else
-    menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Show"));
-  image = gtk_image_new_from_icon_name("menu-board", GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(onActivate), this);
+  const char* ui = ""
+      "<interface>"
+      "  <object class='GtkMenu' id='context_menu'>"
+      "    <child>"
+      "       <object class='GtkMenuItem'>"
+      "          <property name='label'>_Hello</property>"
+      "       </object>"
+      "    </child>"
+      "  </object>"
+      "</interface>";
 
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+  GtkBuilder* builder = gtk_builder_new_from_string(ui, -1);
+  menu = GTK_WIDGET(gtk_builder_get_object(builder, "context_menu"));
 
-  /* 显示文件传输窗口 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Transmission"));
-  image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowTransWindow),
-                           this);
-
-  /* 首选项 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Preferences"));
-  image = gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DataSettings::ResetDataEntry), window);
-
-  /* 共享文件管理 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Shared Management"));
-  image = gtk_image_new_from_icon_name("menu-share", GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  /* 探测好友 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Detect"));
-  image = gtk_image_new_from_icon_name("menu-detect", GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DetectPal::DetectEntry), window);
-
-  /* 程序退出 */
-  NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
-  image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(iptux_gui_quit), NULL);
+//
+//  /* 显示&隐藏面板 */
+//  if (g_object_get_data(G_OBJECT(statusicon), "show"))
+//    menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Hide"));
+//  else
+//    menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Show"));
+//  image = gtk_image_new_from_icon_name("menu-board", GTK_ICON_SIZE_MENU);
+//  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(onActivate), this);
+//
+//  menuitem = gtk_separator_menu_item_new();
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//
+//  /* 显示文件传输窗口 */
+//  NO_OPERATION_C
+//  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Transmission"));
+//  image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
+//  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowTransWindow),
+//                           this);
+//
+//  /* 首选项 */
+//  NO_OPERATION_C
+//  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Preferences"));
+//  image = gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU);
+//  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//  g_signal_connect_swapped(menuitem, "activate",
+//                           G_CALLBACK(DataSettings::ResetDataEntry), window);
+//
+//  /* 共享文件管理 */
+//  NO_OPERATION_C
+//  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Shared Management"));
+//  image = gtk_image_new_from_icon_name("menu-share", GTK_ICON_SIZE_MENU);
+//  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//
+//  menuitem = gtk_separator_menu_item_new();
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//
+//  /* 探测好友 */
+//  NO_OPERATION_C
+//  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Detect"));
+//  image = gtk_image_new_from_icon_name("menu-detect", GTK_ICON_SIZE_MENU);
+//  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//  g_signal_connect_swapped(menuitem, "activate",
+//                           G_CALLBACK(DetectPal::DetectEntry), window);
+//
+//  /* 程序退出 */
+//  NO_OPERATION_C
+//  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
+//  image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
+//  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+//  g_signal_connect(menuitem, "activate", G_CALLBACK(iptux_gui_quit), NULL);
 
   return menu;
 }
