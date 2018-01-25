@@ -54,12 +54,18 @@ class DialogGroup : public DialogBase {
   bool SendTextMsg();
 
  private:
+  GtkWidget* mainPaned;
+  GtkWidget* memberEnclosurePaned;
+  GtkWidget* historyInputPaned;
+
+ private:
   void BroadcastEnclosureMsg(GSList *list);
   void BroadcastTextMsg(const gchar *msg);
 
   static GtkWidget *CreatePopupMenu(GtkTreeModel *model);
   //回调处理部分
  private:
+  static void onUIChanged(DialogGroup& self);
   static gint MemberTreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
                                           GtkTreeIter *b);
   static gint MemberTreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
