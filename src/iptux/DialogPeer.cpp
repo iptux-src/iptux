@@ -544,7 +544,7 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist) {
   else
     para.pal = g_cthrd->GetPalFromList(grpinf->grpid);
 
-  para.stype = MESSAGE_SOURCE_TYPE_SELF;
+  para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
   para.dtlist = (GSList *)dtlist;
 
@@ -566,7 +566,7 @@ MsgPara *DialogPeer::PackageMsg(GSList *dtlist) {
     para->pal = g_cthrd->GetPalFromList(grpinf->grpid);
   else
     para->pal = (PalInfo *)grpinf->member->data;
-  para->stype = MESSAGE_SOURCE_TYPE_SELF;
+  para->stype = MessageSourceType::SELF;
   para->btype = grpinf->type;
   para->dtlist = dtlist;
 

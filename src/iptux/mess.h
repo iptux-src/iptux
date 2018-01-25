@@ -24,11 +24,11 @@ namespace iptux {
 /**
  * 消息来源类型.
  */
-typedef enum {
-  MESSAGE_SOURCE_TYPE_PAL,   ///< 好友
-  MESSAGE_SOURCE_TYPE_SELF,  ///< 自身
-  MESSAGE_SOURCE_TYPE_ERROR  ///< 错误
-} MessageSourceType;
+enum class MessageSourceType {
+  PAL,   ///< 好友
+  SELF,  ///< 自身
+  ERROR  ///< 错误
+};
 
 /**
  * 消息内容类型.

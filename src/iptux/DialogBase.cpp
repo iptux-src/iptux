@@ -461,7 +461,7 @@ void DialogBase::FeedbackMsg(const gchar *msg) {
 
   /* 构建消息封装包 */
   para.pal = NULL;
-  para.stype = MESSAGE_SOURCE_TYPE_SELF;
+  para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
   chip = new ChipData;
   chip->type = MESSAGE_CONTENT_TYPE_STRING;

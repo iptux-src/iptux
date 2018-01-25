@@ -476,7 +476,7 @@ void Command::FeedbackError(PalInfo *pal, GroupBelongType btype,
 
   /* 构建消息封装包 */
   para.pal = pal;
-  para.stype = MESSAGE_SOURCE_TYPE_ERROR;
+  para.stype = MessageSourceType::ERROR;
   para.btype = btype;
   chip = new ChipData;
   chip->type = MESSAGE_CONTENT_TYPE_STRING;

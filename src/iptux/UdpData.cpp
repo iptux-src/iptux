@@ -631,7 +631,7 @@ void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype,
 
   /* 构建消息封装包 */
   para.pal = pal;
-  para.stype = MESSAGE_SOURCE_TYPE_PAL;
+  para.stype = MessageSourceType::PAL;
   para.btype = btype;
   chip = new ChipData;
   chip->type = MESSAGE_CONTENT_TYPE_STRING;

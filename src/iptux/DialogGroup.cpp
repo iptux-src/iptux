@@ -716,7 +716,7 @@ bool DialogGroup::SendTextMsg() {
   FeedbackMsg(msg);
   BroadcastTextMsg(msg);
 
-  msgpara.stype = MESSAGE_SOURCE_TYPE_SELF;
+  msgpara.stype = MessageSourceType::SELF;
   msgpara.pal = NULL;
   g_lgsys->CommunicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);

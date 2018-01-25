@@ -68,7 +68,7 @@ FileInfo::~FileInfo() { g_free(filepath); }
 
 MsgPara::MsgPara()
     : pal(NULL),
-      stype(MESSAGE_SOURCE_TYPE_PAL),
+      stype(MessageSourceType::PAL),
       btype(GROUP_BELONG_TYPE_REGULAR),
       dtlist(NULL) {}
 MsgPara::~MsgPara() {

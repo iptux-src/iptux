@@ -903,7 +903,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
    * @note (para->pal)可能为null.
    */
   switch (para->stype) {
-    case MESSAGE_SOURCE_TYPE_PAL:
+  case MessageSourceType::PAL:
       header = getformattime(FALSE, "%s",
                              para->pal ? para->pal->name : _("unknown"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
@@ -911,14 +911,14 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
                                                "pal-color", NULL);
       g_free(header);
       break;
-    case MESSAGE_SOURCE_TYPE_SELF:
+  case MessageSourceType::SELF:
       header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "me-color", NULL);
       g_free(header);
       break;
-    case MESSAGE_SOURCE_TYPE_ERROR:
+  case MessageSourceType::ERROR:
       header = getformattime(FALSE, "%s", _("<ERROR>"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
