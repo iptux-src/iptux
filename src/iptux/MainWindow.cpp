@@ -123,9 +123,9 @@ void MainWindow::AlterWindowMode() {
 
   window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
   if (gtk_widget_get_visible(window)) {
-    gtk_widget_hide(window);
+    gtk_window_iconify(GTK_WINDOW(window));
   } else {
-    gtk_widget_show(window);
+    gtk_window_deiconify(GTK_WINDOW(window));
   }
 }
 
