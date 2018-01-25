@@ -540,6 +540,7 @@ GtkWidget *MainWindow::CreateMainWindow() {
       /*GDK_HINT_RESIZE_INC |*/ GDK_HINT_WIN_GRAVITY | GDK_HINT_USER_POS |
       GDK_HINT_USER_SIZE);
   window = gtk_application_window_new(app);
+  gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
   gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
   gtk_window_set_default_size(GTK_WINDOW(window), windowConfig.GetWidth(),
                               windowConfig.GetHeight());
