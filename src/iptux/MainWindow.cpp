@@ -652,7 +652,7 @@ GtkWidget *MainWindow::CreateToolBar() {
   gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
   toolitem = gtk_tool_button_new(
-    gtk_image_new_from_icon_name("go-previous", GTK_ICON_SIZE_SMALL_TOOLBAR),
+    gtk_image_new_from_icon_name("go-previous-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR),
     "Go previous"
   );
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toolitem, -1);
@@ -667,7 +667,7 @@ GtkWidget *MainWindow::CreateToolBar() {
   g_datalist_set_data(&widset, "online-label-widget", widget);
 
   toolitem = gtk_tool_button_new(
-    gtk_image_new_from_icon_name("go-next", GTK_ICON_SIZE_SMALL_TOOLBAR),
+    gtk_image_new_from_icon_name("go-next-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR),
     "Go next"
   );
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toolitem, -1);
