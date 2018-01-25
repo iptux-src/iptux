@@ -25,26 +25,19 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-ShareFile::ShareFile() : widset(NULL), mdlset(NULL) { InitSublayer(); }
+ShareFile::ShareFile(GtkWidget* parent) : widset(NULL), mdlset(NULL) {
+  InitSublayer();
+  /* 创建对话框 */
+  dialog = CreateMainDialog(parent);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+                     CreateAllArea(), TRUE, TRUE, 0);
+}
 
 /**
  * 类析构函数.
  */
 ShareFile::~ShareFile() { ClearSublayer(); }
 
-/**
- * 共享文件浏览、更新入口.
- * @param parent 父窗口指针
- */
-ShareFile* ShareFile::newShareFile(GtkWidget *parent) {
-  ShareFile *sfile = new ShareFile();
-
-  /* 创建对话框 */
-  sfile->dialog = sfile->CreateMainDialog(parent);
-  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(sfile->dialog))),
-                     sfile->CreateAllArea(), TRUE, TRUE, 0);
-  return sfile;
-}
 
 void ShareFile::run() {
   /* 运行对话框 */

@@ -18,14 +18,11 @@ namespace iptux {
 
 class ShareFile {
  public:
+  explicit ShareFile(GtkWidget* parent);
   ~ShareFile();
 
-  static ShareFile* newShareFile(GtkWidget* parent);
-
   void run();
-
  private:
-  ShareFile();
 
   void InitSublayer();
   void ClearSublayer();

@@ -182,7 +182,7 @@ void Application::onToolsTransmission(void *, void *, Application &self) {
 
 void Application::onToolsSharedManagement(void *, void *, Application &self) {
   if(!self.shareFile) {
-    self.shareFile = ShareFile::newShareFile(GTK_WIDGET(self.window->getWindow()));
+    self.shareFile = new ShareFile(GTK_WIDGET(self.window->getWindow()));
   }
   self.shareFile->run();
 }
