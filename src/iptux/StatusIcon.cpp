@@ -107,8 +107,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowTransWindow),
-                           this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.tools.transmission");
 
   /* 首选项 */
   NO_OPERATION_C
@@ -127,6 +126,8 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
 
   menuitem = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.tools.shared_management");
+
 
   /* 探测好友 */
   NO_OPERATION_C
@@ -134,25 +135,17 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_icon_name("menu-detect", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DetectPal::DetectEntry), window);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "win.detect");
 
   /* 程序退出 */
   NO_OPERATION_C
-  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
+  menuitem = gtk_menu_item_new_with_mnemonic(_("_Quit"));
   image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(iptux_gui_quit), NULL);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.quit");
 
   return menu;
-}
-
-/**
- * 显示文件传输窗口.
- */
-void StatusIcon::ShowTransWindow(StatusIcon *self) {
-  self->mwin.OpenTransWindow();
 }
 
 /**

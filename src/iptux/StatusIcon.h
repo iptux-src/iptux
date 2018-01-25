@@ -40,7 +40,6 @@ class StatusIcon {
   GtkWidget* CreatePopupMenu();
   //回调处理部分
  private:
-  static void ShowTransWindow(StatusIcon* self);
   static void StatusIconActivate(StatusIcon* self);
   static void onPopupMenu(StatusIcon* self, guint button, guint time);
   static gboolean StatusIconQueryTooltip(GtkStatusIcon* statusicon, gint x,
