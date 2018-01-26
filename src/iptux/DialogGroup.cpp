@@ -39,7 +39,10 @@ DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
 /**
  * 类析构函数.
  */
-DialogGroup::~DialogGroup() { SaveUILayout(); }
+DialogGroup::~DialogGroup() {
+  mainWindow->clearActiveWindow(this);
+  SaveUILayout();
+}
 
 /**
  * 群组对话框入口.

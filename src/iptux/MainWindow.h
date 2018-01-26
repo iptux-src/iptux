@@ -51,6 +51,7 @@ class MainWindow {
   void ClearAllItemFromPaltree();
   void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
   void setActiveWindow(ActiveWindowType t, void* activeWindow);
+  void clearActiveWindow(void* activeWindow);
 
   void OpenTransWindow();
   void UpdateItemToTransTree(GData **para);

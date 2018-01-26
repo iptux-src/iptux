@@ -50,6 +50,8 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
       accel(NULL),
       timerid(0),
       windowConfig(250, 510, "main_window") {
+  activeWindowType = ActiveWindowType ::OTHERS;
+  activeWindow = nullptr;
   windowConfig.LoadFromConfig(config);
 }
 
@@ -2439,7 +2441,7 @@ void MainWindow::onActive(MainWindow& self) {
   if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
     return;
   }
-  self.setActiveWindow(ActiveWindowType::MAIN, &self);
+  //self.setActiveWindow(ActiveWindowType::MAIN, &self);
 }
 
 void MainWindow::setActiveWindow(ActiveWindowType t, void* activeWindow) {
@@ -2447,6 +2449,12 @@ void MainWindow::setActiveWindow(ActiveWindowType t, void* activeWindow) {
   this->activeWindow = activeWindow;
 }
 
+void MainWindow::clearActiveWindow(void* activeWindow) {
+  if(this->activeWindow == activeWindow) {
+    this->activeWindowType = ActiveWindowType ::OTHERS;
+    this->activeWindow = nullptr;
+  }
+}
 
 
 }  // namespace iptux

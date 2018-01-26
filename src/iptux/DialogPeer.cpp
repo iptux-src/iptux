@@ -47,6 +47,7 @@ DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, ProgramData &prog
  * 类析构函数.
  */
 DialogPeer::~DialogPeer() {
+  mainWindow->clearActiveWindow(this);
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0) g_source_remove(timerrcv);
   /*---------------------------------------------------------------*/
