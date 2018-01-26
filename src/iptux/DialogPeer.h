@@ -35,6 +35,9 @@ class DialogPeer : public DialogBase {
   static void ShowDialogPeer(DialogPeer *dlgpr);
 
  private:
+  GtkWidget* window;
+
+ private:
   void ReadUILayout();
   void WriteUILayout();
 
@@ -74,6 +77,7 @@ class DialogPeer : public DialogBase {
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
   static void RemoveSelectedRcv(GtkWidget *widget);
   static gint RcvTreePopup(GtkWidget *treeview, GdkEvent *event);
+  static void onActive(DialogPeer& self);
   //线程处理
  private:
   static void ThreadSendTextMsg(MsgPara *para);

@@ -178,7 +178,6 @@ void DialogPeer::WriteUILayout() {
  */
 GtkWidget *DialogPeer::CreateMainWindow() {
   char buf[MAX_BUFLEN];
-  GtkWidget *window;
   gint width, height;
   PalInfo *palinfor;
   char ipstr[INET_ADDRSTRLEN];
@@ -202,6 +201,7 @@ GtkWidget *DialogPeer::CreateMainWindow() {
   MainWindowSignalSetup(window);
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
+  g_signal_connect_swapped(GTK_WIDGET(window), "notify::is-active", G_CALLBACK(onActive), this);
   return window;
 }
 
@@ -1265,6 +1265,13 @@ gint DialogPeer::RcvTreePopup(GtkWidget *treeview, GdkEvent *event) {
     }
   }
   return FALSE;
+}
+
+void DialogPeer::onActive(DialogPeer& self) {
+  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
+    return;
+  }
+  LOG_WARN("%s", gtk_window_get_title(GTK_WINDOW(self.window)));
 }
 
 }  // namespace iptux

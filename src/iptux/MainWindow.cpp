@@ -90,6 +90,7 @@ void MainWindow::CreateWindow() {
       { "detect", G_ACTION_CALLBACK(onDetect)},
       { "find", G_ACTION_CALLBACK(onFind)},
       { "about", G_ACTION_CALLBACK(onAbout)},
+      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
   };
 
   add_accelerator(app, "win.refresh", "F5");
@@ -111,11 +112,13 @@ void MainWindow::CreateWindow() {
     gtk_widget_hide(window);
   }
 
-  /* 创建传输窗口 */
+/* 创建传输窗口 *//*
+
   window = CreateTransWindow();
   gtk_container_add(GTK_CONTAINER(window), CreateTransArea());
   gtk_widget_show_all(window);
   gtk_widget_hide(window);
+*/
 }
 
 /**
@@ -556,7 +559,7 @@ GtkWidget *MainWindow::CreateMainWindow() {
                            this);
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
-
+  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
   return window;
 }
 
@@ -2406,6 +2409,17 @@ void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
     GroupInfo *groupInfo) {
   DialogGroup::GroupDialogEntry(g_mwin->getConfig(), groupInfo, *g_progdt);
+}
+
+void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {
+  LOG_WARN("TODO: how to get current active chat window");
+}
+
+void MainWindow::onActive(MainWindow& self) {
+  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
+    return;
+  }
+  LOG_WARN("TODO: known I am the focused window");
 }
 
 }  // namespace iptux
