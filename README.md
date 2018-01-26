@@ -22,7 +22,7 @@
 
 # iptux: 飞鸽传书 GNU/Linux 版
 
-[![Build Status](https://travis-ci.org/iptux-src/iptux.png?branch=master)](https://travis-ci.org/iptux-src/iptux)
+[![Build Status](https://travis-ci.org/iptux-src/iptux.svg?branch=master)](https://travis-ci.org/iptux-src/iptux)
 [![GitHub version](https://badge.fury.io/gh/iptux-src%2Fiptux.png)](http://badge.fury.io/gh/iptux-src%2Fiptux)
 
 ## Install
