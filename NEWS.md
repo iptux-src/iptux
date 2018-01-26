@@ -1,3 +1,7 @@
+# 0.7.5 (2018-XX-XX)
+
+* [#114] fix icon size.
+
 # 0.7.4 (2018-01-24)
 
 * [#?] fix bug in save share management.
