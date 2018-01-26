@@ -171,6 +171,7 @@ class MainWindow {
   static void onRefresh (void *, void *, MainWindow& self);
   static void onDetect (void *, void *, MainWindow& self);
   static void onFind (void *, void *, MainWindow& self);
+  static void onAbout (void *, void *, MainWindow& self);
   static void onSortType (void *, GVariant* value, MainWindow& self);
   static void onSortBy (void *, GVariant* value, MainWindow& self);
 };

@@ -56,7 +56,9 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
 /**
  * 类析构函数.
  */
-MainWindow::~MainWindow() { ClearSublayer(); }
+MainWindow::~MainWindow() {
+  ClearSublayer();
+}
 
 GtkWidget* MainWindow::getWindow() {
   return window;
@@ -87,6 +89,7 @@ void MainWindow::CreateWindow() {
       { "sort_by", G_ACTION_CALLBACK(onSortBy), "s" },
       { "detect", G_ACTION_CALLBACK(onDetect)},
       { "find", G_ACTION_CALLBACK(onFind)},
+      { "about", G_ACTION_CALLBACK(onAbout)},
   };
 
   add_accelerator(app, "win.refresh", "F5");
@@ -2180,6 +2183,10 @@ void MainWindow::onFind(void*, void*, MainWindow&self) {
   widget = GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-entry-widget"));
   gtk_widget_grab_focus(widget);
   PallistEntryChanged(widget, &self.widset);
+}
+
+void MainWindow::onAbout(void*, void*, MainWindow&self) {
+  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(GTK_WINDOW(self.window))));
 }
 
 /**

@@ -84,7 +84,7 @@ static const char* menuUi = "<?xml version=\"1.0\"?>\n"
     "    <section>\n"
     "      <item>\n"
     "        <attribute name=\"label\" translatable=\"yes\">_About</attribute>\n"
-    "        <attribute name=\"action\">app.help.about</attribute>\n"
+    "        <attribute name=\"action\">win.about</attribute>\n"
     "      </item>\n"
     "      <item>\n"
     "        <attribute name=\"label\" translatable=\"yes\">_More</attribute>\n"
@@ -135,7 +135,6 @@ void Application::onStartup(Application& self) {
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL },
       { "preferences", G_ACTION_CALLBACK(onPreferences), NULL, NULL, NULL},
-      { "help.about", G_ACTION_CALLBACK(HelpDialog::AboutEntry), NULL, NULL, NULL },
       { "help.more", G_ACTION_CALLBACK(HelpDialog::MoreEntry), NULL, NULL, NULL },
       { "help.faq", G_ACTION_CALLBACK(HelpDialog::onFaq), NULL, NULL, NULL },
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL },

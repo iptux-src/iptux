@@ -22,6 +22,13 @@ namespace iptux {
 GtkWidget *HelpDialog::about = NULL;
 GtkWidget *HelpDialog::more = NULL;
 
+static gboolean onActivateLink(GtkAboutDialog *label,
+                               gchar          *uri,
+                               gpointer        user_data) {
+  iptux_open_url(uri);
+  return true;
+}
+
 HelpDialog::HelpDialog() {}
 
 HelpDialog::~HelpDialog() {}
@@ -29,14 +36,9 @@ HelpDialog::~HelpDialog() {}
 /**
  * 关于对话框入口.
  */
-void HelpDialog::AboutEntry() {
+GtkWidget* HelpDialog::AboutEntry(GtkWindow* parent) {
   HelpDialog hlp;
-
-  if (!about) {
-    about = hlp.CreateAboutDialog();
-    hlp.RunHelpDialog(&about);
-  } else
-    gtk_window_present(GTK_WINDOW(about));
+  return hlp.CreateAboutDialog(parent);
 }
 
 /**
@@ -60,7 +62,7 @@ void HelpDialog::onFaq() {
 /**
  * 创建关于对话框.
  */
-GtkWidget *HelpDialog::CreateAboutDialog() {
+GtkWidget *HelpDialog::CreateAboutDialog(GtkWindow* parent) {
   const char *authors[] = {_("Jally <jallyx@163.com>"),
                            _("ManPT <pentie@gmail.com>"), NULL};
   const char *artists[] = {_("Jally <jallyx@163.com>"),
@@ -72,6 +74,8 @@ GtkWidget *HelpDialog::CreateAboutDialog() {
   GtkWidget *dialog;
 
   dialog = gtk_about_dialog_new();
+  gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
+  gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), true);
   gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), _("iptux"));
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
@@ -80,13 +84,14 @@ GtkWidget *HelpDialog::CreateAboutDialog() {
                                 _("A GTK+ based LAN Messenger."));
   gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog),
                                "https://github.com/iptux-src/iptux");
-  gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), "GPL 2+");
+  gtk_about_dialog_set_license_type(GTK_ABOUT_DIALOG(dialog), GTK_LICENSE_GPL_2_0);
   gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), authors);
   gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(dialog), artists);
   gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(dialog),
                                           translators);
   gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(dialog), "iptux");
-
+  g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+  g_signal_connect(dialog, "activate-link", G_CALLBACK(onActivateLink), NULL);
   return dialog;
 }
 
