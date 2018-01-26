@@ -163,7 +163,7 @@ void StatusIcon::StatusIconActivate(StatusIcon *self) {
   if (grpinf) {
     switch (grpinf->type) {
       case GROUP_BELONG_TYPE_REGULAR:
-        DialogPeer::PeerDialogEntry(self->config, grpinf,
+        DialogPeer::PeerDialogEntry(g_mwin, grpinf,
                                     self->getProgramData());
         break;
       case GROUP_BELONG_TYPE_SEGMENT:

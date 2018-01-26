@@ -1974,7 +1974,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
   /* 根据需求建立对应的对话框 */
   switch (grpinf->type) {
     case GROUP_BELONG_TYPE_REGULAR:
-      DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
@@ -2111,7 +2111,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
   if (!(grpinf->dialog)) {
     switch (grpinf->type) {
       case GROUP_BELONG_TYPE_REGULAR:
-        DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
+        DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
@@ -2292,7 +2292,7 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
   gtk_tree_model_get(model, &iter, 6, &pal, -1);
   if ((grpinf = g_cthrd->GetPalRegularItem(pal))) {
     if (!(grpinf->dialog))
-      DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
     else
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
   }
@@ -2339,7 +2339,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
 
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
   if (!(grpinf->dialog))
-    DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
+    DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
   else
     gtk_window_present(GTK_WINDOW(grpinf->dialog));
   /* 获取会话对象，并将数据添加到会话对象 */
@@ -2403,7 +2403,7 @@ gboolean MainWindow::onDeleteEvent(MainWindow *self) {
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
     GroupInfo *groupInfo) {
-  DialogPeer::PeerDialogEntry(g_mwin->getConfig(), groupInfo, *g_progdt);
+  DialogPeer::PeerDialogEntry(g_mwin, groupInfo, *g_progdt);
 }
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
@@ -2412,14 +2412,27 @@ void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
 }
 
 void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {
-  LOG_WARN("TODO: how to get current active chat window");
+  switch(self.activeWindowType) {
+    case ActiveWindowType::PEER:
+      ((DialogPeer*)self.activeWindow)->ClearHistoryTextView();
+      break;
+    default:
+      LOG_WARN("ClearChatHistory should be disabled for %d", self.activeWindowType);
+  }
 }
 
 void MainWindow::onActive(MainWindow& self) {
   if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
     return;
   }
-  LOG_WARN("TODO: known I am the focused window");
+  self.setActiveWindow(ActiveWindowType::MAIN, &self);
 }
+
+void MainWindow::setActiveWindow(ActiveWindowType t, void* activeWindow) {
+  this->activeWindowType = t;
+  this->activeWindow = activeWindow;
+}
+
+
 
 }  // namespace iptux

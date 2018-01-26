@@ -25,11 +25,11 @@ class DialogBase : public SessionAbstract {
   DialogBase(GroupInfo *grp, ProgramData &progdt);
   virtual ~DialogBase();
 
+  void ClearHistoryTextView();
  protected:
   void InitSublayerGeneral();
   void ClearSublayerGeneral();
 
-  void ClearHistoryTextView();
   void ScrollHistoryTextview();
   virtual void OnNewMessageComing();
   void NotifyUser();

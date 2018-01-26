@@ -16,16 +16,16 @@
 #include "iptux/DialogBase.h"
 #include "iptux/IptuxConfig.h"
 #include "iptux/mess.h"
+#include "iptux/MainWindow.h"
 
 namespace iptux {
 
 class DialogPeer : public DialogBase {
  public:
-  DialogPeer(IptuxConfig &config, GroupInfo *grp, ProgramData &progdt);
+  DialogPeer(MainWindow* mainWindow, GroupInfo *grp, ProgramData &progdt);
   virtual ~DialogPeer();
 
-  static void PeerDialogEntry(IptuxConfig &config, GroupInfo *grpinf,
-                              ProgramData &progdt);
+  static void PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf, ProgramData &progdt);
 
   virtual void UpdatePalData(PalInfo *pal);
   virtual void InsertPalData(PalInfo *pal);
@@ -35,6 +35,7 @@ class DialogPeer : public DialogBase {
   static void ShowDialogPeer(DialogPeer *dlgpr);
 
  private:
+  MainWindow* mainWindow;
   GtkWidget* window;
 
  private:
@@ -57,8 +58,6 @@ class DialogPeer : public DialogBase {
   GtkWidget *CreateFileMenu();
   GtkWidget *CreateToolMenu();
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-
- private:
   void BroadcastEnclosureMsg(GSList *list);
   bool SendTextMsg();
   void FeedbackMsg(const GSList *dtlist);

@@ -21,6 +21,13 @@ namespace iptux {
 
 class StatusIcon;
 
+enum class ActiveWindowType {
+  MAIN,
+  PEER,
+  GROUP,
+  OTHERS
+};
+
 /**
  * @note 鉴于本类成员函数所访问的(CoreThread)类成员链表都具有只增不减的特性，
  * 所以无须加锁访问，若有例外，请于注释中说明，否则应当bug处理.\n
@@ -43,6 +50,7 @@ class MainWindow {
   void DelItemFromPaltree(in_addr_t ipv4);
   void ClearAllItemFromPaltree();
   void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
+  void setActiveWindow(ActiveWindowType t, void* activeWindow);
 
   void OpenTransWindow();
   void UpdateItemToTransTree(GData **para);
@@ -63,11 +71,13 @@ class MainWindow {
 
   GData *widset;  //窗体集
   GData *mdlset;  //数据model集
-  // GData *dtset;           //通用数据集
   GList *tmdllist;       // model链表，用于构建model循环结构
   GtkAccelGroup *accel;  //快捷键集组
   guint timerid;         // UI更新定时器ID
   WindowConfig windowConfig;
+
+  ActiveWindowType activeWindowType;
+  void* activeWindow;
 
  private:
   void InitSublayer();
