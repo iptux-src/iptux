@@ -91,6 +91,7 @@ void MainWindow::CreateWindow() {
       { "find", G_ACTION_CALLBACK(onFind)},
       { "about", G_ACTION_CALLBACK(onAbout)},
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+      { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
   };
 
   add_accelerator(app, "win.refresh", "F5");
@@ -2421,6 +2422,16 @@ void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {
       break;
     default:
       LOG_WARN("ClearChatHistory should be disabled for %d", self.activeWindowType);
+  }
+}
+
+void MainWindow::onInsertPicture(void *, void *, MainWindow &self) {
+  switch(self.activeWindowType) {
+    case ActiveWindowType::PEER:
+      ((DialogPeer*)self.activeWindow)->insertPicture();
+      break;
+    default:
+      LOG_WARN("InsertPicture should be disabled for %d", self.activeWindowType);
   }
 }
 

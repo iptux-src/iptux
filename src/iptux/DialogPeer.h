@@ -33,6 +33,7 @@ class DialogPeer : public DialogBase {
   virtual void ClearAllPalData();
   virtual GSList *GetSelPal();
   static void ShowDialogPeer(DialogPeer *dlgpr);
+  void insertPicture();
 
  private:
   MainWindow* mainWindow;
@@ -56,7 +57,6 @@ class DialogPeer : public DialogBase {
   GtkWidget *CreateFileReceivedTree(GtkTreeModel *model);
   GtkTreeModel *CreateFileReceivedModel();
   GtkWidget *CreateFileMenu();
-  GtkWidget *CreateToolMenu();
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void BroadcastEnclosureMsg(GSList *list);
   bool SendTextMsg();
@@ -68,7 +68,6 @@ class DialogPeer : public DialogBase {
                               gint x, gint y, GtkSelectionData *data,
                               guint info, guint time);
   static void AskSharedFiles(GroupInfo *grpinf);
-  static void InsertPicture(DialogPeer *dlgpr);
   static void DialogPeerDestroy(DialogPeer *dlgpr);
   static void onAcceptButtonClicked(DialogPeer *dlgpr);
   static void ThreadRecvFile(FileInfo *file);

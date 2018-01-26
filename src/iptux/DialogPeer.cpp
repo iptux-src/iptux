@@ -267,7 +267,6 @@ GtkWidget *DialogPeer::CreateMenuBar() {
 
   menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
 
   return menubar;
 }
@@ -350,24 +349,6 @@ GtkWidget *DialogPeer::CreateFileMenu() {
                              GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
   g_datalist_set_data(&widset, "file-menu", menu);
-  return menushell;
-}
-/**
- * 创建工具菜单.
- * @return 菜单
- */
-GtkWidget *DialogPeer::CreateToolMenu() {
-  GtkWidget *menushell;
-  GtkWidget *menu, *menuitem;
-
-  menushell = gtk_menu_item_new_with_mnemonic(_("_Tools"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_menu_item_new_with_label(_("Insert Picture"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(InsertPicture),
-                           this);
   return menushell;
 }
 
@@ -646,31 +627,30 @@ void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
   cmd.SendAskShared(g_cthrd->getUdpSock(), pal, 0, NULL);
 }
 
-/**
- * 插入图片到输入缓冲区.
- * @param dlgpr 对话框类
- */
-void DialogPeer::InsertPicture(DialogPeer *dlgpr) {
-  GtkWidget *widget, *window;
+void DialogPeer::insertPicture() {
+  GtkWidget *widget;
   GtkTextBuffer *buffer;
   GtkTextIter iter;
   GdkPixbuf *pixbuf;
   gchar *filename;
   gint position;
+  GError* error = nullptr;
 
-  window = GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "window-widget"));
   if (!(filename = choose_file_with_preview(
             _("Please select a picture to insert the buffer"), window)))
     return;
 
-  if (!(pixbuf = gdk_pixbuf_new_from_file(filename, NULL))) {
+  if (!(pixbuf = gdk_pixbuf_new_from_file(filename, &error))) {
+    LOG_WARN("failed to load image: %s", error->message);
+    g_error_free(error);
+    error = nullptr;
     g_free(filename);
     return;
   }
   g_free(filename);
 
   widget =
-      GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "input-textview-widget"));
+      GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
   g_object_get(buffer, "cursor-position", &position, NULL);
   gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);

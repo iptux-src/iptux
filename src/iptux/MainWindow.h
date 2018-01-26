@@ -183,6 +183,7 @@ class MainWindow {
   static void onFind (void *, void *, MainWindow& self);
   static void onAbout (void *, void *, MainWindow& self);
   static void onClearChatHistory (void *, void *, MainWindow& self);
+  static void onInsertPicture (void *, void *, MainWindow& self);
   static void onSortType (void *, GVariant* value, MainWindow& self);
   static void onSortBy (void *, GVariant* value, MainWindow& self);
   static void onActive(MainWindow& self);
