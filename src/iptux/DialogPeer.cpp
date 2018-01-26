@@ -1022,6 +1022,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
     }
     if (progress == 1.0) {
       g_source_remove(dlgpr->timerrcv);
+      dlgpr->timerrcv = 0;
       snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
     }
     pbar = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset),
@@ -1066,6 +1067,7 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
                                               "file-to-receive-model");
   if (!model) {
     g_source_remove(dlgpr->timerrcv);
+    dlgpr->timerrcv = 0;
     return FALSE;
   }
   dlgpr->rcvdsize = 0;
