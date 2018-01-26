@@ -252,7 +252,7 @@ GtkWidget *DialogBase::CreateInputArea() {
 
   frame = gtk_frame_new(NULL);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
   /* 接受输入 */
@@ -272,7 +272,7 @@ GtkWidget *DialogBase::CreateInputArea() {
 
   /* 功能按钮 */
   window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  hbb = gtk_hbutton_box_new();
+  hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
   gtk_box_pack_start(GTK_BOX(box), hbb, FALSE, FALSE, 0);
   button = gtk_button_new_with_label(_("Close"));
