@@ -368,12 +368,6 @@ GtkWidget *DialogPeer::CreateToolMenu() {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(InsertPicture),
                            this);
-
-  menuitem = gtk_menu_item_new_with_label(_("Clear Buffer"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ClearHistoryBuffer),
-                           this);
-
   return menushell;
 }
 

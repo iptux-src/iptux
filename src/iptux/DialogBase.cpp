@@ -499,14 +499,6 @@ void DialogBase::AttachFolder(DialogBase *dlgpr) {
 }
 
 /**
- * 清空聊天历史记录缓冲区.
- * @param dlgpr 对话框类
- */
-void DialogBase::ClearHistoryBuffer(DialogBase *dlgpr) {
-  dlgpr->ClearHistoryTextView();
-}
-
-/**
  * 发送消息.
  * @param dlgpr 对话框类
  */

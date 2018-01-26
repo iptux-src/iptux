@@ -1979,7 +1979,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
     case GROUP_BELONG_TYPE_BROADCAST:
-      DialogGroup::GroupDialogEntry(self->config, grpinf, self->progdt);
+      DialogGroup::GroupDialogEntry(self, grpinf, self->progdt);
     default:
       break;
   }
@@ -2116,7 +2116,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
       case GROUP_BELONG_TYPE_BROADCAST:
-        DialogGroup::GroupDialogEntry(self->config, grpinf, self->progdt);
+        DialogGroup::GroupDialogEntry(self, grpinf, self->progdt);
       default:
         break;
     }
@@ -2408,13 +2408,16 @@ void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
     GroupInfo *groupInfo) {
-  DialogGroup::GroupDialogEntry(g_mwin->getConfig(), groupInfo, *g_progdt);
+  DialogGroup::GroupDialogEntry(g_mwin, groupInfo, *g_progdt);
 }
 
 void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {
   switch(self.activeWindowType) {
     case ActiveWindowType::PEER:
       ((DialogPeer*)self.activeWindow)->ClearHistoryTextView();
+      break;
+    case ActiveWindowType::GROUP:
+      ((DialogGroup*)self.activeWindow)->ClearHistoryTextView();
       break;
     default:
       LOG_WARN("ClearChatHistory should be disabled for %d", self.activeWindowType);

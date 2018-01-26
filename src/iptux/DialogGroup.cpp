@@ -28,9 +28,11 @@ namespace iptux {
  * 类构造函数.
  * @param grp 群组信息
  */
-DialogGroup::DialogGroup(GroupInfo *grp, IptuxConfig &config,
+DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
                          ProgramData &progdt)
-    : DialogBase(grp, progdt), config(config) {
+    : DialogBase(grp, progdt),
+      mainWindow(mainWindow),
+      config(mainWindow->getConfig()) {
   InitSublayerSpecify();
 }
 
@@ -43,12 +45,12 @@ DialogGroup::~DialogGroup() { SaveUILayout(); }
  * 群组对话框入口.
  * @param grpinf 群组信息
  */
-void DialogGroup::GroupDialogEntry(IptuxConfig &config, GroupInfo *grpinf,
+void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
                                    ProgramData &progdt) {
   DialogGroup *dlggrp;
   GtkWidget *window, *widget;
 
-  dlggrp = new DialogGroup(grpinf, config, progdt);
+  dlggrp = new DialogGroup(mainWindow, grpinf, progdt);
   window = dlggrp->CreateMainWindow();
   gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
   gtk_widget_show_all(window);
@@ -193,8 +195,6 @@ void DialogGroup::SaveUILayout() {
  */
 GtkWidget *DialogGroup::CreateMainWindow() {
   char buf[MAX_BUFLEN];
-  GtkWidget *window;
-
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
   gtk_window_set_title(GTK_WINDOW(window), buf);
@@ -208,6 +208,7 @@ GtkWidget *DialogGroup::CreateMainWindow() {
   grpinf->dialog = window;
 
   MainWindowSignalSetup(window);
+  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
 
   return window;
 }
@@ -398,13 +399,6 @@ GtkWidget *DialogGroup::CreateToolMenu() {
   menushell = gtk_menu_item_new_with_mnemonic(_("_Tools"));
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  /* 清空历史缓冲区 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Clear Buffer"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ClearHistoryBuffer),
-                           this);
 
   /* 群组成员排序 */
   NO_OPERATION_C
@@ -743,6 +737,13 @@ void DialogGroup::onUIChanged(DialogGroup &self) {
   self.config.SetInt("group_memberenclosure_paned_divide", gtk_paned_get_position(GTK_PANED(self.memberEnclosurePaned)));
   self.config.SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
   self.config.Save();
+}
+
+void DialogGroup::onActive(DialogGroup& self) {
+  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
+    return;
+  }
+  self.mainWindow->setActiveWindow(ActiveWindowType::GROUP, &self);
 }
 
 }  // namespace iptux

@@ -62,7 +62,6 @@ class DialogBase : public SessionAbstract {
   static void AttachRegular(DialogBase *dlgpr);
   static void AttachFolder(DialogBase *dlgpr);
   static void RemoveSelectedFromTree(GtkWidget *widget);
-  static void ClearHistoryBuffer(DialogBase *dlgpr);
   static void SendMessage(DialogBase *dlggrp);
   static gboolean WindowConfigureEvent(GtkWidget *window,
                                        GdkEventConfigure *event, GData **dtset);

@@ -169,7 +169,7 @@ void StatusIcon::StatusIconActivate(StatusIcon *self) {
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
       case GROUP_BELONG_TYPE_BROADCAST:
-        DialogGroup::GroupDialogEntry(self->config, grpinf,
+        DialogGroup::GroupDialogEntry(g_mwin, grpinf,
                                       self->getProgramData());
         break;
       default:
