@@ -37,13 +37,12 @@ class DialogPeer : public DialogBase {
 
  private:
   MainWindow* mainWindow;
-  GtkWidget* window;
 
  private:
   void ReadUILayout();
   void WriteUILayout();
 
-  GtkWidget *CreateMainWindow();
+  GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
   GtkWidget *CreateMenuBar();

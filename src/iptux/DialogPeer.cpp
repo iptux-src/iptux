@@ -64,7 +64,7 @@ void DialogPeer::PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
   GtkWidget *window, *widget;
 
   dlgpr = new DialogPeer(mainWindow, grpinf, progdt);
-  window = dlgpr->CreateMainWindow();
+  window = GTK_WIDGET(dlgpr->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -178,13 +178,13 @@ void DialogPeer::WriteUILayout() {
  * 创建主窗口.
  * @return 窗口
  */
-GtkWidget *DialogPeer::CreateMainWindow() {
+GtkWindow *DialogPeer::CreateMainWindow() {
   char buf[MAX_BUFLEN];
   gint width, height;
   PalInfo *palinfor;
   char ipstr[INET_ADDRSTRLEN];
 
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   palinfor = (PalInfo *)grpinf->member->data;
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
   snprintf(buf, MAX_BUFLEN, _("Talk with %s(%s) IP:%s"), palinfor->name,
@@ -195,9 +195,9 @@ GtkWidget *DialogPeer::CreateMainWindow() {
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
-  widget_enable_dnd_uri(window);
+  widget_enable_dnd_uri(GTK_WIDGET(window));
   g_datalist_set_data(&widset, "window-widget", window);
-  grpinf->dialog = window;
+  grpinf->dialog = GTK_WIDGET(window);
   g_object_set_data(G_OBJECT(window), "dialog", this);
 
   MainWindowSignalSetup(window);
@@ -638,7 +638,7 @@ void DialogPeer::insertPicture() {
   GError* error = nullptr;
 
   if (!(filename = choose_file_with_preview(
-            _("Please select a picture to insert the buffer"), window)))
+            _("Please select a picture to insert the buffer"), GTK_WIDGET(window))))
     return;
 
   if (!(pixbuf = gdk_pixbuf_new_from_file(filename, &error))) {

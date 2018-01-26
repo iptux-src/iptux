@@ -43,7 +43,7 @@ class DialogBase : public SessionAbstract {
   virtual GtkWidget *CreateFileSendTree(GtkTreeModel *model);
   virtual GSList *GetSelPal() { return NULL; };
 
-  void MainWindowSignalSetup(GtkWidget *window);
+  void MainWindowSignalSetup(GtkWindow *window);
   GtkTreeModel *CreateFileSendModel();
   GSList *PickEnclosure(uint32_t fileattr);
 
@@ -73,6 +73,7 @@ class DialogBase : public SessionAbstract {
   static void OpenTransDlg(DialogBase *dlgpr);
 
  protected:
+  GtkWindow* window;
   ProgramData &progdt;
   GData *widset;            //窗体集
   GData *mdlset;            //数据model集

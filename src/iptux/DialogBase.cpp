@@ -231,7 +231,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
 /*
  * 主窗口的信号连接
  */
-void DialogBase::MainWindowSignalSetup(GtkWidget *window) {
+void DialogBase::MainWindowSignalSetup(GtkWindow *window) {
   g_object_set_data(G_OBJECT(window), "session-class", this);
   g_signal_connect_swapped(window, "destroy", G_CALLBACK(DialogDestory), this);
   g_signal_connect_swapped(window, "drag-data-received",
@@ -384,7 +384,7 @@ GtkWidget *DialogBase::CreateFileMenu() {
  * @return 文件链表
  */
 GSList *DialogBase::PickEnclosure(uint32_t fileattr) {
-  GtkWidget *dialog, *parent;
+  GtkWidget *dialog;
   GtkFileChooserAction action;
   const char *title;
   GSList *list;
@@ -396,10 +396,8 @@ GSList *DialogBase::PickEnclosure(uint32_t fileattr) {
     action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
     title = _("Choose enclosure folders");
   }
-  parent = GTK_WIDGET(g_datalist_get_data(&widset, "dialog-widget"));
-
   dialog = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(parent), action, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+      title, GTK_WINDOW(window), action, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);

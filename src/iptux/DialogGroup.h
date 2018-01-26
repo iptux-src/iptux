@@ -36,7 +36,6 @@ class DialogGroup : public DialogBase {
 
  private:
   MainWindow* mainWindow;
-  GtkWidget* window;
   IptuxConfig &config;
   GtkWidget* mainPaned;
   GtkWidget* memberEnclosurePaned;
@@ -47,7 +46,7 @@ class DialogGroup : public DialogBase {
   void ReadUILayout();
   void SaveUILayout();
 
-  GtkWidget *CreateMainWindow();
+  GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
   GtkWidget *CreateMenuBar();

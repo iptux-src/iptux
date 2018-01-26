@@ -54,7 +54,7 @@ void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
   GtkWidget *window, *widget;
 
   dlggrp = new DialogGroup(mainWindow, grpinf, progdt);
-  window = dlggrp->CreateMainWindow();
+  window = GTK_WIDGET(dlggrp->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -196,9 +196,9 @@ void DialogGroup::SaveUILayout() {
  * 创建主窗口.
  * @return 窗口
  */
-GtkWidget *DialogGroup::CreateMainWindow() {
+GtkWindow *DialogGroup::CreateMainWindow() {
   char buf[MAX_BUFLEN];
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
   gtk_window_set_title(GTK_WINDOW(window), buf);
   gtk_window_set_default_size(GTK_WINDOW(window),
@@ -207,8 +207,8 @@ GtkWidget *DialogGroup::CreateMainWindow() {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
   g_datalist_set_data(&widset, "window-widget", window);
-  widget_enable_dnd_uri(window);
-  grpinf->dialog = window;
+  widget_enable_dnd_uri(GTK_WIDGET(window));
+  grpinf->dialog = GTK_WIDGET(window);
 
   MainWindowSignalSetup(window);
   g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
