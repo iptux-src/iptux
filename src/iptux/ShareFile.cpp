@@ -40,17 +40,14 @@ ShareFile::~ShareFile() { ClearSublayer(); }
 
 
 void ShareFile::run() {
-  /* 运行对话框 */
-  gtk_widget_show_all(dialog);
-mark:
   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:
       ApplySharedData();
       break;
     case GTK_RESPONSE_APPLY:
       ApplySharedData();
-      goto mark;
-    case GTK_RESPONSE_CANCEL:
+      run();
+      break;
     default:
       break;
   }
@@ -149,7 +146,7 @@ GtkWidget *ShareFile::CreateAllArea() {
   gtk_box_pack_end(GTK_BOX(vbox), button, FALSE, FALSE, 0);
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(SetPassword), &widset);
   g_datalist_set_data(&widset, "password-button-widget", button);
-
+  gtk_widget_show_all(box);
   return box;
 }
 
