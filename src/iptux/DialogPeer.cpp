@@ -1100,6 +1100,7 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
   if ((progress == 1) || (progress == 0)) {
     if (progress == 1) {
       g_source_remove(dlgpr->timerrcv);
+      dlgpr->timerrcv = 0;
       dlgpr->ShowInfoEnclosure(dlgpr);
     }
     //只要不是在接收过程中，恢复接收和拒收按键

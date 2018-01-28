@@ -839,6 +839,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   }
   if (progress == 1) {
     g_source_remove(dlggrp->timersend);
+    dlggrp->timersend = 0;
     gtk_list_store_clear(GTK_LIST_STORE(model));
     snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
   }
