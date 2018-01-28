@@ -66,6 +66,8 @@ class MainWindow {
  private:
   GtkApplication* app;
   GtkWidget* window;
+  GtkWidget* transWindow;
+
   IptuxConfig &config;
   ProgramData &progdt;
   StatusIcon *statusIcon;
@@ -115,9 +117,6 @@ class MainWindow {
   static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-
- public:
-  static void ShowTransWindow(MainWindow* self);
 
  private:
   //回调处理部分

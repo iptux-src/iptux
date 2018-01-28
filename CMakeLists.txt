@@ -13,8 +13,8 @@ include(FindPkgConfig)
 include(FindGettext)
 include(FindIntl)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE")
 
 if(NOT Intl_FOUND)

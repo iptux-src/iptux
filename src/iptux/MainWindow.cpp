@@ -52,6 +52,7 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
       windowConfig(250, 510, "main_window") {
   activeWindowType = ActiveWindowType ::OTHERS;
   activeWindow = nullptr;
+  transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
 }
 
@@ -59,6 +60,9 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
  * 类析构函数.
  */
 MainWindow::~MainWindow() {
+  if(transWindow) {
+    g_object_unref(transWindow);
+  }
   ClearSublayer();
 }
 
@@ -114,14 +118,6 @@ void MainWindow::CreateWindow() {
   if (progdt.IsAutoHidePanelAfterLogin()) {
     gtk_widget_hide(window);
   }
-
-/* 创建传输窗口 *//*
-
-  window = CreateTransWindow();
-  gtk_container_add(GTK_CONTAINER(window), CreateTransArea());
-  gtk_widget_show_all(window);
-  gtk_widget_hide(window);
-*/
 }
 
 /**
@@ -411,7 +407,23 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
 /**
  * 打开文件传输窗口.
  */
-void MainWindow::OpenTransWindow() { ShowTransWindow(this); }
+void MainWindow::OpenTransWindow() {
+  GtkWidget *widget;
+  guint timerid;
+
+  if(transWindow == nullptr) {
+    transWindow = CreateTransWindow();
+    gtk_container_add(GTK_CONTAINER(transWindow), CreateTransArea());
+    gtk_widget_show_all(transWindow);
+    gtk_widget_hide(transWindow);
+  }
+  gtk_widget_show(transWindow);
+  gtk_window_present(GTK_WINDOW(transWindow));
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "trans-treeview-widget"));
+  timerid = gdk_threads_add_timeout(200, GSourceFunc(UpdateTransUI), widget);
+  g_object_set_data(G_OBJECT(widget), "update-timer-id",
+                    GUINT_TO_POINTER(timerid));
+}
 
 /**
  * 更新文件传输树(trans-tree)的指定项.
@@ -624,7 +636,7 @@ GtkWidget *MainWindow::CreateTransArea() {
   GtkWidget *sw, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
@@ -637,7 +649,7 @@ GtkWidget *MainWindow::CreateTransArea() {
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "trans-treeview-widget", widget);
 
-  hbb = gtk_hbutton_box_new();
+  hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
   gtk_box_pack_start(GTK_BOX(box), hbb, FALSE, FALSE, 0);
   button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
@@ -1124,13 +1136,14 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                         GroupInfo *grpinf) {
   static GdkColor color = {0xff, 0x5252, 0xb8b8, 0x3838};
   GtkIconTheme *theme;
-  GdkPixbuf *cpixbuf, *opixbuf;
+  GdkPixbuf *cpixbuf, *opixbuf= nullptr;
   PangoAttrList *attrs;
   PangoAttribute *attr;
   PangoFontDescription *dspt;
   char ipstr[INET_ADDRSTRLEN];
   gchar *file, *info, *extra;
   PalInfo *pal;
+  GError* error = nullptr;
 
   /* 创建图标 */
   theme = gtk_icon_theme_get_default();
@@ -1138,8 +1151,14 @@ void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
     pal = (PalInfo *)grpinf->member->data;
     file = iptux_erase_filename_suffix(pal->iconfile);
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
-                                       GtkIconLookupFlags(0), NULL);
-    opixbuf = GDK_PIXBUF(g_object_ref(cpixbuf));
+                                       GtkIconLookupFlags(0), &error);
+    if(cpixbuf == nullptr) {
+      LOG_WARN("gtk_icon_theme_load_icon failed: [%d] %s", error->code, error->message);
+      g_error_free(error);
+      error = nullptr;
+    } else {
+      opixbuf = GDK_PIXBUF(g_object_ref(cpixbuf));
+    }
     g_free(file);
   } else {
     cpixbuf = gtk_icon_theme_load_icon(theme, "tip-hide", MAX_ICONSIZE,
@@ -1616,23 +1635,6 @@ gboolean MainWindow::TransPopupMenu(GtkWidget *treeview,
                  event->time);
 
   return TRUE;
-}
-
-/**
- * 显示文件传输窗口.
- * @param widset widget set
- */
-void MainWindow::ShowTransWindow(MainWindow* self) {
-  GtkWidget *widget;
-  guint timerid;
-
-  widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "trans-window-widget"));
-  gtk_widget_show(widget);
-  gtk_window_present(GTK_WINDOW(widget));
-  widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "trans-treeview-widget"));
-  timerid = gdk_threads_add_timeout(200, GSourceFunc(UpdateTransUI), widget);
-  g_object_set_data(G_OBJECT(widget), "update-timer-id",
-                    GUINT_TO_POINTER(timerid));
 }
 
 /**

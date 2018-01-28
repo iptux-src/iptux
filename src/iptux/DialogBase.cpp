@@ -15,8 +15,6 @@
 
 #include <sys/stat.h>
 
-#include <gdk/gdkkeysyms.h>
-
 #include "iptux/AnalogFS.h"
 #include "iptux/Command.h"
 #include "iptux/HelpDialog.h"
