@@ -139,7 +139,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
 
   /* 程序退出 */
   NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_mnemonic(_("_Quit"));
+  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
   image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
