@@ -87,9 +87,7 @@ class MainWindow {
   void ClearSublayer();
 
   GtkWidget *CreateMainWindow();
-  GtkWidget *CreateTransWindow();
   GtkWidget *CreateAllArea();
-  GtkWidget *CreateTransArea();
 
   GtkWidget *CreateToolBar();
   GtkWidget *CreatePaltreeArea();
@@ -100,7 +98,6 @@ class MainWindow {
   GtkTreeModel *CreateTransModel();
   GtkWidget *CreatePaltreeTree(GtkTreeModel *model);
   GtkWidget *CreatePallistTree(GtkTreeModel *model);
-  GtkWidget *CreateTransTree(GtkTreeModel *model);
 
   bool GroupGetPrevPaltreeItem(GtkTreeModel *model, GtkTreeIter *iter,
                                GroupInfo *grpinf);
@@ -114,7 +111,6 @@ class MainWindow {
                                 GroupInfo *grpinf);
   void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                bool blinking);
-  static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
 
@@ -125,14 +121,6 @@ class MainWindow {
   static void GoNextTreeModel(MainWindow *mwin);
 
   static gboolean UpdateTransUI(GtkWidget *treeview);
-  static gboolean TransPopupMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void HideTransWindow(GData **widset);
-  static void ClearTransWindow(GData **widset);
-  static void TerminateTransTask(GtkTreeModel *model);
-  static void TerminateAllTransTask(GtkTreeModel *model);
-  static void ClearTransTask(GtkTreeModel *model);
-  static void OpenContainingFolder(GtkTreeModel *model);
-  static void OpenThisFile(GtkTreeModel *model);
 
   static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
@@ -158,7 +146,6 @@ class MainWindow {
   static gint PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b);
 
-  static void ShowPallistArea(GData **widset);
   static void HidePallistArea(GData **widset);
   static gboolean ClearPallistEntry(GtkWidget *entry, GdkEventKey *event);
   static void PallistEntryChanged(GtkWidget *entry, GData **widset);

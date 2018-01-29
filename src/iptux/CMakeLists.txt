@@ -42,7 +42,7 @@ add_library(iptux
 	utils.cpp
 	wrapper.cpp
 	WindowConfig.cpp
-	)
+        TransWindow.cpp TransWindow.h)
 
 
 add_executable(libiptux_test
