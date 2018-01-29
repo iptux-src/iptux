@@ -26,7 +26,7 @@ static void ClearTransTask(GtkTreeModel *model);
 GtkWidget *trans_window_new(GtkWindow *parent) {
   g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
   g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
-  
+
   GtkWindow *window;
 
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));

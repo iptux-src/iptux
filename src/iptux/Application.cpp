@@ -7,6 +7,7 @@
 #include "HelpDialog.h"
 #include "DataSettings.h"
 #include "ShareFile.h"
+#include "output.h"
 
 static const char* menuUi = "<?xml version=\"1.0\"?>\n"
     "<interface>\n"
@@ -122,10 +123,10 @@ Application::Application(IptuxConfig& config)
   app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
+  g_signal_connect_swapped(app, "notify::active-window", G_CALLBACK(onActiveWindowChanged), this);
   window = new MainWindow(app, config, *data);
 
   g_progdt = data;
-  g_mwin = window;
 }
 
 Application::~Application() {
@@ -161,17 +162,21 @@ void Application::onStartup(Application& self) {
 
 void Application::onActivate(Application& self) {
   g_cthrd = new CoreThread(self.config);
-  StatusIcon* sicon = new StatusIcon(self.config, *g_mwin);
+  StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
   g_lgsys = new LogSystem();
 
-  g_mwin->SetStatusIcon(sicon);
+  self.window->SetStatusIcon(sicon);
 
   int port = self.config.GetInt("port", IPTUX_DEFAULT_PORT);
   iptux_init(port);
   sicon->CreateStatusIcon();
-  g_mwin->CreateWindow();
+  self.window->CreateWindow();
   g_cthrd->CoreThreadEntry();
+}
+
+void Application::onActiveWindowChanged(Application &self) {
+  LOG_WARN("new active window %p", gtk_application_get_active_window(self.app));
 }
 
 void Application::onQuit (void*, void*, Application& self) {
