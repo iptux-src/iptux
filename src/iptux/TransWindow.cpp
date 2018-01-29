@@ -133,7 +133,8 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
   hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
   gtk_box_pack_start(GTK_BOX(box), hbb, FALSE, FALSE, 0);
-  button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+  button = gtk_button_new_with_label(_("Clear"));
+  gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_icon_name("edit-clear-symbolic", GTK_ICON_SIZE_BUTTON));
   gtk_box_pack_start(GTK_BOX(hbb), button, FALSE, FALSE, 0);
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(ClearTransWindow), window);
   gtk_widget_show_all(box);

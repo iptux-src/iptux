@@ -61,9 +61,6 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
  * 类析构函数.
  */
 MainWindow::~MainWindow() {
-  if(transWindow) {
-    g_object_unref(transWindow);
-  }
   ClearSublayer();
 }
 
