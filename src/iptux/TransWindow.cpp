@@ -190,7 +190,6 @@ GtkWidget* CreateTransTree(GtkTreeModel *model) {
 
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
-  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(view), TRUE);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
