@@ -134,7 +134,6 @@ Application::~Application() {
   g_object_unref(app);
   delete data;
   delete window;
-  delete shareFile;
 }
 
 int Application::run(int argc, char** argv) {
@@ -194,8 +193,8 @@ void Application::onToolsTransmission(void *, void *, Application &self) {
 
 void Application::onToolsSharedManagement(void *, void *, Application &self) {
   if(!self.shareFile) {
-    self.shareFile = new ShareFile(GTK_WIDGET(self.window->getWindow()));
+    self.shareFile = share_file_new(GTK_WINDOW(self.window->getWindow()));
   }
-  self.shareFile->run();
+  share_file_run(self.shareFile);
 }
 }
