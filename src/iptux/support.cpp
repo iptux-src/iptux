@@ -304,7 +304,9 @@ void socket_enable_broadcast(int sock) {
 
   optval = 1;
   len = sizeof(optval);
-  setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, len);
+  if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, len) != 0) {
+    LOG_WARN("setsockopt for SO_BROADCAST failed: %s", strerror(errno));
+  }
 }
 
 /**
@@ -317,7 +319,9 @@ void socket_enable_reuse(int sock) {
 
   optval = 1;
   len = sizeof(optval);
-  setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len);
+  if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len) != 0) {
+    LOG_WARN("setsockopt for SO_REUSEADDR failed: %s", strerror(errno));
+  }
 }
 
 /**
