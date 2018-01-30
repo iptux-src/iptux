@@ -127,6 +127,7 @@ Application::Application(IptuxConfig& config)
   window = new MainWindow(app, config, *data);
 
   g_progdt = data;
+  g_mwin = window;
 }
 
 Application::~Application() {

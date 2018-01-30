@@ -13,6 +13,8 @@
 
 namespace iptux {
 
+static const int TRANS_TREE_MAX = 14;
+
 static void HideTransWindow(GtkWindow* window);
 static gboolean TWinConfigureEvent(GtkWindow *window);
 static GtkWidget * CreateTransArea(GtkWindow* window);
@@ -20,12 +22,13 @@ static GtkWidget* CreateTransTree(GtkTreeModel *model);
 static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
 static void OpenThisFile(GtkTreeModel *model);
 static void ClearTransTask(GtkTreeModel *model);
-
+static gboolean UpdateTransUI(GtkWindow *window);
 
 
 GtkWidget *trans_window_new(GtkWindow *parent) {
   g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
   g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
+  g_assert(g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed") != nullptr);
 
   GtkWindow *window;
 
@@ -40,10 +43,16 @@ GtkWidget *trans_window_new(GtkWindow *parent) {
                               config->GetInt("trans_window_height", 350));
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_container_set_border_width(GTK_CONTAINER(window), 5);
+  gtk_container_add(GTK_CONTAINER(window), CreateTransArea(window));
+
   g_signal_connect(window, "delete-event", G_CALLBACK(HideTransWindow), NULL);
   g_signal_connect(window, "configure-event", G_CALLBACK(TWinConfigureEvent), NULL);
-
-  gtk_container_add(GTK_CONTAINER(window), CreateTransArea(window));
+  g_signal_connect_swapped(
+      g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed"),
+      "activate",
+      G_CALLBACK(UpdateTransUI),
+      window
+  );
   return GTK_WIDGET(window);
 }
 
@@ -430,6 +439,51 @@ void OpenThisFile(GtkTreeModel *model) {
     }
     iptux_open_url(filename);
   }
+}
+
+/**
+ * 更新文件传输窗口UI.
+ * @param treeview tree-view
+ * @return GLib库所需
+ */
+gboolean UpdateTransUI(GtkWindow *window) {
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  TransAbstract *trans;
+  GData **para;
+
+  GtkWidget* treeview = GTK_WIDGET(g_object_get_data(G_OBJECT(window), "trans-treeview-widget"));
+
+  /* 考察是否需要更新UI */
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
+  if (!gtk_tree_model_get_iter_first(model, &iter)) return TRUE;
+
+  /* 更新UI */
+  do {
+    gtk_tree_model_get(model, &iter, TRANS_TREE_MAX - 1, &trans, -1);
+    if (trans) {  //当文件传输类存在时才能更新
+      para = trans->GetTransFilePara();  //获取参数
+      /* 更新数据 */
+      gtk_list_store_set(
+          GTK_LIST_STORE(model), &iter, 0, g_datalist_get_data(para, "status"),
+          1, g_datalist_get_data(para, "task"), 2,
+          g_datalist_get_data(para, "peer"), 3, g_datalist_get_data(para, "ip"),
+          4, g_datalist_get_data(para, "filename"), 5,
+          g_datalist_get_data(para, "filelength"), 6,
+          g_datalist_get_data(para, "finishlength"), 7,
+          GPOINTER_TO_INT(g_datalist_get_data(para, "progress")), 8,
+          g_datalist_get_data(para, "pro-text"), 9,
+          g_datalist_get_data(para, "cost"), 10,
+          g_datalist_get_data(para, "remain"), 11,
+          g_datalist_get_data(para, "rate"), 13,
+          g_datalist_get_data(para, "data"), -1);
+    }
+  } while (gtk_tree_model_iter_next(model, &iter));
+
+  /* 重新调整UI */
+  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
+
+  return TRUE;
 }
 
 }

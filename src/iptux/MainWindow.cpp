@@ -100,6 +100,7 @@ void MainWindow::CreateWindow() {
       { "about", G_ACTION_CALLBACK(onAbout)},
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
       { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
+      { "trans_model_changed"},
   };
 
   add_accelerator(app, "win.refresh", "F5");
@@ -109,7 +110,6 @@ void MainWindow::CreateWindow() {
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
                                    this);
-
   /* 聚焦到好友树(paltree)区域 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "paltree-treeview-widget"));
   gtk_widget_grab_focus(widget);
@@ -410,20 +410,12 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
  * 打开文件传输窗口.
  */
 void MainWindow::OpenTransWindow() {
-  GtkWidget *widget;
-  guint timerid;
-
   if(transWindow == nullptr) {
     transWindow = trans_window_new(GTK_WINDOW(window));
     gtk_widget_show_all(transWindow);
     gtk_widget_hide(transWindow);
   }
-  gtk_widget_show(transWindow);
   gtk_window_present(GTK_WINDOW(transWindow));
-  widget = GTK_WIDGET(g_object_get_data(G_OBJECT(transWindow), "trans-treeview-widget"));
-  timerid = gdk_threads_add_timeout(200, GSourceFunc(UpdateTransUI), widget);
-  g_object_set_data(G_OBJECT(widget), "update-timer-id",
-                    GUINT_TO_POINTER(timerid));
 }
 
 /**
@@ -471,6 +463,11 @@ void MainWindow::UpdateItemToTransTree(GData **para) {
       g_datalist_get_data(para, "rate"), 12,
       g_datalist_get_data(para, "filepath"), 13,
       g_datalist_get_data(para, "data"), -1);
+  g_action_group_activate_action(
+      G_ACTION_GROUP(window),
+      "trans_model_changed",
+      nullptr
+  );
 }
 
 /**
@@ -1362,50 +1359,6 @@ void MainWindow::GoNextTreeModel(MainWindow *mwin) {
       GTK_TREE_VIEW_COLUMN(g_object_get_data(G_OBJECT(widget), "info-column"));
   gtk_tree_view_column_queue_resize(column);
 }
-
-/**
- * 更新文件传输窗口UI.
- * @param treeview tree-view
- * @return GLib库所需
- */
-gboolean MainWindow::UpdateTransUI(GtkWidget *treeview) {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  TransAbstract *trans;
-  GData **para;
-
-  /* 考察是否需要更新UI */
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return TRUE;
-
-  /* 更新UI */
-  do {
-    gtk_tree_model_get(model, &iter, TRANS_TREE_MAX - 1, &trans, -1);
-    if (trans) {  //当文件传输类存在时才能更新
-      para = trans->GetTransFilePara();  //获取参数
-      /* 更新数据 */
-      gtk_list_store_set(
-          GTK_LIST_STORE(model), &iter, 0, g_datalist_get_data(para, "status"),
-          1, g_datalist_get_data(para, "task"), 2,
-          g_datalist_get_data(para, "peer"), 3, g_datalist_get_data(para, "ip"),
-          4, g_datalist_get_data(para, "filename"), 5,
-          g_datalist_get_data(para, "filelength"), 6,
-          g_datalist_get_data(para, "finishlength"), 7,
-          GPOINTER_TO_INT(g_datalist_get_data(para, "progress")), 8,
-          g_datalist_get_data(para, "pro-text"), 9,
-          g_datalist_get_data(para, "cost"), 10,
-          g_datalist_get_data(para, "remain"), 11,
-          g_datalist_get_data(para, "rate"), 13,
-          g_datalist_get_data(para, "data"), -1);
-    }
-  } while (gtk_tree_model_iter_next(model, &iter));
-
-  /* 重新调整UI */
-  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
-
-  return TRUE;
-}
-
 
 /**
  * 更新好友树.
