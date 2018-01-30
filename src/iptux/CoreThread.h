@@ -128,7 +128,9 @@ class CoreThread {
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
   static gboolean WatchCoreStatus(CoreThread *pcthrd);
-  //内联成员函数
+  static gboolean InsertMessageInMain(MsgPara *para);
+
+    //内联成员函数
  public:
   inline void setTcpSock(int tcpsock) {
     this->tcpSock = tcpsock;

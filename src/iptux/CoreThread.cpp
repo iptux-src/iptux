@@ -120,25 +120,34 @@ GSList *CoreThread::GetPalList() { return pallist; }
  * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
  */
 void CoreThread::InsertMessage(MsgPara *para) {
+  // para2 will be delete in InsertMessageInMain
+  MsgPara *para2 = new MsgPara(*para);
+
+  gdk_threads_add_idle(
+      GSourceFunc(InsertMessageInMain),
+      para2
+  );
+}
+
+gboolean CoreThread::InsertMessageInMain(MsgPara *para) {
   GroupInfo *grpinf;
   SessionAbstract *session;
 
-  /* 启用UI线程安全保护 */
-  gdk_threads_enter();
+  CoreThread* self = g_cthrd;
 
   /* 获取群组信息 */
   switch (para->btype) {
     case GROUP_BELONG_TYPE_REGULAR:
-      grpinf = GetPalRegularItem(para->pal);
+      grpinf = self->GetPalRegularItem(para->pal);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
-      grpinf = GetPalSegmentItem(para->pal);
+      grpinf = self->GetPalSegmentItem(para->pal);
       break;
     case GROUP_BELONG_TYPE_GROUP:
-      grpinf = GetPalGroupItem(para->pal);
+      grpinf = self->GetPalGroupItem(para->pal);
       break;
     case GROUP_BELONG_TYPE_BROADCAST:
-      grpinf = GetPalBroadcastItem(para->pal);
+      grpinf = self->GetPalBroadcastItem(para->pal);
       break;
     default:
       grpinf = NULL;
@@ -148,7 +157,7 @@ void CoreThread::InsertMessage(MsgPara *para) {
   /* 如果群组存在则插入消息 */
   /* 群组不存在是编程上的错误，请发送Bug报告 */
   if (grpinf) {
-    InsertMsgToGroupInfoItem(grpinf, para);
+    self->InsertMsgToGroupInfoItem(grpinf, para);
     if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -156,8 +165,8 @@ void CoreThread::InsertMessage(MsgPara *para) {
     }
   }
 
-  /* 离开UI操作处理 */
-  gdk_threads_leave();
+  delete para;
+  return G_SOURCE_REMOVE;
 }
 
 /**
