@@ -627,16 +627,15 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
 void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype,
                             const char *msg) {
   MsgPara para;
-  ChipData *chip;
 
   /* 构建消息封装包 */
   para.pal = pal;
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(msg);
-  para.dtlist = g_slist_append(NULL, chip);
+  ChipData chip;
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = msg;
+  para.dtlist.push_back(move(chip));
 
   /* 交给某人处理吧 */
   g_cthrd->InsertMessage(&para);

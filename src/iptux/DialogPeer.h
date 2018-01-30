@@ -59,8 +59,8 @@ class DialogPeer : public DialogBase {
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void BroadcastEnclosureMsg(GSList *list);
   bool SendTextMsg();
-  void FeedbackMsg(const GSList *dtlist);
-  MsgPara *PackageMsg(GSList *dtlist);
+  void FeedbackMsg(const std::vector<ChipData>& dtlist);
+  MsgPara *PackageMsg(const std::vector<ChipData>& dtlist);
   //回调处理部分
  private:
   static void DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,

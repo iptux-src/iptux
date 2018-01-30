@@ -472,17 +472,15 @@ void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype,
 void Command::FeedbackError(PalInfo *pal, GroupBelongType btype,
                             const char *error) {
   MsgPara para;
-  ChipData *chip;
+  ChipData chip;
 
   /* 构建消息封装包 */
   para.pal = pal;
   para.stype = MessageSourceType::ERROR;
   para.btype = btype;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(error);
-  para.dtlist = g_slist_append(NULL, chip);
-
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = error;
+  para.dtlist.push_back(move(chip));
   /* 交给某人处理吧 */
   g_cthrd->InsertMessage(&para);
 }

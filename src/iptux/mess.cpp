@@ -69,12 +69,9 @@ FileInfo::~FileInfo() { g_free(filepath); }
 MsgPara::MsgPara()
     : pal(NULL),
       stype(MessageSourceType::PAL),
-      btype(GROUP_BELONG_TYPE_REGULAR),
-      dtlist(NULL) {}
+      btype(GROUP_BELONG_TYPE_REGULAR) {}
+
 MsgPara::~MsgPara() {
-  for (GSList* tlist = dtlist; tlist; tlist = g_slist_next(tlist))
-    delete (ChipData*)tlist->data;
-  g_slist_free(dtlist);
 }
 
 ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}

@@ -442,8 +442,7 @@ bool DialogPeer::SendTextMsg() {
   pthread_t pid;
   size_t len;
   MsgPara *para;
-  ChipData *chip;
-  GSList *dtlist;
+  std::vector<ChipData> dtlist;
 
   /* 考察缓冲区内是否存在数据 */
   textview = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
@@ -456,7 +455,6 @@ bool DialogPeer::SendTextMsg() {
   buf[0] = '\0';  //缓冲区数据为空
   ptr = buf;
   len = 0;
-  dtlist = NULL;  //数据链表为空
   /* 获取数据 */
   piter = iter = start;  //让指针指向缓冲区开始位置
   do {
@@ -477,10 +475,10 @@ bool DialogPeer::SendTextMsg() {
                                 g_get_user_config_dir(), count++);
       gdk_pixbuf_save(pixbuf, chipmsg, "bmp", NULL, NULL);
       /* 新建一个碎片数据(图片)，并加入数据链表 */
-      chip = new ChipData;
-      chip->type = MESSAGE_CONTENT_TYPE_PICTURE;
-      chip->data = chipmsg;
-      dtlist = g_slist_append(dtlist, chip);
+      ChipData chip;
+      chip.type = MESSAGE_CONTENT_TYPE_PICTURE;
+      chip.data = chipmsg;
+      dtlist.push_back(std::move(chip));
     }
   } while (gtk_text_iter_forward_find_char(
       &iter, GtkTextCharPredicate(giter_compare_foreach),
@@ -490,10 +488,11 @@ bool DialogPeer::SendTextMsg() {
   snprintf(ptr, MAX_UDPLEN - len, "%s", chipmsg);
   g_free(chipmsg);
   /* 新建一个碎片数据(字符串)，并加入数据链表 */
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(buf);
-  dtlist = g_slist_prepend(dtlist, chip);  //保证字符串先被发送
+  ChipData chip;
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = g_strdup(buf);
+  //TODO: 保证字符串先被发送？
+  dtlist.push_back(std::move(chip));
 
   /* 清空缓冲区并发送数据 */
   gtk_text_buffer_delete(buffer, &start, &end);
@@ -512,7 +511,7 @@ bool DialogPeer::SendTextMsg() {
  * @param dtlist 数据链表
  * @note 请不要修改链表(dtlist)中的数据
  */
-void DialogPeer::FeedbackMsg(const GSList *dtlist) {
+void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
   MsgPara para;
 
   /* 构建消息封装包 */
@@ -523,11 +522,10 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist) {
 
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
-  para.dtlist = (GSList *)dtlist;
+  para.dtlist = dtlist;
 
   /* 交给某人处理吧 */
   g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
-  para.dtlist = NULL;  //防止参数数据被修改
 }
 
 /**
@@ -535,7 +533,7 @@ void DialogPeer::FeedbackMsg(const GSList *dtlist) {
  * @param dtlist 数据链表
  * @return 消息封装包
  */
-MsgPara *DialogPeer::PackageMsg(GSList *dtlist) {
+MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
   MsgPara *para;
 
   para = new MsgPara;
@@ -665,14 +663,13 @@ void DialogPeer::insertPicture() {
  */
 void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
   Command cmd;
-  GSList *tlist;
   const char *ptr;
   int sock;
 
-  tlist = para->dtlist;
-  while (tlist) {
-    ptr = ((ChipData *)tlist->data)->data.c_str();
-    switch (((ChipData *)tlist->data)->type) {
+  for(int i = 0; i < para->dtlist.size(); ++i) {
+    ChipData* chipData = &para->dtlist[i];
+    ptr = chipData->data.c_str();
+    switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         /* 文本类型 */
         cmd.SendMessage(g_cthrd->getUdpSock(), para->pal, ptr);
@@ -693,7 +690,6 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
       default:
         break;
     }
-    tlist = g_slist_next(tlist);
   }
 
   /* 释放资源 */

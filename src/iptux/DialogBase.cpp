@@ -453,16 +453,15 @@ bool DialogBase::SendEnclosureMsg() {
  */
 void DialogBase::FeedbackMsg(const gchar *msg) {
   MsgPara para;
-  ChipData *chip;
+  ChipData chip;
 
   /* 构建消息封装包 */
   para.pal = NULL;
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(msg);
-  para.dtlist = g_slist_append(NULL, chip);
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = msg;
+  para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
   g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);

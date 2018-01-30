@@ -167,13 +167,12 @@ void CoreThread::InsertMessage(MsgPara *para) {
  */
 void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
   GtkTextIter iter;
-  GSList *tlist;
   const gchar *data;
 
-  tlist = para->dtlist;
-  while (tlist) {
-    data = ((ChipData *)tlist->data)->data.c_str();
-    switch (((ChipData *)tlist->data)->type) {
+  for(int i = 0; i < para->dtlist.size(); ++i) {
+    ChipData* chipData = &para->dtlist[i];
+    data = chipData->data.c_str();
+    switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         InsertHeaderToBuffer(grpinf->buffer, para);
         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
@@ -190,7 +189,6 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
       default:
         break;
     }
-    tlist = g_slist_next(tlist);
   }
 }
 
