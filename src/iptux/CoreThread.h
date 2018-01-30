@@ -95,8 +95,8 @@ class CoreThread {
   void ReadSharedData();
 
   void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  void InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string);
-  void InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path);
+  void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
+  void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
 
   GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
   GroupInfo *AttachPalRegularItem(PalInfo *pal);

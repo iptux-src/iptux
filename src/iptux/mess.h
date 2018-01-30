@@ -139,7 +139,7 @@ class ChipData {
   ~ChipData();
 
   MessageContentType type;  ///< 消息内容类型
-  char *data;               ///< 数据串 *
+  std::string data;               ///< 数据串 *
 };
 
 /**

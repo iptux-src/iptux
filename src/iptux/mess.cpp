@@ -77,8 +77,8 @@ MsgPara::~MsgPara() {
   g_slist_free(dtlist);
 }
 
-ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data(NULL) {}
-ChipData::~ChipData() { g_free(data); }
+ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
+ChipData::~ChipData() {}
 
 NetSegment::NetSegment() {}
 NetSegment::~NetSegment() {}

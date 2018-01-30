@@ -168,11 +168,11 @@ void CoreThread::InsertMessage(MsgPara *para) {
 void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
   GtkTextIter iter;
   GSList *tlist;
-  gchar *data;
+  const gchar *data;
 
   tlist = para->dtlist;
   while (tlist) {
-    data = ((ChipData *)tlist->data)->data;
+    data = ((ChipData *)tlist->data)->data.c_str();
     switch (((ChipData *)tlist->data)->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         InsertHeaderToBuffer(grpinf->buffer, para);
@@ -935,7 +935,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
  * @param buffer text-buffer
  * @param string 字符串
  */
-void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string) {
+void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string) {
   static uint32_t count = 0;
   GtkTextIter iter;
   GtkTextTag *tag;
@@ -972,7 +972,7 @@ void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string) {
  * @param buffer text-buffer
  * @param path 图片路径
  */
-void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path) {
+void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path) {
   GtkTextIter start, end;
   GdkPixbuf *pixbuf;
 

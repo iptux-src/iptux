@@ -666,12 +666,12 @@ void DialogPeer::insertPicture() {
 void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
   Command cmd;
   GSList *tlist;
-  char *ptr;
+  const char *ptr;
   int sock;
 
   tlist = para->dtlist;
   while (tlist) {
-    ptr = ((ChipData *)tlist->data)->data;
+    ptr = ((ChipData *)tlist->data)->data.c_str();
     switch (((ChipData *)tlist->data)->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         /* 文本类型 */
