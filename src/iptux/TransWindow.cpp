@@ -1,7 +1,3 @@
-//
-// Created by LIDaobing on 2018-01-28.
-//
-
 #include "TransWindow.h"
 
 #include <glib/gi18n.h>
@@ -25,7 +21,7 @@ static void ClearTransTask(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 
 
-GtkWidget *trans_window_new(GtkWindow *parent) {
+TransWindow *trans_window_new(GtkWindow *parent) {
   g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
   g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
   g_assert(g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed") != nullptr);
@@ -53,7 +49,7 @@ GtkWidget *trans_window_new(GtkWindow *parent) {
       G_CALLBACK(UpdateTransUI),
       window
   );
-  return GTK_WIDGET(window);
+  return window;
 }
 
 /**

@@ -411,7 +411,7 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
  */
 void MainWindow::OpenTransWindow() {
   if(transWindow == nullptr) {
-    transWindow = trans_window_new(GTK_WINDOW(window));
+    transWindow = GTK_WIDGET(trans_window_new(GTK_WINDOW(window)));
     gtk_widget_show_all(transWindow);
     gtk_widget_hide(transWindow);
   }

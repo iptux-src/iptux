@@ -5,7 +5,8 @@
 
 namespace iptux {
 
-GtkWidget* trans_window_new(GtkWindow* parent);
+typedef GtkWindow TransWindow;
+TransWindow* trans_window_new(GtkWindow* parent);
 
 }
 
