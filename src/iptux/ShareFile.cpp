@@ -142,6 +142,17 @@ GtkWidget* CreateAllArea(ShareFile* self) {
   return box;
 }
 
+
+enum {
+  COLUMN_ICONNAME,
+  COLUMN_FILENAME,
+  COLUMN_FILESIZE,
+  COLUMN_FILETYPE,
+  COLUMN_TYPE,
+  N_COLUMNS
+};
+
+
 /**
  * 文件树(file-tree)底层数据结构.
  * 5,0 logo,1 filepath,2 filesize,3 filetype,4 type
@@ -151,7 +162,7 @@ GtkWidget* CreateAllArea(ShareFile* self) {
 GtkTreeModel* CreateFileModel() {
   GtkListStore *model;
 
-  model = gtk_list_store_new(5, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+  model = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_UINT);
   gtk_tree_sortable_set_default_sort_func(
       GTK_TREE_SORTABLE(model), GtkTreeIterCompareFunc(FileTreeCompareFunc),
@@ -169,16 +180,12 @@ GtkTreeModel* CreateFileModel() {
  */
 void FillFileModel(GtkTreeModel *model) {
   AnalogFS afs;
-  GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
+  const char *iconname;
   GtkTreeIter iter;
   char *filesize;
   const char *filetype;
   FileInfo *file;
   GSList *tlist;
-
-  /* 先获取两个文件图标 */
-  rpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_FILE);
-  dpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_DIRECTORY);
 
   /* 将现在的共享文件填入model */
   tlist = g_cthrd->GetPublicFileList();
@@ -191,31 +198,31 @@ void FillFileModel(GtkTreeModel *model) {
     switch (GET_MODE(file->fileattr)) {
       case IPMSG_FILE_REGULAR:
         filetype = _("regular");
-        pixbuf = rpixbuf;
+        iconname = "text-x-generic-symbolic";
         break;
       case IPMSG_FILE_DIR:
         filetype = _("directory");
-        pixbuf = dpixbuf;
+        iconname = "folder-symbolic";
         break;
       default:
         filetype = _("unknown");
-        pixbuf = NULL;
+        iconname = NULL;
         break;
     }
     /* 填入数据 */
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1,
-                       file->filepath, 2, filesize, 3, filetype, 4,
-                       file->fileattr, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+                       0, iconname,
+                       1, file->filepath,
+                       2, filesize,
+                       3, filetype,
+                       4, file->fileattr,
+                       -1);
     /* 烦，释放资源 */
     g_free(filesize);
     /* 转入下一个节点 */
     tlist = g_slist_next(tlist);
   }
-
-  /* 释放文件图标 */
-  if (rpixbuf) g_object_unref(rpixbuf);
-  if (dpixbuf) g_object_unref(dpixbuf);
 }
 
 /**
@@ -240,7 +247,7 @@ GtkWidget * CreateFileTree(GtkTreeModel *model) {
   gtk_tree_view_column_set_title(column, _("File"));
   cell = gtk_cell_renderer_pixbuf_new();
   gtk_tree_view_column_pack_start(column, cell, FALSE);
-  gtk_tree_view_column_set_attributes(column, cell, "pixbuf", 0, NULL);
+  gtk_tree_view_column_set_attributes(column, cell, "icon-name", 0, NULL);
   cell = gtk_cell_renderer_text_new();
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(column, cell, "text", 1, NULL);
@@ -315,17 +322,13 @@ void AttachSharedFiles(ShareFile* self, GSList *list) {
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
+  const char *iconname;
   struct stat st;
   int64_t pathsize;
   GSList *tlist;
   char *filesize;
   const char *filetype;
   uint32_t fileattr;
-
-  /* 获取文件图标 */
-  rpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_FILE);
-  dpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_DIRECTORY);
 
   /* 插入文件树 */
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "file-treeview-widget"));
@@ -344,29 +347,30 @@ void AttachSharedFiles(ShareFile* self, GSList *list) {
     if (S_ISREG(st.st_mode)) {
       filetype = _("regular");
       fileattr = IPMSG_FILE_REGULAR;
-      pixbuf = rpixbuf;
+      iconname = "text-x-generic-symbolic";
     } else if (S_ISDIR(st.st_mode)) {
       filetype = _("directory");
       fileattr = IPMSG_FILE_DIR;
-      pixbuf = dpixbuf;
+      iconname = "folder-symbolic";
     } else {
       filetype = _("unknown");
       fileattr = 0;
-      pixbuf = NULL;
+      iconname = NULL;
     }
     /* 添加数据 */
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, tlist->data,
-                       2, filesize, 3, filetype, 4, fileattr, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+                       0, iconname,
+                       1, tlist->data,
+                       2, filesize,
+                       3, filetype,
+                       4, fileattr,
+                       -1);
     /* 释放资源 */
     g_free(filesize);
     /* 转到下一个节点 */
     tlist = g_slist_next(tlist);
   }
-
-  /* 释放文件图标 */
-  if (rpixbuf) g_object_unref(rpixbuf);
-  if (dpixbuf) g_object_unref(dpixbuf);
 }
 
 /**
