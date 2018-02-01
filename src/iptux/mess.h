@@ -13,20 +13,22 @@
 #define IPTUX_MESS_H
 
 #include <arpa/inet.h>
+#include <string>
 
 #include <gtk/gtk.h>
 #include <json/json.h>
+
 
 namespace iptux {
 
 /**
  * 消息来源类型.
  */
-typedef enum {
-  MESSAGE_SOURCE_TYPE_PAL,   ///< 好友
-  MESSAGE_SOURCE_TYPE_SELF,  ///< 自身
-  MESSAGE_SOURCE_TYPE_ERROR  ///< 错误
-} MessageSourceType;
+enum class MessageSourceType {
+  PAL,   ///< 好友
+  SELF,  ///< 自身
+  ERROR  ///< 错误
+};
 
 /**
  * 消息内容类型.
@@ -115,6 +117,18 @@ class FileInfo {
 };
 
 /**
+ * 碎片数据.
+ */
+class ChipData {
+ public:
+  ChipData();
+  ~ChipData();
+
+  MessageContentType type;  ///< 消息内容类型
+  std::string data;               ///< 数据串 *
+};
+
+/**
  * 消息参数.
  */
 class MsgPara {
@@ -125,19 +139,7 @@ class MsgPara {
   PalInfo *pal;             ///< 好友数据信息(来自好友*)
   MessageSourceType stype;  ///< 来源类型
   GroupBelongType btype;    ///< 所属类型
-  GSList *dtlist;           ///< 数据链表 *
-};
-
-/**
- * 碎片数据.
- */
-class ChipData {
- public:
-  ChipData();
-  ~ChipData();
-
-  MessageContentType type;  ///< 消息内容类型
-  char *data;               ///< 数据串 *
+  std::vector<ChipData> dtlist;           ///< 数据链表 *
 };
 
 /**
@@ -148,12 +150,12 @@ class NetSegment {
   NetSegment();
   ~NetSegment();
 
-  char *startip;      ///< IP起始地址 *
-  char *endip;        ///< IP终止地址 *
-  char *description;  ///< 此IP段描述
+  std::string startip;      ///< IP起始地址 *
+  std::string endip;        ///< IP终止地址 *
+  std::string description;  ///< 此IP段描述
 
   Json::Value ToJsonValue() const;
-  static NetSegment *NewFromJsonValue(const Json::Value &value);
+  static NetSegment fromJsonValue(Json::Value &value);
 };
 
 /***************偶是可爱的分割线(抽象类)*****************/

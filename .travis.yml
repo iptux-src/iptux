@@ -15,7 +15,7 @@ dist: trusty
 sudo: false
 install:
   - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+ jsoncpp'
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+3 jsoncpp'
 matrix:
   fast_finish: true
   allow_failures:

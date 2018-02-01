@@ -132,9 +132,8 @@ void bind_iptux_port(int port) {
                 port, strerror(errno));
     exit(1);
   }
-
-  g_cthrd->TcpSockQuote() = tcpsock;
-  g_cthrd->UdpSockQuote() = udpsock;
+  g_cthrd->setTcpSock(tcpsock);
+  g_cthrd->setUdpSock(udpsock);
 }
 
 /**

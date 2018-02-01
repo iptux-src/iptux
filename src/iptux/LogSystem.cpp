@@ -51,10 +51,10 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) {
 
   PalInfo *pal = msgpara->pal;
 
-  if (msgpara->stype == MESSAGE_SOURCE_TYPE_PAL)
+  if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
                         pal->name, pal->user, pal->host);
-  else if (msgpara->stype == MESSAGE_SOURCE_TYPE_SELF) {
+  else if (msgpara->stype == MessageSourceType::SELF) {
     if (msgpara->pal)
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
                           pal->name, pal->user, pal->host);

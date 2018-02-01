@@ -78,5 +78,7 @@ char *ipmsg_get_pathname_full(const char *path, const char *name);
 bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
                       guint time);
 
+void add_accelerator(GtkApplication* app, const char* action, const char* accel);
+
 }  // namespace iptux
 #endif

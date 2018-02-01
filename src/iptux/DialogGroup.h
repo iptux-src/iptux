@@ -16,15 +16,16 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/ProgramData.h"
 #include "iptux/mess.h"
+#include "iptux/MainWindow.h"
 
 namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(GroupInfo *grp, IptuxConfig &config, ProgramData &progdt);
+  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, ProgramData &progdt);
   virtual ~DialogGroup();
 
-  static void GroupDialogEntry(IptuxConfig &config, GroupInfo *grpinf,
+  static void GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
                                ProgramData &progdt);
 
   virtual void UpdatePalData(PalInfo *pal);
@@ -34,12 +35,18 @@ class DialogGroup : public DialogBase {
   virtual GSList *GetSelPal();
 
  private:
+  MainWindow* mainWindow;
   IptuxConfig &config;
+  GtkWidget* mainPaned;
+  GtkWidget* memberEnclosurePaned;
+  GtkWidget* historyInputPaned;
+
+ private:
   virtual void InitSublayerSpecify();
   void ReadUILayout();
   void SaveUILayout();
 
-  GtkWidget *CreateMainWindow();
+  GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
   GtkWidget *CreateMenuBar();
@@ -52,14 +59,13 @@ class DialogGroup : public DialogBase {
   GtkWidget *CreateMemberTree(GtkTreeModel *model);
 
   bool SendTextMsg();
-
- private:
   void BroadcastEnclosureMsg(GSList *list);
   void BroadcastTextMsg(const gchar *msg);
 
   static GtkWidget *CreatePopupMenu(GtkTreeModel *model);
   //回调处理部分
  private:
+  static void onUIChanged(DialogGroup& self);
   static gint MemberTreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
                                           GtkTreeIter *b);
   static gint MemberTreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
@@ -74,6 +80,7 @@ class DialogGroup : public DialogBase {
                                       GtkTreeViewColumn *column,
                                       DialogGroup *self);
   static void SendMessage(DialogGroup *dlggrp);
+  static void onActive(DialogGroup& self);
 };
 
 }  // namespace iptux

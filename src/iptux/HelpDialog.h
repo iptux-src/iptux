@@ -21,12 +21,11 @@ class HelpDialog {
   HelpDialog();
   ~HelpDialog();
 
-  static void AboutEntry();
-  static void MoreEntry();
+  static GtkWidget* AboutEntry(GtkWindow* parent);
+  static void onFaq();
 
  private:
-  GtkWidget *CreateAboutDialog();
-  GtkWidget *CreateMoreDialog();
+  GtkWidget *CreateAboutDialog(GtkWindow* parent);
   void RunHelpDialog(GtkWidget **dialog);
 
   static GtkWidget *about;

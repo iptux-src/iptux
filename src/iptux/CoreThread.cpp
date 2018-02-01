@@ -39,8 +39,8 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
  */
 CoreThread::CoreThread(IptuxConfig &config)
     : config(config),
-      tcpsock(-1),
-      udpsock(-1),
+      tcpSock(-1),
+      udpSock(-1),
       server(true),
       pallist(nullptr),
       rgllist(NULL),
@@ -120,25 +120,34 @@ GSList *CoreThread::GetPalList() { return pallist; }
  * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
  */
 void CoreThread::InsertMessage(MsgPara *para) {
+  // para2 will be delete in InsertMessageInMain
+  MsgPara *para2 = new MsgPara(*para);
+
+  gdk_threads_add_idle(
+      GSourceFunc(InsertMessageInMain),
+      para2
+  );
+}
+
+gboolean CoreThread::InsertMessageInMain(MsgPara *para) {
   GroupInfo *grpinf;
   SessionAbstract *session;
 
-  /* 启用UI线程安全保护 */
-  gdk_threads_enter();
+  CoreThread* self = g_cthrd;
 
   /* 获取群组信息 */
   switch (para->btype) {
     case GROUP_BELONG_TYPE_REGULAR:
-      grpinf = GetPalRegularItem(para->pal);
+      grpinf = self->GetPalRegularItem(para->pal);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
-      grpinf = GetPalSegmentItem(para->pal);
+      grpinf = self->GetPalSegmentItem(para->pal);
       break;
     case GROUP_BELONG_TYPE_GROUP:
-      grpinf = GetPalGroupItem(para->pal);
+      grpinf = self->GetPalGroupItem(para->pal);
       break;
     case GROUP_BELONG_TYPE_BROADCAST:
-      grpinf = GetPalBroadcastItem(para->pal);
+      grpinf = self->GetPalBroadcastItem(para->pal);
       break;
     default:
       grpinf = NULL;
@@ -148,7 +157,7 @@ void CoreThread::InsertMessage(MsgPara *para) {
   /* 如果群组存在则插入消息 */
   /* 群组不存在是编程上的错误，请发送Bug报告 */
   if (grpinf) {
-    InsertMsgToGroupInfoItem(grpinf, para);
+    self->InsertMsgToGroupInfoItem(grpinf, para);
     if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -156,8 +165,8 @@ void CoreThread::InsertMessage(MsgPara *para) {
     }
   }
 
-  /* 离开UI操作处理 */
-  gdk_threads_leave();
+  delete para;
+  return G_SOURCE_REMOVE;
 }
 
 /**
@@ -167,13 +176,12 @@ void CoreThread::InsertMessage(MsgPara *para) {
  */
 void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
   GtkTextIter iter;
-  GSList *tlist;
-  gchar *data;
+  const gchar *data;
 
-  tlist = para->dtlist;
-  while (tlist) {
-    data = ((ChipData *)tlist->data)->data;
-    switch (((ChipData *)tlist->data)->type) {
+  for(int i = 0; i < para->dtlist.size(); ++i) {
+    ChipData* chipData = &para->dtlist[i];
+    data = chipData->data.c_str();
+    switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         InsertHeaderToBuffer(grpinf->buffer, para);
         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
@@ -190,7 +198,6 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
       default:
         break;
     }
-    tlist = g_slist_next(tlist);
   }
 }
 
@@ -201,8 +208,8 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
   Command cmd;
 
-  cmd.BroadCast(pcthrd->udpsock);
-  cmd.DialUp(pcthrd->udpsock);
+  cmd.BroadCast(pcthrd->udpSock);
+  cmd.DialUp(pcthrd->udpSock);
 }
 
 /**
@@ -216,12 +223,12 @@ void CoreThread::SendFeatureData(PalInfo *pal) {
   int sock;
 
   if (!g_progdt->sign.empty()) {
-    cmd.SendMySign(g_cthrd->udpsock, pal);
+    cmd.SendMySign(g_cthrd->udpSock, pal);
   }
   env = g_get_user_config_dir();
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
            g_progdt->myicon.c_str());
-  if (access(path, F_OK) == 0) cmd.SendMyIcon(g_cthrd->udpsock, pal);
+  if (access(path, F_OK) == 0) cmd.SendMyIcon(g_cthrd->udpSock, pal);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -241,7 +248,7 @@ void CoreThread::SendFeatureData(PalInfo *pal) {
 void CoreThread::SendBroadcastExit(PalInfo *pal) {
   Command cmd;
 
-  cmd.SendExit(g_cthrd->udpsock, pal);
+  cmd.SendExit(g_cthrd->udpSock, pal);
 }
 
 /**
@@ -257,7 +264,7 @@ void CoreThread::UpdateMyInfo() {
   tlist = g_cthrd->pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
-    if (FLAG_ISSET(pal->flags, 1)) cmd.SendAbsence(g_cthrd->udpsock, pal);
+    if (FLAG_ISSET(pal->flags, 1)) cmd.SendAbsence(g_cthrd->udpSock, pal);
     if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
       pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
       pthread_detach(pid);
@@ -792,8 +799,8 @@ void CoreThread::ClearSublayer() {
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
   g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
-  shutdown(tcpsock, SHUT_RDWR);
-  shutdown(udpsock, SHUT_RDWR);
+  shutdown(tcpSock, SHUT_RDWR);
+  shutdown(udpSock, SHUT_RDWR);
   server = false;
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
@@ -903,7 +910,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
    * @note (para->pal)可能为null.
    */
   switch (para->stype) {
-    case MESSAGE_SOURCE_TYPE_PAL:
+  case MessageSourceType::PAL:
       header = getformattime(FALSE, "%s",
                              para->pal ? para->pal->name : _("unknown"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
@@ -911,14 +918,14 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
                                                "pal-color", NULL);
       g_free(header);
       break;
-    case MESSAGE_SOURCE_TYPE_SELF:
+  case MessageSourceType::SELF:
       header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "me-color", NULL);
       g_free(header);
       break;
-    case MESSAGE_SOURCE_TYPE_ERROR:
+  case MessageSourceType::ERROR:
       header = getformattime(FALSE, "%s", _("<ERROR>"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
@@ -935,7 +942,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
  * @param buffer text-buffer
  * @param string 字符串
  */
-void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string) {
+void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string) {
   static uint32_t count = 0;
   GtkTextIter iter;
   GtkTextTag *tag;
@@ -972,7 +979,7 @@ void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string) {
  * @param buffer text-buffer
  * @param path 图片路径
  */
-void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path) {
+void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path) {
   GtkTextIter start, end;
   GdkPixbuf *pixbuf;
 
@@ -1148,7 +1155,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
 
   while (self->server) {
     len = sizeof(addr);
-    if ((size = recvfrom(self->udpsock, buf, MAX_UDPLEN, 0,
+    if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
@@ -1164,9 +1171,9 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
   pthread_t pid;
   int subsock;
 
-  listen(pcthrd->tcpsock, 5);
+  listen(pcthrd->tcpSock, 5);
   while (pcthrd->server) {
-    if ((subsock = accept(pcthrd->tcpsock, NULL, NULL)) == -1) continue;
+    if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
     pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
                    GINT_TO_POINTER(subsock));
     pthread_detach(pid);

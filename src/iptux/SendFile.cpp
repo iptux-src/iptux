@@ -144,7 +144,7 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist) {
   }
 
   /* 发送文件信息 */
-  cmd.SendFileInfo(g_cthrd->UdpSockQuote(), pal, opttype, buf);
+  cmd.SendFileInfo(g_cthrd->getUdpSock(), pal, opttype, buf);
 }
 
 /**
@@ -191,7 +191,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
       }
       filelist = g_slist_next(filelist);
     }
-    cmd.SendFileInfo(g_cthrd->UdpSockQuote(), (PalInfo *)pallist->data, opttype,
+    cmd.SendFileInfo(g_cthrd->getUdpSock(), (PalInfo *)pallist->data, opttype,
                      buf);
     pallist = g_slist_next(pallist);
   }

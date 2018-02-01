@@ -28,28 +28,33 @@ namespace iptux {
  * 类构造函数.
  * @param grp 群组信息
  */
-DialogGroup::DialogGroup(GroupInfo *grp, IptuxConfig &config,
+DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
                          ProgramData &progdt)
-    : DialogBase(grp, progdt), config(config) {
+    : DialogBase(grp, progdt),
+      mainWindow(mainWindow),
+      config(mainWindow->getConfig()) {
   InitSublayerSpecify();
 }
 
 /**
  * 类析构函数.
  */
-DialogGroup::~DialogGroup() { SaveUILayout(); }
+DialogGroup::~DialogGroup() {
+  mainWindow->clearActiveWindow(this);
+  SaveUILayout();
+}
 
 /**
  * 群组对话框入口.
  * @param grpinf 群组信息
  */
-void DialogGroup::GroupDialogEntry(IptuxConfig &config, GroupInfo *grpinf,
+void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
                                    ProgramData &progdt) {
   DialogGroup *dlggrp;
   GtkWidget *window, *widget;
 
-  dlggrp = new DialogGroup(grpinf, config, progdt);
-  window = dlggrp->CreateMainWindow();
+  dlggrp = new DialogGroup(mainWindow, grpinf, progdt);
+  window = GTK_WIDGET(dlggrp->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -185,25 +190,15 @@ void DialogGroup::SaveUILayout() {
                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
   config.SetInt("group_window_height",
                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
-  config.SetInt("group_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(
-                                               &dtset, "main-paned-divide")));
-  config.SetInt("group_historyinput_paned_divide",
-                GPOINTER_TO_INT(
-                    g_datalist_get_data(&dtset, "historyinput-paned-divide")));
-  config.SetInt("group_memberenclosure_paned_divide",
-                GPOINTER_TO_INT(g_datalist_get_data(
-                    &dtset, "memberenclosure-paned-divide")));
 }
 
 /**
  * 创建主窗口.
  * @return 窗口
  */
-GtkWidget *DialogGroup::CreateMainWindow() {
+GtkWindow *DialogGroup::CreateMainWindow() {
   char buf[MAX_BUFLEN];
-  GtkWidget *window;
-
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
   gtk_window_set_title(GTK_WINDOW(window), buf);
   gtk_window_set_default_size(GTK_WINDOW(window),
@@ -212,10 +207,11 @@ GtkWidget *DialogGroup::CreateMainWindow() {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
   g_datalist_set_data(&widset, "window-widget", window);
-  widget_enable_dnd_uri(window);
-  grpinf->dialog = window;
+  widget_enable_dnd_uri(GTK_WIDGET(window));
+  grpinf->dialog = GTK_WIDGET(window);
 
   MainWindowSignalSetup(window);
+  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
 
   return window;
 }
@@ -226,47 +222,35 @@ GtkWidget *DialogGroup::CreateMainWindow() {
  */
 GtkWidget *DialogGroup::CreateAllArea() {
   GtkWidget *box;
-  GtkWidget *hpaned, *vpaned;
-  gint position;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   /* 加入菜单条 */
   gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
 
   /* 加入主区域 */
-  hpaned = gtk_hpaned_new();
-  g_object_set_data(G_OBJECT(hpaned), "position-name",
-                    (gpointer) "main-paned-divide");
-  position = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "main-paned-divide"));
-  gtk_paned_set_position(GTK_PANED(hpaned), position);
-  gtk_box_pack_start(GTK_BOX(box), hpaned, TRUE, TRUE, 0);
-  g_signal_connect(hpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
-                   &dtset);
-  /*/* 加入组成员&附件区域 */
-  vpaned = gtk_vpaned_new();
-  g_object_set_data(G_OBJECT(vpaned), "position-name",
-                    (gpointer) "memberenclosure-paned-divide");
-  position = GPOINTER_TO_INT(
-      g_datalist_get_data(&dtset, "memberenclosure-paned-divide"));
-  gtk_paned_set_position(GTK_PANED(vpaned), position);
-  gtk_paned_pack1(GTK_PANED(hpaned), vpaned, FALSE, TRUE);
-  g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
-                   &dtset);
-  gtk_paned_pack1(GTK_PANED(vpaned), CreateMemberArea(), TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpaned), CreateFileSendArea(), FALSE, TRUE);
-  /*/* 加入聊天历史记录&输入区域 */
-  vpaned = gtk_vpaned_new();
-  g_object_set_data(G_OBJECT(vpaned), "position-name",
-                    (gpointer) "historyinput-paned-divide");
-  position =
-      GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide"));
-  gtk_paned_set_position(GTK_PANED(vpaned), position);
-  gtk_paned_pack2(GTK_PANED(hpaned), vpaned, TRUE, TRUE);
-  g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
-                   &dtset);
-  gtk_paned_pack1(GTK_PANED(vpaned), CreateHistoryArea(), TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpaned), DialogBase::CreateInputArea(), FALSE,
+  mainPaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+  gtk_paned_set_position(GTK_PANED(mainPaned), config.GetInt("group_main_paned_divide", 200));
+  gtk_box_pack_start(GTK_BOX(box), mainPaned, TRUE, TRUE, 0);
+  g_signal_connect_swapped(mainPaned, "notify::position", G_CALLBACK(onUIChanged), this);
+
+  /* 加入组成员&附件区域 */
+  memberEnclosurePaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_paned_set_position(GTK_PANED(memberEnclosurePaned), config.GetInt("group_memberenclosure_paned_divide", 100));
+  gtk_paned_pack1(GTK_PANED(mainPaned), memberEnclosurePaned, FALSE, TRUE);
+  g_signal_connect_swapped(memberEnclosurePaned, "notify::position", G_CALLBACK(onUIChanged), this);
+
+  gtk_paned_pack1(GTK_PANED(memberEnclosurePaned), CreateMemberArea(), TRUE, TRUE);
+  gtk_paned_pack2(GTK_PANED(memberEnclosurePaned), CreateFileSendArea(), FALSE, TRUE);
+
+  /* 加入聊天历史记录&输入区域 */
+  historyInputPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_paned_set_position(GTK_PANED(historyInputPaned), config.GetInt("group_historyinput_paned_divide", 100));
+  gtk_paned_pack2(GTK_PANED(mainPaned), historyInputPaned, TRUE, TRUE);
+  g_signal_connect_swapped(historyInputPaned, "notify::position", G_CALLBACK(onUIChanged), this);
+
+  gtk_paned_pack1(GTK_PANED(historyInputPaned), CreateHistoryArea(), TRUE, TRUE);
+  gtk_paned_pack2(GTK_PANED(historyInputPaned), DialogBase::CreateInputArea(), FALSE,
                   TRUE);
 
   return box;
@@ -282,7 +266,6 @@ GtkWidget *DialogGroup::CreateMenuBar() {
   menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateHelpMenu());
 
   return menubar;
 }
@@ -420,13 +403,6 @@ GtkWidget *DialogGroup::CreateToolMenu() {
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
 
-  /* 清空历史缓冲区 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Clear Buffer"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ClearHistoryBuffer),
-                           this);
-
   /* 群组成员排序 */
   NO_OPERATION_C
   menuitem = gtk_menu_item_new_with_label(_("Sort"));
@@ -545,9 +521,9 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
             opttype = IPTUX_REGULAROPT;
             break;
         }
-        cmd.SendUnitMsg(g_cthrd->UdpSockQuote(), pal, opttype, msg);
+        cmd.SendUnitMsg(g_cthrd->getUdpSock(), pal, opttype, msg);
       } else
-        cmd.SendGroupMsg(g_cthrd->UdpSockQuote(), pal, msg);
+        cmd.SendGroupMsg(g_cthrd->getUdpSock(), pal, msg);
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 }
@@ -693,7 +669,7 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
     if ((grpinf->dialog))
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     else
-      DialogPeer::PeerDialogEntry(self->config, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(g_mwin, grpinf, self->progdt);
   }
 }
 
@@ -717,7 +693,7 @@ bool DialogGroup::SendTextMsg() {
   FeedbackMsg(msg);
   BroadcastTextMsg(msg);
 
-  msgpara.stype = MESSAGE_SOURCE_TYPE_SELF;
+  msgpara.stype = MessageSourceType::SELF;
   msgpara.pal = NULL;
   g_lgsys->CommunicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);
@@ -757,6 +733,20 @@ GSList *DialogGroup::GetSelPal() {
     if (active) plist = g_slist_append(plist, pal);
   } while (gtk_tree_model_iter_next(model, &iter));
   return plist;
+}
+
+void DialogGroup::onUIChanged(DialogGroup &self) {
+  self.config.SetInt("group_main_paned_divide", gtk_paned_get_position(GTK_PANED(self.mainPaned)));
+  self.config.SetInt("group_memberenclosure_paned_divide", gtk_paned_get_position(GTK_PANED(self.memberEnclosurePaned)));
+  self.config.SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
+  self.config.Save();
+}
+
+void DialogGroup::onActive(DialogGroup& self) {
+  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
+    return;
+  }
+  self.mainWindow->setActiveWindow(ActiveWindowType::GROUP, &self);
 }
 
 }  // namespace iptux

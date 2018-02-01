@@ -86,6 +86,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
 
   window = mwin.ObtainWindow();
   menu = gtk_menu_new();
+  gtk_menu_attach_to_widget(GTK_MENU(menu), window, nullptr);
 
   /* 显示&隐藏面板 */
   if (g_object_get_data(G_OBJECT(statusicon), "show"))
@@ -106,8 +107,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ShowTransWindow),
-                           this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.tools.transmission");
 
   /* 首选项 */
   NO_OPERATION_C
@@ -115,8 +115,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DataSettings::ResetDataEntry), window);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.preferences");
 
   /* 共享文件管理 */
   NO_OPERATION_C
@@ -124,11 +123,11 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_icon_name("menu-share", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(ShareFile::ShareEntry), window);
 
   menuitem = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.tools.shared_management");
+
 
   /* 探测好友 */
   NO_OPERATION_C
@@ -136,8 +135,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_icon_name("menu-detect", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(DetectPal::DetectEntry), window);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "win.detect");
 
   /* 程序退出 */
   NO_OPERATION_C
@@ -145,16 +143,9 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(iptux_gui_quit), NULL);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.quit");
 
   return menu;
-}
-
-/**
- * 显示文件传输窗口.
- */
-void StatusIcon::ShowTransWindow(StatusIcon *self) {
-  self->mwin.OpenTransWindow();
 }
 
 /**
@@ -172,13 +163,13 @@ void StatusIcon::StatusIconActivate(StatusIcon *self) {
   if (grpinf) {
     switch (grpinf->type) {
       case GROUP_BELONG_TYPE_REGULAR:
-        DialogPeer::PeerDialogEntry(self->config, grpinf,
+        DialogPeer::PeerDialogEntry(g_mwin, grpinf,
                                     self->getProgramData());
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
       case GROUP_BELONG_TYPE_BROADCAST:
-        DialogGroup::GroupDialogEntry(self->config, grpinf,
+        DialogGroup::GroupDialogEntry(g_mwin, grpinf,
                                       self->getProgramData());
         break;
       default:
@@ -223,7 +214,7 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x,
   if ((len = g_cthrd->GetMsglineItems())) {
     msgstr = g_strdup_printf(_("To be read: %u messages"), len);
   } else {
-    msgstr = get_sys_host_addr_string(g_cthrd->UdpSockQuote());
+    msgstr = get_sys_host_addr_string(g_cthrd->getUdpSock());
     msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
   }
   g_cthrd->Unlock();

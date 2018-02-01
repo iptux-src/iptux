@@ -577,4 +577,12 @@ bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
   return true;
 }
 
+void add_accelerator(GtkApplication* app, const char* action, const char* accel) {
+  const char* accels[] = {
+      accel,
+      NULL
+  };
+  gtk_application_set_accels_for_action(app, action, accels);
+}
+
 }  // namespace iptux

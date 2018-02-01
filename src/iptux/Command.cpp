@@ -73,7 +73,6 @@ void Command::DialUp(int sock) {
   struct sockaddr_in addr;
   in_addr_t startip, endip, ipv4;
   NetSegment *pns;
-  GSList *list, *tlist;
 
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 g_progdt->nickname.c_str());
@@ -85,14 +84,13 @@ void Command::DialUp(int sock) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   //与某些代码片段的获取网段描述相冲突，必须复制出来使用
   g_progdt->Lock();
-  list = g_progdt->CopyNetSegment();
+  vector<NetSegment> list = g_progdt->CopyNetSegment();
   g_progdt->Unlock();
-  tlist = list;
-  while (tlist) {
-    pns = (NetSegment *)tlist->data;
-    inet_pton(AF_INET, pns->startip, &startip);
+  for(int i = 0; i < list.size(); ++i) {
+    pns = &list[i];
+    inet_pton(AF_INET, pns->startip.c_str(), &startip);
     startip = ntohl(startip);
-    inet_pton(AF_INET, pns->endip, &endip);
+    inet_pton(AF_INET, pns->endip.c_str(), &endip);
     endip = ntohl(endip);
     ipv4_order(&startip, &endip);
     ipv4 = startip;
@@ -102,11 +100,7 @@ void Command::DialUp(int sock) {
       g_usleep(999);
       ipv4++;
     }
-    tlist = g_slist_next(tlist);
   }
-  for (tlist = list; tlist; tlist = g_slist_next(tlist))
-    delete (NetSegment *)tlist->data;
-  g_slist_free(list);
 }
 
 /**
@@ -478,17 +472,15 @@ void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype,
 void Command::FeedbackError(PalInfo *pal, GroupBelongType btype,
                             const char *error) {
   MsgPara para;
-  ChipData *chip;
+  ChipData chip;
 
   /* 构建消息封装包 */
   para.pal = pal;
-  para.stype = MESSAGE_SOURCE_TYPE_ERROR;
+  para.stype = MessageSourceType::ERROR;
   para.btype = btype;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(error);
-  para.dtlist = g_slist_append(NULL, chip);
-
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = error;
+  para.dtlist.push_back(move(chip));
   /* 交给某人处理吧 */
   g_cthrd->InsertMessage(&para);
 }

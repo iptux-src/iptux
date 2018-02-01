@@ -15,8 +15,6 @@
 
 #include <sys/stat.h>
 
-#include <gdk/gdkkeysyms.h>
-
 #include "iptux/AnalogFS.h"
 #include "iptux/Command.h"
 #include "iptux/HelpDialog.h"
@@ -231,7 +229,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
 /*
  * 主窗口的信号连接
  */
-void DialogBase::MainWindowSignalSetup(GtkWidget *window) {
+void DialogBase::MainWindowSignalSetup(GtkWindow *window) {
   g_object_set_data(G_OBJECT(window), "session-class", this);
   g_signal_connect_swapped(window, "destroy", G_CALLBACK(DialogDestory), this);
   g_signal_connect_swapped(window, "drag-data-received",
@@ -252,7 +250,7 @@ GtkWidget *DialogBase::CreateInputArea() {
 
   frame = gtk_frame_new(NULL);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
   /* 接受输入 */
@@ -272,7 +270,7 @@ GtkWidget *DialogBase::CreateInputArea() {
 
   /* 功能按钮 */
   window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  hbb = gtk_hbutton_box_new();
+  hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
   gtk_box_pack_start(GTK_BOX(box), hbb, FALSE, FALSE, 0);
   button = gtk_button_new_with_label(_("Close"));
@@ -379,32 +377,12 @@ GtkWidget *DialogBase::CreateFileMenu() {
 }
 
 /**
- * 创建帮助菜单.
- * @return 菜单
- */
-GtkWidget *DialogBase::CreateHelpMenu() {
-  GtkWidget *menushell;
-  GtkWidget *menu, *menuitem;
-
-  menushell = gtk_menu_item_new_with_mnemonic(_("_Help"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect(menuitem, "activate", G_CALLBACK(HelpDialog::AboutEntry),
-                   NULL);
-
-  return menushell;
-}
-
-/**
  * 选择附件.
  * @param fileattr 文件类型
  * @return 文件链表
  */
 GSList *DialogBase::PickEnclosure(uint32_t fileattr) {
-  GtkWidget *dialog, *parent;
+  GtkWidget *dialog;
   GtkFileChooserAction action;
   const char *title;
   GSList *list;
@@ -416,10 +394,8 @@ GSList *DialogBase::PickEnclosure(uint32_t fileattr) {
     action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
     title = _("Choose enclosure folders");
   }
-  parent = GTK_WIDGET(g_datalist_get_data(&widset, "dialog-widget"));
-
   dialog = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(parent), action, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+      title, GTK_WINDOW(window), action, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);
@@ -477,16 +453,15 @@ bool DialogBase::SendEnclosureMsg() {
  */
 void DialogBase::FeedbackMsg(const gchar *msg) {
   MsgPara para;
-  ChipData *chip;
+  ChipData chip;
 
   /* 构建消息封装包 */
   para.pal = NULL;
-  para.stype = MESSAGE_SOURCE_TYPE_SELF;
+  para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(msg);
-  para.dtlist = g_slist_append(NULL, chip);
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = msg;
+  para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
   g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
@@ -516,14 +491,6 @@ void DialogBase::AttachFolder(DialogBase *dlgpr) {
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
-}
-
-/**
- * 清空聊天历史记录缓冲区.
- * @param dlgpr 对话框类
- */
-void DialogBase::ClearHistoryBuffer(DialogBase *dlgpr) {
-  dlgpr->ClearHistoryTextView();
 }
 
 /**
@@ -871,6 +838,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   }
   if (progress == 1) {
     g_source_remove(dlggrp->timersend);
+    dlggrp->timersend = 0;
     gtk_list_store_clear(GTK_LIST_STORE(model));
     snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
   }

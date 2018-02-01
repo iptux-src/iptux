@@ -178,7 +178,7 @@ void UdpData::SomeoneEntry() {
   gdk_threads_leave();
 
   /* 通知好友本大爷在线 */
-  cmd.SendAnsentry(g_cthrd->UdpSockQuote(), pal);
+  cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
   if (FLAG_ISSET(pal->flags, 0)) {
     pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
     pthread_detach(pid);
@@ -237,8 +237,9 @@ void UdpData::SomeoneAnsentry() {
   if (FLAG_ISSET(pal->flags, 0)) {
     pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
     pthread_detach(pid);
-  } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0)
-    cmd.SendAnsentry(g_cthrd->UdpSockQuote(), pal);
+  } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
+    cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
+  }
 }
 
 /**
@@ -312,7 +313,7 @@ void UdpData::SomeoneSendmsg() {
   commandno = iptux_get_dec_number(buf, ':', 4);
   packetno = iptux_get_dec_number(buf, ':', 1);
   if (commandno & IPMSG_SENDCHECKOPT)
-    cmd.SendReply(g_cthrd->UdpSockQuote(), pal, packetno);
+    cmd.SendReply(g_cthrd->getUdpSock(), pal, packetno);
   if (packetno <= pal->packetn) return;
   pal->packetn = packetno;
 
@@ -357,7 +358,7 @@ void UdpData::SomeoneSendmsg() {
     if (!(grpinf->dialog)) {
       //                     switch (grpinf->type) {
       //                     case GROUP_BELONG_TYPE_REGULAR:
-      DialogPeer::PeerDialogEntry(config, grpinf, *g_progdt);
+      DialogPeer::PeerDialogEntry(g_mwin, grpinf, *g_progdt);
       //                          break;
       //                     case GROUP_BELONG_TYPE_SEGMENT:
       //                     case GROUP_BELONG_TYPE_GROUP:
@@ -406,7 +407,7 @@ void UdpData::SomeoneAskShared() {
     pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
     pthread_detach(pid);
   } else if (!(iptux_get_dec_number(buf, ':', 4) & IPTUX_PASSWDOPT)) {
-    cmd.SendFileInfo(g_cthrd->UdpSockQuote(), pal,
+    cmd.SendFileInfo(g_cthrd->getUdpSock(), pal,
                      IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
   } else if ((passwd = ipmsg_get_attach(buf, ':', 5))) {
     if (strcmp(passwd, limit) == 0) {
@@ -626,16 +627,15 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
 void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype,
                             const char *msg) {
   MsgPara para;
-  ChipData *chip;
 
   /* 构建消息封装包 */
   para.pal = pal;
-  para.stype = MESSAGE_SOURCE_TYPE_PAL;
+  para.stype = MessageSourceType::PAL;
   para.btype = btype;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(msg);
-  para.dtlist = g_slist_append(NULL, chip);
+  ChipData chip;
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = msg;
+  para.dtlist.push_back(move(chip));
 
   /* 交给某人处理吧 */
   g_cthrd->InsertMessage(&para);
@@ -826,7 +826,7 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
   gdk_threads_leave();
   if (passwd && *passwd != '\0') {
     epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
-    cmd.SendAskShared(g_cthrd->UdpSockQuote(), pal, IPTUX_PASSWDOPT, epasswd);
+    cmd.SendAskShared(g_cthrd->getUdpSock(), pal, IPTUX_PASSWDOPT, epasswd);
     g_free(epasswd);
   }
   g_free(passwd);

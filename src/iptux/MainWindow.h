@@ -21,6 +21,13 @@ namespace iptux {
 
 class StatusIcon;
 
+enum class ActiveWindowType {
+  MAIN,
+  PEER,
+  GROUP,
+  OTHERS
+};
+
 /**
  * @note 鉴于本类成员函数所访问的(CoreThread)类成员链表都具有只增不减的特性，
  * 所以无须加锁访问，若有例外，请于注释中说明，否则应当bug处理.\n
@@ -28,8 +35,10 @@ class StatusIcon;
  */
 class MainWindow {
  public:
-  MainWindow(IptuxConfig &config, ProgramData &progdt);
+  MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &progdt);
   ~MainWindow();
+
+  GtkWidget* getWindow();
 
   void CreateWindow();
   void AlterWindowMode();
@@ -41,6 +50,8 @@ class MainWindow {
   void DelItemFromPaltree(in_addr_t ipv4);
   void ClearAllItemFromPaltree();
   void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
+  void setActiveWindow(ActiveWindowType t, void* activeWindow);
+  void clearActiveWindow(void* activeWindow);
 
   void OpenTransWindow();
   void UpdateItemToTransTree(GData **para);
@@ -53,42 +64,40 @@ class MainWindow {
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
 
  private:
+  GtkApplication* app;
+  GtkWidget* window;
+  GtkWidget* transWindow;
+
   IptuxConfig &config;
   ProgramData &progdt;
   StatusIcon *statusIcon;
 
   GData *widset;  //窗体集
   GData *mdlset;  //数据model集
-  // GData *dtset;           //通用数据集
   GList *tmdllist;       // model链表，用于构建model循环结构
   GtkAccelGroup *accel;  //快捷键集组
   guint timerid;         // UI更新定时器ID
   WindowConfig windowConfig;
+
+  ActiveWindowType activeWindowType;
+  void* activeWindow;
 
  private:
   void InitSublayer();
   void ClearSublayer();
 
   GtkWidget *CreateMainWindow();
-  GtkWidget *CreateTransWindow();
   GtkWidget *CreateAllArea();
-  GtkWidget *CreateTransArea();
 
-  GtkWidget *CreateMenuBar();
   GtkWidget *CreateToolBar();
   GtkWidget *CreatePaltreeArea();
   GtkWidget *CreatePallistArea();
-
-  GtkWidget *CreateFileMenu();
-  GtkWidget *CreateToolMenu();
-  GtkWidget *CreateHelpMenu();
 
   GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();
   GtkTreeModel *CreateTransModel();
   GtkWidget *CreatePaltreeTree(GtkTreeModel *model);
   GtkWidget *CreatePallistTree(GtkTreeModel *model);
-  GtkWidget *CreateTransTree(GtkTreeModel *model);
 
   bool GroupGetPrevPaltreeItem(GtkTreeModel *model, GtkTreeIter *iter,
                                GroupInfo *grpinf);
@@ -102,27 +111,17 @@ class MainWindow {
                                 GroupInfo *grpinf);
   void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                bool blinking);
-  static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-  //回调处理部分
+
  private:
+  //回调处理部分
   static gboolean UpdateUI(MainWindow *mwin);
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);
 
   static gboolean UpdateTransUI(GtkWidget *treeview);
-  static gboolean TransPopupMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void ShowTransWindow(GData **widset);
-  static void HideTransWindow(GData **widset);
-  static void ClearTransWindow(GData **widset);
-  static void TerminateTransTask(GtkTreeModel *model);
-  static void TerminateAllTransTask(GtkTreeModel *model);
-  static void ClearTransTask(GtkTreeModel *model);
-  static void OpenContainingFolder(GtkTreeModel *model);
-  static void OpenThisFile(GtkTreeModel *model);
 
-  static void UpdatePalTree(MainWindow *mwin);
   static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
   static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
@@ -146,10 +145,7 @@ class MainWindow {
                                        GtkTreeIter *b);
   static gint PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b);
-  static void SetPaltreeSortFunc(GtkWidget *menuitem, GData **mdlset);
-  static void SetPaltreeSortType(GtkWidget *menuitem, GData **mdlset);
 
-  static void ShowPallistArea(GData **widset);
   static void HidePallistArea(GData **widset);
   static gboolean ClearPallistEntry(GtkWidget *entry, GdkEventKey *event);
   static void PallistEntryChanged(GtkWidget *entry, GData **widset);
@@ -169,6 +165,15 @@ class MainWindow {
   static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                  MainWindow *self);
   static gboolean onDeleteEvent(MainWindow *self);
+  static void onRefresh (void *, void *, MainWindow& self);
+  static void onDetect (void *, void *, MainWindow& self);
+  static void onFind (void *, void *, MainWindow& self);
+  static void onAbout (void *, void *, MainWindow& self);
+  static void onClearChatHistory (void *, void *, MainWindow& self);
+  static void onInsertPicture (void *, void *, MainWindow& self);
+  static void onSortType (void *, GVariant* value, MainWindow& self);
+  static void onSortBy (void *, GVariant* value, MainWindow& self);
+  static void onActive(MainWindow& self);
 };
 
 }  // namespace iptux

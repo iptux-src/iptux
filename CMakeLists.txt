@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.1)
 project (iptux
-	VERSION 0.7.4)
+	VERSION 0.8.0)
 
 set (CMAKE_CXX_STANDARD 11)
 if (APPLE AND EXISTS /usr/local/opt/gettext)
@@ -13,9 +13,9 @@ include(FindPkgConfig)
 include(FindGettext)
 include(FindIntl)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE")
 
 if(NOT Intl_FOUND)
 	message(FATAL_ERROR "libintl not found")

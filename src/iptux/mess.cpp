@@ -68,24 +68,17 @@ FileInfo::~FileInfo() { g_free(filepath); }
 
 MsgPara::MsgPara()
     : pal(NULL),
-      stype(MESSAGE_SOURCE_TYPE_PAL),
-      btype(GROUP_BELONG_TYPE_REGULAR),
-      dtlist(NULL) {}
+      stype(MessageSourceType::PAL),
+      btype(GROUP_BELONG_TYPE_REGULAR) {}
+
 MsgPara::~MsgPara() {
-  for (GSList* tlist = dtlist; tlist; tlist = g_slist_next(tlist))
-    delete (ChipData*)tlist->data;
-  g_slist_free(dtlist);
 }
 
-ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data(NULL) {}
-ChipData::~ChipData() { g_free(data); }
+ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
+ChipData::~ChipData() {}
 
-NetSegment::NetSegment() : startip(NULL), endip(NULL), description(NULL) {}
-NetSegment::~NetSegment() {
-  g_free(startip);
-  g_free(endip);
-  g_free(description);
-}
+NetSegment::NetSegment() {}
+NetSegment::~NetSegment() {}
 
 Json::Value NetSegment::ToJsonValue() const {
   Json::Value value;
@@ -95,12 +88,11 @@ Json::Value NetSegment::ToJsonValue() const {
   return value;
 }
 
-// static
-NetSegment* NetSegment::NewFromJsonValue(const Json::Value& value) {
-  NetSegment* res = new NetSegment();
-  res->startip = g_strdup(value["startip"].asString().c_str());
-  res->endip = g_strdup(value["startip"].asString().c_str());
-  res->description = g_strdup(value["startip"].asString().c_str());
+NetSegment NetSegment::fromJsonValue(Json::Value &value) {
+  NetSegment res;
+  res.startip = value["startip"].asString();
+  res.endip = value["startip"].asString();
+  res.description = value["startip"].asString();
   return res;
 }
 

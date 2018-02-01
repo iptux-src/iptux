@@ -25,11 +25,11 @@ class DialogBase : public SessionAbstract {
   DialogBase(GroupInfo *grp, ProgramData &progdt);
   virtual ~DialogBase();
 
+  void ClearHistoryTextView();
  protected:
   void InitSublayerGeneral();
   void ClearSublayerGeneral();
 
-  void ClearHistoryTextView();
   void ScrollHistoryTextview();
   virtual void OnNewMessageComing();
   void NotifyUser();
@@ -39,12 +39,11 @@ class DialogBase : public SessionAbstract {
   GtkWidget *CreateInputArea();
   virtual GtkWidget *CreateHistoryArea();
   virtual GtkWidget *CreateFileMenu();
-  virtual GtkWidget *CreateHelpMenu();
   virtual GtkWidget *CreateFileSendArea();
   virtual GtkWidget *CreateFileSendTree(GtkTreeModel *model);
   virtual GSList *GetSelPal() { return NULL; };
 
-  void MainWindowSignalSetup(GtkWidget *window);
+  void MainWindowSignalSetup(GtkWindow *window);
   GtkTreeModel *CreateFileSendModel();
   GSList *PickEnclosure(uint32_t fileattr);
 
@@ -63,7 +62,6 @@ class DialogBase : public SessionAbstract {
   static void AttachRegular(DialogBase *dlgpr);
   static void AttachFolder(DialogBase *dlgpr);
   static void RemoveSelectedFromTree(GtkWidget *widget);
-  static void ClearHistoryBuffer(DialogBase *dlgpr);
   static void SendMessage(DialogBase *dlggrp);
   static gboolean WindowConfigureEvent(GtkWidget *window,
                                        GdkEventConfigure *event, GData **dtset);
@@ -75,6 +73,7 @@ class DialogBase : public SessionAbstract {
   static void OpenTransDlg(DialogBase *dlgpr);
 
  protected:
+  GtkWindow* window;
   ProgramData &progdt;
   GData *widset;            //窗体集
   GData *mdlset;            //数据model集

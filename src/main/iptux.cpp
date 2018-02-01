@@ -22,28 +22,13 @@
 #include <glib.h>
 #include <libintl.h>
 
-#include "iptux/CoreThread.h"
-#include "iptux/LogSystem.h"
-#include "iptux/MainWindow.h"
-#include "iptux/ProgramData.h"
+#include "iptux/Application.h"
 #include "iptux/SoundSystem.h"
-#include "iptux/StatusIcon.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
-#include "iptux/ipmsg.h"
 #include "iptux/output.h"
-#include "iptux/support.h"
 
 using namespace std;
 using namespace iptux;
-
-namespace iptux {
-ProgramData* g_progdt;
-CoreThread* g_cthrd;
-MainWindow* g_mwin;
-SoundSystem* g_sndsys;
-LogSystem* g_lgsys;
-}  // namespace iptux
 
 string getConfigPath() {
   const char* res1 =
@@ -135,7 +120,7 @@ static void dealLog(const IptuxConfig& config) {
   }
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -146,7 +131,6 @@ int main(int argc, char* argv[]) {
 
   context = g_option_context_new(_("- A software for sharing in LAN"));
   g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
-  g_option_context_add_group(context, gtk_get_option_group(TRUE));
   if (!g_option_context_parse(context, &argc, &argv, &error)) {
     g_print(_("option parsing failed: %s\n"), error->message);
     exit(1);
@@ -158,31 +142,7 @@ int main(int argc, char* argv[]) {
   string configPath = configFilename ? configFilename : getConfigPath();
   IptuxConfig config(configPath);
   dealLog(config);
-  ProgramData progdt(config);
-  MainWindow mwin(config, progdt);
-  CoreThread cthrd(config);
-  StatusIcon sicon(config, mwin);
-  LogSystem lgsys;
-  SoundSystem sndsys;
 
-  g_progdt = &progdt;
-  g_cthrd = &cthrd;
-  g_mwin = &mwin;
-  g_sndsys = &sndsys;
-  g_lgsys = &lgsys;
-
-  mwin.SetStatusIcon(&sicon);
-
-  gdk_threads_init();
-  gdk_threads_enter();
-  gtk_init(&argc, &argv);
-
-  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
-  iptux_init(port);
-  sicon.CreateStatusIcon();
-  mwin.CreateWindow();
-  cthrd.CoreThreadEntry();
-  gtk_main();
-  gdk_threads_leave();
-  return 0;
+  Application app(config);
+  return app.run(argc, argv);
 }
