@@ -387,10 +387,11 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
     snprintf(buf, MAX_BUFLEN, _("Address: %s\n"), ipstr);
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
-  if (!FLAG_ISSET(pal->flags, 0))
+  if (!pal->isCompatible()) {
     snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
-  else
+  } else {
     snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
+  }
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);

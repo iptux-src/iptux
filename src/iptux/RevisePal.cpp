@@ -201,8 +201,7 @@ void RevisePal::SetAllValue() {
   gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
   /* 预置兼容性 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                               FLAG_ISSET(pal->flags, 0));
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), pal->isCompatible());
 }
 
 /**
@@ -271,13 +270,10 @@ void RevisePal::ApplyReviseData() {
 
   /* 获取兼容性 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-    FLAG_SET(pal->flags, 0);
-  else
-    FLAG_CLR(pal->flags, 0);
+  pal->setCompatible(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 
   /* 设置好友信息已被手工修改 */
-  FLAG_SET(pal->flags, 2);
+  pal->setChanged(true);
 
   /* 更新好友信息 */
   g_cthrd->Lock();
