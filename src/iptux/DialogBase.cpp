@@ -147,7 +147,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   GtkWidget *widget, *pbar;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
+  const char *iconname;
   struct stat st;
   const GSList *tlist, *pallist;
   AnalogFS afs;
@@ -155,10 +155,6 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   char *filename, *filepath, *progresstip;
   FileInfo *file;
   uint32_t filenum = 0;
-
-  /* 获取文件图标 */
-  rpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_FILE);
-  dpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_DIRECTORY);
 
   /* 插入附件树 */
   widget =
@@ -172,12 +168,13 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       continue;
     }
     /* 获取文件类型图标 */
-    if (S_ISREG(st.st_mode))
-      pixbuf = rpixbuf;
-    else if (S_ISDIR(st.st_mode))
-      pixbuf = dpixbuf;
-    else
-      pixbuf = NULL;
+    if (S_ISREG(st.st_mode)) {
+      iconname = "text-x-generic-symbolic";
+    } else if (S_ISDIR(st.st_mode)) {
+      iconname = "folder-symbolic";
+    } else {
+      iconname = NULL;
+    }
     filesize = afs.ftwsize((char *)tlist->data);
     filename = ipmsg_get_filename_me((char *)tlist->data, &filepath);
     pallist = GetSelPal();
@@ -198,9 +195,14 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       g_cthrd->Unlock();
       /* 添加数据 */
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, filename,
-                         2, numeric_to_size(filesize), 3, tlist->data, 4, file,
-                         5, file->fileown->name, -1);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+                         0, iconname,
+                         1, filename,
+                         2, numeric_to_size(filesize),
+                         3, tlist->data,
+                         4, file,
+                         5, file->fileown->name,
+                         -1);
       pallist = g_slist_next(pallist);
     }
     filenum++;
@@ -214,9 +216,6 @@ void DialogBase::AttachEnclosure(const GSList *list) {
     gtk_tree_model_get(model, &iter, 4, &file, -1);
     totalsendsize += file->filesize;
   } while (gtk_tree_model_iter_next(model, &iter));
-  /* 释放文件图标 */
-  if (rpixbuf) g_object_unref(rpixbuf);
-  if (dpixbuf) g_object_unref(dpixbuf);
 
   pbar =
       GTK_WIDGET(g_datalist_get_data(&widset, "file-send-progress-bar-widget"));
@@ -782,7 +781,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
 GtkTreeModel *DialogBase::CreateFileSendModel() {
   GtkListStore *model;
 
-  model = gtk_list_store_new(6, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+  model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
