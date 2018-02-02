@@ -831,7 +831,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
 
   cell = gtk_cell_renderer_pixbuf_new();
   column =
-      gtk_tree_view_column_new_with_attributes("", cell, "pixbuf", 0, NULL);
+      gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -888,8 +888,7 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
 
   cell = gtk_cell_renderer_pixbuf_new();
-  column =
-      gtk_tree_view_column_new_with_attributes("", cell, "pixbuf", 0, NULL);
+  column = gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -1018,8 +1017,10 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       }
     }
     if (progress == 1.0) {
-      g_source_remove(dlgpr->timerrcv);
-      dlgpr->timerrcv = 0;
+      if(dlgpr->timerrcv > 0) {
+        g_source_remove(dlgpr->timerrcv);
+        dlgpr->timerrcv = 0;
+      }
       snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
     }
     pbar = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset),
