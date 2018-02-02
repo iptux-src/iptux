@@ -167,7 +167,7 @@ GtkWidget *DataSettings::CreatePersonal() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 昵称 */
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
@@ -254,7 +254,7 @@ GtkWidget *DataSettings::CreateSystem() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 候选编码 */
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
@@ -354,7 +354,7 @@ GtkWidget *DataSettings::CreateSound() {
   GtkTreeSelection *selection;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 声音支持 */
   NO_OPERATION_C
   chkbutton = gtk_check_button_new_with_label(_("Activate the sound support"));
@@ -377,7 +377,7 @@ GtkWidget *DataSettings::CreateSound() {
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 3);
   g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), frame);
-  vbox = gtk_vbox_new(FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), vbox);
   /*/* 声音事件树 */
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -424,7 +424,7 @@ GtkWidget *DataSettings::CreateNetwork() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 接受输入 */
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
@@ -481,7 +481,7 @@ GtkWidget *DataSettings::CreateNetwork() {
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "network-treeview-widget", widget);
   /*/* 实用性按钮 */
-  vbox = gtk_vbox_new(FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
   button = gtk_button_new_with_label(_("Import"));
   gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);

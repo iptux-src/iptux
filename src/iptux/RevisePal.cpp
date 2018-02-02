@@ -115,7 +115,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   /* 好友昵称 */
   hbox = gtk_hbox_new(FALSE, 0);
