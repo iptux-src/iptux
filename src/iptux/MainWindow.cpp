@@ -1262,10 +1262,11 @@ void MainWindow::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
     snprintf(buf, MAX_BUFLEN, _("Address: %s\n"), ipstr);
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
-  if (!FLAG_ISSET(pal->flags, 0))
+  if (!pal->isCompatible()) {
     snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
-  else
+  } else {
     snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
+  }
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);
@@ -1294,7 +1295,9 @@ gboolean MainWindow::UpdateUI(MainWindow *mwin) {
   sum = 0;
   tlist = g_cthrd->GetPalList();
   while (tlist) {
-    if (FLAG_ISSET(((PalInfo *)tlist->data)->flags, 1)) sum++;
+    if (((PalInfo *)tlist->data)->isOnline()) {
+      sum++;
+    }
     tlist = g_slist_next(tlist);
   }
 
@@ -1480,7 +1483,7 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
   /* 从数据中心点移除 */
   if ((pal = g_cthrd->GetPalFromList(grpinf->grpid))) {
     g_cthrd->DelPalFromList(grpinf->grpid);
-    FLAG_CLR(pal->flags, 1);
+    pal->setOnline(false);
   }
   /* 加入黑名单 */
   if (!g_cthrd->BlacklistContainItem(grpinf->grpid))

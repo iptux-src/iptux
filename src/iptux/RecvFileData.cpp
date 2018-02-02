@@ -230,7 +230,7 @@ void RecvFileData::RecvDirFiles() {
     len = size - headsize;  //更新缓冲区有效数据量
 
     /* 转码(如果好友不兼容iptux协议) */
-    if (!FLAG_ISSET(file->fileown->flags, 0) &&
+    if (!file->fileown->isCompatible() &&
         strcasecmp(file->fileown->encode, "utf-8") != 0 &&
         (dirname = convert_encode(filename, "utf-8", file->fileown->encode)))
       g_free(filename);

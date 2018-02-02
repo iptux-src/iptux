@@ -505,7 +505,7 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
   do {
     gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
     if (active) {
-      if (FLAG_ISSET(pal->flags, 0)) {
+      if (pal->isCompatible()) {
         switch (grpinf->type) {
           case GROUP_BELONG_TYPE_BROADCAST:
             opttype = IPTUX_BROADCASTOPT;

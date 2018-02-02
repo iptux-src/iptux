@@ -74,10 +74,21 @@ class PalInfo {
   char *sign;      ///< 个性签名
   char *iconfile;  ///< 好友头像 *
   char *encode;    ///< 好友编码 *
-  uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
-
   uint32_t packetn;   ///< 已接受最大的包编号
   uint32_t rpacketn;  ///< 需要接受检查的包编号
+
+  bool isCompatible() const;
+  bool isOnline() const;
+  bool isChanged() const;
+  bool isInBlacklist() const;
+
+  void setCompatible(bool value);
+  void setOnline(bool value);
+  void setChanged(bool value);
+  void setInBlacklistl(bool value);
+
+ private:
+  uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 
 /**

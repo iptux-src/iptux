@@ -264,8 +264,10 @@ void CoreThread::UpdateMyInfo() {
   tlist = g_cthrd->pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
-    if (FLAG_ISSET(pal->flags, 1)) cmd.SendAbsence(g_cthrd->udpSock, pal);
-    if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
+    if (pal->isOnline()) {
+      cmd.SendAbsence(g_cthrd->udpSock, pal);
+    }
+    if (pal->isOnline() and pal->isCompatible()) {
       pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
       pthread_detach(pid);
     }
@@ -288,7 +290,7 @@ void CoreThread::ClearAllPalFromList() {
   tlist = pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
-    FLAG_CLR(pal->flags, 1);
+    pal->setOnline(false);
     tlist = g_slist_next(tlist);
   }
 
@@ -392,7 +394,7 @@ void CoreThread::DelPalFromList(in_addr_t ipv4) {
 
   /* 获取好友信息数据，并将其置为下线状态 */
   if (!(pal = GetPalFromList(ipv4))) return;
-  FLAG_CLR(pal->flags, 1);
+  pal->setOnline(false);
 
   /* 从群组中移除好友 */
   if ((grpinf = GetPalRegularItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
@@ -415,8 +417,10 @@ void CoreThread::UpdatePalToList(in_addr_t ipv4) {
   SessionAbstract *session;
 
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
-  if (!(pal = GetPalFromList(ipv4))) return;
-  FLAG_SET(pal->flags, 1);
+  if (!(pal = GetPalFromList(ipv4))) {
+    return;
+  }
+  pal->setOnline(true);
 
   /* 更新好友所在的群组，以及它在UI上的信息 */
   /*/* 更新常规模式下的群组 */
@@ -487,7 +491,7 @@ void CoreThread::AttachPalToList(PalInfo *pal) {
 
   /* 将好友加入到好友链表 */
   pallist = g_slist_append(pallist, pal);
-  FLAG_SET(pal->flags, 1);
+  pal->setOnline(true);
 
   /* 将好友加入到相应的群组 */
   if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);

@@ -136,7 +136,7 @@ void UdpData::SomeoneLost() {
   pal->sign = NULL;
   pal->iconfile = g_strdup(g_progdt->palicon);
   pal->encode = g_strdup(encode ? encode : "utf-8");
-  FLAG_SET(pal->flags, 1);
+  pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
 
@@ -179,7 +179,7 @@ void UdpData::SomeoneEntry() {
 
   /* 通知好友本大爷在线 */
   cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
-  if (FLAG_ISSET(pal->flags, 0)) {
+  if (pal->isCompatible()) {
     pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
     pthread_detach(pid);
   }
@@ -197,7 +197,7 @@ void UdpData::SomeoneExit() {
   g_cthrd->Lock();
   if ((pal = g_cthrd->GetPalFromList(ipv4))) {
     g_cthrd->DelPalFromList(ipv4);
-    FLAG_CLR(pal->flags, 1);
+    pal->setOnline(false);
   }
   g_cthrd->Unlock();
   gdk_threads_leave();
@@ -234,7 +234,7 @@ void UdpData::SomeoneAnsentry() {
   gdk_threads_leave();
 
   /* 更新本大爷的数据信息 */
-  if (FLAG_ISSET(pal->flags, 0)) {
+  if (pal->isCompatible()) {
     pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
     pthread_detach(pid);
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
@@ -295,7 +295,7 @@ void UdpData::SomeoneSendmsg() {
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
-  if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+  if (!pal || !pal->isCompatible()) {
     if (pal) {
       ConvertEncode(pal->encode);
     } else {
@@ -425,8 +425,9 @@ void UdpData::SomeoneSendIcon() {
   PalInfo *pal;
   char *iconfile;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) || FLAG_ISSET(pal->flags, 2))
+  if (!(pal = g_cthrd->GetPalFromList(ipv4)) || pal->isChanged()) {
     return;
+  }
 
   /* 接收并更新数据 */
   if ((iconfile = RecvPalIcon())) {
@@ -451,7 +452,9 @@ void UdpData::SomeoneSendSign() {
   if (!(pal = g_cthrd->GetPalFromList(ipv4))) return;
 
   /* 若好友不兼容iptux协议，则需转码 */
-  if (!FLAG_ISSET(pal->flags, 0)) ConvertEncode(pal->encode);
+  if (!pal->isCompatible()) {
+    ConvertEncode(pal->encode);
+  }
   /* 对编码作适当调整 */
   if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
     g_free(pal->encode);
@@ -481,7 +484,7 @@ void UdpData::SomeoneBcstmsg() {
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
-  if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+  if (!pal || !pal->isCompatible()) {
     if (pal) {
       ConvertEncode(pal->encode);
     } else {
@@ -570,11 +573,12 @@ PalInfo *UdpData::CreatePalInfo() {
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
     pal->iconfile = g_strdup(g_progdt->palicon);
-  if ((pal->encode = GetPalEncode()))
-    FLAG_SET(pal->flags, 0);
-  else
+  if ((pal->encode = GetPalEncode())) {
+    pal->setCompatible(true);
+  } else {
     pal->encode = g_strdup(encode ? encode : "utf-8");
-  FLAG_SET(pal->flags, 1);
+  }
+  pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
 
@@ -597,7 +601,7 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
   g_free(pal->host);
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
-  if (!FLAG_ISSET(pal->flags, 2)) {
+  if (!pal->isChanged()) {
     g_free(pal->name);
     if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
       pal->name = g_strdup(_("mysterious"));
@@ -606,14 +610,15 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
     g_free(pal->iconfile);
     if (!(pal->iconfile = GetPalIcon()))
       pal->iconfile = g_strdup(g_progdt->palicon);
-    FLAG_CLR(pal->flags, 0);
+    pal->setCompatible(false);
     g_free(pal->encode);
-    if ((pal->encode = GetPalEncode()))
-      FLAG_SET(pal->flags, 0);
-    else
+    if ((pal->encode = GetPalEncode())) {
+      pal->setCompatible(true);
+    } else {
       pal->encode = g_strdup(encode ? encode : "utf-8");
+    }
   }
-  FLAG_SET(pal->flags, 1);
+  pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
 }
@@ -770,8 +775,8 @@ PalInfo *UdpData::AssertPalOnline() {
 
   if ((pal = g_cthrd->GetPalFromList(ipv4))) {
     /* 既然好友不在线，那么他自然不在列表中 */
-    if (!FLAG_ISSET(pal->flags, 1)) {
-      FLAG_SET(pal->flags, 1);
+    if (!pal->isOnline()) {
+      pal->setOnline(true);
       gdk_threads_enter();
       g_cthrd->Lock();
       g_cthrd->UpdatePalToList(ipv4);

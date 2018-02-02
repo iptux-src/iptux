@@ -27,9 +27,9 @@ PalInfo::PalInfo()
       sign(NULL),
       iconfile(NULL),
       encode(NULL),
-      flags(0),
       packetn(0),
-      rpacketn(0) {}
+      rpacketn(0),
+      flags(0) {}
 PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(version);
@@ -41,6 +41,42 @@ PalInfo::~PalInfo() {
   g_free(sign);
   g_free(iconfile);
   g_free(encode);
+}
+
+bool PalInfo::isCompatible() const {
+  return FLAG_ISSET(this->flags, 0);
+}
+
+bool PalInfo::isOnline() const {
+  return FLAG_ISSET(this->flags, 1);
+}
+
+bool PalInfo::isChanged() const {
+  return FLAG_ISSET(this->flags, 2);
+}
+
+void PalInfo::setCompatible(bool value) {
+  if(value) {
+    FLAG_SET(this->flags, 0);
+  } else {
+    FLAG_CLR(this->flags, 0);
+  }
+}
+
+void PalInfo::setOnline(bool value) {
+  if(value) {
+    FLAG_SET(this->flags, 1);
+  } else {
+    FLAG_CLR(this->flags, 1);
+  }
+}
+
+void PalInfo::setChanged(bool value) {
+  if(value) {
+    FLAG_SET(this->flags, 2);
+  } else {
+    FLAG_CLR(this->flags, 2);
+  }
 }
 
 GroupInfo::GroupInfo()
