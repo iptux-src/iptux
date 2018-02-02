@@ -109,7 +109,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal) {
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      frame, FALSE, FALSE, 0);
-  box = gtk_hbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
   image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION,
@@ -165,7 +165,7 @@ char *pop_password_settings(GtkWidget *parent) {
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      hbox, FALSE, FALSE, 0);
   passwd = gtk_label_new(_("Password: "));
@@ -174,7 +174,7 @@ char *pop_password_settings(GtkWidget *parent) {
   gtk_entry_set_activates_default(GTK_ENTRY(passwd), TRUE);
   gtk_entry_set_visibility(GTK_ENTRY(passwd), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), passwd, TRUE, TRUE, 0);
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      hbox, FALSE, FALSE, 0);
   repeat = gtk_label_new(_("Repeat: "));
