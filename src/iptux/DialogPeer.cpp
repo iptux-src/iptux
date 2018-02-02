@@ -831,7 +831,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
 
   cell = gtk_cell_renderer_pixbuf_new();
   column =
-      gtk_tree_view_column_new_with_attributes("", cell, "pixbuf", 0, NULL);
+      gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -866,7 +866,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
 GtkTreeModel *DialogPeer::CreateFileToReceiveModel() {
   GtkListStore *model;
 
-  model = gtk_list_store_new(6, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+  model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
   return GTK_TREE_MODEL(model);
@@ -888,8 +888,7 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
 
   cell = gtk_cell_renderer_pixbuf_new();
-  column =
-      gtk_tree_view_column_new_with_attributes("", cell, "pixbuf", 0, NULL);
+  column = gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -923,7 +922,7 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
 GtkTreeModel *DialogPeer::CreateFileReceivedModel() {
   GtkListStore *model;
 
-  model = gtk_list_store_new(6, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+  model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
   return GTK_TREE_MODEL(model);
@@ -938,7 +937,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
   GSList *ecslist;
   GtkWidget *widget, *hpaned, *pbar;
   float progress = 0.0;
-  GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
+  const char *iconname;
   FileInfo *file;
   gchar *filesize, *path;
   char progresstip[MAX_BUFLEN];
@@ -946,9 +945,6 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
   gint receiving;  //标记是不是窗口在正传送文件时被关闭，又打开的。
 
   receiving = 0;
-  /* 获取文件图标 */
-  rpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_FILE);
-  dpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_DIRECTORY);
 
   //设置界面显示
   palinfor = (PalInfo *)(dlgpr->grpinf->member->data);
@@ -977,13 +973,13 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       filesize = numeric_to_size(file->filesize);
       switch (GET_MODE(file->fileattr)) {
         case IPMSG_FILE_REGULAR:
-          pixbuf = rpixbuf;
+          iconname = "text-x-generic-symbolic";
           break;
         case IPMSG_FILE_DIR:
-          pixbuf = dpixbuf;
+          iconname = "folder-symbolic";
           break;
         default:
-          pixbuf = NULL;
+          iconname = NULL;
           break;
       }
       if (file->finishedsize < file->filesize) {
@@ -994,9 +990,13 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       } else
         mdltmp = mdlrcvd;
       gtk_list_store_append(GTK_LIST_STORE(mdltmp), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(mdltmp), &iter, 0, pixbuf, 1,
-                         file->fileown->name, 2, file->filepath, 3, filesize, 5,
-                         file, -1);
+      gtk_list_store_set(GTK_LIST_STORE(mdltmp), &iter,
+                         0, iconname,
+                         1, file->fileown->name,
+                         2, file->filepath,
+                         3, filesize,
+                         5, file,
+                         -1);
       g_free(filesize);
       ecslist = g_slist_next(ecslist);
     }
@@ -1017,8 +1017,10 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       }
     }
     if (progress == 1.0) {
-      g_source_remove(dlgpr->timerrcv);
-      dlgpr->timerrcv = 0;
+      if(dlgpr->timerrcv > 0) {
+        g_source_remove(dlgpr->timerrcv);
+        dlgpr->timerrcv = 0;
+      }
       snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
     }
     pbar = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset),
@@ -1030,10 +1032,6 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
         g_datalist_get_data(&(dlgpr->widset), "file-receive-paned-widget"));
     gtk_widget_hide(widget);
   }
-
-  /* 释放文件图标 */
-  if (rpixbuf) g_object_unref(rpixbuf);
-  if (dpixbuf) g_object_unref(dpixbuf);
 
   if (receiving > 0) dlgpr->onAcceptButtonClicked(dlgpr);
 }

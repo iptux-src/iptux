@@ -203,22 +203,6 @@ void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
 }
 
 /**
- * 获取库存图片.
- * @param stock_id a stock ID
- * @return pixbuf
- */
-GdkPixbuf *obtain_pixbuf_from_stock(const gchar *stock_id) {
-  GtkWidget *widget;
-  GdkPixbuf *pixbuf;
-
-  widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  pixbuf = gtk_widget_render_icon(widget, stock_id, GTK_ICON_SIZE_MENU, NULL);
-  gtk_widget_destroy(widget);
-
-  return pixbuf;
-}
-
-/**
  * 让窗体(widget)支持uri拖拽操作.
  * @param widget widget
  */
