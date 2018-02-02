@@ -118,7 +118,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   /* 好友昵称 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's nickname:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -130,7 +130,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_datalist_set_data(&widset, "nickname-entry-widget", widget);
 
   /* 好友群组 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's group name:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -142,7 +142,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_datalist_set_data(&widset, "group-entry-widget", widget);
 
   /* 好友系统编码 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("System coding:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -154,7 +154,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_datalist_set_data(&widset, "encode-entry-widget", widget);
 
   /* 好友头像 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -167,7 +167,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
 
   /* 协议兼容性 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   widget = gtk_check_button_new_with_label(
       _("Be compatible with iptux's protocol (DANGEROUS)"));

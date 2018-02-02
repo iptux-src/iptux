@@ -688,7 +688,7 @@ GtkWidget *DialogBase::CreateFileSendArea() {
   pbar = gtk_progress_bar_new();
   g_datalist_set_data(&widset, "file-send-progress-bar-widget", pbar);
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), _("Sending progress."));
-  hbox = gtk_hbox_new(FALSE, 1);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
   gtk_box_pack_start(GTK_BOX(hbox), pbar, TRUE, TRUE, 0);
   button = gtk_button_new_with_label(_("Dirs"));
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);

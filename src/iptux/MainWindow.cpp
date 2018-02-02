@@ -688,7 +688,7 @@ GtkWidget *MainWindow::CreatePallistArea() {
   g_datalist_set_data(&widset, "pallist-treeview-widget", widget);
 
   /* 创建接受搜索输入部分 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   /*/* 关闭按钮 */
   button = gtk_button_new();
