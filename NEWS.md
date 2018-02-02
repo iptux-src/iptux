@@ -1,7 +1,13 @@
-# 0.7.5 (2018-XX-XX)
+# 0.8.0 (2018-XX-XX)
 
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
+* [#?] switch to GTK+3, and use `GtkApplication`.
+
+### refactor
+
+* [#123] don't use `obtain_pixbuf_from_stock`.
+ 
 
 # 0.7.4 (2018-01-24)
 
