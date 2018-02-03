@@ -189,26 +189,6 @@ class SessionAbstract {
   virtual void OnNewMessageComing() = 0;  ///< 窗口打开情况下有新消息
 };
 
-/**
- * 传输抽象类.
- * 提供文件传输类必需的公共接口.
- */
-class TransAbstract {
- public:
-  TransAbstract();
-  virtual ~TransAbstract();
-
-  /**
-   * GData数据如下: \n
-   * [GdkPixbuf]status, [gchar]task, [gchar]peer, [gchar]filename,
-   * [gchar]filelength, [gchar]finishlength, [gint]progress, [gchar]pro-text,
-   * [gchar]cost, [gchar]remain, [gchar]rate, [gpointer]data \n
-   * @see MainWindow::CreateTransModel()
-   */
-  virtual GData **GetTransFilePara() = 0;  ///< 获取更新UI的数据
-  virtual void TerminateTrans() = 0;       ///< 终止过程处理
-};
-
 }  // namespace iptux
 
 #endif

@@ -1,7 +1,3 @@
-//
-// Created by LIDaobing on 2018-02-03.
-//
-
 #ifndef IPTUX_TRANSFILEMODEL_H
 #define IPTUX_TRANSFILEMODEL_H
 

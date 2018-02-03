@@ -81,7 +81,7 @@ void RecvFileData::RecvFileDataEntry() {
  * 获取UI参考数据.
  * @return UI参考数据
  */
-const TransFileModel& RecvFileData::GetTransFilePara() const { return para; }
+const TransFileModel& RecvFileData::getTransFileModel() const { return para; }
 
 /**
  * 终止过程处理.

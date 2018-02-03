@@ -1,7 +1,3 @@
-//
-// Created by LIDaobing on 2018-02-03.
-//
-
 #include "TransFileModel.h"
 
 #include <glib.h>

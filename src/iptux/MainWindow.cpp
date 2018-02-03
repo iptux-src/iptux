@@ -30,6 +30,7 @@
 #include "iptux/utils.h"
 #include "iptux/output.h"
 #include "iptux/TransWindow.h"
+#include "iptux/UiUtils.h"
 
 using namespace std;
 
@@ -450,23 +451,10 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   }
 
   /* 重设数据 */
-  gtk_list_store_set(
-      GTK_LIST_STORE(model), &iter,
-      0, para.getStatus().c_str(),
-      1, para.getTask().c_str(),
-      2, para.getPeer().c_str(),
-      3, para.getIp().c_str(),
-      4, para.getFilename().c_str(),
-      5, para.getFileLength().c_str(),
-      6, para.getFinishLength().c_str(),
-      7, int(para.getProgress()),
-      8, g_strdup(para.getProgressText().c_str()),
-      9, para.getCost().c_str(),
-      10, para.getRemain().c_str(),
-      11, para.getRate().c_str(),
-      12, para.getFilePath().c_str(),
-      13, para.getData(),
-      -1);
+  UiUtils::applyTransFileModel2GtkListStore(
+      para,
+      GTK_LIST_STORE(model),
+      &iter);
   g_action_group_activate_action(
       G_ACTION_GROUP(window),
       "trans_model_changed",

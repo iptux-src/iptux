@@ -14,7 +14,7 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/mess.h"
-#include "iptux/TransFileModel.h"
+#include "iptux/TransAbstract.h"
 
 namespace iptux {
 
@@ -24,7 +24,7 @@ class RecvFileData: public TransAbstract {
   virtual ~RecvFileData();
 
   void RecvFileDataEntry();
-  const TransFileModel& GetTransFilePara() const ;
+  virtual const TransFileModel& getTransFileModel() const ;
   virtual void TerminateTrans();
 
  private:

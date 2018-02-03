@@ -3,9 +3,11 @@
 #include <glib/gi18n.h>
 
 #include "iptux/IptuxConfig.h"
-#include "support.h"
-#include "utils.h"
-#include "deplib.h"
+#include "iptux/support.h"
+#include "iptux/utils.h"
+#include "iptux/deplib.h"
+#include "iptux/TransAbstract.h"
+#include "iptux/UiUtils.h"
 
 namespace iptux {
 
@@ -446,7 +448,6 @@ gboolean UpdateTransUI(GtkWindow *window) {
   GtkTreeModel *model;
   GtkTreeIter iter;
   TransAbstract *trans;
-  GData **para;
 
   GtkWidget* treeview = GTK_WIDGET(g_object_get_data(G_OBJECT(window), "trans-treeview-widget"));
 
@@ -458,21 +459,8 @@ gboolean UpdateTransUI(GtkWindow *window) {
   do {
     gtk_tree_model_get(model, &iter, TRANS_TREE_MAX - 1, &trans, -1);
     if (trans) {  //当文件传输类存在时才能更新
-      para = trans->GetTransFilePara();  //获取参数
-      /* 更新数据 */
-      gtk_list_store_set(
-          GTK_LIST_STORE(model), &iter, 0, g_datalist_get_data(para, "status"),
-          1, g_datalist_get_data(para, "task"), 2,
-          g_datalist_get_data(para, "peer"), 3, g_datalist_get_data(para, "ip"),
-          4, g_datalist_get_data(para, "filename"), 5,
-          g_datalist_get_data(para, "filelength"), 6,
-          g_datalist_get_data(para, "finishlength"), 7,
-          GPOINTER_TO_INT(g_datalist_get_data(para, "progress")), 8,
-          g_datalist_get_data(para, "pro-text"), 9,
-          g_datalist_get_data(para, "cost"), 10,
-          g_datalist_get_data(para, "remain"), 11,
-          g_datalist_get_data(para, "rate"), 13,
-          g_datalist_get_data(para, "data"), -1);
+      const TransFileModel& transFileModel = trans->getTransFileModel();  //获取参数
+      UiUtils::applyTransFileModel2GtkListStore(transFileModel, GTK_LIST_STORE(model), &iter);
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 

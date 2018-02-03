@@ -135,7 +135,4 @@ NetSegment NetSegment::fromJsonValue(Json::Value &value) {
 SessionAbstract::SessionAbstract() {}
 SessionAbstract::~SessionAbstract() {}
 
-TransAbstract::TransAbstract() {}
-TransAbstract::~TransAbstract() {}
-
 }  // namespace iptux

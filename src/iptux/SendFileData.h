@@ -14,17 +14,18 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/mess.h"
+#include "iptux/TransAbstract.h"
 
 namespace iptux {
 
-class SendFileData {
+class SendFileData: public TransAbstract {
  public:
   SendFileData(int sk, FileInfo *fl);
   ~SendFileData();
 
   void SendFileDataEntry();
-  GData **GetTransFilePara();
-  void TerminateTrans();
+  virtual const TransFileModel& getTransFileModel() const;
+  virtual void TerminateTrans();
 
  private:
   void CreateUIPara();
@@ -36,7 +37,7 @@ class SendFileData {
 
   int sock;                           //数据套接口
   FileInfo *file;                     //文件信息
-  GData *para;                        // UI参考数据
+  TransFileModel para;
   bool terminate;                     //终止标志(也作处理结果标识)
   int64_t sumsize;                    //文件(目录)总大小
   char buf[MAX_SOCKLEN];              //数据缓冲区
