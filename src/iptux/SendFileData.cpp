@@ -104,7 +104,7 @@ void SendFileData::CreateUIPara() {
       .setPeer(file->fileown->name)
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
-      .setFileLength(numeric_to_size(file->filesize))
+      .setFileLength(file->filesize)
       .setFinishLength("0B")
       .setProgress(0.0)
       .setCost("00:00:00")
@@ -184,7 +184,7 @@ void SendFileData::SendDirFiles() {
         continue;
       /* 更新UI参考值 */
       para.setFilename(dirt->d_name)
-          .setFileLength(numeric_to_size(st.st_size))
+          .setFileLength(st.st_size)
           .setFinishLength("0B")
           .setProgress(0.0)
           .setCost("00:00:00")
@@ -323,7 +323,7 @@ void SendFileData::UpdateUIParaToOver() {
 
   if (!terminate && GET_MODE(file->fileattr) == IPMSG_FILE_DIR) {
     para.setFilename(ipmsg_get_filename_me(file->filepath, NULL))
-        .setFileLength(numeric_to_size(sumsize));
+        .setFileLength(sumsize);
   }
   if (!terminate) {
     gettimeofday(&time, NULL);

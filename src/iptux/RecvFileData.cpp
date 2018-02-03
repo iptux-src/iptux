@@ -100,7 +100,7 @@ void RecvFileData::CreateUIPara() {
       .setPeer(file->fileown->name)
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
-      .setFileLength(numeric_to_size(file->filesize))
+      .setFileLength(file->filesize)
       .setFinishLength("0B")
       .setProgress(0.0)
       .setCost("00:00:00")
@@ -224,7 +224,7 @@ void RecvFileData::RecvDirFiles() {
       dirname = filename;
     /* 更新UI参考值 */
     para.setFilename(dirname)
-        .setFileLength(numeric_to_size(filesize))
+        .setFileLength(filesize)
         .setFinishLength("0B")
         .setProgress(0.0)
         .setCost("00:00:00")
@@ -364,7 +364,7 @@ void RecvFileData::UpdateUIParaToOver() {
 
   if (!terminate && GET_MODE(file->fileattr) == IPMSG_FILE_DIR) {
     para.setFilename(ipmsg_get_filename_me(file->filepath, NULL));
-    para.setFileLength(numeric_to_size(sumsize));
+    para.setFileLength(sumsize);
     file->finishedsize = file->filesize;
   }
   if (!terminate) {

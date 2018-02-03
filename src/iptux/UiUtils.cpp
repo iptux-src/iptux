@@ -13,7 +13,7 @@ void UiUtils::applyTransFileModel2GtkListStore(
       2, para.getPeer().c_str(),
       3, para.getIp().c_str(),
       4, para.getFilename().c_str(),
-      5, para.getFileLength().c_str(),
+      5, para.getFileLengthText().c_str(),
       6, para.getFinishLength().c_str(),
       7, int(para.getProgress()),
       8, g_strdup(para.getProgressText().c_str()),

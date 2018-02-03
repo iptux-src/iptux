@@ -1,4 +1,5 @@
 #include "TransFileModel.h"
+#include "utils.h"
 
 #include <glib.h>
 
@@ -28,7 +29,7 @@ TransFileModel& TransFileModel::setFilename(const std::string& value) {
   return *this;
 }
 
-TransFileModel& TransFileModel::setFileLength(const std::string& value) {
+TransFileModel& TransFileModel::setFileLength(int64_t value) {
   fileLength = value;
   return *this;
 }
@@ -88,8 +89,11 @@ const std::string& TransFileModel::getFilename() const {
   return filename;
 }
 
-const std::string& TransFileModel::getFileLength() const {
-  return fileLength;
+std::string TransFileModel::getFileLengthText() const {
+  const char* t = numeric_to_size(fileLength);
+  std::string res(t);
+  g_free(gpointer(t));
+  return res;
 }
 
 const std::string& TransFileModel::getFinishLength() const {
@@ -100,7 +104,7 @@ double TransFileModel::getProgress() const {
   return progress;
 }
 
-const std::string TransFileModel::getProgressText() const {
+std::string TransFileModel::getProgressText() const {
   const char* t = g_strdup_printf("%.1f", progress);
   std::string res(t);
   g_free(gpointer(t));
