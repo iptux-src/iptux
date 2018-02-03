@@ -1239,7 +1239,7 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
 
   gchar* result;
   if(signature1) {
-    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n<span foreground=\"blue\" font_style=\"italic\" size=\"smaller\">%s</span>",
+    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n<span foreground=\"#00FF00\" font_style=\"italic\" size=\"smaller\">%s</span>",
                         version, nickname, user, host, address, compatibility, coding,
                         signature1, signature2);
   } else {
