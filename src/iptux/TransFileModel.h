@@ -15,7 +15,7 @@ class TransFileModel {
   TransFileModel &setIp(const std::string &value);
   TransFileModel &setFilename(const std::string &value);
   TransFileModel &setFileLength(int64_t value);
-  TransFileModel &setFinishLength(const std::string &value);
+  TransFileModel &setFinishedLength(const std::string &value);
   TransFileModel &setProgress(double value);
   TransFileModel &setCost(const std::string &value);
   TransFileModel &setRemain(const std::string &value);

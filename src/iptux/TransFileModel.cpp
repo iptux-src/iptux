@@ -34,7 +34,7 @@ TransFileModel& TransFileModel::setFileLength(int64_t value) {
   return *this;
 }
 
-TransFileModel& TransFileModel::setFinishLength(const std::string& value) {
+TransFileModel& TransFileModel::setFinishedLength(const std::string& value) {
   finishLength = value;
   return *this;
 }
