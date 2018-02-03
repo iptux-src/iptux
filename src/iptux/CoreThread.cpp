@@ -43,7 +43,7 @@ CoreThread::CoreThread(IptuxConfig &config)
       udpSock(-1),
       server(true),
       pallist(nullptr),
-      rgllist(NULL),
+      groupInfos(NULL),
       sgmlist(NULL),
       grplist(NULL),
       brdlist(NULL),
@@ -295,7 +295,7 @@ void CoreThread::ClearAllPalFromList() {
   }
 
   /* 清空常规模式下所有群组的成员 */
-  tlist = rgllist;
+  tlist = groupInfos;
   while (tlist) {
     grpinf = (GroupInfo *)tlist->data;
     g_slist_free(grpinf->member);
@@ -513,7 +513,7 @@ void CoreThread::AttachPalToList(PalInfo *pal) {
 GroupInfo *CoreThread::GetPalRegularItem(PalInfo *pal) {
   GSList *tlist;
 
-  tlist = rgllist;
+  tlist = groupInfos;
   while (tlist) {
     if (((GroupInfo *)tlist->data)->grpid == pal->ipv4) break;
     tlist = g_slist_next(tlist);
@@ -810,9 +810,9 @@ void CoreThread::ClearSublayer() {
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
   g_slist_free(pallist);
-  for (tlist = rgllist; tlist; tlist = g_slist_next(tlist))
+  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *)tlist->data;
-  g_slist_free(rgllist);
+  g_slist_free(groupInfos);
   for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *)tlist->data;
   g_slist_free(sgmlist);
@@ -1034,7 +1034,7 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal) {
   grpinf->member = NULL;
   grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
   grpinf->dialog = NULL;
-  rgllist = g_slist_append(rgllist, grpinf);
+  groupInfos = g_slist_append(groupInfos, grpinf);
 
   return grpinf;
 }
