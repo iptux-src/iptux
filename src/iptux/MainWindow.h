@@ -16,6 +16,7 @@
 #include "iptux/ProgramData.h"
 #include "iptux/WindowConfig.h"
 #include "iptux/mess.h"
+#include "iptux/RecvFileData.h"
 
 namespace iptux {
 
@@ -54,7 +55,8 @@ class MainWindow {
   void clearActiveWindow(void* activeWindow);
 
   void OpenTransWindow();
-  void UpdateItemToTransTree(GData **para);
+  //void UpdateItemToTransTree(GData **para);
+  void UpdateItemToTransTree(const TransFileModel& para);
   bool TransmissionActive();
 
   ProgramData &GetProgramData() { return progdt; }
