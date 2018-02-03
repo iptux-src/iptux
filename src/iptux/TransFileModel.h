@@ -29,7 +29,7 @@ class TransFileModel {
   const std::string &getIp() const;
   const std::string &getFilename() const;
   std::string getFileLengthText() const;
-  std::string getFinishLength() const;
+  std::string getFinishedLengthText() const;
   double getProgress() const;
   std::string getProgressText() const;
   const std::string &getCost() const;

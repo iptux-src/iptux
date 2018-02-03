@@ -96,7 +96,7 @@ std::string TransFileModel::getFileLengthText() const {
   return res;
 }
 
-std::string TransFileModel::getFinishLength() const {
+std::string TransFileModel::getFinishedLengthText() const {
   const char* t = numeric_to_size(finishedLength);
   std::string res(t);
   g_free(gpointer(t));
