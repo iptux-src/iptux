@@ -1,8 +1,13 @@
 #include "UiModels.h"
+
+#include <cstring>
+
 #include "mess.h"
 #include "output.h"
 #include "utils.h"
 #include "ipmsg.h"
+
+using namespace std;
 
 namespace iptux {
 
