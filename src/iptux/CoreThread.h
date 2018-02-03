@@ -111,7 +111,7 @@ class CoreThread {
   bool server;           //程序是否正在服务
 
   GSList *pallist;  //好友链表(成员不能被删除)
-  GSList *rgllist, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
   GSList *blacklist;                              //黑名单链表
   GQueue msgline;                                 //消息队列
 
