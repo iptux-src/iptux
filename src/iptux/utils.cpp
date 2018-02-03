@@ -258,13 +258,13 @@ char *numeric_to_size(int64_t numeric) {
   gchar *ptr;
 
   if (numeric >= ((int64_t)1 << 40))
-    ptr = g_strdup_printf("%.1fT", (float)numeric / ((int64_t)1 << 40));
+    ptr = g_strdup_printf("%.1fTiB", (double)numeric / ((int64_t)1 << 40));
   else if (numeric >= (1 << 30))
-    ptr = g_strdup_printf("%.1fG", (float)numeric / (1 << 30));
+    ptr = g_strdup_printf("%.1fGiB", (double)numeric / (1 << 30));
   else if (numeric >= (1 << 20))
-    ptr = g_strdup_printf("%.1fM", (float)numeric / (1 << 20));
+    ptr = g_strdup_printf("%.1fMiB", (double)numeric / (1 << 20));
   else if (numeric >= (1 << 10))
-    ptr = g_strdup_printf("%.1fK", (float)numeric / (1 << 10));
+    ptr = g_strdup_printf("%.1fKiB", (double)numeric / (1 << 10));
   else
     ptr = g_strdup_printf("%" PRId64 "B", numeric);
 
