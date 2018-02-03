@@ -827,7 +827,7 @@ GtkTreeModel *MainWindow::CreatePallistModel() {
 GtkTreeModel *MainWindow::CreateTransModel() {
   GtkListStore *model;
 
-  model = gtk_list_store_new(15, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+  model = gtk_list_store_new(15, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,

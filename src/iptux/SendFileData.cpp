@@ -342,17 +342,11 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
  * 更新UI参考数据到任务结束.
  */
 void SendFileData::UpdateUIParaToOver() {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
   struct timeval time;
   const char *statusfile;
 
-  theme = gtk_icon_theme_get_default();
   statusfile = terminate ? "tip-error" : "tip-finish";
-  if ((pixbuf = gtk_icon_theme_load_icon(theme, statusfile, MAX_ICONSIZE,
-                                         GtkIconLookupFlags(0), NULL)))
-    g_datalist_set_data_full(&para, "status", pixbuf,
-                             GDestroyNotify(g_object_unref));
+  g_datalist_set_data(&para, "status", gpointer(statusfile));
 
   if (!terminate && GET_MODE(file->fileattr) == IPMSG_FILE_DIR) {
     g_datalist_set_data_full(&para, "filename",

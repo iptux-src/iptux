@@ -205,7 +205,7 @@ GtkWidget* CreateTransTree(GtkTreeModel *model) {
                    NULL);
 
   cell = gtk_cell_renderer_pixbuf_new();
-  column = gtk_tree_view_column_new_with_attributes(_("State"), cell, "pixbuf",
+  column = gtk_tree_view_column_new_with_attributes(_("State"), cell, "icon-name",
                                                     0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
