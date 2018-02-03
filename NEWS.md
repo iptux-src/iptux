@@ -3,11 +3,11 @@
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
 * [#?] switch to GTK+3, and use `GtkApplication`.
+* [#125] fix crash on UdpData::SomeoneSendmsg.
 
 ### refactor
 
 * [#123] don't use `obtain_pixbuf_from_stock`.
- 
 
 # 0.7.4 (2018-01-24)
 
