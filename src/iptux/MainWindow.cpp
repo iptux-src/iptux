@@ -418,7 +418,7 @@ void MainWindow::OpenTransWindow() {
   gtk_window_present(GTK_WINDOW(transWindow));
 }
 
-void MainWindow::UpdateItemToTransTree(const RecvFileDataPara& para) {
+void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   GtkTreeModel *model;
   GtkTreeIter iter;
   gpointer data;
@@ -467,59 +467,6 @@ void MainWindow::UpdateItemToTransTree(const RecvFileDataPara& para) {
       12, para.getFilePath().c_str(),
       13, para.getData(),
       -1);
-  g_action_group_activate_action(
-      G_ACTION_GROUP(window),
-      "trans_model_changed",
-      nullptr
-  );
-}
-
-
-/**
- * 更新文件传输树(trans-tree)的指定项.
- * @param para 项值
- * @note 若项不存在则须自动加入
- */
-void MainWindow::UpdateItemToTransTree(GData **para) {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  gpointer data;
-  /* 查询项所在位置，若不存在则自动加入 */
-  data = NULL;
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
-  if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {
-      gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
-      if (para == data) break;
-    } while (gtk_tree_model_iter_next(model, &iter));
-  }
-  if (para != data) {
-    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, para, -1);
-  }
-
-  /**
-   * @note 鉴于参数值(*para)的原地址有可能会被重用， 所以当("data"==null)
-   * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
-   */
-  if (!g_datalist_get_data(para, "data"))
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, NULL, -1);
-
-  /* 重设数据 */
-  gtk_list_store_set(
-      GTK_LIST_STORE(model), &iter, 0, g_datalist_get_data(para, "status"), 1,
-      g_datalist_get_data(para, "task"), 2, g_datalist_get_data(para, "peer"),
-      3, g_datalist_get_data(para, "ip"), 4,
-      g_datalist_get_data(para, "filename"), 5,
-      g_datalist_get_data(para, "filelength"), 6,
-      g_datalist_get_data(para, "finishlength"), 7,
-      GPOINTER_TO_INT(g_datalist_get_data(para, "progress")), 8,
-      g_datalist_get_data(para, "pro-text"), 9,
-      g_datalist_get_data(para, "cost"), 10,
-      g_datalist_get_data(para, "remain"), 11,
-      g_datalist_get_data(para, "rate"), 12,
-      g_datalist_get_data(para, "filepath"), 13,
-      g_datalist_get_data(para, "data"), -1);
   g_action_group_activate_action(
       G_ACTION_GROUP(window),
       "trans_model_changed",

@@ -17,14 +17,14 @@
 
 namespace iptux {
 
-class SendFileData : public TransAbstract {
+class SendFileData {
  public:
   SendFileData(int sk, FileInfo *fl);
   ~SendFileData();
 
   void SendFileDataEntry();
-  virtual GData **GetTransFilePara();
-  virtual void TerminateTrans();
+  GData **GetTransFilePara();
+  void TerminateTrans();
 
  private:
   void CreateUIPara();
