@@ -290,8 +290,6 @@ void UdpData::SomeoneSendmsg() {
   uint32_t commandno, packetno;
   char *text;
   pthread_t pid;
-  DialogPeer *dlgpr;
-  GtkWidget *window;
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
@@ -348,25 +346,17 @@ void UdpData::SomeoneSendmsg() {
     } else
       RecvPalFile();
   }
-  window = GTK_WIDGET(grpinf->dialog);
-  //这里不知道为什么运行时一直会提示window不是object
-  dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
-  if (grpinf->dialog) dlgpr->ShowDialogPeer(dlgpr);
+
+  if (grpinf->dialog) {
+    auto window = GTK_WIDGET(grpinf->dialog);
+    auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
+    dlgpr->ShowDialogPeer(dlgpr);
+  }
   /* 是否直接弹出聊天窗口 */
   if (g_progdt->IsAutoOpenCharDialog()) {
     gdk_threads_enter();
     if (!(grpinf->dialog)) {
-      //                     switch (grpinf->type) {
-      //                     case GROUP_BELONG_TYPE_REGULAR:
       DialogPeer::PeerDialogEntry(g_mwin, grpinf, *g_progdt);
-      //                          break;
-      //                     case GROUP_BELONG_TYPE_SEGMENT:
-      //                     case GROUP_BELONG_TYPE_GROUP:
-      //                     case GROUP_BELONG_TYPE_BROADCAST:
-      //                          DialogGroup::GroupDialogEntry(grpinf);
-      //                     default:
-      //                          break;
-      //                     }
     } else {
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     }
