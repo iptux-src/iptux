@@ -418,6 +418,63 @@ void MainWindow::OpenTransWindow() {
   gtk_window_present(GTK_WINDOW(transWindow));
 }
 
+void MainWindow::UpdateItemToTransTree(const RecvFileDataPara& para) {
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  gpointer data;
+
+  /* 查询项所在位置，若不存在则自动加入 */
+  data = NULL;
+  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
+  bool found = false;
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
+      if (gpointer(&para) == data) {
+        found = true;
+        break;
+      }
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+  if (!found) {
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, &para, -1);
+  }
+
+  /**
+   * @note 鉴于参数值(*para)的原地址有可能会被重用， 所以当("data"==null)
+   * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
+   */
+  if (!para.getData()) {
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, NULL, -1);
+  }
+
+  /* 重设数据 */
+  gtk_list_store_set(
+      GTK_LIST_STORE(model), &iter,
+      0, para.getStatus().c_str(),
+      1, para.getTask().c_str(),
+      2, para.getPeer().c_str(),
+      3, para.getIp().c_str(),
+      4, para.getFilename().c_str(),
+      5, para.getFileLength().c_str(),
+      6, para.getFinishLength().c_str(),
+      7, int(para.getProgress()),
+      8, g_strdup(para.getProgressText().c_str()),
+      9, para.getCost().c_str(),
+      10, para.getRemain().c_str(),
+      11, para.getRate().c_str(),
+      12, para.getFilePath().c_str(),
+      13, para.getData(),
+      -1);
+  g_action_group_activate_action(
+      G_ACTION_GROUP(window),
+      "trans_model_changed",
+      nullptr
+  );
+}
+
+
 /**
  * 更新文件传输树(trans-tree)的指定项.
  * @param para 项值
