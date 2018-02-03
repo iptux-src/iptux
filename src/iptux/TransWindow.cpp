@@ -8,7 +8,6 @@
 #include "iptux/deplib.h"
 #include "iptux/TransAbstract.h"
 #include "iptux/UiUtils.h"
-#include "output.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -33,7 +32,6 @@ static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
 static void OpenThisFile(GtkTreeModel *model);
 static void ClearTransTask(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
-static void printKey(GQuark key);
 static TransWindowPrivate& getPriv(TransWindow* window);
 
 TransWindow *trans_window_new(GtkWindow *parent) {
@@ -48,9 +46,6 @@ TransWindow *trans_window_new(GtkWindow *parent) {
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv, GDestroyNotify(TransWindowPrivate::destroy));
   gtk_window_set_transient_for(window, parent);
   gtk_window_set_destroy_with_parent(window, true);
-
-  GObject* object = G_OBJECT(window);
-  g_datalist_foreach(&object->qdata, GDataForeachFunc(printKey), nullptr);
 
   IptuxConfig *config = static_cast<IptuxConfig *>(g_object_get_data(G_OBJECT(parent), "iptux-config"));
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
@@ -472,10 +467,6 @@ gboolean UpdateTransUI(GtkWindow *window) {
   gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
 
   return TRUE;
-}
-
-static void printKey(GQuark key) {
-  LOG_DEBUG("TransWindow keys: %s", g_quark_to_string(key));
 }
 
 TransWindowPrivate &getPriv(TransWindow *window) {
