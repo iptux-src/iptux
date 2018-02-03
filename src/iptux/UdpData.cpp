@@ -78,6 +78,7 @@ void UdpData::DispatchUdpData() {
 
   /* 决定消息去向 */
   commandno = iptux_get_dec_number(buf, ':', 4);
+  LOG_INFO("command NO.: 0x%x", commandno);
   switch (GET_MODE(commandno)) {
     case IPMSG_BR_ENTRY:
       SomeoneEntry();
@@ -110,6 +111,7 @@ void UdpData::DispatchUdpData() {
       SomeoneBcstmsg();
       break;
     default:
+      LOG_WARN("unknown command: %d", GET_MODE(commandno));
       break;
   }
 }
