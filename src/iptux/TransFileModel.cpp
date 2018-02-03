@@ -39,11 +39,6 @@ TransFileModel& TransFileModel::setFinishedLength(int64_t value) {
   return *this;
 }
 
-TransFileModel& TransFileModel::setProgress(double value) {
-  progress = value;
-  return *this;
-}
-
 TransFileModel& TransFileModel::setCost(const std::string& value) {
   cost = value;
   return *this;
@@ -104,11 +99,11 @@ std::string TransFileModel::getFinishedLengthText() const {
 }
 
 double TransFileModel::getProgress() const {
-  return progress;
+  return percent(finishedLength, fileLength);
 }
 
 std::string TransFileModel::getProgressText() const {
-  const char* t = g_strdup_printf("%.1f", progress);
+  const char* t = g_strdup_printf("%.1f", getProgress());
   std::string res(t);
   g_free(gpointer(t));
   return res;
@@ -133,6 +128,9 @@ const std::string& TransFileModel::getFilePath() const {
 
 TransAbstract* TransFileModel::getData() const {
   return data;
+}
+int64_t TransFileModel::getFileLength() const {
+  return fileLength;
 }
 
 }

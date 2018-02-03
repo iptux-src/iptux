@@ -106,7 +106,6 @@ void SendFileData::CreateUIPara() {
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
       .setFinishedLength(0)
-      .setProgress(0.0)
       .setCost("00:00:00")
       .setRemain(_("Unknown"))
       .setRate("0B/s")
@@ -186,7 +185,6 @@ void SendFileData::SendDirFiles() {
       para.setFilename(dirt->d_name)
           .setFileLength(st.st_size)
           .setFinishedLength(0)
-          .setProgress(0.0)
           .setCost("00:00:00")
           .setRemain(_("Unknown"))
           .setRate("0B/s");
@@ -299,7 +297,6 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
       progress = percent(finishsize, filesize);
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
       para.setFinishedLength(finishsize)
-          .setProgress(progress)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
           .setRemain(numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
           .setRate(numeric_to_rate(rate));
@@ -328,7 +325,6 @@ void SendFileData::UpdateUIParaToOver() {
   if (!terminate) {
     gettimeofday(&time, NULL);
     para.setFinishedLength(sumsize)
-        .setProgress(100)
         .setCost(numeric_to_time((uint32_t)(difftimeval(time, tasktime))))
         .setRemain("")
         .setRate("");

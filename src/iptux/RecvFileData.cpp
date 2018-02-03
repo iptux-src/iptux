@@ -102,7 +102,6 @@ void RecvFileData::CreateUIPara() {
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
       .setFinishedLength(0)
-      .setProgress(0.0)
       .setCost("00:00:00")
       .setRemain(_("Unknown"))
       .setRate("0 B/s")
@@ -226,7 +225,6 @@ void RecvFileData::RecvDirFiles() {
     para.setFilename(dirname)
         .setFileLength(filesize)
         .setFinishedLength(0)
-        .setProgress(0.0)
         .setCost("00:00:00")
         .setRemain(_("Unknown"))
         .setRate("0 B/s");
@@ -337,10 +335,8 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
     difftime = difftimeval(val2, val1);
     if (difftime >= 1) {
       /* 更新UI参考值 */
-      progress = percent(finishsize, filesize);
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
       para.setFinishedLength(finishsize)
-          .setProgress(progress)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
           .setRemain(numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
           .setRate(numeric_to_rate(rate));
@@ -369,8 +365,7 @@ void RecvFileData::UpdateUIParaToOver() {
   }
   if (!terminate) {
     gettimeofday(&time, NULL);
-    para.setFinishedLength(0)
-        .setProgress(100.0)
+    para.setFinishedLength(para.getFileLength())
         .setCost(numeric_to_time((uint32_t)(difftimeval(time, tasktime))))
         .setRemain("")
         .setRate("");
