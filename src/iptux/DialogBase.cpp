@@ -801,15 +801,8 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   GtkWidget *pbar;
   float progress;
   int64_t sentsize;
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
-  const char *statusfile;
   FileInfo *file;
 
-  theme = gtk_icon_theme_get_default();
-  statusfile = "tip-finish";
-  pixbuf = gtk_icon_theme_load_icon(theme, statusfile, MAX_ICONSIZE,
-                                    GtkIconLookupFlags(0), NULL);
   treeview = GTK_TREE_VIEW(
       g_datalist_get_data(&(dlggrp->widset), "file-send-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
@@ -817,8 +810,9 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {  //遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
-      if (pixbuf && (file->finishedsize == file->filesize))
-        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, -1);
+      if (file->finishedsize == file->filesize) {
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
+      }
       sentsize += file->finishedsize;
     } while (gtk_tree_model_iter_next(model, &iter));
   }

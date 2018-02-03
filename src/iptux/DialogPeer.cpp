@@ -763,7 +763,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea() {
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
   button = gtk_button_new_with_label(_("Refuse"));
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(RemoveSelectedRcv),
+  g_signal_connect_swapped(button, "clicked", G_CALLBACK(onRefuseButtonClicked),
                            this);
   g_datalist_set_data(&widset, "file-receive-refuse-button", button);
   button = gtk_button_new_with_label(_("Detail"));
@@ -856,7 +856,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(RcvTreePopup), view);
+                           G_CALLBACK(RcvTreePopup), this);
 
   return view;
 }
@@ -1047,16 +1047,8 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
   float progress = 0.0;
   FileInfo *file;
   GtkTreeIter iter;
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
-  const char *statusfile;
   char progresstip[MAX_BUFLEN];
 
-  /* 获取文件图标 */
-  theme = gtk_icon_theme_get_default();
-  statusfile = "tip-finish";
-  pixbuf = gtk_icon_theme_load_icon(theme, statusfile, MAX_ICONSIZE,
-                                    GtkIconLookupFlags(0), NULL);
   //处理待接收文件界面显示
   model = (GtkTreeModel *)g_datalist_get_data(&(dlgpr->mdlset),
                                               "file-to-receive-model");
@@ -1069,8 +1061,9 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
   gtk_tree_model_get_iter_first(model, &iter);
   do {  //遍历待接收model
     gtk_tree_model_get(model, &iter, 5, &file, -1);
-    if (pixbuf && (file->finishedsize == file->filesize))
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, -1);
+    if (file->finishedsize == file->filesize) {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
+    }
     dlgpr->rcvdsize += file->finishedsize;
   } while (gtk_tree_model_iter_next(model, &iter));
   //设置进度条,如果接收完成重新载入待接收和已接收列表
@@ -1190,15 +1183,14 @@ GSList *DialogPeer::GetSelPal() {
  *从接收文件的TreeView删除选定行（待接收和已接收都用此函数）.
  * @param widget TreeView
  */
-void DialogPeer::RemoveSelectedRcv(GtkWidget *widget) {
+void DialogPeer::onRefuseButtonClicked(DialogPeer *self) {
   GtkTreeModel *model;
   GtkTreeSelection *TreeSel;
   GtkTreeIter iter;
   FileInfo *file;
-  DialogPeer *dlg;
   GList *list;
 
-  dlg = (DialogPeer *)(g_object_get_data(G_OBJECT(widget), "dialog"));
+  GtkWidget* widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "file-to-receive-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
@@ -1215,26 +1207,26 @@ void DialogPeer::RemoveSelectedRcv(GtkWidget *widget) {
   //从列表中删除
   RemoveSelectedFromTree(widget);
   //重新刷新窗口显示
-  dlg->ShowInfoEnclosure(dlg);
+  self->ShowInfoEnclosure(self);
 }
 /**
  *显示接收附件的TreeView的弹出菜单回调函数.(待接收和已接收都用此函数)
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogPeer::RcvTreePopup(GtkWidget *treeview, GdkEvent *event) {
+gint DialogPeer::RcvTreePopup(DialogPeer* self, GdkEvent *event) {
   GtkWidget *menu, *menuitem;
   GdkEventButton *event_button;
 
   menu = gtk_menu_new();
   menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(RemoveSelectedRcv),
-                           treeview);
+  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(onRefuseButtonClicked),
+                           self);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
   if (event->type == GDK_BUTTON_PRESS) {
     event_button = (GdkEventButton *)event;
-    if (event_button->button == 3) {
+    if (event_button->button == GDK_BUTTON_SECONDARY) {
       gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                      event_button->button, event_button->time);
       gtk_widget_show(menuitem);
