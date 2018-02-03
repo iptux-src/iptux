@@ -12,10 +12,26 @@
 #ifndef IPTUX_SUPPORT_H
 #define IPTUX_SUPPORT_H
 
+#include <stdexcept>
+
 #include "iptux/mess.h"
 
 namespace iptux {
 
+class BindFailedException: public std::runtime_error {
+ public:
+  BindFailedException(int ec, const std::string& reason)
+  : std::runtime_error(reason)
+  {
+  }
+
+};
+
+/**
+ *
+ * @param port port number for binding
+ * @throw BindFailedException if bind failed
+ */
 void iptux_init(int port);
 void iptux_gui_quit();
 void iptux_quit(int);

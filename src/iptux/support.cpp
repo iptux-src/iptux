@@ -110,27 +110,34 @@ void bind_iptux_port(int port) {
   socket_enable_reuse(udpsock);
   socket_enable_broadcast(udpsock);
   if ((tcpsock == -1) || (udpsock == -1)) {
-    g_warning(_("Fatal Error!! Failed to create new socket!\n%s"),
-              strerror(errno));
-    pop_warning(NULL, _("Fatal Error!!\nFailed to create new socket!\n%s"),
-                strerror(errno));
-    exit(1);
+    int ec = errno;
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
+              strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
   }
 
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  if (bind(tcpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1 ||
-      bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+  if (bind(tcpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
     close(tcpsock);
     close(udpsock);
-    g_warning(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), port,
-              strerror(errno));
-    pop_warning(NULL,
-                _("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"),
-                port, strerror(errno));
-    exit(1);
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%d)!\n%s"),
+                                         port, strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+  if(bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
+    close(tcpsock);
+    close(udpsock);
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%d)!\n%s"),
+                                         port, strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
   }
   g_cthrd->setTcpSock(tcpsock);
   g_cthrd->setUdpSock(udpsock);
