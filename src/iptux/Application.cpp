@@ -169,9 +169,14 @@ void Application::onActivate(Application& self) {
   self.window->SetStatusIcon(sicon);
 
   int port = self.config.GetInt("port", IPTUX_DEFAULT_PORT);
-  iptux_init(port);
-  sicon->CreateStatusIcon();
   self.window->CreateWindow();
+  try {
+    iptux_init(port);
+  } catch (const BindFailedException& e) {
+    pop_warning(self.window->getWindow(), "%s", e.what());
+    exit(1);
+  }
+  sicon->CreateStatusIcon();
   g_cthrd->CoreThreadEntry();
 }
 

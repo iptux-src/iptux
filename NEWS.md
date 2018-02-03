@@ -9,6 +9,7 @@
 ### refactor
 
 * [#123] don't use `obtain_pixbuf_from_stock`.
+* [#136] the binding failed dialog should be a child of the main window.
 
 # 0.7.4 (2018-01-24)
 
