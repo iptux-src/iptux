@@ -213,13 +213,9 @@ mark:
   }
   return NULL;
 }
-/**
- * 弹出接收文件存放位置的对话框.
- * @param parent parent window
- * @return path string
- */
+
 const char *pop_save_path(GtkWidget *parent) {
-  const char *path;
+  const char *path = nullptr;
   GtkWidget *dialog;
 
   dialog = gtk_file_chooser_dialog_new(
@@ -228,7 +224,6 @@ const char *pop_save_path(GtkWidget *parent) {
       GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_progdt->path.c_str());
-  path = g_progdt->path.c_str();
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
   }

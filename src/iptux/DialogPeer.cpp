@@ -1140,6 +1140,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
   pthread_t pid;
 
   const gchar *filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog));
+  if(filepath == nullptr) {
+    return;
+  }
   self->progdt.path = filepath;
   /* 考察数据集中是否存在项 */
   widget = GTK_WIDGET(
