@@ -95,15 +95,9 @@ void SendFileData::TerminateTrans() { terminate = true; }
  * 创建UI参考数据.
  */
 void SendFileData::CreateUIPara() {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
   struct in_addr addr;
 
-  theme = gtk_icon_theme_get_default();
-  if ((pixbuf = gtk_icon_theme_load_icon(theme, "tip-send", MAX_ICONSIZE,
-                                         GtkIconLookupFlags(0), NULL)))
-    g_datalist_set_data_full(&para, "status", pixbuf,
-                             GDestroyNotify(g_object_unref));
+  g_datalist_set_data(&para, "status", gpointer("tip-send"));
   g_datalist_set_data(&para, "task", (gpointer)(_("send")));
   g_datalist_set_data_full(&para, "peer", g_strdup(file->fileown->name),
                            GDestroyNotify(g_free));
