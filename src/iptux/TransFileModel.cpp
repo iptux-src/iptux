@@ -34,8 +34,8 @@ TransFileModel& TransFileModel::setFileLength(int64_t value) {
   return *this;
 }
 
-TransFileModel& TransFileModel::setFinishedLength(const std::string& value) {
-  finishLength = value;
+TransFileModel& TransFileModel::setFinishedLength(int64_t value) {
+  finishedLength = value;
   return *this;
 }
 
@@ -96,8 +96,11 @@ std::string TransFileModel::getFileLengthText() const {
   return res;
 }
 
-const std::string& TransFileModel::getFinishLength() const {
-  return finishLength;
+std::string TransFileModel::getFinishLength() const {
+  const char* t = numeric_to_size(finishedLength);
+  std::string res(t);
+  g_free(gpointer(t));
+  return res;
 }
 
 double TransFileModel::getProgress() const {

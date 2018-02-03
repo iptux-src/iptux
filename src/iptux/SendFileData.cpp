@@ -105,7 +105,7 @@ void SendFileData::CreateUIPara() {
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
-      .setFinishedLength("0B")
+      .setFinishedLength(0)
       .setProgress(0.0)
       .setCost("00:00:00")
       .setRemain(_("Unknown"))
@@ -185,7 +185,7 @@ void SendFileData::SendDirFiles() {
       /* 更新UI参考值 */
       para.setFilename(dirt->d_name)
           .setFileLength(st.st_size)
-          .setFinishedLength("0B")
+          .setFinishedLength(0)
           .setProgress(0.0)
           .setCost("00:00:00")
           .setRemain(_("Unknown"))
@@ -298,7 +298,7 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
       /* 更新UI参考值 */
       progress = percent(finishsize, filesize);
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
-      para.setFinishedLength(numeric_to_size(finishsize))
+      para.setFinishedLength(finishsize)
           .setProgress(progress)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
           .setRemain(numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
@@ -327,7 +327,7 @@ void SendFileData::UpdateUIParaToOver() {
   }
   if (!terminate) {
     gettimeofday(&time, NULL);
-    para.setFinishedLength(numeric_to_size(sumsize))
+    para.setFinishedLength(sumsize)
         .setProgress(100)
         .setCost(numeric_to_time((uint32_t)(difftimeval(time, tasktime))))
         .setRemain("")

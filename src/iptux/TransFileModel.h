@@ -15,7 +15,7 @@ class TransFileModel {
   TransFileModel &setIp(const std::string &value);
   TransFileModel &setFilename(const std::string &value);
   TransFileModel &setFileLength(int64_t value);
-  TransFileModel &setFinishedLength(const std::string &value);
+  TransFileModel &setFinishedLength(int64_t value);
   TransFileModel &setProgress(double value);
   TransFileModel &setCost(const std::string &value);
   TransFileModel &setRemain(const std::string &value);
@@ -29,7 +29,7 @@ class TransFileModel {
   const std::string &getIp() const;
   const std::string &getFilename() const;
   std::string getFileLengthText() const;
-  const std::string &getFinishLength() const;
+  std::string getFinishLength() const;
   double getProgress() const;
   std::string getProgressText() const;
   const std::string &getCost() const;
@@ -44,7 +44,7 @@ class TransFileModel {
   std::string ip;
   std::string filename;
   int64_t fileLength;
-  std::string finishLength;
+  int64_t finishedLength;
   double progress;
   std::string cost;
   std::string remain;
