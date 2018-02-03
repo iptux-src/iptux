@@ -20,6 +20,12 @@ bool pop_request_quit();
 bool pop_request_shared_file(PalInfo *pal);
 char *pop_obtain_shared_passwd(PalInfo *pal);
 char *pop_password_settings(GtkWidget *parent);
+
+/**
+ * 弹出接收文件存放位置的对话框.
+ * @param parent parent window
+ * @return path const char*, if user does not accept, return nullptr
+ */
 const char *pop_save_path(GtkWidget *parent);
 
 }  // namespace iptux
