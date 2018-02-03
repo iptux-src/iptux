@@ -30,6 +30,7 @@
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
+#include "output.h"
 
 using namespace std;
 
@@ -54,6 +55,7 @@ UdpData::~UdpData() { g_free(encode); }
  */
 void UdpData::UdpDataEntry(IptuxConfig &config, in_addr_t ipv4,
                            const char buf[], size_t size) {
+  LOG_INFO("received udp message from %s, size %d", inAddrToString(ipv4).c_str(), size);
   UdpData udata(config);
 
   udata.ipv4 = ipv4;

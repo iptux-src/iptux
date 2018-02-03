@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <string.h>
+#include <sstream>
 
 #include "iptux/ipmsg.h"
 
@@ -584,5 +585,15 @@ void add_accelerator(GtkApplication* app, const char* action, const char* accel)
   };
   gtk_application_set_accels_for_action(app, action, accels);
 }
+
+std::string inAddrToString(in_addr_t ipv4) {
+  ostringstream oss;
+  oss << int(ipv4 & 0xff) << "."
+      << int((ipv4 & 0xff00) >> 8) << "."
+      << int((ipv4 & 0xff0000) >> 16) << "."
+      << int((ipv4 & 0xff000000) >> 24);
+  return oss.str();
+}
+
 
 }  // namespace iptux
