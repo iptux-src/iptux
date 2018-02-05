@@ -1581,10 +1581,11 @@ gboolean MainWindow::PaltreePopupMenu(GtkWidget *treeview,
   GroupInfo *grpinf;
 
   /* 检查事件是否可用 */
-  if (event->button != 3 ||
+  if (event->button != GDK_BUTTON_SECONDARY ||
       !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), GINT(event->x),
-                                     GINT(event->y), &path, NULL, NULL, NULL))
+                                     GINT(event->y), &path, NULL, NULL, NULL)) {
     return FALSE;
+  }
 
   /* 获取好友群组信息数据 */
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));

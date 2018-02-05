@@ -1249,7 +1249,9 @@ gboolean DataSettings::PopupPickMenu(GtkWidget *treeview,
   GtkWidget *menu;
   GtkTreeModel *model;
 
-  if (event->button != 3) return FALSE;
+  if (event->button != GDK_BUTTON_SECONDARY) {
+    return FALSE;
+  }
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   menu = CreatePopupMenu(model);
   gtk_widget_show_all(menu);
