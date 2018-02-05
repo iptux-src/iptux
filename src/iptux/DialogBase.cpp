@@ -826,7 +826,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
     snprintf(progresstip, MAX_BUFLEN, "%s", _("Sending Progress."));
   } else {
     progress = percent(sentsize, dlggrp->totalsendsize) / 100;
-    snprintf(progresstip, MAX_BUFLEN, _("%s Of %s Sent."),
+    snprintf(progresstip, MAX_BUFLEN, _("%s of %s Sent."),
              numeric_to_size(sentsize), numeric_to_size(dlggrp->totalsendsize));
   }
   if (progress == 1) {

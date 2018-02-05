@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <string.h>
+#include <sstream>
 
 #include "iptux/ipmsg.h"
 
@@ -257,13 +258,13 @@ char *numeric_to_size(int64_t numeric) {
   gchar *ptr;
 
   if (numeric >= ((int64_t)1 << 40))
-    ptr = g_strdup_printf("%.1fT", (float)numeric / ((int64_t)1 << 40));
+    ptr = g_strdup_printf("%.1fTiB", (double)numeric / ((int64_t)1 << 40));
   else if (numeric >= (1 << 30))
-    ptr = g_strdup_printf("%.1fG", (float)numeric / (1 << 30));
+    ptr = g_strdup_printf("%.1fGiB", (double)numeric / (1 << 30));
   else if (numeric >= (1 << 20))
-    ptr = g_strdup_printf("%.1fM", (float)numeric / (1 << 20));
+    ptr = g_strdup_printf("%.1fMiB", (double)numeric / (1 << 20));
   else if (numeric >= (1 << 10))
-    ptr = g_strdup_printf("%.1fK", (float)numeric / (1 << 10));
+    ptr = g_strdup_printf("%.1fKiB", (double)numeric / (1 << 10));
   else
     ptr = g_strdup_printf("%" PRId64 "B", numeric);
 
@@ -584,5 +585,15 @@ void add_accelerator(GtkApplication* app, const char* action, const char* accel)
   };
   gtk_application_set_accels_for_action(app, action, accels);
 }
+
+std::string inAddrToString(in_addr_t ipv4) {
+  ostringstream oss;
+  oss << int(ipv4 & 0xff) << "."
+      << int((ipv4 & 0xff00) >> 8) << "."
+      << int((ipv4 & 0xff0000) >> 16) << "."
+      << int((ipv4 & 0xff000000) >> 24);
+  return oss.str();
+}
+
 
 }  // namespace iptux

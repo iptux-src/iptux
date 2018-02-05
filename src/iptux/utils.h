@@ -80,5 +80,7 @@ bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
 
 void add_accelerator(GtkApplication* app, const char* action, const char* accel);
 
+std::string inAddrToString(in_addr_t ipv4);
+
 }  // namespace iptux
 #endif
