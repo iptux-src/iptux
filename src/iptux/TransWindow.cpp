@@ -162,7 +162,9 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
   GtkTreePath *path;
 
   /* 检查事件是否可用 */
-  if (event->button != 3) return FALSE;
+  if (event->button != GDK_BUTTON_SECONDARY) {
+    return FALSE;
+  }
 
   /* 确定当前被选中的路径 */
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
