@@ -9,14 +9,10 @@
   - [Build from source](#build-from-source)
     - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu-1)
     - [Mac OS X](#mac-os-x-1)
-  - [贡献](#%E8%B4%A1%E7%8C%AE)
-  - [声明](#%E5%A3%B0%E6%98%8E)
-  - [基本](#%E5%9F%BA%E6%9C%AC)
-  - [提高](#%E6%8F%90%E9%AB%98)
-  - [相关](#%E7%9B%B8%E5%85%B3)
-  - [必须](#%E5%BF%85%E9%A1%BB)
-  - [TODO](#todo)
-  - [How to update `po/iptux.pot`](#how-to-update-poiptuxpot)
+  - [Usage](#usage)
+    - [Compatible list](#compatible-list)
+  - [Contributing](#contributing)
+    - [How to update `po/iptux.pot`](#how-to-update-poiptuxpot)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
