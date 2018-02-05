@@ -1,7 +1,3 @@
-//
-// Created by LIDaobing on 2018-02-03.
-//
-
 #ifndef IPTUX_UIUTILS_H
 #define IPTUX_UIUTILS_H
 
