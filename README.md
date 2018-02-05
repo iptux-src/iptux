@@ -35,8 +35,16 @@ sudo apt-get install iptux
 
 ### Mac OS X
 
+stable version:
+
 ```
 brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
+```
+
+head version:
+
+```
+brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
 ```
 
 
