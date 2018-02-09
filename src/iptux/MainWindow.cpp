@@ -1215,17 +1215,17 @@ void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
   GtkTreeModel *model;
 
   model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "regular-paltree-model"));
-  pal_tree_model_set_sort_by(model, key);
+  palTreeModelSetSortKey(model, key);
 
   model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "segment-paltree-model"));
-  pal_tree_model_set_sort_by(model, key);
+  palTreeModelSetSortKey(model, key);
 
   model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "group-paltree-model"));
-  pal_tree_model_set_sort_by(model, key);
+  palTreeModelSetSortKey(model, key);
 
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
-  pal_tree_model_set_sort_by(model, key);
+  palTreeModelSetSortKey(model, key);
 }
 
 

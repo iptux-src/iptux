@@ -88,7 +88,7 @@ PalTreeModel * palTreeModelNew() {
                              GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF, G_TYPE_STRING,
                              G_TYPE_STRING, PANGO_TYPE_ATTR_LIST,
                              GDK_TYPE_COLOR, G_TYPE_POINTER);
-  pal_tree_model_set_sort_by(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
+  palTreeModelSetSortKey(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
   gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
                                        GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
                                        GTK_SORT_ASCENDING);
@@ -96,7 +96,7 @@ PalTreeModel * palTreeModelNew() {
   return GTK_TREE_MODEL(model);
 }
 
-void pal_tree_model_set_sort_by(PalTreeModel* model, PalTreeModelSortKey key) {
+void palTreeModelSetSortKey(PalTreeModel *model, PalTreeModelSortKey key) {
   switch(key) {
     case PalTreeModelSortKey::NICKNAME:
       gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), GtkTreeIterCompareFunc(paltreeCompareByNameFunc), NULL,
