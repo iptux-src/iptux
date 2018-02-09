@@ -30,12 +30,14 @@
 #include "iptux/utils.h"
 #include "iptux/output.h"
 #include "iptux/TransWindow.h"
-#include "iptux/UiUtils.h"
 #include "iptux/UiModels.h"
 
 using namespace std;
 
 namespace iptux {
+
+static gchar* palInfo2HintMarkup(const PalInfo *pal);
+
 
 /**
  * 类构造函数.
@@ -84,7 +86,7 @@ void MainWindow::CreateWindow() {
   /* 创建主窗口 */
   window = CreateMainWindow();
   g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-  g_object_set_data_full(G_OBJECT(window), "trans-model", trans_model_new(),
+  g_object_set_data_full(G_OBJECT(window), "trans-model", transModelNew(),
                            GDestroyNotify(g_object_unref));
 
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
@@ -179,16 +181,19 @@ void MainWindow::UpdateItemToPaltree(in_addr_t ipv4) {
       !(grpinf = g_cthrd->GetPalRegularItem(pal)))
     return;
 
+  const char* font = progdt.font;
+
+
   /* 更新常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   GroupGetPaltreeItem(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &iter, grpinf);
+  groupInfo2PalTreeModel(grpinf, model, &iter, font);
   /* 更新网段模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
   pgrpinf = g_cthrd->GetPalSegmentItem(pal);
   GroupGetPaltreeItem(model, &iter, pgrpinf);
   GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &iter, grpinf);
+  groupInfo2PalTreeModel(grpinf, model, &iter, font);
   /* 更新分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = g_cthrd->GetPalGroupItem(pal);
@@ -200,18 +205,18 @@ void MainWindow::UpdateItemToPaltree(in_addr_t ipv4) {
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
   if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
     gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    FillGroupInfoToPaltree(model, &parent, pgrpinf);
+    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt.font);
   }
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  FillGroupInfoToPaltree(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt.font);
+  palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt.font);
   /* 更新广播模式树 */
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
   pgrpinf = g_cthrd->GetPalBroadcastItem(pal);
   GroupGetPaltreeItem(model, &iter, pgrpinf);
   GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &iter, grpinf);
+  groupInfo2PalTreeModel(grpinf, model, &iter, font);
 }
 
 /**
@@ -228,41 +233,43 @@ void MainWindow::AttachItemToPaltree(in_addr_t ipv4) {
       !(grpinf = g_cthrd->GetPalRegularItem(pal)))
     return;
 
+  const char* font = progdt.font;
+
   /* 添加到常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, NULL);
-  FillGroupInfoToPaltree(model, &iter, grpinf);
+  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt.font);
   /* 添加到网段模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
   pgrpinf = g_cthrd->GetPalSegmentItem(pal);
   if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
     gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    FillGroupInfoToPaltree(model, &parent, pgrpinf);
+    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt.font);
   }
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  FillGroupInfoToPaltree(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt.font);
+  groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
   /* 添加到分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = g_cthrd->GetPalGroupItem(pal);
   if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
     gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    FillGroupInfoToPaltree(model, &parent, pgrpinf);
+    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt.font);
   }
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  FillGroupInfoToPaltree(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt.font);
+  groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
   /* 添加到广播模式树 */
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
   pgrpinf = g_cthrd->GetPalBroadcastItem(pal);
   if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
     gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    FillGroupInfoToPaltree(model, &parent, pgrpinf);
+    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt.font);
   }
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  FillGroupInfoToPaltree(model, &iter, grpinf);
-  UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt.font);
+  groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
 }
 
 /**
@@ -291,7 +298,7 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+    groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt.font);
   } else
     gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
   /* 从分组模式树移除 */
@@ -302,7 +309,7 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+    groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt.font);
   } else
     gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
   /* 从广播模式树移除 */
@@ -314,7 +321,7 @@ void MainWindow::DelItemFromPaltree(in_addr_t ipv4) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    UpdateGroupInfoToPaltree(model, &parent, pgrpinf);
+    groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt.font);
   } else
     gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
 }
@@ -450,10 +457,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   }
 
   /* 重设数据 */
-  UiUtils::applyTransFileModel2GtkListStore(
-      para,
-      GTK_LIST_STORE(model),
-      &iter);
+  transModelFillFromTransFileModel(model, &iter, para);
   g_action_group_activate_action(
       G_ACTION_GROUP(window),
       "trans_model_changed",
@@ -494,19 +498,19 @@ void MainWindow::InitSublayer() {
   accel = gtk_accel_group_new();
   timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 
-  model = CreatePaltreeModel();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = CreatePaltreeModel();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "segment-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = CreatePaltreeModel();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "group-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = CreatePaltreeModel();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "broadcast-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
@@ -709,28 +713,6 @@ GtkWidget *MainWindow::CreatePallistArea() {
 }
 
 /**
- * 好友树(paltree)底层数据结构.
- * 7,0 closed-expander,1 open-expander,2 info.,3 extras,4 style,5 color,6 data
- * \n 关闭的展开器;打开的展开器;群组信息;扩展信息;字体风格;字体颜色;群组数据 \n
- * @return paltree-model
- */
-GtkTreeModel *MainWindow::CreatePaltreeModel() {
-  GtkTreeStore *model;
-
-  model = gtk_tree_store_new(7, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF, G_TYPE_STRING,
-                             G_TYPE_STRING, PANGO_TYPE_ATTR_LIST,
-                             GDK_TYPE_COLOR, G_TYPE_POINTER);
-  gtk_tree_sortable_set_default_sort_func(
-      GTK_TREE_SORTABLE(model),
-      GtkTreeIterCompareFunc(PaltreeCompareByNameFunc), NULL, NULL);
-  gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
-                                       GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
-                                       GTK_SORT_ASCENDING);
-
-  return GTK_TREE_MODEL(model);
-}
-
-/**
  * 好友清单(pallist)底层数据结构.
  * 7,0 icon,1 name,2 group,3 ipstr,4 user,5 host,6 data \n
  * 好友头像;好友昵称;好友群组;IP地址串;好友用户;好友主机;好友数据 \n
@@ -777,23 +759,29 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model) {
   g_object_set(cell, "follow-state", TRUE, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "pixbuf", 0, "pixbuf-expander-closed", 0,
-                                      "pixbuf-expander-open", 1, NULL);
+                                      "pixbuf", PalTreeModelColumn ::CLOSED_EXPANDER,
+                                      "pixbuf-expander-closed", PalTreeModelColumn ::CLOSED_EXPANDER,
+                                      "pixbuf-expander-open", PalTreeModelColumn ::OPEN_EXPANDER,
+                                      NULL);
   g_object_set_data(G_OBJECT(column), "expander-cell", cell);
   /* 群组信息区域 */
   cell = gtk_cell_renderer_text_new();
   g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "text", 2, "attributes", 4,
-                                      "foreground-gdk", 5, NULL);
+                                      "text", PalTreeModelColumn ::INFO,
+                                      "attributes", PalTreeModelColumn ::STYLE,
+                                      "foreground-gdk", PalTreeModelColumn ::COLOR,
+                                      NULL);
   /* 扩展信息区域 */
   cell = gtk_cell_renderer_text_new();
   g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "text", 3, "attributes", 4,
-                                      "foreground-gdk", 5, NULL);
+                                      "text", PalTreeModelColumn ::EXTRAS,
+                                      "attributes", PalTreeModelColumn ::STYLE,
+                                      "foreground-gdk", PalTreeModelColumn ::COLOR,
+                                      NULL);
 
   /* 连接信号 */
   g_signal_connect(view, "query-tooltip", G_CALLBACK(PaltreeQueryTooltip),
@@ -947,157 +935,6 @@ bool MainWindow::GroupGetPaltreeItemWithParent(GtkTreeModel *model,
 }
 
 /**
- * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-void MainWindow::FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
-                                        GroupInfo *grpinf) {
-  static GdkColor color = {0xff, 0x5252, 0xb8b8, 0x3838};
-  GtkIconTheme *theme;
-  GdkPixbuf *cpixbuf, *opixbuf= nullptr;
-  PangoAttrList *attrs;
-  PangoAttribute *attr;
-  PangoFontDescription *dspt;
-  char ipstr[INET_ADDRSTRLEN];
-  gchar *file, *info, *extra;
-  PalInfo *pal;
-  GError* error = nullptr;
-
-  /* 创建图标 */
-  theme = gtk_icon_theme_get_default();
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = (PalInfo *)grpinf->member->data;
-    file = iptux_erase_filename_suffix(pal->iconfile);
-    cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
-                                       GtkIconLookupFlags(0), &error);
-    if(cpixbuf == nullptr) {
-      LOG_WARN("gtk_icon_theme_load_icon failed: [%d] %s", error->code, error->message);
-      g_error_free(error);
-      error = nullptr;
-    } else {
-      opixbuf = GDK_PIXBUF(g_object_ref(cpixbuf));
-    }
-    g_free(file);
-  } else {
-    cpixbuf = gtk_icon_theme_load_icon(theme, "tip-hide", MAX_ICONSIZE,
-                                       GtkIconLookupFlags(0), NULL);
-    opixbuf = gtk_icon_theme_load_icon(theme, "tip-show", MAX_ICONSIZE,
-                                       GtkIconLookupFlags(0), NULL);
-  }
-
-  /* 创建主信息 */
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = (PalInfo *)grpinf->member->data;
-    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-    info = g_strdup_printf("%s\n%s", pal->name, ipstr);
-  } else
-    info = g_strdup(grpinf->name);
-
-  /* 创建扩展信息 */
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR)
-    extra = NULL;
-  else
-    extra = g_strdup_printf("(%u)", g_slist_length(grpinf->member));
-
-  /* 创建字体风格 */
-  attrs = pango_attr_list_new();
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    dspt = pango_font_description_from_string(progdt.font);
-    attr = pango_attr_font_desc_new(dspt);
-    pango_attr_list_insert(attrs, attr);
-    pango_font_description_free(dspt);
-  } else {
-    attr = pango_attr_size_new(8192);
-    pango_attr_list_insert(attrs, attr);
-    attr = pango_attr_style_new(PANGO_STYLE_ITALIC);
-    pango_attr_list_insert(attrs, attr);
-    attr = pango_attr_weight_new(PANGO_WEIGHT_BOLD);
-    pango_attr_list_insert(attrs, attr);
-  }
-
-  /* 设置相应的数据 */
-  gtk_tree_store_set(GTK_TREE_STORE(model), iter, 0, cpixbuf, 1, opixbuf, 2,
-                     info, 3, extra, 4, attrs, 5, &color, 6, grpinf, -1);
-
-  /* 释放资源 */
-  if (cpixbuf) g_object_unref(cpixbuf);
-  if (opixbuf) g_object_unref(opixbuf);
-  g_free(info);
-  g_free(extra);
-  pango_attr_list_unref(attrs);
-}
-
-/**
- * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-void MainWindow::UpdateGroupInfoToPaltree(GtkTreeModel *model,
-                                          GtkTreeIter *iter,
-                                          GroupInfo *grpinf) {
-  GtkIconTheme *theme;
-  GdkPixbuf *cpixbuf, *opixbuf;
-  PangoAttrList *attrs;
-  PangoAttribute *attr;
-  PangoFontDescription *dspt;
-  char ipstr[INET_ADDRSTRLEN];
-  gchar *file, *info, *extra;
-  PalInfo *pal;
-
-  /* 创建图标 */
-  cpixbuf = opixbuf = NULL;
-  theme = gtk_icon_theme_get_default();
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = (PalInfo *)grpinf->member->data;
-    file = iptux_erase_filename_suffix(pal->iconfile);
-    cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
-                                       GtkIconLookupFlags(0), NULL);
-    opixbuf = GDK_PIXBUF(g_object_ref(cpixbuf));
-    g_free(file);
-  }
-
-  /* 创建主信息 */
-  info = NULL;
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = (PalInfo *)grpinf->member->data;
-    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-    info = g_strdup_printf("%s\n%s", pal->name, ipstr);
-  }
-
-  /* 创建扩展信息 */
-  extra = NULL;
-  if (grpinf->type != GROUP_BELONG_TYPE_REGULAR)
-    extra = g_strdup_printf("(%u)", g_slist_length(grpinf->member));
-
-  /* 创建字体风格 */
-  attrs = NULL;
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    attrs = pango_attr_list_new();
-    dspt = pango_font_description_from_string(progdt.font);
-    attr = pango_attr_font_desc_new(dspt);
-    pango_attr_list_insert(attrs, attr);
-    pango_font_description_free(dspt);
-  }
-
-  /* 设置相应的数据 */
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR)
-    gtk_tree_store_set(GTK_TREE_STORE(model), iter, 0, cpixbuf, 1, opixbuf, 2,
-                       info, 4, attrs, -1);
-  else
-    gtk_tree_store_set(GTK_TREE_STORE(model), iter, 3, extra, -1);
-
-  /* 释放资源 */
-  if (cpixbuf) g_object_unref(cpixbuf);
-  if (opixbuf) g_object_unref(opixbuf);
-  g_free(info);
-  g_free(extra);
-  if (attrs) pango_attr_list_unref(attrs);
-}
-
-/**
  * 闪烁指定项.
  * @param model model
  * @param iter iter
@@ -1199,53 +1036,60 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf) {
 }
 
 /**
- * 填充好友数据到TextBuffer.
- * @param buffer text-buffer
  * @param pal class PalInfo
+ * @return use g_free to free the return value
  */
-void MainWindow::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
-  char buf[MAX_BUFLEN], ipstr[INET_ADDRSTRLEN];
-  GtkTextIter iter;
-
-  gtk_text_buffer_get_end_iter(buffer, &iter);
-
-  snprintf(buf, MAX_BUFLEN, _("Version: %s\n"), pal->version);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  if (pal->group && *pal->group != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s@%s\n"), pal->name, pal->group);
-  else
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s\n"), pal->name);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->user);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("Host: %s\n"), pal->host);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-  if (pal->segdes && *pal->segdes != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Address: %s(%s)\n"), pal->segdes, ipstr);
-  else
-    snprintf(buf, MAX_BUFLEN, _("Address: %s\n"), ipstr);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  if (!pal->isCompatible()) {
-    snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
+gchar* palInfo2HintMarkup(const PalInfo *pal) {
+  char ipstr[INET_ADDRSTRLEN];
+  gchar *version = g_markup_printf_escaped(_("Version: %s"), pal->version);
+  gchar *nickname;
+  if (pal->group && *pal->group != '\0') {
+    nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->name, pal->group);
   } else {
-    snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
+    nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->name);
   }
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
+  gchar *user = g_markup_printf_escaped(_("User: %s"), pal->user);
+  gchar *host = g_markup_printf_escaped(_("Host: %s"), pal->host);
+  gchar *address;
+  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+  if (pal->segdes && *pal->segdes != '\0') {
+    address = g_markup_printf_escaped(_("Address: %s(%s)"), pal->segdes, ipstr);
+  } else {
+    address = g_markup_printf_escaped(_("Address: %s"), ipstr);
+  }
+  gchar *compatibility;
+  if (!pal->isCompatible()) {
+    compatibility = g_markup_escape_text(_("Compatibility: Microsoft"), -1);
+  } else {
+    compatibility = g_markup_escape_text(_("Compatibility: GNU/Linux"), -1);
+  }
+  gchar *coding = g_markup_printf_escaped(_("System coding: %s"), pal->encode);
+  gchar *signature1 = nullptr;
+  gchar *signature2 = nullptr;
   if (pal->sign && *pal->sign != '\0') {
-    gtk_text_buffer_insert(buffer, &iter, _("Signature:\n"), -1);
-    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, pal->sign, -1,
-                                             "sign-words", NULL);
+    signature1 = g_markup_printf_escaped("%s", _("Signature:"));
+    signature2 = g_markup_escape_text(pal->sign, -1);
   }
+
+  gchar* result;
+  if(signature1) {
+    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n<span foreground=\"#00FF00\" font_style=\"italic\" size=\"smaller\">%s</span>",
+                        version, nickname, user, host, address, compatibility, coding,
+                        signature1, signature2);
+  } else {
+    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s",
+                             version, nickname, user, host, address, compatibility, coding);
+  }
+  g_free(version);
+  g_free(nickname);
+  g_free(user);
+  g_free(host);
+  g_free(address);
+  g_free(coding);
+  g_free(compatibility);
+  g_free(signature1);
+  g_free(signature2);
+  return result;
 }
 
 /**
@@ -1358,12 +1202,12 @@ void MainWindow::onDetect(void*, void*, MainWindow& self) {
 void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
   string sortBy = g_variant_get_string(value, nullptr);
 
-  GtkTreeIterCompareFunc func;
+  PalTreeModelSortKey key;
 
   if(sortBy == "nickname") {
-    func = (GtkTreeIterCompareFunc)PaltreeCompareByNameFunc;
+    key = PalTreeModelSortKey::NICKNAME;
   } else if(sortBy == "ip") {
-    func = (GtkTreeIterCompareFunc)PaltreeCompareByIPFunc;
+    key = PalTreeModelSortKey::IP;
   } else {
     LOG_WARN("unknown sort by: %s", sortBy.c_str());
     return;
@@ -1373,22 +1217,17 @@ void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
   GtkTreeModel *model;
 
   model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "regular-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
+  palTreeModelSetSortKey(model, key);
 
   model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "segment-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
+  palTreeModelSetSortKey(model, key);
 
   model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "group-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
+  palTreeModelSetSortKey(model, key);
 
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
-  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
-                                          NULL);
-
+  palTreeModelSetSortKey(model, key);
 }
 
 
@@ -1465,16 +1304,13 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
  * @param treeview the object which received the signal
  * @param x the x coordinate of the cursor position
  * @param y the y coordinate of the cursor position
- * @param key TRUE if the tooltip was trigged using the keyboard
+ * @param keyboard_mode TRUE if the tooltip was trigged using the keyboard
  * @param tooltip a GtkTooltip
  * @return Gtk+库所需
  */
 gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
-                                         gboolean key, GtkTooltip *tooltip,
+                                         gboolean keyboard_mode, GtkTooltip *tooltip,
                                          MainWindow *self) {
-  GdkColor color = {0xff, 0xffff, 0xffff, 0xd6d8};
-  GtkWidget *textview;
-  GtkTextBuffer *buffer;
   GtkTreePath *path;
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1483,9 +1319,10 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
 
   gtk_tree_view_convert_widget_to_bin_window_coords(GTK_TREE_VIEW(treeview), x,
                                                     y, &bx, &by);
-  if (key || !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), bx, by,
-                                            &path, NULL, NULL, NULL))
+  if (keyboard_mode || !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), bx, by,
+                                            &path, NULL, NULL, NULL)) {
     return FALSE;
+  }
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_tree_model_get_iter(model, &iter, path);
@@ -1493,15 +1330,9 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
   if (grpinf->type != GROUP_BELONG_TYPE_REGULAR) return FALSE;
 
-  buffer = gtk_text_buffer_new(self->progdt.table);
-  FillPalInfoToBuffer(buffer, (PalInfo *)grpinf->member->data);
-  textview = gtk_text_view_new_with_buffer(buffer);
-  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(textview), FALSE);
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), FALSE);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview), GTK_WRAP_NONE);
-  gtk_widget_modify_base(textview, GTK_STATE_NORMAL, &color);
-  gtk_tooltip_set_custom(tooltip, textview);
-  g_object_unref(buffer);
+  char* tooltipMarkup = palInfo2HintMarkup((PalInfo *)grpinf->member->data);
+  gtk_tooltip_set_markup(tooltip, tooltipMarkup);
+  g_free(tooltipMarkup);
 
   return TRUE;
 }
@@ -1689,48 +1520,6 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
   //        session->ShowEnclosure();
-}
-
-/**
- * 好友树(paltree)按昵称排序的比较函数.
- * @param model paltree-model
- * @param a A GtkTreeIter in model
- * @param b Another GtkTreeIter in model
- * @return 比较值
- */
-gint MainWindow::PaltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                          GtkTreeIter *b) {
-  GroupInfo *agrpinf, *bgrpinf;
-  gint result;
-
-  gtk_tree_model_get(model, a, 6, &agrpinf, -1);
-  gtk_tree_model_get(model, b, 6, &bgrpinf, -1);
-  result = strcmp(agrpinf->name, bgrpinf->name);
-
-  return result;
-}
-
-/**
- * 好友树(paltree)按IP排序的比较函数.
- * @param model paltree-model
- * @param a A GtkTreeIter in model
- * @param b Another GtkTreeIter in model
- * @return 比较值
- */
-gint MainWindow::PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                        GtkTreeIter *b) {
-  GroupInfo *agrpinf, *bgrpinf;
-  gint result;
-
-  gtk_tree_model_get(model, a, 6, &agrpinf, -1);
-  gtk_tree_model_get(model, b, 6, &bgrpinf, -1);
-  if (agrpinf->type == GROUP_BELONG_TYPE_REGULAR &&
-      bgrpinf->type == GROUP_BELONG_TYPE_REGULAR)
-    result = ntohl(agrpinf->grpid) - ntohl(bgrpinf->grpid);
-  else
-    result = 0;
-
-  return result;
 }
 
 /**

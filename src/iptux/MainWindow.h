@@ -95,7 +95,6 @@ class MainWindow {
   GtkWidget *CreatePaltreeArea();
   GtkWidget *CreatePallistArea();
 
-  GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();
   GtkWidget *CreatePaltreeTree(GtkTreeModel *model);
   GtkWidget *CreatePallistTree(GtkTreeModel *model);
@@ -108,8 +107,6 @@ class MainWindow {
                                      GroupInfo *grpinf);
   void FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                               GroupInfo *grpinf);
-  void UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
-                                GroupInfo *grpinf);
   void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                bool blinking);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
@@ -120,8 +117,6 @@ class MainWindow {
   static gboolean UpdateUI(MainWindow *mwin);
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);
-
-  static gboolean UpdateTransUI(GtkWidget *treeview);
 
   static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
@@ -141,12 +136,6 @@ class MainWindow {
                                       GdkDragContext *context, gint x, gint y,
                                       GtkSelectionData *data, guint info,
                                       guint time, MainWindow *self);
-
-  static gint PaltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                       GtkTreeIter *b);
-  static gint PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                     GtkTreeIter *b);
-
   static void HidePallistArea(GData **widset);
   static gboolean ClearPallistEntry(GtkWidget *entry, GdkEventKey *event);
   static void PallistEntryChanged(GtkWidget *entry, GData **widset);
