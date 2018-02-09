@@ -7,9 +7,8 @@
 #include "iptux/utils.h"
 #include "iptux/deplib.h"
 #include "iptux/TransAbstract.h"
-#include "iptux/UiUtils.h"
-#include "output.h"
-#include "UiModels.h"
+#include "iptux/output.h"
+#include "iptux/UiModels.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -484,7 +483,7 @@ gboolean UpdateTransUI(GtkWindow *window) {
     gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
     if (trans) {  //当文件传输类存在时才能更新
       const TransFileModel& transFileModel = trans->getTransFileModel();  //获取参数
-      UiUtils::applyTransFileModel2GtkListStore(transFileModel, GTK_LIST_STORE(model), &iter);
+      transModelFillFromTransFileModel(model, &iter, transFileModel);
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 

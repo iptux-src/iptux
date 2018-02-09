@@ -4,11 +4,10 @@
 #include <gtk/gtk.h>
 
 #include "mess.h"
+#include "iptux/TransFileModel.h"
 
 namespace iptux {
 
-typedef GtkTreeModel TransModel;
-TransModel* transModelNew();
 enum class TransModelColumn {
   STATUS, TASK, PEER, IP, FILENAME,
   FILE_LENGTH_TEXT, FINISHED_LENGTH_TEXT, PROGRESS, PROGRESS_TEXT, COST,
@@ -16,7 +15,9 @@ enum class TransModelColumn {
   FINISHED,
   N_COLUMNS
 };
-
+typedef GtkTreeModel TransModel;
+TransModel* transModelNew();
+void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel&);
 
 enum class PalTreeModelSortKey {
   NICKNAME,
