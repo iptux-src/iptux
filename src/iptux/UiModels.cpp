@@ -222,13 +222,13 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
 
   /* 设置相应的数据 */
   gtk_tree_store_set(GTK_TREE_STORE(model), iter,
-                     0, cpixbuf,
-                     1, opixbuf,
-                     2, info,
-                     3, extra,
-                     4, attrs,
-                     5, &color,
-                     6, grpinf,
+                     PalTreeModelColumn ::CLOSED_EXPANDER, cpixbuf,
+                     PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
+                     PalTreeModelColumn ::INFO, info,
+                     PalTreeModelColumn ::EXTRAS, extra,
+                     PalTreeModelColumn ::STYLE, attrs,
+                     PalTreeModelColumn ::COLOR, &color,
+                     PalTreeModelColumn ::DATA, grpinf,
                      -1);
 
   /* 释放资源 */

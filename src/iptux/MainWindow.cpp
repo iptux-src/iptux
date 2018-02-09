@@ -759,23 +759,29 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model) {
   g_object_set(cell, "follow-state", TRUE, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "pixbuf", 0, "pixbuf-expander-closed", 0,
-                                      "pixbuf-expander-open", 1, NULL);
+                                      "pixbuf", PalTreeModelColumn ::CLOSED_EXPANDER,
+                                      "pixbuf-expander-closed", PalTreeModelColumn ::CLOSED_EXPANDER,
+                                      "pixbuf-expander-open", PalTreeModelColumn ::OPEN_EXPANDER,
+                                      NULL);
   g_object_set_data(G_OBJECT(column), "expander-cell", cell);
   /* 群组信息区域 */
   cell = gtk_cell_renderer_text_new();
   g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "text", 2, "attributes", 4,
-                                      "foreground-gdk", 5, NULL);
+                                      "text", PalTreeModelColumn ::INFO,
+                                      "attributes", PalTreeModelColumn ::STYLE,
+                                      "foreground-gdk", PalTreeModelColumn ::COLOR,
+                                      NULL);
   /* 扩展信息区域 */
   cell = gtk_cell_renderer_text_new();
   g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "text", 3, "attributes", 4,
-                                      "foreground-gdk", 5, NULL);
+                                      "text", PalTreeModelColumn ::EXTRAS,
+                                      "attributes", PalTreeModelColumn ::STYLE,
+                                      "foreground-gdk", PalTreeModelColumn ::COLOR,
+                                      NULL);
 
   /* 连接信号 */
   g_signal_connect(view, "query-tooltip", G_CALLBACK(PaltreeQueryTooltip),
