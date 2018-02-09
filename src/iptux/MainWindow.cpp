@@ -37,6 +37,9 @@ using namespace std;
 
 namespace iptux {
 
+static gchar* palInfo2HintMarkup(const PalInfo *pal);
+
+
 /**
  * 类构造函数.
  */
@@ -1199,53 +1202,56 @@ GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf) {
 }
 
 /**
- * 填充好友数据到TextBuffer.
- * @param buffer text-buffer
  * @param pal class PalInfo
+ * @return use g_free to free the return value
  */
-void MainWindow::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
-  char buf[MAX_BUFLEN], ipstr[INET_ADDRSTRLEN];
-  GtkTextIter iter;
-
-  gtk_text_buffer_get_end_iter(buffer, &iter);
-
-  snprintf(buf, MAX_BUFLEN, _("Version: %s\n"), pal->version);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  if (pal->group && *pal->group != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s@%s\n"), pal->name, pal->group);
-  else
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s\n"), pal->name);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->user);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("Host: %s\n"), pal->host);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-  if (pal->segdes && *pal->segdes != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Address: %s(%s)\n"), pal->segdes, ipstr);
-  else
-    snprintf(buf, MAX_BUFLEN, _("Address: %s\n"), ipstr);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  if (!pal->isCompatible()) {
-    snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
+gchar* palInfo2HintMarkup(const PalInfo *pal) {
+  char ipstr[INET_ADDRSTRLEN];
+  gchar *version = g_markup_printf_escaped(_("Version: %s"), pal->version);
+  gchar *nickname;
+  if (pal->group && *pal->group != '\0') {
+    nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->name, pal->group);
   } else {
-    snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
+    nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->name);
   }
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
+  gchar *user = g_markup_printf_escaped(_("User: %s"), pal->user);
+  gchar *host = g_markup_printf_escaped(_("Host: %s"), pal->host);
+  gchar *address;
+  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+  if (pal->segdes && *pal->segdes != '\0') {
+    address = g_markup_printf_escaped(_("Address: %s(%s)"), pal->segdes, ipstr);
+  } else {
+    address = g_markup_printf_escaped(_("Address: %s"), ipstr);
+  }
+  const gchar *compatibility;
+  if (!pal->isCompatible()) {
+    compatibility = _("Compatibility: Microsoft");
+  } else {
+    compatibility = _("Compatibility: GNU/Linux");
+  }
+  gchar *coding = g_markup_printf_escaped(_("System coding: %s"), pal->encode);
+  gchar *signature1 = nullptr;
+  gchar *signature2 = nullptr;
   if (pal->sign && *pal->sign != '\0') {
-    gtk_text_buffer_insert(buffer, &iter, _("Signature:\n"), -1);
-    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, pal->sign, -1,
-                                             "sign-words", NULL);
+    signature1 = g_markup_printf_escaped("%s", _("Signature:"));
+    signature2 = g_markup_escape_text(pal->sign, -1);
   }
+
+  gchar *result = g_strjoin("\n",
+                            version,
+                            nickname,
+                            user,
+                            host,
+                            address,
+                            compatibility,
+                            coding,
+                            signature1,
+                            "<span foreground=\"blue\" size=\"smaller\">",
+                            signature2,
+                            "</span>",
+                            nullptr);
+  LOG_INFO("%s", result);
+  return result;
 }
 
 /**
@@ -1465,16 +1471,13 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
  * @param treeview the object which received the signal
  * @param x the x coordinate of the cursor position
  * @param y the y coordinate of the cursor position
- * @param key TRUE if the tooltip was trigged using the keyboard
+ * @param keyboard_mode TRUE if the tooltip was trigged using the keyboard
  * @param tooltip a GtkTooltip
  * @return Gtk+库所需
  */
 gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
-                                         gboolean key, GtkTooltip *tooltip,
+                                         gboolean keyboard_mode, GtkTooltip *tooltip,
                                          MainWindow *self) {
-  GdkColor color = {0xff, 0xffff, 0xffff, 0xd6d8};
-  GtkWidget *textview;
-  GtkTextBuffer *buffer;
   GtkTreePath *path;
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1483,25 +1486,22 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
 
   gtk_tree_view_convert_widget_to_bin_window_coords(GTK_TREE_VIEW(treeview), x,
                                                     y, &bx, &by);
-  if (key || !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), bx, by,
-                                            &path, NULL, NULL, NULL))
+  if (keyboard_mode || !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), bx, by,
+                                            &path, NULL, NULL, NULL)) {
     return FALSE;
+  }
 
+  LOG_INFO("treeview: %p, x: %d, y: %d, keyboard_mode: %d, tooltip: %p, self:%p",
+           treeview, x, y, keyboard_mode, tooltip, self);
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_path_free(path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
   if (grpinf->type != GROUP_BELONG_TYPE_REGULAR) return FALSE;
 
-  buffer = gtk_text_buffer_new(self->progdt.table);
-  FillPalInfoToBuffer(buffer, (PalInfo *)grpinf->member->data);
-  textview = gtk_text_view_new_with_buffer(buffer);
-  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(textview), FALSE);
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), FALSE);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview), GTK_WRAP_NONE);
-  gtk_widget_modify_base(textview, GTK_STATE_NORMAL, &color);
-  gtk_tooltip_set_custom(tooltip, textview);
-  g_object_unref(buffer);
+  char* tooltipMarkup = palInfo2HintMarkup((PalInfo *)grpinf->member->data);
+  gtk_tooltip_set_markup(tooltip, tooltipMarkup);
+  g_free(tooltipMarkup);
 
   return TRUE;
 }
