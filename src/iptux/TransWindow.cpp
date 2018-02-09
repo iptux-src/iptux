@@ -15,8 +15,6 @@
 
 namespace iptux {
 
-static const int TRANS_TREE_MAX = 14;
-
 class TransWindowPrivate {
  public:
   GtkWidget* transTreeviewWidget;
@@ -29,7 +27,7 @@ class TransWindowPrivate {
 
 static gboolean TWinConfigureEvent(GtkWindow *window);
 static GtkWidget * CreateTransArea(GtkWindow* window);
-static GtkWidget* CreateTransTree(GtkTreeModel *model);
+static GtkWidget* CreateTransTree(TransWindow *window);
 static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
 static void OpenThisFile(GtkTreeModel *model);
 static void ClearTransTask(GtkTreeModel *model);
@@ -135,8 +133,7 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
-  model = trans_window_get_trans_model(window);
-  widget = CreateTransTree(model);
+  widget = CreateTransTree(window);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   getPriv(window).transTreeviewWidget = widget;
 
@@ -195,12 +192,13 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
  * @param model trans-model
  * @return 传输树
  */
-GtkWidget* CreateTransTree(GtkTreeModel *model) {
+GtkWidget* CreateTransTree(TransWindow *window) {
   GtkWidget *view;
   GtkTreeViewColumn *column;
   GtkCellRenderer *cell;
   GtkTreeSelection *selection;
 
+  auto model = trans_window_get_trans_model(window);
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(view), TRUE);
@@ -302,7 +300,7 @@ static void OpenContainingFolder(GtkTreeModel *model) {
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 12, &filename, -1);
+  gtk_tree_model_get(model, &iter, TransModelColumn::FILE_PATH, &filename, -1);
   if (filename) {
     name = ipmsg_get_filename_me(filename, &filepath);
     if (!g_file_test(filepath, G_FILE_TEST_EXISTS)) {
@@ -335,8 +333,8 @@ static void TerminateTransTask(GtkTreeModel *model) {
     return;
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter,
-                     13, &trans,
-                     15, &finished,
+                     TransModelColumn ::DATA, &trans,
+                     TransModelColumn ::FINISHED, &finished,
                      -1);
   if(finished) {
     return;
@@ -361,7 +359,7 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    gtk_tree_model_get(model, &iter, 12, &trans, -1);
+    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
     if (trans) trans->TerminateTrans();
   } while (gtk_tree_model_iter_next(model, &iter));
 }
@@ -377,7 +375,7 @@ void ClearTransTask(GtkTreeModel *model) {
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
     mark:
-    gtk_tree_model_get(model, &iter, 12, &data, -1);
+    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &data, -1);
     if (!data) {
       if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
       break;
@@ -402,7 +400,7 @@ GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
                                                  "selected-path"))))
     return NULL;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 15, &finished, -1);
+  gtk_tree_model_get(model, &iter, TransModelColumn ::FINISHED, &finished, -1);
 
   menu = gtk_menu_new();
 
@@ -450,7 +448,7 @@ void OpenThisFile(GtkTreeModel *model) {
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 12, &filename, -1);
+  gtk_tree_model_get(model, &iter, TransModelColumn ::FILE_PATH, &filename, -1);
   if (filename) {
     if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
       GtkWidget *dialog = gtk_message_dialog_new(
@@ -483,7 +481,7 @@ gboolean UpdateTransUI(GtkWindow *window) {
 
   /* 更新UI */
   do {
-    gtk_tree_model_get(model, &iter, TRANS_TREE_MAX - 1, &trans, -1);
+    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
     if (trans) {  //当文件传输类存在时才能更新
       const TransFileModel& transFileModel = trans->getTransFileModel();  //获取参数
       UiUtils::applyTransFileModel2GtkListStore(transFileModel, GTK_LIST_STORE(model), &iter);
