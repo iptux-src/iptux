@@ -502,19 +502,19 @@ void MainWindow::InitSublayer() {
   accel = gtk_accel_group_new();
   timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
 
-  model = pal_tree_model_new();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = pal_tree_model_new();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "segment-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = pal_tree_model_new();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "group-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = pal_tree_model_new();
+  model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "broadcast-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);

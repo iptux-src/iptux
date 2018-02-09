@@ -81,7 +81,7 @@ gint paltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
  * \n 关闭的展开器;打开的展开器;群组信息;扩展信息;字体风格;字体颜色;群组数据 \n
  * @return paltree-model
  */
-PalTreeModel * pal_tree_model_new() {
+PalTreeModel * palTreeModelNew() {
   GtkTreeStore *model;
 
   model = gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS),

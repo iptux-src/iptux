@@ -33,7 +33,7 @@ enum class PalTreeModelColumn {
   N_COLUMNS
 };
 typedef GtkTreeModel PalTreeModel;
-PalTreeModel* pal_tree_model_new();
+PalTreeModel* palTreeModelNew();
 void pal_tree_model_set_sort_by(PalTreeModel* model, PalTreeModelSortKey key);
 /**
  * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
