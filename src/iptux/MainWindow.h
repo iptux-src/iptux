@@ -97,7 +97,6 @@ class MainWindow {
 
   GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();
-  GtkTreeModel *CreateTransModel();
   GtkWidget *CreatePaltreeTree(GtkTreeModel *model);
   GtkWidget *CreatePallistTree(GtkTreeModel *model);
 

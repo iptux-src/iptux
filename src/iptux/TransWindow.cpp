@@ -9,6 +9,7 @@
 #include "iptux/TransAbstract.h"
 #include "iptux/UiUtils.h"
 #include "output.h"
+#include "UiModels.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -209,67 +210,79 @@ GtkWidget* CreateTransTree(GtkTreeModel *model) {
                    NULL);
 
   cell = gtk_cell_renderer_pixbuf_new();
-  column = gtk_tree_view_column_new_with_attributes(_("State"), cell, "icon-name",
-                                                    0, NULL);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-
-  cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Task"), cell, "text", 1,
+  column = gtk_tree_view_column_new_with_attributes(_("State"), cell,
+                                                    "icon-name", TransModelColumn::STATUS,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Peer"), cell, "text", 2,
+  column = gtk_tree_view_column_new_with_attributes(_("Task"), cell,
+                                                    "text", TransModelColumn::TASK,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("IPv4"), cell, "text", 3,
+  column = gtk_tree_view_column_new_with_attributes(_("Peer"), cell,
+                                                    "text", TransModelColumn::PEER,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Filename"), cell, "text",
-                                                    4, NULL);
+  column = gtk_tree_view_column_new_with_attributes(_("IPv4"), cell,
+                                                    "text", TransModelColumn::IP,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Size"), cell, "text", 5,
+  column = gtk_tree_view_column_new_with_attributes(_("Filename"), cell,
+                                                    "text", TransModelColumn::FILENAME,
+                                                    NULL);
+  gtk_tree_view_column_set_resizable(column, TRUE);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
+  cell = gtk_cell_renderer_text_new();
+  column = gtk_tree_view_column_new_with_attributes(_("Size"), cell,
+                                                    "text", TransModelColumn::FILE_LENGTH_TEXT,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(_("Completed"), cell,
-                                                    "text", 6, NULL);
+                                                    "text", TransModelColumn::FINISHED_LENGTH_TEXT,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_progress_new();
-  column = gtk_tree_view_column_new_with_attributes(
-      _("Progress"), cell, "value", 7, "text", 8, NULL);
+  column = gtk_tree_view_column_new_with_attributes(_("Progress"), cell,
+                                                    "value", TransModelColumn::PROGRESS,
+                                                    "text", TransModelColumn::PROGRESS_TEXT,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Cost"), cell, "text", 9,
+  column = gtk_tree_view_column_new_with_attributes(_("Cost"), cell,
+                                                    "text", TransModelColumn::COST,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(_("Remaining"), cell,
-                                                    "text", 10, NULL);
+                                                    "text", TransModelColumn::REMAIN,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Rate"), cell, "text", 11,
+  column = gtk_tree_view_column_new_with_attributes(_("Rate"), cell,
+                                                    "text", TransModelColumn::RATE,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
