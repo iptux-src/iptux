@@ -9,6 +9,8 @@ class TransAbstract;
 
 class TransFileModel {
  public:
+  TransFileModel();
+
   TransFileModel &setStatus(const std::string &value);
   TransFileModel &setTask(const std::string &value);
   TransFileModel &setPeer(const std::string &value);
@@ -20,7 +22,14 @@ class TransFileModel {
   TransFileModel &setRemain(const std::string &value);
   TransFileModel &setRate(const std::string &value);
   TransFileModel &setFilePath(const std::string &value);
+
+  /**
+   *
+   * @param value not null
+   * @return
+   */
   TransFileModel &setData(TransAbstract *value);
+  void finish();
 
   const std::string &getStatus() const;
   const std::string &getTask() const;
@@ -37,6 +46,7 @@ class TransFileModel {
   const std::string &getRate() const;
   const std::string &getFilePath() const;
   TransAbstract *getData() const;
+  bool isFinished() const;
  private:
   std::string status;
   std::string task;
@@ -49,6 +59,7 @@ class TransFileModel {
   std::string remain;
   std::string rate;
   std::string filePath;
+  bool finished;
   TransAbstract *data;
 };
 

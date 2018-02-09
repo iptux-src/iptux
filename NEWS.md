@@ -4,6 +4,7 @@
 * [#119] check the return code of `setsockopt`.
 * [#?] switch to GTK+3, and use `GtkApplication`.
 * [#125] fix crash on UdpData::SomeoneSendmsg.
+* [#140] fix crash on TransWindow::TerminateTransTask.
 * [#132] fix file accepted when cancel the directory chooser dialog.
 
 ### refactor

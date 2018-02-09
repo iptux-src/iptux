@@ -31,12 +31,11 @@
 #include "iptux/output.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiUtils.h"
+#include "iptux/UiModels.h"
 
 using namespace std;
 
 namespace iptux {
-
-static const int TRANS_TREE_MAX = 14;
 
 /**
  * 类构造函数.
@@ -85,7 +84,7 @@ void MainWindow::CreateWindow() {
   /* 创建主窗口 */
   window = CreateMainWindow();
   g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-  g_object_set_data_full(G_OBJECT(window), "trans-model", CreateTransModel(),
+  g_object_set_data_full(G_OBJECT(window), "trans-model", trans_model_new(),
                            GDestroyNotify(g_object_unref));
 
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
@@ -430,7 +429,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   bool found = false;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
-      gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
+      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
       if (gpointer(&para) == data) {
         found = true;
         break;
@@ -439,7 +438,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   }
   if (!found) {
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, &para, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, &para, -1);
   }
 
   /**
@@ -447,7 +446,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
    * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
    */
   if (!para.getData()) {
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, NULL, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, NULL, -1);
   }
 
   /* 重设数据 */
@@ -475,7 +474,7 @@ bool MainWindow::TransmissionActive() {
   model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
-      gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
+      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
       if (data) break;
     } while (gtk_tree_model_iter_next(model, &iter));
   }
@@ -745,28 +744,6 @@ GtkTreeModel *MainWindow::CreatePallistModel() {
   model = gtk_list_store_new(7, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_POINTER);
-
-  return GTK_TREE_MODEL(model);
-}
-
-/**
- * 文件传输树(trans-tree)底层数据结构.
- * 14,0 status,1 task,2 peer,3 ip,4 filename,5 filelength,6 finishlength,7
- * progress, 8 pro-text,9 cost,10 remain,11 rate,12,pathname,13 data,14 para \n
- * 任务状态;任务类型;任务对端;文件名(如果当前是文件夹，该项指正在传输的文件夹内单个文件,
- * 整个文件夹传输完成后,该项指向当前是文件夹);文件长度;完成长度;完成进度;
- * 进度串;已花费时间;任务剩余时间;传输速度;带路径文件名(不显示);文件传输类;参数指针值
- * \n
- * @return trans-model
- */
-GtkTreeModel *MainWindow::CreateTransModel() {
-  GtkListStore *model;
-
-  model = gtk_list_store_new(15, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_POINTER);
 
   return GTK_TREE_MODEL(model);
 }

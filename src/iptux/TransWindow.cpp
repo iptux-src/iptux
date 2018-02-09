@@ -8,12 +8,12 @@
 #include "iptux/deplib.h"
 #include "iptux/TransAbstract.h"
 #include "iptux/UiUtils.h"
+#include "output.h"
+#include "UiModels.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
 namespace iptux {
-
-static const int TRANS_TREE_MAX = 14;
 
 class TransWindowPrivate {
  public:
@@ -27,7 +27,7 @@ class TransWindowPrivate {
 
 static gboolean TWinConfigureEvent(GtkWindow *window);
 static GtkWidget * CreateTransArea(GtkWindow* window);
-static GtkWidget* CreateTransTree(GtkTreeModel *model);
+static GtkWidget* CreateTransTree(TransWindow *window);
 static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
 static void OpenThisFile(GtkTreeModel *model);
 static void ClearTransTask(GtkTreeModel *model);
@@ -133,8 +133,7 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
-  model = trans_window_get_trans_model(window);
-  widget = CreateTransTree(model);
+  widget = CreateTransTree(window);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   getPriv(window).transTreeviewWidget = widget;
 
@@ -193,12 +192,13 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
  * @param model trans-model
  * @return 传输树
  */
-GtkWidget* CreateTransTree(GtkTreeModel *model) {
+GtkWidget* CreateTransTree(TransWindow *window) {
   GtkWidget *view;
   GtkTreeViewColumn *column;
   GtkCellRenderer *cell;
   GtkTreeSelection *selection;
 
+  auto model = trans_window_get_trans_model(window);
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(view), TRUE);
@@ -208,67 +208,79 @@ GtkWidget* CreateTransTree(GtkTreeModel *model) {
                    NULL);
 
   cell = gtk_cell_renderer_pixbuf_new();
-  column = gtk_tree_view_column_new_with_attributes(_("State"), cell, "icon-name",
-                                                    0, NULL);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-
-  cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Task"), cell, "text", 1,
+  column = gtk_tree_view_column_new_with_attributes(_("State"), cell,
+                                                    "icon-name", TransModelColumn::STATUS,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Peer"), cell, "text", 2,
+  column = gtk_tree_view_column_new_with_attributes(_("Task"), cell,
+                                                    "text", TransModelColumn::TASK,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("IPv4"), cell, "text", 3,
+  column = gtk_tree_view_column_new_with_attributes(_("Peer"), cell,
+                                                    "text", TransModelColumn::PEER,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Filename"), cell, "text",
-                                                    4, NULL);
+  column = gtk_tree_view_column_new_with_attributes(_("IPv4"), cell,
+                                                    "text", TransModelColumn::IP,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Size"), cell, "text", 5,
+  column = gtk_tree_view_column_new_with_attributes(_("Filename"), cell,
+                                                    "text", TransModelColumn::FILENAME,
+                                                    NULL);
+  gtk_tree_view_column_set_resizable(column, TRUE);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+
+  cell = gtk_cell_renderer_text_new();
+  column = gtk_tree_view_column_new_with_attributes(_("Size"), cell,
+                                                    "text", TransModelColumn::FILE_LENGTH_TEXT,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(_("Completed"), cell,
-                                                    "text", 6, NULL);
+                                                    "text", TransModelColumn::FINISHED_LENGTH_TEXT,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_progress_new();
-  column = gtk_tree_view_column_new_with_attributes(
-      _("Progress"), cell, "value", 7, "text", 8, NULL);
+  column = gtk_tree_view_column_new_with_attributes(_("Progress"), cell,
+                                                    "value", TransModelColumn::PROGRESS,
+                                                    "text", TransModelColumn::PROGRESS_TEXT,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Cost"), cell, "text", 9,
+  column = gtk_tree_view_column_new_with_attributes(_("Cost"), cell,
+                                                    "text", TransModelColumn::COST,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(_("Remaining"), cell,
-                                                    "text", 10, NULL);
+                                                    "text", TransModelColumn::REMAIN,
+                                                    NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Rate"), cell, "text", 11,
+  column = gtk_tree_view_column_new_with_attributes(_("Rate"), cell,
+                                                    "text", TransModelColumn::RATE,
                                                     NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
@@ -288,7 +300,7 @@ static void OpenContainingFolder(GtkTreeModel *model) {
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 12, &filename, -1);
+  gtk_tree_model_get(model, &iter, TransModelColumn::FILE_PATH, &filename, -1);
   if (filename) {
     name = ipmsg_get_filename_me(filename, &filepath);
     if (!g_file_test(filepath, G_FILE_TEST_EXISTS)) {
@@ -314,13 +326,26 @@ static void TerminateTransTask(GtkTreeModel *model) {
   GtkTreePath *path;
   GtkTreeIter iter;
   TransAbstract *trans;
+  gboolean finished;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 12, &trans, -1);
-  if (trans) trans->TerminateTrans();
+  gtk_tree_model_get(model, &iter,
+                     TransModelColumn ::DATA, &trans,
+                     TransModelColumn ::FINISHED, &finished,
+                     -1);
+  if(finished) {
+    return;
+  }
+
+  if(!trans) {
+    LOG_WARN("task not finished but trans is not null");
+    return;
+  }
+
+  trans->TerminateTrans();
 }
 
 
@@ -334,7 +359,7 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    gtk_tree_model_get(model, &iter, 12, &trans, -1);
+    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
     if (trans) trans->TerminateTrans();
   } while (gtk_tree_model_iter_next(model, &iter));
 }
@@ -350,7 +375,7 @@ void ClearTransTask(GtkTreeModel *model) {
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
     mark:
-    gtk_tree_model_get(model, &iter, 12, &data, -1);
+    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &data, -1);
     if (!data) {
       if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
       break;
@@ -369,16 +394,13 @@ GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
 
   GtkTreePath *path;
   GtkTreeIter iter;
-  gchar *remaining;
-  gboolean sensitive = TRUE;
+  bool finished;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return NULL;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 10, &remaining, -1);
-
-  if (g_strcmp0(remaining, "")) sensitive = FALSE;
+  gtk_tree_model_get(model, &iter, TransModelColumn ::FINISHED, &finished, -1);
 
   menu = gtk_menu_new();
 
@@ -386,18 +408,19 @@ GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(OpenThisFile),
                            model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), sensitive);
+  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
 
   menuitem = gtk_menu_item_new_with_label(_("Open Containing Folder"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate",
                            G_CALLBACK(OpenContainingFolder), model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), sensitive);
+  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
 
   menuitem = gtk_menu_item_new_with_label(_("Terminate Task"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(TerminateTransTask),
                            model);
+  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), !finished);
 
   menuitem = gtk_menu_item_new_with_label(_("Terminate All"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -425,7 +448,7 @@ void OpenThisFile(GtkTreeModel *model) {
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 12, &filename, -1);
+  gtk_tree_model_get(model, &iter, TransModelColumn ::FILE_PATH, &filename, -1);
   if (filename) {
     if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
       GtkWidget *dialog = gtk_message_dialog_new(
@@ -458,7 +481,7 @@ gboolean UpdateTransUI(GtkWindow *window) {
 
   /* 更新UI */
   do {
-    gtk_tree_model_get(model, &iter, TRANS_TREE_MAX - 1, &trans, -1);
+    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
     if (trans) {  //当文件传输类存在时才能更新
       const TransFileModel& transFileModel = trans->getTransFileModel();  //获取参数
       UiUtils::applyTransFileModel2GtkListStore(transFileModel, GTK_LIST_STORE(model), &iter);
