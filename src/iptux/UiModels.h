@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include "mess.h"
+
 namespace iptux {
 
 typedef GtkTreeModel TransModel;
@@ -16,7 +18,45 @@ enum class TransModelColumn {
 };
 
 
+enum class PalTreeModelSortKey {
+  NICKNAME,
+  IP
+};
+enum class PalTreeModelColumn {
+  CLOSED_EXPANDER,
+  OPEN_EXPANDER,
+  INFO,
+  EXTRAS,
+  STYLE,
+  COLOR,
+  DATA,
+  N_COLUMNS
+};
+typedef GtkTreeModel PalTreeModel;
+PalTreeModel* pal_tree_model_new();
+void pal_tree_model_set_sort_by(PalTreeModel* model, PalTreeModelSortKey key);
+/**
+ * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
+ * @param model model
+ * @param iter iter
+ * @param grpinf class GroupInfo
+ */
+G_DEPRECATED_FOR(palTreeModelFillFromGroupInfo)
+void groupInfo2PalTreeModel(GroupInfo *grpinf,
+                            PalTreeModel *model,
+                            GtkTreeIter *iter,
+                            const char* font);
 
+/**
+ * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
+ * @param model model
+ * @param iter iter
+ * @param grpinf class GroupInfo
+ */
+void palTreeModelFillFromGroupInfo(PalTreeModel *model,
+                                   GtkTreeIter *iter,
+                                   const GroupInfo *grpinf,
+                                   const char* font);
 
 }
 
