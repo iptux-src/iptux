@@ -37,8 +37,6 @@ using namespace std;
 
 namespace iptux {
 
-static const int TRANS_TREE_MAX = 14;
-
 /**
  * 类构造函数.
  */
@@ -431,7 +429,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   bool found = false;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
-      gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
+      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
       if (gpointer(&para) == data) {
         found = true;
         break;
@@ -440,7 +438,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   }
   if (!found) {
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, &para, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, &para, -1);
   }
 
   /**
@@ -448,7 +446,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
    * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
    */
   if (!para.getData()) {
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TRANS_TREE_MAX, NULL, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, NULL, -1);
   }
 
   /* 重设数据 */
@@ -476,7 +474,7 @@ bool MainWindow::TransmissionActive() {
   model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
-      gtk_tree_model_get(model, &iter, TRANS_TREE_MAX, &data, -1);
+      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
       if (data) break;
     } while (gtk_tree_model_iter_next(model, &iter));
   }
