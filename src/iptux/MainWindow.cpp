@@ -87,7 +87,7 @@ void MainWindow::CreateWindow() {
   /* 创建主窗口 */
   window = CreateMainWindow();
   g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-  g_object_set_data_full(G_OBJECT(window), "trans-model", trans_model_new(),
+  g_object_set_data_full(G_OBJECT(window), "trans-model", transModelNew(),
                            GDestroyNotify(g_object_unref));
 
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());

@@ -17,7 +17,7 @@ namespace iptux {
  *
  * @return trans-model
  */
-TransModel* trans_model_new() {
+TransModel* transModelNew() {
   GtkListStore *model;
 
   model = gtk_list_store_new(int(TransModelColumn::N_COLUMNS),

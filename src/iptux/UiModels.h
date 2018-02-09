@@ -8,7 +8,7 @@
 namespace iptux {
 
 typedef GtkTreeModel TransModel;
-TransModel* trans_model_new();
+TransModel* transModelNew();
 enum class TransModelColumn {
   STATUS, TASK, PEER, IP, FILENAME,
   FILE_LENGTH_TEXT, FINISHED_LENGTH_TEXT, PROGRESS, PROGRESS_TEXT, COST,
@@ -36,6 +36,17 @@ typedef GtkTreeModel PalTreeModel;
 PalTreeModel* palTreeModelNew();
 void palTreeModelSetSortKey(PalTreeModel *model, PalTreeModelSortKey key);
 /**
+ * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
+ * @param model model
+ * @param iter iter
+ * @param grpinf class GroupInfo
+ */
+void palTreeModelFillFromGroupInfo(PalTreeModel *model,
+                                   GtkTreeIter *iter,
+                                   const GroupInfo *grpinf,
+                                   const char* font);
+
+/**
  * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
  * @param model model
  * @param iter iter
@@ -46,17 +57,6 @@ void groupInfo2PalTreeModel(GroupInfo *grpinf,
                             PalTreeModel *model,
                             GtkTreeIter *iter,
                             const char* font);
-
-/**
- * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-void palTreeModelFillFromGroupInfo(PalTreeModel *model,
-                                   GtkTreeIter *iter,
-                                   const GroupInfo *grpinf,
-                                   const char* font);
 
 }
 
