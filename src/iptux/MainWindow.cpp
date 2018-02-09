@@ -1223,11 +1223,11 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
   } else {
     address = g_markup_printf_escaped(_("Address: %s"), ipstr);
   }
-  const gchar *compatibility;
+  gchar *compatibility;
   if (!pal->isCompatible()) {
-    compatibility = _("Compatibility: Microsoft");
+    compatibility = g_markup_escape_text(_("Compatibility: Microsoft"), -1);
   } else {
-    compatibility = _("Compatibility: GNU/Linux");
+    compatibility = g_markup_escape_text(_("Compatibility: GNU/Linux"), -1);
   }
   gchar *coding = g_markup_printf_escaped(_("System coding: %s"), pal->encode);
   gchar *signature1 = nullptr;
@@ -1237,20 +1237,24 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
     signature2 = g_markup_escape_text(pal->sign, -1);
   }
 
-  gchar *result = g_strjoin("\n",
-                            version,
-                            nickname,
-                            user,
-                            host,
-                            address,
-                            compatibility,
-                            coding,
-                            signature1,
-                            "<span foreground=\"blue\" size=\"smaller\">",
-                            signature2,
-                            "</span>",
-                            nullptr);
-  LOG_INFO("%s", result);
+  gchar* result;
+  if(signature1) {
+    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n<span foreground=\"blue\" font_style=\"italic\" size=\"smaller\">%s</span>",
+                        version, nickname, user, host, address, compatibility, coding,
+                        signature1, signature2);
+  } else {
+    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s",
+                             version, nickname, user, host, address, compatibility, coding);
+  }
+  g_free(version);
+  g_free(nickname);
+  g_free(user);
+  g_free(host);
+  g_free(address);
+  g_free(coding);
+  g_free(compatibility);
+  g_free(signature1);
+  g_free(signature2);
   return result;
 }
 
@@ -1491,8 +1495,6 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
     return FALSE;
   }
 
-  LOG_INFO("treeview: %p, x: %d, y: %d, keyboard_mode: %d, tooltip: %p, self:%p",
-           treeview, x, y, keyboard_mode, tooltip, self);
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_path_free(path);
