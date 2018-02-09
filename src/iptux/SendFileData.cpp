@@ -329,7 +329,7 @@ void SendFileData::UpdateUIParaToOver() {
         .setRemain("")
         .setRate("");
   }
-  para.setData(nullptr);
+  para.finish();
 }
 
 }  // namespace iptux

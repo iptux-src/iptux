@@ -371,7 +371,7 @@ void RecvFileData::UpdateUIParaToOver() {
         .setRate("");
     file->finishedsize = file->filesize;
   }
-  para.setData(nullptr);
+  para.finish();
 }
 
 }  // namespace iptux

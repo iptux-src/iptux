@@ -22,6 +22,7 @@ void UiUtils::applyTransFileModel2GtkListStore(
       11, para.getRate().c_str(),
       12, para.getFilePath().c_str(),
       13, para.getData(),
+      15, para.isFinished(),
       -1);
 }
 }

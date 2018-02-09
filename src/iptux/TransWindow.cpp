@@ -8,6 +8,7 @@
 #include "iptux/deplib.h"
 #include "iptux/TransAbstract.h"
 #include "iptux/UiUtils.h"
+#include "output.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -314,13 +315,26 @@ static void TerminateTransTask(GtkTreeModel *model) {
   GtkTreePath *path;
   GtkTreeIter iter;
   TransAbstract *trans;
+  gboolean finished;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 12, &trans, -1);
-  if (trans) trans->TerminateTrans();
+  gtk_tree_model_get(model, &iter,
+                     13, &trans,
+                     15, &finished,
+                     -1);
+  if(finished) {
+    return;
+  }
+
+  if(!trans) {
+    LOG_WARN("task not finished but trans is not null");
+    return;
+  }
+
+  trans->TerminateTrans();
 }
 
 
@@ -369,16 +383,13 @@ GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
 
   GtkTreePath *path;
   GtkTreeIter iter;
-  gchar *remaining;
-  gboolean sensitive = TRUE;
+  bool finished;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return NULL;
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 10, &remaining, -1);
-
-  if (g_strcmp0(remaining, "")) sensitive = FALSE;
+  gtk_tree_model_get(model, &iter, 15, &finished, -1);
 
   menu = gtk_menu_new();
 
@@ -386,18 +397,19 @@ GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(OpenThisFile),
                            model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), sensitive);
+  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
 
   menuitem = gtk_menu_item_new_with_label(_("Open Containing Folder"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate",
                            G_CALLBACK(OpenContainingFolder), model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), sensitive);
+  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
 
   menuitem = gtk_menu_item_new_with_label(_("Terminate Task"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(TerminateTransTask),
                            model);
+  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), !finished);
 
   menuitem = gtk_menu_item_new_with_label(_("Terminate All"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
