@@ -95,52 +95,6 @@ char *convert_encode(const char *string, const char *tocode,
 }
 
 /**
- * 转换字符串编码.
- * @param string 字符串
- * @param tocode 目标编码
- * @param fromcode 源编码
- * @return 新串
- * @note 无论函数处理结果如何，都将会返回一个新串
- */
-char *convert_encode_copy(const char *string, const char *tocode,
-                          const char *fromcode) {
-  char *tstring;
-
-  if (!(tstring = convert_encode(string, tocode, fromcode)))
-    tstring = g_strdup(string);
-
-  return tstring;
-}
-
-/**
- * 获取文件系统的存储空间信息.
- * @param path 文件路径
- * @retval avail 可用空间由此返回
- * @retval total 全部空间由此返回
- */
-void get_file_system_info(const char *path, int64_t *avail, int64_t *total) {
-#ifdef __APPLE__
-  *avail = *total = 0;
-#else
-
-  struct statfs64 st;
-  int result;
-
-mark:
-  switch (result = statfs64(path, &st)) {
-    case 0:
-      *avail = (int64_t)st.f_bsize * st.f_bavail;
-      *total = (int64_t)st.f_bsize * st.f_blocks;
-      break;
-    default:
-      if (errno == EINTR) goto mark;
-      *avail = *total = 0;
-      break;
-  }
-#endif
-}
-
-/**
  * 确保(path)所指向的文件不存在.
  * @param path 文件路径
  * @return 新文件路径 *
@@ -391,13 +345,11 @@ char *iptux_get_section_string(const char *msg, char ch, uint8_t times) {
  * @note (msg)串会被修改
  */
 char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
-  static uint32_t serial = 1;
   char filename[256];  //文件最大长度为255
   const char *ptr;
-  size_t len;
 
   if ((ptr = iptux_skip_section(msg, ch, times))) {
-    len = 0;
+    size_t len = 0;
     while (*ptr != ':' || strncmp(ptr, "::", 2) == 0) {
       if (len < 255) {  //防止缓冲区溢出
         filename[len] = *ptr;
@@ -411,8 +363,10 @@ char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
     }
     filename[len] = '\0';
 
-  } else
+  } else {
+    static uint32_t serial = 1;
     snprintf(filename, 256, "%" PRIu32 "_file", serial++);
+  }
 
   return g_strdup(filename);
 }

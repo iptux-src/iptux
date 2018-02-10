@@ -63,11 +63,7 @@ class DialogPeer : public DialogBase {
   MsgPara *PackageMsg(const std::vector<ChipData>& dtlist);
   //回调处理部分
  private:
-  static void DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
-                              gint x, gint y, GtkSelectionData *data,
-                              guint info, guint time);
   static void AskSharedFiles(GroupInfo *grpinf);
-  static void DialogPeerDestroy(DialogPeer *dlgpr);
   static void onAcceptButtonClicked(DialogPeer *self);
   static void onRefuseButtonClicked(DialogPeer *self);
   static void ThreadRecvFile(FileInfo *file);

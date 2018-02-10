@@ -167,7 +167,6 @@ void init_iptux_environment() {
 void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
   gdouble scale_x, scale_y, scale;
   gint _width, _height;
-  GdkPixbuf *tpixbuf;
 
   width = (width != -1) ? width : G_MAXINT;
   height = (height != -1) ? height : G_MAXINT;
@@ -180,7 +179,7 @@ void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
                 : scale_y;
     _width = (gint)(_width * scale);
     _height = (gint)(_height * scale);
-    tpixbuf = *pixbuf;
+    auto tpixbuf = *pixbuf;
     *pixbuf =
         gdk_pixbuf_scale_simple(tpixbuf, _width, _height, GDK_INTERP_BILINEAR);
     g_object_unref(tpixbuf);
@@ -204,7 +203,7 @@ void widget_enable_dnd_uri(GtkWidget *widget) {
  */
 GSList *selection_data_get_path(GtkSelectionData *data) {
   const char *prl = "file://";
-  gchar **uris, **ptr, *uri;
+  gchar **uris, **ptr;
   GSList *filelist;
 
   if (!(uris = gtk_selection_data_get_uris(data))) return NULL;
@@ -212,7 +211,7 @@ GSList *selection_data_get_path(GtkSelectionData *data) {
   filelist = NULL;
   ptr = uris;
   while (*ptr) {
-    uri = g_uri_unescape_string(*ptr, NULL);
+    auto uri = g_uri_unescape_string(*ptr, NULL);
     if (strncasecmp(uri, prl, strlen(prl)) == 0)
       filelist = g_slist_append(filelist, g_strdup(uri + strlen(prl)));
     else
