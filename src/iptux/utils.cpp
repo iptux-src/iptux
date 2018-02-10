@@ -77,27 +77,6 @@ char *iptux_string_validate(const char *s, const string &codeset,
 }
 
 /**
- * 检查串(string)是否为有效的utf8串，若不是则根据字符集(codeset)来进行转码.
- * @param string 待检查的字符串
- * @param codeset 字符集编码，e.g.<gb18030,big5>
- * @retval encode 正确的字符集编码由此返回
- * @return 有效的utf8串
- * @note 本函数无论处理结果如何，都会无条件的返回一个字符集编码以及一个新串
- * @see iptux_string_validate()
- */
-char *iptux_string_validate_copy(const char *string, const char *codeset,
-                                 char **encode) {
-  char *tstring;
-
-  if (!codeset || !(tstring = iptux_string_validate(string, codeset, encode))) {
-    *encode = g_strdup("utf-8");
-    tstring = g_strdup(string);
-  }
-
-  return tstring;
-}
-
-/**
  * 转换字符串编码.
  * @param string 字符串
  * @param tocode 目标编码
@@ -159,28 +138,6 @@ mark:
       break;
   }
 #endif
-}
-
-/**
- * 从字符串(str)当前位置开始提取一行数据.
- * @param str 字符串起始指针
- * @return 从(str)开始的一行数据
- * @note 首部、尾部的空白字符将会被删除
- */
-char *iptux_string_getline(const char *str) {
-  const char *pptr, *ptr;
-  char *dst;
-  size_t len;
-
-  dst = NULL;
-  pptr = str + strspn(str, "\x20\t");
-  ptr = strpbrk(pptr, "\r\n");
-  if ((len = ptr ? (ptr - pptr) : strlen(pptr))) {
-    dst = g_strndup(pptr, len);
-    g_strchomp(dst);
-  }
-
-  return dst;
 }
 
 /**
