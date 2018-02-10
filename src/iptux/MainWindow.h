@@ -43,7 +43,6 @@ class MainWindow {
 
   void CreateWindow();
   void AlterWindowMode();
-  GtkWidget *ObtainWindow();
 
   bool PaltreeContainItem(in_addr_t ipv4);
   void UpdateItemToPaltree(in_addr_t ipv4);
@@ -57,7 +56,7 @@ class MainWindow {
   void OpenTransWindow();
   //void UpdateItemToTransTree(GData **para);
   void UpdateItemToTransTree(const TransFileModel& para);
-  bool isTransmissionActive();
+  bool isTransmissionActive() const;
 
   ProgramData &GetProgramData() { return progdt; }
 

@@ -52,7 +52,7 @@ bool pop_request_shared_file(PalInfo *pal) {
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Request Shared Resources"), GTK_WINDOW(g_mwin->ObtainWindow()),
+      _("Request Shared Resources"), GTK_WINDOW(g_mwin->getWindow()),
       GTK_DIALOG_MODAL, _("Agree"), GTK_RESPONSE_ACCEPT, _("Refuse"),
       GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
@@ -98,7 +98,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal) {
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Access Password"), GTK_WINDOW(g_mwin->ObtainWindow()),
+      _("Access Password"), GTK_WINDOW(g_mwin->getWindow()),
       GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
