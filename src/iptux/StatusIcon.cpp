@@ -84,7 +84,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   GtkWidget *menu, *menuitem;
   GtkWidget *image, *window;
 
-  window = mwin.ObtainWindow();
+  window = mwin.getWindow();
   menu = gtk_menu_new();
   gtk_menu_attach_to_widget(GTK_MENU(menu), window, nullptr);
 

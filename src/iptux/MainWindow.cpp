@@ -128,22 +128,11 @@ void MainWindow::CreateWindow() {
  * 更改窗口显示模式.
  */
 void MainWindow::AlterWindowMode() {
-  GtkWidget *window;
-
-  window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
   if (gtk_widget_get_visible(window)) {
     gtk_window_iconify(GTK_WINDOW(window));
   } else {
     gtk_window_deiconify(GTK_WINDOW(window));
   }
-}
-
-/**
- * 获取主窗口指针.
- * @return 主窗口
- */
-GtkWidget *MainWindow::ObtainWindow() {
-  return GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
 }
 
 /**
@@ -469,12 +458,12 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
  * 查询此刻是否存在活动的文件传输.
  * @return 活动与否
  */
-bool MainWindow::TransmissionActive() {
+bool MainWindow::isTransmissionActive() const {
   GtkTreeModel *model;
   GtkTreeIter iter;
   gpointer data;
 
-  data = NULL;
+  data = nullptr;
   model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
@@ -483,7 +472,7 @@ bool MainWindow::TransmissionActive() {
     } while (gtk_tree_model_iter_next(model, &iter));
   }
 
-  return data;
+  return !!data;
 }
 
 /**
@@ -559,7 +548,6 @@ GtkWidget *MainWindow::CreateMainWindow() {
   gtk_window_set_default_icon_name("iptux");
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
-  g_datalist_set_data(&widset, "window-widget", window);
   g_signal_connect_swapped(window, "delete-event", G_CALLBACK(onDeleteEvent),
                            this);
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
