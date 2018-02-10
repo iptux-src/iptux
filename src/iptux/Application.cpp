@@ -186,7 +186,7 @@ void Application::onActiveWindowChanged(Application &self) {
 }
 
 void Application::onQuit (void*, void*, Application& self) {
-  if(self.window->TransmissionActive()) {
+  if(self.window->isTransmissionActive()) {
     if(!pop_request_quit(GTK_WINDOW(self.window->getWindow()))) {
       return;
     }

@@ -469,7 +469,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
  * 查询此刻是否存在活动的文件传输.
  * @return 活动与否
  */
-bool MainWindow::TransmissionActive() {
+bool MainWindow::isTransmissionActive() {
   GtkTreeModel *model;
   GtkTreeIter iter;
   gpointer data;

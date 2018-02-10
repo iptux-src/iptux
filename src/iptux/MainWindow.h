@@ -57,7 +57,7 @@ class MainWindow {
   void OpenTransWindow();
   //void UpdateItemToTransTree(GData **para);
   void UpdateItemToTransTree(const TransFileModel& para);
-  bool TransmissionActive();
+  bool isTransmissionActive();
 
   ProgramData &GetProgramData() { return progdt; }
 
