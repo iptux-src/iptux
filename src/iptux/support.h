@@ -33,9 +33,6 @@ class BindFailedException: public std::runtime_error {
  * @throw BindFailedException if bind failed
  */
 void iptux_init(int port);
-void iptux_gui_quit();
-void iptux_quit(int);
-
 void iptux_open_url(const char *url);
 void init_iptux_environment();
 

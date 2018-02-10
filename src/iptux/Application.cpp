@@ -8,6 +8,7 @@
 #include "DataSettings.h"
 #include "ShareFile.h"
 #include "output.h"
+#include "dialog.h"
 
 static const char* menuUi = "<?xml version=\"1.0\"?>\n"
     "<interface>\n"
@@ -185,6 +186,11 @@ void Application::onActiveWindowChanged(Application &self) {
 }
 
 void Application::onQuit (void*, void*, Application& self) {
+  if(self.window->TransmissionActive()) {
+    if(!pop_request_quit(GTK_WINDOW(self.window->getWindow()))) {
+      return;
+    }
+  }
   g_application_quit(G_APPLICATION (self.app));
 }
 

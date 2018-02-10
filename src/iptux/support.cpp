@@ -44,29 +44,7 @@ void iptux_init(int port) {
   g_sndsys->InitSublayer();
 
   signal(SIGPIPE, SIG_IGN);
-  signal(SIGHUP, iptux_quit);
-  signal(SIGINT, iptux_quit);
-  signal(SIGQUIT, iptux_quit);
-  signal(SIGTERM, iptux_quit);
-
   g_lgsys->SystemLog(_("Loading the process successfully!"));
-}
-
-/**
- * 程序GUI退出.
- */
-void iptux_gui_quit() {
-  if (g_mwin->TransmissionActive() && !pop_request_quit()) return;
-  gtk_main_quit();
-  iptux_quit(0);
-}
-
-/**
- * 程序底层退出.
- */
-void iptux_quit(int _ignore) {
-  g_lgsys->SystemLog(_("The process is about to quit!"));
-  exit(0);
 }
 
 /**

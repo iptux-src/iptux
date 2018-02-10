@@ -22,11 +22,11 @@ namespace iptux {
  * 弹出请求程序退出的对话框.
  * @return true|false
  */
-bool pop_request_quit() {
+bool pop_request_quit(GtkWindow* parent) {
   GtkWidget *dialog;
   gint result;
 
-  dialog = gtk_message_dialog_new(GTK_WINDOW(g_mwin->ObtainWindow()),
+  dialog = gtk_message_dialog_new(parent,
                                   GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
                                   GTK_BUTTONS_OK_CANCEL, "%s",
                                   _("File transfer has not been completed.\n"

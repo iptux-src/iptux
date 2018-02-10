@@ -474,7 +474,7 @@ bool MainWindow::TransmissionActive() {
   GtkTreeIter iter;
   gpointer data;
 
-  data = NULL;
+  data = nullptr;
   model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
@@ -483,7 +483,7 @@ bool MainWindow::TransmissionActive() {
     } while (gtk_tree_model_iter_next(model, &iter));
   }
 
-  return data;
+  return !!data;
 }
 
 /**
