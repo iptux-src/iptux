@@ -99,7 +99,10 @@ FileInfo::FileInfo()
       filesize(-1),
       finishedsize(0),
       fileown(NULL),
-      filepath(NULL) {}
+      filepath(NULL),
+      filectime(0),
+      filemtime(0),
+      filenum(0) {}
 FileInfo::~FileInfo() { g_free(filepath); }
 
 MsgPara::MsgPara()

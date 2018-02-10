@@ -366,23 +366,6 @@ PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4) {
 }
 
 /**
- * 查询好友链表中是否已经存在此IP地址的信息数据.
- * @param ipv4 ipv4
- * @return 存在与否
- */
-bool CoreThread::ListContainPal(in_addr_t ipv4) {
-  GSList *tlist;
-
-  tlist = pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == ipv4) break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return tlist;
-}
-
-/**
  * 从好友链表中删除指定的好友信息数据(非UI线程安全).
  * @param ipv4 ipv4
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可；
@@ -595,14 +578,6 @@ void CoreThread::AttachItemToBlacklist(in_addr_t ipv4) {
 }
 
 /**
- * 清空黑名单链表.
- */
-void CoreThread::ClearBlacklist() {
-  g_slist_free(blacklist);
-  blacklist = NULL;
-}
-
-/**
  * 获取消息队列项总数.
  * @return 项数
  */
@@ -650,24 +625,6 @@ void CoreThread::AttachFileToPublic(FileInfo *file) {
 }
 
 /**
- * 从公有文件链表删除指定的文件.
- * @param fileid 文件ID
- */
-void CoreThread::DelFileFromPublic(uint32_t fileid) {
-  GSList *tlist;
-
-  tlist = pblist;
-  while (tlist) {
-    if (((FileInfo *)tlist->data)->fileid == fileid) {
-      delete (FileInfo *)tlist->data;
-      pblist = g_slist_delete_link(pblist, tlist);
-      break;
-    }
-    tlist = g_slist_next(tlist);
-  }
-}
-
-/**
  * 清空公有文件链表.
  */
 void CoreThread::ClearFileFromPublic() {
@@ -707,16 +664,6 @@ void CoreThread::DelFileFromPrivate(uint32_t fileid) {
     }
     tlist = g_slist_next(tlist);
   }
-}
-
-/**
- * 清空私有文件链表.
- */
-void CoreThread::ClearFileFromPrivate() {
-  for (GSList *tlist = prlist; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
-  g_slist_free(prlist);
-  prlist = NULL;
 }
 
 /**

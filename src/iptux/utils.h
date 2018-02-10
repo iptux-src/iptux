@@ -40,15 +40,10 @@ void FLAG_SET(uint8_t &num, int bit, bool value);
 typedef void *(*ThreadFunc)(void *);
 void ipv4_order(in_addr_t *ip1, in_addr_t *ip2);
 
-char *iptux_string_validate(const char *string, const std::string &codeset,
+char *iptux_string_validate(const char *s, const std::string &codeset,
                             char **encode);
 char *convert_encode(const char *string, const char *tocode,
                      const char *fromcode);
-char *convert_encode_copy(const char *string, const char *tocode,
-                          const char *fromcode);
-
-void get_file_system_info(const char *path, int64_t *avail, int64_t *total);
-
 char *assert_filename_inexist(const char *path);
 char *getformattime(gboolean date, const char *format, ...);
 

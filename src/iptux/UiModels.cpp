@@ -167,17 +167,15 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   GdkPixbuf *cpixbuf, *opixbuf= nullptr;
   PangoAttrList *attrs;
   PangoAttribute *attr;
-  PangoFontDescription *dspt;
-  char ipstr[INET_ADDRSTRLEN];
-  gchar *file, *info, *extra;
+  gchar *info, *extra;
   PalInfo *pal;
   GError* error = nullptr;
 
   /* 创建图标 */
   theme = gtk_icon_theme_get_default();
   if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = (PalInfo *)grpinf->member->data;
-    file = iptux_erase_filename_suffix(pal->iconfile);
+    pal = static_cast<PalInfo *>(grpinf->member->data);
+    auto file = iptux_erase_filename_suffix(pal->iconfile);
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                        GtkIconLookupFlags(0), &error);
     if(cpixbuf == nullptr) {
@@ -197,7 +195,8 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
 
   /* 创建主信息 */
   if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = (PalInfo *)grpinf->member->data;
+    char ipstr[INET_ADDRSTRLEN];
+    pal = static_cast<PalInfo *>(grpinf->member->data);
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     info = g_strdup_printf("%s\n%s", pal->name, ipstr);
   } else
@@ -212,7 +211,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   /* 创建字体风格 */
   attrs = pango_attr_list_new();
   if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    dspt = pango_font_description_from_string(font);
+    auto dspt = pango_font_description_from_string(font);
     attr = pango_attr_font_desc_new(dspt);
     pango_attr_list_insert(attrs, attr);
     pango_font_description_free(dspt);

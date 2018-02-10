@@ -50,7 +50,6 @@ class CoreThread {
 
   void ClearAllPalFromList();
   PalInfo *GetPalFromList(in_addr_t ipv4);
-  bool ListContainPal(in_addr_t ipv4);
   void DelPalFromList(in_addr_t ipv4);
   void UpdatePalToList(in_addr_t ipv4);
   void AttachPalToList(PalInfo *pal);
@@ -61,7 +60,6 @@ class CoreThread {
 
   bool BlacklistContainItem(in_addr_t ipv4);
   void AttachItemToBlacklist(in_addr_t ipv4);
-  void ClearBlacklist();
 
   guint GetMsglineItems();
   GroupInfo *GetMsglineHeadItem();
@@ -72,15 +70,12 @@ class CoreThread {
   GSList *GetPalEnclosure(PalInfo *pal);
   void PushItemToEnclosureList(FileInfo *file);
   void PopItemFromEnclosureList(FileInfo *file);
-  GSList *GetPalRcvdEnclosure(PalInfo *pal);
 
   void AttachFileToPublic(FileInfo *file);
-  void DelFileFromPublic(uint32_t fileid);
   void ClearFileFromPublic();
   GSList *GetPublicFileList();
   void AttachFileToPrivate(FileInfo *file);
   void DelFileFromPrivate(uint32_t fileid);
-  void ClearFileFromPrivate();
   FileInfo *GetFileFromAll(uint32_t fileid);
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
   const char *GetAccessPublicLimit();

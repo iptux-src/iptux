@@ -550,68 +550,6 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
 }
 
 /**
- * 图片拖拽事件响应函数.
- * @param dlgpr 对话框类
- * @param context the drag context
- * @param x where the drop happened
- * @param y where the drop happened
- * @param data the received data
- * @param info the info that has been registered with the target in the
- * GtkTargetList
- * @param time the timestamp at which the data was received
- */
-void DialogPeer::DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
-                                 gint x, gint y, GtkSelectionData *data,
-                                 guint info, guint time) {
-  GtkWidget *widget;
-  GtkTextBuffer *buffer;
-  GtkTextIter iter;
-  GdkPixbuf *pixbuf;
-  GSList *list, *flist, *tlist;
-  gint position;
-
-  if (!ValidateDragData(data, context, time)) {
-    return;
-  }
-
-  /* 获取(text-buffer)的当前插入点 */
-  widget =
-      GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "input-textview-widget"));
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-  g_object_get(buffer, "cursor-position", &position, NULL);
-  gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
-  /* 分离图片文件和常规文件，图片立即处理，常规文件稍候再处理 */
-  flist = NULL;  //预置常规文件链表为空
-  tlist = list = selection_data_get_path(data);  //获取所有文件
-  while (tlist) {
-    if ((pixbuf = gdk_pixbuf_new_from_file((char *)tlist->data, NULL))) {
-      /* 既然是图片，那就立即处理吧 */
-      gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
-      g_object_unref(pixbuf);
-    } else {
-      /* 将文件路径转移至文件链表(flist) */
-      flist = g_slist_append(flist, tlist->data);
-      tlist->data = NULL;
-    }
-    tlist = g_slist_next(tlist);
-  }
-  /*/* 释放链表数据 */
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
-  /* 如果文件链表有文件，那就添加为附件吧 */
-  if (flist) {
-    dlgpr->AttachEnclosure(flist);
-    g_slist_foreach(flist, GFunc(g_free), NULL);
-    g_slist_free(flist);
-    widget = GTK_WIDGET(
-        g_datalist_get_data(&dlgpr->widset, "enclosure-frame-widget"));
-    gtk_widget_show(widget);
-  }
-
-  gtk_drag_finish(context, TRUE, FALSE, time);
-}
-
-/**
  * 请求获取此好友的共享文件.
  * @param grpinf 好友群组信息
  */
