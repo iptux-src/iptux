@@ -51,7 +51,8 @@ brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/hom
 * for Ubuntu 14.04, please download from https://github.com/iptux-src/iptux/releases/tag/v0.6.4
 
 ```
-sudo apt-get install git libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ make cmake
+sudo apt-get install git libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ make cmake
+sudo apt-get install libgstreamer1.0-dev gstreamer1.0-plugins-good gstreamer1.0-alsa # if you need the sound support
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make
@@ -62,7 +63,12 @@ iptux
 ### Mac OS X
 
 ```
-brew install gettext gtk+3 cmake jsoncpp gstreamer
+brew install gettext gtk+3 cmake jsoncpp
+# if need the sound support
+brew install gstreamer
+brew install gst-plugins-base --with-libogg --with-libvorbis
+brew install gst-plugins-good
+# endif
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make

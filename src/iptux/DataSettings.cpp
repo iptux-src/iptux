@@ -58,7 +58,7 @@ void DataSettings::ResetDataEntry(GtkWidget *parent) {
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
   label = gtk_label_new(_("System"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSystem(), label);
-#ifdef HAVE_GST
+#ifdef GST_FOUND
   label = gtk_label_new(_("Sound"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSound(), label);
 #endif
@@ -68,7 +68,7 @@ void DataSettings::ResetDataEntry(GtkWidget *parent) {
   /* 设置相关数据默认值 */
   dset.SetPersonalValue();
   dset.SetSystemValue();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
   dset.SetSoundValue();
 #endif
   dset.SetNetworkValue();
@@ -80,7 +80,7 @@ mark:
     case GTK_RESPONSE_OK:
       dset.ObtainPersonalValue();
       dset.ObtainSystemValue();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
       dset.ObtainSoundValue();
 #endif
       dset.ObtainNetworkValue();
@@ -90,7 +90,7 @@ mark:
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
       dset.ObtainSystemValue();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
       dset.ObtainSoundValue();
 #endif
       dset.ObtainNetworkValue();
@@ -116,7 +116,7 @@ void DataSettings::InitSublayer() {
   g_datalist_set_data_full(&mdlset, "icon-model", model,
                            GDestroyNotify(g_object_unref));
   FillIconModel(model);
-#ifdef HAVE_GST
+#ifdef GST_FOUND
   model = CreateSndModel();
   g_datalist_set_data_full(&mdlset, "sound-model", model,
                            GDestroyNotify(g_object_unref));
