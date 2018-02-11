@@ -39,6 +39,7 @@ class SoundSystem {
   static void LinkElement(GData **eltset, GstPad *pad);
   static void ErrorMessageOccur(SoundSystem *sndsys, GstMessage *message);
   static void EosMessageOccur(SoundSystem *sndsys);
+  static void onMessage(SoundSystem *self, GstMessage *message);
 #endif
 };
 

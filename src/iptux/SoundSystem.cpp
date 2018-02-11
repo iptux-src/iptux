@@ -14,6 +14,7 @@
 #ifdef GST_FOUND
 #include <sys/time.h>
 #include <cstring>
+#include <glib/gi18n.h>
 
 #include "iptux/ProgramData.h"
 #include "iptux/output.h"
@@ -66,10 +67,21 @@ void SoundSystem::InitSublayer() {
   sink = gst_element_factory_make("autoaudiosink", "output");
   g_datalist_set_data(&eltset, "output-element", sink);
 
+  if(!filesrc || !decode || !volume || !convert || !sink ) {
+    LOG_WARN("init sound system failed");
+    return;
+  }
+
   gst_bin_add_many(GST_BIN(pipeline), filesrc, decode, volume, convert, sink,
                    NULL);
-  gst_element_link_many(filesrc, decode, NULL);
-  gst_element_link_many(volume, convert, sink, NULL);
+  if(!gst_element_link_many(filesrc, decode, NULL)) {
+    LOG_WARN("init sound system failed");
+    return;
+  }
+  if(!gst_element_link_many(volume, convert, sink, NULL)) {
+    LOG_WARN("init sound system failed");
+    return;
+  }
   g_signal_connect_swapped(decode, "pad-added", G_CALLBACK(LinkElement),
                            &eltset);
 
@@ -79,6 +91,7 @@ void SoundSystem::InitSublayer() {
                            this);
   g_signal_connect_swapped(bus, "message::eos", G_CALLBACK(EosMessageOccur),
                            this);
+  g_signal_connect_swapped(bus, "message", G_CALLBACK(onMessage), this);
   gst_object_unref(bus);
 
   g_object_set(volume, "volume", g_progdt->volume, NULL);
@@ -113,7 +126,10 @@ void SoundSystem::Playing(const char *file) {
   filesrc = GST_ELEMENT(g_datalist_get_data(&eltset, "filesrc-element"));
   g_object_set(filesrc, "location", file, NULL);
   pipeline = GST_ELEMENT(g_datalist_get_data(&eltset, "pipeline-element"));
-  gst_element_set_state(pipeline, GST_STATE_PLAYING);
+  auto res = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+  if(res != GST_STATE_CHANGE_SUCCESS) {
+    LOG_WARN("gst_element_set_state failed: %d", res);
+  }
   timestamp = time;
 }
 
@@ -135,8 +151,12 @@ void SoundSystem::LinkElement(GData **eltset, GstPad *pad) {
   str = gst_caps_get_structure(caps, 0);
   volume = GST_ELEMENT(g_datalist_get_data(eltset, "volume-element"));
   if (strcasestr(gst_structure_get_name(str), "audio") &&
-      (spad = gst_element_get_compatible_pad(volume, pad, caps)))
-    gst_pad_link(pad, spad);
+      (spad = gst_element_get_compatible_pad(volume, pad, caps))) {
+    auto ret = gst_pad_link(pad, spad);
+    if(ret != GST_PAD_LINK_OK) {
+      LOG_WARN("gst_pad_link failed: %d", ret);
+    }
+  }
   gst_caps_unref(caps);
 }
 
@@ -148,7 +168,9 @@ void SoundSystem::ErrorMessageOccur(SoundSystem *sndsys, GstMessage *message) {
   GError *error;
 
   gst_message_parse_error(message, &error, NULL);
-  pwarning(_("Failed to play the prompt tone, %s\n"), error->message);
+  LOG_WARN(_("Failed to play the prompt tone, [%s] %s"),
+           GST_MESSAGE_SRC_NAME(message),
+           error->message);
   g_error_free(error);
   EosMessageOccur(sndsys);
   pipeline =
@@ -169,6 +191,17 @@ void SoundSystem::EosMessageOccur(SoundSystem *sndsys) {
   volume = GST_ELEMENT(g_datalist_get_data(&sndsys->eltset, "volume-element"));
   gst_element_unlink(decode, volume);
   sndsys->persist = false;
+}
+
+void SoundSystem::onMessage(SoundSystem* self, GstMessage* message) {
+  auto type = GST_MESSAGE_TYPE(message);
+  switch(type) {
+    case GST_MESSAGE_ERROR:
+      ErrorMessageOccur(self, message);
+      return;
+    default:
+      LOG_INFO("SoundSystem::onMessage: %s", gst_message_type_get_name(type));
+  }
 }
 }  // namespace iptux
 
