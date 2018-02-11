@@ -13,11 +13,14 @@
 
 #ifdef GST_FOUND
 #include <sys/time.h>
+#include <cstring>
 
 #include "iptux/ProgramData.h"
 #include "iptux/output.h"
 #include "iptux/utils.h"
-#include "global.h"
+#include "iptux/global.h"
+
+using namespace std;
 
 namespace iptux {
 /**
