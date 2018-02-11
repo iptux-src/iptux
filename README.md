@@ -63,7 +63,12 @@ iptux
 ### Mac OS X
 
 ```
-brew install gettext gtk+3 cmake jsoncpp gstreamer
+brew install gettext gtk+3 cmake jsoncpp
+# if need the sound support
+brew install gstreamer
+brew install gst-plugins-base --with-libogg --with-libvorbis
+brew install gst-plugins-good
+# endif
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 mkdir build && cd build && cmake .. && make

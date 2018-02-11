@@ -11,7 +11,9 @@ class Iptux < Formula
   depends_on 'gtk+' unless build.head?
   depends_on 'gtk+3' if build.head?  
   depends_on 'jsoncpp' 
-  depends_on 'gstreamer'
+  depends_on 'gstreamer' => :optional
+  depends_on 'gst-plugins-base' => ["with-ogg", "with-libvorbis"] if build.with? "gstreamer"
+  depends_on 'gst-plugins-good' if build.with? "gstreamer"
   depends_on 'pkg-config' => :build
   depends_on 'cmake' => :build
   unless OS.mac?

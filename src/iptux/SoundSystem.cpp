@@ -91,7 +91,6 @@ void SoundSystem::InitSublayer() {
                            this);
   g_signal_connect_swapped(bus, "message::eos", G_CALLBACK(EosMessageOccur),
                            this);
-  g_signal_connect_swapped(bus, "message", G_CALLBACK(onMessage), this);
   gst_object_unref(bus);
 
   g_object_set(volume, "volume", g_progdt->volume, NULL);
@@ -166,12 +165,15 @@ void SoundSystem::LinkElement(GData **eltset, GstPad *pad) {
 void SoundSystem::ErrorMessageOccur(SoundSystem *sndsys, GstMessage *message) {
   GstElement *pipeline;
   GError *error;
+  gchar *dbgInfo = nullptr;
 
-  gst_message_parse_error(message, &error, NULL);
-  LOG_WARN(_("Failed to play the prompt tone, [%s] %s"),
+  gst_message_parse_error(message, &error, &dbgInfo);
+  LOG_WARN(_("Failed to play the prompt tone, [%s] %s, %s"),
            GST_MESSAGE_SRC_NAME(message),
-           error->message);
+           error->message,
+           dbgInfo);
   g_error_free(error);
+  g_free(dbgInfo);
   EosMessageOccur(sndsys);
   pipeline =
       GST_ELEMENT(g_datalist_get_data(&sndsys->eltset, "pipeline-element"));
@@ -193,16 +195,6 @@ void SoundSystem::EosMessageOccur(SoundSystem *sndsys) {
   sndsys->persist = false;
 }
 
-void SoundSystem::onMessage(SoundSystem* self, GstMessage* message) {
-  auto type = GST_MESSAGE_TYPE(message);
-  switch(type) {
-    case GST_MESSAGE_ERROR:
-      ErrorMessageOccur(self, message);
-      return;
-    default:
-      LOG_DEBUG("SoundSystem::onMessage: %s", gst_message_type_get_name(type));
-  }
-}
 }  // namespace iptux
 
 #else
