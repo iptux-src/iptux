@@ -200,7 +200,7 @@ void SoundSystem::onMessage(SoundSystem* self, GstMessage* message) {
       ErrorMessageOccur(self, message);
       return;
     default:
-      LOG_INFO("SoundSystem::onMessage: %s", gst_message_type_get_name(type));
+      LOG_DEBUG("SoundSystem::onMessage: %s", gst_message_type_get_name(type));
   }
 }
 }  // namespace iptux
