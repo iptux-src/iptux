@@ -11,10 +11,13 @@
 //
 #include "SoundSystem.h"
 
-#ifdef HAVE_GST
+#ifdef GST_FOUND
+#include <sys/time.h>
+
 #include "iptux/ProgramData.h"
 #include "iptux/output.h"
 #include "iptux/utils.h"
+#include "global.h"
 
 namespace iptux {
 /**
@@ -75,7 +78,7 @@ void SoundSystem::InitSublayer() {
                            this);
   gst_object_unref(bus);
 
-  g_object_set(volume, "volume", progdt.volume, NULL);
+  g_object_set(volume, "volume", g_progdt->volume, NULL);
 }
 
 /**
@@ -99,7 +102,7 @@ void SoundSystem::Playing(const char *file) {
   struct timeval time;
 
   gettimeofday(&time, NULL);
-  if (!FLAG_ISSET(progdt.sndfgs, 0) || (difftimeval(time, timestamp) < 0.1))
+  if (!FLAG_ISSET(g_progdt->sndfgs, 0) || (difftimeval(time, timestamp) < 0.1))
     return;
 
   if (persist) EosMessageOccur(this);
