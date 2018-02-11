@@ -127,7 +127,7 @@ void SoundSystem::Playing(const char *file) {
   g_object_set(filesrc, "location", file, NULL);
   pipeline = GST_ELEMENT(g_datalist_get_data(&eltset, "pipeline-element"));
   auto res = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-  if(res != GST_STATE_CHANGE_SUCCESS) {
+  if(res == GST_STATE_CHANGE_FAILURE) {
     LOG_WARN("gst_element_set_state failed: %d", res);
   }
   timestamp = time;
