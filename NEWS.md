@@ -7,6 +7,7 @@
 * [#140] fix crash on TransWindow::TerminateTransTask.
 * [#132] fix file accepted when cancel the directory chooser dialog.
 * [#154] fix sound system.
+* [#52] fix bind problem.
 
 ### refactor
 
