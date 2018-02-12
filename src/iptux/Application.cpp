@@ -153,7 +153,9 @@ void Application::onStartup(Application& self) {
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),
                                    app_entries, G_N_ELEMENTS (app_entries),
                                    &self);
-  auto builder = gtk_builder_new_from_string (menuUi, -1);
+  //puts(menuUi);
+  //auto builder = gtk_builder_new_from_string (menuUi, -1);
+  auto builder = gtk_builder_new_from_resource("/io/github/iptux-src/gtk/menus.ui");
   auto app_menu = G_MENU_MODEL (gtk_builder_get_object (builder, "appmenu"));
   gtk_application_set_app_menu (GTK_APPLICATION (self.app), app_menu);
   auto menubar = G_MENU_MODEL (gtk_builder_get_object (builder, "menubar"));
