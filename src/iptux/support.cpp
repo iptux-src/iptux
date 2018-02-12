@@ -286,8 +286,8 @@ void socket_enable_reuse(int sock) {
 
   optval = 1;
   len = sizeof(optval);
-  if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len) != 0) {
-    LOG_WARN("setsockopt for SO_REUSEADDR failed: %s", strerror(errno));
+  if(setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, len) != 0) {
+    LOG_WARN("setsockopt for SO_REUSEPORT failed: %s", strerror(errno));
   }
 }
 
