@@ -9,6 +9,7 @@
 #include "ShareFile.h"
 #include "output.h"
 #include "dialog.h"
+#include "iptux/IptuxResource.h"
 
 static const char* menuUi = "<?xml version=\"1.0\"?>\n"
     "<interface>\n"
@@ -142,6 +143,7 @@ int Application::run(int argc, char** argv) {
 }
 
 void Application::onStartup(Application& self) {
+  iptux_register_resource();
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL },
       { "preferences", G_ACTION_CALLBACK(onPreferences), NULL, NULL, NULL},

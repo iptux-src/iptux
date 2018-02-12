@@ -111,3 +111,5 @@ src/iptux/libiptux_test
 src/iptux/IptuxResource.c
 
 src/iptux/IptuxResource.h
+
+src/iptux/IptuxResource.cpp

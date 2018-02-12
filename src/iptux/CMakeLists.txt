@@ -9,11 +9,11 @@ endif(GST_FOUND)
 
 add_custom_command(OUTPUT IptuxResource.h
 		MAIN_DEPENDENCY resources/iptux.gresource.xml
-		COMMAND glib-compile-resources --generate-header --target=IptuxResource.h --sourcedir=resources resources/iptux.gresource.xml
+		COMMAND glib-compile-resources --generate-header --manual-register --target=IptuxResource.h --sourcedir=resources resources/iptux.gresource.xml
 )
-add_custom_command(OUTPUT IptuxResource.c
+add_custom_command(OUTPUT IptuxResource.cpp
 		MAIN_DEPENDENCY resources/iptux.gresource.xml
-		COMMAND glib-compile-resources --generate-source --target=IptuxResource.c --sourcedir=resources resources/iptux.gresource.xml
+		COMMAND glib-compile-resources --generate-source --manual-register --target=IptuxResource.cpp --sourcedir=resources resources/iptux.gresource.xml
 		)
 
 add_library(iptux
@@ -55,7 +55,7 @@ add_library(iptux
 		TransFileModel.cpp TransFileModel.h
 		TransAbstract.cpp TransAbstract.h
 		UiModels.h UiModels.cpp
-		IptuxResource.h IptuxResource.c
+		IptuxResource.h IptuxResource.cpp
 		)
 
 
