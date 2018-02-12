@@ -1,6 +1,7 @@
 #define VERSION "@PROJECT_VERSION@@VERSION_SUFFIX@"
 #define IPTUX_VERSION "iptux @PROJECT_VERSION@"
 #define GETTEXT_PACKAGE "@PROJECT_NAME@"
+#define IPTUX_RESOURCE "/io/github/iptux-src/"
 
 #define __PIXMAPS_PATH "@CMAKE_INSTALL_FULL_DATADIR@/iptux/pixmaps"
 #define __LOCALE_PATH "@CMAKE_INSTALL_FULL_DATADIR@/locale"
