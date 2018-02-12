@@ -41,8 +41,8 @@ class CoreThread {
   void Lock();
   void Unlock();
 
-  void InsertMessage(MsgPara *para);
-  void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
+  static void InsertMessage(MsgPara *para);
+  static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
   static void SendNotifyToAll(CoreThread *pcthrd);
   static void SendFeatureData(PalInfo *pal);
   static void SendBroadcastExit(PalInfo *pal);
@@ -86,20 +86,20 @@ class CoreThread {
 
   void InitSublayer();
   void ClearSublayer();
-  void InitThemeSublayerData();
+  static void InitThemeSublayerData();
   void ReadSharedData();
 
-  void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
-  void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
+  static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
+  static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
+  static void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
 
   GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
   GroupInfo *AttachPalRegularItem(PalInfo *pal);
   GroupInfo *AttachPalSegmentItem(PalInfo *pal);
   GroupInfo *AttachPalGroupItem(PalInfo *pal);
   GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
-  void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
   int tcpSock;
   int udpSock;
