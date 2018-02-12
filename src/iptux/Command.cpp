@@ -33,7 +33,9 @@ uint32_t Command::packetn = 1;
 /**
  * 类构造函数.
  */
-Command::Command() : size(0) {}
+Command::Command()
+    : size(0),
+      buf("") {}
 
 /**
  * 类析构函数.
@@ -546,10 +548,11 @@ void Command::CreateCommand(uint32_t command, const char *attach) {
   size += strlen(ptr);
   ptr = buf + size;
 
-  if (command == IPMSG_GETFILEDATA)
-    snprintf(ptr, MAX_UDPLEN - size, ":%d", command);
-  else
-    snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, command);
+  if (command == IPMSG_GETFILEDATA) {
+    snprintf(ptr, MAX_UDPLEN - size, ":%u", command);
+  } else {
+    snprintf(ptr, MAX_UDPLEN - size, ":%u", command);
+  }
   size += strlen(ptr);
   ptr = buf + size;
 
