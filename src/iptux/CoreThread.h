@@ -19,6 +19,7 @@
 
 #include "iptux/IptuxConfig.h"
 #include "iptux/mess.h"
+#include "iptux/UiModels.h"
 
 namespace iptux {
 

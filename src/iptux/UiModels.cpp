@@ -243,5 +243,18 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   pango_attr_list_unref(attrs);
 }
 
+GroupInfo::GroupInfo()
+    : grpid(0),
+      type(GROUP_BELONG_TYPE_REGULAR),
+      name(NULL),
+      member(NULL),
+      buffer(NULL),
+      dialog(NULL) {}
+GroupInfo::~GroupInfo() {
+  g_free(name);
+  g_slist_free(member);
+  g_object_unref(buffer);
+}
+
 
 }

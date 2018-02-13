@@ -10,6 +10,7 @@
 #include "output.h"
 #include "dialog.h"
 #include "iptux/IptuxResource.h"
+#include "iptux/UiHelper.h"
 
 typedef void (* GActionCallback) (GSimpleAction *action,
                    GVariant      *parameter,

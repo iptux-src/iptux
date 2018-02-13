@@ -12,6 +12,8 @@
 #ifndef IPTUX_DIALOG_H
 #define IPTUX_DIALOG_H
 
+#include <gtk/gtk.h>
+
 #include "iptux/mess.h"
 
 namespace iptux {

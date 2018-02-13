@@ -79,19 +79,6 @@ void PalInfo::setChanged(bool value) {
   }
 }
 
-GroupInfo::GroupInfo()
-    : grpid(0),
-      type(GROUP_BELONG_TYPE_REGULAR),
-      name(NULL),
-      member(NULL),
-      buffer(NULL),
-      dialog(NULL) {}
-GroupInfo::~GroupInfo() {
-  g_free(name);
-  g_slist_free(member);
-  g_object_unref(buffer);
-}
-
 FileInfo::FileInfo()
     : fileid(0),
       packetn(0),

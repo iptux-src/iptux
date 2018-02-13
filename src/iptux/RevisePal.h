@@ -12,6 +12,8 @@
 #ifndef IPTUX_REVISEPAL_H
 #define IPTUX_REVISEPAL_H
 
+#include <gtk/gtk.h>
+
 #include "iptux/mess.h"
 
 namespace iptux {

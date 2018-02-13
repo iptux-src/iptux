@@ -12,7 +12,7 @@
 #include "MainWindow.h"
 
 #include <string>
-#include <inttypes.h>
+#include <cinttypes>
 
 #include "iptux/Command.h"
 #include "iptux/DataSettings.h"
@@ -31,6 +31,7 @@
 #include "iptux/output.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiModels.h"
+#include "iptux/UiHelper.h"
 
 using namespace std;
 

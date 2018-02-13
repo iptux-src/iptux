@@ -12,6 +12,8 @@
 #ifndef IPTUX_CALLBACK_H
 #define IPTUX_CALLBACK_H
 
+#include <gtk/gtk.h>
+
 #include "mess.h"
 
 namespace iptux {

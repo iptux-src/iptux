@@ -66,12 +66,6 @@ char *ipmsg_get_filename_pal(const char *pathname);
 char *ipmsg_get_filename_me(const char *pathname, char **path);
 char *iptux_erase_filename_suffix(const char *filename);
 char *ipmsg_get_pathname_full(const char *path, const char *name);
-
-bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
-                      guint time);
-
-void add_accelerator(GtkApplication* app, const char* action, const char* accel);
-
 std::string inAddrToString(in_addr_t ipv4);
 
 }  // namespace iptux

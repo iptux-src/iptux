@@ -15,10 +15,12 @@
 #ifndef __APPLE__
 #include <sys/vfs.h>
 #endif
-#include <errno.h>
-#include <inttypes.h>
-#include <string.h>
+#include <cerrno>
+#include <cinttypes>
+#include <cstring>
 #include <sstream>
+
+#include <unistd.h>
 
 #include "iptux/ipmsg.h"
 
@@ -477,24 +479,6 @@ void FLAG_SET(uint8_t &num, int bit, bool value) {
   } else {
     ((num) &= (~(1 << (bit))));
   }
-}
-
-bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
-                      guint time) {
-  if (gtk_selection_data_get_length(data) <= 0 ||
-      gtk_selection_data_get_format(data) != 8) {
-    gtk_drag_finish(context, FALSE, FALSE, time);
-    return false;
-  }
-  return true;
-}
-
-void add_accelerator(GtkApplication* app, const char* action, const char* accel) {
-  const char* accels[] = {
-      accel,
-      NULL
-  };
-  gtk_application_set_accels_for_action(app, action, accels);
 }
 
 std::string inAddrToString(in_addr_t ipv4) {

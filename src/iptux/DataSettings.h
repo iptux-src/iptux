@@ -12,6 +12,8 @@
 #ifndef IPTUX_DATASETTINGS_H
 #define IPTUX_DATASETTINGS_H
 
+#include <gtk/gtk.h>
+
 #include "iptux/mess.h"
 
 namespace iptux {
