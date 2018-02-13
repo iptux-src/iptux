@@ -14,7 +14,7 @@
 
 #include <string>
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 

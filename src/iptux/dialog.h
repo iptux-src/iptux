@@ -14,7 +14,7 @@
 
 #include <gtk/gtk.h>
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 

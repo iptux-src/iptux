@@ -37,7 +37,7 @@ add_library(iptux
 	IptuxConfig.cpp
 	LogSystem.cpp
 	MainWindow.cpp
-	mess.cpp
+		Models.cpp
 	output.cpp
 	ProgramData.cpp
 	RecvFile.cpp

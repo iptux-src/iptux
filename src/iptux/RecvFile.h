@@ -14,7 +14,7 @@
 #ifndef IPTUX_RECVFILE_H
 #define IPTUX_RECVFILE_H
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 

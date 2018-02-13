@@ -16,7 +16,7 @@
 
 #include "iptux/IptuxConfig.h"
 #include "iptux/ipmsg.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 

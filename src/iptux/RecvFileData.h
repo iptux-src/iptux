@@ -13,7 +13,7 @@
 #define IPTUX_RECVFILEDATA_H
 
 #include "iptux/ipmsg.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 #include "iptux/TransAbstract.h"
 
 namespace iptux {
