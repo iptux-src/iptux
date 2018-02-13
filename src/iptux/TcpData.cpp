@@ -20,6 +20,8 @@
 #include "utils.h"
 #include "wrapper.h"
 
+using namespace std;
+
 namespace iptux {
 
 /**
@@ -202,7 +204,7 @@ void TcpData::RecvMsgPic(PalInfo *pal, const char *path) {
   para.dtlist.push_back(chip);
 
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(&para);
+  g_cthrd->InsertMessage(move(para));
 }
 
 }  // namespace iptux

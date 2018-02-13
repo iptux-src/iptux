@@ -484,7 +484,7 @@ void Command::FeedbackError(PalInfo *pal, GroupBelongType btype,
   chip.data = error;
   para.dtlist.push_back(move(chip));
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(&para);
+  g_cthrd->InsertMessage(move(para));
 }
 
 /**
