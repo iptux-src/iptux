@@ -9,7 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "mess.h"
+#include "Models.h"
 
 #include "iptux/utils.h"
 
@@ -77,19 +77,6 @@ void PalInfo::setChanged(bool value) {
   } else {
     FLAG_CLR(this->flags, 2);
   }
-}
-
-GroupInfo::GroupInfo()
-    : grpid(0),
-      type(GROUP_BELONG_TYPE_REGULAR),
-      name(NULL),
-      member(NULL),
-      buffer(NULL),
-      dialog(NULL) {}
-GroupInfo::~GroupInfo() {
-  g_free(name);
-  g_slist_free(member);
-  g_object_unref(buffer);
 }
 
 FileInfo::FileInfo()

@@ -12,8 +12,8 @@
 //
 #include "DialogPeer.h"
 
+#include <cinttypes>
 #include <gdk/gdkkeysyms.h>
-#include <inttypes.h>
 
 #include "iptux/Command.h"
 #include "iptux/HelpDialog.h"
@@ -26,6 +26,7 @@
 #include "iptux/output.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 

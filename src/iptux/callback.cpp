@@ -21,6 +21,7 @@
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"
 #include "iptux/support.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 

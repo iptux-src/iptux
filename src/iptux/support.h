@@ -14,7 +14,7 @@
 
 #include <stdexcept>
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 
@@ -27,20 +27,8 @@ class BindFailedException: public std::runtime_error {
 
 };
 
-/**
- *
- * @param port port number for binding
- * @throw BindFailedException if bind failed
- */
-void iptux_init(int port);
 void iptux_open_url(const char *url);
 void init_iptux_environment();
-
-void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height);
-
-void widget_enable_dnd_uri(GtkWidget *widget);
-GSList *selection_data_get_path(GtkSelectionData *data);
-
 char *ipv4_get_lan_name(in_addr_t ipv4);
 
 void socket_enable_broadcast(int sock);

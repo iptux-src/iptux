@@ -3,10 +3,26 @@
 
 #include <gtk/gtk.h>
 
-#include "mess.h"
+#include "Models.h"
 #include "iptux/TransFileModel.h"
 
 namespace iptux {
+
+/**
+ * 群组信息.
+ */
+class GroupInfo {
+ public:
+  GroupInfo();
+  ~GroupInfo();
+
+  GQuark grpid;           ///< 唯一标识
+  GroupBelongType type;   ///< 群组类型
+  char *name;             ///< 群组名称 *
+  GSList *member;         ///< 群组成员(数据不为本链表拥有)
+  GtkTextBuffer *buffer;  ///< 消息缓冲区 *
+  GtkWidget *dialog;  ///< 对话框(若存在则必须与对话框类关联)
+};
 
 enum class TransModelColumn {
   STATUS, TASK, PEER, IP, FILENAME,

@@ -12,10 +12,10 @@
 #ifndef IPTUX_MESS_H
 #define IPTUX_MESS_H
 
-#include <arpa/inet.h>
 #include <string>
+#include <arpa/inet.h>
 
-#include <gtk/gtk.h>
+#include <glib.h>
 #include <json/json.h>
 
 
@@ -89,22 +89,6 @@ class PalInfo {
 
  private:
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
-};
-
-/**
- * 群组信息.
- */
-class GroupInfo {
- public:
-  GroupInfo();
-  ~GroupInfo();
-
-  GQuark grpid;           ///< 唯一标识
-  GroupBelongType type;   ///< 群组类型
-  char *name;             ///< 群组名称 *
-  GSList *member;         ///< 群组成员(数据不为本链表拥有)
-  GtkTextBuffer *buffer;  ///< 消息缓冲区 *
-  GtkWidget *dialog;  ///< 对话框(若存在则必须与对话框类关联)
 };
 
 /**

@@ -16,7 +16,8 @@
 #define IPTUX_DIALOGBASE_H
 
 #include "iptux/ProgramData.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
+#include "iptux/UiModels.h"
 
 namespace iptux {
 

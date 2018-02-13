@@ -12,7 +12,7 @@
 #ifndef IPTUX_SENDFILE_H
 #define IPTUX_SENDFILE_H
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 

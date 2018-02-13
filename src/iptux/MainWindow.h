@@ -15,8 +15,9 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/ProgramData.h"
 #include "iptux/WindowConfig.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 #include "iptux/RecvFileData.h"
+#include "iptux/UiModels.h"
 
 namespace iptux {
 
