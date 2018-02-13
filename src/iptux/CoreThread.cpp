@@ -52,7 +52,10 @@ CoreThread::CoreThread(IptuxConfig &config)
       prn(MAX_SHAREDFILE),
       pblist(NULL),
       prlist(NULL),
-      ecsList(NULL) {
+      ecsList(NULL)
+{
+  newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
+  g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
   pthread_mutex_init(&mutex, NULL);
 }
@@ -60,7 +63,10 @@ CoreThread::CoreThread(IptuxConfig &config)
 /**
  * 类析构函数.
  */
-CoreThread::~CoreThread() { ClearSublayer(); }
+CoreThread::~CoreThread() {
+  g_object_unref(newMessageArrived);
+  ClearSublayer();
+}
 
 /**
  * 程序核心入口，主要任务服务将在此开启.
@@ -119,54 +125,70 @@ GSList *CoreThread::GetPalList() { return pallist; }
  * 请不要关心函数内部实现，你只需要按照要求封装消息数据，然后扔给本函数处理就可以了，
  * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
  */
-void CoreThread::InsertMessage(MsgPara *para) {
-  // para2 will be delete in InsertMessageInMain
-  MsgPara *para2 = new MsgPara(*para);
-
-  gdk_threads_add_idle(
-      GSourceFunc(InsertMessageInMain),
-      para2
-  );
+void CoreThread::InsertMessage(const MsgPara& para) {
+  Lock();
+  messages.push(para);
+  Unlock();
+  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
 }
 
-gboolean CoreThread::InsertMessageInMain(MsgPara *para) {
-  GroupInfo *grpinf;
-  SessionAbstract *session;
+void CoreThread::InsertMessage(MsgPara&& para) {
+  Lock();
+  messages.push(para);
+  Unlock();
+  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
+}
 
-  CoreThread* self = g_cthrd;
+void CoreThread::onNewMessageArrived(CoreThread* self) {
+  g_idle_add(GSourceFunc(InsertMessageInMain), self);
+}
 
-  /* 获取群组信息 */
-  switch (para->btype) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      grpinf = self->GetPalRegularItem(para->pal);
-      break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-      grpinf = self->GetPalSegmentItem(para->pal);
-      break;
-    case GROUP_BELONG_TYPE_GROUP:
-      grpinf = self->GetPalGroupItem(para->pal);
-      break;
-    case GROUP_BELONG_TYPE_BROADCAST:
-      grpinf = self->GetPalBroadcastItem(para->pal);
-      break;
-    default:
-      grpinf = NULL;
-      break;
-  }
 
-  /* 如果群组存在则插入消息 */
-  /* 群组不存在是编程上的错误，请发送Bug报告 */
-  if (grpinf) {
-    self->InsertMsgToGroupInfoItem(grpinf, para);
-    if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
-      session->OnNewMessageComing();
+gboolean CoreThread::InsertMessageInMain(CoreThread* self) {
+  while(true) {
+    self->Lock();
+    if(self->messages.empty()) {
+      self->Unlock();
+      break;
     }
-  }
+    MsgPara para = self->messages.front();
+    self->messages.pop();
+    self->Unlock();
 
-  delete para;
-  return G_SOURCE_REMOVE;
+    GroupInfo *grpinf = nullptr;
+    SessionAbstract *session;
+
+    /* 获取群组信息 */
+    switch (para.btype) {
+      case GROUP_BELONG_TYPE_REGULAR:
+        grpinf = self->GetPalRegularItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_SEGMENT:
+        grpinf = self->GetPalSegmentItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_GROUP:
+        grpinf = self->GetPalGroupItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_BROADCAST:
+        grpinf = self->GetPalBroadcastItem(para.pal);
+        break;
+      default:
+        grpinf = nullptr;
+        break;
+    }
+
+    /* 如果群组存在则插入消息 */
+    /* 群组不存在是编程上的错误，请发送Bug报告 */
+    if (grpinf) {
+      self->InsertMsgToGroupInfoItem(grpinf, &para);
+      if (grpinf->dialog) {
+        session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                       "session-class");
+        session->OnNewMessageComing();
+      }
+    }
+    return G_SOURCE_REMOVE;
+  }
 }
 
 /**

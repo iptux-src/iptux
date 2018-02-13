@@ -17,6 +17,8 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
+#include <queue>
+
 #include "iptux/IptuxConfig.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
@@ -42,7 +44,9 @@ class CoreThread {
   void Lock();
   void Unlock();
 
-  static void InsertMessage(MsgPara *para);
+  void InsertMessage(const MsgPara& para);
+  void InsertMessage(MsgPara&& para);
+
   static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
   static void SendNotifyToAll(CoreThread *pcthrd);
   static void SendFeatureData(PalInfo *pal);
@@ -82,6 +86,7 @@ class CoreThread {
   const char *GetAccessPublicLimit();
   void SetAccessPublicLimit(const char *limit);
 
+  GSimpleAction* newMessageArrived;
  private:
   IptuxConfig &config;
 
@@ -102,6 +107,8 @@ class CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
+  std::queue<MsgPara> messages;
+
   int tcpSock;
   int udpSock;
   bool server;           //程序是否正在服务
@@ -121,10 +128,11 @@ class CoreThread {
   pthread_mutex_t mutex;  //锁
   //回调处理部分函数
  private:
+  static void onNewMessageArrived(CoreThread* self);
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
   static gboolean WatchCoreStatus(CoreThread *pcthrd);
-  static gboolean InsertMessageInMain(MsgPara *para);
+  static gboolean InsertMessageInMain(CoreThread* self);
 
     //内联成员函数
  public:

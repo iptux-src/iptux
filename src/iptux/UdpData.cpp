@@ -637,7 +637,7 @@ void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype,
   para.dtlist.push_back(move(chip));
 
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(&para);
+  g_cthrd->InsertMessage(move(para));
 }
 
 void UdpData::ConvertEncode(const char *enc) {
