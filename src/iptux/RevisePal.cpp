@@ -97,8 +97,10 @@ GtkWidget *RevisePal::CreateMainDialog() {
 
   dialog = gtk_dialog_new_with_buttons(
       _("Change Pal's Information"), GTK_WINDOW(g_mwin->getWindow()),
-      GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL, NULL);
+      GTK_DIALOG_MODAL,
+      _("_OK"), GTK_RESPONSE_OK,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);

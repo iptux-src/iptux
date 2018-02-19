@@ -149,9 +149,11 @@ GtkWidget *DataSettings::CreateMainDialog(GtkWidget *parent) {
   GtkWidget *dialog;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Preferences"), GTK_WINDOW(parent), GtkDialogFlags(GTK_DIALOG_MODAL),
-      GTK_STOCK_OK, GTK_RESPONSE_OK, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
-      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+      _("Preferences"), GTK_WINDOW(parent), GTK_DIALOG_MODAL,
+      _("_OK"), GTK_RESPONSE_OK,
+      _("_Apply"), GTK_RESPONSE_APPLY,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -1537,8 +1539,10 @@ void DataSettings::ImportNetSegment(DataSettings *dset) {
   parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
   dialog = gtk_file_chooser_dialog_new(
       _("Please select a file to import data"), GTK_WINDOW(parent),
-      GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+      GTK_FILE_CHOOSER_ACTION_OPEN,
+      _("_Open"), GTK_RESPONSE_ACCEPT,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
@@ -1584,8 +1588,9 @@ void DataSettings::ExportNetSegment(DataSettings *dset) {
   parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
   dialog = gtk_file_chooser_dialog_new(
       _("Save data to file"), GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_SAVE,
-      GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL, NULL);
+      _("_Save"), GTK_RESPONSE_ACCEPT,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
