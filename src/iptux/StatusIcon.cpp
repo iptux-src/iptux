@@ -112,7 +112,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   /* 首选项 */
   NO_OPERATION_C
   menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Preferences"));
-  image = gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU);
+  image = gtk_image_new_from_icon_name("preferences-system-symbolic", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.preferences");
@@ -140,7 +140,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   /* 程序退出 */
   NO_OPERATION_C
   menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
-  image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
+  image = gtk_image_new_from_icon_name("application-exit-symbolic", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.quit");
