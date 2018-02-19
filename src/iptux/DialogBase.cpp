@@ -395,8 +395,10 @@ GSList *DialogBase::PickEnclosure(uint32_t fileattr) {
     title = _("Choose enclosure folders");
   }
   dialog = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(window), action, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+      title, GTK_WINDOW(window), action,
+      _("_Open"), GTK_RESPONSE_ACCEPT,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);
