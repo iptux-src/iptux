@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cerrno>
 
+#include <unistd.h>
 #include <sys/socket.h>
 
 #include <glib/gi18n.h>
