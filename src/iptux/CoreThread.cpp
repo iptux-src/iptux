@@ -20,7 +20,7 @@
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
 #include "iptux/ProgramData.h"
-#include "iptux/TcpData.h" 
+#include "iptux/TcpData.h"
 #include "iptux/UdpData.h"
 #include "iptux/config.h"
 #include "iptux/deplib.h"
