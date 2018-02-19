@@ -11,8 +11,10 @@
 //
 #include "CoreThread.h"
 
-#include <inttypes.h>
+#include <cinttypes>
+#include <unistd.h>
 #include <sys/stat.h>
+#include <sys/socket.h>
 
 #include "iptux/Command.h"
 #include "iptux/LogSystem.h"

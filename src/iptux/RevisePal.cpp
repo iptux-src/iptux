@@ -11,7 +11,9 @@
 //
 #include "RevisePal.h"
 
-#include <inttypes.h>
+#include <cinttypes>
+#include <dirent.h>
+#include <unistd.h>
 
 #include "iptux/CoreThread.h"
 #include "iptux/MainWindow.h"

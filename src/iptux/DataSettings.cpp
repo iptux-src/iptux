@@ -11,6 +11,9 @@
 //
 #include "DataSettings.h"
 
+#include <unistd.h>
+#include <dirent.h>
+
 #include "iptux/CoreThread.h"
 #include "iptux/ProgramData.h"
 #include "iptux/SoundSystem.h"

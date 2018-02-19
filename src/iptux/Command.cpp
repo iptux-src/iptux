@@ -11,9 +11,11 @@
 //
 #include "Command.h"
 
+#include <cinttypes>
 #include <fcntl.h>
-#include <inttypes.h>
+#include <unistd.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 
 #include "iptux/CoreThread.h"
 #include "iptux/ProgramData.h"

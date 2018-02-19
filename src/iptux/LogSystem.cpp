@@ -12,6 +12,7 @@
 #include "LogSystem.h"
 
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "iptux/deplib.h"
 #include "iptux/global.h"

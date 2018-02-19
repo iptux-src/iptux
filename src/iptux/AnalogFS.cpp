@@ -11,9 +11,10 @@
 //
 #include "AnalogFS.h"
 
+#include <cstring>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <cstring>
+#include <unistd.h>
 
 #include "iptux/ipmsg.h"
 #include "iptux/output.h"

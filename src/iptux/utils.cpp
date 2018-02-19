@@ -12,15 +12,16 @@
 
 #include "utils.h"
 
-#ifndef __APPLE__
-#include <sys/vfs.h>
-#endif
 #include <cerrno>
 #include <cinttypes>
 #include <cstring>
 #include <sstream>
-
 #include <unistd.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+#ifndef __APPLE__
+#include <sys/vfs.h>
+#endif
 
 #include "iptux/ipmsg.h"
 

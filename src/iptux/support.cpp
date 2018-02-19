@@ -11,9 +11,11 @@
 //
 #include "support.h"
 
+#include <unistd.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/socket.h>
 
 #include "CoreThread.h"
 #include "LogSystem.h"
@@ -153,9 +155,15 @@ void socket_enable_reuse(int sock) {
 
   optval = 1;
   len = sizeof(optval);
+#ifndef __CYGWIN__
   if(setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, len) != 0) {
     LOG_WARN("setsockopt for SO_REUSEPORT failed: %s", strerror(errno));
   }
+#else
+  if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len) != 0) {
+    LOG_WARN("setsockopt for SO_REUSEADDR failed: %s", strerror(errno));
+  }
+#endif
 }
 
 /**
