@@ -64,10 +64,9 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      box, TRUE, TRUE, 0);
 
-  image =
-      gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+  image = gtk_image_new_from_icon_name("dialog-question-symbolic", GTK_ICON_SIZE_DIALOG);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-  image = gtk_vseparator_new();
+  image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
 
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
@@ -103,7 +102,7 @@ char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal) {
       _("Access Password"),
       parent,
       GTK_DIALOG_MODAL,
-      GTK_STOCK_OK, GTK_RESPONSE_OK,
+      _("_OK"), GTK_RESPONSE_OK,
       NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
@@ -117,10 +116,9 @@ char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal) {
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
-  image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION,
-                                   GTK_ICON_SIZE_DIALOG);
+  image = gtk_image_new_from_icon_name("dialog-password-symbolic", GTK_ICON_SIZE_DIALOG);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-  image = gtk_vseparator_new();
+  image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
   text = g_strdup_printf(_("(%s)[%s]Password:"), pal->name, ipstr);
@@ -165,7 +163,8 @@ char *pop_password_settings(GtkWidget *parent) {
 
   dialog = gtk_dialog_new_with_buttons(
       _("Enter a New Password"), GTK_WINDOW(parent), GTK_DIALOG_MODAL,
-      GTK_STOCK_OK, GTK_RESPONSE_OK, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+      _("_OK"), GTK_RESPONSE_OK,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
       NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
@@ -225,8 +224,10 @@ const char *pop_save_path(GtkWidget *parent, const char* defaultPath) {
 
   dialog = gtk_file_chooser_dialog_new(
       _("Please select a folder to save files."), GTK_WINDOW(parent),
-      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      _("_Save"), GTK_RESPONSE_ACCEPT,
+      NULL);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), defaultPath);
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
