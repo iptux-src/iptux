@@ -68,7 +68,7 @@ void Application::onActivate(Application& self) {
   g_cthrd = new CoreThread(self.config);
   StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
-  g_lgsys = new LogSystem();
+  g_lgsys = new LogSystem(*self.data);
 
   self.window->SetStatusIcon(sicon);
 
