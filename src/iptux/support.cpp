@@ -11,9 +11,11 @@
 //
 #include "support.h"
 
+#include <unistd.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/socket.h>
 
 #include "CoreThread.h"
 #include "LogSystem.h"

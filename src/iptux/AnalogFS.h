@@ -13,6 +13,7 @@
 #ifndef IPTUX_ANALOGFS_H
 #define IPTUX_ANALOGFS_H
 
+#include <dirent.h>
 #include <sys/stat.h>
 
 #include "iptux/ipmsg.h"

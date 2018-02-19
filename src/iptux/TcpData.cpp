@@ -11,8 +11,10 @@
 //
 #include "TcpData.h"
 
+#include <cinttypes>
 #include <fcntl.h>
-#include <inttypes.h>
+#include <unistd.h>
+#include <sys/socket.h>
 
 #include "SendFile.h"
 #include "global.h"

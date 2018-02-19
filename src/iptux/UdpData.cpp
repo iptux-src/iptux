@@ -12,8 +12,9 @@
 //
 #include "UdpData.h"
 
+#include <cinttypes>
 #include <fcntl.h>
-#include <inttypes.h>
+#include <unistd.h>
 
 #include "Command.h"
 #include "CoreThread.h"

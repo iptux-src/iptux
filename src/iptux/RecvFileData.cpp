@@ -12,8 +12,10 @@
 #include "RecvFileData.h"
 
 #include <fcntl.h>
-#include <sys/time.h>
 #include <utime.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/socket.h>
 
 #include "iptux/AnalogFS.h"
 #include "iptux/Command.h"

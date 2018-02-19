@@ -12,8 +12,10 @@
 //
 #include "DialogPeer.h"
 
+#include <cinttypes>
+#include <unistd.h>
+#include <sys/socket.h>
 #include <gdk/gdkkeysyms.h>
-#include <inttypes.h>
 
 #include "iptux/Command.h"
 #include "iptux/HelpDialog.h"

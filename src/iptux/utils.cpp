@@ -12,12 +12,15 @@
 
 #include "utils.h"
 
+#include <cerrno>
+#include <cinttypes>
+#include <cstring>
+#include <unistd.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 #ifndef __APPLE__
 #include <sys/vfs.h>
 #endif
-#include <errno.h>
-#include <inttypes.h>
-#include <string.h>
 
 #include "iptux/ipmsg.h"
 
@@ -143,11 +146,11 @@ void get_file_system_info(const char *path, int64_t *avail, int64_t *total) {
   *avail = *total = 0;
 #else
 
-  struct statfs64 st;
+  struct statfs st;
   int result;
 
 mark:
-  switch (result = statfs64(path, &st)) {
+  switch (result = statfs(path, &st)) {
     case 0:
       *avail = (int64_t)st.f_bsize * st.f_bavail;
       *total = (int64_t)st.f_bsize * st.f_blocks;
