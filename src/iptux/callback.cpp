@@ -13,6 +13,7 @@
 
 #include <string.h>
 
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "iptux/MainWindow.h"
@@ -79,8 +80,10 @@ gchar *choose_file_with_preview(const gchar *title, GtkWidget *parent) {
   gchar *filename;
 
   chooser = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN,
-      GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+      title, GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN,
+      _("_Open"), GTK_RESPONSE_ACCEPT,
+      _("_Cancel"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(chooser), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), FALSE);
