@@ -107,3 +107,9 @@ src/Testing
 Testing
 src/iptux/libiptux_test
 *.cbp
+
+src/iptux/IptuxResource.c
+
+src/iptux/IptuxResource.h
+
+src/iptux/IptuxResource.cpp

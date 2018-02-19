@@ -28,6 +28,7 @@ private:
 private:
   static void onStartup (Application& self);
   static void onActivate (Application& self);
+  static void onActiveWindowChanged (Application& self);
   static void onQuit (void *, void *, Application& self);
   static void onPreferences (void *, void *, Application& self);
   static void onToolsTransmission (void *, void *, Application& self);

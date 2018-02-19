@@ -12,7 +12,7 @@
 #ifndef IPTUX_LOGSYSTEM_H
 #define IPTUX_LOGSYSTEM_H
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 

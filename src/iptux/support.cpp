@@ -19,13 +19,8 @@
 
 #include "CoreThread.h"
 #include "LogSystem.h"
-#include "MainWindow.h"
 #include "ProgramData.h"
-#include "SoundSystem.h"
-#include "dialog.h"
-#include "global.h"
 #include "ipmsg.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "output.h"
 #include "utils.h"
@@ -33,43 +28,6 @@
 namespace iptux {
 
 static void bind_iptux_port(int port);
-
-/**
- * 程序必要初始化.
- */
-void iptux_init(int port) {
-  bind_iptux_port(port);
-  init_iptux_environment();
-
-  g_progdt->InitSublayer();
-  g_lgsys->InitSublayer();
-  g_sndsys->InitSublayer();
-
-  signal(SIGPIPE, SIG_IGN);
-  signal(SIGHUP, iptux_quit);
-  signal(SIGINT, iptux_quit);
-  signal(SIGQUIT, iptux_quit);
-  signal(SIGTERM, iptux_quit);
-
-  g_lgsys->SystemLog(_("Loading the process successfully!"));
-}
-
-/**
- * 程序GUI退出.
- */
-void iptux_gui_quit() {
-  if (g_mwin->TransmissionActive() && !pop_request_quit()) return;
-  gtk_main_quit();
-  iptux_quit(0);
-}
-
-/**
- * 程序底层退出.
- */
-void iptux_quit(int _ignore) {
-  g_lgsys->SystemLog(_("The process is about to quit!"));
-  exit(0);
-}
 
 /**
  * 打开URL.
@@ -97,45 +55,6 @@ void iptux_open_url(const char *url) {
   execlp("konqueror", "konqueror", url, NULL);
   execlp("open", "open", url, NULL);
   pwarning(_("Can't find any available web browser!\n"));
-}
-
-/**
- * 绑定iptux程序的服务监听端口.
- */
-void bind_iptux_port(int port) {
-  struct sockaddr_in addr;
-  int tcpsock, udpsock;
-
-  tcpsock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-  socket_enable_reuse(tcpsock);
-  udpsock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  socket_enable_reuse(udpsock);
-  socket_enable_broadcast(udpsock);
-  if ((tcpsock == -1) || (udpsock == -1)) {
-    g_warning(_("Fatal Error!! Failed to create new socket!\n%s"),
-              strerror(errno));
-    pop_warning(NULL, _("Fatal Error!!\nFailed to create new socket!\n%s"),
-                strerror(errno));
-    exit(1);
-  }
-
-  bzero(&addr, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  if (bind(tcpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1 ||
-      bind(udpsock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
-    close(tcpsock);
-    close(udpsock);
-    g_warning(_("Fatal Error!! Failed to bind the TCP/UDP port(%d)!\n%s"), port,
-              strerror(errno));
-    pop_warning(NULL,
-                _("Fatal Error!!\nFailed to bind the TCP/UDP port(%d)!\n%s"),
-                port, strerror(errno));
-    exit(1);
-  }
-  g_cthrd->setTcpSock(tcpsock);
-  g_cthrd->setUdpSock(udpsock);
 }
 
 /**
@@ -172,90 +91,6 @@ void init_iptux_environment() {
   if (access(path, F_OK) != 0) mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
   if (access(path, F_OK) != 0) mkdir(path, 0777);
-}
-
-/**
- * 按照1:1的比例对图片做缩小(请注意，没有放大)处理.
- * @param pixbuf pixbuf
- * @param width width
- * @param height height
- * @note 原pixbuf将被本函数释放
- */
-void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
-  gdouble scale_x, scale_y, scale;
-  gint _width, _height;
-  GdkPixbuf *tpixbuf;
-
-  width = (width != -1) ? width : G_MAXINT;
-  height = (height != -1) ? height : G_MAXINT;
-  _width = gdk_pixbuf_get_width(*pixbuf);
-  _height = gdk_pixbuf_get_height(*pixbuf);
-  if (_width > width || _height > height) {
-    scale = ((scale_x = (gdouble)width / _width) <
-             (scale_y = (gdouble)height / _height))
-                ? scale_x
-                : scale_y;
-    _width = (gint)(_width * scale);
-    _height = (gint)(_height * scale);
-    tpixbuf = *pixbuf;
-    *pixbuf =
-        gdk_pixbuf_scale_simple(tpixbuf, _width, _height, GDK_INTERP_BILINEAR);
-    g_object_unref(tpixbuf);
-  }
-}
-
-/**
- * 获取库存图片.
- * @param stock_id a stock ID
- * @return pixbuf
- */
-GdkPixbuf *obtain_pixbuf_from_stock(const gchar *stock_id) {
-  GtkWidget *widget;
-  GdkPixbuf *pixbuf;
-
-  widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  pixbuf = gtk_widget_render_icon(widget, stock_id, GTK_ICON_SIZE_MENU, NULL);
-  gtk_widget_destroy(widget);
-
-  return pixbuf;
-}
-
-/**
- * 让窗体(widget)支持uri拖拽操作.
- * @param widget widget
- */
-void widget_enable_dnd_uri(GtkWidget *widget) {
-  static const GtkTargetEntry target = {(gchar *)"text/uri-list", 0, 0};
-
-  gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, &target, 1, GDK_ACTION_MOVE);
-}
-
-/**
- * 由(GtkSelectionData)获取(uri)文件链表.
- * @param data selection data
- * @return 文件链表
- */
-GSList *selection_data_get_path(GtkSelectionData *data) {
-  const char *prl = "file://";
-  gchar **uris, **ptr, *uri;
-  GSList *filelist;
-
-  if (!(uris = gtk_selection_data_get_uris(data))) return NULL;
-
-  filelist = NULL;
-  ptr = uris;
-  while (*ptr) {
-    uri = g_uri_unescape_string(*ptr, NULL);
-    if (strncasecmp(uri, prl, strlen(prl)) == 0)
-      filelist = g_slist_append(filelist, g_strdup(uri + strlen(prl)));
-    else
-      filelist = g_slist_append(filelist, g_strdup(uri));
-    g_free(uri);
-    ptr++;
-  }
-  g_strfreev(uris);
-
-  return filelist;
 }
 
 /**
@@ -305,7 +140,9 @@ void socket_enable_broadcast(int sock) {
 
   optval = 1;
   len = sizeof(optval);
-  setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, len);
+  if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, len) != 0) {
+    LOG_WARN("setsockopt for SO_BROADCAST failed: %s", strerror(errno));
+  }
 }
 
 /**
@@ -318,7 +155,9 @@ void socket_enable_reuse(int sock) {
 
   optval = 1;
   len = sizeof(optval);
-  setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len);
+  if(setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, len) != 0) {
+    LOG_WARN("setsockopt for SO_REUSEPORT failed: %s", strerror(errno));
+  }
 }
 
 /**

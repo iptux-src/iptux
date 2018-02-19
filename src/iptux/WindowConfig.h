@@ -9,10 +9,11 @@ namespace iptux {
 
 class WindowConfig {
  public:
-  WindowConfig(int defaultWidth, int defaultHeight, std::string prefix) {
-    this->width = defaultWidth;
-    this->height = defaultHeight;
-    this->prefix = prefix;
+  WindowConfig(int defaultWidth, int defaultHeight, const std::string& prefix)
+  : width(defaultWidth),
+    height(defaultHeight),
+    prefix(prefix)
+  {
   }
 
   virtual ~WindowConfig() {}

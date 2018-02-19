@@ -22,11 +22,11 @@ namespace iptux {
  * 弹出请求程序退出的对话框.
  * @return true|false
  */
-bool pop_request_quit() {
+bool pop_request_quit(GtkWindow* parent) {
   GtkWidget *dialog;
   gint result;
 
-  dialog = gtk_message_dialog_new(GTK_WINDOW(g_mwin->ObtainWindow()),
+  dialog = gtk_message_dialog_new(parent,
                                   GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
                                   GTK_BUTTONS_OK_CANCEL, "%s",
                                   _("File transfer has not been completed.\n"
@@ -52,7 +52,7 @@ bool pop_request_shared_file(PalInfo *pal) {
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Request Shared Resources"), GTK_WINDOW(g_mwin->ObtainWindow()),
+      _("Request Shared Resources"), GTK_WINDOW(g_mwin->getWindow()),
       GTK_DIALOG_MODAL, _("Agree"), GTK_RESPONSE_ACCEPT, _("Refuse"),
       GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
@@ -98,7 +98,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal) {
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Access Password"), GTK_WINDOW(g_mwin->ObtainWindow()),
+      _("Access Password"), GTK_WINDOW(g_mwin->getWindow()),
       GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
@@ -109,7 +109,7 @@ char *pop_obtain_shared_passwd(PalInfo *pal) {
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      frame, FALSE, FALSE, 0);
-  box = gtk_hbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
   image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION,
@@ -165,7 +165,7 @@ char *pop_password_settings(GtkWidget *parent) {
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      hbox, FALSE, FALSE, 0);
   passwd = gtk_label_new(_("Password: "));
@@ -174,7 +174,7 @@ char *pop_password_settings(GtkWidget *parent) {
   gtk_entry_set_activates_default(GTK_ENTRY(passwd), TRUE);
   gtk_entry_set_visibility(GTK_ENTRY(passwd), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), passwd, TRUE, TRUE, 0);
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      hbox, FALSE, FALSE, 0);
   repeat = gtk_label_new(_("Repeat: "));
@@ -213,13 +213,9 @@ mark:
   }
   return NULL;
 }
-/**
- * 弹出接收文件存放位置的对话框.
- * @param parent parent window
- * @return path string
- */
+
 const char *pop_save_path(GtkWidget *parent) {
-  const char *path;
+  const char *path = nullptr;
   GtkWidget *dialog;
 
   dialog = gtk_file_chooser_dialog_new(
@@ -228,7 +224,6 @@ const char *pop_save_path(GtkWidget *parent) {
       GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_progdt->path.c_str());
-  path = g_progdt->path.c_str();
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
   }

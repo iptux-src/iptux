@@ -33,8 +33,7 @@ namespace iptux {
  * @param fl 文件信息数据
  */
 RecvFileData::RecvFileData(FileInfo *fl)
-    : file(fl), para(NULL), terminate(false), sumsize(0) {
-  g_datalist_init(&para);
+    : file(fl), terminate(false), sumsize(0) {
   gettimeofday(&tasktime, NULL);
   /* gettimeofday(&filetime, NULL);//个人感觉没必要 */
 }
@@ -42,7 +41,7 @@ RecvFileData::RecvFileData(FileInfo *fl)
 /**
  * 类析构函数.
  */
-RecvFileData::~RecvFileData() { g_datalist_clear(&para); }
+RecvFileData::~RecvFileData() {}
 
 /**
  * 接收文件数据入口.
@@ -51,7 +50,7 @@ void RecvFileData::RecvFileDataEntry() {
   /* 创建UI参考数据，并将数据主动加入UI */
   gdk_threads_enter();
   CreateUIPara();
-  g_mwin->UpdateItemToTransTree(&para);
+  g_mwin->UpdateItemToTransTree(para);
   if (g_progdt->IsAutoOpenFileTrans()) {
     g_mwin->OpenTransWindow();
   }
@@ -72,7 +71,7 @@ void RecvFileData::RecvFileDataEntry() {
   /* 主动更新UI */
   gdk_threads_enter();
   UpdateUIParaToOver();
-  g_mwin->UpdateItemToTransTree(&para);
+  g_mwin->UpdateItemToTransTree(para);
   gdk_threads_leave();
 
   /* 处理成功则播放提示音 */
@@ -84,7 +83,7 @@ void RecvFileData::RecvFileDataEntry() {
  * 获取UI参考数据.
  * @return UI参考数据
  */
-GData **RecvFileData::GetTransFilePara() { return &para; }
+const TransFileModel& RecvFileData::getTransFileModel() const { return para; }
 
 /**
  * 终止过程处理.
@@ -95,35 +94,21 @@ void RecvFileData::TerminateTrans() { terminate = true; }
  * 创建UI参考数据.
  */
 void RecvFileData::CreateUIPara() {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
   struct in_addr addr;
 
-  theme = gtk_icon_theme_get_default();
-  if ((pixbuf = gtk_icon_theme_load_icon(theme, "tip-recv", MAX_ICONSIZE,
-                                         GtkIconLookupFlags(0), NULL)))
-    g_datalist_set_data_full(&para, "status", pixbuf,
-                             GDestroyNotify(g_object_unref));
-
-  g_datalist_set_data(&para, "task", (gpointer)(_("receive")));
-  g_datalist_set_data_full(&para, "peer", g_strdup(file->fileown->name),
-                           GDestroyNotify(g_free));
   addr.s_addr = file->fileown->ipv4;
-  g_datalist_set_data_full(&para, "ip", g_strdup(inet_ntoa(addr)),
-                           GDestroyNotify(g_free));
-  g_datalist_set_data_full(&para, "filename",
-                           ipmsg_get_filename_me(file->filepath, NULL),
-                           GDestroyNotify(g_free));
-  g_datalist_set_data_full(&para, "filelength", numeric_to_size(file->filesize),
-                           GDestroyNotify(g_free));
-  g_datalist_set_data(&para, "finishlength", (gpointer)("0B"));
-  g_datalist_set_data(&para, "progress", GINT_TO_POINTER(0));
-  g_datalist_set_data(&para, "pro-text", (gpointer)("0.0%"));
-  g_datalist_set_data(&para, "cost", (gpointer)("00:00:00"));
-  g_datalist_set_data(&para, "remain", (gpointer)(_("unknown")));
-  g_datalist_set_data(&para, "rate", (gpointer)("0B/s"));
-  g_datalist_set_data(&para, "filepath", file->filepath);
-  g_datalist_set_data(&para, "data", this);
+  para.setStatus("tip-recv")
+      .setTask(_("receive"))
+      .setPeer(file->fileown->name)
+      .setIp(inet_ntoa(addr))
+      .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
+      .setFileLength(file->filesize)
+      .setFinishedLength(0)
+      .setCost("00:00:00")
+      .setRemain(_("Unknown"))
+      .setRate("0 B/s")
+      .setFilePath(file->filepath)
+      .setData(this);
 }
 
 /**
@@ -232,24 +217,19 @@ void RecvFileData::RecvDirFiles() {
     len = size - headsize;  //更新缓冲区有效数据量
 
     /* 转码(如果好友不兼容iptux协议) */
-    if (!FLAG_ISSET(file->fileown->flags, 0) &&
+    if (!file->fileown->isCompatible() &&
         strcasecmp(file->fileown->encode, "utf-8") != 0 &&
         (dirname = convert_encode(filename, "utf-8", file->fileown->encode)))
       g_free(filename);
     else
       dirname = filename;
     /* 更新UI参考值 */
-    //要有谁敢在下一段代码中释放(dirname)，那可别怪我没提醒哦
-    g_datalist_set_data_full(&para, "filename", dirname,
-                             GDestroyNotify(g_free));
-    g_datalist_set_data_full(&para, "filelength", numeric_to_size(filesize),
-                             GDestroyNotify(g_free));
-    g_datalist_set_data(&para, "finishlength", (gpointer)("0B"));
-    g_datalist_set_data(&para, "progress", GINT_TO_POINTER(0));
-    g_datalist_set_data(&para, "pro-text", (gpointer)("0.0%"));
-    g_datalist_set_data(&para, "cost", (gpointer)("00:00:00"));
-    g_datalist_set_data(&para, "remain", (gpointer)(_("unknown")));
-    g_datalist_set_data(&para, "rate", (gpointer)("0B/s"));
+    para.setFilename(dirname)
+        .setFileLength(filesize)
+        .setFinishedLength(0)
+        .setCost("00:00:00")
+        .setRemain(_("Unknown"))
+        .setRate("0 B/s");
 
     /* 选择处理方案 */
     gettimeofday(&filetime, NULL);
@@ -357,28 +337,11 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
     difftime = difftimeval(val2, val1);
     if (difftime >= 1) {
       /* 更新UI参考值 */
-      progress = percent(finishsize, filesize);
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
-      g_datalist_set_data_full(&para, "finishlength",
-                               numeric_to_size(finishsize),
-                               GDestroyNotify(g_free));
-      g_datalist_set_data(&para, "progress", GINT_TO_POINTER(GINT(progress)));
-      g_datalist_set_data_full(&para, "pro-text",
-                               g_strdup_printf("%.1f", progress),
-                               GDestroyNotify(g_free));
-      g_datalist_set_data_full(
-          &para, "cost",
-          numeric_to_time((uint32_t)(difftimeval(val2, filetime))),
-          GDestroyNotify(g_free));
-      g_datalist_set_data_full(
-          &para, "remain",
-          numeric_to_time((uint32_t)((filesize - finishsize) / rate)),
-          GDestroyNotify(g_free));
-      g_datalist_set_data_full(&para, "rate", numeric_to_rate(rate),
-                               GDestroyNotify(g_free));
-      //                        g_datalist_set_data_full(&para, "finishsize",
-      //                                                 numeric_to_str(sumsize),
-      //                                                 GDestroyNotify(g_free));
+      para.setFinishedLength(finishsize)
+          .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
+          .setRemain(numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
+          .setRate(numeric_to_rate(rate));
       val1 = val2;           //更新时间参考点
       tmpsize = finishsize;  //更新下载量
     }
@@ -391,40 +354,26 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
  * 更新UI参考数据到任务结束.
  */
 void RecvFileData::UpdateUIParaToOver() {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
   struct timeval time;
   const char *statusfile;
 
-  theme = gtk_icon_theme_get_default();
   statusfile = terminate ? "tip-error" : "tip-finish";
-  if ((pixbuf = gtk_icon_theme_load_icon(theme, statusfile, MAX_ICONSIZE,
-                                         GtkIconLookupFlags(0), NULL)))
-    g_datalist_set_data_full(&para, "status", pixbuf,
-                             GDestroyNotify(g_object_unref));
+  para.setStatus(statusfile);
 
   if (!terminate && GET_MODE(file->fileattr) == IPMSG_FILE_DIR) {
-    g_datalist_set_data_full(&para, "filename",
-                             ipmsg_get_filename_me(file->filepath, NULL),
-                             GDestroyNotify(g_free));
-    g_datalist_set_data_full(&para, "filelength", numeric_to_size(sumsize),
-                             GDestroyNotify(g_free));
+    para.setFilename(ipmsg_get_filename_me(file->filepath, NULL));
+    para.setFileLength(sumsize);
     file->finishedsize = file->filesize;
   }
   if (!terminate) {
     gettimeofday(&time, NULL);
-    g_datalist_set_data_full(&para, "finishlength", numeric_to_size(sumsize),
-                             GDestroyNotify(g_free));
-    g_datalist_set_data(&para, "progress", GINT_TO_POINTER(100));
-    g_datalist_set_data(&para, "pro-text", (gpointer)("100%"));
-    g_datalist_set_data_full(
-        &para, "cost", numeric_to_time((uint32_t)(difftimeval(time, tasktime))),
-        GDestroyNotify(g_free));
-    g_datalist_set_data(&para, "remain", NULL);
-    g_datalist_set_data(&para, "rate", NULL);
+    para.setFinishedLength(para.getFileLength())
+        .setCost(numeric_to_time((uint32_t)(difftimeval(time, tasktime))))
+        .setRemain("")
+        .setRate("");
     file->finishedsize = file->filesize;
   }
-  g_datalist_set_data(&para, "data", NULL);
+  para.finish();
 }
 
 }  // namespace iptux

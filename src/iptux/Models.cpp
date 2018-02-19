@@ -9,7 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "mess.h"
+#include "Models.h"
 
 #include "iptux/utils.h"
 
@@ -27,9 +27,9 @@ PalInfo::PalInfo()
       sign(NULL),
       iconfile(NULL),
       encode(NULL),
-      flags(0),
       packetn(0),
-      rpacketn(0) {}
+      rpacketn(0),
+      flags(0) {}
 PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(version);
@@ -43,17 +43,40 @@ PalInfo::~PalInfo() {
   g_free(encode);
 }
 
-GroupInfo::GroupInfo()
-    : grpid(0),
-      type(GROUP_BELONG_TYPE_REGULAR),
-      name(NULL),
-      member(NULL),
-      buffer(NULL),
-      dialog(NULL) {}
-GroupInfo::~GroupInfo() {
-  g_free(name);
-  g_slist_free(member);
-  g_object_unref(buffer);
+bool PalInfo::isCompatible() const {
+  return FLAG_ISSET(this->flags, 0);
+}
+
+bool PalInfo::isOnline() const {
+  return FLAG_ISSET(this->flags, 1);
+}
+
+bool PalInfo::isChanged() const {
+  return FLAG_ISSET(this->flags, 2);
+}
+
+void PalInfo::setCompatible(bool value) {
+  if(value) {
+    FLAG_SET(this->flags, 0);
+  } else {
+    FLAG_CLR(this->flags, 0);
+  }
+}
+
+void PalInfo::setOnline(bool value) {
+  if(value) {
+    FLAG_SET(this->flags, 1);
+  } else {
+    FLAG_CLR(this->flags, 1);
+  }
+}
+
+void PalInfo::setChanged(bool value) {
+  if(value) {
+    FLAG_SET(this->flags, 2);
+  } else {
+    FLAG_CLR(this->flags, 2);
+  }
 }
 
 FileInfo::FileInfo()
@@ -63,22 +86,22 @@ FileInfo::FileInfo()
       filesize(-1),
       finishedsize(0),
       fileown(NULL),
-      filepath(NULL) {}
+      filepath(NULL),
+      filectime(0),
+      filemtime(0),
+      filenum(0) {}
 FileInfo::~FileInfo() { g_free(filepath); }
 
 MsgPara::MsgPara()
     : pal(NULL),
       stype(MessageSourceType::PAL),
-      btype(GROUP_BELONG_TYPE_REGULAR),
-      dtlist(NULL) {}
+      btype(GROUP_BELONG_TYPE_REGULAR) {}
+
 MsgPara::~MsgPara() {
-  for (GSList* tlist = dtlist; tlist; tlist = g_slist_next(tlist))
-    delete (ChipData*)tlist->data;
-  g_slist_free(dtlist);
 }
 
-ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data(NULL) {}
-ChipData::~ChipData() { g_free(data); }
+ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
+ChipData::~ChipData() {}
 
 NetSegment::NetSegment() {}
 NetSegment::~NetSegment() {}
@@ -101,8 +124,5 @@ NetSegment NetSegment::fromJsonValue(Json::Value &value) {
 
 SessionAbstract::SessionAbstract() {}
 SessionAbstract::~SessionAbstract() {}
-
-TransAbstract::TransAbstract() {}
-TransAbstract::~TransAbstract() {}
 
 }  // namespace iptux

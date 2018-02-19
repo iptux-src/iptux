@@ -15,7 +15,9 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/ProgramData.h"
 #include "iptux/WindowConfig.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
+#include "iptux/RecvFileData.h"
+#include "iptux/UiModels.h"
 
 namespace iptux {
 
@@ -42,7 +44,6 @@ class MainWindow {
 
   void CreateWindow();
   void AlterWindowMode();
-  GtkWidget *ObtainWindow();
 
   bool PaltreeContainItem(in_addr_t ipv4);
   void UpdateItemToPaltree(in_addr_t ipv4);
@@ -54,8 +55,9 @@ class MainWindow {
   void clearActiveWindow(void* activeWindow);
 
   void OpenTransWindow();
-  void UpdateItemToTransTree(GData **para);
-  bool TransmissionActive();
+  //void UpdateItemToTransTree(GData **para);
+  void UpdateItemToTransTree(const TransFileModel& para);
+  bool isTransmissionActive() const;
 
   ProgramData &GetProgramData() { return progdt; }
 
@@ -66,6 +68,8 @@ class MainWindow {
  private:
   GtkApplication* app;
   GtkWidget* window;
+  GtkWidget* transWindow;
+
   IptuxConfig &config;
   ProgramData &progdt;
   StatusIcon *statusIcon;
@@ -85,20 +89,15 @@ class MainWindow {
   void ClearSublayer();
 
   GtkWidget *CreateMainWindow();
-  GtkWidget *CreateTransWindow();
   GtkWidget *CreateAllArea();
-  GtkWidget *CreateTransArea();
 
   GtkWidget *CreateToolBar();
   GtkWidget *CreatePaltreeArea();
   GtkWidget *CreatePallistArea();
 
-  GtkTreeModel *CreatePaltreeModel();
   GtkTreeModel *CreatePallistModel();
-  GtkTreeModel *CreateTransModel();
   GtkWidget *CreatePaltreeTree(GtkTreeModel *model);
   GtkWidget *CreatePallistTree(GtkTreeModel *model);
-  GtkWidget *CreateTransTree(GtkTreeModel *model);
 
   bool GroupGetPrevPaltreeItem(GtkTreeModel *model, GtkTreeIter *iter,
                                GroupInfo *grpinf);
@@ -108,32 +107,16 @@ class MainWindow {
                                      GroupInfo *grpinf);
   void FillGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                               GroupInfo *grpinf);
-  void UpdateGroupInfoToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
-                                GroupInfo *grpinf);
   void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                bool blinking);
-  static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-
- public:
-  static void ShowTransWindow(MainWindow* self);
 
  private:
   //回调处理部分
   static gboolean UpdateUI(MainWindow *mwin);
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);
-
-  static gboolean UpdateTransUI(GtkWidget *treeview);
-  static gboolean TransPopupMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void HideTransWindow(GData **widset);
-  static void ClearTransWindow(GData **widset);
-  static void TerminateTransTask(GtkTreeModel *model);
-  static void TerminateAllTransTask(GtkTreeModel *model);
-  static void ClearTransTask(GtkTreeModel *model);
-  static void OpenContainingFolder(GtkTreeModel *model);
-  static void OpenThisFile(GtkTreeModel *model);
 
   static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
@@ -153,13 +136,6 @@ class MainWindow {
                                       GdkDragContext *context, gint x, gint y,
                                       GtkSelectionData *data, guint info,
                                       guint time, MainWindow *self);
-
-  static gint PaltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                       GtkTreeIter *b);
-  static gint PaltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                     GtkTreeIter *b);
-
-  static void ShowPallistArea(GData **widset);
   static void HidePallistArea(GData **widset);
   static gboolean ClearPallistEntry(GtkWidget *entry, GdkEventKey *event);
   static void PallistEntryChanged(GtkWidget *entry, GData **widset);

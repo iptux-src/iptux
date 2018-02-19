@@ -15,6 +15,7 @@
 #include <cerrno>
 #include <cinttypes>
 #include <cstring>
+#include <sstream>
 #include <unistd.h>
 #include <sys/param.h>
 #include <sys/mount.h>
@@ -79,27 +80,6 @@ char *iptux_string_validate(const char *s, const string &codeset,
 }
 
 /**
- * 检查串(string)是否为有效的utf8串，若不是则根据字符集(codeset)来进行转码.
- * @param string 待检查的字符串
- * @param codeset 字符集编码，e.g.<gb18030,big5>
- * @retval encode 正确的字符集编码由此返回
- * @return 有效的utf8串
- * @note 本函数无论处理结果如何，都会无条件的返回一个字符集编码以及一个新串
- * @see iptux_string_validate()
- */
-char *iptux_string_validate_copy(const char *string, const char *codeset,
-                                 char **encode) {
-  char *tstring;
-
-  if (!codeset || !(tstring = iptux_string_validate(string, codeset, encode))) {
-    *encode = g_strdup("utf-8");
-    tstring = g_strdup(string);
-  }
-
-  return tstring;
-}
-
-/**
  * 转换字符串编码.
  * @param string 字符串
  * @param tocode 目标编码
@@ -118,6 +98,7 @@ char *convert_encode(const char *string, const char *tocode,
 }
 
 /**
+<<<<<<< HEAD
  * 转换字符串编码.
  * @param string 字符串
  * @param tocode 目标编码
@@ -186,6 +167,8 @@ char *iptux_string_getline(const char *str) {
 }
 
 /**
+=======
+>>>>>>> iptux/master
  * 确保(path)所指向的文件不存在.
  * @param path 文件路径
  * @return 新文件路径 *
@@ -260,13 +243,13 @@ char *numeric_to_size(int64_t numeric) {
   gchar *ptr;
 
   if (numeric >= ((int64_t)1 << 40))
-    ptr = g_strdup_printf("%.1fT", (float)numeric / ((int64_t)1 << 40));
+    ptr = g_strdup_printf("%.1fTiB", (double)numeric / ((int64_t)1 << 40));
   else if (numeric >= (1 << 30))
-    ptr = g_strdup_printf("%.1fG", (float)numeric / (1 << 30));
+    ptr = g_strdup_printf("%.1fGiB", (double)numeric / (1 << 30));
   else if (numeric >= (1 << 20))
-    ptr = g_strdup_printf("%.1fM", (float)numeric / (1 << 20));
+    ptr = g_strdup_printf("%.1fMiB", (double)numeric / (1 << 20));
   else if (numeric >= (1 << 10))
-    ptr = g_strdup_printf("%.1fK", (float)numeric / (1 << 10));
+    ptr = g_strdup_printf("%.1fKiB", (double)numeric / (1 << 10));
   else
     ptr = g_strdup_printf("%" PRId64 "B", numeric);
 
@@ -436,13 +419,11 @@ char *iptux_get_section_string(const char *msg, char ch, uint8_t times) {
  * @note (msg)串会被修改
  */
 char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
-  static uint32_t serial = 1;
   char filename[256];  //文件最大长度为255
   const char *ptr;
-  size_t len;
 
   if ((ptr = iptux_skip_section(msg, ch, times))) {
-    len = 0;
+    size_t len = 0;
     while (*ptr != ':' || strncmp(ptr, "::", 2) == 0) {
       if (len < 255) {  //防止缓冲区溢出
         filename[len] = *ptr;
@@ -456,8 +437,10 @@ char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
     }
     filename[len] = '\0';
 
-  } else
+  } else {
+    static uint32_t serial = 1;
     snprintf(filename, 256, "%" PRIu32 "_file", serial++);
+  }
 
   return g_strdup(filename);
 }
@@ -570,22 +553,14 @@ void FLAG_SET(uint8_t &num, int bit, bool value) {
   }
 }
 
-bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
-                      guint time) {
-  if (gtk_selection_data_get_length(data) <= 0 ||
-      gtk_selection_data_get_format(data) != 8) {
-    gtk_drag_finish(context, FALSE, FALSE, time);
-    return false;
-  }
-  return true;
+std::string inAddrToString(in_addr_t ipv4) {
+  ostringstream oss;
+  oss << int(ipv4 & 0xff) << "."
+      << int((ipv4 & 0xff00) >> 8) << "."
+      << int((ipv4 & 0xff0000) >> 16) << "."
+      << int((ipv4 & 0xff000000) >> 24);
+  return oss.str();
 }
 
-void add_accelerator(GtkApplication* app, const char* action, const char* accel) {
-  const char* accels[] = {
-      accel,
-      NULL
-  };
-  gtk_application_set_accels_for_action(app, action, accels);
-}
 
 }  // namespace iptux

@@ -24,6 +24,9 @@ using namespace std;
 
 namespace iptux {
 
+static int mergepath(char tpath[], const char *npath);
+
+
 /**
  * 类构造函数.
  */
@@ -208,7 +211,7 @@ DIR *AnalogFS::opendir(const char *dir) {
  * @param npath 需要被合并的路径
  * @return 成功与否
  */
-int AnalogFS::mergepath(char tpath[], const char *npath) {
+int mergepath(char tpath[], const char *npath) {
   size_t len;
   char *ptr;
 

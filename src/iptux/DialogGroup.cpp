@@ -21,6 +21,7 @@
 #include "iptux/output.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 
@@ -505,7 +506,7 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
   do {
     gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
     if (active) {
-      if (FLAG_ISSET(pal->flags, 0)) {
+      if (pal->isCompatible()) {
         switch (grpinf->type) {
           case GROUP_BELONG_TYPE_BROADCAST:
             opttype = IPTUX_BROADCASTOPT;
@@ -637,7 +638,9 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget *treeview,
   GtkWidget *menu;
   GtkTreeModel *model;
 
-  if (event->button != 3) return FALSE;
+  if (event->button != GDK_BUTTON_SECONDARY) {
+    return FALSE;
+  }
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   menu = CreatePopupMenu(model);
   gtk_widget_show_all(menu);

@@ -45,7 +45,7 @@ CoreThread::CoreThread(IptuxConfig &config)
       udpSock(-1),
       server(true),
       pallist(nullptr),
-      rgllist(NULL),
+      groupInfos(NULL),
       sgmlist(NULL),
       grplist(NULL),
       brdlist(NULL),
@@ -54,7 +54,10 @@ CoreThread::CoreThread(IptuxConfig &config)
       prn(MAX_SHAREDFILE),
       pblist(NULL),
       prlist(NULL),
-      ecsList(NULL) {
+      ecsList(NULL)
+{
+  newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
+  g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
   pthread_mutex_init(&mutex, NULL);
 }
@@ -62,7 +65,10 @@ CoreThread::CoreThread(IptuxConfig &config)
 /**
  * 类析构函数.
  */
-CoreThread::~CoreThread() { ClearSublayer(); }
+CoreThread::~CoreThread() {
+  g_object_unref(newMessageArrived);
+  ClearSublayer();
+}
 
 /**
  * 程序核心入口，主要任务服务将在此开启.
@@ -121,45 +127,70 @@ GSList *CoreThread::GetPalList() { return pallist; }
  * 请不要关心函数内部实现，你只需要按照要求封装消息数据，然后扔给本函数处理就可以了，
  * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
  */
-void CoreThread::InsertMessage(MsgPara *para) {
-  GroupInfo *grpinf;
-  SessionAbstract *session;
+void CoreThread::InsertMessage(const MsgPara& para) {
+  Lock();
+  messages.push(para);
+  Unlock();
+  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
+}
 
-  /* 启用UI线程安全保护 */
-  gdk_threads_enter();
+void CoreThread::InsertMessage(MsgPara&& para) {
+  Lock();
+  messages.push(para);
+  Unlock();
+  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
+}
 
-  /* 获取群组信息 */
-  switch (para->btype) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      grpinf = GetPalRegularItem(para->pal);
-      break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-      grpinf = GetPalSegmentItem(para->pal);
-      break;
-    case GROUP_BELONG_TYPE_GROUP:
-      grpinf = GetPalGroupItem(para->pal);
-      break;
-    case GROUP_BELONG_TYPE_BROADCAST:
-      grpinf = GetPalBroadcastItem(para->pal);
-      break;
-    default:
-      grpinf = NULL;
-      break;
-  }
+void CoreThread::onNewMessageArrived(CoreThread* self) {
+  g_idle_add(GSourceFunc(InsertMessageInMain), self);
+}
 
-  /* 如果群组存在则插入消息 */
-  /* 群组不存在是编程上的错误，请发送Bug报告 */
-  if (grpinf) {
-    InsertMsgToGroupInfoItem(grpinf, para);
-    if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
-      session->OnNewMessageComing();
+
+gboolean CoreThread::InsertMessageInMain(CoreThread* self) {
+  while(true) {
+    self->Lock();
+    if(self->messages.empty()) {
+      self->Unlock();
+      break;
     }
-  }
+    MsgPara para = self->messages.front();
+    self->messages.pop();
+    self->Unlock();
 
-  /* 离开UI操作处理 */
-  gdk_threads_leave();
+    GroupInfo *grpinf = nullptr;
+    SessionAbstract *session;
+
+    /* 获取群组信息 */
+    switch (para.btype) {
+      case GROUP_BELONG_TYPE_REGULAR:
+        grpinf = self->GetPalRegularItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_SEGMENT:
+        grpinf = self->GetPalSegmentItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_GROUP:
+        grpinf = self->GetPalGroupItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_BROADCAST:
+        grpinf = self->GetPalBroadcastItem(para.pal);
+        break;
+      default:
+        grpinf = nullptr;
+        break;
+    }
+
+    /* 如果群组存在则插入消息 */
+    /* 群组不存在是编程上的错误，请发送Bug报告 */
+    if (grpinf) {
+      self->InsertMsgToGroupInfoItem(grpinf, &para);
+      if (grpinf->dialog) {
+        session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                       "session-class");
+        session->OnNewMessageComing();
+      }
+    }
+    return G_SOURCE_REMOVE;
+  }
 }
 
 /**
@@ -169,13 +200,12 @@ void CoreThread::InsertMessage(MsgPara *para) {
  */
 void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
   GtkTextIter iter;
-  GSList *tlist;
-  gchar *data;
+  const gchar *data;
 
-  tlist = para->dtlist;
-  while (tlist) {
-    data = ((ChipData *)tlist->data)->data;
-    switch (((ChipData *)tlist->data)->type) {
+  for(int i = 0; i < para->dtlist.size(); ++i) {
+    ChipData* chipData = &para->dtlist[i];
+    data = chipData->data.c_str();
+    switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         InsertHeaderToBuffer(grpinf->buffer, para);
         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
@@ -192,7 +222,6 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
       default:
         break;
     }
-    tlist = g_slist_next(tlist);
   }
 }
 
@@ -259,8 +288,10 @@ void CoreThread::UpdateMyInfo() {
   tlist = g_cthrd->pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
-    if (FLAG_ISSET(pal->flags, 1)) cmd.SendAbsence(g_cthrd->udpSock, pal);
-    if (FLAG_ISSET(pal->flags, 1) && FLAG_ISSET(pal->flags, 0)) {
+    if (pal->isOnline()) {
+      cmd.SendAbsence(g_cthrd->udpSock, pal);
+    }
+    if (pal->isOnline() and pal->isCompatible()) {
       pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
       pthread_detach(pid);
     }
@@ -283,12 +314,12 @@ void CoreThread::ClearAllPalFromList() {
   tlist = pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
-    FLAG_CLR(pal->flags, 1);
+    pal->setOnline(false);
     tlist = g_slist_next(tlist);
   }
 
   /* 清空常规模式下所有群组的成员 */
-  tlist = rgllist;
+  tlist = groupInfos;
   while (tlist) {
     grpinf = (GroupInfo *)tlist->data;
     g_slist_free(grpinf->member);
@@ -359,23 +390,6 @@ PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4) {
 }
 
 /**
- * 查询好友链表中是否已经存在此IP地址的信息数据.
- * @param ipv4 ipv4
- * @return 存在与否
- */
-bool CoreThread::ListContainPal(in_addr_t ipv4) {
-  GSList *tlist;
-
-  tlist = pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == ipv4) break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return tlist;
-}
-
-/**
  * 从好友链表中删除指定的好友信息数据(非UI线程安全).
  * @param ipv4 ipv4
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可；
@@ -387,7 +401,7 @@ void CoreThread::DelPalFromList(in_addr_t ipv4) {
 
   /* 获取好友信息数据，并将其置为下线状态 */
   if (!(pal = GetPalFromList(ipv4))) return;
-  FLAG_CLR(pal->flags, 1);
+  pal->setOnline(false);
 
   /* 从群组中移除好友 */
   if ((grpinf = GetPalRegularItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
@@ -410,8 +424,10 @@ void CoreThread::UpdatePalToList(in_addr_t ipv4) {
   SessionAbstract *session;
 
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
-  if (!(pal = GetPalFromList(ipv4))) return;
-  FLAG_SET(pal->flags, 1);
+  if (!(pal = GetPalFromList(ipv4))) {
+    return;
+  }
+  pal->setOnline(true);
 
   /* 更新好友所在的群组，以及它在UI上的信息 */
   /*/* 更新常规模式下的群组 */
@@ -482,7 +498,7 @@ void CoreThread::AttachPalToList(PalInfo *pal) {
 
   /* 将好友加入到好友链表 */
   pallist = g_slist_append(pallist, pal);
-  FLAG_SET(pal->flags, 1);
+  pal->setOnline(true);
 
   /* 将好友加入到相应的群组 */
   if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
@@ -504,7 +520,7 @@ void CoreThread::AttachPalToList(PalInfo *pal) {
 GroupInfo *CoreThread::GetPalRegularItem(PalInfo *pal) {
   GSList *tlist;
 
-  tlist = rgllist;
+  tlist = groupInfos;
   while (tlist) {
     if (((GroupInfo *)tlist->data)->grpid == pal->ipv4) break;
     tlist = g_slist_next(tlist);
@@ -586,14 +602,6 @@ void CoreThread::AttachItemToBlacklist(in_addr_t ipv4) {
 }
 
 /**
- * 清空黑名单链表.
- */
-void CoreThread::ClearBlacklist() {
-  g_slist_free(blacklist);
-  blacklist = NULL;
-}
-
-/**
  * 获取消息队列项总数.
  * @return 项数
  */
@@ -641,24 +649,6 @@ void CoreThread::AttachFileToPublic(FileInfo *file) {
 }
 
 /**
- * 从公有文件链表删除指定的文件.
- * @param fileid 文件ID
- */
-void CoreThread::DelFileFromPublic(uint32_t fileid) {
-  GSList *tlist;
-
-  tlist = pblist;
-  while (tlist) {
-    if (((FileInfo *)tlist->data)->fileid == fileid) {
-      delete (FileInfo *)tlist->data;
-      pblist = g_slist_delete_link(pblist, tlist);
-      break;
-    }
-    tlist = g_slist_next(tlist);
-  }
-}
-
-/**
  * 清空公有文件链表.
  */
 void CoreThread::ClearFileFromPublic() {
@@ -698,16 +688,6 @@ void CoreThread::DelFileFromPrivate(uint32_t fileid) {
     }
     tlist = g_slist_next(tlist);
   }
-}
-
-/**
- * 清空私有文件链表.
- */
-void CoreThread::ClearFileFromPrivate() {
-  for (GSList *tlist = prlist; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
-  g_slist_free(prlist);
-  prlist = NULL;
 }
 
 /**
@@ -801,9 +781,9 @@ void CoreThread::ClearSublayer() {
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
   g_slist_free(pallist);
-  for (tlist = rgllist; tlist; tlist = g_slist_next(tlist))
+  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *)tlist->data;
-  g_slist_free(rgllist);
+  g_slist_free(groupInfos);
   for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *)tlist->data;
   g_slist_free(sgmlist);
@@ -937,7 +917,7 @@ void CoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
  * @param buffer text-buffer
  * @param string 字符串
  */
-void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string) {
+void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string) {
   static uint32_t count = 0;
   GtkTextIter iter;
   GtkTextTag *tag;
@@ -974,7 +954,7 @@ void CoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string) {
  * @param buffer text-buffer
  * @param path 图片路径
  */
-void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path) {
+void CoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path) {
   GtkTextIter start, end;
   GdkPixbuf *pixbuf;
 
@@ -1025,7 +1005,7 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal) {
   grpinf->member = NULL;
   grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
   grpinf->dialog = NULL;
-  rgllist = g_slist_append(rgllist, grpinf);
+  groupInfos = g_slist_append(groupInfos, grpinf);
 
   return grpinf;
 }

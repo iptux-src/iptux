@@ -12,10 +12,10 @@
 #ifndef IPTUX_MESS_H
 #define IPTUX_MESS_H
 
-#include <arpa/inet.h>
 #include <string>
+#include <arpa/inet.h>
 
-#include <gtk/gtk.h>
+#include <glib.h>
 #include <json/json.h>
 
 
@@ -74,26 +74,21 @@ class PalInfo {
   char *sign;      ///< 个性签名
   char *iconfile;  ///< 好友头像 *
   char *encode;    ///< 好友编码 *
-  uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
-
   uint32_t packetn;   ///< 已接受最大的包编号
   uint32_t rpacketn;  ///< 需要接受检查的包编号
-};
 
-/**
- * 群组信息.
- */
-class GroupInfo {
- public:
-  GroupInfo();
-  ~GroupInfo();
+  bool isCompatible() const;
+  bool isOnline() const;
+  bool isChanged() const;
+  bool isInBlacklist() const;
 
-  GQuark grpid;           ///< 唯一标识
-  GroupBelongType type;   ///< 群组类型
-  char *name;             ///< 群组名称 *
-  GSList *member;         ///< 群组成员(数据不为本链表拥有)
-  GtkTextBuffer *buffer;  ///< 消息缓冲区 *
-  GtkWidget *dialog;  ///< 对话框(若存在则必须与对话框类关联)
+  void setCompatible(bool value);
+  void setOnline(bool value);
+  void setChanged(bool value);
+  void setInBlacklistl(bool value);
+
+ private:
+  uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 
 /**
@@ -117,6 +112,18 @@ class FileInfo {
 };
 
 /**
+ * 碎片数据.
+ */
+class ChipData {
+ public:
+  ChipData();
+  ~ChipData();
+
+  MessageContentType type;  ///< 消息内容类型
+  std::string data;               ///< 数据串 *
+};
+
+/**
  * 消息参数.
  */
 class MsgPara {
@@ -127,19 +134,7 @@ class MsgPara {
   PalInfo *pal;             ///< 好友数据信息(来自好友*)
   MessageSourceType stype;  ///< 来源类型
   GroupBelongType btype;    ///< 所属类型
-  GSList *dtlist;           ///< 数据链表 *
-};
-
-/**
- * 碎片数据.
- */
-class ChipData {
- public:
-  ChipData();
-  ~ChipData();
-
-  MessageContentType type;  ///< 消息内容类型
-  char *data;               ///< 数据串 *
+  std::vector<ChipData> dtlist;           ///< 数据链表 *
 };
 
 /**
@@ -176,26 +171,6 @@ class SessionAbstract {
   //        virtual void ShowEnclosure() = 0;               ///< 显示附件
   virtual void AttachEnclosure(const GSList *list) = 0;  ///< 添加附件
   virtual void OnNewMessageComing() = 0;  ///< 窗口打开情况下有新消息
-};
-
-/**
- * 传输抽象类.
- * 提供文件传输类必需的公共接口.
- */
-class TransAbstract {
- public:
-  TransAbstract();
-  virtual ~TransAbstract();
-
-  /**
-   * GData数据如下: \n
-   * [GdkPixbuf]status, [gchar]task, [gchar]peer, [gchar]filename,
-   * [gchar]filelength, [gchar]finishlength, [gint]progress, [gchar]pro-text,
-   * [gchar]cost, [gchar]remain, [gchar]rate, [gpointer]data \n
-   * @see MainWindow::CreateTransModel()
-   */
-  virtual GData **GetTransFilePara() = 0;  ///< 获取更新UI的数据
-  virtual void TerminateTrans() = 0;       ///< 终止过程处理
 };
 
 }  // namespace iptux

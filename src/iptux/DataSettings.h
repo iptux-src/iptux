@@ -12,7 +12,9 @@
 #ifndef IPTUX_DATASETTINGS_H
 #define IPTUX_DATASETTINGS_H
 
-#include "iptux/mess.h"
+#include <gtk/gtk.h>
+
+#include "iptux/Models.h"
 
 namespace iptux {
 
@@ -36,14 +38,14 @@ class DataSettings {
   void SetPersonalValue();
   void SetSystemValue();
   void SetSoundValue();
-  void SetNetworkValue();
+  static void SetNetworkValue();
 
   GtkTreeModel *CreateIconModel();
   GtkTreeModel *CreateSndModel();
   GtkTreeModel *CreateNetworkModel();
-  void FillIconModel(GtkTreeModel *model);
-  void FillSndModel(GtkTreeModel *model);
-  void FillNetworkModel(GtkTreeModel *model);
+  static void FillIconModel(GtkTreeModel *model);
+  static void FillSndModel(GtkTreeModel *model);
+  static void FillNetworkModel(GtkTreeModel *model);
   GtkWidget *CreateIconTree(GtkTreeModel *model);
   GtkWidget *CreateSndTree(GtkTreeModel *model);
   GtkWidget *CreateNetworkTree(GtkTreeModel *model);

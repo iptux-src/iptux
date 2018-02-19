@@ -31,6 +31,7 @@
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
+#include "output.h"
 
 using namespace std;
 
@@ -55,6 +56,7 @@ UdpData::~UdpData() { g_free(encode); }
  */
 void UdpData::UdpDataEntry(IptuxConfig &config, in_addr_t ipv4,
                            const char buf[], size_t size) {
+  LOG_INFO("received udp message from %s, size %d", inAddrToString(ipv4).c_str(), size);
   UdpData udata(config);
 
   udata.ipv4 = ipv4;
@@ -77,6 +79,7 @@ void UdpData::DispatchUdpData() {
 
   /* 决定消息去向 */
   commandno = iptux_get_dec_number(buf, ':', 4);
+  LOG_INFO("command NO.: 0x%x", commandno);
   switch (GET_MODE(commandno)) {
     case IPMSG_BR_ENTRY:
       SomeoneEntry();
@@ -109,6 +112,7 @@ void UdpData::DispatchUdpData() {
       SomeoneBcstmsg();
       break;
     default:
+      LOG_WARN("unknown command: %d", GET_MODE(commandno));
       break;
   }
 }
@@ -137,7 +141,7 @@ void UdpData::SomeoneLost() {
   pal->sign = NULL;
   pal->iconfile = g_strdup(g_progdt->palicon);
   pal->encode = g_strdup(encode ? encode : "utf-8");
-  FLAG_SET(pal->flags, 1);
+  pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
 
@@ -180,7 +184,7 @@ void UdpData::SomeoneEntry() {
 
   /* 通知好友本大爷在线 */
   cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
-  if (FLAG_ISSET(pal->flags, 0)) {
+  if (pal->isCompatible()) {
     pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
     pthread_detach(pid);
   }
@@ -198,7 +202,7 @@ void UdpData::SomeoneExit() {
   g_cthrd->Lock();
   if ((pal = g_cthrd->GetPalFromList(ipv4))) {
     g_cthrd->DelPalFromList(ipv4);
-    FLAG_CLR(pal->flags, 1);
+    pal->setOnline(false);
   }
   g_cthrd->Unlock();
   gdk_threads_leave();
@@ -235,7 +239,7 @@ void UdpData::SomeoneAnsentry() {
   gdk_threads_leave();
 
   /* 更新本大爷的数据信息 */
-  if (FLAG_ISSET(pal->flags, 0)) {
+  if (pal->isCompatible()) {
     pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
     pthread_detach(pid);
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
@@ -291,12 +295,10 @@ void UdpData::SomeoneSendmsg() {
   uint32_t commandno, packetno;
   char *text;
   pthread_t pid;
-  DialogPeer *dlgpr;
-  GtkWidget *window;
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
-  if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+  if (!pal || !pal->isCompatible()) {
     if (pal) {
       ConvertEncode(pal->encode);
     } else {
@@ -349,25 +351,17 @@ void UdpData::SomeoneSendmsg() {
     } else
       RecvPalFile();
   }
-  window = GTK_WIDGET(grpinf->dialog);
-  //这里不知道为什么运行时一直会提示window不是object
-  dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
-  if (grpinf->dialog) dlgpr->ShowDialogPeer(dlgpr);
+
+  if (grpinf->dialog) {
+    auto window = GTK_WIDGET(grpinf->dialog);
+    auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
+    dlgpr->ShowDialogPeer(dlgpr);
+  }
   /* 是否直接弹出聊天窗口 */
   if (g_progdt->IsAutoOpenCharDialog()) {
     gdk_threads_enter();
     if (!(grpinf->dialog)) {
-      //                     switch (grpinf->type) {
-      //                     case GROUP_BELONG_TYPE_REGULAR:
       DialogPeer::PeerDialogEntry(g_mwin, grpinf, *g_progdt);
-      //                          break;
-      //                     case GROUP_BELONG_TYPE_SEGMENT:
-      //                     case GROUP_BELONG_TYPE_GROUP:
-      //                     case GROUP_BELONG_TYPE_BROADCAST:
-      //                          DialogGroup::GroupDialogEntry(grpinf);
-      //                     default:
-      //                          break;
-      //                     }
     } else {
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     }
@@ -426,8 +420,9 @@ void UdpData::SomeoneSendIcon() {
   PalInfo *pal;
   char *iconfile;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) || FLAG_ISSET(pal->flags, 2))
+  if (!(pal = g_cthrd->GetPalFromList(ipv4)) || pal->isChanged()) {
     return;
+  }
 
   /* 接收并更新数据 */
   if ((iconfile = RecvPalIcon())) {
@@ -452,7 +447,9 @@ void UdpData::SomeoneSendSign() {
   if (!(pal = g_cthrd->GetPalFromList(ipv4))) return;
 
   /* 若好友不兼容iptux协议，则需转码 */
-  if (!FLAG_ISSET(pal->flags, 0)) ConvertEncode(pal->encode);
+  if (!pal->isCompatible()) {
+    ConvertEncode(pal->encode);
+  }
   /* 对编码作适当调整 */
   if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
     g_free(pal->encode);
@@ -482,7 +479,7 @@ void UdpData::SomeoneBcstmsg() {
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
-  if (!pal || !FLAG_ISSET(pal->flags, 0)) {
+  if (!pal || !pal->isCompatible()) {
     if (pal) {
       ConvertEncode(pal->encode);
     } else {
@@ -571,11 +568,12 @@ PalInfo *UdpData::CreatePalInfo() {
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
     pal->iconfile = g_strdup(g_progdt->palicon);
-  if ((pal->encode = GetPalEncode()))
-    FLAG_SET(pal->flags, 0);
-  else
+  if ((pal->encode = GetPalEncode())) {
+    pal->setCompatible(true);
+  } else {
     pal->encode = g_strdup(encode ? encode : "utf-8");
-  FLAG_SET(pal->flags, 1);
+  }
+  pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
 
@@ -598,7 +596,7 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
   g_free(pal->host);
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
-  if (!FLAG_ISSET(pal->flags, 2)) {
+  if (!pal->isChanged()) {
     g_free(pal->name);
     if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
       pal->name = g_strdup(_("mysterious"));
@@ -607,14 +605,15 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
     g_free(pal->iconfile);
     if (!(pal->iconfile = GetPalIcon()))
       pal->iconfile = g_strdup(g_progdt->palicon);
-    FLAG_CLR(pal->flags, 0);
+    pal->setCompatible(false);
     g_free(pal->encode);
-    if ((pal->encode = GetPalEncode()))
-      FLAG_SET(pal->flags, 0);
-    else
+    if ((pal->encode = GetPalEncode())) {
+      pal->setCompatible(true);
+    } else {
       pal->encode = g_strdup(encode ? encode : "utf-8");
+    }
   }
-  FLAG_SET(pal->flags, 1);
+  pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
 }
@@ -628,19 +627,18 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
 void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype,
                             const char *msg) {
   MsgPara para;
-  ChipData *chip;
 
   /* 构建消息封装包 */
   para.pal = pal;
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(msg);
-  para.dtlist = g_slist_append(NULL, chip);
+  ChipData chip;
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = msg;
+  para.dtlist.push_back(move(chip));
 
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(&para);
+  g_cthrd->InsertMessage(move(para));
 }
 
 void UdpData::ConvertEncode(const char *enc) {
@@ -772,8 +770,8 @@ PalInfo *UdpData::AssertPalOnline() {
 
   if ((pal = g_cthrd->GetPalFromList(ipv4))) {
     /* 既然好友不在线，那么他自然不在列表中 */
-    if (!FLAG_ISSET(pal->flags, 1)) {
-      FLAG_SET(pal->flags, 1);
+    if (!pal->isOnline()) {
+      pal->setOnline(true);
       gdk_threads_enter();
       g_cthrd->Lock();
       g_cthrd->UpdatePalToList(ipv4);

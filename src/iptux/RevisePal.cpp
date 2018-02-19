@@ -96,7 +96,7 @@ GtkWidget *RevisePal::CreateMainDialog() {
   GtkWidget *dialog;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Change Pal's Information"), GTK_WINDOW(g_mwin->ObtainWindow()),
+      _("Change Pal's Information"), GTK_WINDOW(g_mwin->getWindow()),
       GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, GTK_STOCK_CANCEL,
       GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -117,10 +117,10 @@ GtkWidget *RevisePal::CreateAllArea() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   /* 好友昵称 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's nickname:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -132,7 +132,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_datalist_set_data(&widset, "nickname-entry-widget", widget);
 
   /* 好友群组 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's group name:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -144,7 +144,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_datalist_set_data(&widset, "group-entry-widget", widget);
 
   /* 好友系统编码 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("System coding:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -156,7 +156,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_datalist_set_data(&widset, "encode-entry-widget", widget);
 
   /* 好友头像 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -169,7 +169,7 @@ GtkWidget *RevisePal::CreateAllArea() {
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
 
   /* 协议兼容性 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   widget = gtk_check_button_new_with_label(
       _("Be compatible with iptux's protocol (DANGEROUS)"));
@@ -203,8 +203,7 @@ void RevisePal::SetAllValue() {
   gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
   /* 预置兼容性 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                               FLAG_ISSET(pal->flags, 0));
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), pal->isCompatible());
 }
 
 /**
@@ -273,13 +272,10 @@ void RevisePal::ApplyReviseData() {
 
   /* 获取兼容性 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-    FLAG_SET(pal->flags, 0);
-  else
-    FLAG_CLR(pal->flags, 0);
+  pal->setCompatible(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 
   /* 设置好友信息已被手工修改 */
-  FLAG_SET(pal->flags, 2);
+  pal->setChanged(true);
 
   /* 更新好友信息 */
   g_cthrd->Lock();

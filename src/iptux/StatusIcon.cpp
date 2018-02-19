@@ -84,7 +84,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   GtkWidget *menu, *menuitem;
   GtkWidget *image, *window;
 
-  window = mwin.ObtainWindow();
+  window = mwin.getWindow();
   menu = gtk_menu_new();
   gtk_menu_attach_to_widget(GTK_MENU(menu), window, nullptr);
 
@@ -139,7 +139,7 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
 
   /* 程序退出 */
   NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_mnemonic(_("_Quit"));
+  menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
   image = gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);

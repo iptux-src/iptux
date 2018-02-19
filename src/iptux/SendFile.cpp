@@ -43,17 +43,6 @@ void SendFile::SendSharedInfoEntry(PalInfo *pal) {
 }
 
 /**
- * 发送文件信息入口.
- * @param pal class PalInfo
- * @param flist 文件信息链表
- * @note 文件路径链表中的数据将被本函数处理掉
- */
-void SendFile::SendFileInfoEntry(PalInfo *pal, GSList *flist) {
-  /* 发送文件信息 */
-  SendFileInfo(pal, 0, flist);
-}
-
-/**
  * 广播文件信息入口.
  * @param plist 好友链表
  * @param flist 文件信息链表

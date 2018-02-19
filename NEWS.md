@@ -1,6 +1,18 @@
-# 0.7.5 (2018-XX-XX)
+# 0.8.0 (2018-XX-XX)
 
 * [#114] fix icon size.
+* [#119] check the return code of `setsockopt`.
+* [#?] switch to GTK+3, and use `GtkApplication`.
+* [#125] fix crash on UdpData::SomeoneSendmsg.
+* [#140] fix crash on TransWindow::TerminateTransTask.
+* [#132] fix file accepted when cancel the directory chooser dialog.
+* [#154] fix sound system.
+* [#52] fix bind problem.
+
+### refactor
+
+* [#123] don't use `obtain_pixbuf_from_stock`.
+* [#136] the binding failed dialog should be a child of the main window.
 
 # 0.7.4 (2018-01-24)
 

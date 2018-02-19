@@ -15,8 +15,6 @@
 
 #include <sys/stat.h>
 
-#include <gdk/gdkkeysyms.h>
-
 #include "iptux/AnalogFS.h"
 #include "iptux/Command.h"
 #include "iptux/HelpDialog.h"
@@ -28,6 +26,7 @@
 #include "iptux/output.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 
@@ -149,7 +148,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   GtkWidget *widget, *pbar;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GdkPixbuf *pixbuf, *rpixbuf, *dpixbuf;
+  const char *iconname;
   struct stat st;
   const GSList *tlist, *pallist;
   AnalogFS afs;
@@ -157,10 +156,6 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   char *filename, *filepath, *progresstip;
   FileInfo *file;
   uint32_t filenum = 0;
-
-  /* 获取文件图标 */
-  rpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_FILE);
-  dpixbuf = obtain_pixbuf_from_stock(GTK_STOCK_DIRECTORY);
 
   /* 插入附件树 */
   widget =
@@ -174,12 +169,13 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       continue;
     }
     /* 获取文件类型图标 */
-    if (S_ISREG(st.st_mode))
-      pixbuf = rpixbuf;
-    else if (S_ISDIR(st.st_mode))
-      pixbuf = dpixbuf;
-    else
-      pixbuf = NULL;
+    if (S_ISREG(st.st_mode)) {
+      iconname = "text-x-generic-symbolic";
+    } else if (S_ISDIR(st.st_mode)) {
+      iconname = "folder-symbolic";
+    } else {
+      iconname = NULL;
+    }
     filesize = afs.ftwsize((char *)tlist->data);
     filename = ipmsg_get_filename_me((char *)tlist->data, &filepath);
     pallist = GetSelPal();
@@ -200,9 +196,14 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       g_cthrd->Unlock();
       /* 添加数据 */
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, filename,
-                         2, numeric_to_size(filesize), 3, tlist->data, 4, file,
-                         5, file->fileown->name, -1);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+                         0, iconname,
+                         1, filename,
+                         2, numeric_to_size(filesize),
+                         3, tlist->data,
+                         4, file,
+                         5, file->fileown->name,
+                         -1);
       pallist = g_slist_next(pallist);
     }
     filenum++;
@@ -216,9 +217,6 @@ void DialogBase::AttachEnclosure(const GSList *list) {
     gtk_tree_model_get(model, &iter, 4, &file, -1);
     totalsendsize += file->filesize;
   } while (gtk_tree_model_iter_next(model, &iter));
-  /* 释放文件图标 */
-  if (rpixbuf) g_object_unref(rpixbuf);
-  if (dpixbuf) g_object_unref(dpixbuf);
 
   pbar =
       GTK_WIDGET(g_datalist_get_data(&widset, "file-send-progress-bar-widget"));
@@ -252,7 +250,7 @@ GtkWidget *DialogBase::CreateInputArea() {
 
   frame = gtk_frame_new(NULL);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
   /* 接受输入 */
@@ -272,7 +270,7 @@ GtkWidget *DialogBase::CreateInputArea() {
 
   /* 功能按钮 */
   window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  hbb = gtk_hbutton_box_new();
+  hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
   gtk_box_pack_start(GTK_BOX(box), hbb, FALSE, FALSE, 0);
   button = gtk_button_new_with_label(_("Close"));
@@ -455,16 +453,15 @@ bool DialogBase::SendEnclosureMsg() {
  */
 void DialogBase::FeedbackMsg(const gchar *msg) {
   MsgPara para;
-  ChipData *chip;
+  ChipData chip;
 
   /* 构建消息封装包 */
   para.pal = NULL;
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(msg);
-  para.dtlist = g_slist_append(NULL, chip);
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = msg;
+  para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
   g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
@@ -637,7 +634,7 @@ gint DialogBase::EncosureTreePopup(GtkWidget *treeview, GdkEvent *event) {
 
   if (event->type == GDK_BUTTON_PRESS) {
     event_button = (GdkEventButton *)event;
-    if (event_button->button == 3) {
+    if (event_button->button == GDK_BUTTON_SECONDARY) {
       gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                      event_button->button, event_button->time);
       gtk_widget_show(menuitem);
@@ -692,7 +689,7 @@ GtkWidget *DialogBase::CreateFileSendArea() {
   pbar = gtk_progress_bar_new();
   g_datalist_set_data(&widset, "file-send-progress-bar-widget", pbar);
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), _("Sending progress."));
-  hbox = gtk_hbox_new(FALSE, 1);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
   gtk_box_pack_start(GTK_BOX(hbox), pbar, TRUE, TRUE, 0);
   button = gtk_button_new_with_label(_("Dirs"));
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
@@ -703,7 +700,7 @@ GtkWidget *DialogBase::CreateFileSendArea() {
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg), NULL);
-  vbox = gtk_vbox_new(FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
@@ -741,7 +738,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
 
   cell = gtk_cell_renderer_pixbuf_new();
   column =
-      gtk_tree_view_column_new_with_attributes("", cell, "pixbuf", 0, NULL);
+      gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -785,7 +782,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
 GtkTreeModel *DialogBase::CreateFileSendModel() {
   GtkListStore *model;
 
-  model = gtk_list_store_new(6, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+  model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
@@ -805,15 +802,8 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   GtkWidget *pbar;
   float progress;
   int64_t sentsize;
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
-  const char *statusfile;
   FileInfo *file;
 
-  theme = gtk_icon_theme_get_default();
-  statusfile = "tip-finish";
-  pixbuf = gtk_icon_theme_load_icon(theme, statusfile, MAX_ICONSIZE,
-                                    GtkIconLookupFlags(0), NULL);
   treeview = GTK_TREE_VIEW(
       g_datalist_get_data(&(dlggrp->widset), "file-send-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
@@ -821,8 +811,9 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {  //遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
-      if (pixbuf && (file->finishedsize == file->filesize))
-        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, -1);
+      if (file->finishedsize == file->filesize) {
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
+      }
       sentsize += file->finishedsize;
     } while (gtk_tree_model_iter_next(model, &iter));
   }
@@ -836,11 +827,12 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
     snprintf(progresstip, MAX_BUFLEN, "%s", _("Sending Progress."));
   } else {
     progress = percent(sentsize, dlggrp->totalsendsize) / 100;
-    snprintf(progresstip, MAX_BUFLEN, _("%s Of %s Sent."),
+    snprintf(progresstip, MAX_BUFLEN, _("%s of %s Sent."),
              numeric_to_size(sentsize), numeric_to_size(dlggrp->totalsendsize));
   }
   if (progress == 1) {
     g_source_remove(dlggrp->timersend);
+    dlggrp->timersend = 0;
     gtk_list_store_clear(GTK_LIST_STORE(model));
     snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
   }

@@ -7,6 +7,18 @@ if(GST_FOUND)
 	link_libraries("${GST_LIBRARIES}")
 endif(GST_FOUND)
 
+add_custom_command(OUTPUT IptuxResource.h
+		MAIN_DEPENDENCY resources/iptux.gresource.xml
+		COMMAND glib-compile-resources --generate-header --manual-register --target=IptuxResource.h
+			--sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_SOURCE_DIR}/resources/iptux.gresource.xml
+		)
+
+add_custom_command(OUTPUT IptuxResource.cpp
+		MAIN_DEPENDENCY resources/iptux.gresource.xml
+		COMMAND glib-compile-resources --generate-source --manual-register --target=IptuxResource.cpp
+			--sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_SOURCE_DIR}/resources/iptux.gresource.xml
+		)
+
 add_library(iptux
 	STATIC
 	AnalogFS.cpp
@@ -25,7 +37,7 @@ add_library(iptux
 	IptuxConfig.cpp
 	LogSystem.cpp
 	MainWindow.cpp
-	mess.cpp
+		Models.cpp
 	output.cpp
 	ProgramData.cpp
 	RecvFile.cpp
@@ -42,7 +54,12 @@ add_library(iptux
 	utils.cpp
 	wrapper.cpp
 	WindowConfig.cpp
-	)
+        TransWindow.cpp TransWindow.h
+		TransFileModel.cpp TransFileModel.h
+		TransAbstract.cpp TransAbstract.h
+		UiModels.h UiModels.cpp
+		IptuxResource.h IptuxResource.cpp
+        UiHelper.h UiHelper.cpp ProgramDataCore.cpp ProgramDataCore.h)
 
 
 add_executable(libiptux_test

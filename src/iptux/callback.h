@@ -12,7 +12,9 @@
 #ifndef IPTUX_CALLBACK_H
 #define IPTUX_CALLBACK_H
 
-#include "mess.h"
+#include <gtk/gtk.h>
+
+#include "Models.h"
 
 namespace iptux {
 

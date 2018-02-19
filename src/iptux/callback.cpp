@@ -21,6 +21,7 @@
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"
 #include "iptux/support.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 
@@ -188,12 +189,11 @@ void model_turn_select(GtkTreeModel *model, gchar *path) {
 
 void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
   GSList *tags, *tmp;
-  GtkTextTag *tag;
-  gchar *url;
 
   tmp = tags = gtk_text_iter_get_tags(iter);
   while (tmp) {
-    tag = (GtkTextTag *)tmp->data;
+    auto tag = (GtkTextTag *)tmp->data;
+    gchar* url;
     if ((url = (gchar *)g_object_get_data(G_OBJECT(tag), "url"))) {
       if (!gtk_show_uri(NULL, url, GDK_CURRENT_TIME, NULL)) {
         iptux_open_url(url);
@@ -207,9 +207,7 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
 
 void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
                                         ProgramData &progdt) {
-  GdkWindow *window;
   GSList *tags, *tmp;
-  GtkTextTag *tag;
   GtkTextIter iter;
   gboolean hovering;
 
@@ -217,7 +215,7 @@ void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
   gtk_text_view_get_iter_at_location(textview, &iter, x, y);
   tmp = tags = gtk_text_iter_get_tags(&iter);
   while (tmp) {
-    tag = (GtkTextTag *)tmp->data;
+    auto tag = (GtkTextTag *)tmp->data;
     if (g_object_get_data(G_OBJECT(tag), "url")) {
       hovering = TRUE;
       break;
@@ -228,7 +226,7 @@ void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
 
   if (hovering != GPOINTER_TO_INT(g_object_get_data(G_OBJECT(textview),
                                                     "hovering-over-link"))) {
-    window = gtk_text_view_get_window(textview, GTK_TEXT_WINDOW_TEXT);
+    auto window = gtk_text_view_get_window(textview, GTK_TEXT_WINDOW_TEXT);
     if (hovering)
       gdk_window_set_cursor(window, progdt.lcursor);
     else

@@ -35,7 +35,9 @@ uint32_t Command::packetn = 1;
 /**
  * 类构造函数.
  */
-Command::Command() : size(0) {}
+Command::Command()
+    : size(0),
+      buf("") {}
 
 /**
  * 类析构函数.
@@ -474,19 +476,17 @@ void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype,
 void Command::FeedbackError(PalInfo *pal, GroupBelongType btype,
                             const char *error) {
   MsgPara para;
-  ChipData *chip;
+  ChipData chip;
 
   /* 构建消息封装包 */
   para.pal = pal;
   para.stype = MessageSourceType::ERROR;
   para.btype = btype;
-  chip = new ChipData;
-  chip->type = MESSAGE_CONTENT_TYPE_STRING;
-  chip->data = g_strdup(error);
-  para.dtlist = g_slist_append(NULL, chip);
-
+  chip.type = MESSAGE_CONTENT_TYPE_STRING;
+  chip.data = error;
+  para.dtlist.push_back(move(chip));
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(&para);
+  g_cthrd->InsertMessage(move(para));
 }
 
 /**
@@ -550,10 +550,11 @@ void Command::CreateCommand(uint32_t command, const char *attach) {
   size += strlen(ptr);
   ptr = buf + size;
 
-  if (command == IPMSG_GETFILEDATA)
-    snprintf(ptr, MAX_UDPLEN - size, ":%d", command);
-  else
-    snprintf(ptr, MAX_UDPLEN - size, ":%" PRIu32, command);
+  if (command == IPMSG_GETFILEDATA) {
+    snprintf(ptr, MAX_UDPLEN - size, ":%u", command);
+  } else {
+    snprintf(ptr, MAX_UDPLEN - size, ":%u", command);
+  }
   size += strlen(ptr);
   ptr = buf + size;
 

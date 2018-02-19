@@ -17,8 +17,11 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
+#include <queue>
+
 #include "iptux/IptuxConfig.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
+#include "iptux/UiModels.h"
 
 namespace iptux {
 
@@ -41,8 +44,10 @@ class CoreThread {
   void Lock();
   void Unlock();
 
-  void InsertMessage(MsgPara *para);
-  void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
+  void InsertMessage(const MsgPara& para);
+  void InsertMessage(MsgPara&& para);
+
+  static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
   static void SendNotifyToAll(CoreThread *pcthrd);
   static void SendFeatureData(PalInfo *pal);
   static void SendBroadcastExit(PalInfo *pal);
@@ -50,7 +55,6 @@ class CoreThread {
 
   void ClearAllPalFromList();
   PalInfo *GetPalFromList(in_addr_t ipv4);
-  bool ListContainPal(in_addr_t ipv4);
   void DelPalFromList(in_addr_t ipv4);
   void UpdatePalToList(in_addr_t ipv4);
   void AttachPalToList(PalInfo *pal);
@@ -61,7 +65,6 @@ class CoreThread {
 
   bool BlacklistContainItem(in_addr_t ipv4);
   void AttachItemToBlacklist(in_addr_t ipv4);
-  void ClearBlacklist();
 
   guint GetMsglineItems();
   GroupInfo *GetMsglineHeadItem();
@@ -72,46 +75,46 @@ class CoreThread {
   GSList *GetPalEnclosure(PalInfo *pal);
   void PushItemToEnclosureList(FileInfo *file);
   void PopItemFromEnclosureList(FileInfo *file);
-  GSList *GetPalRcvdEnclosure(PalInfo *pal);
 
   void AttachFileToPublic(FileInfo *file);
-  void DelFileFromPublic(uint32_t fileid);
   void ClearFileFromPublic();
   GSList *GetPublicFileList();
   void AttachFileToPrivate(FileInfo *file);
   void DelFileFromPrivate(uint32_t fileid);
-  void ClearFileFromPrivate();
   FileInfo *GetFileFromAll(uint32_t fileid);
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
   const char *GetAccessPublicLimit();
   void SetAccessPublicLimit(const char *limit);
 
+  GSimpleAction* newMessageArrived;
  private:
   IptuxConfig &config;
 
   void InitSublayer();
   void ClearSublayer();
-  void InitThemeSublayerData();
+  static void InitThemeSublayerData();
   void ReadSharedData();
 
-  void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  void InsertStringToBuffer(GtkTextBuffer *buffer, gchar *string);
-  void InsertPixbufToBuffer(GtkTextBuffer *buffer, gchar *path);
+  static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
+  static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
+  static void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
 
   GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
   GroupInfo *AttachPalRegularItem(PalInfo *pal);
   GroupInfo *AttachPalSegmentItem(PalInfo *pal);
   GroupInfo *AttachPalGroupItem(PalInfo *pal);
   GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
-  void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+
+  std::queue<MsgPara> messages;
 
   int tcpSock;
   int udpSock;
   bool server;           //程序是否正在服务
 
   GSList *pallist;  //好友链表(成员不能被删除)
-  GSList *rgllist, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
   GSList *blacklist;                              //黑名单链表
   GQueue msgline;                                 //消息队列
 
@@ -125,10 +128,13 @@ class CoreThread {
   pthread_mutex_t mutex;  //锁
   //回调处理部分函数
  private:
+  static void onNewMessageArrived(CoreThread* self);
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
   static gboolean WatchCoreStatus(CoreThread *pcthrd);
-  //内联成员函数
+  static gboolean InsertMessageInMain(CoreThread* self);
+
+    //内联成员函数
  public:
   inline void setTcpSock(int tcpsock) {
     this->tcpSock = tcpsock;

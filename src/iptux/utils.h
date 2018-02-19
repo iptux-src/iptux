@@ -14,7 +14,7 @@
 
 #include <string>
 
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 
@@ -40,18 +40,10 @@ void FLAG_SET(uint8_t &num, int bit, bool value);
 typedef void *(*ThreadFunc)(void *);
 void ipv4_order(in_addr_t *ip1, in_addr_t *ip2);
 
-char *iptux_string_validate(const char *string, const std::string &codeset,
+char *iptux_string_validate(const char *s, const std::string &codeset,
                             char **encode);
-char *iptux_string_validate_copy(const char *string, const char *codeset,
-                                 char **encode);
 char *convert_encode(const char *string, const char *tocode,
                      const char *fromcode);
-char *convert_encode_copy(const char *string, const char *tocode,
-                          const char *fromcode);
-
-void get_file_system_info(const char *path, int64_t *avail, int64_t *total);
-
-char *iptux_string_getline(const char *str);
 char *assert_filename_inexist(const char *path);
 char *getformattime(gboolean date, const char *format, ...);
 
@@ -74,11 +66,7 @@ char *ipmsg_get_filename_pal(const char *pathname);
 char *ipmsg_get_filename_me(const char *pathname, char **path);
 char *iptux_erase_filename_suffix(const char *filename);
 char *ipmsg_get_pathname_full(const char *path, const char *name);
-
-bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
-                      guint time);
-
-void add_accelerator(GtkApplication* app, const char* action, const char* accel);
+std::string inAddrToString(in_addr_t ipv4);
 
 }  // namespace iptux
 #endif

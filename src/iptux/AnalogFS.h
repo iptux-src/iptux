@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 
 #include "iptux/ipmsg.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 
 namespace iptux {
 
@@ -35,8 +35,6 @@ class AnalogFS {
   DIR *opendir(const char *dir);
 
  private:
-  int mergepath(char tpath[], const char *npath);
-
   char path[MAX_PATHLEN];  //当前工作路径
  public:
   inline char *cwd() { return path; }

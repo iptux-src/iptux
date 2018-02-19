@@ -25,6 +25,7 @@
 #include "iptux/output.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
+#include "iptux/UiHelper.h"
 
 using namespace std;
 
@@ -61,7 +62,7 @@ void DataSettings::ResetDataEntry(GtkWidget *parent) {
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
   label = gtk_label_new(_("System"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSystem(), label);
-#ifdef HAVE_GST
+#ifdef GST_FOUND
   label = gtk_label_new(_("Sound"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSound(), label);
 #endif
@@ -71,7 +72,7 @@ void DataSettings::ResetDataEntry(GtkWidget *parent) {
   /* 设置相关数据默认值 */
   dset.SetPersonalValue();
   dset.SetSystemValue();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
   dset.SetSoundValue();
 #endif
   dset.SetNetworkValue();
@@ -83,7 +84,7 @@ mark:
     case GTK_RESPONSE_OK:
       dset.ObtainPersonalValue();
       dset.ObtainSystemValue();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
       dset.ObtainSoundValue();
 #endif
       dset.ObtainNetworkValue();
@@ -93,7 +94,7 @@ mark:
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
       dset.ObtainSystemValue();
-#ifdef HAVE_GST
+#ifdef GST_FOUND
       dset.ObtainSoundValue();
 #endif
       dset.ObtainNetworkValue();
@@ -119,7 +120,7 @@ void DataSettings::InitSublayer() {
   g_datalist_set_data_full(&mdlset, "icon-model", model,
                            GDestroyNotify(g_object_unref));
   FillIconModel(model);
-#ifdef HAVE_GST
+#ifdef GST_FOUND
   model = CreateSndModel();
   g_datalist_set_data_full(&mdlset, "sound-model", model,
                            GDestroyNotify(g_object_unref));
@@ -170,9 +171,9 @@ GtkWidget *DataSettings::CreatePersonal() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 昵称 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Your nickname:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -183,7 +184,7 @@ GtkWidget *DataSettings::CreatePersonal() {
                    _("Please input your nickname!"));
   g_datalist_set_data(&widset, "nickname-entry-widget", widget);
   /* 群组 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Your group name:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -194,7 +195,7 @@ GtkWidget *DataSettings::CreatePersonal() {
                    _("Please input your group name!"));
   g_datalist_set_data(&widset, "mygroup-entry-widget", widget);
   /* 头像 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Your face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -207,7 +208,7 @@ GtkWidget *DataSettings::CreatePersonal() {
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
   /* 文件存档 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Save files to: "));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -215,7 +216,7 @@ GtkWidget *DataSettings::CreatePersonal() {
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "archive-chooser-widget", widget);
 
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
   /* 个人形象照片 */
   NO_OPERATION_C
@@ -257,9 +258,9 @@ GtkWidget *DataSettings::CreateSystem() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 候选编码 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Candidate network coding:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -270,7 +271,7 @@ GtkWidget *DataSettings::CreateSystem() {
                    _("Candidate network coding"));
   g_datalist_set_data(&widset, "codeset-entry-widget", widget);
   /* 首选编码 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Preference network coding:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -282,7 +283,7 @@ GtkWidget *DataSettings::CreateSystem() {
                      "what you are doing if you want to modify it.)"));
   g_datalist_set_data(&widset, "encode-entry-widget", widget);
   /* 好友头像 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's default face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -295,7 +296,7 @@ GtkWidget *DataSettings::CreateSystem() {
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
   /* 面板字体 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Panel font:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -357,14 +358,14 @@ GtkWidget *DataSettings::CreateSound() {
   GtkTreeSelection *selection;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 声音支持 */
   NO_OPERATION_C
   chkbutton = gtk_check_button_new_with_label(_("Activate the sound support"));
   gtk_box_pack_start(GTK_BOX(box), chkbutton, FALSE, FALSE, 3);
   g_datalist_set_data(&widset, "sound-check-widget", chkbutton);
   /* 音量调整 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), hbox);
   label = gtk_label_new(_("Volume Control: "));
@@ -380,7 +381,7 @@ GtkWidget *DataSettings::CreateSound() {
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 3);
   g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), frame);
-  vbox = gtk_vbox_new(FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), vbox);
   /*/* 声音事件树 */
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -399,7 +400,7 @@ GtkWidget *DataSettings::CreateSound() {
                    &widset);
   g_datalist_set_data(&widset, "sound-treeview-widget", widget);
   /*/* 声音测试 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   widget = CreateSndChooser();
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 5);
@@ -427,9 +428,9 @@ GtkWidget *DataSettings::CreateNetwork() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel *model;
 
-  box = gtk_vbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 接受输入 */
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("From:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -470,7 +471,7 @@ GtkWidget *DataSettings::CreateNetwork() {
   frame = gtk_frame_new(_("Added IP(v4) Section:"));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 5);
-  hbox = gtk_hbox_new(FALSE, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), hbox);
   /*/* 网段树 */
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -484,7 +485,7 @@ GtkWidget *DataSettings::CreateNetwork() {
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "network-treeview-widget", widget);
   /*/* 实用性按钮 */
-  vbox = gtk_vbox_new(FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
   button = gtk_button_new_with_label(_("Import"));
   gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
@@ -1252,7 +1253,9 @@ gboolean DataSettings::PopupPickMenu(GtkWidget *treeview,
   GtkWidget *menu;
   GtkTreeModel *model;
 
-  if (event->button != 3) return FALSE;
+  if (event->button != GDK_BUTTON_SECONDARY) {
+    return FALSE;
+  }
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   menu = CreatePopupMenu(model);
   gtk_widget_show_all(menu);

@@ -15,7 +15,7 @@
 
 #include "iptux/DialogBase.h"
 #include "iptux/IptuxConfig.h"
-#include "iptux/mess.h"
+#include "iptux/Models.h"
 #include "iptux/MainWindow.h"
 
 namespace iptux {
@@ -59,21 +59,17 @@ class DialogPeer : public DialogBase {
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void BroadcastEnclosureMsg(GSList *list);
   bool SendTextMsg();
-  void FeedbackMsg(const GSList *dtlist);
-  MsgPara *PackageMsg(GSList *dtlist);
+  void FeedbackMsg(const std::vector<ChipData>& dtlist);
+  MsgPara *PackageMsg(const std::vector<ChipData>& dtlist);
   //回调处理部分
  private:
-  static void DragPicReceived(DialogPeer *dlgpr, GdkDragContext *context,
-                              gint x, gint y, GtkSelectionData *data,
-                              guint info, guint time);
   static void AskSharedFiles(GroupInfo *grpinf);
-  static void DialogPeerDestroy(DialogPeer *dlgpr);
-  static void onAcceptButtonClicked(DialogPeer *dlgpr);
+  static void onAcceptButtonClicked(DialogPeer *self);
+  static void onRefuseButtonClicked(DialogPeer *self);
   static void ThreadRecvFile(FileInfo *file);
   static void ShowInfoEnclosure(DialogPeer *dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
-  static void RemoveSelectedRcv(GtkWidget *widget);
-  static gint RcvTreePopup(GtkWidget *treeview, GdkEvent *event);
+  static gint RcvTreePopup(DialogPeer *self, GdkEvent *event);
   static void onActive(DialogPeer& self);
   //线程处理
  private:
