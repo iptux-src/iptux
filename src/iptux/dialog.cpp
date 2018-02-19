@@ -13,7 +13,6 @@
 
 #include "iptux/callback.h"
 #include "iptux/deplib.h"
-#include "iptux/global.h"
 #include "iptux/output.h"
 
 namespace iptux {
@@ -45,16 +44,19 @@ bool pop_request_quit(GtkWindow* parent) {
  * @param pal class PalInfo
  * @return true|false
  */
-bool pop_request_shared_file(PalInfo *pal) {
+bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
   GtkWidget *dialog, *box;
   GtkWidget *label, *image;
   char ipstr[INET_ADDRSTRLEN], *ptr;
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Request Shared Resources"), GTK_WINDOW(g_mwin->getWindow()),
-      GTK_DIALOG_MODAL, _("Agree"), GTK_RESPONSE_ACCEPT, _("Refuse"),
-      GTK_RESPONSE_CANCEL, NULL);
+      _("Request Shared Resources"),
+      parent,
+      GTK_DIALOG_MODAL,
+      _("Agree"), GTK_RESPONSE_ACCEPT,
+      _("Refuse"), GTK_RESPONSE_CANCEL,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
@@ -91,15 +93,18 @@ bool pop_request_shared_file(PalInfo *pal) {
  * @param pal class PalInfo
  * @return password string
  */
-char *pop_obtain_shared_passwd(PalInfo *pal) {
+char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal) {
   GtkWidget *dialog, *frame, *box;
   GtkWidget *image, *passwd;
   char ipstr[INET_ADDRSTRLEN], *text;
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Access Password"), GTK_WINDOW(g_mwin->getWindow()),
-      GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+      _("Access Password"),
+      parent,
+      GTK_DIALOG_MODAL,
+      GTK_STOCK_OK, GTK_RESPONSE_OK,
+      NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
@@ -214,7 +219,7 @@ mark:
   return NULL;
 }
 
-const char *pop_save_path(GtkWidget *parent) {
+const char *pop_save_path(GtkWidget *parent, const char* defaultPath) {
   const char *path = nullptr;
   GtkWidget *dialog;
 
@@ -222,8 +227,7 @@ const char *pop_save_path(GtkWidget *parent) {
       _("Please select a folder to save files."), GTK_WINDOW(parent),
       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL,
       GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
-  gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
-                                      g_progdt->path.c_str());
+  gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), defaultPath);
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
   }

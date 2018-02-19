@@ -19,8 +19,8 @@
 namespace iptux {
 
 bool pop_request_quit(GtkWindow* parent);
-bool pop_request_shared_file(PalInfo *pal);
-char *pop_obtain_shared_passwd(PalInfo *pal);
+bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal);
+char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal);
 char *pop_password_settings(GtkWidget *parent);
 
 /**
@@ -28,7 +28,7 @@ char *pop_password_settings(GtkWidget *parent);
  * @param parent parent window
  * @return path const char*, if user does not accept, return nullptr
  */
-const char *pop_save_path(GtkWidget *parent);
+const char *pop_save_path(GtkWidget *parent, const char* defaultPath);
 
 }  // namespace iptux
 

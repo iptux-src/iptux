@@ -822,7 +822,7 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
   gchar *passwd, *epasswd;
 
   gdk_threads_enter();
-  passwd = pop_obtain_shared_passwd(pal);
+  passwd = pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal);
   gdk_threads_leave();
   if (passwd && *passwd != '\0') {
     epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
@@ -842,7 +842,7 @@ void UdpData::ThreadAskSharedFile(PalInfo *pal) {
 
   if (g_progdt->IsFilterFileShareRequest()) {
     gdk_threads_enter();
-    permit = pop_request_shared_file(pal);
+    permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal);
     gdk_threads_leave();
     if (permit) sfile.SendSharedInfoEntry(pal);
   } else
