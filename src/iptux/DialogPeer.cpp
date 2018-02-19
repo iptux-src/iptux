@@ -1073,7 +1073,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
   FileInfo *file;
   pthread_t pid;
 
-  const gchar *filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog));
+  const gchar *filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
   if(filepath == nullptr) {
     return;
   }
