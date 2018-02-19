@@ -674,20 +674,20 @@ GtkWidget *MainWindow::CreatePallistArea() {
   /* 创建接受搜索输入部分 */
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  /*/* 关闭按钮 */
+  /* 关闭按钮 */
   button = gtk_button_new();
-  widget = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON);
+  widget = gtk_image_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_button_set_image(GTK_BUTTON(button), widget);
   g_object_set(button, "relief", GTK_RELIEF_NONE, NULL);
   gtk_widget_set_size_request(button, -1, 1);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(HidePallistArea),
                            &widset);
-  /*/* 输入框 */
+  /* 输入框 */
   widget = gtk_entry_new();
   gtk_entry_set_activates_default(GTK_ENTRY(widget), TRUE);
-  gtk_entry_set_icon_from_stock(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY,
-                                GTK_STOCK_FIND);
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY,
+                                "edit-find-symbolic");
   gtk_widget_add_events(widget, GDK_KEY_PRESS_MASK);
   g_object_set(widget, "has-tooltip", TRUE, NULL);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
