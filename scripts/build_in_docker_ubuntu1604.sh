@@ -2,6 +2,8 @@
 
 set -ex
 
+env
+
 apt-get install -y lcov git
 
 cd `dirname $0`/..
