@@ -24,6 +24,7 @@
 #endif
 
 #include "iptux/ipmsg.h"
+#include "output.h"
 
 using namespace std;
 
@@ -91,9 +92,13 @@ char *convert_encode(const char *string, const char *tocode,
                      const char *fromcode) {
   gsize rbytes, wbytes;
   char *tstring;
+  GError* err = nullptr;
 
-  tstring = g_convert(string, -1, tocode, fromcode, &rbytes, &wbytes, NULL);
-
+  tstring = g_convert(string, -1, tocode, fromcode, &rbytes, &wbytes, &err);
+  if (err != nullptr) {
+    LOG_INFO("g_convert failed: %s-%s-%s", g_quark_to_string(err->domain), err->code, err->message);
+    return nullptr;
+  }
   return tstring;
 }
 
