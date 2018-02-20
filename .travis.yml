@@ -1,22 +1,27 @@
 language: cpp
 cache:
   directories:
-    - $HOME/Library/Caches/Homebrew
+  - "$HOME/Library/Caches/Homebrew"
 os:
-  - linux
-  - osx
+- linux
+- osx
 compiler:
-  - gcc
-  - clang
+- gcc
+- clang
 script:
-  - '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make && make test; }'
-  - '[ "$TRAVIS_OS_NAME" != linux ] || docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:latest /ws/scripts/build_in_docker_ubuntu1604.sh'
+- '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
+  make test; }'
+- '[ "$TRAVIS_OS_NAME" != linux ] || docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:latest
+  env CODECOV_TOKEN=$CODECOV_TOKEN /ws/scripts/build_in_docker_ubuntu1604.sh'
 dist: trusty
 sudo: false
 install:
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+3 jsoncpp'
+- '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
+- '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+3 jsoncpp'
 matrix:
   fast_finish: true
   allow_failures:
-    - os: osx
+  - os: osx
+env:
+  global:
+    secure: eyR9+pbzRtjG35BrWjHfSngD2N0VXJLCweyLkaiInuQCc1iTmsCetXP/wHGHcn5u02k3yBw31dlh4/r7cvXlpZrEJDV60U/wzVaezO44pUNZCiEngdhnBQS2iiFeAsHFbHrXMHVS6x+80wJfntRVZ069/xvuvcC/CWgKhVmhfn8=
