@@ -1134,7 +1134,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(self->config, addr.sin_addr.s_addr, buf, size);
+    UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
   }
 }
 

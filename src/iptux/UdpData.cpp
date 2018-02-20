@@ -40,8 +40,8 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UdpData::UdpData(IptuxConfig &config)
-    : config(config), ipv4(0), size(0), encode(NULL) {}
+UdpData::UdpData()
+    : ipv4(0), size(0), encode(NULL) {}
 
 /**
  * 类析构函数.
@@ -54,10 +54,10 @@ UdpData::~UdpData() { g_free(encode); }
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(IptuxConfig &config, in_addr_t ipv4,
+void UdpData::UdpDataEntry(in_addr_t ipv4,
                            const char buf[], size_t size) {
   LOG_INFO("received udp message from %s, size %d", inAddrToString(ipv4).c_str(), size);
-  UdpData udata(config);
+  UdpData udata;
 
   udata.ipv4 = ipv4;
   udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;

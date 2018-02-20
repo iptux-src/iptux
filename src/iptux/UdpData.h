@@ -22,10 +22,10 @@ namespace iptux {
 
 class UdpData {
  public:
-  explicit UdpData(IptuxConfig &config);
+  explicit UdpData();
   ~UdpData();
 
-  static void UdpDataEntry(IptuxConfig &config, in_addr_t ipv4,
+  static void UdpDataEntry(in_addr_t ipv4,
                            const char buf[], size_t size);
 
  private:
@@ -56,7 +56,6 @@ class UdpData {
   PalInfo *AssertPalOnline();
   void RecvPalFile();
 
-  IptuxConfig &config;
   in_addr_t ipv4;        //数据来自
   size_t size;           //缓冲区数据有效长度
   char buf[MAX_UDPLEN];  //数据缓冲区
