@@ -135,7 +135,7 @@ void ProgramDataCore::ReadProgData() {
   path = config.GetString("archive_path", g_get_home_dir());
   sign = config.GetString("personal_sign");
 
-  codeset = config.GetString("candidacy_encode", "utf-16");
+  codeset = config.GetString("candidacy_encode", "gb18030,utf-16");
   encode = config.GetString("preference_encode", "utf-8");
   palicon = g_strdup(config.GetString("pal_icon", "icon-qq.png").c_str());
   font = g_strdup(config.GetString("panel_font", "Sans Serif 10").c_str());
