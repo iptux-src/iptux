@@ -112,7 +112,7 @@ void UdpData::DispatchUdpData() {
       SomeoneBcstmsg();
       break;
     default:
-      LOG_WARN("unknown command: %d", GET_MODE(commandno));
+      LOG_WARN("unknown command: 0x%x", GET_MODE(commandno));
       break;
   }
 }
