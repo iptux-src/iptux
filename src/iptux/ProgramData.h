@@ -31,6 +31,7 @@ class ProgramData: public ProgramDataCore {
  private:
   void CreateCursor();
   void CreateTagTable();
+  void CheckIconTheme();
 };
 }  // namespace iptux
 
