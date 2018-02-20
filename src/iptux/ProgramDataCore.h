@@ -73,8 +73,6 @@ class ProgramDataCore {
 
  private:
   void ReadProgData();
-  void AddGconfNotify();
-  void CheckIconTheme();
   void CreateRegex();
 
   void WriteNetSegment();

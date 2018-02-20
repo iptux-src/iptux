@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#include "iptux/CoreThread.h"
 #include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "iptux/ipmsg.h"
@@ -22,7 +21,7 @@ ProgramDataCore::ProgramDataCore(IptuxConfig &config)
       transtip(NULL),
       msgtip(NULL),
       volume(1.0),
-      sndfgs(~0),
+      sndfgs(uint8_t(~0)),
       urlregex(NULL),
       config(config),
       flags(0) {
@@ -49,7 +48,6 @@ ProgramDataCore::~ProgramDataCore() {
  */
 void ProgramDataCore::InitSublayer() {
   ReadProgData();
-  CheckIconTheme();
   CreateRegex();
 }
 
@@ -160,34 +158,6 @@ void ProgramDataCore::ReadProgData() {
   FLAG_SET(flags, 2, config.GetBool("transnd_support"));
   FLAG_SET(flags, 1, config.GetBool("msgsnd_support"));
   FLAG_SET(flags, 0, config.GetBool("sound_support"));
-}
-
-/**
- * 确保头像数据被存放在主题库中.
- */
-void ProgramDataCore::CheckIconTheme() {
-  char pathbuf[MAX_PATHLEN];
-  GdkPixbuf *pixbuf;
-
-  snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", myicon.c_str());
-  if (access(pathbuf, F_OK) != 0) {
-    snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
-             g_get_user_config_dir(), myicon.c_str());
-    if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-      gtk_icon_theme_add_builtin_icon(myicon.c_str(), MAX_ICONSIZE, pixbuf);
-      g_object_unref(pixbuf);
-    }
-  }
-
-  snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", palicon);
-  if (access(pathbuf, F_OK) != 0) {
-    snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
-             g_get_user_config_dir(), palicon);
-    if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-      gtk_icon_theme_add_builtin_icon(palicon, MAX_ICONSIZE, pixbuf);
-      g_object_unref(pixbuf);
-    }
-  }
 }
 
 /**
