@@ -2,7 +2,7 @@
 
 set -ex
 
-sudo apt-get install -y lcov
+apt-get install -y lcov
 
 cd `dirname $0`/..
 mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE .. && make
