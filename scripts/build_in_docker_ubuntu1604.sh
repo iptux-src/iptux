@@ -4,6 +4,8 @@ set -ex
 
 env
 
+export CODECOV_TOKEN=cec2d3eb-e3d2-414c-ae88-137cc880e0e1
+
 apt-get install -y lcov git
 
 cd `dirname $0`/..
