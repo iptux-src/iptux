@@ -5,7 +5,7 @@ set -ex
 apt-get install -y lcov
 
 cd `dirname $0`/..
-mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE .. && make
+mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
 make iptux_coverage
 ctest --verbose
 make install
