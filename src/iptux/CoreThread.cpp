@@ -39,7 +39,7 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-CoreThread::CoreThread(ProgramData &data)
+CoreThread::CoreThread(ProgramDataCore &data)
     : programData(data),
       config(data.getConfig()),
       tcpSock(-1),
