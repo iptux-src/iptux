@@ -44,7 +44,7 @@ CoreThread::CoreThread(ProgramDataCore &data)
       config(data.getConfig()),
       tcpSock(-1),
       udpSock(-1),
-      server(true),
+      started(false),
       pallist(nullptr),
       groupInfos(NULL),
       sgmlist(NULL),
@@ -76,6 +76,11 @@ CoreThread::~CoreThread() {
  * 程序核心入口，主要任务服务将在此开启.
  */
 void CoreThread::start() {
+  if(started) {
+    throw "CoreThread already started, can't start twice";
+    started = true;
+  }
+
   bind_iptux_port();
 
   pthread_t pid;
@@ -778,7 +783,7 @@ void CoreThread::ClearSublayer() {
   g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
-  server = false;
+  started = false;
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
@@ -1131,7 +1136,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
   char buf[MAX_UDPLEN];
   ssize_t size;
 
-  while (self->server) {
+  while (self->started) {
     len = sizeof(addr);
     if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr *)&addr, &len)) == -1)
@@ -1150,7 +1155,7 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
   int subsock;
 
   listen(pcthrd->tcpSock, 5);
-  while (pcthrd->server) {
+  while (pcthrd->started) {
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
     pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
                    GINT_TO_POINTER(subsock));

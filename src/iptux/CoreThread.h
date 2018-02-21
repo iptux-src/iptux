@@ -112,7 +112,7 @@ class CoreThread {
   std::queue<MsgPara> messages;
   int tcpSock;
   int udpSock;
-  bool server;           //程序是否正在服务
+  bool started;           //程序是否正在服务
 
   GSList *pallist;  //好友链表(成员不能被删除)
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
