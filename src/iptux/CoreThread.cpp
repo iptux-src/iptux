@@ -113,6 +113,10 @@ ProgramDataCore& CoreThread::getProgramData() {
   return programData;
 }
 
+bool CoreThread::getDebug() const {
+  return debug;
+}
+
 void CoreThread::setDebug(bool debug) {
   this->debug = debug;
 }
@@ -798,7 +802,9 @@ void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+  if (!debug) {
+    g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+  }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
 
@@ -1024,14 +1030,15 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal) {
   GroupInfo *grpinf;
 
   grpinf = new GroupInfo;
-  grpinf->grpid = pal->ipv4;
-  grpinf->type = GROUP_BELONG_TYPE_REGULAR;
-  grpinf->name = g_strdup(pal->name);
-  grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
-  grpinf->dialog = NULL;
+  if(!debug){
+    grpinf->grpid = pal->ipv4;
+    grpinf->type = GROUP_BELONG_TYPE_REGULAR;
+    grpinf->name = g_strdup(pal->name);
+    grpinf->member = NULL;
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+    grpinf->dialog = NULL;
+  }
   groupInfos = g_slist_append(groupInfos, grpinf);
-
   return grpinf;
 }
 
@@ -1053,7 +1060,9 @@ GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  if(!debug) {
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  }
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -1078,7 +1087,9 @@ GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_GROUP;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  if (!debug) {
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  }
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
 
@@ -1101,7 +1112,9 @@ GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  if (!debug) {
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  }
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
 
@@ -1159,9 +1172,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    if(!self->debug) {
-      UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
-    }
+    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, buf, size);
   }
 }
 

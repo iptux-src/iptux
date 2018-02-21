@@ -42,6 +42,7 @@ class CoreThread {
   void stop();
 
   ProgramDataCore& getProgramData();
+  bool getDebug() const;
   void setDebug(bool debug);
 
   void WriteSharedData();
