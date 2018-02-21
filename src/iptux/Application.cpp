@@ -75,13 +75,13 @@ void Application::onActivate(Application& self) {
   int port = self.config.GetInt("port", IPTUX_DEFAULT_PORT);
   self.window->CreateWindow();
   try {
-    iptux_init(port);
+    g_cthrd->start();
   } catch (const BindFailedException& e) {
     pop_warning(self.window->getWindow(), "%s", e.what());
     exit(1);
   }
+  iptux_init();
   sicon->CreateStatusIcon();
-  g_cthrd->start();
 }
 
 void Application::onActiveWindowChanged(Application &self) {

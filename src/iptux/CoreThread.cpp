@@ -76,6 +76,8 @@ CoreThread::~CoreThread() {
  * 程序核心入口，主要任务服务将在此开启.
  */
 void CoreThread::start() {
+  bind_iptux_port();
+
   pthread_t pid;
 
   /* 开启UDP监听服务 */
@@ -1209,5 +1211,46 @@ void CoreThread::PopItemFromEnclosureList(FileInfo *file) {
 void CoreThread::Lock() { pthread_mutex_lock(&mutex); }
 
 void CoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
+
+void CoreThread::bind_iptux_port() {
+  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
+  struct sockaddr_in addr;
+  tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  socket_enable_reuse(tcpSock);
+  udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  socket_enable_reuse(udpSock);
+  socket_enable_broadcast(udpSock);
+  if ((tcpSock == -1) || (udpSock == -1)) {
+    int ec = errno;
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
+                                         strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+
+  bzero(&addr, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
+    close(tcpSock);
+    close(udpSock);
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%d)!\n%s"),
+                                         port, strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+  if(::bind(udpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
+    close(tcpSock);
+    close(udpSock);
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%d)!\n%s"),
+                                         port, strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+}
+
 
 }  // namespace iptux

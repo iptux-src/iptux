@@ -104,8 +104,10 @@ class CoreThread {
   GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  void bind_iptux_port();
 
-  ProgramDataCore &programData;
+
+    ProgramDataCore &programData;
   IptuxConfig &config;
   std::queue<MsgPara> messages;
   int tcpSock;
@@ -135,14 +137,6 @@ class CoreThread {
 
     //内联成员函数
  public:
-  inline void setTcpSock(int tcpsock) {
-    this->tcpSock = tcpsock;
-  }
-
-  inline void setUdpSock(int udpsock) {
-    this->udpSock = udpsock;
-  }
-
   inline int getUdpSock() const {
     return udpSock;
   }
