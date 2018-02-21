@@ -24,15 +24,10 @@ namespace iptux {
 Application::Application(IptuxConfig& config)
 : config(config),
   shareFile(nullptr) {
-  data = new ProgramData(config);
   app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
   g_signal_connect_swapped(app, "notify::active-window", G_CALLBACK(onActiveWindowChanged), this);
-  window = new MainWindow(app, config, *data);
-
-  g_progdt = data;
-  g_mwin = window;
 }
 
 Application::~Application() {
@@ -46,6 +41,11 @@ int Application::run(int argc, char** argv) {
 }
 
 void Application::onStartup(Application& self) {
+  self.data = new ProgramData(self.config);
+  self.window = new MainWindow(self.app, self.config, *self.data);
+  g_progdt = self.data;
+  g_mwin = self.window;
+
   iptux_register_resource();
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL },

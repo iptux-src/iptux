@@ -9,8 +9,7 @@ TEST(ProgramData, Constructor) {
   gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
   ProgramData* data = new ProgramData(*config);
-  ASSERT_NE(data->lcursor, nullptr);
-  ASSERT_EQ(gdk_cursor_get_cursor_type(data->lcursor), GDK_HAND2);
+  ASSERT_NE(data->table, nullptr);
   delete data;
 }
 

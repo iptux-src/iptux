@@ -14,17 +14,7 @@ namespace iptux {
 
 void ProgramData::InitSublayer() {
   CheckIconTheme();
-  CreateCursor();
   CreateTagTable();
-}
-
-
-/**
- * 创建鼠标光标.
- */
-void ProgramData::CreateCursor() {
-  xcursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_XTERM);
-  lcursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_HAND2);
 }
 
 /**
@@ -100,18 +90,10 @@ void ProgramData::CheckIconTheme() {
 
 ProgramData::ProgramData(IptuxConfig &config)
     : ProgramDataCore(config),
-      xcursor(nullptr),
-      lcursor(nullptr),
       table(nullptr) {
   InitSublayer();
 }
 ProgramData::~ProgramData() {
-  if(xcursor) {
-    g_object_unref(xcursor);
-  }
-  if(lcursor) {
-    g_object_unref(lcursor);
-  }
   if (table) {
     g_object_unref(table);
   }

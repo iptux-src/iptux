@@ -231,10 +231,11 @@ void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
   if (hovering != GPOINTER_TO_INT(g_object_get_data(G_OBJECT(textview),
                                                     "hovering-over-link"))) {
     auto window = gtk_text_view_get_window(textview, GTK_TEXT_WINDOW_TEXT);
-    if (hovering)
-      gdk_window_set_cursor(window, progdt.lcursor);
-    else
-      gdk_window_set_cursor(window, progdt.xcursor);
+    if (hovering) {
+      gdk_window_set_cursor(window, gdk_cursor_new_for_display(gdk_display_get_default(), GDK_HAND2));
+    } else {
+      gdk_window_set_cursor(window, gdk_cursor_new_for_display(gdk_display_get_default(), GDK_XTERM));
+    }
     g_object_set_data(G_OBJECT(textview), "hovering-over-link",
                       GINT_TO_POINTER(hovering));
   }
