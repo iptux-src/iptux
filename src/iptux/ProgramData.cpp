@@ -14,7 +14,6 @@ using namespace std;
 namespace iptux {
 
 void ProgramData::InitSublayer() {
-  ProgramDataCore::InitSublayer();
   CheckIconTheme();
   CreateCursor();
   CreateTagTable();
@@ -105,6 +104,7 @@ ProgramData::ProgramData(IptuxConfig &config)
       xcursor(nullptr),
       lcursor(nullptr),
       table(nullptr) {
+  InitSublayer();
 }
 ProgramData::~ProgramData() {
   if(xcursor) {

@@ -66,7 +66,7 @@ add_executable(libiptux_test
     IptuxConfigTest.cpp
 	UtilsTest.cpp
 	TestMain.cpp
-	)
+        ProgramDataCoreTest.cpp TestHelper.h TestHelper.cpp)
 if(GTEST_FOUND)
 	include_directories(${GTEST_INCLUDE_DIRS})
 	target_link_libraries(libiptux_test ${GTEST_BOTH_LIBRARIES} iptux pthread)

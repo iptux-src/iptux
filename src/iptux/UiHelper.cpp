@@ -69,7 +69,6 @@ void iptux_init(int port) {
   bind_iptux_port(port);
   init_iptux_environment();
 
-  g_progdt->InitSublayer();
   g_lgsys->InitSublayer();
   g_sndsys->InitSublayer();
 
