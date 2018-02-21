@@ -24,8 +24,8 @@ void ProgramData::InitSublayer() {
  * 创建鼠标光标.
  */
 void ProgramData::CreateCursor() {
-  xcursor = gdk_cursor_new(GDK_XTERM);
-  lcursor = gdk_cursor_new(GDK_HAND2);
+  xcursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_XTERM);
+  lcursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_HAND2);
 }
 
 /**
