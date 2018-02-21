@@ -60,6 +60,7 @@ CoreThread::CoreThread(IptuxConfig &config)
   g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
   pthread_mutex_init(&mutex, NULL);
+  InitSublayer();
 }
 
 /**

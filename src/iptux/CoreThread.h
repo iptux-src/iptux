@@ -35,7 +35,7 @@ namespace iptux {
  */
 class CoreThread {
  public:
-  CoreThread(IptuxConfig &config);
+  explicit CoreThread(IptuxConfig &config);
   ~CoreThread();
 
   void CoreThreadEntry();
@@ -88,8 +88,6 @@ class CoreThread {
 
   GSimpleAction* newMessageArrived;
  private:
-  IptuxConfig &config;
-
   void InitSublayer();
   void ClearSublayer();
   static void InitThemeSublayerData();
@@ -107,8 +105,8 @@ class CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
+  IptuxConfig &config;
   std::queue<MsgPara> messages;
-
   int tcpSock;
   int udpSock;
   bool server;           //程序是否正在服务
