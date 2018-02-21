@@ -3,11 +3,8 @@
 set -ex
 
 env
-
 export CODECOV_TOKEN=cec2d3eb-e3d2-414c-ae88-137cc880e0e1
-
-apt-get update
-apt-get install -y lcov git xvfb
+env
 
 cd `dirname $0`/..
 mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make VERBOSE=1
