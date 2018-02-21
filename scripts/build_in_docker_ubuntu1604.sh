@@ -6,12 +6,12 @@ env
 
 export CODECOV_TOKEN=cec2d3eb-e3d2-414c-ae88-137cc880e0e1
 
-apt-get install -y lcov git
+apt-get install -y lcov git xvfb
 
 cd `dirname $0`/..
 mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make VERBOSE=1
 make iptux_coverage VERBOSE=1
-ctest --verbose
+xvfb-run ctest --verbose
 make install
 lcov --directory . --capture --output-file coverage.info # capture coverage info
 lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
