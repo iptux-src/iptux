@@ -1,3 +1,4 @@
+#include "config.h"
 #include "TransAbstract.h"
 
 namespace iptux {

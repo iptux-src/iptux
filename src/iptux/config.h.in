@@ -1,3 +1,11 @@
+#ifndef IPTUX_CONFIG_H
+#define IPTUX_CONFIG_H
+
+#include <glib.h>
+
+#define GDK_VERSION_MIN_REQUIRED (G_ENCODE_VERSION (3, 12))
+#define GDK_VERSION_MAX_ALLOWED (G_ENCODE_VERSION (3, 12))
+
 #define VERSION "@PROJECT_VERSION@@VERSION_SUFFIX@"
 #define IPTUX_VERSION "iptux @PROJECT_VERSION@"
 #define GETTEXT_PACKAGE "@PROJECT_NAME@"
@@ -12,3 +20,5 @@
 #if defined(__APPLE__) || defined(__CYGWIN__)
 #  define O_LARGEFILE 0
 #endif
+
+#endif // IPTUX_CONFIG_H

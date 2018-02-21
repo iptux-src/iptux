@@ -1,3 +1,4 @@
+#include "config.h"
 #include "IptuxConfig.h"
 
 #include <cstring>

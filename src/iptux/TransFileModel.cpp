@@ -1,3 +1,4 @@
+#include "config.h"
 #include "TransFileModel.h"
 #include "utils.h"
 
