@@ -10,7 +10,7 @@ apt-get install -y lcov git
 
 cd `dirname $0`/..
 mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
-make iptux_coverage
+make iptux_coverage VERBOSE=1
 ctest --verbose
 make install
 lcov --directory . --capture --output-file coverage.info # capture coverage info
