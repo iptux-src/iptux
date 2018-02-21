@@ -132,6 +132,7 @@ class CoreThread {
 
   guint timerid;          //定时器ID
   pthread_mutex_t mutex;  //锁
+  pthread_t notifyToAllThread;
   bool debug;
   //回调处理部分函数
  private:

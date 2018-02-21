@@ -97,8 +97,7 @@ void CoreThread::start() {
   /* 定时扫描处理程序内部任务 */
   timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
   /* 通知所有计算机本大爷上线啦 */
-  pthread_create(&pid, NULL, ThreadFunc(SendNotifyToAll), this);
-  pthread_detach(pid);
+  pthread_create(&notifyToAllThread, NULL, ThreadFunc(SendNotifyToAll), this);
 }
 
 void CoreThread::stop() {
@@ -106,6 +105,7 @@ void CoreThread::stop() {
     throw "CoreThread not started, or already stopped";
   }
   started = false;
+  pthread_join(notifyToAllThread, nullptr);
   ClearSublayer();
 }
 
