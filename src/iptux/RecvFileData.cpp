@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "RecvFileData.h"
 
 #include <fcntl.h>

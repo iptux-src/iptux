@@ -1,3 +1,4 @@
+#include "config.h"
 #include "global.h"
 
 namespace iptux {

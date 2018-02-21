@@ -1,5 +1,5 @@
-pkg_check_modules (IPTUX REQUIRED glib-2.0>=2.32.0 gthread-2.0>=2.14.0 gtk+-3.0 jsoncpp>=1.0)
-include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_BINARY_DIR}/src" "${IPTUX_INCLUDE_DIRS}")
+pkg_check_modules (IPTUX REQUIRED glib-2.0>=2.32.0 gthread-2.0>=2.14.0 gtk+-3.0>=3.12 jsoncpp>=1.0)
+include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_BINARY_DIR}/src" "${PROJECT_BINARY_DIR}/src/iptux" "${IPTUX_INCLUDE_DIRS}")
 link_libraries("${IPTUX_LIBRARIES}")
 link_libraries("${Intl_LIBRARIES}")
 if(GST_FOUND)

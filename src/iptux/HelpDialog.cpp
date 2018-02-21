@@ -10,9 +10,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "HelpDialog.h"
 
-#include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "iptux/support.h"
 

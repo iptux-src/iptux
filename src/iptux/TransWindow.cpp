@@ -1,3 +1,4 @@
+#include "config.h"
 #include "TransWindow.h"
 
 #include <glib/gi18n.h>
@@ -122,7 +123,6 @@ static void ClearTransWindow(GtkWidget *window) {
 GtkWidget * CreateTransArea(GtkWindow* window) {
   GtkWidget *box, *hbb;
   GtkWidget *sw, *button, *widget;
-  GtkTreeModel *model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 

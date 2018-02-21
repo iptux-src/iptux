@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "RevisePal.h"
 
 #include <cinttypes>
@@ -18,7 +19,6 @@
 #include "iptux/CoreThread.h"
 #include "iptux/MainWindow.h"
 #include "iptux/callback.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"

@@ -12,6 +12,7 @@
 //
 //
 
+#include "config.h"
 #include "RecvFile.h"
 
 #include <cstring>
