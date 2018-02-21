@@ -12,7 +12,7 @@ script:
 - '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
   make test; }'
 - env
-- '[ "$TRAVIS_OS_NAME" != linux ] || docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:latest
+- '[ "$TRAVIS_OS_NAME" != linux ] || docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:0.0.2
   env CODECOV_TOKEN=$CODECOV_TOKEN /ws/scripts/build_in_docker_ubuntu1604.sh'
 dist: trusty
 sudo: false
