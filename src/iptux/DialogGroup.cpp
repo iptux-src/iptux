@@ -489,7 +489,7 @@ void DialogGroup::BroadcastEnclosureMsg(GSList *list) {
  * @param msg 文本消息
  */
 void DialogGroup::BroadcastTextMsg(const gchar *msg) {
-  Command cmd;
+  Command cmd(*g_cthrd);
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;

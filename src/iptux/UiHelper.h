@@ -5,12 +5,7 @@
 
 namespace iptux {
 
-/**
- *
- * @param port port number for binding
- * @throw BindFailedException if bind failed
- */
-void iptux_init(int port);
+void iptux_init();
 
 bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
                       guint time);

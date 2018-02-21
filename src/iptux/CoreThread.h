@@ -38,7 +38,12 @@ class CoreThread {
   explicit CoreThread(ProgramDataCore &data);
   ~CoreThread();
 
-  void CoreThreadEntry();
+  void start();
+  void stop();
+
+  ProgramDataCore& getProgramData();
+  void setDebug(bool debug);
+
   void WriteSharedData();
   GSList *GetPalList();
   void Lock();
@@ -104,13 +109,15 @@ class CoreThread {
   GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  void bind_iptux_port();
+
 
   ProgramDataCore &programData;
   IptuxConfig &config;
   std::queue<MsgPara> messages;
   int tcpSock;
   int udpSock;
-  bool server;           //程序是否正在服务
+  bool started;           //程序是否正在服务
 
   GSList *pallist;  //好友链表(成员不能被删除)
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
@@ -125,6 +132,8 @@ class CoreThread {
 
   guint timerid;          //定时器ID
   pthread_mutex_t mutex;  //锁
+  pthread_t notifyToAllThread;
+  bool debug;
   //回调处理部分函数
  private:
   static void onNewMessageArrived(CoreThread* self);
@@ -135,14 +144,6 @@ class CoreThread {
 
     //内联成员函数
  public:
-  inline void setTcpSock(int tcpsock) {
-    this->tcpSock = tcpsock;
-  }
-
-  inline void setUdpSock(int udpsock) {
-    this->udpSock = udpsock;
-  }
-
   inline int getUdpSock() const {
     return udpSock;
   }
