@@ -44,6 +44,10 @@ ProgramDataCore::~ProgramDataCore() {
   pthread_mutex_destroy(&mutex);
 }
 
+IptuxConfig& ProgramDataCore::getConfig() {
+  return config;
+}
+
 /**
  * 初始化相关类成员数据.
  */
