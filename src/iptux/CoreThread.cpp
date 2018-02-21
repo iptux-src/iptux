@@ -39,8 +39,9 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-CoreThread::CoreThread(IptuxConfig &config)
-    : config(config),
+CoreThread::CoreThread(ProgramData &data)
+    : programData(data),
+      config(data.getConfig()),
       tcpSock(-1),
       udpSock(-1),
       server(true),

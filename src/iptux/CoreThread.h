@@ -19,7 +19,7 @@
 
 #include <queue>
 
-#include "iptux/IptuxConfig.h"
+#include "iptux/ProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
 
@@ -35,7 +35,7 @@ namespace iptux {
  */
 class CoreThread {
  public:
-  explicit CoreThread(IptuxConfig &config);
+  explicit CoreThread(ProgramData &data);
   ~CoreThread();
 
   void CoreThreadEntry();
@@ -105,6 +105,7 @@ class CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
+  ProgramData &programData;
   IptuxConfig &config;
   std::queue<MsgPara> messages;
   int tcpSock;
