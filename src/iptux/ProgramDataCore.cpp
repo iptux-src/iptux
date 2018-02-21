@@ -24,7 +24,8 @@ ProgramDataCore::ProgramDataCore(IptuxConfig &config)
       sndfgs(uint8_t(~0)),
       urlregex(NULL),
       config(config),
-      flags(0) {
+      flags(0)
+{
   gettimeofday(&timestamp, NULL);
   pthread_mutex_init(&mutex, NULL);
   InitSublayer();

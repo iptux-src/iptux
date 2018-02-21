@@ -55,7 +55,8 @@ CoreThread::CoreThread(ProgramDataCore &data)
       prn(MAX_SHAREDFILE),
       pblist(NULL),
       prlist(NULL),
-      ecsList(NULL)
+      ecsList(NULL),
+      debug(false)
 {
   newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
   g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
@@ -68,8 +69,10 @@ CoreThread::CoreThread(ProgramDataCore &data)
  * 类析构函数.
  */
 CoreThread::~CoreThread() {
+  if(started) {
+    stop();
+  }
   g_object_unref(newMessageArrived);
-  ClearSublayer();
 }
 
 /**
@@ -78,8 +81,8 @@ CoreThread::~CoreThread() {
 void CoreThread::start() {
   if(started) {
     throw "CoreThread already started, can't start twice";
-    started = true;
   }
+  started = true;
 
   bind_iptux_port();
 
@@ -95,6 +98,23 @@ void CoreThread::start() {
   timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
   /* 通知所有计算机本大爷上线啦 */
   pthread_create(&pid, NULL, ThreadFunc(SendNotifyToAll), this);
+  pthread_detach(pid);
+}
+
+void CoreThread::stop() {
+  if(!started) {
+    throw "CoreThread not started, or already stopped";
+  }
+  started = false;
+  ClearSublayer();
+}
+
+ProgramDataCore& CoreThread::getProgramData() {
+  return programData;
+}
+
+void CoreThread::setDebug(bool debug) {
+  this->debug = debug;
 }
 
 /**
@@ -237,8 +257,7 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
  * @param pcthrd 核心类
  */
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
-  Command cmd;
-
+  Command cmd(*pcthrd);
   cmd.BroadCast(pcthrd->udpSock);
   cmd.DialUp(pcthrd->udpSock);
 }
@@ -248,7 +267,7 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  * @param pal class PalInfo
  */
 void CoreThread::SendFeatureData(PalInfo *pal) {
-  Command cmd;
+  Command cmd(*g_cthrd);
   char path[MAX_PATHLEN];
   const gchar *env;
   int sock;
@@ -277,8 +296,7 @@ void CoreThread::SendFeatureData(PalInfo *pal) {
  * @param pal class PalInfo
  */
 void CoreThread::SendBroadcastExit(PalInfo *pal) {
-  Command cmd;
-
+  Command cmd(*g_cthrd);
   cmd.SendExit(g_cthrd->udpSock, pal);
 }
 
@@ -286,7 +304,7 @@ void CoreThread::SendBroadcastExit(PalInfo *pal) {
  * 更新本大爷的个人信息.
  */
 void CoreThread::UpdateMyInfo() {
-  Command cmd;
+  Command cmd(*g_cthrd);
   pthread_t pid;
   PalInfo *pal;
   GSList *tlist;
@@ -783,7 +801,6 @@ void CoreThread::ClearSublayer() {
   g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
-  started = false;
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
@@ -1142,7 +1159,9 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+    if(!self->debug) {
+      UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+    }
   }
 }
 

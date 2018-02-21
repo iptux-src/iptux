@@ -1259,7 +1259,7 @@ void MainWindow::onSortType(void *, GVariant *value, MainWindow &self) {
  * @param grpinf 好友群组信息
  */
 void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
-  Command cmd;
+  Command cmd(*g_cthrd);
 
   cmd.SendAskShared(g_cthrd->getUdpSock(), (PalInfo *)grpinf->member->data, 0,
                     NULL);

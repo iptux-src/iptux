@@ -39,6 +39,11 @@ class CoreThread {
   ~CoreThread();
 
   void start();
+  void stop();
+
+  ProgramDataCore& getProgramData();
+  void setDebug(bool debug);
+
   void WriteSharedData();
   GSList *GetPalList();
   void Lock();
@@ -107,7 +112,7 @@ class CoreThread {
   void bind_iptux_port();
 
 
-    ProgramDataCore &programData;
+  ProgramDataCore &programData;
   IptuxConfig &config;
   std::queue<MsgPara> messages;
   int tcpSock;
@@ -127,6 +132,7 @@ class CoreThread {
 
   guint timerid;          //定时器ID
   pthread_mutex_t mutex;  //锁
+  bool debug;
   //回调处理部分函数
  private:
   static void onNewMessageArrived(CoreThread* self);

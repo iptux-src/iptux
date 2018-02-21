@@ -158,7 +158,7 @@ void UdpData::SomeoneLost() {
  * 好友上线.
  */
 void UdpData::SomeoneEntry() {
-  Command cmd;
+  Command cmd(*g_cthrd);
   pthread_t pid;
   PalInfo *pal;
 
@@ -212,7 +212,7 @@ void UdpData::SomeoneExit() {
  * 好友在线.
  */
 void UdpData::SomeoneAnsentry() {
-  Command cmd;
+  Command cmd(*g_cthrd);
   pthread_t pid;
   PalInfo *pal;
   const char *ptr;
@@ -291,7 +291,7 @@ void UdpData::SomeoneAbsence() {
 void UdpData::SomeoneSendmsg() {
   GroupInfo *grpinf;
   PalInfo *pal;
-  Command cmd;
+  Command cmd(*g_cthrd);
   uint32_t commandno, packetno;
   char *text;
   pthread_t pid;
@@ -389,7 +389,7 @@ void UdpData::SomeoneRecvmsg() {
  * 好友请求本计算机的共享文件.
  */
 void UdpData::SomeoneAskShared() {
-  Command cmd;
+  Command cmd(*g_cthrd);
   pthread_t pid;
   PalInfo *pal;
   const char *limit;
@@ -818,7 +818,7 @@ void UdpData::RecvPalFile() {
  * @param pal class PalInfo
  */
 void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
-  Command cmd;
+  Command cmd(*g_cthrd);
   gchar *passwd, *epasswd;
 
   gdk_threads_enter();

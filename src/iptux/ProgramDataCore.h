@@ -27,6 +27,9 @@ class ProgramDataCore {
   explicit ProgramDataCore(IptuxConfig &config);
   virtual ~ProgramDataCore();
 
+  ProgramDataCore(const ProgramDataCore&) = delete;
+  ProgramDataCore&operator=(const ProgramDataCore&) = delete;
+
   IptuxConfig& getConfig();
 
   void WriteProgData();

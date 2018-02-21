@@ -102,7 +102,7 @@ void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach) {
  */
 void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist) {
   AnalogFS afs;
-  Command cmd;
+  Command cmd(*g_cthrd);
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;
@@ -146,7 +146,7 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist) {
  */
 void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
   AnalogFS afs;
-  Command cmd;
+  Command cmd(*g_cthrd);
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;

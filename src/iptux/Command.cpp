@@ -35,8 +35,9 @@ uint32_t Command::packetn = 1;
 /**
  * 类构造函数.
  */
-Command::Command()
-    : size(0),
+Command::Command(CoreThread& coreThread)
+    : coreThread(coreThread),
+      size(0),
       buf("") {}
 
 /**
@@ -52,9 +53,10 @@ void Command::BroadCast(int sock) {
   struct sockaddr_in addr;
   GSList *list, *tlist;
 
-  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, g_progdt->nickname.c_str());
-  ConvertEncode(g_progdt->encode);
-  CreateIptuxExtra(g_progdt->encode);
+  ProgramDataCore& programData = coreThread.getProgramData();
+  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, coreThread.getProgramData().nickname.c_str());
+  ConvertEncode(programData.encode);
+  CreateIptuxExtra(programData.encode);
 
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
@@ -78,18 +80,19 @@ void Command::DialUp(int sock) {
   in_addr_t startip, endip, ipv4;
   NetSegment *pns;
 
+  ProgramDataCore& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                g_progdt->nickname.c_str());
-  ConvertEncode(g_progdt->encode);
-  CreateIptuxExtra(g_progdt->encode);
+                programData.nickname.c_str());
+  ConvertEncode(programData.encode);
+  CreateIptuxExtra(programData.encode);
 
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   //与某些代码片段的获取网段描述相冲突，必须复制出来使用
-  g_progdt->Lock();
-  vector<NetSegment> list = g_progdt->CopyNetSegment();
-  g_progdt->Unlock();
+  programData.Lock();
+  vector<NetSegment> list = programData.CopyNetSegment();
+  programData.Unlock();
   for(int i = 0; i < list.size(); ++i) {
     pns = &list[i];
     inet_pton(AF_INET, pns->startip.c_str(), &startip);
@@ -588,6 +591,7 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode) {
 void Command::CreateIptuxExtra(const string &encode) {
   char *pptr, *ptr;
 
+  ProgramDataCore& programData = coreThread.getProgramData();
   pptr = buf + size;
   if (!encode.empty() && strcasecmp(encode.c_str(), "utf-8") != 0 &&
       (ptr = convert_encode(g_progdt->mygroup.c_str(), encode.c_str(),
@@ -595,11 +599,11 @@ void Command::CreateIptuxExtra(const string &encode) {
     snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
     g_free(ptr);
   } else
-    snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->mygroup.c_str());
+    snprintf(pptr, MAX_UDPLEN - size, "%s", programData.mygroup.c_str());
   size += strlen(pptr) + 1;
 
   pptr = buf + size;
-  snprintf(pptr, MAX_UDPLEN - size, "%s", g_progdt->myicon.c_str());
+  snprintf(pptr, MAX_UDPLEN - size, "%s", programData.myicon.c_str());
   size += strlen(pptr) + 1;
 
   pptr = buf + size;
