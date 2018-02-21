@@ -1,6 +1,8 @@
 #ifndef IPTUX_TESTHELPER_H
 #define IPTUX_TESTHELPER_H
 
+#include <memory>
+
 #include "iptux/IptuxConfig.h"
 
 namespace iptux {
