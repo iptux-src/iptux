@@ -27,6 +27,7 @@ ProgramDataCore::ProgramDataCore(IptuxConfig &config)
       flags(0) {
   gettimeofday(&timestamp, NULL);
   pthread_mutex_init(&mutex, NULL);
+  InitSublayer();
 }
 
 /**

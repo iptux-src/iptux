@@ -27,7 +27,6 @@ class ProgramDataCore {
   explicit ProgramDataCore(IptuxConfig &config);
   virtual ~ProgramDataCore();
 
-  virtual void InitSublayer();
   void WriteProgData();
   std::vector<NetSegment> CopyNetSegment();
   char *FindNetSegDescription(in_addr_t ipv4);
@@ -72,6 +71,7 @@ class ProgramDataCore {
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
 
  private:
+  void InitSublayer();
   void ReadProgData();
   void CreateRegex();
 

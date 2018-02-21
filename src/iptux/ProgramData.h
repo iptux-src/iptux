@@ -23,12 +23,12 @@ class ProgramData: public ProgramDataCore {
   explicit ProgramData(IptuxConfig &config);
   ~ProgramData() override;
 
-  void InitSublayer() override;
 
   GdkCursor *xcursor, *lcursor;  //光标
   GtkTextTagTable *table;        // tag table
 
  private:
+  void InitSublayer();
   void CreateCursor();
   void CreateTagTable();
   void CheckIconTheme();
