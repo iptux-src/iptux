@@ -811,17 +811,19 @@ void CoreThread::ClearSublayer() {
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
   g_slist_free(pallist);
-  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
-  g_slist_free(groupInfos);
-  for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
-  g_slist_free(sgmlist);
-  for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
-  g_slist_free(grplist);
-  for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
+  if(!debug) {
+    for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+    g_slist_free(groupInfos);
+    for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+    g_slist_free(sgmlist);
+    for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+    g_slist_free(grplist);
+    for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+  }
   g_slist_free(brdlist);
   g_slist_free(blacklist);
   g_queue_clear(&msgline);
