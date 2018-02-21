@@ -11,6 +11,7 @@
 //
 //
 
+#include "config.h"
 #include "DialogBase.h"
 
 #include <sys/stat.h>

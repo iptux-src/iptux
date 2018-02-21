@@ -1,4 +1,6 @@
+#include "config.h"
 #include "Application.h"
+
 #include "iptux/ProgramData.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"

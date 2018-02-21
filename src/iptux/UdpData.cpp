@@ -10,6 +10,7 @@
 // Copyright: See COPYING file that comes with this distribution
 // 2012.02 在接收消息中去掉了群组模式，群组模式只用来发消息
 //
+#include "config.h"
 #include "UdpData.h"
 
 #include <cinttypes>

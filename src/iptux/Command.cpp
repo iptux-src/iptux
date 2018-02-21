@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "Command.h"
 
 #include <cinttypes>
@@ -19,7 +20,6 @@
 
 #include "iptux/CoreThread.h"
 #include "iptux/ProgramData.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"
 #include "iptux/support.h"

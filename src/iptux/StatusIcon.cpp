@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "config.h"
 #include "StatusIcon.h"
 
 #include "DataSettings.h"
