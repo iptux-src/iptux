@@ -96,7 +96,6 @@ class CoreThread {
  private:
   void InitSublayer();
   void ClearSublayer();
-  static void InitThemeSublayerData();
   void ReadSharedData();
 
   static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);

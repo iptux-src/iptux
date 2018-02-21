@@ -508,6 +508,7 @@ void MainWindow::InitSublayer() {
   model = CreatePallistModel();
   g_datalist_set_data_full(&mdlset, "pallist-model", model,
                            GDestroyNotify(g_object_unref));
+  InitThemeSublayerData();
 }
 
 /**
@@ -1774,6 +1775,36 @@ void MainWindow::clearActiveWindow(void* activeWindow) {
     this->activeWindow = nullptr;
   }
 }
+
+void MainWindow::InitThemeSublayerData() {
+  GtkIconTheme *theme;
+  GtkIconFactory *factory;
+  GtkIconSet *set;
+  GdkPixbuf *pixbuf;
+
+  theme = gtk_icon_theme_get_default();
+  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH);
+  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/icon");
+  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/menu");
+  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/tip");
+
+  factory = gtk_icon_factory_new();
+  gtk_icon_factory_add_default(factory);
+  if ((pixbuf = gtk_icon_theme_load_icon(theme, "iptux", 64,
+                                         GtkIconLookupFlags(0), NULL))) {
+    set = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "iptux-logo-show", set);
+    g_object_unref(pixbuf);
+  }
+  if ((pixbuf = gtk_icon_theme_load_icon(theme, "iptux-i", 64,
+                                         GtkIconLookupFlags(0), NULL))) {
+    set = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "iptux-logo-hide", set);
+    g_object_unref(pixbuf);
+  }
+  g_object_unref(factory);
+}
+
 
 
 }  // namespace iptux

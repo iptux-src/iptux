@@ -73,8 +73,6 @@ void Application::onActivate(Application& self) {
   g_lgsys = new LogSystem(*self.data);
 
   self.window->SetStatusIcon(sicon);
-
-  int port = self.config.GetInt("port", IPTUX_DEFAULT_PORT);
   self.window->CreateWindow();
   try {
     g_cthrd->start();
