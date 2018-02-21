@@ -75,11 +75,9 @@ CoreThread::~CoreThread() {
 /**
  * 程序核心入口，主要任务服务将在此开启.
  */
-void CoreThread::CoreThreadEntry() {
+void CoreThread::start() {
   pthread_t pid;
 
-  /* 初始化底层数据 */
-  InitSublayer();
   /* 开启UDP监听服务 */
   pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
   pthread_detach(pid);
@@ -816,6 +814,7 @@ void CoreThread::ClearSublayer() {
 /**
  * 初始化主题库底层数据.
  */
+// TODO: this should not in CoreThread
 void CoreThread::InitThemeSublayerData() {
   GtkIconTheme *theme;
   GtkIconFactory *factory;

@@ -38,7 +38,7 @@ class CoreThread {
   explicit CoreThread(ProgramDataCore &data);
   ~CoreThread();
 
-  void CoreThreadEntry();
+  void start();
   void WriteSharedData();
   GSList *GetPalList();
   void Lock();

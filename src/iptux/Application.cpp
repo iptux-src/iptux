@@ -81,7 +81,7 @@ void Application::onActivate(Application& self) {
     exit(1);
   }
   sicon->CreateStatusIcon();
-  g_cthrd->CoreThreadEntry();
+  g_cthrd->start();
 }
 
 void Application::onActiveWindowChanged(Application &self) {
