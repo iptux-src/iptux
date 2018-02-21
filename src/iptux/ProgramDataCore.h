@@ -27,6 +27,11 @@ class ProgramDataCore {
   explicit ProgramDataCore(IptuxConfig &config);
   virtual ~ProgramDataCore();
 
+  ProgramDataCore(const ProgramDataCore&) = delete;
+  ProgramDataCore&operator=(const ProgramDataCore&) = delete;
+
+  IptuxConfig& getConfig();
+
   void WriteProgData();
   std::vector<NetSegment> CopyNetSegment();
   char *FindNetSegDescription(in_addr_t ipv4);

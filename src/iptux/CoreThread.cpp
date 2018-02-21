@@ -40,11 +40,12 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-CoreThread::CoreThread(IptuxConfig &config)
-    : config(config),
+CoreThread::CoreThread(ProgramDataCore &data)
+    : programData(data),
+      config(data.getConfig()),
       tcpSock(-1),
       udpSock(-1),
-      server(true),
+      started(false),
       pallist(nullptr),
       groupInfos(NULL),
       sgmlist(NULL),
@@ -55,30 +56,39 @@ CoreThread::CoreThread(IptuxConfig &config)
       prn(MAX_SHAREDFILE),
       pblist(NULL),
       prlist(NULL),
-      ecsList(NULL)
+      ecsList(NULL),
+      debug(false)
 {
   newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
   g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
   pthread_mutex_init(&mutex, NULL);
+  InitSublayer();
 }
 
 /**
  * 类析构函数.
  */
 CoreThread::~CoreThread() {
+  if(started) {
+    stop();
+  }
   g_object_unref(newMessageArrived);
-  ClearSublayer();
 }
 
 /**
  * 程序核心入口，主要任务服务将在此开启.
  */
-void CoreThread::CoreThreadEntry() {
+void CoreThread::start() {
+  if(started) {
+    throw "CoreThread already started, can't start twice";
+  }
+  started = true;
+
+  bind_iptux_port();
+
   pthread_t pid;
 
-  /* 初始化底层数据 */
-  InitSublayer();
   /* 开启UDP监听服务 */
   pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
   pthread_detach(pid);
@@ -88,7 +98,24 @@ void CoreThread::CoreThreadEntry() {
   /* 定时扫描处理程序内部任务 */
   timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
   /* 通知所有计算机本大爷上线啦 */
-  pthread_create(&pid, NULL, ThreadFunc(SendNotifyToAll), this);
+  pthread_create(&notifyToAllThread, NULL, ThreadFunc(SendNotifyToAll), this);
+}
+
+void CoreThread::stop() {
+  if(!started) {
+    throw "CoreThread not started, or already stopped";
+  }
+  started = false;
+  pthread_join(notifyToAllThread, nullptr);
+  ClearSublayer();
+}
+
+ProgramDataCore& CoreThread::getProgramData() {
+  return programData;
+}
+
+void CoreThread::setDebug(bool debug) {
+  this->debug = debug;
 }
 
 /**
@@ -231,8 +258,7 @@ void CoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
  * @param pcthrd 核心类
  */
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
-  Command cmd;
-
+  Command cmd(*pcthrd);
   cmd.BroadCast(pcthrd->udpSock);
   cmd.DialUp(pcthrd->udpSock);
 }
@@ -242,7 +268,7 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  * @param pal class PalInfo
  */
 void CoreThread::SendFeatureData(PalInfo *pal) {
-  Command cmd;
+  Command cmd(*g_cthrd);
   char path[MAX_PATHLEN];
   const gchar *env;
   int sock;
@@ -271,8 +297,7 @@ void CoreThread::SendFeatureData(PalInfo *pal) {
  * @param pal class PalInfo
  */
 void CoreThread::SendBroadcastExit(PalInfo *pal) {
-  Command cmd;
-
+  Command cmd(*g_cthrd);
   cmd.SendExit(g_cthrd->udpSock, pal);
 }
 
@@ -280,7 +305,7 @@ void CoreThread::SendBroadcastExit(PalInfo *pal) {
  * 更新本大爷的个人信息.
  */
 void CoreThread::UpdateMyInfo() {
-  Command cmd;
+  Command cmd(*g_cthrd);
   pthread_t pid;
   PalInfo *pal;
   GSList *tlist;
@@ -777,7 +802,6 @@ void CoreThread::ClearSublayer() {
   g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
-  server = false;
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
@@ -815,6 +839,7 @@ void CoreThread::ClearSublayer() {
 /**
  * 初始化主题库底层数据.
  */
+// TODO: this should not in CoreThread
 void CoreThread::InitThemeSublayerData() {
   GtkIconTheme *theme;
   GtkIconFactory *factory;
@@ -1129,13 +1154,15 @@ void CoreThread::RecvUdpData(CoreThread *self) {
   char buf[MAX_UDPLEN];
   ssize_t size;
 
-  while (self->server) {
+  while (self->started) {
     len = sizeof(addr);
     if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+    if(!self->debug) {
+      UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
+    }
   }
 }
 
@@ -1148,7 +1175,7 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
   int subsock;
 
   listen(pcthrd->tcpSock, 5);
-  while (pcthrd->server) {
+  while (pcthrd->started) {
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
     pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
                    GINT_TO_POINTER(subsock));
@@ -1209,5 +1236,46 @@ void CoreThread::PopItemFromEnclosureList(FileInfo *file) {
 void CoreThread::Lock() { pthread_mutex_lock(&mutex); }
 
 void CoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
+
+void CoreThread::bind_iptux_port() {
+  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
+  struct sockaddr_in addr;
+  tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  socket_enable_reuse(tcpSock);
+  udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  socket_enable_reuse(udpSock);
+  socket_enable_broadcast(udpSock);
+  if ((tcpSock == -1) || (udpSock == -1)) {
+    int ec = errno;
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
+                                         strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+
+  bzero(&addr, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
+    close(tcpSock);
+    close(udpSock);
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%d)!\n%s"),
+                                         port, strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+  if(::bind(udpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
+    close(tcpSock);
+    close(udpSock);
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%d)!\n%s"),
+                                         port, strerror(ec));
+    LOG_WARN("%s", errmsg);
+    throw BindFailedException(ec, errmsg);
+  }
+}
+
 
 }  // namespace iptux

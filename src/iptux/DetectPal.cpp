@@ -105,7 +105,7 @@ GtkWidget *DetectPal::CreateInputArea() {
  */
 void DetectPal::SendDetectPacket() {
   GtkWidget *widget, *parent;
-  Command cmd;
+  Command cmd(*g_cthrd);
   in_addr_t ipv4;
   const char *text;
 

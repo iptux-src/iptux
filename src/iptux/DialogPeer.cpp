@@ -558,7 +558,7 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
-  Command cmd;
+  Command cmd(*g_cthrd);
   PalInfo *pal;
 
   if (!(grpinf->member))
@@ -605,7 +605,7 @@ void DialogPeer::insertPicture() {
  * @param para 消息参数
  */
 void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
-  Command cmd;
+  Command cmd(*g_cthrd);
   const char *ptr;
   int sock;
 

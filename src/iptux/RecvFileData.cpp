@@ -117,7 +117,7 @@ void RecvFileData::CreateUIPara() {
  */
 void RecvFileData::RecvRegularFile() {
   AnalogFS afs;
-  Command cmd;
+  Command cmd(*g_cthrd);
   int64_t finishsize;
   int sock, fd;
   struct utimbuf timebuf;
@@ -171,7 +171,7 @@ void RecvFileData::RecvRegularFile() {
  */
 void RecvFileData::RecvDirFiles() {
   AnalogFS afs;
-  Command cmd;
+  Command cmd(*g_cthrd);
   gchar *dirname, *pathname, *filename, *filectime, *filemtime;
   int64_t filesize, finishsize;
   uint32_t headsize, fileattr;
