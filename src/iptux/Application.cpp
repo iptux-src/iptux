@@ -23,6 +23,8 @@ namespace iptux {
 
 Application::Application(IptuxConfig& config)
 : config(config),
+  data(nullptr),
+  window(nullptr),
   shareFile(nullptr) {
   app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
