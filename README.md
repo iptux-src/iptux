@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/iptux-src/iptux.svg?branch=master)](https://travis-ci.org/iptux-src/iptux)
 [![GitHub version](https://badge.fury.io/gh/iptux-src%2Fiptux.svg)](http://badge.fury.io/gh/iptux-src%2Fiptux)
 [![Join the chat at https://gitter.im/iptux-src/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/iptux-src/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![codecov](https://codecov.io/gh/iptux-src/iptux/branch/master/graph/badge.svg)](https://codecov.io/gh/iptux-src/iptux)
+[![codecov](https://codecov.io/gh/iptux-src/iptux/branch/master/graph/badge.svg)](https://codecov.io/gh/iptux-src/iptux/branch/master)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
