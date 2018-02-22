@@ -579,7 +579,7 @@ PalInfo *UdpData::CreatePalInfo() {
   pal->photo = NULL;
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
-    pal->iconfile = g_strdup(g_progdt->palicon);
+    pal->iconfile = g_strdup(programData.palicon);
   if ((pal->encode = GetPalEncode())) {
     pal->setCompatible(true);
   } else {
