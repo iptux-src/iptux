@@ -41,8 +41,8 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UdpData::UdpData()
-    : ipv4(0), size(0), encode(NULL) {}
+UdpData::UdpData(CoreThread& coreThread)
+    : coreThread(coreThread), ipv4(0), size(0), encode(NULL) {}
 
 /**
  * 类析构函数.
@@ -55,10 +55,12 @@ UdpData::~UdpData() { g_free(encode); }
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(in_addr_t ipv4,
-                           const char buf[], size_t size) {
+void UdpData::UdpDataEntry(CoreThread& coreThread,
+                           in_addr_t ipv4,
+                           const char buf[],
+                           size_t size) {
   LOG_INFO("received udp message from %s, size %d", inAddrToString(ipv4).c_str(), size);
-  UdpData udata;
+  UdpData udata(coreThread);
 
   udata.ipv4 = ipv4;
   udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
@@ -75,7 +77,9 @@ void UdpData::DispatchUdpData() {
 
   /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
   /* 嘿嘿，那就不要怪偶心狠手辣了 */
-  if (g_progdt->IsUsingBlacklist() && g_cthrd->BlacklistContainItem(ipv4))
+  ProgramDataCore& programData = coreThread.getProgramData();
+
+  if (programData.IsUsingBlacklist() && coreThread.BlacklistContainItem(ipv4))
     return;
 
   /* 决定消息去向 */
@@ -159,35 +163,41 @@ void UdpData::SomeoneLost() {
  * 好友上线.
  */
 void UdpData::SomeoneEntry() {
-  Command cmd(*g_cthrd);
+  Command cmd(coreThread);
   pthread_t pid;
   PalInfo *pal;
 
+  ProgramDataCore& programData = coreThread.getProgramData();
   /* 转换缓冲区数据编码 */
-  ConvertEncode(g_progdt->encode);
+  ConvertEncode(programData.encode);
 
   /* 加入或更新好友列表 */
   gdk_threads_enter();
-  g_cthrd->Lock();
-  if ((pal = g_cthrd->GetPalFromList(ipv4))) {
+  coreThread.Lock();
+  if ((pal = coreThread.GetPalFromList(ipv4))) {
     UpdatePalInfo(pal);
-    g_cthrd->UpdatePalToList(ipv4);
+    coreThread.UpdatePalToList(ipv4);
   } else {
     pal = CreatePalInfo();
-    g_cthrd->AttachPalToList(pal);
+    coreThread.AttachPalToList(pal);
   }
-  g_cthrd->Unlock();
-  if (g_mwin->PaltreeContainItem(ipv4))
-    g_mwin->UpdateItemToPaltree(ipv4);
-  else
-    g_mwin->AttachItemToPaltree(ipv4);
+  coreThread.Unlock();
+  if(!coreThread.getDebug()) {
+    if (g_mwin->PaltreeContainItem(ipv4)) {
+      g_mwin->UpdateItemToPaltree(ipv4);
+    } else {
+      g_mwin->AttachItemToPaltree(ipv4);
+    }
+  }
   gdk_threads_leave();
 
   /* 通知好友本大爷在线 */
-  cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
-  if (pal->isCompatible()) {
-    pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
-    pthread_detach(pid);
+  cmd.SendAnsentry(coreThread.getUdpSock(), pal);
+  if(!coreThread.getDebug()) {
+    if (pal->isCompatible()) {
+      pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
+      pthread_detach(pid);
+    }
   }
 }
 
@@ -553,9 +563,10 @@ void UdpData::SomeoneBcstmsg() {
 PalInfo *UdpData::CreatePalInfo() {
   PalInfo *pal;
 
+  ProgramDataCore& programData = coreThread.getProgramData();
   pal = new PalInfo;
   pal->ipv4 = ipv4;
-  pal->segdes = g_progdt->FindNetSegDescription(ipv4);
+  pal->segdes = programData.FindNetSegDescription(ipv4);
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
   if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
@@ -568,7 +579,7 @@ PalInfo *UdpData::CreatePalInfo() {
   pal->photo = NULL;
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
-    pal->iconfile = g_strdup(g_progdt->palicon);
+    pal->iconfile = g_strdup(programData.palicon);
   if ((pal->encode = GetPalEncode())) {
     pal->setCompatible(true);
   } else {

@@ -42,6 +42,7 @@ class CoreThread {
   void stop();
 
   ProgramDataCore& getProgramData();
+  bool getDebug() const;
   void setDebug(bool debug);
 
   void WriteSharedData();
@@ -95,7 +96,6 @@ class CoreThread {
  private:
   void InitSublayer();
   void ClearSublayer();
-  static void InitThemeSublayerData();
   void ReadSharedData();
 
   static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);

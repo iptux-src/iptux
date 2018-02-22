@@ -118,7 +118,9 @@ void Command::DialUp(int sock) {
 void Command::SendAnsentry(int sock, PalInfo *pal) {
   struct sockaddr_in addr;
 
-  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, g_progdt->nickname.c_str());
+  ProgramDataCore& programData = coreThread.getProgramData();
+
+  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData.nickname.c_str());
   ConvertEncode(pal->encode);
   CreateIptuxExtra(pal->encode);
 

@@ -111,7 +111,7 @@ class MainWindow {
                                bool blinking);
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-
+  void InitThemeSublayerData();
  private:
   //回调处理部分
   static gboolean UpdateUI(MainWindow *mwin);

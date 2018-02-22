@@ -47,6 +47,7 @@ void Application::onStartup(Application& self) {
   self.window = new MainWindow(self.app, self.config, *self.data);
   g_progdt = self.data;
   g_mwin = self.window;
+
   iptux_register_resource();
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL },

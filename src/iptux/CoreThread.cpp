@@ -23,7 +23,6 @@
 #include "iptux/ProgramData.h"
 #include "iptux/TcpData.h"
 #include "iptux/UdpData.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"
 #include "iptux/output.h"
@@ -112,6 +111,10 @@ void CoreThread::stop() {
 
 ProgramDataCore& CoreThread::getProgramData() {
   return programData;
+}
+
+bool CoreThread::getDebug() const {
+  return debug;
 }
 
 void CoreThread::setDebug(bool debug) {
@@ -786,7 +789,6 @@ void CoreThread::SetAccessPublicLimit(const char *limit) {
  * 初始化底层数据.
  */
 void CoreThread::InitSublayer() {
-  InitThemeSublayerData();
   ReadSharedData();
 }
 
@@ -799,24 +801,28 @@ void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+  if (!debug) {
+    g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+  }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
   g_slist_free(pallist);
-  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
-  g_slist_free(groupInfos);
-  for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
-  g_slist_free(sgmlist);
-  for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
-  g_slist_free(grplist);
-  for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *)tlist->data;
+  if(!debug) {
+    for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+    g_slist_free(groupInfos);
+    for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+    g_slist_free(sgmlist);
+    for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+    g_slist_free(grplist);
+    for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
+      delete (GroupInfo *) tlist->data;
+  }
   g_slist_free(brdlist);
   g_slist_free(blacklist);
   g_queue_clear(&msgline);
@@ -834,39 +840,6 @@ void CoreThread::ClearSublayer() {
 
   if (timerid > 0) g_source_remove(timerid);
   pthread_mutex_destroy(&mutex);
-}
-
-/**
- * 初始化主题库底层数据.
- */
-// TODO: this should not in CoreThread
-void CoreThread::InitThemeSublayerData() {
-  GtkIconTheme *theme;
-  GtkIconFactory *factory;
-  GtkIconSet *set;
-  GdkPixbuf *pixbuf;
-
-  theme = gtk_icon_theme_get_default();
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH);
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/icon");
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/menu");
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/tip");
-
-  factory = gtk_icon_factory_new();
-  gtk_icon_factory_add_default(factory);
-  if ((pixbuf = gtk_icon_theme_load_icon(theme, "iptux", 64,
-                                         GtkIconLookupFlags(0), NULL))) {
-    set = gtk_icon_set_new_from_pixbuf(pixbuf);
-    gtk_icon_factory_add(factory, "iptux-logo-show", set);
-    g_object_unref(pixbuf);
-  }
-  if ((pixbuf = gtk_icon_theme_load_icon(theme, "iptux-i", 64,
-                                         GtkIconLookupFlags(0), NULL))) {
-    set = gtk_icon_set_new_from_pixbuf(pixbuf);
-    gtk_icon_factory_add(factory, "iptux-logo-hide", set);
-    g_object_unref(pixbuf);
-  }
-  g_object_unref(factory);
 }
 
 /**
@@ -1025,14 +998,15 @@ GroupInfo *CoreThread::AttachPalRegularItem(PalInfo *pal) {
   GroupInfo *grpinf;
 
   grpinf = new GroupInfo;
-  grpinf->grpid = pal->ipv4;
-  grpinf->type = GROUP_BELONG_TYPE_REGULAR;
-  grpinf->name = g_strdup(pal->name);
-  grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
-  grpinf->dialog = NULL;
+  if(!debug){
+    grpinf->grpid = pal->ipv4;
+    grpinf->type = GROUP_BELONG_TYPE_REGULAR;
+    grpinf->name = g_strdup(pal->name);
+    grpinf->member = NULL;
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+    grpinf->dialog = NULL;
+  }
   groupInfos = g_slist_append(groupInfos, grpinf);
-
   return grpinf;
 }
 
@@ -1054,7 +1028,9 @@ GroupInfo *CoreThread::AttachPalSegmentItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  if(!debug) {
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  }
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -1079,7 +1055,9 @@ GroupInfo *CoreThread::AttachPalGroupItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_GROUP;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  if (!debug) {
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  }
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
 
@@ -1102,7 +1080,9 @@ GroupInfo *CoreThread::AttachPalBroadcastItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  if (!debug) {
+    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  }
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
 
@@ -1160,9 +1140,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    if(!self->debug) {
-      UdpData::UdpDataEntry(addr.sin_addr.s_addr, buf, size);
-    }
+    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, buf, size);
   }
 }
 
