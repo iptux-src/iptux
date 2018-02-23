@@ -28,8 +28,6 @@
 
 namespace iptux {
 
-static void bind_iptux_port(int port);
-
 /**
  * 打开URL.
  * @param url url
