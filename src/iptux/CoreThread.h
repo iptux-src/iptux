@@ -35,7 +35,7 @@ class CoreThread {
   virtual void UpdatePalToList(in_addr_t ipv4);
   virtual void AttachPalToList(PalInfo *pal);
 
-  void regesiterCallback(const EventCallback& callback);
+  void registerCallback(const EventCallback &callback);
   void sendFeatureData(PalInfo *pal);
   void emitNewPalOnline(PalInfo* palInfo);
   void emitEvent(const Event& event);

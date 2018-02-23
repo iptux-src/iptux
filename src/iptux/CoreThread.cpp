@@ -279,7 +279,7 @@ void CoreThread::AttachPalToList(PalInfo *pal) {
   pal->setOnline(true);
 }
 
-void CoreThread::regesiterCallback(const EventCallback& callback) {
+void CoreThread::registerCallback(const EventCallback &callback) {
   Lock();
   callbacks.push_back(callback);
   Unlock();

@@ -59,7 +59,7 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
   activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
-  g_cthrd->regesiterCallback([&](const Event& event){this->processEvent(event);});
+  g_cthrd->registerCallback([&](const Event &event) { this->processEvent(event); });
 }
 
 /**
