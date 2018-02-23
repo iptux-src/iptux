@@ -199,28 +199,7 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
  * @param pal class PalInfo
  */
 void UiCoreThread::SendFeatureData(PalInfo *pal) {
-  Command cmd(*g_cthrd);
-  char path[MAX_PATHLEN];
-  const gchar *env;
-  int sock;
-
-  if (!g_progdt->sign.empty()) {
-    cmd.SendMySign(g_cthrd->udpSock, pal);
-  }
-  env = g_get_user_config_dir();
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
-           g_progdt->myicon.c_str());
-  if (access(path, F_OK) == 0) cmd.SendMyIcon(g_cthrd->udpSock, pal);
-  snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
-  if (access(path, F_OK) == 0) {
-    if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-      pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-                strerror(errno));
-      exit(1);
-    }
-    cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
-    close(sock);
-  }
+  g_cthrd->sendFeatureData(pal);
 }
 
 /**

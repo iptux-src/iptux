@@ -14,6 +14,8 @@
 #include "UdpData.h"
 
 #include <cinttypes>
+#include <thread>
+#include <functional>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -163,6 +165,8 @@ void UdpData::SomeoneLost() {
  * 好友上线.
  */
 void UdpData::SomeoneEntry() {
+  using namespace std::placeholders;
+
   Command cmd(coreThread);
   pthread_t pid;
   PalInfo *pal;
@@ -187,11 +191,9 @@ void UdpData::SomeoneEntry() {
 
   /* 通知好友本大爷在线 */
   cmd.SendAnsentry(coreThread.getUdpSock(), pal);
-  if(!coreThread.getDebug()) {
-    if (pal->isCompatible()) {
-      pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendFeatureData), pal);
-      pthread_detach(pid);
-    }
+  if (pal->isCompatible()) {
+    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
+    t1.detach();
   }
 }
 

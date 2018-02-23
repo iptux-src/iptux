@@ -39,6 +39,7 @@ class CoreThread {
   virtual void AttachPalToList(PalInfo *pal);
 
   void regesiterCallback(const EventCallback& callback);
+  void sendFeatureData(PalInfo *pal);
   void emitNewPalOnline(PalInfo* palInfo);
   void emitEvent(const Event& event);
  public:
