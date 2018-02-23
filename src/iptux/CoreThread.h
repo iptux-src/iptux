@@ -19,9 +19,6 @@ class CoreThread {
   virtual void start();
   virtual void stop();
 
-  bool getDebug() const;
-  void setDebug(bool debug);
-
   int getUdpSock() const;
 
   ProgramDataCore& getProgramData();
@@ -49,7 +46,6 @@ class CoreThread {
   IptuxConfig& config;
   int tcpSock;
   int udpSock;
-  bool debug;
   GSList *blacklist;                              //黑名单链表
   pthread_mutex_t mutex;  //锁
   GSList *pallist;  //好友链表(成员不能被删除)

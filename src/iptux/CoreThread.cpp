@@ -21,7 +21,6 @@ CoreThread::CoreThread(ProgramDataCore &data)
       tcpSock(-1),
       udpSock(-1),
       started(false),
-      debug(false),
       blacklist(nullptr),
       pallist(nullptr)
 {
@@ -154,14 +153,6 @@ int CoreThread::getUdpSock() const {
 
 ProgramDataCore& CoreThread::getProgramData() {
   return programData;
-}
-
-bool CoreThread::getDebug() const {
-  return debug;
-}
-
-void CoreThread::setDebug(bool debug) {
-  this->debug = debug;
 }
 
 /**

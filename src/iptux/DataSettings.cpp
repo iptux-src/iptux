@@ -456,7 +456,7 @@ GtkWidget *DataSettings::CreateNetwork() {
                    NULL);
   g_datalist_set_data(&widset, "endip-entry-widget", widget);
   /* 增加&删除按钮 */
-  hbox = gtk_hbutton_box_new();
+  hbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbox), GTK_BUTTONBOX_SPREAD);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   snprintf(buf, MAX_BUFLEN, "%s↓↓", _("Add"));
@@ -1070,7 +1070,6 @@ void DataSettings::ObtainNetworkValue() {
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GSList *tlist;
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));

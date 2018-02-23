@@ -675,27 +675,23 @@ void UiCoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  if (!debug) {
-    g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
-  }
+  g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
   CoreThread::ClearSublayer();
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
   g_slist_free(pallist);
-  if(!debug) {
-    for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
-      delete (GroupInfo *) tlist->data;
-    g_slist_free(groupInfos);
-    for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
-      delete (GroupInfo *) tlist->data;
-    g_slist_free(sgmlist);
-    for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
-      delete (GroupInfo *) tlist->data;
-    g_slist_free(grplist);
-    for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
-      delete (GroupInfo *) tlist->data;
-  }
+  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
+    delete (GroupInfo *) tlist->data;
+  g_slist_free(groupInfos);
+  for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
+    delete (GroupInfo *) tlist->data;
+  g_slist_free(sgmlist);
+  for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
+    delete (GroupInfo *) tlist->data;
+  g_slist_free(grplist);
+  for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
+    delete (GroupInfo *) tlist->data;
   g_slist_free(brdlist);
   g_slist_free(blacklist);
   g_queue_clear(&msgline);
@@ -870,14 +866,12 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
   GroupInfo *grpinf;
 
   grpinf = new GroupInfo;
-  if(!debug){
-    grpinf->grpid = pal->ipv4;
-    grpinf->type = GROUP_BELONG_TYPE_REGULAR;
-    grpinf->name = g_strdup(pal->name);
-    grpinf->member = NULL;
-    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
-    grpinf->dialog = NULL;
-  }
+  grpinf->grpid = pal->ipv4;
+  grpinf->type = GROUP_BELONG_TYPE_REGULAR;
+  grpinf->name = g_strdup(pal->name);
+  grpinf->member = NULL;
+  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->dialog = NULL;
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
 }
@@ -900,9 +894,7 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;
-  if(!debug) {
-    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
-  }
+  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -927,9 +919,7 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_GROUP;
   grpinf->name = name;
   grpinf->member = NULL;
-  if (!debug) {
-    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
-  }
+  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
 
@@ -952,9 +942,7 @@ GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
   grpinf->member = NULL;
-  if (!debug) {
-    grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
-  }
+  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
 
