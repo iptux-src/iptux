@@ -373,7 +373,7 @@ GtkWidget *DataSettings::CreateSound() {
   g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), hbox);
   label = gtk_label_new(_("Volume Control: "));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  widget = gtk_hscale_new_with_range(0.0, 1.0, 0.01);
+  widget = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0.0, 1.0, 0.01);
   gtk_scale_set_draw_value(GTK_SCALE(widget), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_signal_connect(widget, "value-changed", G_CALLBACK(AdjustVolume), NULL);

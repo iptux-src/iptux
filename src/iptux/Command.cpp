@@ -35,7 +35,7 @@ uint32_t Command::packetn = 1;
 /**
  * 类构造函数.
  */
-Command::Command(UiCoreThread& coreThread)
+Command::Command(CoreThread& coreThread)
     : coreThread(coreThread),
       size(0),
       buf("") {}

@@ -22,6 +22,7 @@
 #include "iptux/ProgramDataCore.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
+#include "iptux/CoreThread.h"
 
 namespace iptux {
 
@@ -33,43 +34,32 @@ namespace iptux {
  * 若此特性不可被如此利用，请报告bug. \n
  * @note 如果本程序编码中的某处没有遵循以上规则，请报告bug.
  */
-class UiCoreThread {
+class UiCoreThread: public CoreThread {
  public:
   explicit UiCoreThread(ProgramDataCore &data);
-  ~UiCoreThread();
+  ~UiCoreThread() override ;
 
-  void start();
-  void stop();
-
-  ProgramDataCore& getProgramData();
-  bool getDebug() const;
-  void setDebug(bool debug);
+  void start() override;
 
   void WriteSharedData();
-  GSList *GetPalList();
-  void Lock();
-  void Unlock();
 
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
 
   static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
-  static void SendNotifyToAll(UiCoreThread *pcthrd);
   static void SendFeatureData(PalInfo *pal);
   static void SendBroadcastExit(PalInfo *pal);
   static void UpdateMyInfo();
 
-  void ClearAllPalFromList();
-  PalInfo *GetPalFromList(in_addr_t ipv4);
-  void DelPalFromList(in_addr_t ipv4);
-  void UpdatePalToList(in_addr_t ipv4);
-  void AttachPalToList(PalInfo *pal);
+  void ClearAllPalFromList() override ;
+  void DelPalFromList(in_addr_t ipv4) override ;
+  void UpdatePalToList(in_addr_t ipv4) override ;
+  void AttachPalToList(PalInfo *pal) override ;
   GroupInfo *GetPalRegularItem(PalInfo *pal);
   GroupInfo *GetPalSegmentItem(PalInfo *pal);
   GroupInfo *GetPalGroupItem(PalInfo *pal);
   GroupInfo *GetPalBroadcastItem(PalInfo *pal);
 
-  bool BlacklistContainItem(in_addr_t ipv4);
   void AttachItemToBlacklist(in_addr_t ipv4);
 
   guint GetMsglineItems();
@@ -95,7 +85,7 @@ class UiCoreThread {
   GSimpleAction* newMessageArrived;
  private:
   void InitSublayer();
-  void ClearSublayer();
+  void ClearSublayer() override ;
   void ReadSharedData();
 
   static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
@@ -109,19 +99,11 @@ class UiCoreThread {
   GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  void bind_iptux_port();
 
-
-  ProgramDataCore &programData;
-  IptuxConfig &config;
+  guint timerid;          //定时器ID
   std::queue<MsgPara> messages;
-  int tcpSock;
-  int udpSock;
-  bool started;           //程序是否正在服务
 
-  GSList *pallist;  //好友链表(成员不能被删除)
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
-  GSList *blacklist;                              //黑名单链表
   GQueue msgline;                                 //消息队列
 
   uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
@@ -130,24 +112,14 @@ class UiCoreThread {
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
   std::string passwd;  //共享文件密码
 
-  guint timerid;          //定时器ID
-  pthread_mutex_t mutex;  //锁
-  pthread_t notifyToAllThread;
-  bool debug;
   //回调处理部分函数
  private:
   static void onNewMessageArrived(UiCoreThread* self);
-  static void RecvUdpData(UiCoreThread *pcthrd);
-  static void RecvTcpData(UiCoreThread *pcthrd);
-  static gboolean WatchCoreStatus(UiCoreThread *pcthrd);
   static gboolean InsertMessageInMain(UiCoreThread* self);
+  static gboolean WatchCoreStatus(UiCoreThread *self);
 
     //内联成员函数
  public:
-  inline int getUdpSock() const {
-    return udpSock;
-  }
-
   inline uint32_t &PbnQuote() { return pbn; }
 
   inline uint32_t &PrnQuote() { return prn; }

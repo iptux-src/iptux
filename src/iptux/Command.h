@@ -22,8 +22,11 @@ namespace iptux {
 
 class Command {
  public:
-  explicit Command(UiCoreThread& coreThread);
+  explicit Command(CoreThread& coreThread);
   ~Command();
+
+  Command(const Command&) = delete;
+  Command& operator=(const Command&) = delete;
 
   void BroadCast(int sock);
   void DialUp(int sock);
@@ -58,7 +61,7 @@ class Command {
 
 
 private:
-  UiCoreThread& coreThread;
+  CoreThread& coreThread;
   size_t size;              //当前已使用缓冲区的长度
   char buf[MAX_UDPLEN];     //数据缓冲区
   static uint32_t packetn;  //包编号

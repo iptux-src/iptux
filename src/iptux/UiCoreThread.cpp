@@ -40,28 +40,19 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
  * 类构造函数.
  */
 UiCoreThread::UiCoreThread(ProgramDataCore &data)
-    : programData(data),
-      config(data.getConfig()),
-      tcpSock(-1),
-      udpSock(-1),
-      started(false),
-      pallist(nullptr),
+    : CoreThread(data),
       groupInfos(NULL),
       sgmlist(NULL),
       grplist(NULL),
       brdlist(NULL),
-      blacklist(NULL),
       pbn(1),
       prn(MAX_SHAREDFILE),
       pblist(NULL),
       prlist(NULL),
-      ecsList(NULL),
-      debug(false)
-{
+      ecsList(NULL) {
   newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
   g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
-  pthread_mutex_init(&mutex, NULL);
   InitSublayer();
 }
 
@@ -69,56 +60,7 @@ UiCoreThread::UiCoreThread(ProgramDataCore &data)
  * 类析构函数.
  */
 UiCoreThread::~UiCoreThread() {
-  if(started) {
-    stop();
-  }
   g_object_unref(newMessageArrived);
-}
-
-/**
- * 程序核心入口，主要任务服务将在此开启.
- */
-void UiCoreThread::start() {
-  if(started) {
-    throw "CoreThread already started, can't start twice";
-  }
-  started = true;
-
-  bind_iptux_port();
-
-  pthread_t pid;
-
-  /* 开启UDP监听服务 */
-  pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
-  pthread_detach(pid);
-  /* 开启TCP监听服务 */
-  pthread_create(&pid, NULL, ThreadFunc(RecvTcpData), this);
-  pthread_detach(pid);
-  /* 定时扫描处理程序内部任务 */
-  timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
-  /* 通知所有计算机本大爷上线啦 */
-  pthread_create(&notifyToAllThread, NULL, ThreadFunc(SendNotifyToAll), this);
-}
-
-void UiCoreThread::stop() {
-  if(!started) {
-    throw "CoreThread not started, or already stopped";
-  }
-  started = false;
-  pthread_join(notifyToAllThread, nullptr);
-  ClearSublayer();
-}
-
-ProgramDataCore& UiCoreThread::getProgramData() {
-  return programData;
-}
-
-bool UiCoreThread::getDebug() const {
-  return debug;
-}
-
-void UiCoreThread::setDebug(bool debug) {
-  this->debug = debug;
 }
 
 /**
@@ -142,12 +84,6 @@ void UiCoreThread::WriteSharedData() {
   }
   config.Save();
 }
-
-/**
- * 获取好友链表.
- * @return 好友链表
- */
-GSList *UiCoreThread::GetPalList() { return pallist; }
 
 /**
  * 插入消息(UI线程安全).
@@ -222,6 +158,8 @@ gboolean UiCoreThread::InsertMessageInMain(UiCoreThread* self) {
     }
     return G_SOURCE_REMOVE;
   }
+  g_assert_not_reached();
+  return G_SOURCE_REMOVE;
 }
 
 /**
@@ -254,16 +192,6 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
         break;
     }
   }
-}
-
-/**
- * 向局域网内所有计算机发送上线信息.
- * @param pcthrd 核心类
- */
-void UiCoreThread::SendNotifyToAll(UiCoreThread *pcthrd) {
-  Command cmd(*pcthrd);
-  cmd.BroadCast(pcthrd->udpSock);
-  cmd.DialUp(pcthrd->udpSock);
 }
 
 /**
@@ -334,18 +262,11 @@ void UiCoreThread::UpdateMyInfo() {
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */
 void UiCoreThread::ClearAllPalFromList() {
+  CoreThread::ClearAllPalFromList();
+
   SessionAbstract *session;
   GroupInfo *grpinf;
-  PalInfo *pal;
   GSList *tlist;
-
-  /* 清除所有好友的在线标志 */
-  tlist = pallist;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
-    pal->setOnline(false);
-    tlist = g_slist_next(tlist);
-  }
 
   /* 清空常规模式下所有群组的成员 */
   tlist = groupInfos;
@@ -402,35 +323,19 @@ void UiCoreThread::ClearAllPalFromList() {
 }
 
 /**
- * 从好友链表中获取指定的好友信息数据.
- * @param ipv4 ipv4
- * @return 好友信息数据
- */
-PalInfo *UiCoreThread::GetPalFromList(in_addr_t ipv4) {
-  GSList *tlist;
-
-  tlist = pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == ipv4) break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return (PalInfo *)(tlist ? tlist->data : NULL);
-}
-
-/**
  * 从好友链表中删除指定的好友信息数据(非UI线程安全).
  * @param ipv4 ipv4
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可；
  * 鉴于群组中只能包含在线的好友，所以若某群组中包含了此好友，则必须从此群组中删除此好友
  */
 void UiCoreThread::DelPalFromList(in_addr_t ipv4) {
+  CoreThread::DelPalFromList(ipv4);
+
   PalInfo *pal;
   GroupInfo *grpinf;
 
   /* 获取好友信息数据，并将其置为下线状态 */
   if (!(pal = GetPalFromList(ipv4))) return;
-  pal->setOnline(false);
 
   /* 从群组中移除好友 */
   if ((grpinf = GetPalRegularItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
@@ -448,6 +353,8 @@ void UiCoreThread::DelPalFromList(in_addr_t ipv4) {
  * @note 群组中被更新的成员信息也应该在界面上做出相应更新
  */
 void UiCoreThread::UpdatePalToList(in_addr_t ipv4) {
+  CoreThread::UpdatePalToList(ipv4);
+
   PalInfo *pal;
   GroupInfo *grpinf;
   SessionAbstract *session;
@@ -456,7 +363,6 @@ void UiCoreThread::UpdatePalToList(in_addr_t ipv4) {
   if (!(pal = GetPalFromList(ipv4))) {
     return;
   }
-  pal->setOnline(true);
 
   /* 更新好友所在的群组，以及它在UI上的信息 */
   /*/* 更新常规模式下的群组 */
@@ -523,11 +429,8 @@ void UiCoreThread::UpdatePalToList(in_addr_t ipv4) {
  * 也应该分配好友到相应的群组
  */
 void UiCoreThread::AttachPalToList(PalInfo *pal) {
+  CoreThread::AttachPalToList(pal);
   GroupInfo *grpinf;
-
-  /* 将好友加入到好友链表 */
-  pallist = g_slist_append(pallist, pal);
-  pal->setOnline(true);
 
   /* 将好友加入到相应的群组 */
   if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
@@ -611,15 +514,6 @@ GroupInfo *UiCoreThread::GetPalGroupItem(PalInfo *pal) {
  */
 GroupInfo *UiCoreThread::GetPalBroadcastItem(PalInfo *pal) {
   return (GroupInfo *)(brdlist ? brdlist->data : NULL);
-}
-
-/**
- * 黑名单链表中是否包含此项.
- * @param ipv4 ipv4
- * @return 是否包含
- */
-bool UiCoreThread::BlacklistContainItem(in_addr_t ipv4) {
-  return g_slist_find(blacklist, GUINT_TO_POINTER(ipv4));
 }
 
 /**
@@ -796,6 +690,7 @@ void UiCoreThread::InitSublayer() {
  * 清空底层数据.
  */
 void UiCoreThread::ClearSublayer() {
+
   GSList *tlist;
 
   /**
@@ -804,8 +699,7 @@ void UiCoreThread::ClearSublayer() {
   if (!debug) {
     g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
   }
-  shutdown(tcpSock, SHUT_RDWR);
-  shutdown(udpSock, SHUT_RDWR);
+  CoreThread::ClearSublayer();
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
     delete (PalInfo *)tlist->data;
@@ -837,7 +731,6 @@ void UiCoreThread::ClearSublayer() {
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo *)tlist->data;
   g_slist_free(ecsList);
-
   if (timerid > 0) g_source_remove(timerid);
   pthread_mutex_destroy(&mutex);
 }
@@ -1125,62 +1018,6 @@ void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
 }
 
 /**
- * 监听UDP服务端口.
- * @param pcthrd 核心类
- */
-void UiCoreThread::RecvUdpData(UiCoreThread *self) {
-  struct sockaddr_in addr;
-  socklen_t len;
-  char buf[MAX_UDPLEN];
-  ssize_t size;
-
-  while (self->started) {
-    len = sizeof(addr);
-    if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
-                         (struct sockaddr *)&addr, &len)) == -1)
-      continue;
-    if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, buf, size);
-  }
-}
-
-/**
- * 监听TCP服务端口.
- * @param pcthrd 核心类
- */
-void UiCoreThread::RecvTcpData(UiCoreThread *pcthrd) {
-  pthread_t pid;
-  int subsock;
-
-  listen(pcthrd->tcpSock, 5);
-  while (pcthrd->started) {
-    if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
-    pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
-                   GINT_TO_POINTER(subsock));
-    pthread_detach(pid);
-  }
-}
-
-/**
- * 扫描处理程序内部任务(非UI线程安全).
- * @param pcthrd 核心类
- * @return GLib库所需
- */
-gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
-  GList *tlist;
-
-  /* 让等待队列中的群组信息项闪烁 */
-  pthread_mutex_lock(&pcthrd->mutex);
-  tlist = pcthrd->msgline.head;
-  while (tlist) {
-    g_mwin->MakeItemBlinking((GroupInfo *)tlist->data, true);
-    tlist = g_list_next(tlist);
-  }
-  pthread_mutex_unlock(&pcthrd->mutex);
-
-  return TRUE;
-}
-/**
  * 获取特定好友发过来的文件(非UI线程安全).
  * @param pal class PalInfo
  * @return palecslist 该好友发过来待接收的文件列表
@@ -1211,48 +1048,29 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
   delete file;
 }
 
-void UiCoreThread::Lock() { pthread_mutex_lock(&mutex); }
+void UiCoreThread::start() {
+/* 定时扫描处理程序内部任务 */
+  timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
+}
 
-void UiCoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
+/**
+ * 扫描处理程序内部任务(非UI线程安全).
+ * @param pcthrd 核心类
+ * @return GLib库所需
+ */
+gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
+  GList *tlist;
 
-void UiCoreThread::bind_iptux_port() {
-  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
-  struct sockaddr_in addr;
-  tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-  socket_enable_reuse(tcpSock);
-  udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  socket_enable_reuse(udpSock);
-  socket_enable_broadcast(udpSock);
-  if ((tcpSock == -1) || (udpSock == -1)) {
-    int ec = errno;
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
-                                         strerror(ec));
-    LOG_WARN("%s", errmsg);
-    throw BindFailedException(ec, errmsg);
+  /* 让等待队列中的群组信息项闪烁 */
+  pthread_mutex_lock(&pcthrd->mutex);
+  tlist = pcthrd->msgline.head;
+  while (tlist) {
+    g_mwin->MakeItemBlinking((GroupInfo *)tlist->data, true);
+    tlist = g_list_next(tlist);
   }
+  pthread_mutex_unlock(&pcthrd->mutex);
 
-  bzero(&addr, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
-    int ec = errno;
-    close(tcpSock);
-    close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%d)!\n%s"),
-                                         port, strerror(ec));
-    LOG_WARN("%s", errmsg);
-    throw BindFailedException(ec, errmsg);
-  }
-  if(::bind(udpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
-    int ec = errno;
-    close(tcpSock);
-    close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%d)!\n%s"),
-                                         port, strerror(ec));
-    LOG_WARN("%s", errmsg);
-    throw BindFailedException(ec, errmsg);
-  }
+  return TRUE;
 }
 
 

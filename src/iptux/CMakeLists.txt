@@ -59,7 +59,7 @@ add_library(iptux
 		TransAbstract.cpp TransAbstract.h
 		UiModels.h UiModels.cpp
 		IptuxResource.h IptuxResource.cpp
-        UiHelper.h UiHelper.cpp ProgramDataCore.cpp ProgramDataCore.h)
+        UiHelper.h UiHelper.cpp ProgramDataCore.cpp ProgramDataCore.h CoreThread.cpp CoreThread.h)
 
 
 add_executable(libiptux_test
