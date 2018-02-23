@@ -167,6 +167,7 @@ class MainWindow {
   static void onSortType (void *, GVariant* value, MainWindow& self);
   static void onSortBy (void *, GVariant* value, MainWindow& self);
   static void onActive(MainWindow& self);
+  static gboolean onNewPalOnlineEvent(gpointer data);
 };
 
 }  // namespace iptux

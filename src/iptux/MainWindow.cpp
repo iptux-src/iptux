@@ -1806,18 +1806,27 @@ void MainWindow::InitThemeSublayerData() {
   g_object_unref(factory);
 }
 
-
+// this function is run in corethread, so always use g_idle_add to update the ui
 void MainWindow::processEvent(const Event& event) {
   EventType type = event.getType();
   if(type == EventType ::NEW_PAL_ONLINE) {
     auto event2 = (const NewPalOnlineEvent &) event;
     auto ipv4 = event2.getPalInfo()->ipv4;
-    if(PaltreeContainItem(ipv4)) {
-      UpdateItemToPaltree(ipv4);
-    } else {
-      AttachItemToPaltree(ipv4);
-    }
+    in_addr_t *p = g_new(in_addr_t, 1);
+    *p = ipv4;
+    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE, MainWindow::onNewPalOnlineEvent, p, g_free);
   }
+}
+
+gboolean MainWindow::onNewPalOnlineEvent(gpointer data) {
+  in_addr_t* ipv4 = static_cast<in_addr_t *>(data);
+  MainWindow* self = g_mwin;
+  if(self->PaltreeContainItem(*ipv4)) {
+    self->UpdateItemToPaltree(*ipv4);
+  } else {
+    self->AttachItemToPaltree(*ipv4);
+  }
+  return G_SOURCE_REMOVE;
 }
 
 
