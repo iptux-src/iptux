@@ -1,7 +1,3 @@
-//
-// Created by LIDaobing on 2018-02-23.
-//
-
 #include "config.h"
 #include "CoreThread.h"
 
