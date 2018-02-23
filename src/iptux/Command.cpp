@@ -18,13 +18,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux/UiCoreThread.h"
 #include "iptux/ProgramData.h"
 #include "iptux/deplib.h"
-#include "iptux/global.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"
+#include "iptux/global.h"
 
 using namespace std;
 
@@ -159,8 +158,9 @@ void Command::SendExit(int sock, PalInfo *pal) {
 void Command::SendAbsence(int sock, PalInfo *pal) {
   struct sockaddr_in addr;
 
+  ProgramDataCore& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE,
-                g_progdt->nickname.c_str());
+                programData.nickname.c_str());
   ConvertEncode(pal->encode);
   CreateIptuxExtra(pal->encode);
 
@@ -180,10 +180,11 @@ void Command::SendAbsence(int sock, PalInfo *pal) {
 void Command::SendDetectPacket(int sock, in_addr_t ipv4) {
   struct sockaddr_in addr;
 
+  ProgramDataCore& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                g_progdt->nickname.c_str());
-  ConvertEncode(g_progdt->encode);
-  CreateIptuxExtra(g_progdt->encode);
+                programData.nickname.c_str());
+  ConvertEncode(programData.encode);
+  CreateIptuxExtra(programData.encode);
 
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
@@ -597,7 +598,7 @@ void Command::CreateIptuxExtra(const string &encode) {
   ProgramDataCore& programData = coreThread.getProgramData();
   pptr = buf + size;
   if (!encode.empty() && strcasecmp(encode.c_str(), "utf-8") != 0 &&
-      (ptr = convert_encode(g_progdt->mygroup.c_str(), encode.c_str(),
+      (ptr = convert_encode(programData.mygroup.c_str(), encode.c_str(),
                             "utf-8"))) {
     snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
     g_free(ptr);
