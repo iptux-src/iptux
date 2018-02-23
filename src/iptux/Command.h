@@ -16,13 +16,13 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 
 namespace iptux {
 
 class Command {
  public:
-  explicit Command(CoreThread& coreThread);
+  explicit Command(UiCoreThread& coreThread);
   ~Command();
 
   void BroadCast(int sock);
@@ -58,7 +58,7 @@ class Command {
 
 
 private:
-  CoreThread& coreThread;
+  UiCoreThread& coreThread;
   size_t size;              //当前已使用缓冲区的长度
   char buf[MAX_UDPLEN];     //数据缓冲区
   static uint32_t packetn;  //包编号

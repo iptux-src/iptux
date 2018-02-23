@@ -17,16 +17,16 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
-#include "CoreThread.h"
+#include "UiCoreThread.h"
 
 namespace iptux {
 
 class UdpData {
  public:
-  explicit UdpData(CoreThread& coreThread);
+  explicit UdpData(UiCoreThread& coreThread);
   ~UdpData();
 
-  static void UdpDataEntry(CoreThread& coreThread,
+  static void UdpDataEntry(UiCoreThread& coreThread,
                            in_addr_t ipv4,
                            const char buf[],
                            size_t size);
@@ -59,7 +59,7 @@ class UdpData {
   PalInfo *AssertPalOnline();
   void RecvPalFile();
  private:
-  CoreThread& coreThread;
+  UiCoreThread& coreThread;
   in_addr_t ipv4;        //数据来自
   size_t size;           //缓冲区数据有效长度
   char buf[MAX_UDPLEN];  //数据缓冲区

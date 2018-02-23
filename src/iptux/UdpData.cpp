@@ -18,7 +18,7 @@
 #include <unistd.h>
 
 #include "Command.h"
-#include "CoreThread.h"
+#include "UiCoreThread.h"
 #include "DialogGroup.h"
 #include "DialogPeer.h"
 #include "MainWindow.h"
@@ -41,7 +41,7 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UdpData::UdpData(CoreThread& coreThread)
+UdpData::UdpData(UiCoreThread& coreThread)
     : coreThread(coreThread), ipv4(0), size(0), encode(NULL) {}
 
 /**
@@ -55,7 +55,7 @@ UdpData::~UdpData() { g_free(encode); }
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(CoreThread& coreThread,
+void UdpData::UdpDataEntry(UiCoreThread& coreThread,
                            in_addr_t ipv4,
                            const char buf[],
                            size_t size) {
@@ -195,7 +195,7 @@ void UdpData::SomeoneEntry() {
   cmd.SendAnsentry(coreThread.getUdpSock(), pal);
   if(!coreThread.getDebug()) {
     if (pal->isCompatible()) {
-      pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
+      pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendFeatureData), pal);
       pthread_detach(pid);
     }
   }
@@ -251,7 +251,7 @@ void UdpData::SomeoneAnsentry() {
 
   /* 更新本大爷的数据信息 */
   if (pal->isCompatible()) {
-    pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
+    pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendFeatureData), pal);
     pthread_detach(pid);
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
     cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);

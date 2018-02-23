@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/ProgramData.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"
@@ -35,7 +35,7 @@ uint32_t Command::packetn = 1;
 /**
  * 类构造函数.
  */
-Command::Command(CoreThread& coreThread)
+Command::Command(UiCoreThread& coreThread)
     : coreThread(coreThread),
       size(0),
       buf("") {}

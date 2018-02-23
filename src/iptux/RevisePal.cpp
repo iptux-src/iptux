@@ -16,7 +16,7 @@
 #include <dirent.h>
 #include <unistd.h>
 
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/MainWindow.h"
 #include "iptux/callback.h"
 #include "iptux/deplib.h"

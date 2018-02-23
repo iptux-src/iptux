@@ -25,7 +25,7 @@ add_library(iptux
 	Application.cpp
 	callback.cpp
 	Command.cpp
-	CoreThread.cpp
+        UiCoreThread.cpp
 	DataSettings.cpp
 	DetectPal.cpp
 	dialog.cpp

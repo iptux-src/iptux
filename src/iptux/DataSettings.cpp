@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/ProgramData.h"
 #include "iptux/SoundSystem.h"
 #include "iptux/callback.h"
@@ -90,7 +90,7 @@ mark:
 #endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
-      CoreThread::UpdateMyInfo();
+      UiCoreThread::UpdateMyInfo();
       break;
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
@@ -100,7 +100,7 @@ mark:
 #endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
-      CoreThread::UpdateMyInfo();
+      UiCoreThread::UpdateMyInfo();
       goto mark;
     default:
       break;

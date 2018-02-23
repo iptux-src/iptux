@@ -14,8 +14,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef IPTUX_CORETHREAD_H
-#define IPTUX_CORETHREAD_H
+#ifndef IPTUX_UICORETHREAD_H
+#define IPTUX_UICORETHREAD_H
 
 #include <queue>
 
@@ -33,10 +33,10 @@ namespace iptux {
  * 若此特性不可被如此利用，请报告bug. \n
  * @note 如果本程序编码中的某处没有遵循以上规则，请报告bug.
  */
-class CoreThread {
+class UiCoreThread {
  public:
-  explicit CoreThread(ProgramDataCore &data);
-  ~CoreThread();
+  explicit UiCoreThread(ProgramDataCore &data);
+  ~UiCoreThread();
 
   void start();
   void stop();
@@ -54,7 +54,7 @@ class CoreThread {
   void InsertMessage(MsgPara&& para);
 
   static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
-  static void SendNotifyToAll(CoreThread *pcthrd);
+  static void SendNotifyToAll(UiCoreThread *pcthrd);
   static void SendFeatureData(PalInfo *pal);
   static void SendBroadcastExit(PalInfo *pal);
   static void UpdateMyInfo();
@@ -136,11 +136,11 @@ class CoreThread {
   bool debug;
   //回调处理部分函数
  private:
-  static void onNewMessageArrived(CoreThread* self);
-  static void RecvUdpData(CoreThread *pcthrd);
-  static void RecvTcpData(CoreThread *pcthrd);
-  static gboolean WatchCoreStatus(CoreThread *pcthrd);
-  static gboolean InsertMessageInMain(CoreThread* self);
+  static void onNewMessageArrived(UiCoreThread* self);
+  static void RecvUdpData(UiCoreThread *pcthrd);
+  static void RecvTcpData(UiCoreThread *pcthrd);
+  static gboolean WatchCoreStatus(UiCoreThread *pcthrd);
+  static gboolean InsertMessageInMain(UiCoreThread* self);
 
     //内联成员函数
  public:

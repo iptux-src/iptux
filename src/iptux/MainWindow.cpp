@@ -1181,7 +1181,7 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
   g_cthrd->ClearAllPalFromList();
   g_cthrd->Unlock();
 
-  pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendNotifyToAll), g_cthrd);
+  pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendNotifyToAll), g_cthrd);
   pthread_detach(pid);
 }
 
