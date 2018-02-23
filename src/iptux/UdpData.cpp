@@ -182,14 +182,8 @@ void UdpData::SomeoneEntry() {
     coreThread.AttachPalToList(pal);
   }
   coreThread.Unlock();
-  if(!coreThread.getDebug()) {
-    if (g_mwin->PaltreeContainItem(ipv4)) {
-      g_mwin->UpdateItemToPaltree(ipv4);
-    } else {
-      g_mwin->AttachItemToPaltree(ipv4);
-    }
-  }
   gdk_threads_leave();
+  coreThread.emitNewPalOnline(pal);
 
   /* 通知好友本大爷在线 */
   cmd.SendAnsentry(coreThread.getUdpSock(), pal);

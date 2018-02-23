@@ -1,9 +1,15 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
+#include <vector>
+#include <functional>
+
 #include "iptux/ProgramDataCore.h"
+#include "iptux/Event.h"
 
 namespace iptux {
+
+typedef std::function<void(Event const&)> EventCallback;
 
 class CoreThread {
  public:
@@ -31,6 +37,10 @@ class CoreThread {
   virtual void DelPalFromList(in_addr_t ipv4);
   virtual void UpdatePalToList(in_addr_t ipv4);
   virtual void AttachPalToList(PalInfo *pal);
+
+  void regesiterCallback(const EventCallback& callback);
+  void emitNewPalOnline(PalInfo* palInfo);
+  void emitEvent(const Event& event);
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
  protected:
@@ -45,6 +55,7 @@ class CoreThread {
  private:
   bool started;
   pthread_t notifyToAllThread;
+  std::vector<EventCallback> callbacks;
  protected:
   virtual void ClearSublayer();
  private:
@@ -52,7 +63,6 @@ class CoreThread {
  private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
-  static gboolean WatchCoreStatus(CoreThread *pcthrd);
 };
 
 }

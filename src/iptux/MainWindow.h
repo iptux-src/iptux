@@ -18,6 +18,7 @@
 #include "iptux/Models.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/UiModels.h"
+#include "Event.h"
 
 namespace iptux {
 
@@ -64,6 +65,8 @@ class MainWindow {
   IptuxConfig &getConfig() { return config; }
 
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
+
+  void processEvent(const Event& event);
 
  private:
   GtkApplication* app;

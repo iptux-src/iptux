@@ -288,4 +288,24 @@ void CoreThread::AttachPalToList(PalInfo *pal) {
   pallist = g_slist_append(pallist, pal);
   pal->setOnline(true);
 }
+
+void CoreThread::regesiterCallback(const EventCallback& callback) {
+  Lock();
+  callbacks.push_back(callback);
+  Unlock();
+}
+
+void CoreThread::emitNewPalOnline(PalInfo* palInfo) {
+  NewPalOnlineEvent event(palInfo);
+  emitEvent(event);
+}
+
+void CoreThread::emitEvent(const Event& event) {
+  Lock();
+  for(EventCallback& callback: callbacks) {
+    callback(event);
+  }
+  Unlock();
+}
+
 }

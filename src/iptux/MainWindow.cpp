@@ -59,6 +59,7 @@ MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &pr
   activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
+  g_cthrd->regesiterCallback([&](const Event& event){this->processEvent(event);});
 }
 
 /**
@@ -1803,6 +1804,20 @@ void MainWindow::InitThemeSublayerData() {
     g_object_unref(pixbuf);
   }
   g_object_unref(factory);
+}
+
+
+void MainWindow::processEvent(const Event& event) {
+  EventType type = event.getType();
+  if(type == EventType ::NEW_PAL_ONLINE) {
+    auto event2 = (const NewPalOnlineEvent &) event;
+    auto ipv4 = event2.getPalInfo()->ipv4;
+    if(PaltreeContainItem(ipv4)) {
+      UpdateItemToPaltree(ipv4);
+    } else {
+      AttachItemToPaltree(ipv4);
+    }
+  }
 }
 
 
