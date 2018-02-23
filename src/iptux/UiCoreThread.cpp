@@ -1049,6 +1049,7 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
 }
 
 void UiCoreThread::start() {
+  CoreThread::start();
 /* 定时扫描处理程序内部任务 */
   timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
 }
