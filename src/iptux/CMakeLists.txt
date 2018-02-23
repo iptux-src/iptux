@@ -25,7 +25,7 @@ add_library(iptux
 	Application.cpp
 	callback.cpp
 	Command.cpp
-	CoreThread.cpp
+        UiCoreThread.cpp
 	DataSettings.cpp
 	DetectPal.cpp
 	dialog.cpp
@@ -59,7 +59,7 @@ add_library(iptux
 		TransAbstract.cpp TransAbstract.h
 		UiModels.h UiModels.cpp
 		IptuxResource.h IptuxResource.cpp
-        UiHelper.h UiHelper.cpp ProgramDataCore.cpp ProgramDataCore.h)
+        UiHelper.h UiHelper.cpp ProgramDataCore.cpp ProgramDataCore.h CoreThread.cpp CoreThread.h Event.cpp Event.h)
 
 
 add_executable(libiptux_test

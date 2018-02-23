@@ -16,7 +16,7 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 
 namespace iptux {
 
@@ -24,6 +24,9 @@ class Command {
  public:
   explicit Command(CoreThread& coreThread);
   ~Command();
+
+  Command(const Command&) = delete;
+  Command& operator=(const Command&) = delete;
 
   void BroadCast(int sock);
   void DialUp(int sock);

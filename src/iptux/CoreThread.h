@@ -1,158 +1,67 @@
-//
-// C++ Interface: CoreThread
-//
-// Description:
-// 程序中的核心线程类，实际上也被设计成了所有底层核心数据的中心点，
-// 所有数据的更新、查询、插入、删除都必须通过本类接口才能完成。
-// -----------------------------------------------------
-// 2012.02:把文件传送的核心数据全部放在CoreThread类。
-// prlist不变,增加ecsList来存放好友发来文件.
-//------------------------------------------------------
-// Author: cwll <cwll2009@126.com>, (C) 2012
-//         Jally <jallyx@163.com>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
-#include <queue>
+#include <vector>
+#include <functional>
 
 #include "iptux/ProgramDataCore.h"
-#include "iptux/Models.h"
-#include "iptux/UiModels.h"
+#include "iptux/Event.h"
 
 namespace iptux {
 
-/**
- * @note 请保证插入或更新某成员时，底层优先于UI；删除某成员时，UI优先于底层，
- * 否则你会把所有事情都搞砸. \n
- * @note 鉴于(GroupInfo::member)成员发生变动时必须保证函数处于UI线程安全的环境，
- * 所以UI线程安全的函数对(GroupInfo::member)的访问无须加锁.\n
- * 若此特性不可被如此利用，请报告bug. \n
- * @note 如果本程序编码中的某处没有遵循以上规则，请报告bug.
- */
+typedef std::function<void(Event const&)> EventCallback;
+
 class CoreThread {
  public:
   explicit CoreThread(ProgramDataCore &data);
-  ~CoreThread();
+  virtual ~CoreThread();
 
-  void start();
-  void stop();
+  virtual void start();
+  virtual void stop();
+
+  int getUdpSock() const;
 
   ProgramDataCore& getProgramData();
-  bool getDebug() const;
-  void setDebug(bool debug);
+  bool BlacklistContainItem(in_addr_t ipv4) const;
 
-  void WriteSharedData();
-  GSList *GetPalList();
   void Lock();
   void Unlock();
 
-  void InsertMessage(const MsgPara& para);
-  void InsertMessage(MsgPara&& para);
-
-  static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
-  static void SendNotifyToAll(CoreThread *pcthrd);
-  static void SendFeatureData(PalInfo *pal);
-  static void SendBroadcastExit(PalInfo *pal);
-  static void UpdateMyInfo();
-
-  void ClearAllPalFromList();
+  GSList *GetPalList();
+  virtual void ClearAllPalFromList();
+  const PalInfo *GetPalFromList(in_addr_t ipv4) const;
   PalInfo *GetPalFromList(in_addr_t ipv4);
-  void DelPalFromList(in_addr_t ipv4);
-  void UpdatePalToList(in_addr_t ipv4);
-  void AttachPalToList(PalInfo *pal);
-  GroupInfo *GetPalRegularItem(PalInfo *pal);
-  GroupInfo *GetPalSegmentItem(PalInfo *pal);
-  GroupInfo *GetPalGroupItem(PalInfo *pal);
-  GroupInfo *GetPalBroadcastItem(PalInfo *pal);
+  virtual void DelPalFromList(in_addr_t ipv4);
+  virtual void UpdatePalToList(in_addr_t ipv4);
+  virtual void AttachPalToList(PalInfo *pal);
 
-  bool BlacklistContainItem(in_addr_t ipv4);
-  void AttachItemToBlacklist(in_addr_t ipv4);
-
-  guint GetMsglineItems();
-  GroupInfo *GetMsglineHeadItem();
-  bool MsglineContainItem(GroupInfo *grpinf);
-  void PushItemToMsgline(GroupInfo *grpinf);
-  void PopItemFromMsgline(GroupInfo *grpinf);
-
-  GSList *GetPalEnclosure(PalInfo *pal);
-  void PushItemToEnclosureList(FileInfo *file);
-  void PopItemFromEnclosureList(FileInfo *file);
-
-  void AttachFileToPublic(FileInfo *file);
-  void ClearFileFromPublic();
-  GSList *GetPublicFileList();
-  void AttachFileToPrivate(FileInfo *file);
-  void DelFileFromPrivate(uint32_t fileid);
-  FileInfo *GetFileFromAll(uint32_t fileid);
-  FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
-  const char *GetAccessPublicLimit();
-  void SetAccessPublicLimit(const char *limit);
-
-  GSimpleAction* newMessageArrived;
- private:
-  void InitSublayer();
-  void ClearSublayer();
-  void ReadSharedData();
-
-  static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
-  static void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
-
-  GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalRegularItem(PalInfo *pal);
-  GroupInfo *AttachPalSegmentItem(PalInfo *pal);
-  GroupInfo *AttachPalGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
-  static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  void bind_iptux_port();
-
-
-  ProgramDataCore &programData;
-  IptuxConfig &config;
-  std::queue<MsgPara> messages;
+  void registerCallback(const EventCallback &callback);
+  void sendFeatureData(PalInfo *pal);
+  void emitNewPalOnline(PalInfo* palInfo);
+  void emitEvent(const Event& event);
+ public:
+  static void SendNotifyToAll(CoreThread *pcthrd);
+ protected:
+  ProgramDataCore& programData;
+  IptuxConfig& config;
   int tcpSock;
   int udpSock;
-  bool started;           //程序是否正在服务
-
-  GSList *pallist;  //好友链表(成员不能被删除)
-  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
   GSList *blacklist;                              //黑名单链表
-  GQueue msgline;                                 //消息队列
-
-  uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
-  GSList *pblist, *prlist;  //文件链表(共享/私有)
-  GSList *ecsList;          //文件链表(好友发过来)
-  //        GSList *rcvdList;               //文件链表(好友发过来已接收)
-  std::string passwd;  //共享文件密码
-
-  guint timerid;          //定时器ID
   pthread_mutex_t mutex;  //锁
-  pthread_t notifyToAllThread;
-  bool debug;
-  //回调处理部分函数
+  GSList *pallist;  //好友链表(成员不能被删除)
  private:
-  static void onNewMessageArrived(CoreThread* self);
+  bool started;
+  pthread_t notifyToAllThread;
+  std::vector<EventCallback> callbacks;
+ protected:
+  virtual void ClearSublayer();
+ private:
+  void bind_iptux_port();
+ private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
-  static gboolean WatchCoreStatus(CoreThread *pcthrd);
-  static gboolean InsertMessageInMain(CoreThread* self);
-
-    //内联成员函数
- public:
-  inline int getUdpSock() const {
-    return udpSock;
-  }
-
-  inline uint32_t &PbnQuote() { return pbn; }
-
-  inline uint32_t &PrnQuote() { return prn; }
 };
 
-}  // namespace iptux
+}
 
-#endif
+#endif //IPTUX_CORETHREAD_H

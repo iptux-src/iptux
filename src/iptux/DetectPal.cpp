@@ -13,7 +13,7 @@
 #include "DetectPal.h"
 
 #include "iptux/Command.h"
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/callback.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"

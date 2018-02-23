@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include "CoreThread.h"
+#include "UiCoreThread.h"
 #include "LogSystem.h"
 #include "ProgramData.h"
 #include "ipmsg.h"
@@ -27,8 +27,6 @@
 #include "utils.h"
 
 namespace iptux {
-
-static void bind_iptux_port(int port);
 
 /**
  * 打开URL.

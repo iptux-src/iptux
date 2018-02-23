@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/ProgramData.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"

@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/ProgramData.h"
 #include "iptux/SoundSystem.h"
 #include "iptux/callback.h"
@@ -90,7 +90,7 @@ mark:
 #endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
-      CoreThread::UpdateMyInfo();
+      UiCoreThread::UpdateMyInfo();
       break;
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
@@ -100,7 +100,7 @@ mark:
 #endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
-      CoreThread::UpdateMyInfo();
+      UiCoreThread::UpdateMyInfo();
       goto mark;
     default:
       break;
@@ -373,7 +373,7 @@ GtkWidget *DataSettings::CreateSound() {
   g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), hbox);
   label = gtk_label_new(_("Volume Control: "));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  widget = gtk_hscale_new_with_range(0.0, 1.0, 0.01);
+  widget = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0.0, 1.0, 0.01);
   gtk_scale_set_draw_value(GTK_SCALE(widget), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_signal_connect(widget, "value-changed", G_CALLBACK(AdjustVolume), NULL);
@@ -456,7 +456,7 @@ GtkWidget *DataSettings::CreateNetwork() {
                    NULL);
   g_datalist_set_data(&widset, "endip-entry-widget", widget);
   /* 增加&删除按钮 */
-  hbox = gtk_hbutton_box_new();
+  hbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbox), GTK_BUTTONBOX_SPREAD);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   snprintf(buf, MAX_BUFLEN, "%s↓↓", _("Add"));
@@ -1070,7 +1070,6 @@ void DataSettings::ObtainNetworkValue() {
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GSList *tlist;
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));

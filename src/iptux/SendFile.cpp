@@ -19,7 +19,7 @@
 
 #include "iptux/AnalogFS.h"
 #include "iptux/Command.h"
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/SendFileData.h"
 #include "iptux/global.h"
 #include "iptux/utils.h"

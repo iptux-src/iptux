@@ -14,11 +14,13 @@
 #include "UdpData.h"
 
 #include <cinttypes>
+#include <thread>
+#include <functional>
 #include <fcntl.h>
 #include <unistd.h>
 
 #include "Command.h"
-#include "CoreThread.h"
+#include "UiCoreThread.h"
 #include "DialogGroup.h"
 #include "DialogPeer.h"
 #include "MainWindow.h"
@@ -163,8 +165,9 @@ void UdpData::SomeoneLost() {
  * 好友上线.
  */
 void UdpData::SomeoneEntry() {
+  using namespace std::placeholders;
+
   Command cmd(coreThread);
-  pthread_t pid;
   PalInfo *pal;
 
   ProgramDataCore& programData = coreThread.getProgramData();
@@ -172,7 +175,6 @@ void UdpData::SomeoneEntry() {
   ConvertEncode(programData.encode);
 
   /* 加入或更新好友列表 */
-  gdk_threads_enter();
   coreThread.Lock();
   if ((pal = coreThread.GetPalFromList(ipv4))) {
     UpdatePalInfo(pal);
@@ -182,22 +184,13 @@ void UdpData::SomeoneEntry() {
     coreThread.AttachPalToList(pal);
   }
   coreThread.Unlock();
-  if(!coreThread.getDebug()) {
-    if (g_mwin->PaltreeContainItem(ipv4)) {
-      g_mwin->UpdateItemToPaltree(ipv4);
-    } else {
-      g_mwin->AttachItemToPaltree(ipv4);
-    }
-  }
-  gdk_threads_leave();
+  coreThread.emitNewPalOnline(pal);
 
   /* 通知好友本大爷在线 */
   cmd.SendAnsentry(coreThread.getUdpSock(), pal);
-  if(!coreThread.getDebug()) {
-    if (pal->isCompatible()) {
-      pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
-      pthread_detach(pid);
-    }
+  if (pal->isCompatible()) {
+    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
+    t1.detach();
   }
 }
 
@@ -251,7 +244,7 @@ void UdpData::SomeoneAnsentry() {
 
   /* 更新本大爷的数据信息 */
   if (pal->isCompatible()) {
-    pthread_create(&pid, NULL, ThreadFunc(CoreThread::SendFeatureData), pal);
+    pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendFeatureData), pal);
     pthread_detach(pid);
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
     cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);

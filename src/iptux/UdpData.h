@@ -17,7 +17,7 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
-#include "CoreThread.h"
+#include "iptux/CoreThread.h"
 
 namespace iptux {
 

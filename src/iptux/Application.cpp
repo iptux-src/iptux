@@ -44,6 +44,7 @@ int Application::run(int argc, char** argv) {
 
 void Application::onStartup(Application& self) {
   self.data = new ProgramData(self.config);
+  g_cthrd = new UiCoreThread(*self.data);
   self.window = new MainWindow(self.app, self.config, *self.data);
   g_progdt = self.data;
   g_mwin = self.window;
@@ -69,7 +70,6 @@ void Application::onStartup(Application& self) {
 }
 
 void Application::onActivate(Application& self) {
-  g_cthrd = new CoreThread(*self.data);
   StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
   g_lgsys = new LogSystem(*self.data);

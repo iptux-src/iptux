@@ -18,6 +18,7 @@
 #include "iptux/Models.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/UiModels.h"
+#include "Event.h"
 
 namespace iptux {
 
@@ -64,6 +65,8 @@ class MainWindow {
   IptuxConfig &getConfig() { return config; }
 
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
+
+  void processEvent(const Event& event);
 
  private:
   GtkApplication* app;
@@ -164,6 +167,7 @@ class MainWindow {
   static void onSortType (void *, GVariant* value, MainWindow& self);
   static void onSortBy (void *, GVariant* value, MainWindow& self);
   static void onActive(MainWindow& self);
+  static gboolean onNewPalOnlineEvent(gpointer data);
 };
 
 }  // namespace iptux
