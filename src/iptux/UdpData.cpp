@@ -168,7 +168,6 @@ void UdpData::SomeoneEntry() {
   using namespace std::placeholders;
 
   Command cmd(coreThread);
-  pthread_t pid;
   PalInfo *pal;
 
   ProgramDataCore& programData = coreThread.getProgramData();
@@ -176,7 +175,6 @@ void UdpData::SomeoneEntry() {
   ConvertEncode(programData.encode);
 
   /* 加入或更新好友列表 */
-  gdk_threads_enter();
   coreThread.Lock();
   if ((pal = coreThread.GetPalFromList(ipv4))) {
     UpdatePalInfo(pal);
@@ -186,7 +184,6 @@ void UdpData::SomeoneEntry() {
     coreThread.AttachPalToList(pal);
   }
   coreThread.Unlock();
-  gdk_threads_leave();
   coreThread.emitNewPalOnline(pal);
 
   /* 通知好友本大爷在线 */
