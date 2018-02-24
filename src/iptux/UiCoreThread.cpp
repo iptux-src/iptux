@@ -20,7 +20,7 @@
 #include "iptux/Command.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/TcpData.h"
 #include "iptux/UdpData.h"
 #include "iptux/deplib.h"
@@ -39,7 +39,7 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(ProgramDataCore &data)
+UiCoreThread::UiCoreThread(ProgramData &data)
     : CoreThread(data),
       groupInfos(NULL),
       sgmlist(NULL),

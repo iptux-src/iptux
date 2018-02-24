@@ -16,7 +16,7 @@
 #include <dirent.h>
 
 #include "iptux/UiCoreThread.h"
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/SoundSystem.h"
 #include "iptux/callback.h"
 #include "iptux/config.h"

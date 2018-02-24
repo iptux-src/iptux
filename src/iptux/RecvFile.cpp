@@ -17,7 +17,7 @@
 
 #include <cstring>
 
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/callback.h"
 #include "iptux/global.h"

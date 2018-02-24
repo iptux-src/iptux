@@ -14,7 +14,7 @@
 
 #include "iptux/DialogBase.h"
 #include "iptux/IptuxConfig.h"
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/MainWindow.h"
 
@@ -22,11 +22,11 @@ namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, ProgramData &progdt);
+  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, UiProgramData &progdt);
   virtual ~DialogGroup();
 
   static void GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                               ProgramData &progdt);
+                               UiProgramData &progdt);
 
   virtual void UpdatePalData(PalInfo *pal);
   virtual void InsertPalData(PalInfo *pal);

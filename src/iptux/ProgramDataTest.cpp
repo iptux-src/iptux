@@ -6,10 +6,10 @@
 using namespace iptux;
 
 TEST(ProgramData, Constructor) {
-  gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
-  ProgramData* data = new ProgramData(*config);
-  ASSERT_NE(data->table, nullptr);
-  delete data;
+  ProgramData* core = new ProgramData(*config);
+  ASSERT_FALSE(core->IsSaveChatHistory());
+  core->WriteProgData();
+  delete core;
 }
 

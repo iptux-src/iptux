@@ -7,7 +7,7 @@ using namespace iptux;
 
 TEST(CoreThread, Constructor) {
   auto config = newTestIptuxConfig();
-  ProgramDataCore* core = new ProgramDataCore(*config);
+  ProgramData* core = new ProgramData(*config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(*core);
   thread->start();

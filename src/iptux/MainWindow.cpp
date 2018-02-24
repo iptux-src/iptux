@@ -44,7 +44,7 @@ static gchar* palInfo2HintMarkup(const PalInfo *pal);
 /**
  * 类构造函数.
  */
-MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &progdt)
+MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, UiProgramData &progdt)
     : app(app),
       window(nullptr),
       config(config),

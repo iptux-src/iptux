@@ -13,7 +13,7 @@
 #define IPTUX_MAINWINDOW_H
 
 #include "iptux/IptuxConfig.h"
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
 #include "iptux/Models.h"
 #include "iptux/RecvFileData.h"
@@ -38,7 +38,7 @@ enum class ActiveWindowType {
  */
 class MainWindow {
  public:
-  MainWindow(GtkApplication* app, IptuxConfig &config, ProgramData &progdt);
+  MainWindow(GtkApplication* app, IptuxConfig &config, UiProgramData &progdt);
   ~MainWindow();
 
   GtkWidget* getWindow();
@@ -60,7 +60,7 @@ class MainWindow {
   void UpdateItemToTransTree(const TransFileModel& para);
   bool isTransmissionActive() const;
 
-  ProgramData &GetProgramData() { return progdt; }
+  UiProgramData &GetProgramData() { return progdt; }
 
   IptuxConfig &getConfig() { return config; }
 
@@ -74,7 +74,7 @@ class MainWindow {
   GtkWidget* transWindow;
 
   IptuxConfig &config;
-  ProgramData &progdt;
+  UiProgramData &progdt;
   StatusIcon *statusIcon;
 
   GData *widset;  //窗体集

@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/deplib.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
@@ -52,7 +52,7 @@ void Command::BroadCast(int sock) {
   struct sockaddr_in addr;
   GSList *list, *tlist;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, coreThread.getProgramData().nickname.c_str());
   ConvertEncode(programData.encode);
   CreateIptuxExtra(programData.encode);
@@ -79,7 +79,7 @@ void Command::DialUp(int sock) {
   in_addr_t startip, endip, ipv4;
   NetSegment *pns;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData.nickname.c_str());
   ConvertEncode(programData.encode);
@@ -117,7 +117,7 @@ void Command::DialUp(int sock) {
 void Command::SendAnsentry(int sock, PalInfo *pal) {
   struct sockaddr_in addr;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
 
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData.nickname.c_str());
   ConvertEncode(pal->encode);
@@ -158,7 +158,7 @@ void Command::SendExit(int sock, PalInfo *pal) {
 void Command::SendAbsence(int sock, PalInfo *pal) {
   struct sockaddr_in addr;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE,
                 programData.nickname.c_str());
   ConvertEncode(pal->encode);
@@ -180,7 +180,7 @@ void Command::SendAbsence(int sock, PalInfo *pal) {
 void Command::SendDetectPacket(int sock, in_addr_t ipv4) {
   struct sockaddr_in addr;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData.nickname.c_str());
   ConvertEncode(programData.encode);
@@ -433,7 +433,7 @@ void Command::SendMyIcon(int sock, PalInfo *pal) {
 void Command::SendMySign(int sock, PalInfo *pal) {
   struct sockaddr_in addr;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   CreateCommand(IPTUX_SENDSIGN, programData.sign.c_str());
   ConvertEncode(pal->encode);
 
@@ -595,7 +595,7 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode) {
 void Command::CreateIptuxExtra(const string &encode) {
   char *pptr, *ptr;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   pptr = buf + size;
   if (!encode.empty() && strcasecmp(encode.c_str(), "utf-8") != 0 &&
       (ptr = convert_encode(programData.mygroup.c_str(), encode.c_str(),

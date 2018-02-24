@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 
 #include "iptux/IptuxConfig.h"
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "MainWindow.h"
 #include "ShareFile.h"
 
@@ -19,7 +19,7 @@ class Application {
 
 private:
   IptuxConfig& config;
-  ProgramData* data;
+  UiProgramData* data;
 
   GtkApplication* app;
   MainWindow* window;

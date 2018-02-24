@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Application.h"
 
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"
 #include "iptux/support.h"
@@ -43,7 +43,7 @@ int Application::run(int argc, char** argv) {
 }
 
 void Application::onStartup(Application& self) {
-  self.data = new ProgramData(self.config);
+  self.data = new UiProgramData(self.config);
   g_cthrd = new UiCoreThread(*self.data);
   self.window = new MainWindow(self.app, self.config, *self.data);
   g_progdt = self.data;
