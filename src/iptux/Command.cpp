@@ -90,7 +90,7 @@ void Command::DialUp(int sock) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   //与某些代码片段的获取网段描述相冲突，必须复制出来使用
   programData.Lock();
-  vector<NetSegment> list = programData.CopyNetSegment();
+  vector<NetSegment> list = programData.copyNetSegments();
   programData.Unlock();
   for(int i = 0; i < list.size(); ++i) {
     pns = &list[i];

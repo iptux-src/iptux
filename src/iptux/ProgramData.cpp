@@ -97,9 +97,18 @@ void ProgramData::WriteProgData() {
  * 深拷贝一份网段数据.
  * @return 网段数据
  */
-vector<NetSegment> ProgramData::CopyNetSegment() {
+vector<NetSegment> ProgramData::copyNetSegments() const {
   return netseg;
 }
+
+const std::vector<NetSegment>& ProgramData::getNetSegments() const {
+  return netseg;
+}
+
+void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
+  netseg = netSegments;
+}
+
 
 /**
  * 查询(ipv4)所在网段的描述串.
