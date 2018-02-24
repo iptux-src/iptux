@@ -1,5 +1,5 @@
 #include "config.h"
-#include "ProgramDataCore.h"
+#include "ProgramData.h"
 
 #include <unistd.h>
 #include <sys/time.h>
@@ -15,7 +15,7 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-ProgramDataCore::ProgramDataCore(IptuxConfig &config)
+ProgramData::ProgramData(IptuxConfig &config)
     : palicon(NULL),
       font(NULL),
       transtip(NULL),
@@ -34,7 +34,7 @@ ProgramDataCore::ProgramDataCore(IptuxConfig &config)
 /**
  * 类析构函数.
  */
-ProgramDataCore::~ProgramDataCore() {
+ProgramData::~ProgramData() {
   g_free(palicon);
   g_free(font);
 
@@ -45,14 +45,14 @@ ProgramDataCore::~ProgramDataCore() {
   pthread_mutex_destroy(&mutex);
 }
 
-IptuxConfig& ProgramDataCore::getConfig() {
+IptuxConfig& ProgramData::getConfig() {
   return config;
 }
 
 /**
  * 初始化相关类成员数据.
  */
-void ProgramDataCore::InitSublayer() {
+void ProgramData::InitSublayer() {
   ReadProgData();
   CreateRegex();
 }
@@ -60,7 +60,7 @@ void ProgramDataCore::InitSublayer() {
 /**
  * 写出程序数据.
  */
-void ProgramDataCore::WriteProgData() {
+void ProgramData::WriteProgData() {
   gettimeofday(&timestamp, NULL);  //更新时间戳
   config.SetString("nick_name", nickname);
   config.SetString("belong_group", mygroup);
@@ -99,7 +99,7 @@ void ProgramDataCore::WriteProgData() {
  * 深拷贝一份网段数据.
  * @return 网段数据
  */
-vector<NetSegment> ProgramDataCore::CopyNetSegment() {
+vector<NetSegment> ProgramData::CopyNetSegment() {
   return netseg;
 }
 
@@ -108,7 +108,7 @@ vector<NetSegment> ProgramDataCore::CopyNetSegment() {
  * @param ipv4 ipv4
  * @return 描述串
  */
-char *ProgramDataCore::FindNetSegDescription(in_addr_t ipv4) {
+char *ProgramData::FindNetSegDescription(in_addr_t ipv4) {
   in_addr_t startip, endip;
   NetSegment *pns;
   char *description;
@@ -134,7 +134,7 @@ char *ProgramDataCore::FindNetSegDescription(in_addr_t ipv4) {
 /**
  * 读取程序数据.
  */
-void ProgramDataCore::ReadProgData() {
+void ProgramData::ReadProgData() {
   nickname = config.GetString("nick_name", g_get_user_name());
   mygroup = config.GetString("belong_group");
   myicon = config.GetString("my_icon", "icon-tux.png");
@@ -169,7 +169,7 @@ void ProgramDataCore::ReadProgData() {
 /**
  * 创建识别URL的正则表达式.
  */
-void ProgramDataCore::CreateRegex() {
+void ProgramData::CreateRegex() {
   urlregex =
       g_regex_new(URL_REGEX, GRegexCompileFlags(0), GRegexMatchFlags(0), NULL);
 }
@@ -178,7 +178,7 @@ void ProgramDataCore::CreateRegex() {
 /**
  * 写出网段数据.
  */
-void ProgramDataCore::WriteNetSegment() {
+void ProgramData::WriteNetSegment() {
   vector<Json::Value> jsons;
 
   pthread_mutex_lock(&mutex);
@@ -193,35 +193,35 @@ void ProgramDataCore::WriteNetSegment() {
  * 读取网段数据.
  * @param client GConfClient
  */
-void ProgramDataCore::ReadNetSegment() {
+void ProgramData::ReadNetSegment() {
   vector<Json::Value> values = config.GetVector("scan_net_segment");
   for (size_t i = 0; i < values.size(); ++i) {
     netseg.push_back(NetSegment::fromJsonValue(values[i]));
   }
 }
 
-void ProgramDataCore::Lock() { pthread_mutex_lock(&mutex); }
+void ProgramData::Lock() { pthread_mutex_lock(&mutex); }
 
-void ProgramDataCore::Unlock() { pthread_mutex_unlock(&mutex); }
+void ProgramData::Unlock() { pthread_mutex_unlock(&mutex); }
 
-bool ProgramDataCore::IsAutoOpenCharDialog() const { return FLAG_ISSET(flags, 7); }
+bool ProgramData::IsAutoOpenCharDialog() const { return FLAG_ISSET(flags, 7); }
 
-bool ProgramDataCore::IsAutoHidePanelAfterLogin() const {
+bool ProgramData::IsAutoHidePanelAfterLogin() const {
   return FLAG_ISSET(flags, 6);
 }
 
-bool ProgramDataCore::IsAutoOpenFileTrans() const { return FLAG_ISSET(flags, 5); }
-bool ProgramDataCore::IsEnterSendMessage() const { return FLAG_ISSET(flags, 4); }
-bool ProgramDataCore::IsAutoCleanChatHistory() const {
+bool ProgramData::IsAutoOpenFileTrans() const { return FLAG_ISSET(flags, 5); }
+bool ProgramData::IsEnterSendMessage() const { return FLAG_ISSET(flags, 4); }
+bool ProgramData::IsAutoCleanChatHistory() const {
   return FLAG_ISSET(flags, 3);
 }
-bool ProgramDataCore::IsSaveChatHistory() const { return FLAG_ISSET(flags, 2); }
-bool ProgramDataCore::IsUsingBlacklist() const { return FLAG_ISSET(flags, 1); }
-bool ProgramDataCore::IsFilterFileShareRequest() const {
+bool ProgramData::IsSaveChatHistory() const { return FLAG_ISSET(flags, 2); }
+bool ProgramData::IsUsingBlacklist() const { return FLAG_ISSET(flags, 1); }
+bool ProgramData::IsFilterFileShareRequest() const {
   return FLAG_ISSET(flags, 0);
 }
 
-void ProgramDataCore::SetFlag(int idx, bool flag) {
+void ProgramData::SetFlag(int idx, bool flag) {
   if (flag) {
     FLAG_SET(flags, idx);
   } else {

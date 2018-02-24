@@ -89,7 +89,7 @@ void UiProgramData::CheckIconTheme() {
 
 
 UiProgramData::UiProgramData(IptuxConfig &config)
-    : ProgramDataCore(config),
+    : ProgramData(config),
       table(nullptr) {
   InitSublayer();
 }

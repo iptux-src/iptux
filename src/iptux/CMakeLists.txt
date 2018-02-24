@@ -59,14 +59,14 @@ add_library(iptux
 		TransAbstract.cpp TransAbstract.h
 		UiModels.h UiModels.cpp
 		IptuxResource.h IptuxResource.cpp
-        UiHelper.h UiHelper.cpp ProgramDataCore.cpp ProgramDataCore.h CoreThread.cpp CoreThread.h Event.cpp Event.h)
+        UiHelper.h UiHelper.cpp ProgramData.cpp ProgramData.h CoreThread.cpp CoreThread.h Event.cpp Event.h)
 
 
 add_executable(libiptux_test
     IptuxConfigTest.cpp
 	UtilsTest.cpp
 	TestMain.cpp
-        ProgramDataCoreTest.cpp TestHelper.h TestHelper.cpp UiProgramDataTest.cpp CoreThreadTest.cpp)
+		ProgramDataTest.cpp TestHelper.h TestHelper.cpp UiProgramDataTest.cpp CoreThreadTest.cpp)
 if(GTEST_FOUND)
 	include_directories(${GTEST_INCLUDE_DIRS})
 	target_link_libraries(libiptux_test ${GTEST_BOTH_LIBRARIES} iptux pthread)

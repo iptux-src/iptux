@@ -14,11 +14,11 @@
 
 #include <gtk/gtk.h>
 
-#include "iptux/ProgramDataCore.h"
+#include "iptux/ProgramData.h"
 
 namespace iptux {
 
-class UiProgramData: public ProgramDataCore {
+class UiProgramData: public ProgramData {
  public:
   explicit UiProgramData(IptuxConfig &config);
   ~UiProgramData() override;

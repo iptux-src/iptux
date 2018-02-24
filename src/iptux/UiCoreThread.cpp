@@ -39,7 +39,7 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(ProgramDataCore &data)
+UiCoreThread::UiCoreThread(ProgramData &data)
     : CoreThread(data),
       groupInfos(NULL),
       sgmlist(NULL),

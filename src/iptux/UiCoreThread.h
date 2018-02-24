@@ -19,7 +19,7 @@
 
 #include <queue>
 
-#include "iptux/ProgramDataCore.h"
+#include "iptux/ProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
 #include "iptux/CoreThread.h"
@@ -36,7 +36,7 @@ namespace iptux {
  */
 class UiCoreThread: public CoreThread {
  public:
-  explicit UiCoreThread(ProgramDataCore &data);
+  explicit UiCoreThread(ProgramData &data);
   ~UiCoreThread() override ;
 
   void start() override;

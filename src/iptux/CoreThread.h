@@ -4,7 +4,7 @@
 #include <vector>
 #include <functional>
 
-#include "iptux/ProgramDataCore.h"
+#include "iptux/ProgramData.h"
 #include "iptux/Event.h"
 
 namespace iptux {
@@ -13,7 +13,7 @@ typedef std::function<void(Event const&)> EventCallback;
 
 class CoreThread {
  public:
-  explicit CoreThread(ProgramDataCore &data);
+  explicit CoreThread(ProgramData &data);
   virtual ~CoreThread();
 
   virtual void start();
@@ -21,7 +21,7 @@ class CoreThread {
 
   int getUdpSock() const;
 
-  ProgramDataCore& getProgramData();
+  ProgramData& getProgramData();
   bool BlacklistContainItem(in_addr_t ipv4) const;
 
   void Lock();
@@ -42,7 +42,7 @@ class CoreThread {
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
  protected:
-  ProgramDataCore& programData;
+  ProgramData& programData;
   IptuxConfig& config;
   int tcpSock;
   int udpSock;

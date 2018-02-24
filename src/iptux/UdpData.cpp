@@ -79,7 +79,7 @@ void UdpData::DispatchUdpData() {
 
   /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
   /* 嘿嘿，那就不要怪偶心狠手辣了 */
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
 
   if (programData.IsUsingBlacklist() && coreThread.BlacklistContainItem(ipv4))
     return;
@@ -170,7 +170,7 @@ void UdpData::SomeoneEntry() {
   Command cmd(coreThread);
   PalInfo *pal;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   /* 转换缓冲区数据编码 */
   ConvertEncode(programData.encode);
 
@@ -556,7 +556,7 @@ void UdpData::SomeoneBcstmsg() {
 PalInfo *UdpData::CreatePalInfo() {
   PalInfo *pal;
 
-  ProgramDataCore& programData = coreThread.getProgramData();
+  ProgramData& programData = coreThread.getProgramData();
   pal = new PalInfo;
   pal->ipv4 = ipv4;
   pal->segdes = programData.FindNetSegDescription(ipv4);

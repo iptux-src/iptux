@@ -22,13 +22,13 @@ namespace iptux {
 // 消息(:1);有消息到来后需要播放提示音
 // 声音(:0);是否需要提示音
 */
-class ProgramDataCore {
+class ProgramData {
  public:
-  explicit ProgramDataCore(IptuxConfig &config);
-  virtual ~ProgramDataCore();
+  explicit ProgramData(IptuxConfig &config);
+  virtual ~ProgramData();
 
-  ProgramDataCore(const ProgramDataCore&) = delete;
-  ProgramDataCore&operator=(const ProgramDataCore&) = delete;
+  ProgramData(const ProgramData&) = delete;
+  ProgramData&operator=(const ProgramData&) = delete;
 
   IptuxConfig& getConfig();
 

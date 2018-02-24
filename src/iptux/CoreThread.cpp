@@ -15,7 +15,7 @@
 
 namespace iptux {
 
-CoreThread::CoreThread(ProgramDataCore &data)
+CoreThread::CoreThread(ProgramData &data)
     : programData(data),
       config(data.getConfig()),
       tcpSock(-1),
@@ -151,7 +151,7 @@ int CoreThread::getUdpSock() const {
   return udpSock;
 }
 
-ProgramDataCore& CoreThread::getProgramData() {
+ProgramData& CoreThread::getProgramData() {
   return programData;
 }
 

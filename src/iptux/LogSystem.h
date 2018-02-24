@@ -13,13 +13,13 @@
 #define IPTUX_LOGSYSTEM_H
 
 #include "iptux/Models.h"
-#include "iptux/ProgramDataCore.h"
+#include "iptux/ProgramData.h"
 
 namespace iptux {
 
 class LogSystem {
  public:
-  explicit LogSystem(const ProgramDataCore& programDataCore);
+  explicit LogSystem(const ProgramData& programDataCore);
   ~LogSystem();
 
   void InitSublayer();
@@ -27,7 +27,7 @@ class LogSystem {
   void SystemLog(const char *fmt, ...);
 
  private:
-  const ProgramDataCore& programDataCore;
+  const ProgramData& programDataCore;
   int fdc, fds;
 };
 

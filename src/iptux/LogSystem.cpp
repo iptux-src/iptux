@@ -24,7 +24,7 @@
 
 namespace iptux {
 
-LogSystem::LogSystem(const ProgramDataCore& programDataCore)
+LogSystem::LogSystem(const ProgramData& programDataCore)
     : programDataCore(programDataCore),
       fdc(-1),
       fds(-1) {}
