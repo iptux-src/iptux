@@ -109,14 +109,11 @@ vector<NetSegment> ProgramData::CopyNetSegment() {
  * @return 描述串
  */
 char *ProgramData::FindNetSegDescription(in_addr_t ipv4) {
-  in_addr_t startip, endip;
-  NetSegment *pns;
-  char *description;
-
   ipv4 = ntohl(ipv4);
-  description = NULL;
+  char* description = nullptr;
   for(int i = 0; i < netseg.size(); ++i) {
-    pns = &netseg[i];
+    in_addr_t startip, endip;
+    auto pns = &netseg[i];
     inet_pton(AF_INET, pns->startip.c_str(), &startip);
     startip = ntohl(startip);
     inet_pton(AF_INET, pns->endip.c_str(), &endip);
