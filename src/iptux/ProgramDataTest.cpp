@@ -5,6 +5,7 @@
 #include "iptux/ProgramData.h"
 #include "iptux/TestHelper.h"
 
+using namespace std;
 using namespace iptux;
 
 TEST(ProgramData, Constructor) {
@@ -24,17 +25,17 @@ TEST(ProgramData, WriteAndRead) {
   netSegment.startip = "1.2.3.4";
   netSegment.endip = "1.2.3.5";
   netSegment.description = "foobar";
-  core->netseg.push_back(netSegment);
+  core->setNetSegments(vector<NetSegment>(1, netSegment));
   core->WriteProgData();
   delete core;
 
 
   auto config2 = new IptuxConfig(config->getFileName());
   ProgramData* core2 = new ProgramData(*config2);
-  ASSERT_EQ(core2->netseg.size(), 1);
-  ASSERT_EQ(core2->netseg[0].startip, "1.2.3.4");
-  ASSERT_EQ(core2->netseg[0].endip, "1.2.3.5");
-  ASSERT_EQ(core2->netseg[0].description, "foobar");
+  ASSERT_EQ(core2->getNetSegments().size(), 1);
+  ASSERT_EQ(core2->getNetSegments()[0].startip, "1.2.3.4");
+  ASSERT_EQ(core2->getNetSegments()[0].endip, "1.2.3.5");
+  ASSERT_EQ(core2->getNetSegments()[0].description, "foobar");
   delete core2;
   delete config2;
 

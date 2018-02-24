@@ -33,7 +33,11 @@ class ProgramData {
   IptuxConfig& getConfig();
 
   void WriteProgData();
-  std::vector<NetSegment> CopyNetSegment();
+
+  std::vector<NetSegment> copyNetSegments() const;
+  const std::vector<NetSegment>& getNetSegments() const;
+  void setNetSegments(std::vector<NetSegment>&& netSegments);
+
   char *FindNetSegDescription(in_addr_t ipv4);
   void Lock();
   void Unlock();
@@ -64,13 +68,12 @@ class ProgramData {
   double volume;   //音量控制
   uint8_t sndfgs;  // 2 传输:1 消息:0 声音
 
-  std::vector<NetSegment> netseg;  //需要通知登录的IP段
-
   GRegex *urlregex;              // URL正则表达式
 
   struct timeval timestamp;  //程序数据时间戳
 
  private:
+  std::vector<NetSegment> netseg;  //需要通知登录的IP段
   IptuxConfig &config;
   pthread_mutex_t mutex;  //锁
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享

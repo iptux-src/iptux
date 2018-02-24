@@ -719,14 +719,11 @@ void DataSettings::FillSndModel(GtkTreeModel *model) {
  * @note 与修改此链表的代码段是串行关系，无需加锁
  */
 void DataSettings::FillNetworkModel(GtkTreeModel *model) {
-  GtkTreeIter iter;
-  NetSegment *pns;
-
-  for(int i = 0; i < g_progdt->netseg.size(); ++i) {
-    pns = &g_progdt->netseg[i];
+  for(const NetSegment& pns: g_progdt->getNetSegments()) {
+    GtkTreeIter iter;
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns->startip.c_str(), 1,
-                       pns->endip.c_str(), 2, pns->description.c_str(), -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns.startip.c_str(), 1,
+                       pns.endip.c_str(), 2, pns.description.c_str(), -1);
   }
 }
 
@@ -1074,15 +1071,16 @@ void DataSettings::ObtainNetworkValue() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   g_progdt->Lock();
-  g_progdt->netseg.clear();
+  vector<NetSegment> netSegments;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
       NetSegment ns;
       gtk_tree_model_get(model, &iter, 0, &ns.startip, 1, &ns.endip, 2,
                          &ns.description, -1);
-      g_progdt->netseg.push_back (ns);
+      netSegments.push_back(move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
+  g_progdt->setNetSegments(move(netSegments));
   g_progdt->Unlock();
 }
 
