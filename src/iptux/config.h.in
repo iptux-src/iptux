@@ -1,8 +1,12 @@
 #ifndef IPTUX_CONFIG_H
 #define IPTUX_CONFIG_H
 
-#include <glib.h>
+#ifndef G_ENCODE_VERSION
+#define G_ENCODE_VERSION(major,minor)   ((major) << 16 | (minor) << 8)
+#endif
 
+#define GLIB_VERSION_MIN_REQUIRED (G_ENCODE_VERSION (2, 32))
+#define GLIB_VERSION_MAX_ALLOWED (G_ENCODE_VERSION (2, 32))
 #define GDK_VERSION_MIN_REQUIRED (G_ENCODE_VERSION (3, 12))
 #define GDK_VERSION_MAX_ALLOWED (G_ENCODE_VERSION (3, 12))
 
