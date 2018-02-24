@@ -1070,16 +1070,25 @@ void DataSettings::ObtainNetworkValue() {
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  g_progdt->Lock();
   vector<NetSegment> netSegments;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
+      char* startip = nullptr;
+      char* endip = nullptr;
+      char* description = nullptr;
+      gtk_tree_model_get(model, &iter,
+                         0, &startip,
+                         1, &endip,
+                         2, &description,
+                         -1);
       NetSegment ns;
-      gtk_tree_model_get(model, &iter, 0, &ns.startip, 1, &ns.endip, 2,
-                         &ns.description, -1);
+      if(startip) ns.startip = startip;
+      if(endip) ns.endip = endip;
+      if(description) ns.description = description;
       netSegments.push_back(move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
+  g_progdt->Lock();
   g_progdt->setNetSegments(move(netSegments));
   g_progdt->Unlock();
 }
@@ -1106,7 +1115,7 @@ void DataSettings::WriteNetSegment(const char *filename, GSList *list) {
   tlist = list;
   while (tlist) {
     pns = (NetSegment *)tlist->data;
-    fprintf(stream, "\n%s - %s //%s", pns->startip.c_str(), pns->endip.c_str(),
+    fprintf(stream, "\n%s - %s //%s\n", pns->startip.c_str(), pns->endip.c_str(),
             pns->description.c_str());
     tlist = g_slist_next(tlist);
   }
@@ -1600,9 +1609,18 @@ void DataSettings::ExportNetSegment(DataSettings *dset) {
       if (!gtk_tree_model_get_iter_first(model, &iter)) break;
       list = NULL;
       do {
+        char* startip;
+        char* endip;
+        char* description;
+        gtk_tree_model_get(model, &iter,
+                           0, &startip,
+                           1, &endip,
+                           2, &description,
+                           -1);
         ns = new NetSegment;
-        gtk_tree_model_get(model, &iter, 0, &ns->startip, 1, &ns->endip, 2,
-                           &ns->description, -1);
+        if(startip) ns->startip = startip;
+        if(endip) ns->endip = endip;
+        if(description) ns->description = description;
         list = g_slist_append(list, ns);
       } while (gtk_tree_model_iter_next(model, &iter));
       filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
