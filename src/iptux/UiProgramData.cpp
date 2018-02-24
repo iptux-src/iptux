@@ -1,5 +1,5 @@
 #include "config.h"
-#include "ProgramData.h"
+#include "UiProgramData.h"
 
 #include <unistd.h>
 #include <sys/time.h>
@@ -12,7 +12,7 @@ using namespace std;
 
 namespace iptux {
 
-void ProgramData::InitSublayer() {
+void UiProgramData::InitSublayer() {
   CheckIconTheme();
   CreateTagTable();
 }
@@ -21,7 +21,7 @@ void ProgramData::InitSublayer() {
  * 创建用于(text-view)的一些通用tag.
  * @note 给这些tag一个"global"标记，表示这些对象是全局共享的
  */
-void ProgramData::CreateTagTable() {
+void UiProgramData::CreateTagTable() {
   GtkTextTag *tag;
 
   table = gtk_text_tag_table_new();
@@ -62,7 +62,7 @@ void ProgramData::CreateTagTable() {
 /**
  * 确保头像数据被存放在主题库中.
  */
-void ProgramData::CheckIconTheme() {
+void UiProgramData::CheckIconTheme() {
   char pathbuf[MAX_PATHLEN];
   GdkPixbuf *pixbuf;
 
@@ -88,12 +88,12 @@ void ProgramData::CheckIconTheme() {
 }
 
 
-ProgramData::ProgramData(IptuxConfig &config)
+UiProgramData::UiProgramData(IptuxConfig &config)
     : ProgramDataCore(config),
       table(nullptr) {
   InitSublayer();
 }
-ProgramData::~ProgramData() {
+UiProgramData::~UiProgramData() {
   if (table) {
     g_object_unref(table);
   }

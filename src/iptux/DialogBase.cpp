@@ -31,7 +31,7 @@
 
 namespace iptux {
 
-DialogBase::DialogBase(GroupInfo *grp, ProgramData &progdt)
+DialogBase::DialogBase(GroupInfo *grp, UiProgramData &progdt)
     : progdt(progdt),
       widset(NULL),
       mdlset(NULL),

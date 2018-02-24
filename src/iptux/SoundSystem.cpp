@@ -17,7 +17,7 @@
 #include <cstring>
 #include <glib/gi18n.h>
 
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/output.h"
 #include "iptux/utils.h"
 #include "iptux/global.h"

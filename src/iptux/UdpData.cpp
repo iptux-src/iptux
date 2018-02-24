@@ -24,7 +24,7 @@
 #include "DialogGroup.h"
 #include "DialogPeer.h"
 #include "MainWindow.h"
-#include "ProgramData.h"
+#include "UiProgramData.h"
 #include "RecvFile.h"
 #include "SendFile.h"
 #include "SoundSystem.h"

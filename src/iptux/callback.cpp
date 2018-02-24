@@ -18,7 +18,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "iptux/MainWindow.h"
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/StatusIcon.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"
@@ -210,7 +210,7 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
 }
 
 void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
-                                        ProgramData &progdt) {
+                                        UiProgramData &progdt) {
   GSList *tags, *tmp;
   GtkTextIter iter;
   gboolean hovering;

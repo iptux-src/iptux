@@ -35,7 +35,7 @@ class StatusIcon {
   gboolean embedded;
 
  private:
-  ProgramData& getProgramData() { return mwin.GetProgramData(); }
+  UiProgramData& getProgramData() { return mwin.GetProgramData(); }
   static gboolean UpdateUI(StatusIcon* sicon);
   GtkWidget* CreatePopupMenu();
   //回调处理部分

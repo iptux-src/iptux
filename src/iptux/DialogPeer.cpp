@@ -37,7 +37,7 @@ namespace iptux {
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, ProgramData &progdt)
+DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, UiProgramData &progdt)
     : DialogBase(grp, progdt),
       mainWindow(mainWindow),
       config(mainWindow->getConfig()),
@@ -63,7 +63,7 @@ DialogPeer::~DialogPeer() {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                                 ProgramData &progdt) {
+                                 UiProgramData &progdt) {
   DialogPeer *dlgpr;
   GtkWidget *window, *widget;
 

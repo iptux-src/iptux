@@ -31,7 +31,7 @@ namespace iptux {
  * @param grp 群组信息
  */
 DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
-                         ProgramData &progdt)
+                         UiProgramData &progdt)
     : DialogBase(grp, progdt),
       mainWindow(mainWindow),
       config(mainWindow->getConfig()) {
@@ -51,7 +51,7 @@ DialogGroup::~DialogGroup() {
  * @param grpinf 群组信息
  */
 void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                                   ProgramData &progdt) {
+                                   UiProgramData &progdt) {
   DialogGroup *dlggrp;
   GtkWidget *window, *widget;
 

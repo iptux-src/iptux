@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef IPTUX_PROGRAMDATA_H
-#define IPTUX_PROGRAMDATA_H
+#ifndef IPTUX_UIPROGRAMDATA_H
+#define IPTUX_UIPROGRAMDATA_H
 
 #include <gtk/gtk.h>
 
@@ -18,10 +18,10 @@
 
 namespace iptux {
 
-class ProgramData: public ProgramDataCore {
+class UiProgramData: public ProgramDataCore {
  public:
-  explicit ProgramData(IptuxConfig &config);
-  ~ProgramData() override;
+  explicit UiProgramData(IptuxConfig &config);
+  ~UiProgramData() override;
 
   GtkTextTagTable *table;        // tag table
 
