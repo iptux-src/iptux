@@ -118,8 +118,8 @@ Json::Value NetSegment::ToJsonValue() const {
 NetSegment NetSegment::fromJsonValue(Json::Value &value) {
   NetSegment res;
   res.startip = value["startip"].asString();
-  res.endip = value["startip"].asString();
-  res.description = value["startip"].asString();
+  res.endip = value["endip"].asString();
+  res.description = value["description"].asString();
   return res;
 }
 

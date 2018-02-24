@@ -10,8 +10,10 @@ namespace iptux {
 
 class IptuxConfig {
  public:
-  explicit IptuxConfig(std::string& fname);
+  explicit IptuxConfig(const std::string& fname);
   ~IptuxConfig();
+
+  const std::string& getFileName() const;
 
   int GetInt(const std::string& key) const;
   int GetInt(const std::string& key, int defaultValue) const;

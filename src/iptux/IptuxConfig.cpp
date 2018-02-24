@@ -12,7 +12,7 @@ using namespace std;
 
 namespace iptux {
 
-IptuxConfig::IptuxConfig(string& fname) : fname(fname) {
+IptuxConfig::IptuxConfig(const string& fname) : fname(fname) {
   ifstream ifs(fname.c_str());
   if (!ifs.is_open()) {
     g_warning("config file %s not found", fname.c_str());
@@ -36,6 +36,11 @@ IptuxConfig::IptuxConfig(string& fname) : fname(fname) {
 }
 
 IptuxConfig::~IptuxConfig() {}
+
+const std::string& IptuxConfig::getFileName() const {
+  return fname;
+}
+
 
 int IptuxConfig::GetInt(const string& key) const { return GetInt(key, 0); }
 

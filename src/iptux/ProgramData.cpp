@@ -89,10 +89,8 @@ void ProgramData::WriteProgData() {
   config.SetBool("transnd_support", FLAG_ISSET(sndfgs, 2));
   config.SetBool("msgsnd_support", FLAG_ISSET(sndfgs, 1));
   config.SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
-
-  config.Save();
-
   WriteNetSegment();
+  config.Save();
 }
 
 /**
@@ -161,6 +159,8 @@ void ProgramData::ReadProgData() {
   FLAG_SET(flags, 2, config.GetBool("transnd_support"));
   FLAG_SET(flags, 1, config.GetBool("msgsnd_support"));
   FLAG_SET(flags, 0, config.GetBool("sound_support"));
+
+  ReadNetSegment();
 }
 
 /**
@@ -183,7 +183,7 @@ void ProgramData::WriteNetSegment() {
     jsons.push_back(netseg[i].ToJsonValue());
   }
   pthread_mutex_unlock(&mutex);
-  config.SetVector("scan_net_segement", jsons);
+  config.SetVector("scan_net_segment", jsons);
 }
 
 /**
