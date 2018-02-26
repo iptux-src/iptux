@@ -1220,6 +1220,7 @@ void MainWindow::onSortBy(GSimpleAction *action, GVariant* value, MainWindow& se
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
   palTreeModelSetSortKey(model, key);
+  g_simple_action_set_state(action, value);
 }
 
 
@@ -1255,6 +1256,7 @@ void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &
       GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
   gtk_tree_sortable_set_sort_column_id(
       GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  g_simple_action_set_state(action, value);
 }
 
 /**
