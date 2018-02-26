@@ -98,8 +98,8 @@ void MainWindow::CreateWindow() {
 
   GActionEntry win_entries[] = {
       { "refresh", G_ACTION_CALLBACK(onRefresh)},
-      { "sort_type", G_ACTION_CALLBACK(onSortType), "s" },
-      { "sort_by", G_ACTION_CALLBACK(onSortBy), "s" },
+      { "sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
+      { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
       { "detect", G_ACTION_CALLBACK(onDetect)},
       { "find", G_ACTION_CALLBACK(onFind)},
       { "about", G_ACTION_CALLBACK(onAbout)},
@@ -1191,7 +1191,7 @@ void MainWindow::onDetect(void*, void*, MainWindow& self) {
 }
 
 
-void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
+void MainWindow::onSortBy(GSimpleAction *action, GVariant* value, MainWindow& self) {
   string sortBy = g_variant_get_string(value, nullptr);
 
   PalTreeModelSortKey key;
@@ -1223,7 +1223,7 @@ void MainWindow::onSortBy(void *, GVariant* value, MainWindow& self) {
 }
 
 
-void MainWindow::onSortType(void *, GVariant *value, MainWindow &self) {
+void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &self) {
   string sortType = g_variant_get_string(value, nullptr);
 
   GtkSortType type;
