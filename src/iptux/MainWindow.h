@@ -164,8 +164,8 @@ class MainWindow {
   static void onAbout (void *, void *, MainWindow& self);
   static void onClearChatHistory (void *, void *, MainWindow& self);
   static void onInsertPicture (void *, void *, MainWindow& self);
-  static void onSortType (void *, GVariant* value, MainWindow& self);
-  static void onSortBy (void *, GVariant* value, MainWindow& self);
+  static void onSortType (GSimpleAction *action, GVariant* value, MainWindow& self);
+  static void onSortBy (GSimpleAction *action, GVariant* value, MainWindow& self);
   static void onActive(MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
 };
