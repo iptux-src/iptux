@@ -1,4 +1,4 @@
 coverage:
   ignore:
-    - "^src/iptux/TestMain.cpp$"
+    - "^src/iptux/Test.*"
     - "^src/iptux/.*Test.cpp$"
