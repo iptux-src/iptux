@@ -107,6 +107,18 @@ ChipData::~ChipData() {}
 NetSegment::NetSegment() {}
 NetSegment::~NetSegment() {}
 
+bool NetSegment::ContainIP(in_addr_t ipv4) const {
+  ipv4 = ntohl(ipv4);
+
+  in_addr_t startip2, endip2;
+  inet_pton(AF_INET, startip.c_str(), &startip2);
+  startip2 = ntohl(startip2);
+  inet_pton(AF_INET, endip.c_str(), &endip2);
+  endip2 = ntohl(endip2);
+  ipv4_order(&startip2, &endip2);
+  return ipv4 >= startip2 && ipv4 <= endip2;
+}
+
 Json::Value NetSegment::ToJsonValue() const {
   Json::Value value;
   value["startip"] = startip;
