@@ -8,11 +8,10 @@ set (CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+IF (CMAKE_BUILD_TYPE STREQUAL "Coverage")
     include(CodeCoverage)
     setup_target_for_coverage(${PROJECT_NAME}_coverage libiptux_test coverage)
-endif()
-
+ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Coverage"
 
 if (APPLE AND EXISTS /usr/local/opt/gettext)
     list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/gettext")
@@ -25,7 +24,7 @@ include(FindGettext)
 include(FindIntl)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread -g -O0 -fprofile-arcs -ftest-coverage")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE")
 
 if(NOT Intl_FOUND)
