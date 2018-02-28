@@ -255,9 +255,6 @@ void CoreThread::DelPalFromList(in_addr_t ipv4) {
  */
 void CoreThread::UpdatePalToList(in_addr_t ipv4) {
   PalInfo *pal;
-  GroupInfo *grpinf;
-  SessionAbstract *session;
-
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
   if (!(pal = GetPalFromList(ipv4))) {
     return;
@@ -272,8 +269,6 @@ void CoreThread::UpdatePalToList(in_addr_t ipv4) {
  * 也应该分配好友到相应的群组
  */
 void CoreThread::AttachPalToList(PalInfo *pal) {
-  GroupInfo *grpinf;
-
   /* 将好友加入到好友链表 */
   pallist = g_slist_append(pallist, pal);
   pal->setOnline(true);

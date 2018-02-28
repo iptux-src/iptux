@@ -115,24 +115,13 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
  * @param ipv4 ipv4
  * @return 描述串
  */
-char *ProgramData::FindNetSegDescription(in_addr_t ipv4) {
-  ipv4 = ntohl(ipv4);
-  char* description = nullptr;
-  for(int i = 0; i < netseg.size(); ++i) {
-    in_addr_t startip, endip;
-    auto pns = &netseg[i];
-    inet_pton(AF_INET, pns->startip.c_str(), &startip);
-    startip = ntohl(startip);
-    inet_pton(AF_INET, pns->endip.c_str(), &endip);
-    endip = ntohl(endip);
-    ipv4_order(&startip, &endip);
-    if (ipv4 >= startip && ipv4 <= endip) {
-      description = g_strdup(pns->description.c_str());
-      break;
+string ProgramData::FindNetSegDescription(in_addr_t ipv4) const {
+  for (int i = 0; i < netseg.size(); ++i) {
+    if (netseg[i].ContainIP(ipv4)) {
+      return netseg[i].description;
     }
   }
-
-  return description;
+  return "";
 }
 
 /**

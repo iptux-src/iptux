@@ -145,6 +145,8 @@ class NetSegment {
   NetSegment();
   ~NetSegment();
 
+  bool ContainIP(in_addr_t ipv4) const;
+
   std::string startip;      ///< IP起始地址 *
   std::string endip;        ///< IP终止地址 *
   std::string description;  ///< 此IP段描述

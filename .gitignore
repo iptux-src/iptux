@@ -113,3 +113,4 @@ src/iptux/IptuxResource.c
 src/iptux/IptuxResource.h
 
 src/iptux/IptuxResource.cpp
+cmake-build-debug

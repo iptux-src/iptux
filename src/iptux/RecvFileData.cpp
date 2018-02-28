@@ -314,7 +314,7 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
                                int64_t offset) {
   int64_t tmpsize, finishsize;
   struct timeval val1, val2;
-  float difftime, progress;
+  float difftime;
   uint32_t rate;
   ssize_t size;
 

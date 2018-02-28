@@ -38,7 +38,7 @@ class ProgramData {
   const std::vector<NetSegment>& getNetSegments() const;
   void setNetSegments(std::vector<NetSegment>&& netSegments);
 
-  char *FindNetSegDescription(in_addr_t ipv4);
+  std::string FindNetSegDescription(in_addr_t ipv4) const;
   void Lock();
   void Unlock();
 

@@ -135,7 +135,7 @@ void UdpData::SomeoneLost() {
   /* 创建好友数据 */
   pal = new PalInfo;
   pal->ipv4 = ipv4;
-  pal->segdes = g_progdt->FindNetSegDescription(ipv4);
+  pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
   if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
@@ -559,7 +559,7 @@ PalInfo *UdpData::CreatePalInfo() {
   ProgramData& programData = coreThread.getProgramData();
   pal = new PalInfo;
   pal->ipv4 = ipv4;
-  pal->segdes = programData.FindNetSegDescription(ipv4);
+  pal->segdes = g_strdup(programData.FindNetSegDescription(ipv4).c_str());
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
   if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
@@ -591,7 +591,7 @@ PalInfo *UdpData::CreatePalInfo() {
  */
 void UdpData::UpdatePalInfo(PalInfo *pal) {
   g_free(pal->segdes);
-  pal->segdes = g_progdt->FindNetSegDescription(ipv4);
+  pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
   g_free(pal->version);
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
