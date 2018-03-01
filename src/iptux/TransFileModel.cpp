@@ -122,7 +122,6 @@ std::string TransFileModel::getProgressText() const {
   std::string res(t);
   g_free(gpointer(t));
   return res;
-
 }
 
 const std::string& TransFileModel::getCost() const {

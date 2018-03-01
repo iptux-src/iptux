@@ -613,7 +613,6 @@ void UiCoreThread::InitSublayer() {
  * 清空底层数据.
  */
 void UiCoreThread::ClearSublayer() {
-
   GSList *tlist;
 
   /**

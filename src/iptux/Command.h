@@ -59,12 +59,12 @@ class Command {
   void CreateIptuxExtra(const std::string &encode);
   void CreateIconExtra();
 
-
-private:
+ private:
   CoreThread& coreThread;
   size_t size;              //当前已使用缓冲区的长度
   char buf[MAX_UDPLEN];     //数据缓冲区
   static uint32_t packetn;  //包编号
+
  public:
   inline uint32_t &Packetn() { return packetn; }
 };

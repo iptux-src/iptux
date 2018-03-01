@@ -27,6 +27,7 @@ class DialogBase : public SessionAbstract {
   virtual ~DialogBase();
 
   void ClearHistoryTextView();
+
  protected:
   void InitSublayerGeneral();
   void ClearSublayerGeneral();

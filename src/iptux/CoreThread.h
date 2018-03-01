@@ -39,8 +39,10 @@ class CoreThread {
   void sendFeatureData(PalInfo *pal);
   void emitNewPalOnline(PalInfo* palInfo);
   void emitEvent(const Event& event);
+
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
+
  protected:
   ProgramData& programData;
   IptuxConfig& config;
@@ -49,14 +51,18 @@ class CoreThread {
   GSList *blacklist;                              //黑名单链表
   pthread_mutex_t mutex;  //锁
   GSList *pallist;  //好友链表(成员不能被删除)
+
  private:
   bool started;
   pthread_t notifyToAllThread;
   std::vector<EventCallback> callbacks;
+
  protected:
   virtual void ClearSublayer();
+
  private:
   void bind_iptux_port();
+
  private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);

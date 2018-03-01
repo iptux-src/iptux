@@ -24,7 +24,6 @@ class BindFailedException: public std::runtime_error {
   : std::runtime_error(reason)
   {
   }
-
 };
 
 void iptux_open_url(const char *url);
