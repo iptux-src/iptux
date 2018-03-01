@@ -6,6 +6,7 @@ namespace iptux {
 
 enum class EventType {
   NEW_PAL_ONLINE,
+  NEW_MESSAGE,
 };
 
 class Event {
@@ -24,6 +25,16 @@ class NewPalOnlineEvent:public Event {
   const PalInfo* getPalInfo() const;
  private:
   PalInfo* palInfo;
+};
+
+class NewMessageEvent:public Event {
+ public:
+  explicit NewMessageEvent(MsgPara&& msgPara);
+  EventType getType() const override;
+
+  const MsgPara& getMsgPara() const;
+ private:
+  MsgPara msgPara;
 };
 
 }

@@ -98,17 +98,14 @@ void UiCoreThread::WriteSharedData() {
  * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
  */
 void UiCoreThread::InsertMessage(const MsgPara& para) {
-  Lock();
-  messages.push(para);
-  Unlock();
-  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
+  MsgPara para2 = para;
+  NewMessageEvent event(move(para2));
+  this->emitEvent(event);
 }
 
 void UiCoreThread::InsertMessage(MsgPara&& para) {
-  Lock();
-  messages.push(para);
-  Unlock();
-  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
+  NewMessageEvent event(move(para));
+  this->emitEvent(event);
 }
 
 void UiCoreThread::onNewMessageArrived(UiCoreThread* self) {

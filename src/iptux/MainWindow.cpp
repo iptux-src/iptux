@@ -1821,7 +1821,15 @@ void MainWindow::processEvent(const Event& event) {
     in_addr_t *p = g_new(in_addr_t, 1);
     *p = ipv4;
     gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE, MainWindow::onNewPalOnlineEvent, p, g_free);
+    return;
   }
+  if(type == EventType::NEW_MESSAGE) {
+    auto event2 = (const NewMessageEvent &) event;
+    auto msgPara = event2.getMsgPara();
+    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE, MainWindow::onNewMessageEvent, p, g_free);
+    return;
+  }
+  LOG_WARN("unknown event type: %d", event.getType());
 }
 
 gboolean MainWindow::onNewPalOnlineEvent(gpointer data) {

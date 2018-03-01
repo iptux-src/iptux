@@ -15,4 +15,12 @@ const PalInfo* NewPalOnlineEvent::getPalInfo() const {
   return palInfo;
 }
 
+NewMessageEvent::NewMessageEvent(MsgPara&& msgPara)
+  : Event(),
+    msgPara(msgPara) {}
+
+EventType NewMessageEvent::getType() const {
+  return EventType ::NEW_MESSAGE;
+}
+
 }
