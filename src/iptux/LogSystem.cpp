@@ -24,10 +24,12 @@
 
 namespace iptux {
 
-LogSystem::LogSystem(const ProgramData& programDataCore)
-    : programDataCore(programDataCore),
+LogSystem::LogSystem(const ProgramData& programData)
+    : programData(programData),
       fdc(-1),
-      fds(-1) {}
+      fds(-1) {
+  InitSublayer();
+}
 
 LogSystem::~LogSystem() {
   close(fdc);
@@ -49,7 +51,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) {
   gchar *log, *msg, *ptr;
   va_list ap;
 
-  if (!programDataCore.IsSaveChatHistory()) {
+  if (!programData.IsSaveChatHistory()) {
     return;
   }
 
@@ -82,7 +84,7 @@ void LogSystem::SystemLog(const char *fmt, ...) {
   gchar *log, *msg, *ptr;
   va_list ap;
 
-  if (!programDataCore.IsSaveChatHistory()) {
+  if (!programData.IsSaveChatHistory()) {
     return;
   }
   ptr = getformattime(TRUE, _("User:%s Host:%s"), g_get_user_name(),

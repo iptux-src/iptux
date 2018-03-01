@@ -19,4 +19,17 @@ TEST(IptuxConfig, SetStringList) {
   EXPECT_EQ(config->GetStringList("key").size(), 2);
   config->SetStringList("key", vector<string>{"hello"});
   EXPECT_EQ(config->GetStringList("key").size(), 1);
+
+  const char* boolKey = "boolKey";
+  ASSERT_FALSE(config->GetBool(boolKey));
+  ASSERT_FALSE(config->GetBool(boolKey, false));
+  ASSERT_TRUE(config->GetBool(boolKey, true));
+  config->SetBool(boolKey, false);
+  ASSERT_FALSE(config->GetBool(boolKey));
+  ASSERT_FALSE(config->GetBool(boolKey, false));
+  ASSERT_FALSE(config->GetBool(boolKey, true));
+  config->SetBool(boolKey, true);
+  ASSERT_TRUE(config->GetBool(boolKey));
+  ASSERT_TRUE(config->GetBool(boolKey, false));
+  ASSERT_TRUE(config->GetBool(boolKey, true));
 }

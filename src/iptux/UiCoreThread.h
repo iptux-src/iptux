@@ -19,10 +19,11 @@
 
 #include <queue>
 
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
 #include "iptux/CoreThread.h"
+#include "LogSystem.h"
 
 namespace iptux {
 
@@ -36,8 +37,10 @@ namespace iptux {
  */
 class UiCoreThread: public CoreThread {
  public:
-  explicit UiCoreThread(ProgramData &data);
+  explicit UiCoreThread(UiProgramData &data);
   ~UiCoreThread() override ;
+
+  UiProgramData& getUiProgramData();
 
   void start() override;
 
@@ -46,9 +49,9 @@ class UiCoreThread: public CoreThread {
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
 
-  static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
+  void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
   static void SendFeatureData(PalInfo *pal);
-  static void SendBroadcastExit(PalInfo *pal);
+  static void SendBroadcastExit(PalInfo *pal, UiCoreThread* self);
   static void UpdateMyInfo();
 
   void ClearAllPalFromList() override ;
@@ -81,8 +84,6 @@ class UiCoreThread: public CoreThread {
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
   const char *GetAccessPublicLimit();
   void SetAccessPublicLimit(const char *limit);
-
-  GSimpleAction* newMessageArrived;
  private:
   void InitSublayer();
   void ClearSublayer() override ;
@@ -100,6 +101,9 @@ class UiCoreThread: public CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
+private:
+  UiProgramData& programData;
+  LogSystem* logSystem;
   guint timerid;          //定时器ID
   std::queue<MsgPara> messages;
 
@@ -114,8 +118,6 @@ class UiCoreThread: public CoreThread {
 
   //回调处理部分函数
  private:
-  static void onNewMessageArrived(UiCoreThread* self);
-  static gboolean InsertMessageInMain(UiCoreThread* self);
   static gboolean WatchCoreStatus(UiCoreThread *self);
 
     //内联成员函数

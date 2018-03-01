@@ -11,7 +11,7 @@ using namespace iptux;
 TEST(ProgramData, Constructor) {
   auto config = newTestIptuxConfig();
   ProgramData* core = new ProgramData(*config);
-  ASSERT_FALSE(core->IsSaveChatHistory());
+  ASSERT_TRUE(core->IsSaveChatHistory());
   core->WriteProgData();
   delete core;
 
@@ -36,6 +36,9 @@ TEST(ProgramData, WriteAndRead) {
   ASSERT_EQ(core2->getNetSegments()[0].startip, "1.2.3.4");
   ASSERT_EQ(core2->getNetSegments()[0].endip, "1.2.3.5");
   ASSERT_EQ(core2->getNetSegments()[0].description, "foobar");
+  ASSERT_TRUE(core2->IsSaveChatHistory());
+  ASSERT_FALSE(core2->IsUsingBlacklist());
+  ASSERT_FALSE(core2->IsFilterFileShareRequest());
   delete core2;
   delete config2;
 

@@ -27,7 +27,6 @@ namespace iptux {
 void iptux_init() {
   init_iptux_environment();
 
-  g_lgsys->InitSublayer();
   g_sndsys->InitSublayer();
 
   signal(SIGPIPE, SIG_IGN);

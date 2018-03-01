@@ -19,16 +19,18 @@ namespace iptux {
 
 class LogSystem {
  public:
-  explicit LogSystem(const ProgramData& programDataCore);
+  explicit LogSystem(const ProgramData& programData);
   ~LogSystem();
 
-  void InitSublayer();
   void CommunicateLog(MsgPara *msgpara, const char *fmt, ...);
   void SystemLog(const char *fmt, ...);
 
  private:
-  const ProgramData& programDataCore;
+  const ProgramData& programData;
   int fdc, fds;
+
+ private:
+  void InitSublayer();
 };
 
 }  // namespace iptux

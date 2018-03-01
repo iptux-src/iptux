@@ -1,17 +1,14 @@
 #include "gtest/gtest.h"
 
-#include "iptux/CoreThread.h"
+#include "iptux/LogSystem.h"
 #include "iptux/TestHelper.h"
 
 using namespace iptux;
 
-TEST(CoreThread, Constructor) {
+TEST(LogSystem, Constructor) {
   auto config = newTestIptuxConfig();
   ProgramData* core = new ProgramData(*config);
-  core->sign = "abc";
-  CoreThread* thread = new CoreThread(*core);
-  thread->start();
-  thread->stop();
-  delete thread;
+  LogSystem* logSystem = new LogSystem(*core);
+  delete logSystem;
   delete core;
 }

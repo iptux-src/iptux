@@ -18,7 +18,8 @@
 #include "iptux/Models.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/UiModels.h"
-#include "Event.h"
+#include "iptux/Event.h"
+#include "iptux/UiCoreThread.h"
 
 namespace iptux {
 
@@ -38,7 +39,7 @@ enum class ActiveWindowType {
  */
 class MainWindow {
  public:
-  MainWindow(GtkApplication* app, IptuxConfig &config, UiProgramData &progdt);
+  MainWindow(GtkApplication* app, UiCoreThread& coreThread);
   ~MainWindow();
 
   GtkWidget* getWindow();
@@ -70,11 +71,12 @@ class MainWindow {
 
  private:
   GtkApplication* app;
+  UiCoreThread& coreThread;
   GtkWidget* window;
   GtkWidget* transWindow;
 
-  IptuxConfig &config;
   UiProgramData &progdt;
+  IptuxConfig &config;
   StatusIcon *statusIcon;
 
   GData *widset;  //窗体集
@@ -115,8 +117,10 @@ class MainWindow {
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void InitThemeSublayerData();
+  void processEventInMainThread(Event* event);
  private:
   //回调处理部分
+  static gboolean processEventCallback(gpointer data);
   static gboolean UpdateUI(MainWindow *mwin);
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);

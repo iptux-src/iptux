@@ -93,6 +93,7 @@ UiProgramData::UiProgramData(IptuxConfig &config)
       table(nullptr) {
   InitSublayer();
 }
+
 UiProgramData::~UiProgramData() {
   if (table) {
     g_object_unref(table);

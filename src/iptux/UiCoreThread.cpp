@@ -39,8 +39,9 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(ProgramData &data)
+UiCoreThread::UiCoreThread(UiProgramData &data)
     : CoreThread(data),
+      programData(data),
       groupInfos(NULL),
       sgmlist(NULL),
       grplist(NULL),
@@ -50,8 +51,8 @@ UiCoreThread::UiCoreThread(ProgramData &data)
       pblist(NULL),
       prlist(NULL),
       ecsList(NULL) {
-  newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
-  g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
+  logSystem = new LogSystem(data);
+  g_lgsys = logSystem;
   g_queue_init(&msgline);
   InitSublayer();
 }
@@ -60,7 +61,7 @@ UiCoreThread::UiCoreThread(ProgramData &data)
  * 类析构函数.
  */
 UiCoreThread::~UiCoreThread() {
-  g_object_unref(newMessageArrived);
+  delete logSystem;
 }
 
 /**
@@ -95,71 +96,14 @@ void UiCoreThread::WriteSharedData() {
  * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
  */
 void UiCoreThread::InsertMessage(const MsgPara& para) {
-  Lock();
-  messages.push(para);
-  Unlock();
-  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
+  MsgPara para2 = para;
+  NewMessageEvent event(move(para2));
+  this->emitEvent(event);
 }
 
 void UiCoreThread::InsertMessage(MsgPara&& para) {
-  Lock();
-  messages.push(para);
-  Unlock();
-  g_signal_emit_by_name(newMessageArrived, "activate", nullptr);
-}
-
-void UiCoreThread::onNewMessageArrived(UiCoreThread* self) {
-  g_idle_add(GSourceFunc(InsertMessageInMain), self);
-}
-
-
-gboolean UiCoreThread::InsertMessageInMain(UiCoreThread* self) {
-  while(true) {
-    self->Lock();
-    if(self->messages.empty()) {
-      self->Unlock();
-      break;
-    }
-    MsgPara para = self->messages.front();
-    self->messages.pop();
-    self->Unlock();
-
-    GroupInfo *grpinf = nullptr;
-    SessionAbstract *session;
-
-    /* 获取群组信息 */
-    switch (para.btype) {
-      case GROUP_BELONG_TYPE_REGULAR:
-        grpinf = self->GetPalRegularItem(para.pal);
-        break;
-      case GROUP_BELONG_TYPE_SEGMENT:
-        grpinf = self->GetPalSegmentItem(para.pal);
-        break;
-      case GROUP_BELONG_TYPE_GROUP:
-        grpinf = self->GetPalGroupItem(para.pal);
-        break;
-      case GROUP_BELONG_TYPE_BROADCAST:
-        grpinf = self->GetPalBroadcastItem(para.pal);
-        break;
-      default:
-        grpinf = nullptr;
-        break;
-    }
-
-    /* 如果群组存在则插入消息 */
-    /* 群组不存在是编程上的错误，请发送Bug报告 */
-    if (grpinf) {
-      self->InsertMsgToGroupInfoItem(grpinf, &para);
-      if (grpinf->dialog) {
-        session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                       "session-class");
-        session->OnNewMessageComing();
-      }
-    }
-    return G_SOURCE_REMOVE;
-  }
-  g_assert_not_reached();
-  return G_SOURCE_REMOVE;
+  NewMessageEvent event(move(para));
+  this->emitEvent(event);
 }
 
 /**
@@ -182,11 +126,11 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
         InsertStringToBuffer(grpinf->buffer, data);
         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
         gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-        g_lgsys->CommunicateLog(para, "[STRING]%s", data);
+        logSystem->CommunicateLog(para, "[STRING]%s", data);
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         InsertPixbufToBuffer(grpinf->buffer, data);
-        g_lgsys->CommunicateLog(para, "[PICTURE]%s", data);
+        logSystem->CommunicateLog(para, "[PICTURE]%s", data);
         break;
       default:
         break;
@@ -206,9 +150,9 @@ void UiCoreThread::SendFeatureData(PalInfo *pal) {
  * 发送通告本计算机下线的信息.
  * @param pal class PalInfo
  */
-void UiCoreThread::SendBroadcastExit(PalInfo *pal) {
-  Command cmd(*g_cthrd);
-  cmd.SendExit(g_cthrd->udpSock, pal);
+void UiCoreThread::SendBroadcastExit(PalInfo *pal, UiCoreThread* self) {
+  Command cmd(*self);
+  cmd.SendExit(self->udpSock, pal);
 }
 
 /**
@@ -675,7 +619,7 @@ void UiCoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+  g_slist_foreach(pallist, GFunc(SendBroadcastExit), this);
   CoreThread::ClearSublayer();
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
@@ -870,7 +814,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_REGULAR;
   grpinf->name = g_strdup(pal->name);
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
@@ -894,7 +838,7 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -919,7 +863,7 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_GROUP;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
 
@@ -942,7 +886,7 @@ GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
 
@@ -1039,6 +983,10 @@ gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
   pthread_mutex_unlock(&pcthrd->mutex);
 
   return TRUE;
+}
+
+UiProgramData& UiCoreThread::getUiProgramData() {
+  return programData;
 }
 
 
