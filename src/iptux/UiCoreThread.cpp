@@ -39,8 +39,9 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(ProgramData &data)
+UiCoreThread::UiCoreThread(UiProgramData &data)
     : CoreThread(data),
+      programData(data),
       groupInfos(NULL),
       sgmlist(NULL),
       grplist(NULL),
@@ -206,9 +207,9 @@ void UiCoreThread::SendFeatureData(PalInfo *pal) {
  * 发送通告本计算机下线的信息.
  * @param pal class PalInfo
  */
-void UiCoreThread::SendBroadcastExit(PalInfo *pal) {
-  Command cmd(*g_cthrd);
-  cmd.SendExit(g_cthrd->udpSock, pal);
+void UiCoreThread::SendBroadcastExit(PalInfo *pal, UiCoreThread* self) {
+  Command cmd(*self);
+  cmd.SendExit(self->udpSock, pal);
 }
 
 /**
@@ -675,7 +676,7 @@ void UiCoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExit), NULL);
+  g_slist_foreach(pallist, GFunc(SendBroadcastExit), this);
   CoreThread::ClearSublayer();
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
@@ -870,7 +871,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_REGULAR;
   grpinf->name = g_strdup(pal->name);
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
@@ -894,7 +895,7 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -919,7 +920,7 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_GROUP;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
 
@@ -942,7 +943,7 @@ GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(g_progdt->table);
+  grpinf->buffer = gtk_text_buffer_new(programData.table);
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
 
@@ -1039,6 +1040,10 @@ gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
   pthread_mutex_unlock(&pcthrd->mutex);
 
   return TRUE;
+}
+
+UiProgramData& UiCoreThread::getUiProgramData() {
+  return programData;
 }
 
 

@@ -19,7 +19,7 @@
 
 #include <queue>
 
-#include "iptux/ProgramData.h"
+#include "iptux/UiProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
 #include "iptux/CoreThread.h"
@@ -37,8 +37,10 @@ namespace iptux {
  */
 class UiCoreThread: public CoreThread {
  public:
-  explicit UiCoreThread(ProgramData &data);
+  explicit UiCoreThread(UiProgramData &data);
   ~UiCoreThread() override ;
+
+  UiProgramData& getUiProgramData();
 
   void start() override;
 
@@ -49,7 +51,7 @@ class UiCoreThread: public CoreThread {
 
   void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
   static void SendFeatureData(PalInfo *pal);
-  static void SendBroadcastExit(PalInfo *pal);
+  static void SendBroadcastExit(PalInfo *pal, UiCoreThread* self);
   static void UpdateMyInfo();
 
   void ClearAllPalFromList() override ;
@@ -102,6 +104,7 @@ class UiCoreThread: public CoreThread {
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
 private:
+  UiProgramData& programData;
   LogSystem* logSystem;
   guint timerid;          //定时器ID
   std::queue<MsgPara> messages;

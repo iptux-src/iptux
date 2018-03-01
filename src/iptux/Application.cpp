@@ -44,7 +44,7 @@ int Application::run(int argc, char** argv) {
 void Application::onStartup(Application& self) {
   self.data = new UiProgramData(self.config);
   g_cthrd = new UiCoreThread(*self.data);
-  self.window = new MainWindow(self.app, self.config, *self.data);
+  self.window = new MainWindow(self.app, *g_cthrd);
   g_progdt = self.data;
   g_mwin = self.window;
 

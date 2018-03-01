@@ -6,8 +6,9 @@
 using namespace iptux;
 
 TEST(UiCoreThread, Constructor) {
+  gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
-  ProgramData* core = new ProgramData(*config);
+  UiProgramData* core = new UiProgramData(*config);
   core->sign = "abc";
   UiCoreThread* thread = new UiCoreThread(*core);
   thread->start();

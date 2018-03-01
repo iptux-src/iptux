@@ -44,11 +44,12 @@ static gchar* palInfo2HintMarkup(const PalInfo *pal);
 /**
  * 类构造函数.
  */
-MainWindow::MainWindow(GtkApplication* app, IptuxConfig &config, UiProgramData &progdt)
+MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
     : app(app),
+      coreThread(coreThread),
       window(nullptr),
-      config(config),
-      progdt(progdt),
+      progdt(coreThread.getUiProgramData()),
+      config(progdt.getConfig()),
       widset(NULL),
       mdlset(NULL),
       tmdllist(NULL),
@@ -1812,37 +1813,87 @@ void MainWindow::InitThemeSublayerData() {
   g_object_unref(factory);
 }
 
-// this function is run in corethread, so always use g_idle_add to update the ui
-void MainWindow::processEvent(const Event& event) {
-  EventType type = event.getType();
-  if(type == EventType ::NEW_PAL_ONLINE) {
-    auto event2 = (const NewPalOnlineEvent &) event;
-    auto ipv4 = event2.getPalInfo()->ipv4;
-    in_addr_t *p = g_new(in_addr_t, 1);
-    *p = ipv4;
-    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE, MainWindow::onNewPalOnlineEvent, p, g_free);
-    return;
+class EventData {
+public:
+  EventData(MainWindow* window, const Event& event) {
+    this->window = window;
+    this->event = event.clone();
   }
-  if(type == EventType::NEW_MESSAGE) {
-    auto event2 = (const NewMessageEvent &) event;
-    auto msgPara = event2.getMsgPara();
-    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE, MainWindow::onNewMessageEvent, p, g_free);
-    return;
-  }
-  LOG_WARN("unknown event type: %d", event.getType());
-}
 
-gboolean MainWindow::onNewPalOnlineEvent(gpointer data) {
-  in_addr_t* ipv4 = static_cast<in_addr_t *>(data);
-  MainWindow* self = g_mwin;
-  if(self->PaltreeContainItem(*ipv4)) {
-    self->UpdateItemToPaltree(*ipv4);
-  } else {
-    self->AttachItemToPaltree(*ipv4);
+  ~EventData() {
+    delete this->event;
   }
+
+  MainWindow* window;
+  Event* event;
+};
+
+gboolean MainWindow::processEventCallback(gpointer data) {
+  EventData* callback = (EventData*)data;
+  callback->window->processEventInMainThread(callback->event);
+  delete callback;
   return G_SOURCE_REMOVE;
 }
 
 
+// this function is run in corethread, so always use g_idle_add to update the ui
+void MainWindow::processEvent(const Event& event) {
+  // deleted in `processEventCallback`
+  EventData* callback = new EventData(this, event);
+  gdk_threads_add_idle(processEventCallback, callback);
+}
+
+void MainWindow::processEventInMainThread(Event* _event) {
+  EventType type = _event->getType();
+  if(type == EventType ::NEW_PAL_ONLINE) {
+    auto event = (NewPalOnlineEvent*)_event;
+    auto ipv4 = event->getPalInfo()->ipv4;
+    if(PaltreeContainItem(ipv4)) {
+      UpdateItemToPaltree(ipv4);
+    } else {
+      AttachItemToPaltree(ipv4);
+    }
+    return;
+  }
+  if(type == EventType::NEW_MESSAGE) {
+    auto event = (NewMessageEvent*)_event;
+    auto para = event->getMsgPara();
+    GroupInfo *grpinf = nullptr;
+    SessionAbstract *session;
+
+    /* 获取群组信息 */
+    switch (para.btype) {
+      case GROUP_BELONG_TYPE_REGULAR:
+        grpinf = coreThread.GetPalRegularItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_SEGMENT:
+        grpinf = coreThread.GetPalSegmentItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_GROUP:
+        grpinf = coreThread.GetPalGroupItem(para.pal);
+        break;
+      case GROUP_BELONG_TYPE_BROADCAST:
+        grpinf = coreThread.GetPalBroadcastItem(para.pal);
+        break;
+      default:
+        grpinf = nullptr;
+        break;
+    }
+
+    /* 如果群组存在则插入消息 */
+    /* 群组不存在是编程上的错误，请发送Bug报告 */
+    if (grpinf) {
+      coreThread.InsertMsgToGroupInfoItem(grpinf, &para);
+      if (grpinf->dialog) {
+        session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                       "session-class");
+        session->OnNewMessageComing();
+      }
+    }
+
+    return;
+  }
+  LOG_WARN("unknown event type: %d", type);
+}
 
 }  // namespace iptux
