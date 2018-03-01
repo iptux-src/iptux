@@ -1,15 +1,15 @@
 #include "gtest/gtest.h"
 
-#include "iptux/CoreThread.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/TestHelper.h"
 
 using namespace iptux;
 
-TEST(CoreThread, Constructor) {
+TEST(UiCoreThread, Constructor) {
   auto config = newTestIptuxConfig();
   ProgramData* core = new ProgramData(*config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(*core);
+  UiCoreThread* thread = new UiCoreThread(*core);
   thread->start();
   thread->stop();
   delete thread;
