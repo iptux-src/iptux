@@ -47,6 +47,7 @@ class TransFileModel {
   const std::string &getFilePath() const;
   TransAbstract *getData() const;
   bool isFinished() const;
+
  private:
   std::string status;
   std::string task;

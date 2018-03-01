@@ -118,6 +118,7 @@ class MainWindow {
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void InitThemeSublayerData();
   void processEventInMainThread(Event* event);
+
  private:
   //回调处理部分
   static gboolean processEventCallback(gpointer data);

@@ -56,6 +56,7 @@ class DataSettings {
 
   GData *widset;  //窗体集
   GData *mdlset;  //数据model集
+
  private:
   void ObtainPersonalValue();
   void ObtainSystemValue();
@@ -67,7 +68,8 @@ class DataSettings {
 
   static GtkWidget *CreatePopupMenu(GtkTreeModel *model);
   static gint IconfileGetItemPos(GtkTreeModel *model, const char *pathname);
-  //回调处理部分
+
+ //回调处理部分
  private:
   static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
   static void AddNewIcon(GtkWidget *button, GData **widset);
