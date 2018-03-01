@@ -53,8 +53,6 @@ UiCoreThread::UiCoreThread(UiProgramData &data)
       ecsList(NULL) {
   logSystem = new LogSystem(data);
   g_lgsys = logSystem;
-  newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
-  g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
   InitSublayer();
 }
@@ -63,7 +61,6 @@ UiCoreThread::UiCoreThread(UiProgramData &data)
  * 类析构函数.
  */
 UiCoreThread::~UiCoreThread() {
-  g_object_unref(newMessageArrived);
   delete logSystem;
 }
 
@@ -107,60 +104,6 @@ void UiCoreThread::InsertMessage(const MsgPara& para) {
 void UiCoreThread::InsertMessage(MsgPara&& para) {
   NewMessageEvent event(move(para));
   this->emitEvent(event);
-}
-
-void UiCoreThread::onNewMessageArrived(UiCoreThread* self) {
-  gdk_threads_add_idle(GSourceFunc(InsertMessageInMain), self);
-}
-
-
-gboolean UiCoreThread::InsertMessageInMain(UiCoreThread* self) {
-  while(true) {
-    self->Lock();
-    if(self->messages.empty()) {
-      self->Unlock();
-      break;
-    }
-    MsgPara para = self->messages.front();
-    self->messages.pop();
-    self->Unlock();
-
-    GroupInfo *grpinf = nullptr;
-    SessionAbstract *session;
-
-    /* 获取群组信息 */
-    switch (para.btype) {
-      case GROUP_BELONG_TYPE_REGULAR:
-        grpinf = self->GetPalRegularItem(para.pal);
-        break;
-      case GROUP_BELONG_TYPE_SEGMENT:
-        grpinf = self->GetPalSegmentItem(para.pal);
-        break;
-      case GROUP_BELONG_TYPE_GROUP:
-        grpinf = self->GetPalGroupItem(para.pal);
-        break;
-      case GROUP_BELONG_TYPE_BROADCAST:
-        grpinf = self->GetPalBroadcastItem(para.pal);
-        break;
-      default:
-        grpinf = nullptr;
-        break;
-    }
-
-    /* 如果群组存在则插入消息 */
-    /* 群组不存在是编程上的错误，请发送Bug报告 */
-    if (grpinf) {
-      self->InsertMsgToGroupInfoItem(grpinf, &para);
-      if (grpinf->dialog) {
-        session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                       "session-class");
-        session->OnNewMessageComing();
-      }
-    }
-    return G_SOURCE_REMOVE;
-  }
-  g_assert_not_reached();
-  return G_SOURCE_REMOVE;
 }
 
 /**

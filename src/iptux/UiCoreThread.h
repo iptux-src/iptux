@@ -84,8 +84,6 @@ class UiCoreThread: public CoreThread {
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
   const char *GetAccessPublicLimit();
   void SetAccessPublicLimit(const char *limit);
-
-  GSimpleAction* newMessageArrived;
  private:
   void InitSublayer();
   void ClearSublayer() override ;
@@ -120,8 +118,6 @@ private:
 
   //回调处理部分函数
  private:
-  static void onNewMessageArrived(UiCoreThread* self);
-  static gboolean InsertMessageInMain(UiCoreThread* self);
   static gboolean WatchCoreStatus(UiCoreThread *self);
 
     //内联成员函数
