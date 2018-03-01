@@ -144,7 +144,7 @@ void ProgramData::ReadProgData() {
   FLAG_SET(flags, 5, config.GetBool("open_transmission"));
   FLAG_SET(flags, 4, config.GetBool("use_enter_key"));
   FLAG_SET(flags, 3, config.GetBool("clearup_history"));
-  FLAG_SET(flags, 2, config.GetBool("record_log"));
+  FLAG_SET(flags, 2, config.GetBool("record_log", true));
   FLAG_SET(flags, 1, config.GetBool("open_blacklist"));
   FLAG_SET(flags, 0, config.GetBool("proof_shared"));
 
@@ -154,9 +154,9 @@ void ProgramData::ReadProgData() {
       config.GetString("trans_tip", __SOUND_PATH "/trans.ogg").c_str());
   volume = config.GetDouble("volume_degree");
 
-  FLAG_SET(flags, 2, config.GetBool("transnd_support"));
-  FLAG_SET(flags, 1, config.GetBool("msgsnd_support"));
-  FLAG_SET(flags, 0, config.GetBool("sound_support"));
+  FLAG_SET(sndfgs, 2, config.GetBool("transnd_support", true));
+  FLAG_SET(sndfgs, 1, config.GetBool("msgsnd_support", true));
+  FLAG_SET(sndfgs, 0, config.GetBool("sound_support", true));
 
   ReadNetSegment();
 }
