@@ -458,12 +458,10 @@ void UdpData::SomeoneSendSign() {
   if ((sign = ipmsg_get_attach(buf, ':', 5))) {
     g_free(pal->sign);
     pal->sign = sign;
-    gdk_threads_enter();
-    g_cthrd->Lock();
-    g_cthrd->UpdatePalToList(ipv4);
-    g_cthrd->Unlock();
-    g_mwin->UpdateItemToPaltree(ipv4);
-    gdk_threads_leave();
+    coreThread.Lock();
+    coreThread.UpdatePalToList(ipv4);
+    coreThread.Unlock();
+    coreThread.emitNewPalOnline(pal);
   }
 }
 
