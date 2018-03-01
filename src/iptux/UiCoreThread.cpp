@@ -50,6 +50,8 @@ UiCoreThread::UiCoreThread(ProgramData &data)
       pblist(NULL),
       prlist(NULL),
       ecsList(NULL) {
+  logSystem = new LogSystem(data);
+  g_lgsys = logSystem;
   newMessageArrived = g_simple_action_new("newMessageArrived", nullptr);
   g_signal_connect_swapped(newMessageArrived, "activate", G_CALLBACK(onNewMessageArrived), this);
   g_queue_init(&msgline);
@@ -61,6 +63,7 @@ UiCoreThread::UiCoreThread(ProgramData &data)
  */
 UiCoreThread::~UiCoreThread() {
   g_object_unref(newMessageArrived);
+  delete logSystem;
 }
 
 /**
@@ -182,11 +185,11 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
         InsertStringToBuffer(grpinf->buffer, data);
         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
         gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-        g_lgsys->CommunicateLog(para, "[STRING]%s", data);
+        logSystem->CommunicateLog(para, "[STRING]%s", data);
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         InsertPixbufToBuffer(grpinf->buffer, data);
-        g_lgsys->CommunicateLog(para, "[PICTURE]%s", data);
+        logSystem->CommunicateLog(para, "[PICTURE]%s", data);
         break;
       default:
         break;

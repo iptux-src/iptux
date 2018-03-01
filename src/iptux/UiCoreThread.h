@@ -23,6 +23,7 @@
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
 #include "iptux/CoreThread.h"
+#include "LogSystem.h"
 
 namespace iptux {
 
@@ -46,7 +47,7 @@ class UiCoreThread: public CoreThread {
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
 
-  static void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
+  void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
   static void SendFeatureData(PalInfo *pal);
   static void SendBroadcastExit(PalInfo *pal);
   static void UpdateMyInfo();
@@ -100,6 +101,8 @@ class UiCoreThread: public CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
+private:
+  LogSystem* logSystem;
   guint timerid;          //定时器ID
   std::queue<MsgPara> messages;
 

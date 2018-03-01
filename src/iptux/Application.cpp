@@ -71,7 +71,6 @@ void Application::onStartup(Application& self) {
 void Application::onActivate(Application& self) {
   StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
-  g_lgsys = new LogSystem(*self.data);
 
   self.window->SetStatusIcon(sicon);
   self.window->CreateWindow();
