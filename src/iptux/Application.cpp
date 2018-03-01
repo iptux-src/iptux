@@ -29,7 +29,6 @@ Application::Application(IptuxConfig& config)
   app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
-  g_signal_connect_swapped(app, "notify::active-window", G_CALLBACK(onActiveWindowChanged), this);
 }
 
 Application::~Application() {
@@ -84,10 +83,6 @@ void Application::onActivate(Application& self) {
   }
   iptux_init();
   sicon->CreateStatusIcon();
-}
-
-void Application::onActiveWindowChanged(Application &self) {
-  LOG_WARN("new active window %p", gtk_application_get_active_window(self.app));
 }
 
 void Application::onQuit (void*, void*, Application& self) {

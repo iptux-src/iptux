@@ -226,21 +226,16 @@ void UdpData::SomeoneAnsentry() {
   if (!ptr || *ptr == '\0') ConvertEncode(g_progdt->encode);
 
   /* 加入或更新好友列表 */
-  gdk_threads_enter();
-  g_cthrd->Lock();
-  if ((pal = g_cthrd->GetPalFromList(ipv4))) {
+  coreThread.Lock();
+  if ((pal = coreThread.GetPalFromList(ipv4))) {
     UpdatePalInfo(pal);
-    g_cthrd->UpdatePalToList(ipv4);
+    coreThread.UpdatePalToList(ipv4);
   } else {
     pal = CreatePalInfo();
-    g_cthrd->AttachPalToList(pal);
+    coreThread.AttachPalToList(pal);
   }
-  g_cthrd->Unlock();
-  if (g_mwin->PaltreeContainItem(ipv4))
-    g_mwin->UpdateItemToPaltree(ipv4);
-  else
-    g_mwin->AttachItemToPaltree(ipv4);
-  gdk_threads_leave();
+  coreThread.Unlock();
+  coreThread.emitNewPalOnline(pal);
 
   /* 更新本大爷的数据信息 */
   if (pal->isCompatible()) {

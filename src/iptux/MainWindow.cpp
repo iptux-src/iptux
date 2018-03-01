@@ -892,15 +892,19 @@ bool MainWindow::GroupGetPrevPaltreeItem(GtkTreeModel *model, GtkTreeIter *iter,
  */
 bool MainWindow::GroupGetPaltreeItem(GtkTreeModel *model, GtkTreeIter *iter,
                                      GroupInfo *grpinf) {
-  GroupInfo *pgrpinf;
-
   if (!gtk_tree_model_get_iter_first(model, iter)) return false;
   do {
+    GroupInfo *pgrpinf;
     gtk_tree_model_get(model, iter, 6, &pgrpinf, -1);
-    if (pgrpinf->grpid == grpinf->grpid) break;
+    if(pgrpinf == nullptr) {
+      LOG_WARN("don't have pgrpinf in this model and iter: %p, %p", model, iter);
+      continue;
+    }
+    if (pgrpinf->grpid == grpinf->grpid) {
+      return true;
+    }
   } while (gtk_tree_model_iter_next(model, iter));
-
-  return (pgrpinf->grpid == grpinf->grpid);
+  return false;
 }
 
 /**

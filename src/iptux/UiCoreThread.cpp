@@ -109,7 +109,7 @@ void UiCoreThread::InsertMessage(MsgPara&& para) {
 }
 
 void UiCoreThread::onNewMessageArrived(UiCoreThread* self) {
-  g_idle_add(GSourceFunc(InsertMessageInMain), self);
+  gdk_threads_add_idle(GSourceFunc(InsertMessageInMain), self);
 }
 
 
