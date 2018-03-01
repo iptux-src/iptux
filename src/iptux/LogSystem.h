@@ -22,13 +22,15 @@ class LogSystem {
   explicit LogSystem(const ProgramData& programData);
   ~LogSystem();
 
-  void InitSublayer();
   void CommunicateLog(MsgPara *msgpara, const char *fmt, ...);
   void SystemLog(const char *fmt, ...);
 
  private:
   const ProgramData& programData;
   int fdc, fds;
+
+ private:
+  void InitSublayer();
 };
 
 }  // namespace iptux

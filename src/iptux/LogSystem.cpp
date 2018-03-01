@@ -27,7 +27,9 @@ namespace iptux {
 LogSystem::LogSystem(const ProgramData& programData)
     : programData(programData),
       fdc(-1),
-      fds(-1) {}
+      fds(-1) {
+  InitSublayer();
+}
 
 LogSystem::~LogSystem() {
   close(fdc);
