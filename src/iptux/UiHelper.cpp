@@ -30,7 +30,7 @@ void iptux_init() {
   g_sndsys->InitSublayer();
 
   signal(SIGPIPE, SIG_IGN);
-  g_lgsys->SystemLog(_("Loading the process successfully!"));
+  g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
 }
 
 

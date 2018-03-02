@@ -52,7 +52,6 @@ UiCoreThread::UiCoreThread(UiProgramData &data)
       prlist(NULL),
       ecsList(NULL) {
   logSystem = new LogSystem(data);
-  g_lgsys = logSystem;
   g_queue_init(&msgline);
   InitSublayer();
 }
@@ -126,11 +125,11 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
         InsertStringToBuffer(grpinf->buffer, data);
         gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
         gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-        logSystem->CommunicateLog(para, "[STRING]%s", data);
+        CommunicateLog(para, "[STRING]%s", data);
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         InsertPixbufToBuffer(grpinf->buffer, data);
-        logSystem->CommunicateLog(para, "[PICTURE]%s", data);
+        CommunicateLog(para, "[PICTURE]%s", data);
         break;
       default:
         break;
@@ -988,5 +987,18 @@ UiProgramData& UiCoreThread::getUiProgramData() {
   return programData;
 }
 
+void UiCoreThread::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const {
+  va_list args;
+  va_start (args, fmt);
+  logSystem->CommunicateLog(msgpara, fmt, args);
+  va_end(args);
+}
+
+void UiCoreThread::SystemLog(const char *fmt, ...) const {
+  va_list args;
+  va_start (args, fmt);
+  logSystem->SystemLog(fmt, args);
+  va_end(args);
+}
 
 }  // namespace iptux

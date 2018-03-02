@@ -157,10 +157,10 @@ void RecvFileData::RecvRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    g_lgsys->SystemLog(_("Failed to receive the file \"%s\" from %s!"),
+    g_cthrd->SystemLog(_("Failed to receive the file \"%s\" from %s!"),
                        file->filepath, file->fileown->name);
   } else {
-    g_lgsys->SystemLog(_("Receive the file \"%s\" from %s successfully!"),
+    g_cthrd->SystemLog(_("Receive the file \"%s\" from %s successfully!"),
                        file->filepath, file->fileown->name);
   }
   /* 关闭文件传输套接口 */
@@ -293,10 +293,10 @@ void RecvFileData::RecvDirFiles() {
 end:
   if (!result) {
     terminate = true;
-    g_lgsys->SystemLog(_("Failed to receive the directory \"%s\" from %s!"),
+    g_cthrd->SystemLog(_("Failed to receive the directory \"%s\" from %s!"),
                        file->filepath, file->fileown->name);
   } else {
-    g_lgsys->SystemLog(_("Receive the directory \"%s\" from %s successfully!"),
+    g_cthrd->SystemLog(_("Receive the directory \"%s\" from %s successfully!"),
                        file->filepath, file->fileown->name);
   }
   /* 关闭文件传输套接口 */

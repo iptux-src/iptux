@@ -97,7 +97,7 @@ char *convert_encode(const char *string, const char *tocode,
 
   tstring = g_convert(string, -1, tocode, fromcode, &rbytes, &wbytes, &err);
   if (err != nullptr) {
-    LOG_INFO("g_convert failed: %s-%s-%s", g_quark_to_string(err->domain), err->code, err->message);
+    LOG_INFO("g_convert failed: %s-%d-%s", g_quark_to_string(err->domain), err->code, err->message);
     g_clear_error(&err);
     return nullptr;
   }

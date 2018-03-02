@@ -22,8 +22,8 @@ class LogSystem {
   explicit LogSystem(const ProgramData& programData);
   ~LogSystem();
 
-  void CommunicateLog(MsgPara *msgpara, const char *fmt, ...);
-  void SystemLog(const char *fmt, ...);
+  void CommunicateLog(MsgPara *msgpara, const char *fmt, va_list args);
+  void SystemLog(const char *fmt, va_list args);
 
  private:
   const ProgramData& programData;

@@ -39,7 +39,7 @@ namespace iptux {
 #endif
 
 void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
-           const char *format, ...);
+           const char *format, ...) G_GNUC_PRINTF(5, 6);
 }  // namespace iptux
 
 #endif
