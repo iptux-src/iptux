@@ -84,6 +84,7 @@ class UiCoreThread: public CoreThread {
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
   const char *GetAccessPublicLimit();
   void SetAccessPublicLimit(const char *limit);
+
  private:
   void InitSublayer();
   void ClearSublayer() override ;

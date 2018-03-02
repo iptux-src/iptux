@@ -139,7 +139,6 @@ char *assert_filename_inexist(const char *path) {
  */
 char *getformattime(gboolean date, const char *format, ...) {
   char buf[MAX_BUFLEN], *msg, *ptr;
-  struct tm *tm;
   time_t tt;
   va_list ap;
 
@@ -148,11 +147,12 @@ char *getformattime(gboolean date, const char *format, ...) {
   va_end(ap);
 
   time(&tt);
-  tm = localtime(&tt);
+  struct tm tm;
+  localtime_r(&tt, &tm);
   if (date)
-    strftime(buf, MAX_BUFLEN, "%c", tm);
+    strftime(buf, MAX_BUFLEN, "%c", &tm);
   else
-    strftime(buf, MAX_BUFLEN, "%X", tm);
+    strftime(buf, MAX_BUFLEN, "%X", &tm);
 
   ptr = g_strdup_printf("(%s) %s:", buf, msg);
   g_free(msg);
