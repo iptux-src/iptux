@@ -47,9 +47,8 @@ void LogSystem::InitSublayer() {
   fds = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 }
 
-void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) {
+void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
   gchar *log, *msg, *ptr;
-  va_list ap;
 
   if (!programData.IsSaveChatHistory()) {
     return;
@@ -69,9 +68,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) {
   } else
     return;
 
-  va_start(ap, fmt);
   msg = g_strdup_vprintf(fmt, ap);
-  va_end(ap);
   log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER, ptr, msg,
                         LOG_END_HEADER);
   write(fdc, log, strlen(log));
@@ -80,18 +77,15 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) {
   g_free(msg);
 }
 
-void LogSystem::SystemLog(const char *fmt, ...) {
+void LogSystem::SystemLog(const char *fmt, va_list ap) {
   gchar *log, *msg, *ptr;
-  va_list ap;
 
   if (!programData.IsSaveChatHistory()) {
     return;
   }
   ptr = getformattime(TRUE, _("User:%s Host:%s"), g_get_user_name(),
                       g_get_host_name());
-  va_start(ap, fmt);
   msg = g_strdup_vprintf(fmt, ap);
-  va_end(ap);
   log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER, ptr, msg,
                         LOG_END_HEADER);
   g_free(ptr);

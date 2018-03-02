@@ -23,9 +23,10 @@
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
 #include "iptux/CoreThread.h"
-#include "LogSystem.h"
 
 namespace iptux {
+
+class LogSystem;
 
 /**
  * @note 请保证插入或更新某成员时，底层优先于UI；删除某成员时，UI优先于底层，
@@ -84,6 +85,10 @@ class UiCoreThread: public CoreThread {
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
   const char *GetAccessPublicLimit();
   void SetAccessPublicLimit(const char *limit);
+
+  void CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const G_GNUC_PRINTF(3, 4);
+  void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
+
  private:
   void InitSublayer();
   void ClearSublayer() override ;

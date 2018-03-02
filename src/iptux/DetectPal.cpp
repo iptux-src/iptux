@@ -18,6 +18,7 @@
 #include "iptux/deplib.h"
 #include "iptux/global.h"
 #include "iptux/output.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 

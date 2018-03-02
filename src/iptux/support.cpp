@@ -19,7 +19,6 @@
 #include <sys/socket.h>
 
 #include "UiCoreThread.h"
-#include "LogSystem.h"
 #include "UiProgramData.h"
 #include "ipmsg.h"
 #include "iptux/deplib.h"

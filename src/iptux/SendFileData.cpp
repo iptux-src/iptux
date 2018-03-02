@@ -136,10 +136,10 @@ void SendFileData::SendRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    g_lgsys->SystemLog(_("Failed to send the file \"%s\" to %s!"),
+    g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
                        file->filepath, file->fileown->name);
   } else {
-    g_lgsys->SystemLog(_("Send the file \"%s\" to %s successfully!"),
+    g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
                        file->filepath, file->fileown->name);
   }
 }
@@ -256,10 +256,10 @@ end:
     /* 关闭堆栈中所有的目录流，并清空堆栈 */
     g_queue_foreach(&dirstack, GFunc(closedir), NULL);
     g_queue_clear(&dirstack);
-    g_lgsys->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
+    g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
                        file->filepath, file->fileown->name);
   } else {
-    g_lgsys->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
+    g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
                        file->filepath, file->fileown->name);
   }
 }

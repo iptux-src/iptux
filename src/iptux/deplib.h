@@ -12,7 +12,6 @@
 #ifndef IPTUX_DEPLIB_H
 #define IPTUX_DEPLIB_H
 
-#undef _
 #include <glib/gi18n.h>
 
 #define ATOM_OBJECT 0xFFFC
@@ -26,9 +25,5 @@
 #define PIC_PATH "/iptux/pic"
 #define ICON_PATH "/iptux/icon"
 #define PHOTO_PATH "/iptux/photo"
-
-#ifndef _
-#define _(string) gettext(string)
-#endif
 
 #endif

@@ -56,13 +56,13 @@ static GOptionEntry entries[] = {
 
 static string nowAsString() {
   time_t rawtime;
-  struct tm* timeinfo;
+  struct tm timeinfo;
   char buffer[80];
 
   time(&rawtime);
-  timeinfo = localtime(&rawtime);
+  localtime_r(&rawtime, &timeinfo);
 
-  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
   return buffer;
 }
 

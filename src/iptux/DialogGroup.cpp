@@ -699,7 +699,7 @@ bool DialogGroup::SendTextMsg() {
 
   msgpara.stype = MessageSourceType::SELF;
   msgpara.pal = NULL;
-  g_lgsys->CommunicateLog(&msgpara, "[STRING]%s", msg);
+  g_cthrd->CommunicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);
 
   return true;
