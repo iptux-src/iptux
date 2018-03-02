@@ -315,7 +315,7 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-      pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+      LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
                 strerror(errno));
       exit(1);
     }

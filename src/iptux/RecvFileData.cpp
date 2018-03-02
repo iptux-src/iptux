@@ -26,6 +26,7 @@
 #include "iptux/output.h"
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 

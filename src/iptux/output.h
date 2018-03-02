@@ -12,7 +12,7 @@
 #ifndef IPTUX_OUTPUT_H
 #define IPTUX_OUTPUT_H
 
-#include <gtk/gtk.h>
+#include <glib.h>
 
 namespace iptux {
 
@@ -40,11 +40,6 @@ namespace iptux {
 
 void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
            const char *format, ...);
-
-void pop_info(GtkWidget *parent, const gchar *format, ...);
-void pop_warning(GtkWidget *parent, const gchar *format, ...);
-void pop_error(const gchar *format, ...);
-
 }  // namespace iptux
 
 #endif
