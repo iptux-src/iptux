@@ -11,6 +11,7 @@ TEST(UiCoreThread, Constructor) {
   UiProgramData* core = new UiProgramData(*config);
   core->sign = "abc";
   UiCoreThread* thread = new UiCoreThread(*core);
+  thread->SystemLog("hello %s", "world");
   thread->start();
   thread->stop();
   delete thread;
