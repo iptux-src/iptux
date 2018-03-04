@@ -26,6 +26,7 @@
 
 #include "iptux/ipmsg.h"
 #include "output.h"
+#include "Exception.h"
 
 using namespace std;
 
@@ -498,5 +499,12 @@ std::string inAddrToString(in_addr_t ipv4) {
   return oss.str();
 }
 
+in_addr_t stringToInAddr(const std::string& s) {
+  in_addr_t res;
+  if(inet_pton(AF_INET, s.c_str(), &res) == 1) {
+    return res;
+  }
+  throw Exception(ErrorCode::INVALID_IP_ADDRESS);
+}
 
 }  // namespace iptux

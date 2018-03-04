@@ -1,8 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "iptux/utils.h"
+#include "Exception.h"
 
 using namespace iptux;
+using namespace std;
 
 TEST(Utils, FLAG_SET) {
   uint8_t a = 1;
@@ -27,4 +29,30 @@ TEST(Utils, numeric_to_size) {
   EXPECT_STREQ(numeric_to_size(1L<<40), "1.0TiB");
   EXPECT_STREQ(numeric_to_size(-1), "-1B");
   EXPECT_STREQ(numeric_to_size(-1024), "-1024B");
+}
+
+TEST(Utils, stringToInAddr) {
+  EXPECT_EQ(stringToInAddr("127.0.0.1"), 0x100007f);
+  EXPECT_EQ(stringToInAddr("1.2.3.4"), 0x4030201);
+  EXPECT_EQ(stringToInAddr("1.2.3.255"), 0xff030201);
+  EXPECT_EQ(stringToInAddr("255.2.3.4"), 0x40302ff);
+  
+  vector<string> cases = {
+      "",
+      "123",
+      "123.234",
+      "123.234.2",
+      "123.235.0.256",
+      "1.2.3.4.5",
+      "hello world",
+  };
+
+  for(const string& c: cases) {
+    try {
+      stringToInAddr(c);
+      EXPECT_TRUE(false) << c;
+    } catch(Exception& e) {
+      ASSERT_EQ(e.getErrorCode(), ErrorCode::INVALID_IP_ADDRESS);
+    }
+  }
 }

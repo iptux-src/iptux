@@ -62,14 +62,15 @@ add_library(iptux
         UiHelper.h UiHelper.cpp
     ProgramData.cpp ProgramData.h
     CoreThread.cpp CoreThread.h
-    Event.cpp Event.h)
+    Event.cpp Event.h Exception.cpp Exception.h)
 
 
 add_executable(libiptux_test
     IptuxConfigTest.cpp
 	UtilsTest.cpp
 	TestMain.cpp
-		ProgramDataTest.cpp TestHelper.h TestHelper.cpp UiProgramDataTest.cpp CoreThreadTest.cpp ModelsTest.cpp UiCoreThreadTest.cpp LogSystemTest.cpp)
+		ProgramDataTest.cpp TestHelper.h TestHelper.cpp UiProgramDataTest.cpp CoreThreadTest.cpp ModelsTest.cpp
+		UiCoreThreadTest.cpp LogSystemTest.cpp UdpDataTest.cpp)
 if(GTEST_FOUND)
 	include_directories(${GTEST_INCLUDE_DIRS})
 	target_link_libraries(libiptux_test ${GTEST_BOTH_LIBRARIES} iptux pthread)

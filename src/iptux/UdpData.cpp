@@ -20,21 +20,17 @@
 #include <unistd.h>
 
 #include "Command.h"
-#include "UiCoreThread.h"
 #include "DialogGroup.h"
 #include "DialogPeer.h"
-#include "MainWindow.h"
-#include "UiProgramData.h"
 #include "RecvFile.h"
 #include "SendFile.h"
-#include "SoundSystem.h"
-#include "dialog.h"
 #include "global.h"
 #include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
 #include "output.h"
+#include "dialog.h"
 
 using namespace std;
 
@@ -61,7 +57,7 @@ void UdpData::UdpDataEntry(CoreThread& coreThread,
                            in_addr_t ipv4,
                            const char buf[],
                            size_t size) {
-  LOG_INFO("received udp message from %s, size %d", inAddrToString(ipv4).c_str(), size);
+  LOG_INFO("received udp message from %s, size %zu", inAddrToString(ipv4).c_str(), size);
   UdpData udata(coreThread);
 
   udata.ipv4 = ipv4;
@@ -119,7 +115,7 @@ void UdpData::DispatchUdpData() {
       SomeoneBcstmsg();
       break;
     default:
-      LOG_WARN("unknown command: 0x%x", GET_MODE(commandno));
+      LOG_WARN("unknown command: 0x%lx", GET_MODE(commandno));
       break;
   }
 }
@@ -766,20 +762,18 @@ char *UdpData::RecvPalIcon() {
 PalInfo *UdpData::AssertPalOnline() {
   PalInfo *pal;
 
-  if ((pal = g_cthrd->GetPalFromList(ipv4))) {
+  if ((pal = coreThread.GetPalFromList(ipv4))) {
     /* 既然好友不在线，那么他自然不在列表中 */
     if (!pal->isOnline()) {
       pal->setOnline(true);
-      gdk_threads_enter();
-      g_cthrd->Lock();
-      g_cthrd->UpdatePalToList(ipv4);
-      g_cthrd->Unlock();
-      g_mwin->AttachItemToPaltree(ipv4);
-      gdk_threads_leave();
+      coreThread.Lock();
+      coreThread.UpdatePalToList(ipv4);
+      coreThread.Unlock();
+      coreThread.emitNewPalOnline(pal);
     }
   } else {
     SomeoneLost();
-    pal = g_cthrd->GetPalFromList(ipv4);
+    pal = coreThread.GetPalFromList(ipv4);
   }
 
   return pal;

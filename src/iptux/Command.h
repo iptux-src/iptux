@@ -16,7 +16,7 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
-#include "iptux/UiCoreThread.h"
+#include "iptux/CoreThread.h"
 
 namespace iptux {
 
@@ -51,7 +51,7 @@ class Command {
   void SendSublayer(int sock, PalInfo *pal, uint32_t opttype, const char *path);
 
  private:
-  static void FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error);
+  void FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error);
   void SendSublayerData(int sock, int fd);
   void ConvertEncode(const std::string &encode);
   void CreateCommand(uint32_t command, const char *attach);
