@@ -36,7 +36,7 @@ TEST(Utils, stringToInAddr) {
   EXPECT_EQ(stringToInAddr("1.2.3.4"), 0x4030201);
   EXPECT_EQ(stringToInAddr("1.2.3.255"), 0xff030201);
   EXPECT_EQ(stringToInAddr("255.2.3.4"), 0x40302ff);
-  
+
   vector<string> cases = {
       "",
       "123",
