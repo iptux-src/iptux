@@ -3,8 +3,8 @@ require 'formula'
 class Iptux < Formula
   head 'https://github.com/iptux-src/iptux.git'
   homepage 'https://github.com/iptux-src/iptux'
-  url 'https://github.com/iptux-src/iptux/archive/v0.7.4.tar.gz'
-  sha256 'cb208c54f9e888b40aed6c9590dcf25bfdcceb1a5a964b57220ede0fa816f22a'
+  url 'https://github.com/iptux-src/iptux/archive/v0.7.5.tar.gz'
+  sha256 '37fd2618e888d44b3ddcc21e2d497f0a8dcbdb2adcb23fd137fb8e56d2d46919'
 
   depends_on :x11 => :optional
   depends_on 'gettext'
