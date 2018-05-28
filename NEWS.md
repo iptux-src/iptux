@@ -1,4 +1,4 @@
-# 0.7.5 (2018-XX-XX)
+# 0.7.5 (2018-05-28)
 
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
