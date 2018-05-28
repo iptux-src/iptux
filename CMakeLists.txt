@@ -21,7 +21,11 @@ if(NOT Intl_FOUND)
 	message(FATAL_ERROR "libintl not found")
 endif(NOT Intl_FOUND)
 
-pkg_check_modules(GST gstreamer-1.0>=1.0)
+option(WITH_GSTREAMER "build with gstreamer" ON)
+
+if(WITH_GSTREAMER)
+    pkg_check_modules(GST gstreamer-1.0>=1.0)
+endif(WITH_GSTREAMER)
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/src/iptux/config.h.in"
