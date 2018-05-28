@@ -35,16 +35,30 @@ sudo apt-get install iptux
 
 ### Mac OS X
 
-stable version:
+stable version without gstreamer:
 
-```
+```sh
+brew unlink gstreamer # check #211
 brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
 ```
 
-head version:
+stable version with gstream: # much slower
 
+```sh
+brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb --with-gstreamer
 ```
+
+head version without gstreamer:
+
+```sh
+brew unlink gstreamer # check #211
 brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
+```
+
+head version with gstreamer: # much slower
+
+```sh
+brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb --with-gstreamer
 ```
 
 
