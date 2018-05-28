@@ -303,7 +303,7 @@ void ProgramData::WriteNetSegment() {
     tlist = g_slist_next(tlist);
   }
   pthread_mutex_unlock(&mutex);
-  config.SetVector("scan_net_segement", jsons);
+  config.SetVector("scan_net_segment", jsons);
 }
 
 /**

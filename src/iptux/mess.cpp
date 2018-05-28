@@ -89,9 +89,9 @@ NetSegment::~NetSegment() {
 
 Json::Value NetSegment::ToJsonValue() const {
   Json::Value value;
-  value["startip"] = startip;
-  value["endip"] = endip;
-  value["description"] = description;
+  value["startip"] = startip ? startip : "";
+  value["endip"] = endip ? endip : "";
+  value["description"] = description ? description : "";
   return value;
 }
 
