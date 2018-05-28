@@ -2,6 +2,7 @@
 
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
+* [#207] fix crash when config the `Network'.
 
 # 0.7.4 (2018-01-24)
 
