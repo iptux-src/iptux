@@ -32,7 +32,9 @@ static int mergepath(char tpath[], const char *npath);
  * 类构造函数.
  */
 AnalogFS::AnalogFS() {
-  if (!::getcwd(path, MAX_PATHLEN)) strcpy(path, "/");
+  if (!::getcwd(path, MAX_PATHLEN)) {
+    strcpy(path, "/");
+  }
 }
 
 /**
