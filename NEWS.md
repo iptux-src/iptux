@@ -1,6 +1,6 @@
 # 0.7.6 (2018-12-29)
 
-* [#219] fix compatible with FeiQ.
+* [#219] fix compatible with FeiQ. thanks to caowai.
 
 # 0.7.5 (2018-05-28)
 
