@@ -1,8 +1,12 @@
+# 0.7.6 (2018-12-29)
+
+* [#219] fix compatible with FeiQ.
+
 # 0.7.5 (2018-05-28)
 
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
-* [#207] fix crash when config the `Network'.
+* [#207] fix crash when config the `Network`.
 
 # 0.7.4 (2018-01-24)
 
