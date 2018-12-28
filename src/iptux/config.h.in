@@ -1,5 +1,7 @@
 #define VERSION "@PROJECT_VERSION@"
-#define IPTUX_VERSION "iptux @PROJECT_VERSION@"
+
+/* the 1_ prefix is used for compatible with FeiQ */
+#define IPTUX_VERSION "1_iptux @PROJECT_VERSION@"
 #define GETTEXT_PACKAGE "@PROJECT_NAME@"
 
 #define __PIXMAPS_PATH "@CMAKE_INSTALL_FULL_DATADIR@/iptux/pixmaps"
