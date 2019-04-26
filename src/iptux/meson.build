@@ -88,4 +88,25 @@ libiptux = static_library('iptux',
     include_directories: inc
 )
 
+test_sources = files([
+    'CoreThreadTest.cpp',
+    'IptuxConfigTest.cpp',
+    'LogSystemTest.cpp',
+    'ModelsTest.cpp',
+    'ProgramDataTest.cpp',
+    'TestHelper.cpp',
+    'TestMain.cpp',
+    'UdpDataTest.cpp',
+    'UiCoreThreadTest.cpp',
+    'UiProgramDataTest.cpp',
+    'UtilsTest.cpp'
+])
+libiptux_test = executable('libiptux_test',
+    test_sources,
+    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep],
+    link_with: [libiptux, libgtest],
+    include_directories: inc
+)
+test('unit test', libiptux_test)
+
 
