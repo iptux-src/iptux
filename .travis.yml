@@ -23,7 +23,7 @@ addons:
     - libgtk-3-dev
     - libglib2.0-dev
     - libjsoncpp-dev
-dist: trusty
+dist: xenial
 sudo: false
 matrix:
   fast_finish: true
