@@ -75,7 +75,6 @@ Makefile
 config.h
 config.log
 config.status
-po/POTFILES
 src/main/iptux
 stamp-h1
 autom4te.cache
