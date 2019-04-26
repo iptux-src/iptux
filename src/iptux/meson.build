@@ -1,3 +1,6 @@
+gtk_dep = dependency('gtk+-3.0', version: '>=3.12')
+jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
+
 glib_compile_resources = find_program('glib-compile-resources')
 
 iptux_resource_h = custom_target('iptux_resource_h',
@@ -23,14 +26,10 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
    install : true,
    install_dir : 'subdir')
 
-# add_custom_command(OUTPUT IptuxResource.h
-# 		MAIN_DEPENDENCY resources/iptux.gresource.xml
-# 		COMMAND glib-compile-resources --generate-header --manual-register --target=IptuxResource.h
-# 			--sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_SOURCE_DIR}/resources/iptux.gresource.xml
-# 		)
-
-# add_custom_command(OUTPUT IptuxResource.cpp
-# 		MAIN_DEPENDENCY resources/iptux.gresource.xml
-# 		COMMAND glib-compile-resources --generate-source --manual-register --target=IptuxResource.cpp
-# 			--sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_SOURCE_DIR}/resources/iptux.gresource.xml
-# 		)
+library('iptux',
+    [
+        iptux_resource_h,
+        iptux_resource_cpp
+    ],
+    dependencies: [gtk_dep, jsoncpp_dep]
+)
