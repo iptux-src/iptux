@@ -8,17 +8,23 @@ os:
 compiler:
 - gcc
 - clang
+install:
+- '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
+- '[ "$TRAVIS_OS_NAME" != osx ] || brew install meson gettext gtk+3 jsoncpp'
 script:
 - '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
   make test; }'
 - env
-- '[ "$TRAVIS_OS_NAME" != linux ] || docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:0.0.2
-  env CODECOV_TOKEN=$CODECOV_TOKEN /ws/scripts/build_in_docker_ubuntu1604.sh'
+- '[ "$TRAVIS_OS_NAME" != linux ] || { meson builddir && ninja -v -C builddir test} '
+addons:
+  apt:
+    packages:
+    - meson
+    - libgtk-3-dev
+    - libglib2.0-dev
+    - libjsoncpp-dev
 dist: trusty
 sudo: false
-install:
-- '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-- '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+3 jsoncpp'
 matrix:
   fast_finish: true
   allow_failures:
