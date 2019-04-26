@@ -86,7 +86,7 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 sources += [iptux_resource_h, iptux_resource_cpp]
 inc = include_directories('..')
 
-library('iptux',
+libiptux = static_library('iptux',
     sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep],
     include_directories: inc
