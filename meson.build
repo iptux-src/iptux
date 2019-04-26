@@ -4,3 +4,4 @@ project('iptux', 'cpp',
 
 subdir('src')
 subdir('pixmaps')
+subdir('sound')
