@@ -15,7 +15,7 @@ script:
 - '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
   make test; }'
 - env
-- '[ "$TRAVIS_OS_NAME" != linux ] || { meson builddir && ninja -v -C builddir test; }'
+- '[ "$TRAVIS_OS_NAME" != linux ] || { mkdir builddir && meson builddir && ninja -v -C builddir test; }'
 addons:
   apt:
     packages:
