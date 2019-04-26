@@ -2,14 +2,22 @@ gtk_dep = dependency('gtk+-3.0', version: '>=3.12')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0')
 
-glib_compile_resources = find_program('glib-compile-resources')
+conf_data = configuration_data()
+conf_data.set_quoted('VERSION', meson.project_version())
+# the 1_ prefix is used for compatible with FeiQ
+conf_data.set_quoted('IPTUX_VERSION', '1_iptux '+meson.project_version())
+conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+conf_data.set('CMAKE_INSTALL_FULL_DATADIR',
+    join_paths(get_option('prefix'), get_option('datadir')))
+configure_file(input : 'config.h.in',
+               output : 'config.h',
+               configuration : conf_data)
 
 sources = files([
     'AnalogFS.cpp',
     'Application.cpp',
     'Command.cpp',
     'CoreThread.cpp',
-    'CoreThreadTest.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',
     'DialogBase.cpp',
@@ -19,14 +27,10 @@ sources = files([
     'Exception.cpp',
     'HelpDialog.cpp',
     'IptuxConfig.cpp',
-    'IptuxConfigTest.cpp',
     'LogSystem.cpp',
-    'LogSystemTest.cpp',
     'MainWindow.cpp',
     'Models.cpp',
-    'ModelsTest.cpp',
     'ProgramData.cpp',
-    'ProgramDataTest.cpp',
     'RecvFile.cpp',
     'RecvFileData.cpp',
     'RevisePal.cpp',
@@ -36,20 +40,14 @@ sources = files([
     'SoundSystem.cpp',
     'StatusIcon.cpp',
     'TcpData.cpp',
-    'TestHelper.cpp',
-    'TestMain.cpp',
     'TransAbstract.cpp',
     'TransFileModel.cpp',
     'TransWindow.cpp',
     'UdpData.cpp',
-    'UdpDataTest.cpp',
     'UiCoreThread.cpp',
-    'UiCoreThreadTest.cpp',
     'UiHelper.cpp',
     'UiModels.cpp',
     'UiProgramData.cpp',
-    'UiProgramDataTest.cpp',
-    'UtilsTest.cpp',
     'WindowConfig.cpp',
     'callback.cpp',
     'dialog.cpp',
@@ -59,6 +57,8 @@ sources = files([
     'utils.cpp',
     'wrapper.cpp'
 ])
+
+glib_compile_resources = find_program('glib-compile-resources')
 
 iptux_resource_h = custom_target('iptux_resource_h',
   output : 'IptuxResource.h',
