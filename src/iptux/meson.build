@@ -68,9 +68,7 @@ iptux_resource_h = custom_target('iptux_resource_h',
     '--manual-register',
     '--target=@OUTPUT@',
     '--sourcedir=' + join_paths(meson.current_source_dir(), 'resources'),
-    '@INPUT@'],
-   install : true,
-   install_dir : 'subdir')
+    '@INPUT@'])
 iptux_resource_cpp = custom_target('iptux_resource_cpp',
   output : 'IptuxResource.cpp',
   input : 'resources/iptux.gresource.xml',
@@ -79,9 +77,7 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
     '--manual-register',
     '--target=@OUTPUT@',
     '--sourcedir=' + join_paths(meson.current_source_dir(), 'resources'),
-    '@INPUT@'],
-   install : true,
-   install_dir : 'subdir')
+    '@INPUT@'])
 
 sources += [iptux_resource_h, iptux_resource_cpp]
 inc = include_directories('..')
