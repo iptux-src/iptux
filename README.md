@@ -122,3 +122,7 @@ xgettext \
   --msgid-bugs-address=https://github.com/iptux-src/iptux/issues/new \
   --package-version=0.7.3
 ```
+
+## Stargazers over time
+
+[![Stargazers over time](https://starcharts.herokuapp.com/iptux-src/iptux.svg)](https://starcharts.herokuapp.com/iptux-src/iptux)
