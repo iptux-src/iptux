@@ -1,6 +1,6 @@
 gtk_dep = dependency('gtk+-3.0', version: '>=3.12')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
-gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0')
+gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
 
 conf_data = configuration_data()
 conf_data.set_quoted('VERSION', meson.project_version())
@@ -9,6 +9,9 @@ conf_data.set_quoted('IPTUX_VERSION', '1_iptux '+meson.project_version())
 conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf_data.set('CMAKE_INSTALL_FULL_DATADIR',
     join_paths(get_option('prefix'), get_option('datadir')))
+if gstreamer_dep.found()
+    conf_data.set('GST_FOUND', true)
+endif
 configure_file(input : 'config.h.in',
                output : 'config.h',
                configuration : conf_data)
