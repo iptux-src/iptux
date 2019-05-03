@@ -12,8 +12,7 @@ install:
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew install meson gettext gtk+3 jsoncpp'
 script:
-- '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
-  make test; }'
+- '[ "$TRAVIS_OS_NAME" != osx ] || { meson builddir && ninja -v -C builddir test; }'
 - env
 - '[ "$TRAVIS_OS_NAME" != linux ] || make -f scripts/Makefile travis'
 dist: xenial
