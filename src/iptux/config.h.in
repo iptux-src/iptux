@@ -10,19 +10,17 @@
 #define GDK_VERSION_MIN_REQUIRED (G_ENCODE_VERSION (3, 12))
 #define GDK_VERSION_MAX_ALLOWED (G_ENCODE_VERSION (3, 12))
 
-#define VERSION "@PROJECT_VERSION@@VERSION_SUFFIX@"
+#mesondefine VERSION
 
-/* the 1_ prefix is used for compatible with FeiQ */
-#define IPTUX_VERSION "1_iptux @PROJECT_VERSION@"
-
-#define GETTEXT_PACKAGE "@PROJECT_NAME@"
+#mesondefine IPTUX_VERSION
+#mesondefine GETTEXT_PACKAGE
 #define IPTUX_RESOURCE "/io/github/iptux-src/"
 
 #define __PIXMAPS_PATH "@CMAKE_INSTALL_FULL_DATADIR@/iptux/pixmaps"
 #define __LOCALE_PATH "@CMAKE_INSTALL_FULL_DATADIR@/locale"
 #define __SOUND_PATH "@CMAKE_INSTALL_FULL_DATADIR@/iptux/sound"
 
-#cmakedefine GST_FOUND
+#mesondefine GST_FOUND
 
 #if defined(__APPLE__) || defined(__CYGWIN__)
 #  define O_LARGEFILE 0

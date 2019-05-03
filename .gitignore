@@ -75,7 +75,6 @@ Makefile
 config.h
 config.log
 config.status
-po/POTFILES
 src/main/iptux
 stamp-h1
 autom4te.cache
@@ -114,3 +113,5 @@ src/iptux/IptuxResource.h
 
 src/iptux/IptuxResource.cpp
 cmake-build-debug
+builddir
+coverage.info

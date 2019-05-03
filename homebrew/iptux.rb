@@ -15,13 +15,20 @@ class Iptux < Formula
   depends_on 'gst-plugins-base' => ["with-ogg", "with-libvorbis"] if build.with? "gstreamer"
   depends_on 'gst-plugins-good' if build.with? "gstreamer"
   depends_on 'pkg-config' => :build
-  depends_on 'cmake' => :build
+  depends_on 'cmake' => :build unless build.head?
+  depends_on 'meson' => :build if build.head?
+  depends_on 'ninja' => :build if build.head?
   unless OS.mac?
     depends_on "linuxbrew/xorg/xorg"
   end
 
   def install
-    system "cmake", "-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}", "."
-    system "make", "install"
+    if build.head?
+        system "meson", "builddir", "--prefix=#{prefix}"
+        system "ninja", "-C", "builddir", "install"
+    else
+        system "cmake", "-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}", "."
+        system "make", "install"
+    end
   end
 end

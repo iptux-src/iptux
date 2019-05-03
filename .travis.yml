@@ -2,24 +2,26 @@ language: cpp
 cache:
   directories:
   - "$HOME/Library/Caches/Homebrew"
-os:
-- linux
-- osx
-compiler:
-- gcc
-- clang
-script:
-- '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
-  make test; }'
-- env
-- '[ "$TRAVIS_OS_NAME" != linux ] || docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:0.0.2
-  env CODECOV_TOKEN=$CODECOV_TOKEN /ws/scripts/build_in_docker_ubuntu1604.sh'
-dist: trusty
-sudo: false
 install:
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-- '[ "$TRAVIS_OS_NAME" != osx ] || brew install gettext gtk+3 jsoncpp'
+- '[ "$TRAVIS_OS_NAME" != osx ] || brew install meson gettext gtk+3 jsoncpp'
+script:
+- env
+- '[ "$TRAVIS_OS_NAME" != osx ] || { export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig" && export PATH="/usr/local/opt/gettext/bin:$PATH" && meson builddir && ninja -v -C builddir test; }'
+- '[ "$TRAVIS_OS_NAME" != linux ] || docker pull lidaobing/iptux-travis-gcc:0.0.3'
+- '[ "$TRAVIS_OS_NAME" != linux ] || env TARGET=$TARGET CODECOV_TOKEN=$CODECOV_TOKEN make -f scripts/Makefile $TARGET'
+dist: xenial
+sudo: false
 matrix:
+  include:
+  - os: osx
+    compiler: clang
+  - os: linux
+    compiler: gcc
+    env: TARGET=travis-linux
+  - os: linux
+    compiler: gcc
+    env: TARGET=travis-linux-codecov
   fast_finish: true
   allow_failures:
   - os: osx
