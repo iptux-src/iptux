@@ -15,15 +15,7 @@ script:
 - '[ "$TRAVIS_OS_NAME" != osx ] || { mkdir build && cd build && cmake .. && make &&
   make test; }'
 - env
-- meson --version
-- '[ "$TRAVIS_OS_NAME" != linux ] || { mkdir builddir && meson builddir && ninja -v -C builddir test; }'
-addons:
-  apt:
-    packages:
-    - meson
-    - libgtk-3-dev
-    - libglib2.0-dev
-    - libjsoncpp-dev
+- '[ "$TRAVIS_OS_NAME" != linux ] || make -f scripts/Makefile travis'
 dist: xenial
 sudo: false
 matrix:
