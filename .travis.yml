@@ -2,12 +2,6 @@ language: cpp
 cache:
   directories:
   - "$HOME/Library/Caches/Homebrew"
-os:
-- linux
-- osx
-compiler:
-- gcc
-- clang
 install:
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew install meson gettext gtk+3 jsoncpp'
