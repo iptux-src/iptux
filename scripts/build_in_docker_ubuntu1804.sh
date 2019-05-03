@@ -9,7 +9,7 @@ env
 cd $(dirname $0)/..
 meson builddir && ninja -v -C builddir
 xvfb-run ninja -v -C builddir test
-make install
+ninja -v -C builddir install
 # lcov --directory . --capture --output-file coverage.info # capture coverage info
 # lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
 # lcov --remove coverage.info '*Test*' --output-file coverage.info # filter out system
