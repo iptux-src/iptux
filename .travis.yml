@@ -8,7 +8,7 @@ install:
 script:
 - '[ "$TRAVIS_OS_NAME" != osx ] || { export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig" && meson builddir && ninja -v -C builddir test; }'
 - env
-- '[ "$TRAVIS_OS_NAME" != linux ] || make -f scripts/Makefile travis-linux'
+- '[ "$TRAVIS_OS_NAME" != linux ] || make -f scripts/Makefile $TARGET'
 dist: xenial
 sudo: false
 matrix:
@@ -17,6 +17,10 @@ matrix:
     compiler: clang
   - os: linux
     compiler: gcc
+    env: TARGET=travis-linux
+  - os: linux
+    compiler: gcc
+    env: TARGET=travis-linux-codecov
   fast_finish: true
   allow_failures:
   - os: osx

@@ -8,3 +8,5 @@ docker:
 	docker build -f iptux-travis-gcc.Dockerfile -t lidaobing/iptux-travis-gcc:0.0.3 .
 travis-linux:
 	docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:0.0.3 /ws/scripts/build_in_docker_ubuntu1804.sh
+travis-linux-codecov:
+	docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:0.0.3 /ws/scripts/build_in_docker_ubuntu1804.sh
