@@ -114,4 +114,5 @@ src/iptux/IptuxResource.h
 src/iptux/IptuxResource.cpp
 cmake-build-debug
 builddir
+builddir-linux
 coverage.info

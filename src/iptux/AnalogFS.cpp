@@ -86,12 +86,14 @@ int AnalogFS::open(const char *fn, int flags, mode_t mode) {
   mergepath(tpath, fn);
   if ((flags & O_ACCMODE) == O_WRONLY) {
     tfn = assert_filename_inexist(tpath);
-    if ((fd = ::open(tfn, flags, mode)) == -1)
+    if ((fd = ::open(tfn, flags, mode)) == -1) {
       pwarning(_("Open() file \"%s\" failed, %s"), tfn, strerror(errno));
+    }
     g_free(tfn);
   } else {
-    if ((fd = ::open(tpath, flags, mode)) == -1)
+    if ((fd = ::open(tpath, flags, mode)) == -1) {
       pwarning(_("Open() file \"%s\" failed, %s"), tpath, strerror(errno));
+    }
   }
   return fd;
 }
@@ -128,9 +130,9 @@ int AnalogFS::mkdir(const char *dir, mode_t mode) {
   strcpy(tpath, path);
   mergepath(tpath, dir);
   if (::access(tpath, F_OK) == 0) return 0;
-  if ((result = ::mkdir(tpath, mode)) != 0)
+  if ((result = ::mkdir(tpath, mode)) != 0) {
     pwarning(_("Mkdir() directory \"%s\" failed, %s"), tpath, strerror(errno));
-
+  }
   return result;
 }
 
@@ -201,10 +203,10 @@ DIR *AnalogFS::opendir(const char *dir) {
 
   strcpy(tpath, path);
   mergepath(tpath, dir);
-  if (!(dirs = ::opendir(tpath)))
+  if (!(dirs = ::opendir(tpath))) {
     pwarning(_("Opendir() directory \"%s\" failed, %s"), tpath,
              strerror(errno));
-
+  }
   return dirs;
 }
 
