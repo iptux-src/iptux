@@ -91,6 +91,8 @@ libiptux = static_library('iptux',
     include_directories: inc
 )
 
+gtest_inc = include_directories('../googletest/include')
+thread_dep = dependency('threads')
 test_sources = files([
     'CoreThreadTest.cpp',
     'IptuxConfigTest.cpp',
@@ -106,9 +108,9 @@ test_sources = files([
 ])
 libiptux_test = executable('libiptux_test',
     test_sources,
-    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep],
+    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep],
     link_with: [libiptux, libgtest],
-    include_directories: inc
+    include_directories: [inc, gtest_inc]
 )
 test('unit test', libiptux_test)
 
