@@ -1,7 +1,7 @@
 require 'formula'
 
 class Iptux < Formula
-  head 'https://github.com/lidaobing/iptux.git', :branch => "meson"
+  head 'https://github.com/iptux-src/iptux.git'
   homepage 'https://github.com/iptux-src/iptux'
   url 'https://github.com/iptux-src/iptux/archive/v0.7.5.tar.gz'
   sha256 '37fd2618e888d44b3ddcc21e2d497f0a8dcbdb2adcb23fd137fb8e56d2d46919'
