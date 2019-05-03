@@ -1,7 +1,7 @@
 require 'formula'
 
 class Iptux < Formula
-  head 'https://github.com/iptux-src/iptux.git', :branch => :meson
+  head 'https://github.com/lidaobing/iptux.git', :branch => "meson"
   homepage 'https://github.com/iptux-src/iptux'
   url 'https://github.com/iptux-src/iptux/archive/v0.7.5.tar.gz'
   sha256 '37fd2618e888d44b3ddcc21e2d497f0a8dcbdb2adcb23fd137fb8e56d2d46919'
@@ -17,17 +17,18 @@ class Iptux < Formula
   depends_on 'pkg-config' => :build
   depends_on 'cmake' => :build unless build.head?
   depends_on 'meson' => :build if build.head?
+  depends_on 'ninja' => :build if build.head?
   unless OS.mac?
     depends_on "linuxbrew/xorg/xorg"
   end
 
   def install
     if build.head?
+        system "meson", "builddir", "--prefix=#{prefix}"
+        system "ninja", "-C", "builddir", "install"
+    elsif
         system "cmake", "-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}", "."
         system "make", "install"
-    elsif
-        system "meson", "builddir"
-        system "ninja", "-C", "builddir", "install"
     end
   end
 end
