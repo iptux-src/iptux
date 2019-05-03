@@ -2,3 +2,4 @@ coverage:
   ignore:
     - "^src/iptux/Test.*"
     - "^src/iptux/.*Test.cpp$"
+    - "^src/googletest.*"
