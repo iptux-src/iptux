@@ -92,7 +92,7 @@ void Command::DialUp(int sock) {
   programData.Lock();
   vector<NetSegment> list = programData.copyNetSegments();
   programData.Unlock();
-  for(int i = 0; i < list.size(); ++i) {
+  for(int i = 0; i < int(list.size()); ++i) {
     pns = &list[i];
     inet_pton(AF_INET, pns->startip.c_str(), &startip);
     startip = ntohl(startip);
