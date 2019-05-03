@@ -6,8 +6,9 @@ install:
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
 - '[ "$TRAVIS_OS_NAME" != osx ] || brew install meson gettext gtk+3 jsoncpp'
 script:
-- '[ "$TRAVIS_OS_NAME" != osx ] || { export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig" && meson builddir && ninja -v -C builddir test; }'
 - env
+- '[ "$TRAVIS_OS_NAME" != osx ] || { export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig" && meson builddir && ninja -v -C builddir test; }'
+- '[ "$TRAVIS_OS_NAME" != linux ] || docker pull lidaobing/iptux-travis-gcc:0.0.3'
 - '[ "$TRAVIS_OS_NAME" != linux ] || make -f scripts/Makefile $TARGET'
 dist: xenial
 sudo: false
