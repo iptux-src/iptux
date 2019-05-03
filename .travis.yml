@@ -21,6 +21,11 @@ matrix:
   fast_finish: true
   allow_failures:
   - os: osx
+  include:
+  - os: osx
+    compiler: clang
+  - os: linux
+    compiler: gcc
 env:
   global:
     secure: eyR9+pbzRtjG35BrWjHfSngD2N0VXJLCweyLkaiInuQCc1iTmsCetXP/wHGHcn5u02k3yBw31dlh4/r7cvXlpZrEJDV60U/wzVaezO44pUNZCiEngdhnBQS2iiFeAsHFbHrXMHVS6x+80wJfntRVZ069/xvuvcC/CWgKhVmhfn8=
