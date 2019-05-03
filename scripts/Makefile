@@ -6,5 +6,5 @@ fast-cppcheck:
 	cppcheck -q -I src --enable=all --error-exitcode=1 --inconclusive ./src/iptux/ ./src/main/
 docker:
 	docker build -f iptux-travis-gcc.Dockerfile -t lidaobing/iptux-travis-gcc:0.0.3 .
-travis:
+travis-linux:
 	docker run -t -v `pwd`:/ws lidaobing/iptux-travis-gcc:0.0.3 /ws/scripts/build_in_docker_ubuntu1804.sh
