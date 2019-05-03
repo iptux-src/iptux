@@ -26,7 +26,7 @@ class Iptux < Formula
     if build.head?
         system "meson", "builddir", "--prefix=#{prefix}"
         system "ninja", "-C", "builddir", "install"
-    elsif
+    else
         system "cmake", "-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}", "."
         system "make", "install"
     end
