@@ -80,6 +80,7 @@ class CoreThread {
    */
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
+
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
 
