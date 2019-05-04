@@ -32,3 +32,27 @@ TEST(CoreThread, IsBlocked) {
   delete thread;
   delete core;
 }
+
+TEST(CoreThread, GetPalList) {
+  auto config = newTestIptuxConfig();
+  ProgramData* core = new ProgramData(*config);
+  core->sign = "abc";
+  CoreThread* thread = new CoreThread(*core);
+  EXPECT_EQ(thread->GetPalList(), nullptr);
+  PalInfo pal;
+  thread->AttachPalToList(&pal);
+  EXPECT_NE(thread->GetPalList(), nullptr);
+  delete thread;
+  delete core;
+}
+
+TEST(CoreThread, SendMessage) {
+  auto config = newTestIptuxConfig();
+  ProgramData* core = new ProgramData(*config);
+  core->sign = "abc";
+  CoreThread* thread = new CoreThread(*core);
+  PalInfo pal;
+  thread->SendMessage(pal, "hello world");
+  delete thread;
+  delete core;
+}

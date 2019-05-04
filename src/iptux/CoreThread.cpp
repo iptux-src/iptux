@@ -13,6 +13,8 @@
 #include "Command.h"
 #include "deplib.h"
 
+using namespace std;
+
 namespace iptux {
 
 CoreThread::CoreThread(ProgramData &data)
@@ -332,5 +334,22 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
 void CoreThread::AddBlockIp(in_addr_t ipv4) {
   blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
 }
+
+void CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
+  Command cmd(*this);
+  cmd.SendMessage(getUdpSock(), &palInfo, message.c_str());
+}
+
+void CoreThread::InsertMessage(const MsgPara& para) {
+  MsgPara para2 = para;
+  NewMessageEvent event(move(para2));
+  this->emitEvent(event);
+}
+
+void CoreThread::InsertMessage(MsgPara&& para) {
+  NewMessageEvent event(move(para));
+  this->emitEvent(event);
+}
+
 
 }

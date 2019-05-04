@@ -30,7 +30,9 @@ PalInfo::PalInfo()
       encode(NULL),
       packetn(0),
       rpacketn(0),
-      flags(0) {}
+      flags(0) {
+       encode = g_strdup("");
+      }
 PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(version);

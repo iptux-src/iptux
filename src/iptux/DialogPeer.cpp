@@ -615,7 +615,7 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
     switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
         /* 文本类型 */
-        cmd.SendMessage(g_cthrd->getUdpSock(), para->pal, ptr);
+        g_cthrd->SendMessage(*(para->pal), chipData->data);
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         /* 图片类型 */

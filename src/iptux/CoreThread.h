@@ -56,6 +56,27 @@ class CoreThread {
   void emitNewPalOnline(PalInfo* palInfo);
   void emitEvent(const Event& event);
 
+  /**
+   * @brief send message to pal
+   *
+   * @param pal
+   * @param message
+   */
+  void SendMessage(PalInfo& pal, const std::string& message);
+
+
+  /**
+   * 插入消息(UI线程安全).
+   * @param para 消息参数封装包
+   * @note 消息数据必须使用utf8编码
+   * @note (para->pal)不可为null
+   * @note
+   * 请不要关心函数内部实现，你只需要按照要求封装消息数据，然后扔给本函数处理就可以了，
+   * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
+   */
+  void InsertMessage(const MsgPara& para);
+  void InsertMessage(MsgPara&& para);
+
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
 
