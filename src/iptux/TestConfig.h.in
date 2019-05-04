@@ -1,0 +1,6 @@
+#ifndef IPTUX_TEST_CONFIG_H
+#define IPTUX_TEST_CONFIG_H
+
+#mesondefine PROJECT_ROOT_PATH
+
+#endif // IPTUX_TEST_CONFIG_H

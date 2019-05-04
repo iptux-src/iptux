@@ -58,7 +58,12 @@ void UdpData::UdpDataEntry(CoreThread& coreThread,
                            in_addr_t ipv4,
                            const char buf[],
                            size_t size) {
-  LOG_INFO("received udp message from %s, size %zu", inAddrToString(ipv4).c_str(), size);
+  if(Log::IsDebugEnabled()) {
+    LOG_DEBUG("received udp message from %s, size %zu\n%s", inAddrToString(ipv4).c_str(), size,
+      stringDump(string(buf, size)).c_str());
+  } else {
+    LOG_INFO("received udp message from %s, size %zu", inAddrToString(ipv4).c_str(), size);
+  }
   UdpData udata(coreThread);
 
   udata.ipv4 = ipv4;

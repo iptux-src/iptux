@@ -507,4 +507,46 @@ in_addr_t stringToInAddr(const std::string& s) {
   throw Exception(ErrorCode::INVALID_IP_ADDRESS);
 }
 
+std::string stringDump(const std::string& str) {
+  if(str.empty()) {
+    return "";
+  }
+
+  ostringstream oss;
+  for(int i = 0; i < int(str.size()); i+= 16) {
+    oss << stringFormat("%08x  ", i);
+    for(int j = 0; j < 8; ++j) {
+      if(i+j < int(str.size())) {
+        oss << stringFormat("%02x ", uint8_t(str[i+j]));
+      } else {
+        oss << "   ";
+      }
+    }
+    oss << ' ';
+    for(int j = 8; j < 16; ++j) {
+      if(i+j < int(str.size())) {
+        oss << stringFormat("%02x ", uint8_t(str[i+j]));
+      } else {
+        oss << "   ";
+      }
+    }
+    oss << " |";
+    for(int j = 0; j < 16; ++j) {
+      if(i+j >= str.size()) {
+        break;
+      }
+      char c = str[i+j];
+      if(c >= ' ' && c <= '\x7e') {
+        oss << c;
+      } else {
+        oss << '.';
+      }
+    }
+    oss << "|\n";
+  }
+  oss << stringFormat("%08x\n", str.size());;
+  return oss.str();
+}
+
+
 }  // namespace iptux

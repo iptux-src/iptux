@@ -16,6 +16,12 @@ configure_file(input : 'config.h.in',
                output : 'config.h',
                configuration : conf_data)
 
+test_conf_data = configuration_data()
+test_conf_data.set_quoted('PROJECT_ROOT_PATH', meson.source_root())
+configure_file(input : 'TestConfig.h.in',
+               output : 'TestConfig.h',
+               configuration : test_conf_data)
+
 sources = files([
     'AnalogFS.cpp',
     'Application.cpp',
