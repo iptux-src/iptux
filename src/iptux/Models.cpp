@@ -155,7 +155,7 @@ string ChipData::ToString() const {
     oss << "MessageContentType::PICTURE";
     break;
   default:
-    assert(false);
+    g_assert_not_reached();
   }
   oss << ", ";
   oss << data;

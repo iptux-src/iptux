@@ -354,16 +354,13 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
         LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"), strerror(errno));
         return false;
       }
-      {
-        Command cmd(*this);
-        cmd.SendSublayer(sock, &pal, IPTUX_MSGPICOPT, ptr);
-        close(sock);  //关闭网络套接口
-        /*/* 删除此图片 */
-        unlink(ptr);  //此文件已无用处
-      }
+      Command(*this).SendSublayer(sock, &pal, IPTUX_MSGPICOPT, ptr);
+      close(sock);  //关闭网络套接口
+      /*/* 删除此图片 */
+      unlink(ptr);  //此文件已无用处
       return true;
     default:
-      assert(false);
+      g_assert_not_reached();
   }
 }
 
