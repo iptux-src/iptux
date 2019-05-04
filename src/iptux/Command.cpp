@@ -33,6 +33,29 @@ namespace iptux {
 uint32_t Command::packetn = 1;
 
 /**
+ * @brief
+ *
+ * @param sockfd
+ * @param buf
+ * @param len
+ * @param flags
+ * @param dest_addr
+ * @param addrlen
+ * @return true means succcess
+ * @return false means failed
+ */
+bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, const struct sockaddr_in *dest_addr) {
+  if(Log::IsDebugEnabled()) {
+    LOG_DEBUG("send udp message to %s, size %d\n%s", inAddrToString(dest_addr->sin_addr.s_addr).c_str(), len,
+      stringDump(string((const char*)buf, len)).c_str());
+  } else if(Log::IsInfoEnabled()) {
+    LOG_INFO("send udp message to %s, size %d", inAddrToString(dest_addr->sin_addr.s_addr).c_str(), len);
+  }
+  return sendto(sockfd, buf, len, flags, (struct sockaddr *)dest_addr, sizeof(struct sockaddr_in)) != -1;
+}
+
+
+/**
  * 类构造函数.
  */
 Command::Command(CoreThread& coreThread)
@@ -64,7 +87,7 @@ void Command::BroadCast(int sock) {
   tlist = list = get_sys_broadcast_addr(sock);
   while (tlist) {
     addr.sin_addr.s_addr = GPOINTER_TO_UINT(tlist->data);
-    sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+    commandSendTo(sock, buf, size, 0, &addr);
     g_usleep(9999);
     tlist = g_slist_next(tlist);
   }
@@ -103,7 +126,7 @@ void Command::DialUp(int sock) {
     ipv4 = startip;
     while (ipv4 <= endip) {
       addr.sin_addr.s_addr = htonl(ipv4);
-      sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+      commandSendTo(sock, buf, size, 0, &addr);
       g_usleep(999);
       ipv4++;
     }
@@ -129,7 +152,7 @@ void Command::SendAnsentry(int sock, PalInfo *pal) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -148,7 +171,7 @@ void Command::SendExit(int sock, PalInfo *pal) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -170,7 +193,7 @@ void Command::SendAbsence(int sock, PalInfo *pal) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -192,7 +215,7 @@ void Command::SendDetectPacket(int sock, in_addr_t ipv4) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -215,23 +238,17 @@ void Command::SendMessage(int sock, PalInfo *pal, const char *msg) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  if(Log::IsDebugEnabled()) {
-    LOG_DEBUG("send udp message to %s, size %d\n%s", inAddrToString(pal->ipv4).c_str(), size,
-      stringDump(string(buf, size)).c_str());
-  } else {
-    LOG_INFO("send udp message to %s, size %d", inAddrToString(pal->ipv4).c_str(), size);
-  }
-
   count = 0;
   do {
-    sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+    commandSendTo(sock, buf, size, 0, &addr);
     g_usleep(1000000);
     count++;
   } while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
-  if (pal->rpacketn == packetno)
+  if (pal->rpacketn == packetno) {
     FeedbackError(pal, GROUP_BELONG_TYPE_REGULAR,
                   _("Your pal didn't receive the packet. "
                     "He or she is offline maybe."));
+  }
 }
 
 /**
@@ -253,7 +270,7 @@ void Command::SendReply(int sock, PalInfo *pal, uint32_t packetno) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -273,7 +290,7 @@ void Command::SendGroupMsg(int sock, PalInfo *pal, const char *msg) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -295,7 +312,7 @@ void Command::SendUnitMsg(int sock, PalInfo *pal, uint32_t opttype,
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -387,7 +404,7 @@ void Command::SendAskShared(int sock, PalInfo *pal, uint32_t opttype,
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -410,7 +427,7 @@ void Command::SendFileInfo(int sock, PalInfo *pal, uint32_t opttype,
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -430,7 +447,7 @@ void Command::SendMyIcon(int sock, PalInfo *pal) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
@@ -450,7 +467,7 @@ void Command::SendMySign(int sock, PalInfo *pal) {
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
 
-  sendto(sock, buf, size, 0, (struct sockaddr *)&addr, sizeof(addr));
+  commandSendTo(sock, buf, size, 0, &addr);
 }
 
 /**
