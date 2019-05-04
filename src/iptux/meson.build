@@ -20,6 +20,7 @@ sources = files([
     'AnalogFS.cpp',
     'Application.cpp',
     'Command.cpp',
+    'CommandMode.cpp',
     'CoreThread.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',
@@ -94,6 +95,7 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
+    'CommandModeTest.cpp',
     'CoreThreadTest.cpp',
     'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',

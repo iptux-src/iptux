@@ -13,6 +13,7 @@
 #define IPTUX_UTILS_H
 
 #include <string>
+#include <memory>
 
 #include "iptux/Models.h"
 
@@ -68,6 +69,14 @@ char *iptux_erase_filename_suffix(const char *filename);
 char *ipmsg_get_pathname_full(const char *path, const char *name);
 std::string inAddrToString(in_addr_t ipv4);
 in_addr_t stringToInAddr(const std::string& s);
+
+template<typename ... Args>
+std::string stringFormat( const std::string& format, Args ... args ) {
+    size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
+    std::unique_ptr<char[]> buf( new char[ size ] );
+    snprintf( buf.get(), size, format.c_str(), args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}
 
 }  // namespace iptux
 #endif
