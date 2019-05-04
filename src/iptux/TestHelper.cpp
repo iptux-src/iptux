@@ -1,5 +1,10 @@
 #include "config.h"
+#include "TestConfig.h"
 #include "TestHelper.h"
+
+#include "iptux/utils.h"
+
+#include <fstream>
 
 #include <glib.h>
 
@@ -12,6 +17,12 @@ shared_ptr<IptuxConfig> newTestIptuxConfig() {
   auto res = shared_ptr<IptuxConfig>(new IptuxConfig(fname));
   g_free(fname);
   return res;
+}
+
+string readTestData(const string& fname) {
+  auto fullPath = stringFormat("%s/src/iptux/testdata/%s", PROJECT_ROOT_PATH, fname.c_str());
+  ifstream ifs(fullPath);
+  return string(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
 }
 
 }

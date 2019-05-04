@@ -38,6 +38,25 @@ namespace iptux {
 #define pwarning(format, ...) warnx(format, ##__VA_ARGS__)
 #endif
 
+enum class LogLevel {
+  WARN = G_LOG_LEVEL_WARNING,
+  INFO = G_LOG_LEVEL_INFO,
+  DEBUG = G_LOG_LEVEL_DEBUG
+};
+
+class Log {
+ public:
+  /**
+   * @brief Set the Log Level object
+   *
+   * @param level
+   */
+  static void setLogLevel(LogLevel level);
+  static bool IsDebugEnabled();
+  static bool IsInfoEnabled();
+  static bool IsWarnEnabled();
+};
+
 void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
            const char *format, ...) G_GNUC_PRINTF(5, 6);
 }  // namespace iptux

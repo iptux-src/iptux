@@ -24,6 +24,7 @@
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"
 #include "iptux/global.h"
+#include "iptux/output.h"
 
 using namespace std;
 
@@ -213,6 +214,13 @@ void Command::SendMessage(int sock, PalInfo *pal, const char *msg) {
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr.s_addr = pal->ipv4;
+
+  if(Log::IsDebugEnabled()) {
+    LOG_DEBUG("send udp message to %s, size %d\n%s", inAddrToString(pal->ipv4).c_str(), size,
+      stringDump(string(buf, size)).c_str());
+  } else {
+    LOG_INFO("send udp message to %s, size %d", inAddrToString(pal->ipv4).c_str(), size);
+  }
 
   count = 0;
   do {

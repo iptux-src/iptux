@@ -112,10 +112,13 @@ static void dealLog(const IptuxConfig& config) {
                     logHandler, NULL);
 
   if (logStr == "DEBUG") {
+    Log::setLogLevel(LogLevel::DEBUG);
     logLevel = G_LOG_LEVEL_DEBUG;
   } else if (logStr == "INFO") {
+    Log::setLogLevel(LogLevel::INFO);
     logLevel = G_LOG_LEVEL_INFO;
   } else if (logStr == "WARN") {
+    Log::setLogLevel(LogLevel::WARN);
     logLevel = G_LOG_LEVEL_WARNING;
   } else {
     LOG_ERROR("unknown log level: %s", log);

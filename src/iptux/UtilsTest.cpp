@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "iptux/utils.h"
-#include "Exception.h"
+#include "iptux/Exception.h"
+#include "iptux/TestHelper.h"
 
 using namespace iptux;
 using namespace std;
@@ -64,4 +65,10 @@ TEST(Utils, stringFormat) {
   // following will SIGSEGV
   // EXPECT_EQ(stringFormat("hello%s"), "hello");
   // EXPECT_EQ(stringFormat("hello %d", "world"), "hello 3");
+}
+
+TEST(Utils, stringDump) {
+  EXPECT_EQ(stringDump(""), "");
+  EXPECT_EQ(stringDump("\n"), "00000000  0a                                                |.|\n00000001\n");
+  EXPECT_EQ(stringDump(readTestData("hexdumptest.dat")), readTestData("hexdumptest.out.dat"));
 }

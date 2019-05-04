@@ -20,6 +20,8 @@ using namespace std;
 
 namespace iptux {
 
+static LogLevel _level = LogLevel::WARN;
+
 string pretty_fname(const string &fname) {
   size_t pos = fname.rfind("/src/");
   if (pos == string::npos) {
@@ -31,6 +33,9 @@ string pretty_fname(const string &fname) {
 
 void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
            const char *format, ...) {
+  if(int(level) > int(_level)) {
+    return;
+  }
   va_list ap;
   va_start(ap, format);
   gchar *msg = g_strdup_vprintf(format, ap);
@@ -38,6 +43,14 @@ void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
   g_log("iptux", level, "%s:%d:%s:%s", pretty_fname(fname).c_str(), line, func,
         msg);
   g_free(msg);
+}
+
+bool Log::IsDebugEnabled() {
+  return LogLevel::DEBUG <= _level;
+}
+
+void Log::setLogLevel(LogLevel level) {
+  _level = level;
 }
 
 }  // namespace iptux
