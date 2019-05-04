@@ -335,10 +335,38 @@ void CoreThread::AddBlockIp(in_addr_t ipv4) {
   blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
 }
 
-void CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
+bool CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
   Command cmd(*this);
   cmd.SendMessage(getUdpSock(), &palInfo, message.c_str());
+  return true;
 }
+
+bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
+  auto ptr = chipData.data.c_str();
+  switch (chipData.type) {
+    case MessageContentType::STRING:
+      /* 文本类型 */
+      return SendMessage(pal, chipData.data);
+    case MESSAGE_CONTENT_TYPE_PICTURE:
+      /* 图片类型 */
+      int sock;
+      if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+        LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"), strerror(errno));
+        return false;
+      }
+      {
+        Command cmd(*this);
+        cmd.SendSublayer(sock, &pal, IPTUX_MSGPICOPT, ptr);
+        close(sock);  //关闭网络套接口
+        /*/* 删除此图片 */
+        unlink(ptr);  //此文件已无用处
+      }
+      return true;
+    default:
+      assert(false);
+  }
+}
+
 
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;

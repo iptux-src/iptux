@@ -60,10 +60,12 @@ class CoreThread {
    * @brief send message to pal
    *
    * @param pal
-   * @param message
+   * @param message string message
+   * @return true if send success
+   * @return false if send failed
    */
-  void SendMessage(PalInfo& pal, const std::string& message);
-
+  bool SendMessage(PalInfo& pal, const std::string& message);
+  bool SendMessage(PalInfo& pal, const ChipData& chipData);
 
   /**
    * 插入消息(UI线程安全).

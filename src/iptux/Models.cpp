@@ -12,7 +12,11 @@
 #include "config.h"
 #include "Models.h"
 
+#include <sstream>
+
 #include "iptux/utils.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -139,5 +143,24 @@ NetSegment NetSegment::fromJsonValue(Json::Value &value) {
 
 SessionAbstract::SessionAbstract() {}
 SessionAbstract::~SessionAbstract() {}
+
+string ChipData::ToString() const {
+  ostringstream oss;
+  oss << "ChipData(";
+  switch(type) {
+  case MessageContentType::STRING:
+    oss << "MessageContentType::STRING";
+    break;
+  case MessageContentType::PICTURE:
+    oss << "MessageContentType::PICTURE";
+    break;
+  default:
+    assert(false);
+  }
+  oss << ", ";
+  oss << data;
+  oss << ")";
+  return oss.str();
+}
 
 }  // namespace iptux

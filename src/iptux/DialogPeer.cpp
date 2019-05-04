@@ -610,28 +610,8 @@ void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
   int sock;
 
   for(int i = 0; i < para->dtlist.size(); ++i) {
-    ChipData* chipData = &para->dtlist[i];
-    ptr = chipData->data.c_str();
-    switch (chipData->type) {
-      case MESSAGE_CONTENT_TYPE_STRING:
-        /* 文本类型 */
-        g_cthrd->SendMessage(*(para->pal), chipData->data);
-        break;
-      case MESSAGE_CONTENT_TYPE_PICTURE:
-        /* 图片类型 */
-        if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-          pop_error(_("Fatal Error!!\nFailed to create new socket!"
-                      "\n%s"),
-                    strerror(errno));
-          exit(1);
-        }
-        cmd.SendSublayer(sock, para->pal, IPTUX_MSGPICOPT, ptr);
-        close(sock);  //关闭网络套接口
-        /*/* 删除此图片 */
-        unlink(ptr);  //此文件已无用处
-        break;
-      default:
-        break;
+    if(!g_cthrd->SendMessage(*(para->pal), para->dtlist[i])) {
+      LOG_ERROR("send message failed: %s", para->dtlist[i].ToString().c_str());
     }
   }
 

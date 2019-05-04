@@ -56,3 +56,16 @@ TEST(CoreThread, SendMessage) {
   delete thread;
   delete core;
 }
+
+TEST(CoreThread, SendMessage_ChipData) {
+  auto config = newTestIptuxConfig();
+  ProgramData* core = new ProgramData(*config);
+  core->sign = "abc";
+  CoreThread* thread = new CoreThread(*core);
+  PalInfo pal;
+  ChipData chipData;
+  chipData.data = "hello world";
+  thread->SendMessage(pal, chipData);
+  delete thread;
+  delete core;
+}
