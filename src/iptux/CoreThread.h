@@ -64,8 +64,10 @@ class CoreThread {
   IptuxConfig& config;
   int tcpSock;
   int udpSock;
+
  private:
   GSList *blacklist;                              //黑名单链表
+
  protected:
   pthread_mutex_t mutex;  //锁
   GSList *pallist;  //好友链表(成员不能被删除)
