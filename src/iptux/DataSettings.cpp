@@ -558,7 +558,7 @@ void DataSettings::SetSystemValue() {
   active = IconfileGetItemPos(model, g_progdt->palicon);
   gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
-  gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), g_progdt->font);
+  gtk_font_chooser_set_font(GTK_FONT_CHOOSER(widget), g_progdt->font);
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsAutoOpenCharDialog());
