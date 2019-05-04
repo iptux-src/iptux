@@ -392,4 +392,10 @@ void CoreThread::InsertMessage(MsgPara&& para) {
   this->emitEvent(event);
 }
 
+bool CoreThread::SendAskShared(PalInfo& pal) {
+  Command(*this).SendAskShared(getUdpSock(), &pal, 0, NULL);
+  return true;
+}
+
+
 }

@@ -102,3 +102,14 @@ TEST(CoreThread, AsyncSendMsgPara) {
   delete thread;
   delete core;
 }
+
+TEST(CoreThread, SendAskShared) {
+  auto config = newTestIptuxConfig();
+  ProgramData* core = new ProgramData(*config);
+  core->sign = "abc";
+  CoreThread* thread = new CoreThread(*core);
+  PalInfo pal;
+  thread->SendAskShared(pal);
+  delete thread;
+  delete core;
+}
