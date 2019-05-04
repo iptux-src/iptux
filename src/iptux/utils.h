@@ -13,6 +13,7 @@
 #define IPTUX_UTILS_H
 
 #include <string>
+#include <memory>
 
 #include "iptux/Models.h"
 
