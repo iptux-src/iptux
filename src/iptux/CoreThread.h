@@ -69,6 +69,8 @@ class CoreThread {
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
 
+  bool SendAskShared(PalInfo& pal);
+
   /**
    * 插入消息(UI线程安全).
    * @param para 消息参数封装包

@@ -18,7 +18,6 @@
 #include <sys/socket.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "iptux/Command.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/SendFile.h"
@@ -555,15 +554,14 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
-  Command cmd(*g_cthrd);
   PalInfo *pal;
 
-  if (!(grpinf->member))
+  if (!(grpinf->member)) {
     pal = g_cthrd->GetPalFromList(grpinf->grpid);
-  else
+  } else {
     pal = (PalInfo *)grpinf->member->data;
-
-  cmd.SendAskShared(g_cthrd->getUdpSock(), pal, 0, NULL);
+  }
+  g_cthrd->SendAskShared(*pal);
 }
 
 void DialogPeer::insertPicture() {
