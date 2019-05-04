@@ -50,11 +50,11 @@ void Application::onStartup(Application& self) {
 
   iptux_register_resource();
   GActionEntry app_entries[] =  {
-      { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL },
-      { "preferences", G_ACTION_CALLBACK(onPreferences), NULL, NULL, NULL},
-      { "help.faq", G_ACTION_CALLBACK(HelpDialog::onFaq), NULL, NULL, NULL },
-      { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL },
-      { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL },
+      { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL, {0,0,0}},
+      { "preferences", G_ACTION_CALLBACK(onPreferences), NULL, NULL, NULL, {0,0,0}},
+      { "help.faq", G_ACTION_CALLBACK(HelpDialog::onFaq), NULL, NULL, NULL, {0,0,0}},
+      { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
+      { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),

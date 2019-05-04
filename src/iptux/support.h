@@ -20,7 +20,7 @@ namespace iptux {
 
 class BindFailedException: public std::runtime_error {
  public:
-  BindFailedException(int ec, const std::string& reason)
+  BindFailedException(G_GNUC_UNUSED int ec, const std::string& reason)
   : std::runtime_error(reason)
   {
   }

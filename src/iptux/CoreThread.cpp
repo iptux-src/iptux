@@ -20,9 +20,9 @@ CoreThread::CoreThread(ProgramData &data)
       config(data.getConfig()),
       tcpSock(-1),
       udpSock(-1),
-      started(false),
       blacklist(nullptr),
-      pallist(nullptr)
+      pallist(nullptr),
+      started(false)
 {
   pthread_mutex_init(&mutex, NULL);
 }
