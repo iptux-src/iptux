@@ -12,7 +12,11 @@
 #include "config.h"
 #include "Models.h"
 
+#include <sstream>
+
 #include "iptux/utils.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -30,7 +34,9 @@ PalInfo::PalInfo()
       encode(NULL),
       packetn(0),
       rpacketn(0),
-      flags(0) {}
+      flags(0) {
+       encode = g_strdup("");
+      }
 PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(version);
@@ -137,5 +143,24 @@ NetSegment NetSegment::fromJsonValue(Json::Value &value) {
 
 SessionAbstract::SessionAbstract() {}
 SessionAbstract::~SessionAbstract() {}
+
+string ChipData::ToString() const {
+  ostringstream oss;
+  oss << "ChipData(";
+  switch(type) {
+  case MessageContentType::STRING:
+    oss << "MessageContentType::STRING";
+    break;
+  case MessageContentType::PICTURE:
+    oss << "MessageContentType::PICTURE";
+    break;
+  default:
+    g_assert_not_reached();
+  }
+  oss << ", ";
+  oss << data;
+  oss << ")";
+  return oss.str();
+}
 
 }  // namespace iptux

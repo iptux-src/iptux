@@ -33,10 +33,13 @@ enum class MessageSourceType {
 /**
  * 消息内容类型.
  */
-typedef enum {
-  MESSAGE_CONTENT_TYPE_STRING,  ///< 字符串
-  MESSAGE_CONTENT_TYPE_PICTURE  ///< 图片
-} MessageContentType;
+enum class MessageContentType {
+  STRING,  ///< 字符串
+  PICTURE  ///< 图片
+};
+
+static const MessageContentType MESSAGE_CONTENT_TYPE_STRING = MessageContentType::STRING;
+static const MessageContentType MESSAGE_CONTENT_TYPE_PICTURE = MessageContentType::PICTURE;
 
 /**
  * 群组所属类型
@@ -118,6 +121,8 @@ class ChipData {
  public:
   ChipData();
   ~ChipData();
+
+  std::string ToString() const;
 
   MessageContentType type;  ///< 消息内容类型
   std::string data;               ///< 数据串 *

@@ -31,6 +31,8 @@
 #include "iptux/utils.h"
 #include "iptux/UiHelper.h"
 
+using namespace std;
+
 namespace iptux {
 
 /**
@@ -444,7 +446,6 @@ bool DialogPeer::SendTextMsg() {
   GdkPixbuf *pixbuf;
   char buf[MAX_UDPLEN];
   gchar *chipmsg, *ptr;
-  pthread_t pid;
   size_t len;
   MsgPara *para;
   std::vector<ChipData> dtlist;
@@ -503,11 +504,7 @@ bool DialogPeer::SendTextMsg() {
   gtk_text_buffer_delete(buffer, &start, &end);
   FeedbackMsg(dtlist);
   para = PackageMsg(dtlist);
-  pthread_create(&pid, NULL, ThreadFunc(ThreadSendTextMsg), para);
-  pthread_detach(pid);
-  /* g_slist_foreach(dtlist, GFunc(glist_delete_foreach), CHIP_DATA); */
-  /* g_slist_free(dtlist); */
-
+  g_cthrd->AsyncSendMsgPara(move(*para));
   return true;
 }
 
@@ -600,44 +597,6 @@ void DialogPeer::insertPicture() {
   g_object_unref(pixbuf);
 }
 
-/**
- * 发送文本消息.
- * @param para 消息参数
- */
-void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
-  Command cmd(*g_cthrd);
-  const char *ptr;
-  int sock;
-
-  for(int i = 0; i < para->dtlist.size(); ++i) {
-    ChipData* chipData = &para->dtlist[i];
-    ptr = chipData->data.c_str();
-    switch (chipData->type) {
-      case MESSAGE_CONTENT_TYPE_STRING:
-        /* 文本类型 */
-        cmd.SendMessage(g_cthrd->getUdpSock(), para->pal, ptr);
-        break;
-      case MESSAGE_CONTENT_TYPE_PICTURE:
-        /* 图片类型 */
-        if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-          pop_error(_("Fatal Error!!\nFailed to create new socket!"
-                      "\n%s"),
-                    strerror(errno));
-          exit(1);
-        }
-        cmd.SendSublayer(sock, para->pal, IPTUX_MSGPICOPT, ptr);
-        close(sock);  //关闭网络套接口
-        /*/* 删除此图片 */
-        unlink(ptr);  //此文件已无用处
-        break;
-      default:
-        break;
-    }
-  }
-
-  /* 释放资源 */
-  delete para;
-}
 /**
  * 创建文件接收和发送区域.
  * @return 主窗体

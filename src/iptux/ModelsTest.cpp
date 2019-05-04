@@ -38,3 +38,7 @@ TEST(NetSegment, ContainIP) {
   }
 }
 
+TEST(ChipData, ToString) {
+  EXPECT_EQ(ChipData().ToString(), "ChipData(MessageContentType::STRING, )");
+}
+

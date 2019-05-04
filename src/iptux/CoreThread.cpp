@@ -4,6 +4,8 @@
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 
+#include <thread>
+
 #include "ipmsg.h"
 #include "support.h"
 #include "output.h"
@@ -12,6 +14,8 @@
 #include "TcpData.h"
 #include "Command.h"
 #include "deplib.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -331,6 +335,61 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
 
 void CoreThread::AddBlockIp(in_addr_t ipv4) {
   blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
+}
+
+bool CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
+  Command cmd(*this);
+  cmd.SendMessage(getUdpSock(), &palInfo, message.c_str());
+  return true;
+}
+
+bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
+  auto ptr = chipData.data.c_str();
+  switch (chipData.type) {
+    case MessageContentType::STRING:
+      /* 文本类型 */
+      return SendMessage(pal, chipData.data);
+    case MESSAGE_CONTENT_TYPE_PICTURE:
+      /* 图片类型 */
+      int sock;
+      if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+        LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"), strerror(errno));
+        return false;
+      }
+      Command(*this).SendSublayer(sock, &pal, IPTUX_MSGPICOPT, ptr);
+      close(sock);  //关闭网络套接口
+      /*/* 删除此图片 */
+      unlink(ptr);  //此文件已无用处
+      return true;
+    default:
+      g_assert_not_reached();
+  }
+}
+
+bool CoreThread::SendMsgPara(const MsgPara& para) {
+  for(int i = 0; i < para.dtlist.size(); ++i) {
+    if(!SendMessage(*(para.pal), para.dtlist[i])) {
+      LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
+      return false;
+    }
+  }
+  return true;
+}
+
+void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
+  thread t(&CoreThread::SendMsgPara, this, para);
+  t.detach();
+}
+
+void CoreThread::InsertMessage(const MsgPara& para) {
+  MsgPara para2 = para;
+  NewMessageEvent event(move(para2));
+  this->emitEvent(event);
+}
+
+void CoreThread::InsertMessage(MsgPara&& para) {
+  NewMessageEvent event(move(para));
+  this->emitEvent(event);
 }
 
 }
