@@ -111,7 +111,6 @@ class CoreThread {
  private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
-
 };
 
 }
