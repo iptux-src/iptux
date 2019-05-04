@@ -605,16 +605,9 @@ void DialogPeer::insertPicture() {
  * @param para 消息参数
  */
 void DialogPeer::ThreadSendTextMsg(MsgPara *para) {
-  Command cmd(*g_cthrd);
-  const char *ptr;
-  int sock;
-
-  for(int i = 0; i < para->dtlist.size(); ++i) {
-    if(!g_cthrd->SendMessage(*(para->pal), para->dtlist[i])) {
-      LOG_ERROR("send message failed: %s", para->dtlist[i].ToString().c_str());
-    }
+  if(!g_cthrd->SendMessage(*para)) {
+    LOG_ERROR(_("send message failed."));
   }
-
   /* 释放资源 */
   delete para;
 }

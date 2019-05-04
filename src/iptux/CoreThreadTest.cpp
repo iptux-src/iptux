@@ -4,6 +4,7 @@
 #include "iptux/TestHelper.h"
 #include "iptux/utils.h"
 
+using namespace std;
 using namespace iptux;
 
 TEST(CoreThread, Constructor) {
@@ -52,7 +53,7 @@ TEST(CoreThread, SendMessage) {
   core->sign = "abc";
   CoreThread* thread = new CoreThread(*core);
   PalInfo pal;
-  thread->SendMessage(pal, "hello world");
+  EXPECT_TRUE(thread->SendMessage(pal, "hello world"));
   delete thread;
   delete core;
 }
@@ -65,7 +66,23 @@ TEST(CoreThread, SendMessage_ChipData) {
   PalInfo pal;
   ChipData chipData;
   chipData.data = "hello world";
-  thread->SendMessage(pal, chipData);
+  EXPECT_TRUE(thread->SendMessage(pal, chipData));
+  delete thread;
+  delete core;
+}
+
+TEST(CoreThread, SendMessage_MsgPara) {
+  auto config = newTestIptuxConfig();
+  ProgramData* core = new ProgramData(*config);
+  core->sign = "abc";
+  CoreThread* thread = new CoreThread(*core);
+  PalInfo pal;
+  ChipData chipData;
+  chipData.data = "hello world";
+  MsgPara para;
+  para.pal = &pal;
+  para.dtlist.push_back(move(chipData));
+  EXPECT_TRUE(thread->SendMessage(para));
   delete thread;
   delete core;
 }

@@ -364,6 +364,15 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
   }
 }
 
+bool CoreThread::SendMessage(const MsgPara& para) {
+  for(int i = 0; i < para.dtlist.size(); ++i) {
+    if(!SendMessage(*(para.pal), para.dtlist[i])) {
+      LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
+      return false;
+    }
+  }
+  return true;
+}
 
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;

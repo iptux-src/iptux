@@ -66,6 +66,7 @@ class CoreThread {
    */
   bool SendMessage(PalInfo& pal, const std::string& message);
   bool SendMessage(PalInfo& pal, const ChipData& chipData);
+  bool SendMessage(const MsgPara& msgPara);
 
   /**
    * 插入消息(UI线程安全).
