@@ -95,6 +95,7 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
+    'CommandModeTest.cpp',
     'CoreThreadTest.cpp',
     'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
