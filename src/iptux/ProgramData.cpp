@@ -224,5 +224,10 @@ void ProgramData::SetFlag(int idx, bool flag) {
   }
 }
 
+ProgramData& ProgramData::SetUsingBlacklist(bool value) {
+  SetFlag(1, value);
+  return *this;
+}
+
 }  // namespace iptux
 

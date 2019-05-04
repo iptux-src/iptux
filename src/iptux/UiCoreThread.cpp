@@ -439,14 +439,6 @@ GroupInfo *UiCoreThread::GetPalBroadcastItem(PalInfo *pal) {
 }
 
 /**
- * 加入此项到黑名单链表.
- * @param ipv4 ipv4
- */
-void UiCoreThread::AttachItemToBlacklist(in_addr_t ipv4) {
-  blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
-}
-
-/**
  * 获取消息队列项总数.
  * @return 项数
  */
@@ -635,7 +627,6 @@ void UiCoreThread::ClearSublayer() {
   for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *) tlist->data;
   g_slist_free(brdlist);
-  g_slist_free(blacklist);
   g_queue_clear(&msgline);
 
   for (tlist = pblist; tlist; tlist = g_slist_next(tlist))

@@ -64,8 +64,6 @@ class UiCoreThread: public CoreThread {
   GroupInfo *GetPalGroupItem(PalInfo *pal);
   GroupInfo *GetPalBroadcastItem(PalInfo *pal);
 
-  void AttachItemToBlacklist(in_addr_t ipv4);
-
   guint GetMsglineItems();
   GroupInfo *GetMsglineHeadItem();
   bool MsglineContainItem(GroupInfo *grpinf);
