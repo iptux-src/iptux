@@ -49,6 +49,10 @@ bool Log::IsDebugEnabled() {
   return LogLevel::DEBUG <= _level;
 }
 
+bool Log::IsInfoEnabled() {
+  return LogLevel::INFO <= _level;
+}
+
 void Log::setLogLevel(LogLevel level) {
   _level = level;
 }
