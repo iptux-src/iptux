@@ -71,10 +71,6 @@ class DialogPeer : public DialogBase {
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
   static gint RcvTreePopup(DialogPeer *self, GdkEvent *event);
   static void onActive(DialogPeer& self);
-  //线程处理
- private:
-  static void ThreadSendTextMsg(MsgPara *para);
-
  protected:
   IptuxConfig &config;
   int64_t torcvsize;  //总计待接收大小(包括已接收)

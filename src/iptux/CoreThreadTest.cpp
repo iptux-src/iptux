@@ -71,7 +71,7 @@ TEST(CoreThread, SendMessage_ChipData) {
   delete core;
 }
 
-TEST(CoreThread, SendMessage_MsgPara) {
+TEST(CoreThread, SendMsgPara) {
   auto config = newTestIptuxConfig();
   ProgramData* core = new ProgramData(*config);
   core->sign = "abc";
@@ -82,7 +82,23 @@ TEST(CoreThread, SendMessage_MsgPara) {
   MsgPara para;
   para.pal = &pal;
   para.dtlist.push_back(move(chipData));
-  EXPECT_TRUE(thread->SendMessage(para));
+  EXPECT_TRUE(thread->SendMsgPara(para));
+  delete thread;
+  delete core;
+}
+
+TEST(CoreThread, AsyncSendMsgPara) {
+  auto config = newTestIptuxConfig();
+  ProgramData* core = new ProgramData(*config);
+  core->sign = "abc";
+  CoreThread* thread = new CoreThread(*core);
+  PalInfo pal;
+  ChipData chipData;
+  chipData.data = "hello world";
+  MsgPara para;
+  para.pal = &pal;
+  para.dtlist.push_back(move(chipData));
+  thread->AsyncSendMsgPara(move(para));
   delete thread;
   delete core;
 }

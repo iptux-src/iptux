@@ -4,6 +4,8 @@
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 
+#include <thread>
+
 #include "ipmsg.h"
 #include "support.h"
 #include "output.h"
@@ -364,7 +366,7 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
   }
 }
 
-bool CoreThread::SendMessage(const MsgPara& para) {
+bool CoreThread::SendMsgPara(const MsgPara& para) {
   for(int i = 0; i < para.dtlist.size(); ++i) {
     if(!SendMessage(*(para.pal), para.dtlist[i])) {
       LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
@@ -372,6 +374,11 @@ bool CoreThread::SendMessage(const MsgPara& para) {
     }
   }
   return true;
+}
+
+void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
+  thread t(&CoreThread::SendMsgPara, this, para);
+  t.detach();
 }
 
 void CoreThread::InsertMessage(const MsgPara& para) {
@@ -384,6 +391,5 @@ void CoreThread::InsertMessage(MsgPara&& para) {
   NewMessageEvent event(move(para));
   this->emitEvent(event);
 }
-
 
 }

@@ -66,7 +66,8 @@ class CoreThread {
    */
   bool SendMessage(PalInfo& pal, const std::string& message);
   bool SendMessage(PalInfo& pal, const ChipData& chipData);
-  bool SendMessage(const MsgPara& msgPara);
+  bool SendMsgPara(const MsgPara& msgPara);
+  void AsyncSendMsgPara(MsgPara&& msgPara);
 
   /**
    * 插入消息(UI线程安全).
@@ -79,7 +80,6 @@ class CoreThread {
    */
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
-
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
 
@@ -110,6 +110,7 @@ class CoreThread {
  private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
+
 };
 
 }
