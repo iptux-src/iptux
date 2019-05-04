@@ -52,6 +52,14 @@ class ProgramData {
   bool IsFilterFileShareRequest() const;
   void SetFlag(int idx, bool flag);
 
+  /**
+   * @brief Set the Using Blacklist object
+   *
+   * @param value
+   * @return ProgramData& self
+   */
+  ProgramData& SetUsingBlacklist(bool value);
+
   std::string nickname;  //昵称 *
   std::string mygroup;   //所属群组 *
   std::string myicon;    //个人头像 *

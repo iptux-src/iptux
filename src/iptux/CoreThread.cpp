@@ -31,6 +31,7 @@ CoreThread::~CoreThread() {
   if(started) {
     stop();
   }
+  g_slist_free(blacklist);
 }
 
 /**
@@ -172,6 +173,10 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  */
 bool CoreThread::BlacklistContainItem(in_addr_t ipv4) const {
   return g_slist_find(blacklist, GUINT_TO_POINTER(ipv4));
+}
+
+bool CoreThread::IsBlocked(in_addr_t ipv4) const {
+  return programData.IsUsingBlacklist() and BlacklistContainItem(ipv4);
 }
 
 void CoreThread::Lock() { pthread_mutex_lock(&mutex); }
@@ -324,5 +329,8 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
   }
 }
 
+void CoreThread::AddBlockIp(in_addr_t ipv4) {
+  blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
+}
 
 }

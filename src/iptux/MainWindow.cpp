@@ -1293,8 +1293,9 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
     pal->setOnline(false);
   }
   /* 加入黑名单 */
-  if (!g_cthrd->BlacklistContainItem(grpinf->grpid))
-    g_cthrd->AttachItemToBlacklist(grpinf->grpid);
+  if (!g_cthrd->BlacklistContainItem(grpinf->grpid)) {
+    g_cthrd->AddBlockIp(grpinf->grpid);
+  }
   g_cthrd->Unlock();
 }
 

@@ -24,6 +24,22 @@ class CoreThread {
   ProgramData& getProgramData();
   bool BlacklistContainItem(in_addr_t ipv4) const;
 
+  /**
+   * @brief add ipaddress to block list
+   *
+   * @param ipv4 the ip address
+   */
+  void AddBlockIp(in_addr_t ipv4);
+
+  /**
+   * @brief whether the ipv4 address is blocked?
+   *
+   * @param ipv4: address
+   * @return true if blocked
+   * @return false if not blocked
+   */
+  bool IsBlocked(in_addr_t ipv4) const;
+
   void Lock();
   void Unlock();
 
@@ -48,7 +64,11 @@ class CoreThread {
   IptuxConfig& config;
   int tcpSock;
   int udpSock;
+
+ private:
   GSList *blacklist;                              //黑名单链表
+
+ protected:
   pthread_mutex_t mutex;  //锁
   GSList *pallist;  //好友链表(成员不能被删除)
 

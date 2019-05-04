@@ -76,10 +76,10 @@ void UdpData::DispatchUdpData() {
 
   /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
   /* 嘿嘿，那就不要怪偶心狠手辣了 */
-  ProgramData& programData = coreThread.getProgramData();
-
-  if (programData.IsUsingBlacklist() && coreThread.BlacklistContainItem(ipv4))
+  if(coreThread.IsBlocked(ipv4)) {
+    LOG_INFO("address is blocked: %s", inAddrToString(ipv4).c_str());
     return;
+  }
 
   /* 决定消息去向 */
   commandno = iptux_get_dec_number(buf, ':', 4);
