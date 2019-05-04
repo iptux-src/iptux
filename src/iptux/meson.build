@@ -20,6 +20,7 @@ sources = files([
     'AnalogFS.cpp',
     'Application.cpp',
     'Command.cpp',
+    'CommandMode.cpp',
     'CoreThread.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',

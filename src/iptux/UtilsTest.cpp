@@ -56,3 +56,12 @@ TEST(Utils, stringToInAddr) {
     }
   }
 }
+
+TEST(Utils, stringFormat) {
+  EXPECT_EQ(stringFormat("hello"), "hello");
+  EXPECT_EQ(stringFormat("hello %s", "world"), "hello world");
+  EXPECT_EQ(stringFormat("hello %d", 3), "hello 3");
+  // following will SIGSEGV
+  // EXPECT_EQ(stringFormat("hello%s"), "hello");
+  // EXPECT_EQ(stringFormat("hello %d", "world"), "hello 3");
+}

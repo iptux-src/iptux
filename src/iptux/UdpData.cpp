@@ -20,6 +20,7 @@
 #include <unistd.h>
 
 #include "Command.h"
+#include "CommandMode.h"
 #include "DialogGroup.h"
 #include "DialogPeer.h"
 #include "RecvFile.h"
@@ -82,8 +83,9 @@ void UdpData::DispatchUdpData() {
 
   /* 决定消息去向 */
   commandno = iptux_get_dec_number(buf, ':', 4);
-  LOG_INFO("command NO.: 0x%x", commandno);
-  switch (GET_MODE(commandno)) {
+  auto commandMode = GET_MODE(commandno);
+  LOG_INFO("command NO.: [0x%x] %s", commandno, CommandMode(commandMode).toString().c_str());
+  switch (commandMode) {
     case IPMSG_BR_ENTRY:
       SomeoneEntry();
       break;
@@ -115,7 +117,7 @@ void UdpData::DispatchUdpData() {
       SomeoneBcstmsg();
       break;
     default:
-      LOG_WARN("unknown command: 0x%lx", GET_MODE(commandno));
+      LOG_WARN("unknown command mode: 0x%lx", commandMode);
       break;
   }
 }
