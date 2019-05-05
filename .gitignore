@@ -9,7 +9,8 @@
 #
 # Normal rules
 #
-.*
+.idea
+.vscode/ipch
 *.o
 *.o.*
 *.a

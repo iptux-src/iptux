@@ -1,0 +1,41 @@
+{
+  "tasks": [
+    {
+        "type": "shell",
+        "label": "ninja",
+        "command": "ninja",
+        "args": [],
+        "options": {
+            "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
+        },
+        "problemMatcher": {
+            "owner": "cpp",
+            "fileLocation": [
+                "relative",
+                "${workspaceFolder}/builddir"
+            ],
+            "pattern": {
+                "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                "file": 1,
+                "line": 2,
+                "column": 3,
+                "severity": 4,
+                "message": 5
+            }
+        }
+    },
+    {
+        "type": "shell",
+        "label": "ninja clean",
+        "command": "ninja",
+        "args": [
+            "clean"
+        ],
+        "options": {
+            "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
+        },
+        "problemMatcher": []
+    }
+],
+  "version": "2.0.0"
+}
