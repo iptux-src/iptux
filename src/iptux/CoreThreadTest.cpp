@@ -87,21 +87,21 @@ TEST(CoreThread, SendMsgPara) {
   delete core;
 }
 
-TEST(CoreThread, AsyncSendMsgPara) {
-  auto config = newTestIptuxConfig();
-  ProgramData* core = new ProgramData(*config);
-  core->sign = "abc";
-  CoreThread* thread = new CoreThread(*core);
-  PalInfo pal;
-  ChipData chipData;
-  chipData.data = "hello world";
-  MsgPara para;
-  para.pal = &pal;
-  para.dtlist.push_back(move(chipData));
-  thread->AsyncSendMsgPara(move(para));
-  delete thread;
-  delete core;
-}
+// TEST(CoreThread, AsyncSendMsgPara) {
+//   auto config = newTestIptuxConfig();
+//   ProgramData* core = new ProgramData(*config);
+//   core->sign = "abc";
+//   CoreThread* thread = new CoreThread(*core);
+//   PalInfo pal;
+//   ChipData chipData;
+//   chipData.data = "hello world";
+//   MsgPara para;
+//   para.pal = &pal;
+//   para.dtlist.push_back(move(chipData));
+//   thread->AsyncSendMsgPara(move(para));
+//   delete thread;
+//   delete core;
+// }
 
 TEST(CoreThread, SendAskShared) {
   auto config = newTestIptuxConfig();
