@@ -5,6 +5,11 @@
 using namespace std;
 using namespace iptux;
 
+TEST(PalInfo, GetKey) {
+  PalInfo info;
+  ASSERT_EQ(info.GetKey().ToString(), "0.0.0.0:2425");
+}
+
 TEST(NetSegment, ContainIP) {
   NetSegment netSegment;
   netSegment.startip = "1.2.3.4";

@@ -51,7 +51,16 @@ typedef enum {
   GROUP_BELONG_TYPE_BROADCAST  ///< 广播
 } GroupBelongType;
 
-/***************偶是可爱的分割线(数据对象)*****************/
+class PalKey {
+ public:
+  PalKey(in_addr_t ipv4);
+  PalKey(in_addr_t ipv4, int port);
+
+  std::string ToString() const;
+ private:
+  in_addr_t ipv4;
+  int port;
+};
 
 /**
  * 好友信息.
@@ -65,6 +74,10 @@ class PalInfo {
  public:
   PalInfo();
   ~PalInfo();
+
+  PalKey GetKey() const {
+    return ipv4;
+  }
 
   in_addr_t ipv4;  ///< 好友IP
   char *segdes;    ///< 所在网段描述
@@ -93,6 +106,8 @@ class PalInfo {
  private:
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
+
+
 
 /**
  * 文件信息.

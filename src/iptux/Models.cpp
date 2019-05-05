@@ -15,6 +15,7 @@
 #include <sstream>
 
 #include "iptux/utils.h"
+#include "iptux/ipmsg.h"
 
 using namespace std;
 
@@ -161,6 +162,18 @@ string ChipData::ToString() const {
   oss << data;
   oss << ")";
   return oss.str();
+}
+
+PalKey::PalKey(in_addr_t ipv4)
+  : ipv4(ipv4), port(IPTUX_DEFAULT_PORT)
+{}
+
+PalKey::PalKey(in_addr_t ipv4, int port)
+  : ipv4(ipv4), port(port)
+{}
+
+string PalKey::ToString() const {
+  return stringFormat("%s:%d", inAddrToString(ipv4).c_str(), port);
 }
 
 }  // namespace iptux
