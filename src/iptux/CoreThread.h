@@ -45,10 +45,12 @@ class CoreThread {
 
   GSList *GetPalList();
   virtual void ClearAllPalFromList();
-  const PalInfo *GetPalFromList(in_addr_t ipv4) const;
-  PalInfo *GetPalFromList(in_addr_t ipv4);
-  virtual void DelPalFromList(in_addr_t ipv4);
-  virtual void UpdatePalToList(in_addr_t ipv4);
+  // const PalInfo *GetPalFromList(in_addr_t ipv4) const;
+  // PalInfo *GetPalFromList(in_addr_t ipv4);
+  const PalInfo *GetPalFromList(PalKey palKey) const;
+  PalInfo *GetPalFromList(PalKey palKey);
+  virtual void DelPalFromList(PalKey palKey);
+  virtual void UpdatePalToList(PalKey palKey);
   virtual void AttachPalToList(PalInfo *pal);
 
   void registerCallback(const EventCallback &callback);
