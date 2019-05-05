@@ -56,6 +56,8 @@ class PalKey {
   PalKey(in_addr_t ipv4);
   PalKey(in_addr_t ipv4, int port);
 
+  in_addr_t GetIpv4() const {return ipv4;}
+  int GetPort() const {return port;}
   std::string ToString() const;
  private:
   in_addr_t ipv4;

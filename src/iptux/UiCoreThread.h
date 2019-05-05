@@ -56,8 +56,8 @@ class UiCoreThread: public CoreThread {
   static void UpdateMyInfo();
 
   void ClearAllPalFromList() override ;
-  void DelPalFromList(in_addr_t ipv4) override ;
-  void UpdatePalToList(in_addr_t ipv4) override ;
+  void DelPalFromList(PalKey palKey) override ;
+  void UpdatePalToList(PalKey palKey) override ;
   void AttachPalToList(PalInfo *pal) override ;
   GroupInfo *GetPalRegularItem(PalInfo *pal);
   GroupInfo *GetPalSegmentItem(PalInfo *pal);

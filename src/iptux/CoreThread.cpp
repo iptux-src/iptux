@@ -216,24 +216,24 @@ void CoreThread::ClearAllPalFromList() {
  * @param ipv4 ipv4
  * @return 好友信息数据
  */
-const PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4) const {
+const PalInfo *CoreThread::GetPalFromList(PalKey palKey) const {
   GSList *tlist;
 
   tlist = pallist;
   while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == ipv4) break;
+    if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
     tlist = g_slist_next(tlist);
   }
 
   return (PalInfo *)(tlist ? tlist->data : NULL);
 }
 
-PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4) {
+PalInfo *CoreThread::GetPalFromList(PalKey palKey) {
   GSList *tlist;
 
   tlist = pallist;
   while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == ipv4) break;
+    if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
     tlist = g_slist_next(tlist);
   }
 
@@ -246,11 +246,11 @@ PalInfo *CoreThread::GetPalFromList(in_addr_t ipv4) {
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可；
  * 鉴于群组中只能包含在线的好友，所以若某群组中包含了此好友，则必须从此群组中删除此好友
  */
-void CoreThread::DelPalFromList(in_addr_t ipv4) {
+void CoreThread::DelPalFromList(PalKey palKey) {
   PalInfo *pal;
 
   /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPalFromList(ipv4))) return;
+  if (!(pal = GetPalFromList(palKey))) return;
   pal->setOnline(false);
 }
 
@@ -262,10 +262,10 @@ void CoreThread::DelPalFromList(in_addr_t ipv4) {
  * 所以好友信息更新后应该重新调整群组成员；
  * @note 群组中被更新的成员信息也应该在界面上做出相应更新
  */
-void CoreThread::UpdatePalToList(in_addr_t ipv4) {
+void CoreThread::UpdatePalToList(PalKey palKey) {
   PalInfo *pal;
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
-  if (!(pal = GetPalFromList(ipv4))) {
+  if (!(pal = GetPalFromList(palKey))) {
     return;
   }
   pal->setOnline(true);
