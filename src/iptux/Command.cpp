@@ -18,12 +18,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux/UiProgramData.h"
 #include "iptux/deplib.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"
-#include "iptux/global.h"
 #include "iptux/output.h"
 
 using namespace std;
