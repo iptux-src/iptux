@@ -61,7 +61,7 @@ void UdpData::UdpDataEntry(CoreThread& coreThread,
                            size_t size) {
   if(Log::IsDebugEnabled()) {
     LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", inAddrToString(ipv4).c_str(), port, size,
-      stringDump(string(buf, size)).c_str());
+      stringDumpAsCString(string(buf, size)).c_str());
   } else {
     LOG_INFO("received udp message from %s:%d, size %zu", inAddrToString(ipv4).c_str(), port, size);
   }
