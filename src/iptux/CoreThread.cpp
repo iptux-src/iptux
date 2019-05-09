@@ -117,7 +117,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, buf, size);
+    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, addr.sin_port, buf, size);
   }
 }
 
@@ -367,7 +367,7 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
 }
 
 bool CoreThread::SendMsgPara(const MsgPara& para) {
-  for(int i = 0; i < para.dtlist.size(); ++i) {
+  for(int i = 0; i < int(para.dtlist.size()); ++i) {
     if(!SendMessage(*(para.pal), para.dtlist[i])) {
       LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
       return false;

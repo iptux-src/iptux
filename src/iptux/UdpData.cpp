@@ -56,13 +56,14 @@ UdpData::~UdpData() { g_free(encode); }
  */
 void UdpData::UdpDataEntry(CoreThread& coreThread,
                            in_addr_t ipv4,
+                           int port,
                            const char buf[],
                            size_t size) {
   if(Log::IsDebugEnabled()) {
-    LOG_DEBUG("received udp message from %s, size %zu\n%s", inAddrToString(ipv4).c_str(), size,
+    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", inAddrToString(ipv4).c_str(), port, size,
       stringDump(string(buf, size)).c_str());
   } else {
-    LOG_INFO("received udp message from %s, size %zu", inAddrToString(ipv4).c_str(), size);
+    LOG_INFO("received udp message from %s:%d, size %zu", inAddrToString(ipv4).c_str(), port, size);
   }
   UdpData udata(coreThread);
 
