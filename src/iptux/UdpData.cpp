@@ -745,7 +745,10 @@ char *UdpData::RecvPalIcon() {
   /* 将头像数据刷入磁盘 */
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
            g_get_user_cache_dir(), ipv4);
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) return NULL;
+  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+    LOG_ERROR("write icon to path filed: %s", path);
+    return NULL;
+  }
   xwrite(fd, buf + len, size - len);
   close(fd);
 
