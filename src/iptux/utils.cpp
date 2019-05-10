@@ -16,6 +16,7 @@
 #include <cerrno>
 #include <cinttypes>
 #include <cstring>
+#include <cstdint>
 #include <sstream>
 #include <unistd.h>
 #include <sys/param.h>
@@ -548,5 +549,32 @@ std::string stringDump(const std::string& str) {
   return oss.str();
 }
 
+
+std::string stringDumpAsCString(const std::string& str) {
+  static const char* tables[32] = {
+    "\\x00", "\\x01", "\\x02", "\\x03", "\\x04", "\\x05", "\\x06", "\\x07",
+    "\\x08", "\\t",   "\\n",   "\\x0b", "\\x0c", "\\r",   "\\x0e", "\\x0f",
+    "\\x10", "\\x11", "\\x12", "\\x13", "\\x14", "\\x15", "\\x16", "\\x17",
+    "\\x18", "\\x19", "\\x1a", "\\x1b", "\\x1c", "\\x1d", "\\x1e", "\\x1f"
+  };
+
+  ostringstream oss;
+  oss << '"';
+  for(int i = 0; i < int(str.size()); ++i) {
+    if(uint8_t(str[i]) < 0x20) {
+      oss << tables[str[i]];
+    } else if (str[i] == '"') {
+      oss << "\\\"";
+    } else if (str[i] == '\\') {
+      oss << "\\\\";
+    } else if (uint8_t(str[i]) < 0x7f) {
+      oss << str[i];
+    } else {
+      oss << stringFormat("\\x%02x", uint8_t(str[i]));
+    }
+  }
+  oss << '"';
+  return oss.str();
+}
 
 }  // namespace iptux

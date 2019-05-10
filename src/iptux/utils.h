@@ -86,5 +86,13 @@ std::string stringFormat( const std::string& format, Args ... args ) {
  */
 std::string stringDump(const std::string& str);
 
+/**
+ * @brief dump string like C String
+ *
+ * @param str
+ * @return std::string
+ */
+std::string stringDumpAsCString(const std::string& str);
+
 }  // namespace iptux
 #endif

@@ -56,13 +56,14 @@ UdpData::~UdpData() { g_free(encode); }
  */
 void UdpData::UdpDataEntry(CoreThread& coreThread,
                            in_addr_t ipv4,
+                           int port,
                            const char buf[],
                            size_t size) {
   if(Log::IsDebugEnabled()) {
-    LOG_DEBUG("received udp message from %s, size %zu\n%s", inAddrToString(ipv4).c_str(), size,
-      stringDump(string(buf, size)).c_str());
+    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", inAddrToString(ipv4).c_str(), port, size,
+      stringDumpAsCString(string(buf, size)).c_str());
   } else {
-    LOG_INFO("received udp message from %s, size %zu", inAddrToString(ipv4).c_str(), size);
+    LOG_INFO("received udp message from %s:%d, size %zu", inAddrToString(ipv4).c_str(), port, size);
   }
   UdpData udata(coreThread);
 
@@ -745,7 +746,10 @@ char *UdpData::RecvPalIcon() {
   /* 将头像数据刷入磁盘 */
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
            g_get_user_cache_dir(), ipv4);
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) return NULL;
+  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+    LOG_ERROR("write icon to path filed: %s", path);
+    return NULL;
+  }
   xwrite(fd, buf + len, size - len);
   close(fd);
 
