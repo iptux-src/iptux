@@ -2,6 +2,7 @@
 #define IPTUX_WINDOW_CONFIG_H
 
 #include <string>
+#include <memory>
 
 #include "iptux/IptuxConfig.h"
 
