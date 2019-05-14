@@ -2,6 +2,7 @@
 #define IPTUX_WINDOW_CONFIG_H
 
 #include <string>
+#include <memory>
 
 #include "iptux/IptuxConfig.h"
 
@@ -32,8 +33,8 @@ class WindowConfig {
     return *this;
   }
 
-  void LoadFromConfig(IptuxConfig& config);
-  void SaveToConfig(IptuxConfig& config);
+  void LoadFromConfig(std::shared_ptr<IptuxConfig> config);
+  void SaveToConfig(std::shared_ptr<IptuxConfig> config);
 
  private:
   int width;

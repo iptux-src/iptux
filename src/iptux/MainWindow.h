@@ -63,7 +63,7 @@ class MainWindow {
 
   std::shared_ptr<UiProgramData> GetProgramData() { return progdt; }
 
-  IptuxConfig &getConfig() { return config; }
+  std::shared_ptr<IptuxConfig> getConfig() { return config; }
 
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
 
@@ -76,7 +76,7 @@ class MainWindow {
   GtkWidget* transWindow;
 
   std::shared_ptr<UiProgramData> progdt;
-  IptuxConfig &config;
+  std::shared_ptr<IptuxConfig> config;
   StatusIcon *statusIcon;
 
   GData *widset;  //窗体集

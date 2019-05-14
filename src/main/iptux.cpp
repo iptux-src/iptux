@@ -164,8 +164,8 @@ int main(int argc, char** argv) {
     exit(0);
   }
   string configPath = configFilename ? configFilename : getConfigPath();
-  IptuxConfig config(configPath);
-  dealLog(config);
+  auto config = make_shared<IptuxConfig>(configPath);
+  dealLog(*config);
 
   Application app(config);
   return app.run(argc, argv);

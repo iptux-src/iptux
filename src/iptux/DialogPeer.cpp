@@ -133,50 +133,50 @@ void DialogPeer::ClearAllPalData() {
  */
 void DialogPeer::ReadUILayout() {
   g_datalist_set_data(&dtset, "window-width",
-                      GINT_TO_POINTER(config.GetInt("peer_window_width", 570)));
+                      GINT_TO_POINTER(config->GetInt("peer_window_width", 570)));
   g_datalist_set_data(
       &dtset, "window-height",
-      GINT_TO_POINTER(config.GetInt("peer_window_height", 420)));
+      GINT_TO_POINTER(config->GetInt("peer_window_height", 420)));
   g_datalist_set_data(
       &dtset, "main-paned-divide",
-      GINT_TO_POINTER(config.GetInt("peer_main_paned_divide", 375)));
+      GINT_TO_POINTER(config->GetInt("peer_main_paned_divide", 375)));
   g_datalist_set_data(
       &dtset, "historyinput-paned-divide",
-      GINT_TO_POINTER(config.GetInt("peer_historyinput_paned_divide", 255)));
+      GINT_TO_POINTER(config->GetInt("peer_historyinput_paned_divide", 255)));
   g_datalist_set_data(
       &dtset, "infoenclosure-paned-divide",
-      GINT_TO_POINTER(config.GetInt("peer_infoenclosure_paned_divide", 255)));
+      GINT_TO_POINTER(config->GetInt("peer_infoenclosure_paned_divide", 255)));
   g_datalist_set_data(
       &dtset, "enclosure-paned-divide",
-      GINT_TO_POINTER(config.GetInt("peer_enclosure_paned_divide", 280)));
+      GINT_TO_POINTER(config->GetInt("peer_enclosure_paned_divide", 280)));
   g_datalist_set_data(
       &dtset, "file-receive-paned-divide",
-      GINT_TO_POINTER(config.GetInt("peer_file_recieve_paned_divide", 140)));
+      GINT_TO_POINTER(config->GetInt("peer_file_recieve_paned_divide", 140)));
 }
 
 /**
  * 保存对话框的UI布局数据.
  */
 void DialogPeer::WriteUILayout() {
-  config.SetInt("peer_window_width",
+  config->SetInt("peer_window_width",
                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
-  config.SetInt("peer_window_height",
+  config->SetInt("peer_window_height",
                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
-  config.SetInt("peer_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(
+  config->SetInt("peer_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(
                                               &dtset, "main-paned-divide")));
-  config.SetInt("peer_historyinput_paned_divide",
+  config->SetInt("peer_historyinput_paned_divide",
                 GPOINTER_TO_INT(
                     g_datalist_get_data(&dtset, "historyinput-paned-divide")));
-  config.SetInt("peer_infoenclosure_paned_divide",
+  config->SetInt("peer_infoenclosure_paned_divide",
                 GPOINTER_TO_INT(
                     g_datalist_get_data(&dtset, "infoenclosure-paned-divide")));
-  config.SetInt(
+  config->SetInt(
       "peer_enclosure_paned_divide",
       GPOINTER_TO_INT(g_datalist_get_data(&dtset, "enclosure-paned-divide")));
-  config.SetInt("peer_file_recieve_paned_divide",
+  config->SetInt("peer_file_recieve_paned_divide",
                 GPOINTER_TO_INT(
                     g_datalist_get_data(&dtset, "file-receive-paned-divide")));
-  config.Save();
+  config->Save();
 }
 
 /**

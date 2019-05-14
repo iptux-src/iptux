@@ -190,9 +190,9 @@ void DialogGroup::InitSublayerSpecify() {
  * 写出对话框的UI布局数据.
  */
 void DialogGroup::SaveUILayout() {
-  config.SetInt("group_window_width",
+  config->SetInt("group_window_width",
                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
-  config.SetInt("group_window_height",
+  config->SetInt("group_window_height",
                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
 }
 
@@ -206,8 +206,8 @@ GtkWindow *DialogGroup::CreateMainWindow() {
   snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
   gtk_window_set_title(GTK_WINDOW(window), buf);
   gtk_window_set_default_size(GTK_WINDOW(window),
-                              config.GetInt("group_window_width", 500),
-                              config.GetInt("group_window_height", 350));
+                              config->GetInt("group_window_width", 500),
+                              config->GetInt("group_window_height", 350));
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
   g_datalist_set_data(&widset, "window-widget", window);
@@ -234,13 +234,13 @@ GtkWidget *DialogGroup::CreateAllArea() {
 
   /* 加入主区域 */
   mainPaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
-  gtk_paned_set_position(GTK_PANED(mainPaned), config.GetInt("group_main_paned_divide", 200));
+  gtk_paned_set_position(GTK_PANED(mainPaned), config->GetInt("group_main_paned_divide", 200));
   gtk_box_pack_start(GTK_BOX(box), mainPaned, TRUE, TRUE, 0);
   g_signal_connect_swapped(mainPaned, "notify::position", G_CALLBACK(onUIChanged), this);
 
   /* 加入组成员&附件区域 */
   memberEnclosurePaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
-  gtk_paned_set_position(GTK_PANED(memberEnclosurePaned), config.GetInt("group_memberenclosure_paned_divide", 100));
+  gtk_paned_set_position(GTK_PANED(memberEnclosurePaned), config->GetInt("group_memberenclosure_paned_divide", 100));
   gtk_paned_pack1(GTK_PANED(mainPaned), memberEnclosurePaned, FALSE, TRUE);
   g_signal_connect_swapped(memberEnclosurePaned, "notify::position", G_CALLBACK(onUIChanged), this);
 
@@ -249,7 +249,7 @@ GtkWidget *DialogGroup::CreateAllArea() {
 
   /* 加入聊天历史记录&输入区域 */
   historyInputPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
-  gtk_paned_set_position(GTK_PANED(historyInputPaned), config.GetInt("group_historyinput_paned_divide", 100));
+  gtk_paned_set_position(GTK_PANED(historyInputPaned), config->GetInt("group_historyinput_paned_divide", 100));
   gtk_paned_pack2(GTK_PANED(mainPaned), historyInputPaned, TRUE, TRUE);
   g_signal_connect_swapped(historyInputPaned, "notify::position", G_CALLBACK(onUIChanged), this);
 
@@ -742,10 +742,10 @@ GSList *DialogGroup::GetSelPal() {
 }
 
 void DialogGroup::onUIChanged(DialogGroup &self) {
-  self.config.SetInt("group_main_paned_divide", gtk_paned_get_position(GTK_PANED(self.mainPaned)));
-  self.config.SetInt("group_memberenclosure_paned_divide", gtk_paned_get_position(GTK_PANED(self.memberEnclosurePaned)));
-  self.config.SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
-  self.config.Save();
+  self.config->SetInt("group_main_paned_divide", gtk_paned_get_position(GTK_PANED(self.mainPaned)));
+  self.config->SetInt("group_memberenclosure_paned_divide", gtk_paned_get_position(GTK_PANED(self.memberEnclosurePaned)));
+  self.config->SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
+  self.config->Save();
 }
 
 void DialogGroup::onActive(DialogGroup& self) {

@@ -12,13 +12,13 @@ namespace iptux {
 
 class Application {
  public:
-  explicit Application(IptuxConfig& config);
+  explicit Application(std::shared_ptr<IptuxConfig> config);
   ~Application();
 
   int run(int argc, char** argv);
 
 private:
-  IptuxConfig& config;
+  std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<UiProgramData> data;
 
   GtkApplication* app;

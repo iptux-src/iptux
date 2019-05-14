@@ -8,7 +8,7 @@ using namespace iptux;
 TEST(UiProgramData, Constructor) {
   gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
-  UiProgramData* data = new UiProgramData(*config);
+  UiProgramData* data = new UiProgramData(config);
   ASSERT_NE(data->table, nullptr);
   delete data;
 }

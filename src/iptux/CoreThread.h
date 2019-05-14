@@ -91,7 +91,7 @@ class CoreThread {
 
  protected:
   std::shared_ptr<ProgramData> programData;
-  IptuxConfig& config;
+  std::shared_ptr<IptuxConfig> config;
   int tcpSock;
   int udpSock;
 

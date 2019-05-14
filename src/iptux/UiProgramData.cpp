@@ -88,7 +88,7 @@ void UiProgramData::CheckIconTheme() {
 }
 
 
-UiProgramData::UiProgramData(IptuxConfig &config)
+UiProgramData::UiProgramData(shared_ptr<IptuxConfig> config)
     : ProgramData(config),
       table(nullptr) {
   InitSublayer();

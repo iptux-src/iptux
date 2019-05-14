@@ -9,7 +9,7 @@ using namespace iptux;
 
 TEST(CoreThread, Constructor) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   thread->start();
@@ -19,7 +19,7 @@ TEST(CoreThread, Constructor) {
 
 TEST(CoreThread, IsBlocked) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   EXPECT_FALSE(thread->IsBlocked(stringToInAddr("1.2.3.4")));
@@ -34,7 +34,7 @@ TEST(CoreThread, IsBlocked) {
 
 TEST(CoreThread, GetPalList) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   EXPECT_EQ(thread->GetPalList(), nullptr);
@@ -46,7 +46,7 @@ TEST(CoreThread, GetPalList) {
 
 TEST(CoreThread, SendMessage) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   PalInfo pal;
@@ -56,7 +56,7 @@ TEST(CoreThread, SendMessage) {
 
 TEST(CoreThread, SendMessage_ChipData) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   PalInfo pal;
@@ -68,7 +68,7 @@ TEST(CoreThread, SendMessage_ChipData) {
 
 TEST(CoreThread, SendMsgPara) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   PalInfo pal;
@@ -99,7 +99,7 @@ TEST(CoreThread, SendMsgPara) {
 
 TEST(CoreThread, SendAskShared) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   PalInfo pal;

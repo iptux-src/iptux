@@ -23,12 +23,14 @@
 #include "support.h"
 #include "utils.h"
 
+using namespace std;
+
 namespace iptux {
 
 /**
  * 类构造函数.
  */
-StatusIcon::StatusIcon(IptuxConfig &config, MainWindow &mwin)
+StatusIcon::StatusIcon(shared_ptr<IptuxConfig> config, MainWindow &mwin)
     : config(config), mwin(mwin), statusicon(NULL), timerid(0) {}
 
 /**

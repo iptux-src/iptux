@@ -36,7 +36,7 @@ class DialogGroup : public DialogBase {
 
  private:
   MainWindow* mainWindow;
-  IptuxConfig &config;
+  std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;
   GtkWidget* memberEnclosurePaned;
   GtkWidget* historyInputPaned;

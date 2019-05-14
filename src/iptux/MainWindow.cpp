@@ -577,7 +577,7 @@ GtkWidget *MainWindow::CreateAllArea() {
   g_object_set_data(G_OBJECT(paned), "position-name",
                     (gpointer) "mwin-main-paned-divide");
   gtk_paned_set_position(GTK_PANED(paned),
-                         config.GetInt("mwin_main_paned_divide", 210));
+                         config->GetInt("mwin_main_paned_divide", 210));
   gtk_container_set_border_width(GTK_CONTAINER(paned), 4);
   gtk_box_pack_start(GTK_BOX(box), paned, TRUE, TRUE, 0);
   g_signal_connect(paned, "notify::position", G_CALLBACK(PanedDivideChanged),
@@ -1724,9 +1724,9 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
  */
 void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                     MainWindow *self) {
-  self->config.SetInt("mwin_main_paned_divide",
+  self->config->SetInt("mwin_main_paned_divide",
                       gtk_paned_get_position(GTK_PANED(paned)));
-  self->config.Save();
+  self->config->Save();
 }
 
 gboolean MainWindow::onDeleteEvent(MainWindow *self) {

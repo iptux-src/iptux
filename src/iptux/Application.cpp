@@ -23,7 +23,7 @@ typedef void (* GActionCallback) (GSimpleAction *action,
 
 namespace iptux {
 
-Application::Application(IptuxConfig& config)
+Application::Application(shared_ptr<IptuxConfig> config)
 : config(config),
   data(nullptr),
   window(nullptr),
