@@ -20,7 +20,7 @@ namespace iptux {
 
 class UiProgramData: public ProgramData {
  public:
-  explicit UiProgramData(IptuxConfig &config);
+  explicit UiProgramData(std::shared_ptr<IptuxConfig> config);
   ~UiProgramData() override;
 
   GtkTextTagTable *table;        // tag table

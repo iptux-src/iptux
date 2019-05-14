@@ -10,7 +10,7 @@ using namespace iptux;
 
 TEST(ProgramData, Constructor) {
   auto config = newTestIptuxConfig();
-  ProgramData* core = new ProgramData(*config);
+  ProgramData* core = new ProgramData(config);
   ASSERT_TRUE(core->IsSaveChatHistory());
   core->WriteProgData();
   delete core;
@@ -20,7 +20,7 @@ TEST(ProgramData, Constructor) {
 
 TEST(ProgramData, WriteAndRead) {
   auto config = newTestIptuxConfig();
-  ProgramData* core = new ProgramData(*config);
+  ProgramData* core = new ProgramData(config);
   NetSegment netSegment;
   netSegment.startip = "1.2.3.4";
   netSegment.endip = "1.2.3.5";
@@ -30,8 +30,8 @@ TEST(ProgramData, WriteAndRead) {
   delete core;
 
 
-  auto config2 = new IptuxConfig(config->getFileName());
-  ProgramData* core2 = new ProgramData(*config2);
+  auto config2 = make_shared<IptuxConfig>(config->getFileName());
+  ProgramData* core2 = new ProgramData(config2);
   ASSERT_EQ(core2->getNetSegments().size(), 1);
   ASSERT_EQ(core2->getNetSegments()[0].startip, "1.2.3.4");
   ASSERT_EQ(core2->getNetSegments()[0].endip, "1.2.3.5");
@@ -40,7 +40,6 @@ TEST(ProgramData, WriteAndRead) {
   ASSERT_FALSE(core2->IsUsingBlacklist());
   ASSERT_FALSE(core2->IsFilterFileShareRequest());
   delete core2;
-  delete config2;
 
   g_unlink(config->getFileName().c_str());
 }

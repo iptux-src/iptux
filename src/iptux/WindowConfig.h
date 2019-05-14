@@ -32,8 +32,8 @@ class WindowConfig {
     return *this;
   }
 
-  void LoadFromConfig(IptuxConfig& config);
-  void SaveToConfig(IptuxConfig& config);
+  void LoadFromConfig(std::shared_ptr<IptuxConfig> config);
+  void SaveToConfig(std::shared_ptr<IptuxConfig> config);
 
  private:
   int width;

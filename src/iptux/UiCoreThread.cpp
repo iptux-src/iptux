@@ -78,11 +78,11 @@ void UiCoreThread::WriteSharedData() {
     tlist = g_slist_next(tlist);
   }
   /* 写出数据 */
-  config.SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
+  config->SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
   if (!passwd.empty()) {
-    config.SetString(CONFIG_ACCESS_SHARED_LIMIT, passwd);
+    config->SetString(CONFIG_ACCESS_SHARED_LIMIT, passwd);
   }
-  config.Save();
+  config->Save();
 }
 
 /**
@@ -651,8 +651,8 @@ void UiCoreThread::ReadSharedData() {
   struct stat st;
 
   /* 读取共享文件数据 */
-  vector<string> sharedFileList = config.GetStringList(CONFIG_SHARED_FILE_LIST);
-  passwd = g_strdup(config.GetString(CONFIG_ACCESS_SHARED_LIMIT).c_str());
+  vector<string> sharedFileList = config->GetStringList(CONFIG_SHARED_FILE_LIST);
+  passwd = g_strdup(config->GetString(CONFIG_ACCESS_SHARED_LIMIT).c_str());
 
   /* 分析数据并加入文件链表 */
   for (size_t i = 0; i < sharedFileList.size(); ++i) {

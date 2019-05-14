@@ -19,7 +19,7 @@ namespace iptux {
 
 class StatusIcon {
  public:
-  StatusIcon(IptuxConfig& config, MainWindow& mwin);
+  StatusIcon(std::shared_ptr<IptuxConfig> config, MainWindow& mwin);
   ~StatusIcon();
 
   void CreateStatusIcon();
@@ -28,7 +28,7 @@ class StatusIcon {
   gboolean AlterInterfaceMode();
 
  private:
-  IptuxConfig& config;
+  std::shared_ptr<IptuxConfig> config;
   MainWindow& mwin;
   GtkStatusIcon* statusicon;
   guint timerid;

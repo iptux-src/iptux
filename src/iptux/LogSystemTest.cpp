@@ -8,7 +8,7 @@ using namespace iptux;
 
 TEST(LogSystem, Constructor) {
   auto config = newTestIptuxConfig();
-  auto core = make_shared<ProgramData>(*config);
+  auto core = make_shared<ProgramData>(config);
   LogSystem* logSystem = new LogSystem(core);
   delete logSystem;
 }

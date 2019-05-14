@@ -1,6 +1,8 @@
 #ifndef IPTUX_PROGRAMDATACORE_H
 #define IPTUX_PROGRAMDATACORE_H
 
+#include <memory>
+
 #include <netinet/in.h>
 
 #include "iptux/IptuxConfig.h"
@@ -24,13 +26,13 @@ namespace iptux {
 */
 class ProgramData {
  public:
-  explicit ProgramData(IptuxConfig &config);
+  explicit ProgramData(std::shared_ptr<IptuxConfig> config);
   virtual ~ProgramData();
 
   ProgramData(const ProgramData&) = delete;
   ProgramData&operator=(const ProgramData&) = delete;
 
-  IptuxConfig& getConfig();
+  std::shared_ptr<IptuxConfig> getConfig();
 
   void WriteProgData();
 
@@ -82,7 +84,7 @@ class ProgramData {
 
  private:
   std::vector<NetSegment> netseg;  //需要通知登录的IP段
-  IptuxConfig &config;
+  std::shared_ptr<IptuxConfig> config;
   pthread_mutex_t mutex;  //锁
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
 

@@ -73,7 +73,7 @@ class DialogPeer : public DialogBase {
   static void onActive(DialogPeer& self);
 
  protected:
-  IptuxConfig &config;
+  std::shared_ptr<IptuxConfig> config;
   int64_t torcvsize;  //总计待接收大小(包括已接收)
   int64_t rcvdsize;   //总计已接收大小
   guint timerrcv;     //接收文件界面更新计时器ID

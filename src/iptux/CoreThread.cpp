@@ -29,7 +29,7 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       started(false)
 {
   pthread_mutex_init(&mutex, NULL);
-  if(config.GetBool("debug_dont_broadcast")) {
+  if(config->GetBool("debug_dont_broadcast")) {
     debugDontBroadcast = true;
   }
 }
@@ -65,7 +65,7 @@ void CoreThread::start() {
 }
 
 void CoreThread::bind_iptux_port() {
-  int port = config.GetInt("port", IPTUX_DEFAULT_PORT);
+  int port = config->GetInt("port", IPTUX_DEFAULT_PORT);
   struct sockaddr_in addr;
   tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   socket_enable_reuse(tcpSock);
