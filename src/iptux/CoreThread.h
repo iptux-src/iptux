@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <functional>
+#include <memory>
 
 #include "iptux/ProgramData.h"
 #include "iptux/Event.h"

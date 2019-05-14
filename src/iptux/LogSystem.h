@@ -12,6 +12,8 @@
 #ifndef IPTUX_LOGSYSTEM_H
 #define IPTUX_LOGSYSTEM_H
 
+#include <memory>
+
 #include "iptux/Models.h"
 #include "iptux/ProgramData.h"
 

@@ -15,6 +15,8 @@
 #ifndef IPTUX_DIALOGBASE_H
 #define IPTUX_DIALOGBASE_H
 
+#include <memory>
+
 #include "iptux/UiProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
