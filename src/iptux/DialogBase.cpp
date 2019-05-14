@@ -27,9 +27,11 @@
 #include "iptux/utils.h"
 #include "iptux/UiHelper.h"
 
+using namespace std;
+
 namespace iptux {
 
-DialogBase::DialogBase(GroupInfo *grp, UiProgramData &progdt)
+DialogBase::DialogBase(GroupInfo *grp, shared_ptr<UiProgramData> progdt)
     : progdt(progdt),
       widset(NULL),
       mdlset(NULL),
@@ -60,7 +62,7 @@ void DialogBase::InitSublayerGeneral() {
  * 清空底层数据.
  */
 void DialogBase::ClearSublayerGeneral() {
-  if (progdt.IsAutoCleanChatHistory()) {
+  if (progdt->IsAutoCleanChatHistory()) {
     ClearHistoryTextView();
   }
   grpinf->dialog = NULL;
@@ -279,7 +281,7 @@ GtkWidget *DialogBase::CreateInputArea() {
   button = gtk_button_new_with_label(_("Send"));
   gtk_widget_add_accelerator(
       button, "clicked", accel, GDK_KEY_Return,
-      progdt.IsEnterSendMessage() ? GdkModifierType(0) : GDK_CONTROL_MASK,
+      progdt->IsEnterSendMessage() ? GdkModifierType(0) : GDK_CONTROL_MASK,
       GTK_ACCEL_VISIBLE);
   gtk_box_pack_end(GTK_BOX(hbb), button, FALSE, FALSE, 0);
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(SendMessage), this);

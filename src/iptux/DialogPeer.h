@@ -22,10 +22,10 @@ namespace iptux {
 
 class DialogPeer : public DialogBase {
  public:
-  DialogPeer(MainWindow* mainWindow, GroupInfo *grp, UiProgramData &progdt);
+  DialogPeer(MainWindow* mainWindow, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
   virtual ~DialogPeer();
 
-  static void PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf, UiProgramData &progdt);
+  static void PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf, std::shared_ptr<UiProgramData> progdt);
 
   virtual void UpdatePalData(PalInfo *pal);
   virtual void InsertPalData(PalInfo *pal);

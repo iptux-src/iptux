@@ -61,7 +61,7 @@ class MainWindow {
   void UpdateItemToTransTree(const TransFileModel& para);
   bool isTransmissionActive() const;
 
-  UiProgramData &GetProgramData() { return progdt; }
+  std::shared_ptr<UiProgramData> GetProgramData() { return progdt; }
 
   IptuxConfig &getConfig() { return config; }
 
@@ -75,7 +75,7 @@ class MainWindow {
   GtkWidget* window;
   GtkWidget* transWindow;
 
-  UiProgramData &progdt;
+  std::shared_ptr<UiProgramData> progdt;
   IptuxConfig &config;
   StatusIcon *statusIcon;
 

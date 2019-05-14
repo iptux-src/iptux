@@ -136,6 +136,8 @@ void UdpData::DispatchUdpData() {
 void UdpData::SomeoneLost() {
   PalInfo *pal;
 
+  auto g_progdt = g_cthrd->getProgramData();
+
   /* 创建好友数据 */
   pal = new PalInfo;
   pal->ipv4 = ipv4;
@@ -174,9 +176,9 @@ void UdpData::SomeoneEntry() {
   Command cmd(coreThread);
   PalInfo *pal;
 
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
   /* 转换缓冲区数据编码 */
-  ConvertEncode(programData.encode);
+  ConvertEncode(programData->encode);
 
   /* 加入或更新好友列表 */
   coreThread.Lock();
@@ -225,6 +227,8 @@ void UdpData::SomeoneAnsentry() {
   PalInfo *pal;
   const char *ptr;
 
+  auto g_progdt = g_cthrd->getProgramData();
+
   /* 若好友不兼容iptux协议，则需转码 */
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') ConvertEncode(g_progdt->encode);
@@ -256,6 +260,8 @@ void UdpData::SomeoneAnsentry() {
 void UdpData::SomeoneAbsence() {
   PalInfo *pal;
   const char *ptr;
+
+  auto g_progdt = g_cthrd->getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
   pal = g_cthrd->GetPalFromList(ipv4);  //利用好友链表只增不减的特性，无须加锁
@@ -298,6 +304,8 @@ void UdpData::SomeoneSendmsg() {
   uint32_t commandno, packetno;
   char *text;
   pthread_t pid;
+
+  auto g_progdt = g_cthrd->getUiProgramData();
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
@@ -364,7 +372,7 @@ void UdpData::SomeoneSendmsg() {
   if (g_progdt->IsAutoOpenCharDialog()) {
     gdk_threads_enter();
     if (!(grpinf->dialog)) {
-      DialogPeer::PeerDialogEntry(g_mwin, grpinf, *g_progdt);
+      DialogPeer::PeerDialogEntry(g_mwin, grpinf, g_progdt);
     } else {
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     }
@@ -478,6 +486,8 @@ void UdpData::SomeoneBcstmsg() {
   uint32_t commandno, packetno;
   char *text;
 
+  auto g_progdt = g_cthrd->getProgramData();
+
   /* 如果对方兼容iptux协议，则无须再转换编码 */
   pal = g_cthrd->GetPalFromList(ipv4);
   if (!pal || !pal->isCompatible()) {
@@ -553,10 +563,10 @@ void UdpData::SomeoneBcstmsg() {
 PalInfo *UdpData::CreatePalInfo() {
   PalInfo *pal;
 
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
   pal = new PalInfo;
   pal->ipv4 = ipv4;
-  pal->segdes = g_strdup(programData.FindNetSegDescription(ipv4).c_str());
+  pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
   if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
@@ -569,7 +579,7 @@ PalInfo *UdpData::CreatePalInfo() {
   pal->photo = NULL;
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
-    pal->iconfile = g_strdup(programData.palicon);
+    pal->iconfile = g_strdup(programData->palicon);
   if ((pal->encode = GetPalEncode())) {
     pal->setCompatible(true);
   } else {
@@ -587,6 +597,8 @@ PalInfo *UdpData::CreatePalInfo() {
  * @param pal 好友数据
  */
 void UdpData::UpdatePalInfo(PalInfo *pal) {
+  auto g_progdt = g_cthrd->getProgramData();
+
   g_free(pal->segdes);
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
   g_free(pal->version);
@@ -673,7 +685,7 @@ void UdpData::ConvertEncode(const string &enc) {
       (ptr = convert_encode(buf, "utf-8", enc.c_str())))
     encode = g_strdup(enc.c_str());
   else
-    ptr = iptux_string_validate(buf, g_progdt->codeset, &encode);
+    ptr = iptux_string_validate(buf, coreThread.getProgramData()->codeset, &encode);
   if (ptr) {
     len = strlen(ptr);
     size = len < MAX_UDPLEN ? len : MAX_UDPLEN;
@@ -842,6 +854,8 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
 void UdpData::ThreadAskSharedFile(PalInfo *pal) {
   SendFile sfile;
   bool permit;
+
+  auto g_progdt = g_cthrd->getProgramData();
 
   if (g_progdt->IsFilterFileShareRequest()) {
     gdk_threads_enter();

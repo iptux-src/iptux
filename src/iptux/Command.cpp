@@ -81,10 +81,10 @@ Command::~Command() {}
 void Command::BroadCast(int sock) {
   GSList *list, *tlist;
 
-  ProgramData& programData = coreThread.getProgramData();
-  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, coreThread.getProgramData().nickname.c_str());
-  ConvertEncode(programData.encode);
-  CreateIptuxExtra(programData.encode);
+  auto programData = coreThread.getProgramData();
+  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY, programData->nickname.c_str());
+  ConvertEncode(programData->encode);
+  CreateIptuxExtra(programData->encode);
 
   tlist = list = get_sys_broadcast_addr(sock);
   while (tlist) {
@@ -103,16 +103,16 @@ void Command::DialUp(int sock) {
   in_addr_t startip, endip, ipv4;
   NetSegment *pns;
 
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                programData.nickname.c_str());
-  ConvertEncode(programData.encode);
-  CreateIptuxExtra(programData.encode);
+                programData->nickname.c_str());
+  ConvertEncode(programData->encode);
+  CreateIptuxExtra(programData->encode);
 
   //与某些代码片段的获取网段描述相冲突，必须复制出来使用
-  programData.Lock();
-  vector<NetSegment> list = programData.copyNetSegments();
-  programData.Unlock();
+  programData->Lock();
+  vector<NetSegment> list = programData->copyNetSegments();
+  programData->Unlock();
   for(int i = 0; i < int(list.size()); ++i) {
     pns = &list[i];
     inet_pton(AF_INET, pns->startip.c_str(), &startip);
@@ -135,9 +135,9 @@ void Command::DialUp(int sock) {
  * @param pal class PalInfo
  */
 void Command::SendAnsentry(int sock, PalInfo *pal) {
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
 
-  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData.nickname.c_str());
+  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData->nickname.c_str());
   ConvertEncode(pal->encode);
   CreateIptuxExtra(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
@@ -160,9 +160,9 @@ void Command::SendExit(int sock, PalInfo *pal) {
  * @param pal class PalInfo
  */
 void Command::SendAbsence(int sock, PalInfo *pal) {
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE,
-                programData.nickname.c_str());
+                programData->nickname.c_str());
   ConvertEncode(pal->encode);
   CreateIptuxExtra(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
@@ -174,11 +174,11 @@ void Command::SendAbsence(int sock, PalInfo *pal) {
  * @param ipv4 ipv4 address
  */
 void Command::SendDetectPacket(int sock, in_addr_t ipv4) {
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                programData.nickname.c_str());
-  ConvertEncode(programData.encode);
-  CreateIptuxExtra(programData.encode);
+                programData->nickname.c_str());
+  ConvertEncode(programData->encode);
+  CreateIptuxExtra(programData->encode);
   commandSendTo(sock, buf, size, 0, ipv4);
 }
 
@@ -367,8 +367,8 @@ void Command::SendMyIcon(int sock, PalInfo *pal) {
  * @param pal class PalInfo
  */
 void Command::SendMySign(int sock, PalInfo *pal) {
-  ProgramData& programData = coreThread.getProgramData();
-  CreateCommand(IPTUX_SENDSIGN, programData.sign.c_str());
+  auto programData = coreThread.getProgramData();
+  CreateCommand(IPTUX_SENDSIGN, programData->sign.c_str());
   ConvertEncode(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
@@ -523,19 +523,19 @@ void Command::CreateIpmsgExtra(const char *extra, const char *encode) {
 void Command::CreateIptuxExtra(const string &encode) {
   char *pptr, *ptr;
 
-  ProgramData& programData = coreThread.getProgramData();
+  auto programData = coreThread.getProgramData();
   pptr = buf + size;
   if (!encode.empty() && strcasecmp(encode.c_str(), "utf-8") != 0 &&
-      (ptr = convert_encode(programData.mygroup.c_str(), encode.c_str(),
+      (ptr = convert_encode(programData->mygroup.c_str(), encode.c_str(),
                             "utf-8"))) {
     snprintf(pptr, MAX_UDPLEN - size, "%s", ptr);
     g_free(ptr);
   } else
-    snprintf(pptr, MAX_UDPLEN - size, "%s", programData.mygroup.c_str());
+    snprintf(pptr, MAX_UDPLEN - size, "%s", programData->mygroup.c_str());
   size += strlen(pptr) + 1;
 
   pptr = buf + size;
-  snprintf(pptr, MAX_UDPLEN - size, "%s", programData.myicon.c_str());
+  snprintf(pptr, MAX_UDPLEN - size, "%s", programData->myicon.c_str());
   size += strlen(pptr) + 1;
 
   pptr = buf + size;

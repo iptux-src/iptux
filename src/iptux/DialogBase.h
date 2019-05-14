@@ -15,6 +15,8 @@
 #ifndef IPTUX_DIALOGBASE_H
 #define IPTUX_DIALOGBASE_H
 
+#include <memory>
+
 #include "iptux/UiProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
@@ -23,7 +25,7 @@ namespace iptux {
 
 class DialogBase : public SessionAbstract {
  public:
-  DialogBase(GroupInfo *grp, UiProgramData &progdt);
+  DialogBase(GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
   virtual ~DialogBase();
 
   void ClearHistoryTextView();
@@ -76,7 +78,7 @@ class DialogBase : public SessionAbstract {
 
  protected:
   GtkWindow* window;
-  UiProgramData &progdt;
+  std::shared_ptr<UiProgramData> progdt;
   GData *widset;            //窗体集
   GData *mdlset;            //数据model集
   GData *dtset;             //通用数据集

@@ -38,7 +38,7 @@ namespace iptux {
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, UiProgramData &progdt)
+DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, shared_ptr<UiProgramData> progdt)
     : DialogBase(grp, progdt),
       mainWindow(mainWindow),
       config(mainWindow->getConfig()),
@@ -64,7 +64,7 @@ DialogPeer::~DialogPeer() {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                                 UiProgramData &progdt) {
+                                 shared_ptr<UiProgramData> progdt) {
   DialogPeer *dlgpr;
   GtkWidget *window, *widget;
 
@@ -296,9 +296,10 @@ GtkWidget *DialogPeer::CreateInfoArea() {
                                       GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(frame), sw);
 
-  buffer = gtk_text_buffer_new(progdt.table);
-  if (grpinf->member)
+  buffer = gtk_text_buffer_new(progdt->table);
+  if (grpinf->member) {
     FillPalInfoToBuffer(buffer, (PalInfo *)grpinf->member->data);
+  }
   widget = gtk_text_view_new_with_buffer(buffer);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
@@ -1031,11 +1032,13 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
   FileInfo *file;
   pthread_t pid;
 
+  auto g_progdt = g_cthrd->getUiProgramData();
+
   const gchar *filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
   if(filepath == nullptr) {
     return;
   }
-  self->progdt.path = filepath;
+  self->progdt->path = filepath;
   /* 考察数据集中是否存在项 */
   widget = GTK_WIDGET(
       g_datalist_get_data(&(self->widset), "file-to-receive-treeview-widget"));

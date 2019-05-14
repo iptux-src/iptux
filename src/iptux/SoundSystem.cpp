@@ -94,7 +94,7 @@ void SoundSystem::InitSublayer() {
                            this);
   gst_object_unref(bus);
 
-  g_object_set(volume, "volume", g_progdt->volume, NULL);
+  g_object_set(volume, "volume", g_cthrd->getProgramData()->volume, NULL);
 }
 
 /**
@@ -118,7 +118,7 @@ void SoundSystem::Playing(const char *file) {
   struct timeval time;
 
   gettimeofday(&time, NULL);
-  if (!FLAG_ISSET(g_progdt->sndfgs, 0) || (difftimeval(time, timestamp) < 0.1))
+  if (!FLAG_ISSET(g_cthrd->getProgramData()->sndfgs, 0) || (difftimeval(time, timestamp) < 0.1))
     return;
 
   if (persist) EosMessageOccur(this);

@@ -19,7 +19,7 @@ class Application {
 
 private:
   IptuxConfig& config;
-  UiProgramData* data;
+  std::shared_ptr<UiProgramData> data;
 
   GtkApplication* app;
   MainWindow* window;

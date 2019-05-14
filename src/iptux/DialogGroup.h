@@ -22,11 +22,11 @@ namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, UiProgramData &progdt);
+  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
   virtual ~DialogGroup();
 
   static void GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                               UiProgramData &progdt);
+                               std::shared_ptr<UiProgramData> progdt);
 
   virtual void UpdatePalData(PalInfo *pal);
   virtual void InsertPalData(PalInfo *pal);

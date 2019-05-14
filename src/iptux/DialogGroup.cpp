@@ -24,6 +24,8 @@
 #include "iptux/utils.h"
 #include "iptux/UiHelper.h"
 
+using namespace std;
+
 namespace iptux {
 
 /**
@@ -31,7 +33,7 @@ namespace iptux {
  * @param grp 群组信息
  */
 DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
-                         UiProgramData &progdt)
+                         shared_ptr<UiProgramData> progdt)
     : DialogBase(grp, progdt),
       mainWindow(mainWindow),
       config(mainWindow->getConfig()) {
@@ -51,7 +53,7 @@ DialogGroup::~DialogGroup() {
  * @param grpinf 群组信息
  */
 void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                                   UiProgramData &progdt) {
+                                   shared_ptr<UiProgramData> progdt) {
   DialogGroup *dlggrp;
   GtkWidget *window, *widget;
 

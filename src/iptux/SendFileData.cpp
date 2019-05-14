@@ -53,6 +53,7 @@ void SendFileData::SendFileDataEntry() {
   gdk_threads_enter();
   CreateUIPara();
   g_mwin->UpdateItemToTransTree(para);
+  auto g_progdt = g_cthrd->getUiProgramData();
   if (g_progdt->IsAutoOpenFileTrans()) {
     g_mwin->OpenTransWindow();
   }
