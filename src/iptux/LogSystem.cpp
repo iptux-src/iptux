@@ -22,9 +22,11 @@
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER "-------------------------------------"
 
+using namespace std;
+
 namespace iptux {
 
-LogSystem::LogSystem(const ProgramData& programData)
+LogSystem::LogSystem(shared_ptr<const ProgramData> programData)
     : programData(programData),
       fdc(-1),
       fds(-1) {
@@ -50,7 +52,7 @@ void LogSystem::InitSublayer() {
 void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
   gchar *log, *msg, *ptr;
 
-  if (!programData.IsSaveChatHistory()) {
+  if (!programData->IsSaveChatHistory()) {
     return;
   }
 
@@ -80,7 +82,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
 void LogSystem::SystemLog(const char *fmt, va_list ap) {
   gchar *log, *msg, *ptr;
 
-  if (!programData.IsSaveChatHistory()) {
+  if (!programData->IsSaveChatHistory()) {
     return;
   }
   ptr = getformattime(TRUE, _("User:%s Host:%s"), g_get_user_name(),

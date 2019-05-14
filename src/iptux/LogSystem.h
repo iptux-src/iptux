@@ -19,14 +19,14 @@ namespace iptux {
 
 class LogSystem {
  public:
-  explicit LogSystem(const ProgramData& programData);
+  explicit LogSystem(std::shared_ptr<const ProgramData> programData);
   ~LogSystem();
 
   void CommunicateLog(MsgPara *msgpara, const char *fmt, va_list args);
   void SystemLog(const char *fmt, va_list args);
 
  private:
-  const ProgramData& programData;
+  std::shared_ptr<const ProgramData> programData;
   int fdc, fds;
 
  private:

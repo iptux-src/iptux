@@ -3,12 +3,12 @@
 #include "iptux/LogSystem.h"
 #include "iptux/TestHelper.h"
 
+using namespace std;
 using namespace iptux;
 
 TEST(LogSystem, Constructor) {
   auto config = newTestIptuxConfig();
-  ProgramData* core = new ProgramData(*config);
-  LogSystem* logSystem = new LogSystem(*core);
+  auto core = make_shared<ProgramData>(*config);
+  LogSystem* logSystem = new LogSystem(core);
   delete logSystem;
-  delete core;
 }

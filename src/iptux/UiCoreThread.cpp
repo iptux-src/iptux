@@ -39,7 +39,7 @@ static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(UiProgramData &data)
+UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
     : CoreThread(data),
       programData(data),
       groupInfos(NULL),
@@ -681,6 +681,8 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
   GtkTextIter iter;
   gchar *header;
 
+  auto g_progdt = g_cthrd->getProgramData();
+
   /**
    * @note (para->pal)可能为null.
    */
@@ -726,6 +728,8 @@ void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *stri
   char name[9];  // 8 +1  =9
   gint startp, endp;
   gint urlendp;
+
+  auto g_progdt = g_cthrd->getProgramData();
 
   urlendp = 0;
   matchinfo = NULL;
@@ -803,7 +807,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_REGULAR;
   grpinf->name = g_strdup(pal->name);
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(programData.table);
+  grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
@@ -827,7 +831,7 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(programData.table);
+  grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -852,7 +856,7 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_GROUP;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(programData.table);
+  grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
 
@@ -875,7 +879,7 @@ GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *pal) {
   grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
   grpinf->member = NULL;
-  grpinf->buffer = gtk_text_buffer_new(programData.table);
+  grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
 
@@ -974,7 +978,7 @@ gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
   return TRUE;
 }
 
-UiProgramData& UiCoreThread::getUiProgramData() {
+shared_ptr<UiProgramData> UiCoreThread::getUiProgramData() {
   return programData;
 }
 

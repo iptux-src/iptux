@@ -14,7 +14,8 @@ namespace iptux {
 
 shared_ptr<IptuxConfig> newTestIptuxConfig() {
   char* fname = g_strdup_printf("/tmp/iptux%d.json", g_random_int());
-  auto res = shared_ptr<IptuxConfig>(new IptuxConfig(fname));
+  auto res = make_shared<IptuxConfig>(fname);
+  res->SetBool("debug_dont_broadcast", true);
   g_free(fname);
   return res;
 }

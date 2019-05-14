@@ -38,10 +38,10 @@ class LogSystem;
  */
 class UiCoreThread: public CoreThread {
  public:
-  explicit UiCoreThread(UiProgramData &data);
+  explicit UiCoreThread(std::shared_ptr<UiProgramData> data);
   ~UiCoreThread() override ;
 
-  UiProgramData& getUiProgramData();
+  std::shared_ptr<UiProgramData> getUiProgramData();
 
   void start() override;
 
@@ -105,7 +105,7 @@ class UiCoreThread: public CoreThread {
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
 private:
-  UiProgramData& programData;
+  std::shared_ptr<UiProgramData> programData;
   LogSystem* logSystem;
   guint timerid;          //定时器ID
   std::queue<MsgPara> messages;

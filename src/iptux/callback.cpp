@@ -25,6 +25,8 @@
 #include "iptux/support.h"
 #include "iptux/UiHelper.h"
 
+using namespace std;
+
 namespace iptux {
 
 /**
@@ -210,7 +212,7 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
 }
 
 void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
-                                        UiProgramData &progdt) {
+                                        shared_ptr<UiProgramData> progdt) {
   GSList *tags, *tmp;
   GtkTextIter iter;
   gboolean hovering;
@@ -291,7 +293,7 @@ gboolean textview_motion_notify_event(GtkWidget *textview,
   gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                                         GTK_TEXT_WINDOW_WIDGET, event->x,
                                         event->y, &x, &y);
-  textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, *g_progdt);
+  textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, g_cthrd->getUiProgramData());
   gdk_window_get_pointer(gtk_widget_get_window(textview), NULL, NULL, NULL);
 
   return FALSE;
@@ -305,7 +307,7 @@ gboolean textview_visibility_notify_event(GtkWidget *textview,
   gtk_text_view_window_to_buffer_coords(
       GTK_TEXT_VIEW(textview), GTK_TEXT_WINDOW_WIDGET, wx, wy, &bx, &by);
   textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by,
-                                     *g_progdt);
+                                     g_cthrd->getUiProgramData());
 
   return FALSE;
 }

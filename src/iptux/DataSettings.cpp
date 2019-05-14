@@ -51,6 +51,8 @@ void DataSettings::ResetDataEntry(GtkWidget *parent) {
   GtkWidget *dialog;
   GtkWidget *note, *label;
 
+  auto g_progdt = g_cthrd->getUiProgramData();
+
   dialog = dset.CreateMainDialog(parent);
 
   /* 创建相关数据设置标签 */
@@ -517,6 +519,8 @@ void DataSettings::SetPersonalValue() {
   GdkPixbuf *pixbuf;
   gint active;
 
+  auto g_progdt = g_cthrd->getUiProgramData();
+
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
   gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->nickname.c_str());
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "mygroup-entry-widget"));
@@ -548,6 +552,8 @@ void DataSettings::SetSystemValue() {
   GtkWidget *widget;
   GtkTreeModel *model;
   gint active;
+
+  auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->codeset.c_str());
@@ -595,6 +601,8 @@ void DataSettings::SetSoundValue() {
   GtkTreeModel *model;
   GtkTreeIter iter;
   gchar *filepath;
+
+  auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
@@ -703,6 +711,8 @@ void DataSettings::FillIconModel(GtkTreeModel *model) {
 void DataSettings::FillSndModel(GtkTreeModel *model) {
   GtkTreeIter iter;
 
+  auto g_progdt = g_cthrd->getUiProgramData();
+
   gtk_list_store_append(GTK_LIST_STORE(model), &iter);
   gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
                      FLAG_ISSET(g_progdt->sndfgs, 2), 1, _("Transfer finished"),
@@ -719,6 +729,7 @@ void DataSettings::FillSndModel(GtkTreeModel *model) {
  * @note 与修改此链表的代码段是串行关系，无需加锁
  */
 void DataSettings::FillNetworkModel(GtkTreeModel *model) {
+  auto g_progdt = g_cthrd->getUiProgramData();
   for(const NetSegment& pns: g_progdt->getNetSegments()) {
     GtkTreeIter iter;
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -889,6 +900,8 @@ void DataSettings::ObtainPersonalValue() {
   const gchar *text;
   gint active;
 
+  auto g_progdt = g_cthrd->getUiProgramData();
+
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
   if (*(text = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
     g_progdt->nickname = text;
@@ -947,6 +960,8 @@ void DataSettings::ObtainSystemValue() {
   char path[MAX_PATHLEN], *file;
   gchar *text;
   gint active;
+
+  auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
@@ -1026,11 +1041,14 @@ void DataSettings::ObtainSoundValue() {
   gboolean active;
   gchar *path;
 
+  auto g_progdt = g_cthrd->getUiProgramData();
+
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-check-widget"));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))) {
     FLAG_SET(g_progdt->sndfgs, 0);
-  else
+  } else {
     FLAG_CLR(g_progdt->sndfgs, 0);
+  }
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "volume-hscale-widget"));
   g_progdt->volume = gtk_range_get_value(GTK_RANGE(widget));
@@ -1088,6 +1106,7 @@ void DataSettings::ObtainNetworkValue() {
       netSegments.push_back(move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
+  auto g_progdt = g_cthrd->getUiProgramData();
   g_progdt->Lock();
   g_progdt->setNetSegments(move(netSegments));
   g_progdt->Unlock();

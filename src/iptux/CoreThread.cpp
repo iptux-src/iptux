@@ -19,9 +19,9 @@ using namespace std;
 
 namespace iptux {
 
-CoreThread::CoreThread(ProgramData &data)
+CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
-      config(data.getConfig()),
+      config(data->getConfig()),
       tcpSock(-1),
       udpSock(-1),
       blacklist(nullptr),
@@ -29,6 +29,9 @@ CoreThread::CoreThread(ProgramData &data)
       started(false)
 {
   pthread_mutex_init(&mutex, NULL);
+  if(config.GetBool("debug_dont_broadcast")) {
+    debugDontBroadcast = true;
+  }
 }
 
 CoreThread::~CoreThread() {
@@ -156,7 +159,7 @@ int CoreThread::getUdpSock() const {
   return udpSock;
 }
 
-ProgramData& CoreThread::getProgramData() {
+shared_ptr<ProgramData> CoreThread::getProgramData() {
   return programData;
 }
 
@@ -166,7 +169,9 @@ ProgramData& CoreThread::getProgramData() {
  */
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
   Command cmd(*pcthrd);
-  cmd.BroadCast(pcthrd->udpSock);
+  if(!pcthrd->debugDontBroadcast) {
+    cmd.BroadCast(pcthrd->udpSock);
+  }
   cmd.DialUp(pcthrd->udpSock);
 }
 
@@ -180,7 +185,7 @@ bool CoreThread::BlacklistContainItem(in_addr_t ipv4) const {
 }
 
 bool CoreThread::IsBlocked(in_addr_t ipv4) const {
-  return programData.IsUsingBlacklist() and BlacklistContainItem(ipv4);
+  return programData->IsUsingBlacklist() and BlacklistContainItem(ipv4);
 }
 
 void CoreThread::Lock() { pthread_mutex_lock(&mutex); }
@@ -312,12 +317,12 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
   const gchar *env;
   int sock;
 
-  if (!programData.sign.empty()) {
+  if (!programData->sign.empty()) {
     cmd.SendMySign(udpSock, pal);
   }
   env = g_get_user_config_dir();
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
-      programData.myicon.c_str());
+      programData->myicon.c_str());
   if (access(path, F_OK) == 0) {
     cmd.SendMyIcon(udpSock, pal);
   }

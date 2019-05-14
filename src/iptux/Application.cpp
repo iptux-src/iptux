@@ -14,6 +14,8 @@
 #include "iptux/IptuxResource.h"
 #include "iptux/UiHelper.h"
 
+using namespace std;
+
 typedef void (* GActionCallback) (GSimpleAction *action,
                    GVariant      *parameter,
                    gpointer       user_data) ;
@@ -33,7 +35,6 @@ Application::Application(IptuxConfig& config)
 
 Application::~Application() {
   g_object_unref(app);
-  delete data;
   delete window;
 }
 
@@ -42,10 +43,9 @@ int Application::run(int argc, char** argv) {
 }
 
 void Application::onStartup(Application& self) {
-  self.data = new UiProgramData(self.config);
-  g_cthrd = new UiCoreThread(*self.data);
+  self.data = make_shared<UiProgramData>(self.config);
+  g_cthrd = new UiCoreThread(self.data);
   self.window = new MainWindow(self.app, *g_cthrd);
-  g_progdt = self.data;
   g_mwin = self.window;
 
   iptux_register_resource();
