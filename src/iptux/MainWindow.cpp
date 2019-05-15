@@ -1264,8 +1264,10 @@ void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &
 void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
   Command cmd(*g_cthrd);
 
-  cmd.SendAskShared(g_cthrd->getUdpSock(), (PalInfo *)grpinf->member->data, 0,
-                    NULL);
+  cmd.SendAskShared(g_cthrd->getUdpSock(),
+    g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()),
+    0,
+    NULL);
 }
 
 /**
@@ -1855,16 +1857,16 @@ void MainWindow::processEventInMainThread(Event* _event) {
     /* 获取群组信息 */
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
-        grpinf = coreThread.GetPalRegularItem(para.pal);
+        grpinf = coreThread.GetPalRegularItem(para.pal.get());
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
-        grpinf = coreThread.GetPalSegmentItem(para.pal);
+        grpinf = coreThread.GetPalSegmentItem(para.pal.get());
         break;
       case GROUP_BELONG_TYPE_GROUP:
-        grpinf = coreThread.GetPalGroupItem(para.pal);
+        grpinf = coreThread.GetPalGroupItem(para.pal.get());
         break;
       case GROUP_BELONG_TYPE_BROADCAST:
-        grpinf = coreThread.GetPalBroadcastItem(para.pal);
+        grpinf = coreThread.GetPalBroadcastItem(para.pal.get());
         break;
       default:
         grpinf = nullptr;

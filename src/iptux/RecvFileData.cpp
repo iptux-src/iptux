@@ -131,7 +131,7 @@ void RecvFileData::RecvRegularFile() {
     exit(1);
   }
   /* 请求文件数据 */
-  if (!cmd.SendAskData(sock, file->fileown, file->packetn, file->fileid, 0)) {
+  if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn, file->fileid, 0)) {
     close(sock);
     terminate = true;  //标记处理过程失败
     return;
@@ -190,7 +190,7 @@ void RecvFileData::RecvDirFiles() {
     exit(1);
   }
   /* 请求目录文件 */
-  if (!cmd.SendAskFiles(sock, file->fileown, file->packetn, file->fileid)) {
+  if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn, file->fileid)) {
     close(sock);
     terminate = true;  //标记处理过程失败
     return;

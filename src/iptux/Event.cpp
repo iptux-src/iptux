@@ -12,11 +12,11 @@ EventType Event::getType() const {
   return type;
 }
 
-NewPalOnlineEvent::NewPalOnlineEvent(PalInfo *palInfo)
+NewPalOnlineEvent::NewPalOnlineEvent(PPalInfo palInfo)
   : Event(EventType::NEW_PAL_ONLINE),
     palInfo(palInfo) {}
 
-const PalInfo* NewPalOnlineEvent::getPalInfo() const {
+CPPalInfo NewPalOnlineEvent::getPalInfo() const {
   return palInfo;
 }
 

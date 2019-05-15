@@ -3,6 +3,7 @@
 #include "iptux/CoreThread.h"
 #include "iptux/TestHelper.h"
 #include "iptux/utils.h"
+#include "iptux/Exception.h"
 
 using namespace std;
 using namespace iptux;
@@ -38,7 +39,7 @@ TEST(CoreThread, GetPalList) {
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   EXPECT_EQ(int(thread->GetPalList().size()), 0);
-  PalInfo* pal = new PalInfo();
+  PPalInfo pal = make_shared<PalInfo>();
   thread->AttachPalToList(pal);
   EXPECT_EQ(int(thread->GetPalList().size()), 1);
   delete thread;
@@ -49,7 +50,15 @@ TEST(CoreThread, SendMessage) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  PalInfo pal;
+  auto pal = make_shared<PalInfo>();
+  try {
+    thread->SendMessage(pal, "hello world");
+    EXPECT_TRUE(false);
+  } catch(Exception e) {
+    EXPECT_EQ(e.getErrorCode(), ErrorCode::PAL_KEY_NOT_EXIST);
+  }
+
+  thread->AttachPalToList(pal);
   EXPECT_TRUE(thread->SendMessage(pal, "hello world"));
   delete thread;
 }
@@ -59,7 +68,8 @@ TEST(CoreThread, SendMessage_ChipData) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  PalInfo pal;
+  auto pal = make_shared<PalInfo>();
+  thread->AttachPalToList(pal);
   ChipData chipData;
   chipData.data = "hello world";
   EXPECT_TRUE(thread->SendMessage(pal, chipData));
@@ -71,11 +81,12 @@ TEST(CoreThread, SendMsgPara) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  PalInfo pal;
+  PPalInfo pal = make_shared<PalInfo>();
+  thread->AttachPalToList(pal);
   ChipData chipData;
   chipData.data = "hello world";
   MsgPara para;
-  para.pal = &pal;
+  para.pal = pal;
   para.dtlist.push_back(move(chipData));
   EXPECT_TRUE(thread->SendMsgPara(para));
   delete thread;
@@ -102,7 +113,7 @@ TEST(CoreThread, SendAskShared) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  PalInfo pal;
+  auto pal = make_shared<PalInfo>();
   thread->SendAskShared(pal);
   delete thread;
 }

@@ -517,10 +517,11 @@ void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
   MsgPara para;
 
   /* 构建消息封装包 */
-  if (grpinf->member)
-    para.pal = (PalInfo *)grpinf->member->data;
-  else
-    para.pal = g_cthrd->GetPalFromList(grpinf->grpid);
+  if (grpinf->member) {
+    para.pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
+  } else {
+    para.pal = g_cthrd->GetPal(grpinf->grpid);
+  }
 
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->type;
@@ -539,10 +540,11 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
   MsgPara *para;
 
   para = new MsgPara;
-  if (!(grpinf->member))
-    para->pal = g_cthrd->GetPalFromList(grpinf->grpid);
-  else
-    para->pal = (PalInfo *)grpinf->member->data;
+  if (!(grpinf->member)) {
+    para->pal = g_cthrd->GetPal(grpinf->grpid);
+  } else {
+    para->pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
+  }
   para->stype = MessageSourceType::SELF;
   para->btype = grpinf->type;
   para->dtlist = dtlist;
@@ -555,14 +557,14 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
-  PalInfo *pal;
+  PPalInfo pal;
 
   if (!(grpinf->member)) {
-    pal = g_cthrd->GetPalFromList(grpinf->grpid);
+    pal = g_cthrd->GetPal(grpinf->grpid);
   } else {
-    pal = (PalInfo *)grpinf->member->data;
+    pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
   }
-  g_cthrd->SendAskShared(*pal);
+  g_cthrd->SendAskShared(pal);
 }
 
 void DialogPeer::insertPicture() {

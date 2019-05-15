@@ -22,11 +22,11 @@ class Event {
 
 class NewPalOnlineEvent:public Event {
  public:
-  explicit NewPalOnlineEvent(PalInfo* palInfo);
-  const PalInfo* getPalInfo() const;
+  explicit NewPalOnlineEvent(PPalInfo palInfo);
+  CPPalInfo getPalInfo() const;
   NewPalOnlineEvent* clone() const override;
  private:
-  PalInfo* palInfo;
+  PPalInfo palInfo;
 };
 
 class NewMessageEvent:public Event {

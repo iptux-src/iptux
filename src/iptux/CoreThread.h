@@ -46,24 +46,23 @@ class CoreThread {
 
   const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
-  // const PalInfo *GetPalFromList(in_addr_t ipv4) const;
-  // PalInfo *GetPalFromList(in_addr_t ipv4);
-  const PalInfo *GetPalFromList(PalKey palKey) const;
-  PalInfo *GetPalFromList(PalKey palKey);
+  [[deprecated]] const PalInfo *GetPalFromList(PalKey palKey) const;
+  [[deprecated]] PalInfo *GetPalFromList(PalKey palKey);
 
-  std::shared_ptr<const PalInfo> GetPal(PalKey palKey) const;
-  std::shared_ptr<PalInfo> GetPal(PalKey palKey);
+  CPPalInfo GetPal(PalKey palKey) const;
+  PPalInfo GetPal(PalKey palKey);
 
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);
 
   [[deprecated]]
   virtual void AttachPalToList(PalInfo *pal);
-  virtual void AttachPalToList(std::shared_ptr<PalInfo> pal);
+  virtual void AttachPalToList(PPalInfo pal);
 
   void registerCallback(const EventCallback &callback);
-  void sendFeatureData(PalInfo *pal);
-  void emitNewPalOnline(PalInfo* palInfo);
+  void sendFeatureData(PPalInfo pal);
+  void emitNewPalOnline(PPalInfo palInfo);
+  void emitNewPalOnline(const PalKey& palKey);
   void emitEvent(const Event& event);
 
   /**
@@ -74,12 +73,12 @@ class CoreThread {
    * @return true if send success
    * @return false if send failed
    */
-  bool SendMessage(PalInfo& pal, const std::string& message);
-  bool SendMessage(PalInfo& pal, const ChipData& chipData);
+  bool SendMessage(PPalInfo pal, const std::string& message);
+  bool SendMessage(PPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
 
-  bool SendAskShared(PalInfo& pal);
+  bool SendAskShared(PPalInfo pal);
 
   /**
    * 插入消息(UI线程安全).
@@ -94,7 +93,7 @@ class CoreThread {
   void InsertMessage(MsgPara&& para);
 
   void UpdateMyInfo();
-  void SendBroadcastExit(PalInfo *pal);
+  void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);

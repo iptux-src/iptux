@@ -34,27 +34,35 @@ class Command {
   void BroadCast(int sock);
   void DialUp(int sock);
   void SendAnsentry(int sock, CPPalInfo pal);
-  void SendExit(int sock, PalInfo *pal);
-  void SendAbsence(int sock, PalInfo *pal);
+  void SendExit(int sock, CPPalInfo pal);
+  void SendAbsence(int sock, CPPalInfo pal);
   void SendDetectPacket(int sock, in_addr_t ipv4);
-  void SendMessage(int sock, PalInfo *pal, const char *msg);
-  void SendReply(int sock, PalInfo *pal, uint32_t packetno);
-  void SendGroupMsg(int sock, PalInfo *pal, const char *msg);
-  void SendUnitMsg(int sock, PalInfo *pal, uint32_t opttype, const char *msg);
+  void SendMessage(int sock, CPPalInfo pal, const char *msg);
+  void SendReply(int sock, CPPalInfo pal, uint32_t packetno);
+  void SendReply(int sock, const PalKey& pal, uint32_t packetno);
+  void SendGroupMsg(int sock, CPPalInfo pal, const char *msg);
+  void SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype, const char *msg);
 
-  bool SendAskData(int sock, PalInfo *pal, uint32_t packetno, uint32_t fileid,
+  bool SendAskData(int sock, CPPalInfo pal, uint32_t packetno, uint32_t fileid,
                    int64_t offset);
-  bool SendAskFiles(int sock, PalInfo *pal, uint32_t packetno, uint32_t fileid);
-  void SendAskShared(int sock, PalInfo *pal, uint32_t opttype,
+  bool SendAskData(int sock, const PalKey& pal, uint32_t packetno, uint32_t fileid,
+                   int64_t offset);
+  bool SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno, uint32_t fileid);
+  bool SendAskFiles(int sock, const PalKey& pal, uint32_t packetno, uint32_t fileid);
+  void SendAskShared(int sock, CPPalInfo pal, uint32_t opttype,
                      const char *attach);
-  void SendFileInfo(int sock, PalInfo *pal, uint32_t opttype,
+  void SendAskShared(int sock, const PalKey& pal, uint32_t opttype,
+                     const char *attach);
+  void SendFileInfo(int sock, CPPalInfo pal, uint32_t opttype,
                     const char *extra);
-  void SendMyIcon(int sock, PalInfo *pal);
-  void SendMySign(int sock, PalInfo *pal);
-  void SendSublayer(int sock, PalInfo *pal, uint32_t opttype, const char *path);
+  void SendFileInfo(int sock, const PalKey& pal, uint32_t opttype,
+                    const char *extra);
+  void SendMyIcon(int sock, CPPalInfo pal);
+  void SendMySign(int sock, CPPalInfo pal);
+  void SendSublayer(int sock, CPPalInfo pal, uint32_t opttype, const char *path);
 
  private:
-  void FeedbackError(PalInfo *pal, GroupBelongType btype, const char *error);
+  void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char *error);
   void SendSublayerData(int sock, int fd);
   void ConvertEncode(const std::string &encode);
   void CreateCommand(uint32_t command, const char *attach);

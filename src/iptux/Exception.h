@@ -7,6 +7,7 @@ namespace iptux {
 
 enum class ErrorCode {
   INVALID_IP_ADDRESS,
+  PAL_KEY_NOT_EXIST,
 };
 
 class Exception : public std::runtime_error {

@@ -15,6 +15,7 @@
 #include "TcpData.h"
 #include "Command.h"
 #include "deplib.h"
+#include "iptux/Exception.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -162,7 +163,7 @@ void CoreThread::ClearSublayer() {
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
   for(auto palInfo: pImpl->pallist) {
-    SendBroadcastExit(palInfo.get());
+    SendBroadcastExit(palInfo);
   }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
@@ -309,9 +310,19 @@ void CoreThread::registerCallback(const EventCallback &callback) {
   Unlock();
 }
 
-void CoreThread::emitNewPalOnline(PalInfo* palInfo) {
+void CoreThread::emitNewPalOnline(PPalInfo palInfo) {
   NewPalOnlineEvent event(palInfo);
   emitEvent(event);
+}
+
+void CoreThread::emitNewPalOnline(const PalKey& palKey) {
+  auto palInfo = GetPal(palKey);
+  if(palInfo) {
+    NewPalOnlineEvent event(palInfo);
+    emitEvent(event);
+  } else {
+    LOG_ERROR("emitNewPalOnline meet a unknown key: %s", palKey.ToString().c_str());
+  }
 }
 
 void CoreThread::emitEvent(const Event& event) {
@@ -326,7 +337,7 @@ void CoreThread::emitEvent(const Event& event) {
  * 向好友发送iptux特有的数据.
  * @param pal class PalInfo
  */
-void CoreThread::sendFeatureData(PalInfo *pal) {
+void CoreThread::sendFeatureData(PPalInfo pal) {
   Command cmd(*this);
   char path[MAX_PATHLEN];
   const gchar *env;
@@ -357,13 +368,13 @@ void CoreThread::AddBlockIp(in_addr_t ipv4) {
   pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
 }
 
-bool CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
+bool CoreThread::SendMessage(PPalInfo palInfo, const string& message) {
   Command cmd(*this);
-  cmd.SendMessage(getUdpSock(), &palInfo, message.c_str());
+  cmd.SendMessage(getUdpSock(), palInfo, message.c_str());
   return true;
 }
 
-bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
+bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
   auto ptr = chipData.data.c_str();
   switch (chipData.type) {
     case MessageContentType::STRING:
@@ -376,7 +387,7 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
         LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"), strerror(errno));
         return false;
       }
-      Command(*this).SendSublayer(sock, &pal, IPTUX_MSGPICOPT, ptr);
+      Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  //关闭网络套接口
       /*/* 删除此图片 */
       unlink(ptr);  //此文件已无用处
@@ -388,7 +399,7 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
 
 bool CoreThread::SendMsgPara(const MsgPara& para) {
   for(int i = 0; i < int(para.dtlist.size()); ++i) {
-    if(!SendMessage(*(para.pal), para.dtlist[i])) {
+    if(!SendMessage(para.pal, para.dtlist[i])) {
       LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
       return false;
     }
@@ -412,8 +423,8 @@ void CoreThread::InsertMessage(MsgPara&& para) {
   this->emitEvent(event);
 }
 
-bool CoreThread::SendAskShared(PalInfo& pal) {
-  Command(*this).SendAskShared(getUdpSock(), &pal, 0, NULL);
+bool CoreThread::SendAskShared(PPalInfo pal) {
+  Command(*this).SendAskShared(getUdpSock(), pal, 0, NULL);
   return true;
 }
 
@@ -426,10 +437,10 @@ void CoreThread::UpdateMyInfo() {
   Lock();
   for(auto pal: pImpl->pallist) {
     if (pal->isOnline()) {
-      cmd.SendAbsence(udpSock, pal.get());
+      cmd.SendAbsence(udpSock, pal);
     }
     if (pal->isOnline() and pal->isCompatible()) {
-      thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal.get());
+      thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
       t1.detach();
     }
     tlist = g_slist_next(tlist);
@@ -441,7 +452,7 @@ void CoreThread::UpdateMyInfo() {
  * 发送通告本计算机下线的信息.
  * @param pal class PalInfo
  */
-void CoreThread::SendBroadcastExit(PalInfo *pal) {
+void CoreThread::SendBroadcastExit(PPalInfo pal) {
   Command cmd(*this);
   cmd.SendExit(udpSock, pal);
 }
