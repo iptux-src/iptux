@@ -34,6 +34,7 @@
 #include "dialog.h"
 
 using namespace std;
+using namespace std::placeholders;
 
 namespace iptux {
 
@@ -247,8 +248,8 @@ void UdpData::SomeoneAnsentry() {
 
   /* 更新本大爷的数据信息 */
   if (pal->isCompatible()) {
-    pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendFeatureData), pal);
-    pthread_detach(pid);
+    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
+    t1.detach();
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
     cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
   }

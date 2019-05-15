@@ -138,45 +138,12 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
 }
 
 /**
- * 向好友发送iptux特有的数据.
- * @param pal class PalInfo
- */
-void UiCoreThread::SendFeatureData(PalInfo *pal) {
-  g_cthrd->sendFeatureData(pal);
-}
-
-/**
  * 发送通告本计算机下线的信息.
  * @param pal class PalInfo
  */
-void UiCoreThread::SendBroadcastExit(PalInfo *pal, UiCoreThread* self) {
+void UiCoreThread::SendBroadcastExitCallback(PalInfo *pal, UiCoreThread* self) {
   Command cmd(*self);
   cmd.SendExit(self->udpSock, pal);
-}
-
-/**
- * 更新本大爷的个人信息.
- */
-void UiCoreThread::UpdateMyInfo() {
-  Command cmd(*g_cthrd);
-  pthread_t pid;
-  PalInfo *pal;
-  GSList *tlist;
-
-  pthread_mutex_lock(&g_cthrd->mutex);
-  tlist = g_cthrd->pallist;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
-    if (pal->isOnline()) {
-      cmd.SendAbsence(g_cthrd->udpSock, pal);
-    }
-    if (pal->isOnline() and pal->isCompatible()) {
-      pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
-      pthread_detach(pid);
-    }
-    tlist = g_slist_next(tlist);
-  }
-  pthread_mutex_unlock(&g_cthrd->mutex);
 }
 
 /**
@@ -609,7 +576,7 @@ void UiCoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExit), this);
+  g_slist_foreach(pallist, GFunc(SendBroadcastExitCallback), this);
   CoreThread::ClearSublayer();
 
   for (tlist = pallist; tlist; tlist = g_slist_next(tlist))

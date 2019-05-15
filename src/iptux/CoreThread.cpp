@@ -5,6 +5,7 @@
 #include <glib/gi18n.h>
 
 #include <thread>
+#include <functional>
 
 #include "ipmsg.h"
 #include "support.h"
@@ -16,6 +17,7 @@
 #include "deplib.h"
 
 using namespace std;
+using namespace std::placeholders;
 
 namespace iptux {
 
@@ -407,5 +409,26 @@ bool CoreThread::SendAskShared(PalInfo& pal) {
   return true;
 }
 
+void CoreThread::UpdateMyInfo() {
+  Command cmd(*this);
+  pthread_t pid;
+  PalInfo *pal;
+  GSList *tlist;
+
+  Lock();
+  tlist = pallist;
+  while (tlist) {
+    pal = (PalInfo *)tlist->data;
+    if (pal->isOnline()) {
+      cmd.SendAbsence(udpSock, pal);
+    }
+    if (pal->isOnline() and pal->isCompatible()) {
+      thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
+      t1.detach();
+    }
+    tlist = g_slist_next(tlist);
+  }
+  Unlock();
+}
 
 }

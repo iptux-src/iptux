@@ -51,9 +51,7 @@ class UiCoreThread: public CoreThread {
   void InsertMessage(MsgPara&& para);
 
   void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
-  static void SendFeatureData(PalInfo *pal);
-  static void SendBroadcastExit(PalInfo *pal, UiCoreThread* self);
-  static void UpdateMyInfo();
+  static void SendBroadcastExitCallback(PalInfo *pal, UiCoreThread* self);
 
   void ClearAllPalFromList() override ;
   void DelPalFromList(PalKey palKey) override ;
