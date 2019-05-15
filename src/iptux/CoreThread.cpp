@@ -19,6 +19,9 @@ using namespace std;
 
 namespace iptux {
 
+struct CoreThread::Impl {
+};
+
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
       config(data->getConfig()),
@@ -26,7 +29,8 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       udpSock(-1),
       blacklist(nullptr),
       pallist(nullptr),
-      started(false)
+      started(false),
+      pImpl(std::make_unique<Impl>())
 {
   pthread_mutex_init(&mutex, NULL);
   if(config->GetBool("debug_dont_broadcast")) {

@@ -117,6 +117,8 @@ class CoreThread {
  private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 }
