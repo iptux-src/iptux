@@ -158,8 +158,19 @@ void CoreThread::stop() {
 }
 
 void CoreThread::ClearSublayer() {
+  /**
+   * @note 必须在发送下线信息之后才能关闭套接口.
+   */
+  for (auto tlist = pallist; tlist; tlist = g_slist_next(tlist)) {
+    SendBroadcastExit((PalInfo *)tlist->data);
+  }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
+  for (auto tlist = pallist; tlist; tlist = g_slist_next(tlist)) {
+    delete (PalInfo *)tlist->data;
+  }
+  g_slist_free(pallist);
+
 }
 
 int CoreThread::getUdpSock() const {
@@ -430,5 +441,15 @@ void CoreThread::UpdateMyInfo() {
   }
   Unlock();
 }
+
+/**
+ * 发送通告本计算机下线的信息.
+ * @param pal class PalInfo
+ */
+void CoreThread::SendBroadcastExit(PalInfo *pal) {
+  Command cmd(*this);
+  cmd.SendExit(udpSock, pal);
+}
+
 
 }

@@ -138,15 +138,6 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
 }
 
 /**
- * 发送通告本计算机下线的信息.
- * @param pal class PalInfo
- */
-void UiCoreThread::SendBroadcastExitCallback(PalInfo *pal, UiCoreThread* self) {
-  Command cmd(*self);
-  cmd.SendExit(self->udpSock, pal);
-}
-
-/**
  * 从好友链表中移除所有好友数据(非UI线程安全).
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */
@@ -573,15 +564,8 @@ void UiCoreThread::InitSublayer() {
 void UiCoreThread::ClearSublayer() {
   GSList *tlist;
 
-  /**
-   * @note 必须在发送下线信息之后才能关闭套接口.
-   */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExitCallback), this);
   CoreThread::ClearSublayer();
 
-  for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
-    delete (PalInfo *)tlist->data;
-  g_slist_free(pallist);
   for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *) tlist->data;
   g_slist_free(groupInfos);
