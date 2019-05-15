@@ -20,6 +20,7 @@ using namespace std;
 namespace iptux {
 
 struct CoreThread::Impl {
+  GSList *blacklist {nullptr};                              //黑名单链表
   bool debugDontBroadcast {false} ;
 };
 
@@ -28,7 +29,6 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       config(data->getConfig()),
       tcpSock(-1),
       udpSock(-1),
-      blacklist(nullptr),
       pallist(nullptr),
       started(false),
       pImpl(std::make_unique<Impl>())
@@ -43,7 +43,7 @@ CoreThread::~CoreThread() {
   if(started) {
     stop();
   }
-  g_slist_free(blacklist);
+  g_slist_free(pImpl->blacklist);
 }
 
 /**
@@ -186,7 +186,7 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  * @return 是否包含
  */
 bool CoreThread::BlacklistContainItem(in_addr_t ipv4) const {
-  return g_slist_find(blacklist, GUINT_TO_POINTER(ipv4));
+  return g_slist_find(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
 }
 
 bool CoreThread::IsBlocked(in_addr_t ipv4) const {
@@ -344,7 +344,7 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
 }
 
 void CoreThread::AddBlockIp(in_addr_t ipv4) {
-  blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
+  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
 }
 
 bool CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
