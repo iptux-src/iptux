@@ -13,6 +13,7 @@
 #define IPTUX_MESS_H
 
 #include <string>
+#include <memory>
 #include <arpa/inet.h>
 
 #include <glib.h>
