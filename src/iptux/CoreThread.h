@@ -97,8 +97,6 @@ class CoreThread {
   int tcpSock;
   int udpSock;
   pthread_mutex_t mutex;  //锁
-private:
-  GSList *pallist;  //好友链表(成员不能被删除)
 
  private:
   bool started;

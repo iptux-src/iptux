@@ -24,6 +24,7 @@ namespace iptux {
 struct CoreThread::Impl {
   GSList *blacklist {nullptr};                              //黑名单链表
   bool debugDontBroadcast {false} ;
+  GSList *pallist {nullptr};  //好友链表(成员不能被删除)
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -31,7 +32,6 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       config(data->getConfig()),
       tcpSock(-1),
       udpSock(-1),
-      pallist(nullptr),
       started(false),
       pImpl(std::make_unique<Impl>())
 {
@@ -161,15 +161,15 @@ void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  for (auto tlist = pallist; tlist; tlist = g_slist_next(tlist)) {
+  for (auto tlist = pImpl->pallist; tlist; tlist = g_slist_next(tlist)) {
     SendBroadcastExit((PalInfo *)tlist->data);
   }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
-  for (auto tlist = pallist; tlist; tlist = g_slist_next(tlist)) {
+  for (auto tlist = pImpl->pallist; tlist; tlist = g_slist_next(tlist)) {
     delete (PalInfo *)tlist->data;
   }
-  g_slist_free(pallist);
+  g_slist_free(pImpl->pallist);
 
 }
 
@@ -214,7 +214,7 @@ void CoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
  * 获取好友链表.
  * @return 好友链表
  */
-GSList *CoreThread::GetPalList() { return pallist; }
+GSList *CoreThread::GetPalList() { return pImpl->pallist; }
 
 
 /**
@@ -226,7 +226,7 @@ void CoreThread::ClearAllPalFromList() {
   GSList *tlist;
 
   /* 清除所有好友的在线标志 */
-  tlist = pallist;
+  tlist = pImpl->pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
     pal->setOnline(false);
@@ -242,7 +242,7 @@ void CoreThread::ClearAllPalFromList() {
 const PalInfo *CoreThread::GetPalFromList(PalKey palKey) const {
   GSList *tlist;
 
-  tlist = pallist;
+  tlist = pImpl->pallist;
   while (tlist) {
     if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
     tlist = g_slist_next(tlist);
@@ -254,7 +254,7 @@ const PalInfo *CoreThread::GetPalFromList(PalKey palKey) const {
 PalInfo *CoreThread::GetPalFromList(PalKey palKey) {
   GSList *tlist;
 
-  tlist = pallist;
+  tlist = pImpl->pallist;
   while (tlist) {
     if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
     tlist = g_slist_next(tlist);
@@ -302,7 +302,7 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
  */
 void CoreThread::AttachPalToList(PalInfo *pal) {
   /* 将好友加入到好友链表 */
-  pallist = g_slist_append(pallist, pal);
+  pImpl->pallist = g_slist_append(pImpl->pallist, pal);
   pal->setOnline(true);
 }
 
@@ -427,7 +427,7 @@ void CoreThread::UpdateMyInfo() {
   GSList *tlist;
 
   Lock();
-  tlist = pallist;
+  tlist = pImpl->pallist;
   while (tlist) {
     pal = (PalInfo *)tlist->data;
     if (pal->isOnline()) {
