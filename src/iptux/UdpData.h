@@ -47,7 +47,7 @@ class UdpData {
   void SomeoneSendSign();
   void SomeoneBcstmsg();
 
-  PalInfo *CreatePalInfo();
+  std::shared_ptr<PalInfo> CreatePalInfo();
   void UpdatePalInfo(PalInfo *pal);
 
   void InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg);

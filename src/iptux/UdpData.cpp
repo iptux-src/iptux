@@ -175,7 +175,7 @@ void UdpData::SomeoneEntry() {
   using namespace std::placeholders;
 
   Command cmd(coreThread);
-  PalInfo *pal;
+  shared_ptr<PalInfo> pal;
 
   auto programData = coreThread.getProgramData();
   /* 转换缓冲区数据编码 */
@@ -183,20 +183,20 @@ void UdpData::SomeoneEntry() {
 
   /* 加入或更新好友列表 */
   coreThread.Lock();
-  if ((pal = coreThread.GetPalFromList(ipv4))) {
-    UpdatePalInfo(pal);
+  if ((pal = coreThread.GetPal(ipv4))) {
+    UpdatePalInfo(pal.get());
     coreThread.UpdatePalToList(ipv4);
   } else {
     pal = CreatePalInfo();
     coreThread.AttachPalToList(pal);
   }
   coreThread.Unlock();
-  coreThread.emitNewPalOnline(pal);
+  coreThread.emitNewPalOnline(pal.get());
 
   /* 通知好友本大爷在线 */
   cmd.SendAnsentry(coreThread.getUdpSock(), pal);
   if (pal->isCompatible()) {
-    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
+    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal.get());
     t1.detach();
   }
 }
@@ -224,8 +224,6 @@ void UdpData::SomeoneExit() {
  */
 void UdpData::SomeoneAnsentry() {
   Command cmd(*g_cthrd);
-  pthread_t pid;
-  PalInfo *pal;
   const char *ptr;
 
   auto g_progdt = g_cthrd->getProgramData();
@@ -236,19 +234,20 @@ void UdpData::SomeoneAnsentry() {
 
   /* 加入或更新好友列表 */
   coreThread.Lock();
-  if ((pal = coreThread.GetPalFromList(ipv4))) {
-    UpdatePalInfo(pal);
+  shared_ptr<PalInfo> pal;
+  if ((pal = coreThread.GetPal(ipv4))) {
+    UpdatePalInfo(pal.get());
     coreThread.UpdatePalToList(ipv4);
   } else {
     pal = CreatePalInfo();
     coreThread.AttachPalToList(pal);
   }
   coreThread.Unlock();
-  coreThread.emitNewPalOnline(pal);
+  coreThread.emitNewPalOnline(pal.get());
 
   /* 更新本大爷的数据信息 */
   if (pal->isCompatible()) {
-    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
+    thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal.get());
     t1.detach();
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
     cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
@@ -283,8 +282,7 @@ void UdpData::SomeoneAbsence() {
     UpdatePalInfo(pal);
     g_cthrd->UpdatePalToList(ipv4);
   } else {
-    pal = CreatePalInfo();
-    g_cthrd->AttachPalToList(pal);
+    g_cthrd->AttachPalToList(CreatePalInfo());
   }
   g_cthrd->Unlock();
   if (g_mwin->PaltreeContainItem(ipv4))
@@ -561,11 +559,9 @@ void UdpData::SomeoneBcstmsg() {
  * 创建好友信息数据.
  * @return 好友数据
  */
-PalInfo *UdpData::CreatePalInfo() {
-  PalInfo *pal;
-
+shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto programData = coreThread.getProgramData();
-  pal = new PalInfo;
+  auto pal = make_shared<PalInfo>();
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))

@@ -28,9 +28,12 @@ class Command {
   Command(const Command&) = delete;
   Command& operator=(const Command&) = delete;
 
+  /// Const Pointer to PalInfo
+  using CPPalInfo = std::shared_ptr<const PalInfo>;
+
   void BroadCast(int sock);
   void DialUp(int sock);
-  void SendAnsentry(int sock, PalInfo *pal);
+  void SendAnsentry(int sock, CPPalInfo pal);
   void SendExit(int sock, PalInfo *pal);
   void SendAbsence(int sock, PalInfo *pal);
   void SendDetectPacket(int sock, in_addr_t ipv4);

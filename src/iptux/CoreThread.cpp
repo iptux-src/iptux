@@ -238,6 +238,15 @@ const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
   return nullptr;
 }
 
+shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
+  for(auto palInfo: pImpl->pallist) {
+    if(palInfo->ipv4 == palKey.GetIpv4()) {
+      return palInfo;
+    }
+  }
+  return {};
+}
+
 PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
     if(palInfo->ipv4 == palKey.GetIpv4()) {
@@ -286,6 +295,11 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
  */
 void CoreThread::AttachPalToList(PalInfo *pal) {
   pImpl->pallist.push_back(shared_ptr<PalInfo>(pal));
+  pal->setOnline(true);
+}
+
+void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
+  pImpl->pallist.push_back(pal);
   pal->setOnline(true);
 }
 

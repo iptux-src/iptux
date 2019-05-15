@@ -134,7 +134,7 @@ void Command::DialUp(int sock) {
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendAnsentry(int sock, PalInfo *pal) {
+void Command::SendAnsentry(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
 
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData->nickname.c_str());

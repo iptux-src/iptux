@@ -50,9 +50,16 @@ class CoreThread {
   // PalInfo *GetPalFromList(in_addr_t ipv4);
   const PalInfo *GetPalFromList(PalKey palKey) const;
   PalInfo *GetPalFromList(PalKey palKey);
+
+  std::shared_ptr<const PalInfo> GetPal(PalKey palKey) const;
+  std::shared_ptr<PalInfo> GetPal(PalKey palKey);
+
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);
+
+  [[deprecated]]
   virtual void AttachPalToList(PalInfo *pal);
+  virtual void AttachPalToList(std::shared_ptr<PalInfo> pal);
 
   void registerCallback(const EventCallback &callback);
   void sendFeatureData(PalInfo *pal);
