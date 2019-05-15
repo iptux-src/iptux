@@ -20,6 +20,7 @@ using namespace std;
 namespace iptux {
 
 struct CoreThread::Impl {
+  bool debugDontBroadcast {false} ;
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -34,7 +35,7 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
 {
   pthread_mutex_init(&mutex, NULL);
   if(config->GetBool("debug_dont_broadcast")) {
-    debugDontBroadcast = true;
+    pImpl->debugDontBroadcast = true;
   }
 }
 
@@ -173,7 +174,7 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
  */
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
   Command cmd(*pcthrd);
-  if(!pcthrd->debugDontBroadcast) {
+  if(!pcthrd->pImpl->debugDontBroadcast) {
     cmd.BroadCast(pcthrd->udpSock);
   }
   cmd.DialUp(pcthrd->udpSock);

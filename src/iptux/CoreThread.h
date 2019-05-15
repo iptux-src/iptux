@@ -97,7 +97,6 @@ class CoreThread {
 
  private:
   GSList *blacklist;                              //黑名单链表
-  bool debugDontBroadcast {false} ;
 
  protected:
   pthread_mutex_t mutex;  //锁
