@@ -37,10 +37,10 @@ TEST(CoreThread, GetPalList) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  EXPECT_EQ(thread->GetPalList(), nullptr);
-  PalInfo pal;
-  thread->AttachPalToList(&pal);
-  EXPECT_NE(thread->GetPalList(), nullptr);
+  EXPECT_EQ(int(thread->GetPalList().size()), 0);
+  PalInfo* pal = new PalInfo();
+  thread->AttachPalToList(pal);
+  EXPECT_EQ(int(thread->GetPalList().size()), 1);
   delete thread;
 }
 

@@ -24,7 +24,7 @@ namespace iptux {
 struct CoreThread::Impl {
   GSList *blacklist {nullptr};                              //黑名单链表
   bool debugDontBroadcast {false} ;
-  GSList *pallist {nullptr};  //好友链表(成员不能被删除)
+  vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -161,16 +161,11 @@ void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  for (auto tlist = pImpl->pallist; tlist; tlist = g_slist_next(tlist)) {
-    SendBroadcastExit((PalInfo *)tlist->data);
+  for(auto palInfo: pImpl->pallist) {
+    SendBroadcastExit(palInfo.get());
   }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
-  for (auto tlist = pImpl->pallist; tlist; tlist = g_slist_next(tlist)) {
-    delete (PalInfo *)tlist->data;
-  }
-  g_slist_free(pImpl->pallist);
-
 }
 
 int CoreThread::getUdpSock() const {
@@ -214,7 +209,8 @@ void CoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
  * 获取好友链表.
  * @return 好友链表
  */
-GSList *CoreThread::GetPalList() { return pImpl->pallist; }
+const vector<shared_ptr<PalInfo>>&
+CoreThread::GetPalList() { return pImpl->pallist; }
 
 
 /**
@@ -222,15 +218,9 @@ GSList *CoreThread::GetPalList() { return pImpl->pallist; }
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */
 void CoreThread::ClearAllPalFromList() {
-  PalInfo *pal;
-  GSList *tlist;
-
   /* 清除所有好友的在线标志 */
-  tlist = pImpl->pallist;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
-    pal->setOnline(false);
-    tlist = g_slist_next(tlist);
+  for(auto palInfo: pImpl->pallist) {
+    palInfo->setOnline(false);
   }
 }
 
@@ -239,28 +229,22 @@ void CoreThread::ClearAllPalFromList() {
  * @param ipv4 ipv4
  * @return 好友信息数据
  */
-const PalInfo *CoreThread::GetPalFromList(PalKey palKey) const {
-  GSList *tlist;
-
-  tlist = pImpl->pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
-    tlist = g_slist_next(tlist);
+const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
+  for(auto palInfo: pImpl->pallist) {
+    if(palInfo->ipv4 == palKey.GetIpv4()) {
+      return palInfo.get();
+    }
   }
-
-  return (PalInfo *)(tlist ? tlist->data : NULL);
+  return nullptr;
 }
 
-PalInfo *CoreThread::GetPalFromList(PalKey palKey) {
-  GSList *tlist;
-
-  tlist = pImpl->pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
-    tlist = g_slist_next(tlist);
+PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
+  for(auto palInfo: pImpl->pallist) {
+    if(palInfo->ipv4 == palKey.GetIpv4()) {
+      return palInfo.get();
+    }
   }
-
-  return (PalInfo *)(tlist ? tlist->data : NULL);
+  return nullptr;
 }
 
 /**
@@ -301,8 +285,7 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
  * 也应该分配好友到相应的群组
  */
 void CoreThread::AttachPalToList(PalInfo *pal) {
-  /* 将好友加入到好友链表 */
-  pImpl->pallist = g_slist_append(pImpl->pallist, pal);
+  pImpl->pallist.push_back(shared_ptr<PalInfo>(pal));
   pal->setOnline(true);
 }
 
@@ -427,14 +410,12 @@ void CoreThread::UpdateMyInfo() {
   GSList *tlist;
 
   Lock();
-  tlist = pImpl->pallist;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
+  for(auto pal: pImpl->pallist) {
     if (pal->isOnline()) {
-      cmd.SendAbsence(udpSock, pal);
+      cmd.SendAbsence(udpSock, pal.get());
     }
     if (pal->isOnline() and pal->isCompatible()) {
-      thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
+      thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal.get());
       t1.detach();
     }
     tlist = g_slist_next(tlist);
@@ -451,5 +432,15 @@ void CoreThread::SendBroadcastExit(PalInfo *pal) {
   cmd.SendExit(udpSock, pal);
 }
 
+int
+CoreThread::GetOnlineCount() const {
+  int res = 0;
+  for(auto pal: pImpl->pallist) {
+    if(pal->isOnline()) {
+      res++;
+    }
+  }
+  return res;
+}
 
 }

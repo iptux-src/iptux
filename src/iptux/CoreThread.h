@@ -44,7 +44,7 @@ class CoreThread {
   void Lock();
   void Unlock();
 
-  GSList *GetPalList();
+  const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
   // const PalInfo *GetPalFromList(in_addr_t ipv4) const;
   // PalInfo *GetPalFromList(in_addr_t ipv4);
@@ -88,6 +88,7 @@ class CoreThread {
 
   void UpdateMyInfo();
   void SendBroadcastExit(PalInfo *pal);
+  int GetOnlineCount() const;
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
 

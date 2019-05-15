@@ -1102,14 +1102,7 @@ gboolean MainWindow::UpdateUI(MainWindow *mwin) {
   GSList *tlist;
 
   /* 统计当前在线人数 */
-  sum = 0;
-  tlist = g_cthrd->GetPalList();
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->isOnline()) {
-      sum++;
-    }
-    tlist = g_slist_next(tlist);
-  }
+  sum = g_cthrd->GetOnlineCount();
 
   /* 更新UI */
   if (sumonline != sum) {
@@ -1595,9 +1588,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   gtk_list_store_clear(GTK_LIST_STORE(model));
 
   /* 将符合条件的好友加入好友清单 */
-  tlist = g_cthrd->GetPalList();
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
+  for(auto pal: g_cthrd->GetPalList()) {
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     /* Search friends case ingore is better. */
     if (*text == '\0' || strcasestr(pal->name, text) ||
@@ -1611,10 +1602,9 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, pal->name,
                          2, pal->group, 3, ipstr, 4, pal->user, 5, pal->host, 6,
-                         pal, -1);
+                         pal.get(), -1);
       if (pixbuf) g_object_unref(pixbuf);
     }
-    tlist = g_slist_next(tlist);
   }
 
   /* 重新调整好友清单UI */
