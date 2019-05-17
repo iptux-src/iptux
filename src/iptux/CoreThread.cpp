@@ -91,13 +91,15 @@ void CoreThread::bind_iptux_port() {
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+  auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
+  addr.sin_addr.s_addr = stringToInAddr(bind_ip);
   if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%d)!\n%s"),
-                                         port, strerror(ec));
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
+                                         bind_ip.c_str(), port, strerror(ec));
     LOG_WARN("%s", errmsg);
     throw BindFailedException(ec, errmsg);
   }
@@ -105,8 +107,8 @@ void CoreThread::bind_iptux_port() {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%d)!\n%s"),
-                                         port, strerror(ec));
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
+                                         bind_ip.c_str(), port, strerror(ec));
     LOG_WARN("%s", errmsg);
     throw BindFailedException(ec, errmsg);
   }
