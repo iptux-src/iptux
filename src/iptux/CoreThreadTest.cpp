@@ -160,6 +160,15 @@ TEST(CoreThread, FullCase) {
   // send my icon
   ifstream ifs(testDataPath("iptux.png"));
   thread1->SendMyIcon(pal2InThread1, ifs);
+  while(thread2Events.size() != 2) {
+    this_thread::sleep_for(10ms);
+  }
+  {
+    auto event = thread2Events[1];
+    EXPECT_EQ(event->getType(), EventType::ICON_UPDATE);
+    auto event2 = (IconUpdateEvent*)(event.get());
+    EXPECT_EQ(event2->GetPalKey().ToString(), "127.0.0.1:2425");
+  }
 
   // send picture
   ChipData chipData;
