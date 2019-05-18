@@ -14,6 +14,7 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
+#include "iptux/CoreThread.h"
 
 namespace iptux {
 
@@ -22,7 +23,7 @@ class TcpData {
   TcpData();
   ~TcpData();
 
-  static void TcpDataEntry(int sock);
+  static void TcpDataEntry(CoreThread* coreThread, int sock);
 
  private:
   void DispatchTcpData();
@@ -34,6 +35,7 @@ class TcpData {
   void RecvPhotoPic(PalInfo *pal, const char *path);
   void RecvMsgPic(PalInfo *pal, const char *path);
 
+  CoreThread* coreThread;
   int sock;               //数据交流套接口
   size_t size;            //缓冲区已使用长度
   char buf[MAX_SOCKLEN];  //缓冲区

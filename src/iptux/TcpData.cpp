@@ -22,6 +22,7 @@
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
+#include "iptux/output.h"
 
 using namespace std;
 
@@ -41,9 +42,10 @@ TcpData::~TcpData() { close(sock); }
  * TCP连接处理入口.
  * @param sock tcp socket
  */
-void TcpData::TcpDataEntry(int sock) {
+void TcpData::TcpDataEntry(CoreThread* coreThread, int sock) {
   TcpData tdata;
 
+  tdata.coreThread = coreThread;
   tdata.sock = sock;
   tdata.DispatchTcpData();
 }
@@ -52,11 +54,19 @@ void TcpData::TcpDataEntry(int sock) {
  * 分派TCP数据处理方案.
  */
 void TcpData::DispatchTcpData() {
+  struct sockaddr_in addr;
+  socklen_t socklen;
+  socklen = sizeof(addr);
+  getpeername(sock, (struct sockaddr *)&addr, &socklen);
+  LOG_DEBUG("received tcp message from %s:%d", inAddrToString(addr.sin_addr.s_addr).c_str(), int(addr.sin_port));
+
   uint32_t commandno;
   ssize_t len;
 
   /* 读取消息前缀 */
-  if ((len = read_ipmsg_prefix(sock, buf, MAX_SOCKLEN)) <= 0) return;
+  if ((len = read_ipmsg_prefix(sock, buf, MAX_SOCKLEN)) <= 0) {
+    return;
+  }
 
   /* 分派消息 */
   size = len;  //设置缓冲区数据的有效长度
@@ -121,7 +131,10 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   /* 检查好友是否存在 */
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
-  if (!(pal = g_cthrd->GetPalFromList(addr.sin_addr.s_addr))) return;
+  if (!(pal = coreThread->GetPalFromList(addr.sin_addr.s_addr))) {
+
+    return;
+  }
 
   /* 创建即将接收的数据文件路径 */
   switch (GET_OPT(cmdopt)) {
