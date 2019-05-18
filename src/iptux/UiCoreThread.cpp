@@ -79,6 +79,7 @@ void UiCoreThread::WriteSharedData() {
   }
   /* 写出数据 */
   config->SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
+  auto passwd = GetAccessPublicLimit();
   if (!passwd.empty()) {
     config->SetString(CONFIG_ACCESS_SHARED_LIMIT, passwd);
   }
@@ -550,24 +551,6 @@ FileInfo *UiCoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,
 }
 
 /**
- * 获取共享文件访问密码.
- * @return 密码字符串
- */
-const char *UiCoreThread::GetAccessPublicLimit() { return passwd.c_str(); }
-
-/**
- * 更新共享文件访问密码.
- * @param limit 密码字符串
- */
-void UiCoreThread::SetAccessPublicLimit(const char *limit) {
-  if (limit == NULL) {
-    passwd = "";
-  } else {
-    passwd = string(limit);
-  }
-}
-
-/**
  * 初始化底层数据.
  */
 void UiCoreThread::InitSublayer() {
@@ -619,7 +602,6 @@ void UiCoreThread::ReadSharedData() {
 
   /* 读取共享文件数据 */
   vector<string> sharedFileList = config->GetStringList(CONFIG_SHARED_FILE_LIST);
-  passwd = g_strdup(config->GetString(CONFIG_ACCESS_SHARED_LIMIT).c_str());
 
   /* 分析数据并加入文件链表 */
   for (size_t i = 0; i < sharedFileList.size(); ++i) {

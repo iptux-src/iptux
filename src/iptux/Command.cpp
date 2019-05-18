@@ -401,10 +401,10 @@ void Command::SendFileInfo(int sock, const PalKey& palKey, uint32_t opttype,
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendMyIcon(int sock, CPPalInfo pal) {
+void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
   CreateCommand(IPTUX_SENDICON, NULL);
   ConvertEncode(pal->encode);
-  CreateIconExtra();
+  CreateIconExtra(iss);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -429,6 +429,7 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
  */
 void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
                            const char *path) {
+  LOG_DEBUG("send tcp message to %s, op %d, file %s", pal->GetKey().ToString().c_str(), int(opttype), path);
   struct sockaddr_in addr;
   int fd;
 
@@ -443,7 +444,10 @@ void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
   if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
       (xwrite(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1))
+  {
+    LOG_WARN("send tcp message failed");
     return;
+  }
 
   SendSublayerData(sock, fd);
   close(fd);
@@ -593,18 +597,14 @@ void Command::CreateIptuxExtra(const string &encode) {
 /**
  * 创建个人头像的扩展数据.
  */
-void Command::CreateIconExtra() {
+void Command::CreateIconExtra(istream& iss) {
   const gchar *env;
   char path[MAX_PATHLEN];
   ssize_t len;
   int fd;
 
-  env = g_get_user_config_dir();
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon", env);
-  if ((fd = open(path, O_RDONLY)) == -1) return;
-  len = xread(fd, buf + size, MAX_UDPLEN - size);
-  close(fd);
-  if (len != -1) size += len;
+  iss.read(buf+size, MAX_UDPLEN-size);
+  size+=iss.gcount();
 }
 
 }  // namespace iptux

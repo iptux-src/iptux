@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <thread>
+#include <fstream>
 
 #include "iptux/CoreThread.h"
 #include "iptux/TestHelper.h"
@@ -128,7 +129,7 @@ TEST(CoreThread, FullCase) {
   auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
   auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
   thread1->start();
-  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\"}");
+  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\", \"access_shared_limit\": \"qwert\"}");
   auto thread2 = new CoreThread(make_shared<ProgramData>(config2));
   thread2->start();
   thread1->SendDetectPacket("127.0.0.2");
@@ -145,6 +146,8 @@ TEST(CoreThread, FullCase) {
 
   auto pal2InThread1 = thread1->GetPal("127.0.0.2");
   auto pal1InThread2 = thread2->GetPal("127.0.0.1");
+
+  // send message
   thread1->SendMessage(pal2InThread1, "hello world");
   while(thread2Events.size() != 1) {
     this_thread::sleep_for(10ms);
@@ -153,6 +156,33 @@ TEST(CoreThread, FullCase) {
   EXPECT_EQ(event->getType(), EventType::NEW_MESSAGE);
   auto event2 = (NewMessageEvent*)(event.get());
   EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
+
+  // send my icon
+  ifstream ifs(testDataPath("iptux.png"));
+  thread1->SendMyIcon(pal2InThread1, ifs);
+  while(thread2Events.size() != 2) {
+    this_thread::sleep_for(10ms);
+  }
+  {
+    auto event = thread2Events[1];
+    EXPECT_EQ(event->getType(), EventType::ICON_UPDATE);
+    auto event2 = (IconUpdateEvent*)(event.get());
+    EXPECT_EQ(event2->GetPalKey().ToString(), "127.0.0.1:2425");
+  }
+
+  // send ask shared
+  thread1->SendAskShared(pal2InThread1);
+
+  // send picture
+  ChipData chipData;
+  chipData.type = MessageContentType::PICTURE;
+  chipData.data = testDataPath("iptux.png");
+  chipData.SetDeleteFileAfterSent(false);
+  thread1->SendMessage(pal2InThread1, chipData);
+  // WARNING: does not work as expected, the message will be sent from 127.0.0.2(expect 127.0.0.1)
+  // while(thread2Events.size() != 2) {
+  //   this_thread::sleep_for(10ms);
+  // }
 
   thread1->SendExit(pal2InThread1);
   while(thread2->GetOnlineCount() != 0) {

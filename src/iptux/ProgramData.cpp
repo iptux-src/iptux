@@ -89,6 +89,7 @@ void ProgramData::WriteProgData() {
   config->SetBool("transnd_support", FLAG_ISSET(sndfgs, 2));
   config->SetBool("msgsnd_support", FLAG_ISSET(sndfgs, 1));
   config->SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
+  config->SetString("access_shared_limit", passwd);
   WriteNetSegment();
   config->Save();
 }
@@ -157,6 +158,8 @@ void ProgramData::ReadProgData() {
   FLAG_SET(sndfgs, 2, config->GetBool("transnd_support", true));
   FLAG_SET(sndfgs, 1, config->GetBool("msgsnd_support", true));
   FLAG_SET(sndfgs, 0, config->GetBool("sound_support", true));
+
+  passwd = config->GetString("access_shared_limit");
 
   ReadNetSegment();
 }

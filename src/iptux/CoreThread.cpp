@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <functional>
+#include <fstream>
 
 #include "ipmsg.h"
 #include "support.h"
@@ -144,15 +145,13 @@ void CoreThread::RecvUdpData(CoreThread *self) {
  * @param pcthrd 核心类
  */
 void CoreThread::RecvTcpData(CoreThread *pcthrd) {
-  pthread_t pid;
   int subsock;
 
   listen(pcthrd->tcpSock, 5);
   while (pcthrd->started) {
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
-    pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
-                   GINT_TO_POINTER(subsock));
-    pthread_detach(pid);
+    thread([](CoreThread* coreThread, int subsock){TcpData::TcpDataEntry(coreThread, subsock);}, pcthrd, subsock)
+      .detach();
   }
 }
 
@@ -360,7 +359,8 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
       programData->myicon.c_str());
   if (access(path, F_OK) == 0) {
-    cmd.SendMyIcon(udpSock, pal);
+    ifstream ifs(path);
+    cmd.SendMyIcon(udpSock, pal, ifs);
   }
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
@@ -372,6 +372,10 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
     cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
     close(sock);
   }
+}
+
+void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
+    Command(*this).SendMyIcon(udpSock, pal, iss);
 }
 
 void CoreThread::AddBlockIp(in_addr_t ipv4) {
@@ -400,7 +404,9 @@ bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  //关闭网络套接口
       /*/* 删除此图片 */
-      unlink(ptr);  //此文件已无用处
+      if(chipData.GetDeleteFileAfterSent()) {
+        unlink(ptr);  //此文件已无用处
+      }
       return true;
     default:
       g_assert_not_reached();
@@ -438,7 +444,6 @@ bool CoreThread::SendAskShared(PPalInfo pal) {
 
 void CoreThread::UpdateMyInfo() {
   Command cmd(*this);
-  GSList *tlist;
 
   Lock();
   for(auto pal: pImpl->pallist) {
@@ -449,7 +454,6 @@ void CoreThread::UpdateMyInfo() {
       thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
       t1.detach();
     }
-    tlist = g_slist_next(tlist);
   }
   Unlock();
 }
@@ -486,8 +490,21 @@ void CoreThread::emitSomeoneExit(const PalKey& palKey) {
   emitEvent(make_shared<PalOfflineEvent>(palKey));
 }
 
+void CoreThread::EmitIconUpdate(const PalKey& palKey) {
+  UpdatePalToList(palKey);
+  emitEvent(make_shared<IconUpdateEvent>(palKey));
+}
+
 void CoreThread::SendExit(PPalInfo palInfo) {
   Command(*this).SendExit(udpSock, palInfo);
+}
+
+const string& CoreThread::GetAccessPublicLimit() const {
+  return programData->GetPasswd();
+}
+
+void CoreThread::SetAccessPublicLimit(const string& val) {
+  programData->SetPasswd(val);
 }
 
 }

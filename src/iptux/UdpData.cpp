@@ -238,7 +238,7 @@ void UdpData::SomeoneAnsEntry() {
     thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
     t1.detach();
   } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
-    cmd.SendAnsentry(g_cthrd->getUdpSock(), pal);
+    cmd.SendAnsentry(coreThread.getUdpSock(), pal);
   }
 }
 
@@ -249,10 +249,10 @@ void UdpData::SomeoneAbsence() {
   PalInfo *pal;
   const char *ptr;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread.getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
-  pal = g_cthrd->GetPalFromList(ipv4);  //利用好友链表只增不减的特性，无须加锁
+  pal = coreThread.GetPalFromList(ipv4);  //利用好友链表只增不减的特性，无须加锁
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
@@ -265,14 +265,14 @@ void UdpData::SomeoneAbsence() {
 
   /* 加入或更新好友列表 */
   gdk_threads_enter();
-  g_cthrd->Lock();
+  coreThread.Lock();
   if (pal) {
     UpdatePalInfo(pal);
-    g_cthrd->UpdatePalToList(ipv4);
+    coreThread.UpdatePalToList(ipv4);
   } else {
-    g_cthrd->AttachPalToList(CreatePalInfo());
+    coreThread.AttachPalToList(CreatePalInfo());
   }
-  g_cthrd->Unlock();
+  coreThread.Unlock();
   if (g_mwin->PaltreeContainItem(ipv4))
     g_mwin->UpdateItemToPaltree(ipv4);
   else
@@ -362,20 +362,18 @@ void UdpData::SomeoneAskShared() {
   Command cmd(coreThread);
   pthread_t pid;
   PalInfo *pal;
-  const char *limit;
   char *passwd;
 
   if (!(pal = coreThread.GetPalFromList(ipv4))) return;
 
-  limit = g_cthrd->GetAccessPublicLimit();
-  if (!limit || *limit == '\0') {
-    pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
-    pthread_detach(pid);
+  auto limit = coreThread.GetAccessPublicLimit();
+  if (limit.empty()) {
+    thread([](CoreThread* coreThread, PalInfo* pal){ThreadAskSharedFile(coreThread, pal);}, &coreThread, pal).detach();
   } else if (!(iptux_get_dec_number(buf, ':', 4) & IPTUX_PASSWDOPT)) {
-    cmd.SendFileInfo(g_cthrd->getUdpSock(), pal->GetKey(),
+    cmd.SendFileInfo(coreThread.getUdpSock(), pal->GetKey(),
                      IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
   } else if ((passwd = ipmsg_get_attach(buf, ':', 5))) {
-    if (strcmp(passwd, limit) == 0) {
+    if (limit == passwd) {
       pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
       pthread_detach(pid);
     }
@@ -390,7 +388,7 @@ void UdpData::SomeoneSendIcon() {
   PalInfo *pal;
   char *iconfile;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) || pal->isChanged()) {
+  if (!(pal = coreThread.GetPalFromList(ipv4)) || pal->isChanged()) {
     return;
   }
 
@@ -398,12 +396,7 @@ void UdpData::SomeoneSendIcon() {
   if ((iconfile = RecvPalIcon())) {
     g_free(pal->iconfile);
     pal->iconfile = iconfile;
-    gdk_threads_enter();
-    g_cthrd->Lock();
-    g_cthrd->UpdatePalToList(ipv4);
-    g_cthrd->Unlock();
-    g_mwin->UpdateItemToPaltree(ipv4);
-    gdk_threads_leave();
+    coreThread.EmitIconUpdate(PalKey(ipv4));
   }
 }
 
@@ -414,7 +407,7 @@ void UdpData::SomeoneSendSign() {
   PalInfo *pal;
   char *sign;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4))) return;
+  if (!(pal = coreThread.GetPalFromList(ipv4))) return;
 
   /* 若好友不兼容iptux协议，则需转码 */
   if (!pal->isCompatible()) {
@@ -445,10 +438,10 @@ void UdpData::SomeoneBcstmsg() {
   uint32_t commandno, packetno;
   char *text;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread.getProgramData();
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
-  pal = g_cthrd->GetPalFromList(ipv4);
+  pal = coreThread.GetPalFromList(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
       ConvertEncode(pal->encode);
@@ -489,7 +482,7 @@ void UdpData::SomeoneBcstmsg() {
         break;
     }
     /*/* 注册消息 */
-    g_cthrd->Lock();
+    coreThread.Lock();
     switch (GET_OPT(commandno)) {
       case IPTUX_BROADCASTOPT:
         grpinf = g_cthrd->GetPalBroadcastItem(pal);
@@ -507,7 +500,7 @@ void UdpData::SomeoneBcstmsg() {
     }
     if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
       g_cthrd->PushItemToMsgline(grpinf);
-    g_cthrd->Unlock();
+    coreThread.Unlock();
   }
   g_free(text);
 
@@ -715,8 +708,9 @@ char *UdpData::RecvPalIcon() {
   /* 将头像数据刷入磁盘 */
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
            g_get_user_cache_dir(), ipv4);
+  Helper::prepareDir(path);
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
-    LOG_ERROR("write icon to path filed: %s", path);
+    LOG_ERROR("write icon to path failed: %s", path);
     return NULL;
   }
   xwrite(fd, buf + len, size - len);
@@ -775,7 +769,7 @@ void UdpData::RecvPalFile() {
   if ((commandno & IPTUX_SHAREDOPT) || (ptr && *ptr != '\0')) {
     para = NULL;
     g_datalist_init(&para);
-    g_datalist_set_data(&para, "palinfo", g_cthrd->GetPalFromList(ipv4));
+    g_datalist_set_data(&para, "palinfo", coreThread.GetPalFromList(ipv4));
     g_datalist_set_data_full(&para, "extra-data", g_strdup(ptr),
                              GDestroyNotify(g_free));
     g_datalist_set_data(&para, "packetno", GUINT_TO_POINTER(packetno));
@@ -808,11 +802,11 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
  * 某好友请求本计算机的共享文件.
  * @param pal class PalInfo
  */
-void UdpData::ThreadAskSharedFile(PalInfo *pal) {
+void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PalInfo *pal) {
   SendFile sfile;
   bool permit;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread->getProgramData();
 
   if (g_progdt->IsFilterFileShareRequest()) {
     gdk_threads_enter();

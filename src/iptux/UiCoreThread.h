@@ -79,8 +79,6 @@ class UiCoreThread: public CoreThread {
   void DelFileFromPrivate(uint32_t fileid);
   FileInfo *GetFileFromAll(uint32_t fileid);
   FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
-  const char *GetAccessPublicLimit();
-  void SetAccessPublicLimit(const char *limit);
 
   void CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const G_GNUC_PRINTF(3, 4);
   void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
@@ -115,7 +113,6 @@ private:
   GSList *pblist, *prlist;  //文件链表(共享/私有)
   GSList *ecsList;          //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
-  std::string passwd;  //共享文件密码
 
   //回调处理部分函数
  private:

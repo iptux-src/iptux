@@ -148,6 +148,11 @@ class ChipData {
 
   MessageContentType type;  ///< 消息内容类型
   std::string data;               ///< 数据串 *
+
+  void SetDeleteFileAfterSent(bool val) { deleteFileAfterSent = val; }
+  bool GetDeleteFileAfterSent() const { return deleteFileAfterSent; }
+ private:
+  bool deleteFileAfterSent {true};
 };
 
 /**

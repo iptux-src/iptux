@@ -577,4 +577,12 @@ std::string stringDumpAsCString(const std::string& str) {
   return oss.str();
 }
 
+void Helper::prepareDir(const std::string& fname) {
+  auto path = g_path_get_dirname(fname.c_str());
+  if(g_mkdir_with_parents(path, 0755) != 0) {
+    LOG_ERROR("g_mkdir_with_parents failed: %s, %s", path, strerror(errno));
+  }
+  g_free(path);
+}
+
 }  // namespace iptux

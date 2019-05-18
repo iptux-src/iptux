@@ -32,7 +32,7 @@ TEST(ProgramData, WriteAndRead) {
 
   auto config2 = make_shared<IptuxConfig>(config->getFileName());
   ProgramData* core2 = new ProgramData(config2);
-  ASSERT_EQ(core2->getNetSegments().size(), 1);
+  ASSERT_EQ(int(core2->getNetSegments().size()), 1);
   ASSERT_EQ(core2->getNetSegments()[0].startip, "1.2.3.4");
   ASSERT_EQ(core2->getNetSegments()[0].endip, "1.2.3.5");
   ASSERT_EQ(core2->getNetSegments()[0].description, "foobar");

@@ -66,7 +66,11 @@ class CoreThread {
   void emitSomeoneExit(const PalKey& palKey);
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);
+  void EmitIconUpdate(const PalKey& palKey);
   void emitEvent(std::shared_ptr<const Event> event);
+
+  const std::string& GetAccessPublicLimit() const;
+  void SetAccessPublicLimit(const std::string& val);
 
   /**
    * @brief send message to pal
@@ -86,6 +90,7 @@ class CoreThread {
   void SendDetectPacket(const std::string& ipv4);
   void SendDetectPacket(in_addr_t ipv4);
   void SendExit(PPalInfo pal);
+  void SendMyIcon(PPalInfo pal, std::istream& iss);
 
   /**
    * 插入消息(UI线程安全).

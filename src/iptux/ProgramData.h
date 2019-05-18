@@ -54,6 +54,9 @@ class ProgramData {
   bool IsFilterFileShareRequest() const;
   void SetFlag(int idx, bool flag);
 
+  const std::string& GetPasswd() const {return passwd;}
+  void SetPasswd(const std::string& val) {passwd = val;}
+
   /**
    * @brief Set the Using Blacklist object
    *
@@ -87,6 +90,7 @@ class ProgramData {
   std::shared_ptr<IptuxConfig> config;
   pthread_mutex_t mutex;  //锁
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
+  std::string passwd;
 
  private:
   void InitSublayer();

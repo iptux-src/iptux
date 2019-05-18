@@ -1853,6 +1853,12 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     }
   }
 
+  if(type == EventType::ICON_UPDATE) {
+    auto event = (const IconUpdateEvent*)(_event.get());
+    auto ipv4 = event->GetPalKey().GetIpv4();
+    UpdateItemToPaltree(ipv4);
+  }
+
   if(type == EventType::NEW_MESSAGE) {
     auto event = (const NewMessageEvent*)(_event.get());
     auto para = event->getMsgPara();
