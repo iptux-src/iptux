@@ -102,7 +102,10 @@ void CoreThread::bind_iptux_port() {
                                          bind_ip.c_str(), port, strerror(ec));
     LOG_WARN("%s", errmsg);
     throw BindFailedException(ec, errmsg);
+  } else {
+    LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
+
   if(::bind(udpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
@@ -111,6 +114,8 @@ void CoreThread::bind_iptux_port() {
                                          bind_ip.c_str(), port, strerror(ec));
     LOG_WARN("%s", errmsg);
     throw BindFailedException(ec, errmsg);
+  } else {
+    LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
   }
 }
 
@@ -468,6 +473,10 @@ CoreThread::GetOnlineCount() const {
     }
   }
   return res;
+}
+
+void CoreThread::SendDetectPacket(const string& ipv4) {
+  Command(*this).SendDetectPacket(udpSock, stringToInAddr(ipv4));
 }
 
 }

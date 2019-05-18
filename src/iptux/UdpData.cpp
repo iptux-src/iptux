@@ -100,7 +100,7 @@ void UdpData::DispatchUdpData() {
       SomeoneExit();
       break;
     case IPMSG_ANSENTRY:
-      SomeoneAnsentry();
+      SomeoneAnsEntry();
       break;
     case IPMSG_BR_ABSENCE:
       SomeoneAbsence();
@@ -222,11 +222,11 @@ void UdpData::SomeoneExit() {
 /**
  * 好友在线.
  */
-void UdpData::SomeoneAnsentry() {
+void UdpData::SomeoneAnsEntry() {
   Command cmd(*g_cthrd);
   const char *ptr;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread.getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
   ptr = iptux_skip_string(buf, size, 3);

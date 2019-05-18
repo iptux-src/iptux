@@ -1,9 +1,12 @@
 #include "gtest/gtest.h"
 
+#include <thread>
+
 #include "iptux/CoreThread.h"
 #include "iptux/TestHelper.h"
 #include "iptux/utils.h"
 #include "iptux/Exception.h"
+#include "iptux/output.h"
 
 using namespace std;
 using namespace iptux;
@@ -116,4 +119,22 @@ TEST(CoreThread, SendAskShared) {
   auto pal = make_shared<PalInfo>();
   thread->SendAskShared(pal);
   delete thread;
+}
+
+TEST(CoreThread, FullCase) {
+  using namespace std::chrono_literals;
+  Log::setLogLevel(LogLevel::DEBUG);
+  auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
+  auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
+  thread1->start();
+  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\"}");
+  auto thread2 = new CoreThread(make_shared<ProgramData>(config2));
+  thread2->start();
+  thread1->SendDetectPacket("127.0.0.2");
+  while(thread2->GetOnlineCount() != 1) {
+    thread2->Lock();
+    cout << thread2->GetOnlineCount() << endl;
+    thread2->Unlock();
+    this_thread::sleep_for(10ms);
+  }
 }

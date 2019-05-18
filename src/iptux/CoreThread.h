@@ -80,6 +80,9 @@ class CoreThread {
 
   bool SendAskShared(PPalInfo pal);
 
+  void SendDetectPacket(const std::string& ipv4);
+  void SendDetectPacket(in_addr_t ipv4);
+
   /**
    * 插入消息(UI线程安全).
    * @param para 消息参数封装包

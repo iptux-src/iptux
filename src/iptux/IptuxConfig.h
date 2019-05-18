@@ -10,6 +10,28 @@ namespace iptux {
 
 class IptuxConfig {
  public:
+  /**
+   * @brief create a IptuxConfig from string
+   *
+   * @param str
+   * @return std::shared_ptr<IptuxConfig>
+   */
+  static std::shared_ptr<IptuxConfig>
+  newFromString(const std::string& str);
+
+  /**
+   * @brief create a IptuxConfig from file
+   *
+   * @param fname
+   * @return std::shared_ptr<IptuxConfig>
+   */
+  static std::shared_ptr<IptuxConfig>
+  newFromFile(const std::string& fname);
+
+ private:
+  IptuxConfig();
+
+ public:
   explicit IptuxConfig(const std::string& fname);
   ~IptuxConfig();
 

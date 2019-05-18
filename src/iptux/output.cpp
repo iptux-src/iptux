@@ -22,6 +22,35 @@ namespace iptux {
 
 static LogLevel _level = LogLevel::WARN;
 
+static const char* logLevelAsString(GLogLevelFlags logLevel) {
+  switch (logLevel) {
+    case G_LOG_LEVEL_DEBUG:
+      return "DEBUG";
+    case G_LOG_LEVEL_INFO:
+      return "INFO ";
+    case G_LOG_LEVEL_MESSAGE:
+      return "MESSA";
+    case G_LOG_LEVEL_WARNING:
+      return "WARN ";
+    case G_LOG_LEVEL_ERROR:
+      return "ERROR";
+    default:
+      return "UNKNO";
+  }
+}
+
+static string nowAsString() {
+  time_t rawtime;
+  struct tm timeinfo;
+  char buffer[80];
+
+  time(&rawtime);
+  localtime_r(&rawtime, &timeinfo);
+
+  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
+  return buffer;
+}
+
 string pretty_fname(const string &fname) {
   size_t pos = fname.rfind("/src/");
   if (pos == string::npos) {
@@ -40,8 +69,9 @@ void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
   va_start(ap, format);
   gchar *msg = g_strdup_vprintf(format, ap);
   va_end(ap);
-  g_log("iptux", level, "%s:%d:%s:%s", pretty_fname(fname).c_str(), line, func,
-        msg);
+  fprintf(stderr, "[%s][iptux][%s]%s:%d:%s:%s\n", nowAsString().c_str(),
+          logLevelAsString(level),
+          pretty_fname(fname).c_str(), line, func, msg);
   g_free(msg);
 }
 

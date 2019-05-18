@@ -38,7 +38,7 @@ class UdpData {
   void SomeoneLost();
   void SomeoneEntry();
   void SomeoneExit();
-  void SomeoneAnsentry();
+  void SomeoneAnsEntry();
   void SomeoneAbsence();
   void SomeoneSendmsg();
   void SomeoneRecvmsg();
