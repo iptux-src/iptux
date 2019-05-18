@@ -322,21 +322,20 @@ void CoreThread::registerCallback(const EventCallback &callback) {
 }
 
 void CoreThread::emitNewPalOnline(PPalInfo palInfo) {
-  NewPalOnlineEvent event(palInfo);
-  emitEvent(event);
+  emitEvent(make_shared<NewPalOnlineEvent>(palInfo));
 }
 
 void CoreThread::emitNewPalOnline(const PalKey& palKey) {
   auto palInfo = GetPal(palKey);
   if(palInfo) {
     NewPalOnlineEvent event(palInfo);
-    emitEvent(event);
+    emitEvent(make_shared<NewPalOnlineEvent>(palInfo));
   } else {
     LOG_ERROR("emitNewPalOnline meet a unknown key: %s", palKey.ToString().c_str());
   }
 }
 
-void CoreThread::emitEvent(const Event& event) {
+void CoreThread::emitEvent(shared_ptr<const Event> event) {
   Lock();
   for(EventCallback& callback: callbacks) {
     callback(event);
@@ -425,13 +424,11 @@ void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
 
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
-  NewMessageEvent event(move(para2));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
 }
 
 void CoreThread::InsertMessage(MsgPara&& para) {
-  NewMessageEvent event(move(para));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
 }
 
 bool CoreThread::SendAskShared(PPalInfo pal) {
@@ -441,8 +438,6 @@ bool CoreThread::SendAskShared(PPalInfo pal) {
 
 void CoreThread::UpdateMyInfo() {
   Command cmd(*this);
-  pthread_t pid;
-  PalInfo *pal;
   GSList *tlist;
 
   Lock();

@@ -133,9 +133,6 @@ TEST(CoreThread, FullCase) {
   thread2->start();
   thread1->SendDetectPacket("127.0.0.2");
   while(thread2->GetOnlineCount() != 1) {
-    thread2->Lock();
-    cout << thread2->GetOnlineCount() << endl;
-    thread2->Unlock();
     this_thread::sleep_for(10ms);
   }
 
@@ -143,9 +140,19 @@ TEST(CoreThread, FullCase) {
   EXPECT_EQ(thread1->GetOnlineCount(), 1);
   EXPECT_TRUE(thread1->GetPal("127.0.0.2"));
 
+  vector<shared_ptr<const Event>> thread2Events;
+  thread2->registerCallback([&](shared_ptr<const Event> event) { thread2Events.emplace_back(event); });
+
   auto pal2InThread1 = thread1->GetPal("127.0.0.2");
   auto pal1InThread2 = thread2->GetPal("127.0.0.1");
   thread1->SendMessage(pal2InThread1, "hello world");
+  while(thread2Events.size() != 1) {
+    this_thread::sleep_for(10ms);
+  }
+  auto event = thread2Events[0];
+  EXPECT_EQ(event->getType(), EventType::NEW_MESSAGE);
+  auto event2 = (NewMessageEvent*)(event.get());
+  EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
 
   Log::setLogLevel(oldLogLevel);
 }

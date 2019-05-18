@@ -67,7 +67,7 @@ class MainWindow {
 
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
 
-  void processEvent(const Event& event);
+  void processEvent(std::shared_ptr<const Event> event);
 
  private:
   GtkApplication* app;
@@ -117,7 +117,7 @@ class MainWindow {
   static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void InitThemeSublayerData();
-  void processEventInMainThread(Event* event);
+  void processEventInMainThread(std::shared_ptr<const Event> event);
 
  private:
   //回调处理部分

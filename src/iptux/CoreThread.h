@@ -10,7 +10,7 @@
 
 namespace iptux {
 
-typedef std::function<void(Event const&)> EventCallback;
+using EventCallback = std::function<void(std::shared_ptr<const Event>)>;
 
 class CoreThread {
  public:
@@ -65,7 +65,7 @@ class CoreThread {
   void sendFeatureData(PPalInfo pal);
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);
-  void emitEvent(const Event& event);
+  void emitEvent(std::shared_ptr<const Event> event);
 
   /**
    * @brief send message to pal
@@ -96,7 +96,7 @@ class CoreThread {
    */
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
-  
+
   void UpdateMyInfo();
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;

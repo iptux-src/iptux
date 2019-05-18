@@ -60,7 +60,7 @@ MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
   activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
-  g_cthrd->registerCallback([&](const Event &event) { this->processEvent(event); });
+  g_cthrd->registerCallback([&](shared_ptr<const Event> event) { this->processEvent(event); });
 }
 
 /**
@@ -1808,17 +1808,13 @@ void MainWindow::InitThemeSublayerData() {
 
 class EventData {
 public:
-  EventData(MainWindow* window, const Event& event) {
+  EventData(MainWindow* window, shared_ptr<const Event> event) {
     this->window = window;
-    this->event = event.clone();
-  }
-
-  ~EventData() {
-    delete this->event;
+    this->event = event;
   }
 
   MainWindow* window;
-  Event* event;
+  shared_ptr<const Event> event;
 };
 
 gboolean MainWindow::processEventCallback(gpointer data) {
@@ -1830,16 +1826,16 @@ gboolean MainWindow::processEventCallback(gpointer data) {
 
 
 // this function is run in corethread, so always use g_idle_add to update the ui
-void MainWindow::processEvent(const Event& event) {
+void MainWindow::processEvent(shared_ptr<const Event> event) {
   // deleted in `processEventCallback`
   EventData* callback = new EventData(this, event);
   gdk_threads_add_idle(processEventCallback, callback);
 }
 
-void MainWindow::processEventInMainThread(Event* _event) {
+void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if(type == EventType ::NEW_PAL_ONLINE) {
-    auto event = (NewPalOnlineEvent*)_event;
+    auto event = (NewPalOnlineEvent*)(_event.get());
     auto ipv4 = event->getPalInfo()->ipv4;
     if(PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
@@ -1849,7 +1845,7 @@ void MainWindow::processEventInMainThread(Event* _event) {
     return;
   }
   if(type == EventType::NEW_MESSAGE) {
-    auto event = (NewMessageEvent*)_event;
+    auto event = (NewMessageEvent*)(_event.get());
     auto para = event->getMsgPara();
     GroupInfo *grpinf = nullptr;
     SessionAbstract *session;

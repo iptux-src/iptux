@@ -96,13 +96,11 @@ void UiCoreThread::WriteSharedData() {
  */
 void UiCoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
-  NewMessageEvent event(move(para2));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
 }
 
 void UiCoreThread::InsertMessage(MsgPara&& para) {
-  NewMessageEvent event(move(para));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
 }
 
 /**
