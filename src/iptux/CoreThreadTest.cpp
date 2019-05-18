@@ -145,6 +145,8 @@ TEST(CoreThread, FullCase) {
 
   auto pal2InThread1 = thread1->GetPal("127.0.0.2");
   auto pal1InThread2 = thread2->GetPal("127.0.0.1");
+
+  // send message
   thread1->SendMessage(pal2InThread1, "hello world");
   while(thread2Events.size() != 1) {
     this_thread::sleep_for(10ms);
@@ -152,6 +154,19 @@ TEST(CoreThread, FullCase) {
   auto event = thread2Events[0];
   EXPECT_EQ(event->getType(), EventType::NEW_MESSAGE);
   auto event2 = (NewMessageEvent*)(event.get());
+  EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
+
+  // send picture
+  ChipData chipData;
+  chipData.type = MessageContentType::PICTURE;
+  chipData.data = testDataPath("iptux.png");
+  thread1->SendMessage(pal2InThread1, chipData);
+  while(thread2Events.size() != 2) {
+    this_thread::sleep_for(10ms);
+  }
+  event = thread2Events[0];
+  EXPECT_EQ(event->getType(), EventType::NEW_MESSAGE);
+  event2 = (NewMessageEvent*)(event.get());
   EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
 
   thread1->SendExit(pal2InThread1);
