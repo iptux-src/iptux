@@ -132,7 +132,6 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
   if (!(pal = coreThread->GetPalFromList(addr.sin_addr.s_addr))) {
-
     return;
   }
 

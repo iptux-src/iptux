@@ -429,7 +429,6 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
  */
 void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
                            const char *path) {
-
   LOG_DEBUG("send tcp message to %s, op %d, file %s", pal->GetKey().ToString().c_str(), int(opttype), path);
   struct sockaddr_in addr;
   int fd;
