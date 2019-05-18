@@ -160,7 +160,8 @@ TEST(CoreThread, FullCase) {
   ChipData chipData;
   chipData.type = MessageContentType::PICTURE;
   chipData.data = testDataPath("iptux.png");
-  thread1->SendMessage(pal2InThread1, chipData);
+  chipData.SetDeleteFileAfterSent(false);
+  thread2->SendMessage(pal1InThread2, chipData);
   while(thread2Events.size() != 2) {
     this_thread::sleep_for(10ms);
   }
