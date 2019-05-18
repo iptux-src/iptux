@@ -362,20 +362,18 @@ void UdpData::SomeoneAskShared() {
   Command cmd(coreThread);
   pthread_t pid;
   PalInfo *pal;
-  const char *limit;
   char *passwd;
 
   if (!(pal = coreThread.GetPalFromList(ipv4))) return;
 
-  limit = g_cthrd->GetAccessPublicLimit();
-  if (!limit || *limit == '\0') {
-    pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
-    pthread_detach(pid);
+  auto limit = coreThread.GetAccessPublicLimit();
+  if (limit.empty()) {
+    thread([](CoreThread* coreThread, PalInfo* pal){ThreadAskSharedFile(coreThread, pal);}, &coreThread, pal).detach();
   } else if (!(iptux_get_dec_number(buf, ':', 4) & IPTUX_PASSWDOPT)) {
     cmd.SendFileInfo(coreThread.getUdpSock(), pal->GetKey(),
                      IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
   } else if ((passwd = ipmsg_get_attach(buf, ':', 5))) {
-    if (strcmp(passwd, limit) == 0) {
+    if (limit == passwd) {
       pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
       pthread_detach(pid);
     }
@@ -803,11 +801,11 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
  * 某好友请求本计算机的共享文件.
  * @param pal class PalInfo
  */
-void UdpData::ThreadAskSharedFile(PalInfo *pal) {
+void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PalInfo *pal) {
   SendFile sfile;
   bool permit;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread->getProgramData();
 
   if (g_progdt->IsFilterFileShareRequest()) {
     gdk_threads_enter();

@@ -129,7 +129,7 @@ TEST(CoreThread, FullCase) {
   auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
   auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
   thread1->start();
-  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\"}");
+  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\", \"access_shared_limit\": \"qwert\"}");
   auto thread2 = new CoreThread(make_shared<ProgramData>(config2));
   thread2->start();
   thread1->SendDetectPacket("127.0.0.2");
@@ -169,6 +169,9 @@ TEST(CoreThread, FullCase) {
     auto event2 = (IconUpdateEvent*)(event.get());
     EXPECT_EQ(event2->GetPalKey().ToString(), "127.0.0.1:2425");
   }
+
+  // send ask shared
+  thread1->SendAskShared(pal2InThread1);
 
   // send picture
   ChipData chipData;

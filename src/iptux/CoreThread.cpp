@@ -145,7 +145,6 @@ void CoreThread::RecvUdpData(CoreThread *self) {
  * @param pcthrd 核心类
  */
 void CoreThread::RecvTcpData(CoreThread *pcthrd) {
-  pthread_t pid;
   int subsock;
 
   listen(pcthrd->tcpSock, 5);
@@ -500,6 +499,14 @@ void CoreThread::EmitIconUpdate(const PalKey& palKey) {
 
 void CoreThread::SendExit(PPalInfo palInfo) {
   Command(*this).SendExit(udpSock, palInfo);
+}
+
+const string& CoreThread::GetAccessPublicLimit() const {
+  return programData->GetPasswd();
+}
+
+void CoreThread::SetAccessPublicLimit(const string& val) {
+  programData->SetPasswd(val);
 }
 
 }

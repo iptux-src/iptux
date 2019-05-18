@@ -69,6 +69,8 @@ class CoreThread {
   void EmitIconUpdate(const PalKey& palKey);
   void emitEvent(std::shared_ptr<const Event> event);
 
+  const std::string& GetAccessPublicLimit() const;
+  void SetAccessPublicLimit(const std::string& val);
 
   /**
    * @brief send message to pal
