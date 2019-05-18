@@ -429,6 +429,8 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
  */
 void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
                            const char *path) {
+
+  LOG_DEBUG("send tcp message to %s, op %d, file %s", pal->GetKey().ToString().c_str(), int(opttype), path);
   struct sockaddr_in addr;
   int fd;
 
@@ -443,7 +445,10 @@ void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
   if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
       (xwrite(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1))
+  {
+    LOG_WARN("send tcp message failed");
     return;
+  }
 
   SendSublayerData(sock, fd);
   close(fd);
