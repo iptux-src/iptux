@@ -398,12 +398,7 @@ void UdpData::SomeoneSendIcon() {
   if ((iconfile = RecvPalIcon())) {
     g_free(pal->iconfile);
     pal->iconfile = iconfile;
-    gdk_threads_enter();
-    coreThread.Lock();
-    coreThread.UpdatePalToList(ipv4);
-    coreThread.Unlock();
-    g_mwin->UpdateItemToPaltree(ipv4);
-    gdk_threads_leave();
+    coreThread.EmitIconUpdate(PalKey(ipv4));
   }
 }
 

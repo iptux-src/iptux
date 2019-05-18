@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <thread>
+#include <fstream>
 
 #include "iptux/CoreThread.h"
 #include "iptux/TestHelper.h"
@@ -155,6 +156,10 @@ TEST(CoreThread, FullCase) {
   EXPECT_EQ(event->getType(), EventType::NEW_MESSAGE);
   auto event2 = (NewMessageEvent*)(event.get());
   EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
+
+  // send my icon
+  ifstream ifs(testDataPath("iptux.png"));
+  thread1->SendMyIcon(pal2InThread1, ifs);
 
   // send picture
   ChipData chipData;

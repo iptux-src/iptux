@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <functional>
+#include <fstream>
 
 #include "ipmsg.h"
 #include "support.h"
@@ -359,7 +360,8 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
       programData->myicon.c_str());
   if (access(path, F_OK) == 0) {
-    cmd.SendMyIcon(udpSock, pal);
+    ifstream ifs(path);
+    cmd.SendMyIcon(udpSock, pal, ifs);
   }
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
@@ -371,6 +373,10 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
     cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
     close(sock);
   }
+}
+
+void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
+    Command(*this).SendMyIcon(udpSock, pal, iss);
 }
 
 void CoreThread::AddBlockIp(in_addr_t ipv4) {
@@ -485,6 +491,11 @@ void CoreThread::emitSomeoneExit(const PalKey& palKey) {
   }
   DelPalFromList(palKey.GetIpv4());
   emitEvent(make_shared<PalOfflineEvent>(palKey));
+}
+
+void CoreThread::EmitIconUpdate(const PalKey& palKey) {
+  UpdatePalToList(palKey);
+  emitEvent(make_shared<IconUpdateEvent>(palKey));
 }
 
 void CoreThread::SendExit(PPalInfo palInfo) {

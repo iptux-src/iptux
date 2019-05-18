@@ -8,6 +8,7 @@ enum class EventType {
   NEW_PAL_ONLINE,
   NEW_MESSAGE,
   PAL_OFFLINE,
+  ICON_UPDATE,
 };
 
 class Event {
@@ -44,6 +45,13 @@ class PalOfflineEvent: public Event {
   PalKey palKey;
 };
 
+class IconUpdateEvent: public Event {
+ public:
+  explicit IconUpdateEvent(PalKey palKey): Event(EventType::ICON_UPDATE), palKey(palKey) {}
+  const PalKey& GetPalKey() const {return palKey;}
+ private:
+  PalKey palKey;
+};
 }
 
 #endif //IPTUX_EVENT_H

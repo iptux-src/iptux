@@ -13,6 +13,7 @@
 #define IPTUX_COMMAND_H
 
 #include <string>
+#include <istream>
 
 #include "iptux/ipmsg.h"
 #include "iptux/Models.h"
@@ -57,7 +58,7 @@ class Command {
                     const char *extra);
   void SendFileInfo(int sock, const PalKey& pal, uint32_t opttype,
                     const char *extra);
-  void SendMyIcon(int sock, CPPalInfo pal);
+  void SendMyIcon(int sock, CPPalInfo pal, std::istream& iss);
   void SendMySign(int sock, CPPalInfo pal);
   void SendSublayer(int sock, CPPalInfo pal, uint32_t opttype, const char *path);
 
@@ -68,7 +69,7 @@ class Command {
   void CreateCommand(uint32_t command, const char *attach);
   void CreateIpmsgExtra(const char *extra, const char *encode);
   void CreateIptuxExtra(const std::string &encode);
-  void CreateIconExtra();
+  void CreateIconExtra(std::istream& iss);
 
  private:
   CoreThread& coreThread;
