@@ -87,4 +87,9 @@ void Log::setLogLevel(LogLevel level) {
   _level = level;
 }
 
+LogLevel Log::getLogLevel() {
+  return _level;
+}
+
+
 }  // namespace iptux
