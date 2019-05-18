@@ -52,6 +52,7 @@ class Log {
    * @param level
    */
   static void setLogLevel(LogLevel level);
+  static LogLevel getLogLevel();
   static bool IsDebugEnabled();
   static bool IsInfoEnabled();
   static bool IsWarnEnabled();

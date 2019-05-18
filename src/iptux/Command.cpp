@@ -23,12 +23,23 @@
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"
 #include "iptux/output.h"
+#include "iptux/Exception.h"
 
 using namespace std;
 
 namespace iptux {
 
 uint32_t Command::packetn = 1;
+
+static
+PPalInfo getAndCheckPalInfo(CoreThread& coreThread, const PalKey& palKey) {
+  auto res = coreThread.GetPal(palKey);
+  if(!res) {
+    throw Exception(ErrorCode::PAL_KEY_NOT_EXIST, stringFormat("palkey not exist: %s", palKey.ToString().c_str()));
+  }
+  return res;
+}
+
 
 /**
  * @brief
@@ -45,9 +56,9 @@ uint32_t Command::packetn = 1;
 static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, in_addr_t ipv4, int port) {
   if(Log::IsDebugEnabled()) {
     LOG_DEBUG("send udp message to %s:%d, size %d\n%s", inAddrToString(ipv4).c_str(),
-      port, len, stringDump(string((const char*)buf, len)).c_str());
+      port, int(len), stringDump(string((const char*)buf, len)).c_str());
   } else if(Log::IsInfoEnabled()) {
-    LOG_INFO("send udp message to %s:%d, size %d", inAddrToString(ipv4).c_str(), port, len);
+    LOG_INFO("send udp message to %s:%d, size %d", inAddrToString(ipv4).c_str(), port, int(len));
   }
   struct sockaddr_in addr;
   bzero(&addr, sizeof(addr));
@@ -134,7 +145,7 @@ void Command::DialUp(int sock) {
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendAnsentry(int sock, PalInfo *pal) {
+void Command::SendAnsentry(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
 
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData->nickname.c_str());
@@ -148,7 +159,7 @@ void Command::SendAnsentry(int sock, PalInfo *pal) {
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendExit(int sock, PalInfo *pal) {
+void Command::SendExit(int sock, CPPalInfo pal) {
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_BR_EXIT, NULL);
   ConvertEncode(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
@@ -159,7 +170,7 @@ void Command::SendExit(int sock, PalInfo *pal) {
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendAbsence(int sock, PalInfo *pal) {
+void Command::SendAbsence(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE,
                 programData->nickname.c_str());
@@ -188,11 +199,16 @@ void Command::SendDetectPacket(int sock, in_addr_t ipv4) {
  * @param pal class PalInfo
  * @param msg 消息数据
  */
-void Command::SendMessage(int sock, PalInfo *pal, const char *msg) {
+void Command::SendMessage(int sock, CPPalInfo pal, const char *msg) {
   uint32_t packetno;
   uint8_t count;
 
-  pal->rpacketn = packetno = packetn;  //此数据包需要检验回复
+  auto pal2 = coreThread.GetPal(pal->GetKey());
+  if(!pal2) {
+    throw Exception(ErrorCode::PAL_KEY_NOT_EXIST);
+  }
+
+  pal2->rpacketn = packetno = packetn;  //此数据包需要检验回复
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_SENDMSG, msg);
   ConvertEncode(pal->encode);
 
@@ -214,7 +230,7 @@ void Command::SendMessage(int sock, PalInfo *pal, const char *msg) {
  * @param pal class PalInfo
  * @param packetno 好友消息的包编号
  */
-void Command::SendReply(int sock, PalInfo *pal, uint32_t packetno) {
+void Command::SendReply(int sock, CPPalInfo pal, uint32_t packetno) {
   char packetstr[11];  // 10 +1 =11
 
   snprintf(packetstr, 11, "%" PRIu32, packetno);
@@ -224,13 +240,18 @@ void Command::SendReply(int sock, PalInfo *pal, uint32_t packetno) {
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
+void Command::SendReply(int sock, const PalKey& palKey, uint32_t packetno) {
+  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
+  SendReply(sock, palInfo, packetno);
+}
+
 /**
  * 群发消息(被其他函数调用).
  * @param sock udp socket
  * @param pal class PalInfo
  * @param msg 消息数据
  */
-void Command::SendGroupMsg(int sock, PalInfo *pal, const char *msg) {
+void Command::SendGroupMsg(int sock, CPPalInfo pal, const char *msg) {
   CreateCommand(IPMSG_BROADCASTOPT | IPMSG_SENDMSG, msg);
   ConvertEncode(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
@@ -243,7 +264,7 @@ void Command::SendGroupMsg(int sock, PalInfo *pal, const char *msg) {
  * @param opttype 命令额外选项
  * @param msg 消息数据
  */
-void Command::SendUnitMsg(int sock, PalInfo *pal, uint32_t opttype,
+void Command::SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype,
                           const char *msg) {
   CreateCommand(opttype | IPTUX_SENDMSG, msg);
   ConvertEncode(pal->encode);
@@ -259,7 +280,7 @@ void Command::SendUnitMsg(int sock, PalInfo *pal, uint32_t opttype,
  * @param offset 文件偏移量
  * @return 消息发送成功与否
  */
-bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
+bool Command::SendAskData(int sock, CPPalInfo pal, uint32_t packetno,
                           uint32_t fileid, int64_t offset) {
   char attrstr[35];  // 8+1+8+1+16 +1 =35
   struct sockaddr_in addr;
@@ -289,6 +310,13 @@ bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
   return true;
 }
 
+bool Command::SendAskData(int sock, const PalKey& palKey, uint32_t packetno,
+                          uint32_t fileid, int64_t offset)
+{
+  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
+  return SendAskData(sock, palInfo, packetno, fileid, offset);
+}
+
 /**
  * 向好友请求目录文件.
  * @param sock tcp socket
@@ -297,7 +325,14 @@ bool Command::SendAskData(int sock, PalInfo *pal, uint32_t packetno,
  * @param fileid 文件ID标识
  * @return 消息发送成功与否
  */
-bool Command::SendAskFiles(int sock, PalInfo *pal, uint32_t packetno,
+bool Command::SendAskFiles(int sock, const PalKey& palKey, uint32_t packetno,
+                           uint32_t fileid)
+{
+  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
+  return SendAskFiles(sock, palInfo, packetno, fileid);
+}
+
+bool Command::SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno,
                            uint32_t fileid) {
   char attrstr[20];  // 8+1+8+1+1 +1  =20
   struct sockaddr_in addr;
@@ -327,13 +362,19 @@ bool Command::SendAskFiles(int sock, PalInfo *pal, uint32_t packetno,
  * @param opttype 命令额外选项
  * @param attach 附加数据，即密码
  */
-void Command::SendAskShared(int sock, PalInfo *pal, uint32_t opttype,
+void Command::SendAskShared(int sock, CPPalInfo pal, uint32_t opttype,
                             const char *attach) {
   CreateCommand(opttype | IPTUX_ASKSHARED, attach);
   ConvertEncode(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
+void Command::SendAskShared(int sock, const PalKey& palKey, uint32_t opttype,
+                            const char *attach)
+{
+  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
+  SendAskShared(sock, palInfo, opttype, attach);
+}
 /**
  * 向好友发送文件信息.
  * @param sock udp socket
@@ -341,12 +382,18 @@ void Command::SendAskShared(int sock, PalInfo *pal, uint32_t opttype,
  * @param opttype 命令额外选项
  * @param extra 扩展数据，即文件信息
  */
-void Command::SendFileInfo(int sock, PalInfo *pal, uint32_t opttype,
+void Command::SendFileInfo(int sock, CPPalInfo pal, uint32_t opttype,
                            const char *extra) {
   CreateCommand(opttype | IPMSG_FILEATTACHOPT | IPMSG_SENDMSG, NULL);
   ConvertEncode(pal->encode);
   CreateIpmsgExtra(extra, pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
+}
+void Command::SendFileInfo(int sock, const PalKey& palKey, uint32_t opttype,
+                           const char *extra)
+{
+  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
+  return SendFileInfo(sock, palInfo, opttype, extra);
 }
 
 /**
@@ -354,7 +401,7 @@ void Command::SendFileInfo(int sock, PalInfo *pal, uint32_t opttype,
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendMyIcon(int sock, PalInfo *pal) {
+void Command::SendMyIcon(int sock, CPPalInfo pal) {
   CreateCommand(IPTUX_SENDICON, NULL);
   ConvertEncode(pal->encode);
   CreateIconExtra();
@@ -366,7 +413,7 @@ void Command::SendMyIcon(int sock, PalInfo *pal) {
  * @param sock udp socket
  * @param pal class PalInfo
  */
-void Command::SendMySign(int sock, PalInfo *pal) {
+void Command::SendMySign(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPTUX_SENDSIGN, programData->sign.c_str());
   ConvertEncode(pal->encode);
@@ -380,7 +427,7 @@ void Command::SendMySign(int sock, PalInfo *pal) {
  * @param opttype 命令额外选项
  * @param path 文件路径
  */
-void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype,
+void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
                            const char *path) {
   struct sockaddr_in addr;
   int fd;
@@ -408,13 +455,13 @@ void Command::SendSublayer(int sock, PalInfo *pal, uint32_t opttype,
  * @param btype 消息归属类型
  * @param error 错误串
  */
-void Command::FeedbackError(PalInfo *pal, GroupBelongType btype,
+void Command::FeedbackError(CPPalInfo pal, GroupBelongType btype,
                             const char *error) {
   MsgPara para;
   ChipData chip;
 
   /* 构建消息封装包 */
-  para.pal = pal;
+  para.pal = coreThread.GetPal(pal->GetKey());
   para.stype = MessageSourceType::ERROR;
   para.btype = btype;
   chip.type = MESSAGE_CONTENT_TYPE_STRING;

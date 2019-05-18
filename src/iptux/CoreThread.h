@@ -10,7 +10,7 @@
 
 namespace iptux {
 
-typedef std::function<void(Event const&)> EventCallback;
+using EventCallback = std::function<void(std::shared_ptr<const Event>)>;
 
 class CoreThread {
  public:
@@ -44,20 +44,29 @@ class CoreThread {
   void Lock();
   void Unlock();
 
-  GSList *GetPalList();
+  const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
-  // const PalInfo *GetPalFromList(in_addr_t ipv4) const;
-  // PalInfo *GetPalFromList(in_addr_t ipv4);
-  const PalInfo *GetPalFromList(PalKey palKey) const;
-  PalInfo *GetPalFromList(PalKey palKey);
+  [[deprecated]] const PalInfo *GetPalFromList(PalKey palKey) const;
+  [[deprecated]] PalInfo *GetPalFromList(PalKey palKey);
+
+  CPPalInfo GetPal(PalKey palKey) const;
+  PPalInfo GetPal(PalKey palKey);
+  CPPalInfo GetPal(const std::string& ipv4) const;
+  PPalInfo GetPal(const std::string& ipv4);
+
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);
+
+  [[deprecated]]
   virtual void AttachPalToList(PalInfo *pal);
+  virtual void AttachPalToList(PPalInfo pal);
 
   void registerCallback(const EventCallback &callback);
-  void sendFeatureData(PalInfo *pal);
-  void emitNewPalOnline(PalInfo* palInfo);
-  void emitEvent(const Event& event);
+  void sendFeatureData(PPalInfo pal);
+  void emitSomeoneExit(const PalKey& palKey);
+  void emitNewPalOnline(PPalInfo palInfo);
+  void emitNewPalOnline(const PalKey& palKey);
+  void emitEvent(std::shared_ptr<const Event> event);
 
   /**
    * @brief send message to pal
@@ -67,12 +76,16 @@ class CoreThread {
    * @return true if send success
    * @return false if send failed
    */
-  bool SendMessage(PalInfo& pal, const std::string& message);
-  bool SendMessage(PalInfo& pal, const ChipData& chipData);
+  bool SendMessage(PPalInfo pal, const std::string& message);
+  bool SendMessage(PPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
 
-  bool SendAskShared(PalInfo& pal);
+  bool SendAskShared(PPalInfo pal);
+
+  void SendDetectPacket(const std::string& ipv4);
+  void SendDetectPacket(in_addr_t ipv4);
+  void SendExit(PPalInfo pal);
 
   /**
    * 插入消息(UI线程安全).
@@ -86,6 +99,10 @@ class CoreThread {
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
 
+  void UpdateMyInfo();
+  void SendBroadcastExit(PPalInfo pal);
+  int GetOnlineCount() const;
+
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
 
@@ -94,14 +111,7 @@ class CoreThread {
   std::shared_ptr<IptuxConfig> config;
   int tcpSock;
   int udpSock;
-
- private:
-  GSList *blacklist;                              //黑名单链表
-  bool debugDontBroadcast {false} ;
-
- protected:
   pthread_mutex_t mutex;  //锁
-  GSList *pallist;  //好友链表(成员不能被删除)
 
  private:
   bool started;
@@ -117,6 +127,8 @@ class CoreThread {
  private:
   static void RecvUdpData(CoreThread *pcthrd);
   static void RecvTcpData(CoreThread *pcthrd);
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 }

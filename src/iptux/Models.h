@@ -13,6 +13,7 @@
 #define IPTUX_MESS_H
 
 #include <string>
+#include <memory>
 #include <arpa/inet.h>
 
 #include <glib.h>
@@ -109,7 +110,11 @@ class PalInfo {
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 
+/// pointer to PalInfo
+using PPalInfo = std::shared_ptr<PalInfo>;
 
+/// const pointer to PalInfo
+using CPPalInfo = std::shared_ptr<const PalInfo>;
 
 /**
  * 文件信息.
@@ -153,7 +158,7 @@ class MsgPara {
   MsgPara();
   ~MsgPara();
 
-  PalInfo *pal;             ///< 好友数据信息(来自好友*)
+  PPalInfo pal;             ///< 好友数据信息(来自好友*)
   MessageSourceType stype;  ///< 来源类型
   GroupBelongType btype;    ///< 所属类型
   std::vector<ChipData> dtlist;           ///< 数据链表 *

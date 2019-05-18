@@ -96,13 +96,11 @@ void UiCoreThread::WriteSharedData() {
  */
 void UiCoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
-  NewMessageEvent event(move(para2));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
 }
 
 void UiCoreThread::InsertMessage(MsgPara&& para) {
-  NewMessageEvent event(move(para));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
 }
 
 /**
@@ -135,48 +133,6 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
         break;
     }
   }
-}
-
-/**
- * 向好友发送iptux特有的数据.
- * @param pal class PalInfo
- */
-void UiCoreThread::SendFeatureData(PalInfo *pal) {
-  g_cthrd->sendFeatureData(pal);
-}
-
-/**
- * 发送通告本计算机下线的信息.
- * @param pal class PalInfo
- */
-void UiCoreThread::SendBroadcastExit(PalInfo *pal, UiCoreThread* self) {
-  Command cmd(*self);
-  cmd.SendExit(self->udpSock, pal);
-}
-
-/**
- * 更新本大爷的个人信息.
- */
-void UiCoreThread::UpdateMyInfo() {
-  Command cmd(*g_cthrd);
-  pthread_t pid;
-  PalInfo *pal;
-  GSList *tlist;
-
-  pthread_mutex_lock(&g_cthrd->mutex);
-  tlist = g_cthrd->pallist;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
-    if (pal->isOnline()) {
-      cmd.SendAbsence(g_cthrd->udpSock, pal);
-    }
-    if (pal->isOnline() and pal->isCompatible()) {
-      pthread_create(&pid, NULL, ThreadFunc(SendFeatureData), pal);
-      pthread_detach(pid);
-    }
-    tlist = g_slist_next(tlist);
-  }
-  pthread_mutex_unlock(&g_cthrd->mutex);
 }
 
 /**
@@ -353,6 +309,24 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
 void UiCoreThread::AttachPalToList(PalInfo *pal) {
   CoreThread::AttachPalToList(pal);
   GroupInfo *grpinf;
+
+  /* 将好友加入到相应的群组 */
+  if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
+  AttachPalToGroupInfoItem(grpinf, pal);
+  if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal);
+  AttachPalToGroupInfoItem(grpinf, pal);
+  if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
+  AttachPalToGroupInfoItem(grpinf, pal);
+  if (!(grpinf = GetPalBroadcastItem(pal)))
+    grpinf = AttachPalBroadcastItem(pal);
+  AttachPalToGroupInfoItem(grpinf, pal);
+}
+
+void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
+  CoreThread::AttachPalToList(pal2);
+  GroupInfo *grpinf;
+
+  auto pal = pal2.get();
 
   /* 将好友加入到相应的群组 */
   if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
@@ -606,15 +580,8 @@ void UiCoreThread::InitSublayer() {
 void UiCoreThread::ClearSublayer() {
   GSList *tlist;
 
-  /**
-   * @note 必须在发送下线信息之后才能关闭套接口.
-   */
-  g_slist_foreach(pallist, GFunc(SendBroadcastExit), this);
   CoreThread::ClearSublayer();
 
-  for (tlist = pallist; tlist; tlist = g_slist_next(tlist))
-    delete (PalInfo *)tlist->data;
-  g_slist_free(pallist);
   for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo *) tlist->data;
   g_slist_free(groupInfos);

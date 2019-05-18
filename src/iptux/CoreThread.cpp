@@ -5,6 +5,7 @@
 #include <glib/gi18n.h>
 
 #include <thread>
+#include <functional>
 
 #include "ipmsg.h"
 #include "support.h"
@@ -14,23 +15,30 @@
 #include "TcpData.h"
 #include "Command.h"
 #include "deplib.h"
+#include "iptux/Exception.h"
 
 using namespace std;
+using namespace std::placeholders;
 
 namespace iptux {
+
+struct CoreThread::Impl {
+  GSList *blacklist {nullptr};                              //黑名单链表
+  bool debugDontBroadcast {false} ;
+  vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+};
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
       config(data->getConfig()),
       tcpSock(-1),
       udpSock(-1),
-      blacklist(nullptr),
-      pallist(nullptr),
-      started(false)
+      started(false),
+      pImpl(std::make_unique<Impl>())
 {
   pthread_mutex_init(&mutex, NULL);
   if(config->GetBool("debug_dont_broadcast")) {
-    debugDontBroadcast = true;
+    pImpl->debugDontBroadcast = true;
   }
 }
 
@@ -38,7 +46,7 @@ CoreThread::~CoreThread() {
   if(started) {
     stop();
   }
-  g_slist_free(blacklist);
+  g_slist_free(pImpl->blacklist);
 }
 
 /**
@@ -83,24 +91,31 @@ void CoreThread::bind_iptux_port() {
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+  auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
+  addr.sin_addr.s_addr = stringToInAddr(bind_ip);
   if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%d)!\n%s"),
-                                         port, strerror(ec));
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
+                                         bind_ip.c_str(), port, strerror(ec));
     LOG_WARN("%s", errmsg);
     throw BindFailedException(ec, errmsg);
+  } else {
+    LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
+
   if(::bind(udpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%d)!\n%s"),
-                                         port, strerror(ec));
+    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
+                                         bind_ip.c_str(), port, strerror(ec));
     LOG_WARN("%s", errmsg);
     throw BindFailedException(ec, errmsg);
+  } else {
+    LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
   }
 }
 
@@ -151,6 +166,12 @@ void CoreThread::stop() {
 }
 
 void CoreThread::ClearSublayer() {
+  /**
+   * @note 必须在发送下线信息之后才能关闭套接口.
+   */
+  for(auto palInfo: pImpl->pallist) {
+    SendBroadcastExit(palInfo);
+  }
   shutdown(tcpSock, SHUT_RDWR);
   shutdown(udpSock, SHUT_RDWR);
 }
@@ -169,7 +190,7 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
  */
 void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
   Command cmd(*pcthrd);
-  if(!pcthrd->debugDontBroadcast) {
+  if(!pcthrd->pImpl->debugDontBroadcast) {
     cmd.BroadCast(pcthrd->udpSock);
   }
   cmd.DialUp(pcthrd->udpSock);
@@ -181,7 +202,7 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  * @return 是否包含
  */
 bool CoreThread::BlacklistContainItem(in_addr_t ipv4) const {
-  return g_slist_find(blacklist, GUINT_TO_POINTER(ipv4));
+  return g_slist_find(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
 }
 
 bool CoreThread::IsBlocked(in_addr_t ipv4) const {
@@ -196,7 +217,8 @@ void CoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
  * 获取好友链表.
  * @return 好友链表
  */
-GSList *CoreThread::GetPalList() { return pallist; }
+const vector<shared_ptr<PalInfo>>&
+CoreThread::GetPalList() { return pImpl->pallist; }
 
 
 /**
@@ -204,15 +226,9 @@ GSList *CoreThread::GetPalList() { return pallist; }
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */
 void CoreThread::ClearAllPalFromList() {
-  PalInfo *pal;
-  GSList *tlist;
-
   /* 清除所有好友的在线标志 */
-  tlist = pallist;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
-    pal->setOnline(false);
-    tlist = g_slist_next(tlist);
+  for(auto palInfo: pImpl->pallist) {
+    palInfo->setOnline(false);
   }
 }
 
@@ -221,28 +237,35 @@ void CoreThread::ClearAllPalFromList() {
  * @param ipv4 ipv4
  * @return 好友信息数据
  */
-const PalInfo *CoreThread::GetPalFromList(PalKey palKey) const {
-  GSList *tlist;
-
-  tlist = pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
-    tlist = g_slist_next(tlist);
+const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
+  for(auto palInfo: pImpl->pallist) {
+    if(palInfo->ipv4 == palKey.GetIpv4()) {
+      return palInfo.get();
+    }
   }
-
-  return (PalInfo *)(tlist ? tlist->data : NULL);
+  return nullptr;
 }
 
-PalInfo *CoreThread::GetPalFromList(PalKey palKey) {
-  GSList *tlist;
-
-  tlist = pallist;
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->ipv4 == palKey.GetIpv4()) break;
-    tlist = g_slist_next(tlist);
+shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
+  for(auto palInfo: pImpl->pallist) {
+    if(palInfo->ipv4 == palKey.GetIpv4()) {
+      return palInfo;
+    }
   }
+  return {};
+}
 
-  return (PalInfo *)(tlist ? tlist->data : NULL);
+shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
+  return GetPal(PalKey(stringToInAddr(ipv4)));
+}
+
+PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
+  for(auto palInfo: pImpl->pallist) {
+    if(palInfo->ipv4 == palKey.GetIpv4()) {
+      return palInfo.get();
+    }
+  }
+  return nullptr;
 }
 
 /**
@@ -283,8 +306,12 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
  * 也应该分配好友到相应的群组
  */
 void CoreThread::AttachPalToList(PalInfo *pal) {
-  /* 将好友加入到好友链表 */
-  pallist = g_slist_append(pallist, pal);
+  pImpl->pallist.push_back(shared_ptr<PalInfo>(pal));
+  pal->setOnline(true);
+}
+
+void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
+  pImpl->pallist.push_back(pal);
   pal->setOnline(true);
 }
 
@@ -294,12 +321,21 @@ void CoreThread::registerCallback(const EventCallback &callback) {
   Unlock();
 }
 
-void CoreThread::emitNewPalOnline(PalInfo* palInfo) {
-  NewPalOnlineEvent event(palInfo);
-  emitEvent(event);
+void CoreThread::emitNewPalOnline(PPalInfo palInfo) {
+  emitEvent(make_shared<NewPalOnlineEvent>(palInfo));
 }
 
-void CoreThread::emitEvent(const Event& event) {
+void CoreThread::emitNewPalOnline(const PalKey& palKey) {
+  auto palInfo = GetPal(palKey);
+  if(palInfo) {
+    NewPalOnlineEvent event(palInfo);
+    emitEvent(make_shared<NewPalOnlineEvent>(palInfo));
+  } else {
+    LOG_ERROR("emitNewPalOnline meet a unknown key: %s", palKey.ToString().c_str());
+  }
+}
+
+void CoreThread::emitEvent(shared_ptr<const Event> event) {
   Lock();
   for(EventCallback& callback: callbacks) {
     callback(event);
@@ -311,7 +347,7 @@ void CoreThread::emitEvent(const Event& event) {
  * 向好友发送iptux特有的数据.
  * @param pal class PalInfo
  */
-void CoreThread::sendFeatureData(PalInfo *pal) {
+void CoreThread::sendFeatureData(PPalInfo pal) {
   Command cmd(*this);
   char path[MAX_PATHLEN];
   const gchar *env;
@@ -339,16 +375,16 @@ void CoreThread::sendFeatureData(PalInfo *pal) {
 }
 
 void CoreThread::AddBlockIp(in_addr_t ipv4) {
-  blacklist = g_slist_append(blacklist, GUINT_TO_POINTER(ipv4));
+  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
 }
 
-bool CoreThread::SendMessage(PalInfo& palInfo, const string& message) {
+bool CoreThread::SendMessage(PPalInfo palInfo, const string& message) {
   Command cmd(*this);
-  cmd.SendMessage(getUdpSock(), &palInfo, message.c_str());
+  cmd.SendMessage(getUdpSock(), palInfo, message.c_str());
   return true;
 }
 
-bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
+bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
   auto ptr = chipData.data.c_str();
   switch (chipData.type) {
     case MessageContentType::STRING:
@@ -361,7 +397,7 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
         LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"), strerror(errno));
         return false;
       }
-      Command(*this).SendSublayer(sock, &pal, IPTUX_MSGPICOPT, ptr);
+      Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  //关闭网络套接口
       /*/* 删除此图片 */
       unlink(ptr);  //此文件已无用处
@@ -373,7 +409,7 @@ bool CoreThread::SendMessage(PalInfo& pal, const ChipData& chipData) {
 
 bool CoreThread::SendMsgPara(const MsgPara& para) {
   for(int i = 0; i < int(para.dtlist.size()); ++i) {
-    if(!SendMessage(*(para.pal), para.dtlist[i])) {
+    if(!SendMessage(para.pal, para.dtlist[i])) {
       LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
       return false;
     }
@@ -388,19 +424,70 @@ void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
 
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
-  NewMessageEvent event(move(para2));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
 }
 
 void CoreThread::InsertMessage(MsgPara&& para) {
-  NewMessageEvent event(move(para));
-  this->emitEvent(event);
+  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
 }
 
-bool CoreThread::SendAskShared(PalInfo& pal) {
-  Command(*this).SendAskShared(getUdpSock(), &pal, 0, NULL);
+bool CoreThread::SendAskShared(PPalInfo pal) {
+  Command(*this).SendAskShared(getUdpSock(), pal, 0, NULL);
   return true;
 }
 
+void CoreThread::UpdateMyInfo() {
+  Command cmd(*this);
+  GSList *tlist;
+
+  Lock();
+  for(auto pal: pImpl->pallist) {
+    if (pal->isOnline()) {
+      cmd.SendAbsence(udpSock, pal);
+    }
+    if (pal->isOnline() and pal->isCompatible()) {
+      thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
+      t1.detach();
+    }
+    tlist = g_slist_next(tlist);
+  }
+  Unlock();
+}
+
+/**
+ * 发送通告本计算机下线的信息.
+ * @param pal class PalInfo
+ */
+void CoreThread::SendBroadcastExit(PPalInfo pal) {
+  Command cmd(*this);
+  cmd.SendExit(udpSock, pal);
+}
+
+int
+CoreThread::GetOnlineCount() const {
+  int res = 0;
+  for(auto pal: pImpl->pallist) {
+    if(pal->isOnline()) {
+      res++;
+    }
+  }
+  return res;
+}
+
+void CoreThread::SendDetectPacket(const string& ipv4) {
+  Command(*this).SendDetectPacket(udpSock, stringToInAddr(ipv4));
+}
+
+void CoreThread::emitSomeoneExit(const PalKey& palKey) {
+  if(!GetPal(palKey)) {
+    return;
+  }
+  DelPalFromList(palKey.GetIpv4());
+  emitEvent(make_shared<PalOfflineEvent>(palKey));
+}
+
+void CoreThread::SendExit(PPalInfo palInfo) {
+  Command(*this).SendExit(udpSock, palInfo);
+}
 
 }

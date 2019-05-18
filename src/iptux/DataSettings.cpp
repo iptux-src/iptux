@@ -92,7 +92,7 @@ mark:
 #endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
-      UiCoreThread::UpdateMyInfo();
+      g_cthrd->UpdateMyInfo();
       break;
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
@@ -102,7 +102,7 @@ mark:
 #endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
-      UiCoreThread::UpdateMyInfo();
+      g_cthrd->UpdateMyInfo();
       goto mark;
     default:
       break;

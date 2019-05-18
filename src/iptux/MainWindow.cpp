@@ -60,7 +60,7 @@ MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
   activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
-  g_cthrd->registerCallback([&](const Event &event) { this->processEvent(event); });
+  g_cthrd->registerCallback([&](shared_ptr<const Event> event) { this->processEvent(event); });
 }
 
 /**
@@ -1102,14 +1102,7 @@ gboolean MainWindow::UpdateUI(MainWindow *mwin) {
   GSList *tlist;
 
   /* 统计当前在线人数 */
-  sum = 0;
-  tlist = g_cthrd->GetPalList();
-  while (tlist) {
-    if (((PalInfo *)tlist->data)->isOnline()) {
-      sum++;
-    }
-    tlist = g_slist_next(tlist);
-  }
+  sum = g_cthrd->GetOnlineCount();
 
   /* 更新UI */
   if (sumonline != sum) {
@@ -1271,8 +1264,10 @@ void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &
 void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
   Command cmd(*g_cthrd);
 
-  cmd.SendAskShared(g_cthrd->getUdpSock(), (PalInfo *)grpinf->member->data, 0,
-                    NULL);
+  cmd.SendAskShared(g_cthrd->getUdpSock(),
+    g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()),
+    0,
+    NULL);
 }
 
 /**
@@ -1595,9 +1590,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   gtk_list_store_clear(GTK_LIST_STORE(model));
 
   /* 将符合条件的好友加入好友清单 */
-  tlist = g_cthrd->GetPalList();
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
+  for(auto pal: g_cthrd->GetPalList()) {
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     /* Search friends case ingore is better. */
     if (*text == '\0' || strcasestr(pal->name, text) ||
@@ -1611,10 +1604,9 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, pal->name,
                          2, pal->group, 3, ipstr, 4, pal->user, 5, pal->host, 6,
-                         pal, -1);
+                         pal.get(), -1);
       if (pixbuf) g_object_unref(pixbuf);
     }
-    tlist = g_slist_next(tlist);
   }
 
   /* 重新调整好友清单UI */
@@ -1816,17 +1808,13 @@ void MainWindow::InitThemeSublayerData() {
 
 class EventData {
 public:
-  EventData(MainWindow* window, const Event& event) {
+  EventData(MainWindow* window, shared_ptr<const Event> event) {
     this->window = window;
-    this->event = event.clone();
-  }
-
-  ~EventData() {
-    delete this->event;
+    this->event = event;
   }
 
   MainWindow* window;
-  Event* event;
+  shared_ptr<const Event> event;
 };
 
 gboolean MainWindow::processEventCallback(gpointer data) {
@@ -1838,16 +1826,16 @@ gboolean MainWindow::processEventCallback(gpointer data) {
 
 
 // this function is run in corethread, so always use g_idle_add to update the ui
-void MainWindow::processEvent(const Event& event) {
+void MainWindow::processEvent(shared_ptr<const Event> event) {
   // deleted in `processEventCallback`
   EventData* callback = new EventData(this, event);
   gdk_threads_add_idle(processEventCallback, callback);
 }
 
-void MainWindow::processEventInMainThread(Event* _event) {
+void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if(type == EventType ::NEW_PAL_ONLINE) {
-    auto event = (NewPalOnlineEvent*)_event;
+    auto event = (const NewPalOnlineEvent*)(_event.get());
     auto ipv4 = event->getPalInfo()->ipv4;
     if(PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
@@ -1856,8 +1844,17 @@ void MainWindow::processEventInMainThread(Event* _event) {
     }
     return;
   }
+
+  if(type == EventType::PAL_OFFLINE) {
+    auto event = (const PalOfflineEvent*)(_event.get());
+    auto ipv4 = event->GetPalKey().GetIpv4();
+    if(PaltreeContainItem(ipv4)) {
+      DelItemFromPaltree(ipv4);
+    }
+  }
+
   if(type == EventType::NEW_MESSAGE) {
-    auto event = (NewMessageEvent*)_event;
+    auto event = (const NewMessageEvent*)(_event.get());
     auto para = event->getMsgPara();
     GroupInfo *grpinf = nullptr;
     SessionAbstract *session;
@@ -1865,16 +1862,27 @@ void MainWindow::processEventInMainThread(Event* _event) {
     /* 获取群组信息 */
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
-        grpinf = coreThread.GetPalRegularItem(para.pal);
+        grpinf = coreThread.GetPalRegularItem(para.pal.get());
+        coreThread.PushItemToMsgline(grpinf);
+        if(coreThread.getProgramData()->IsAutoOpenCharDialog()) {
+          if (!(grpinf->dialog)) {
+            DialogPeer::PeerDialogEntry(g_mwin, grpinf, coreThread.getUiProgramData());
+          } else {
+            gtk_window_present(GTK_WINDOW(grpinf->dialog));
+          }
+        }
+        if(coreThread.getUiProgramData()->IsMsgSoundEnabled()) {
+          g_sndsys->Playing(coreThread.getProgramData()->msgtip);
+        }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
-        grpinf = coreThread.GetPalSegmentItem(para.pal);
+        grpinf = coreThread.GetPalSegmentItem(para.pal.get());
         break;
       case GROUP_BELONG_TYPE_GROUP:
-        grpinf = coreThread.GetPalGroupItem(para.pal);
+        grpinf = coreThread.GetPalGroupItem(para.pal.get());
         break;
       case GROUP_BELONG_TYPE_BROADCAST:
-        grpinf = coreThread.GetPalBroadcastItem(para.pal);
+        grpinf = coreThread.GetPalBroadcastItem(para.pal.get());
         break;
       default:
         grpinf = nullptr;

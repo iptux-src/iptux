@@ -56,7 +56,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
     return;
   }
 
-  PalInfo *pal = msgpara->pal;
+  auto pal = msgpara->pal;
 
   if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),

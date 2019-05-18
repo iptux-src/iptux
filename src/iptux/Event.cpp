@@ -12,16 +12,12 @@ EventType Event::getType() const {
   return type;
 }
 
-NewPalOnlineEvent::NewPalOnlineEvent(PalInfo *palInfo)
+NewPalOnlineEvent::NewPalOnlineEvent(PPalInfo palInfo)
   : Event(EventType::NEW_PAL_ONLINE),
     palInfo(palInfo) {}
 
-const PalInfo* NewPalOnlineEvent::getPalInfo() const {
+CPPalInfo NewPalOnlineEvent::getPalInfo() const {
   return palInfo;
-}
-
-NewPalOnlineEvent* NewPalOnlineEvent::clone() const {
-  return new NewPalOnlineEvent(palInfo);
 }
 
 NewMessageEvent::NewMessageEvent(MsgPara&& msgPara)
@@ -32,11 +28,12 @@ const MsgPara& NewMessageEvent::getMsgPara() const {
   return msgPara;
 }
 
-NewMessageEvent* NewMessageEvent::clone() const {
-  MsgPara para = msgPara;
-  return new NewMessageEvent(move(para));
+PalOfflineEvent::PalOfflineEvent(PalKey palKey)
+  : Event(EventType::PAL_OFFLINE),
+    palKey(move(palKey)) {}
+
+const PalKey& PalOfflineEvent::GetPalKey() const {
+  return palKey;
 }
 
-
 }
-

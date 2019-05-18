@@ -14,13 +14,45 @@
 
 #include <string>
 
+#include <sys/time.h>
+
 #include "iptux/deplib.h"
+#include "iptux/utils.h"
 
 using namespace std;
 
 namespace iptux {
 
 static LogLevel _level = LogLevel::WARN;
+
+static const char* logLevelAsString(GLogLevelFlags logLevel) {
+  switch (logLevel) {
+    case G_LOG_LEVEL_DEBUG:
+      return "DEBUG";
+    case G_LOG_LEVEL_INFO:
+      return "INFO ";
+    case G_LOG_LEVEL_MESSAGE:
+      return "MESSA";
+    case G_LOG_LEVEL_WARNING:
+      return "WARN ";
+    case G_LOG_LEVEL_ERROR:
+      return "ERROR";
+    default:
+      return "UNKNO";
+  }
+}
+
+static string nowAsString() {
+  struct timeval tv;
+  gettimeofday(&tv, nullptr);
+  struct tm timeinfo;
+  char buffer[80];
+
+  localtime_r(&tv.tv_sec, &timeinfo);
+
+  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
+  return stringFormat("%s.%03ld", buffer, (tv.tv_usec/1000));
+}
 
 string pretty_fname(const string &fname) {
   size_t pos = fname.rfind("/src/");
@@ -40,8 +72,9 @@ void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
   va_start(ap, format);
   gchar *msg = g_strdup_vprintf(format, ap);
   va_end(ap);
-  g_log("iptux", level, "%s:%d:%s:%s", pretty_fname(fname).c_str(), line, func,
-        msg);
+  fprintf(stderr, "[%s][iptux][%s]%s:%d:%s:%s\n", nowAsString().c_str(),
+          logLevelAsString(level),
+          pretty_fname(fname).c_str(), line, func, msg);
   g_free(msg);
 }
 
@@ -56,5 +89,10 @@ bool Log::IsInfoEnabled() {
 void Log::setLogLevel(LogLevel level) {
   _level = level;
 }
+
+LogLevel Log::getLogLevel() {
+  return _level;
+}
+
 
 }  // namespace iptux

@@ -1,5 +1,6 @@
 # 0.8.0 (2018-XX-XX)
 
+* [#?] add a config option `bind_ip` to specify binding ip.
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
 * [#?] switch to GTK+3, and use `GtkApplication`.

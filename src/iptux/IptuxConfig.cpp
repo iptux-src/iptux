@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <sstream>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -11,6 +12,30 @@
 using namespace std;
 
 namespace iptux {
+
+shared_ptr<IptuxConfig>
+IptuxConfig::newFromString(const string& str) {
+  auto res = shared_ptr<IptuxConfig>(new IptuxConfig());
+
+  istringstream iss(str);
+  Json::CharReaderBuilder rbuilder;
+  std::string errs;
+  bool ok = Json::parseFromStream(rbuilder, iss, &res->root, &errs);
+  if (!ok) {
+    g_warning("invalid content in config:\n%s", errs.c_str());
+    return res;
+  }
+
+  int version = res->root.get("version", 1).asInt();
+  if (version != 1) {
+    g_error("unknown config file version %d", version);
+    return res;
+  }
+  return res;
+}
+
+IptuxConfig::IptuxConfig() {
+}
 
 IptuxConfig::IptuxConfig(const string& fname) : fname(fname) {
   ifstream ifs(fname.c_str());
