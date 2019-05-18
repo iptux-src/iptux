@@ -1858,6 +1858,7 @@ void MainWindow::processEventInMainThread(Event* _event) {
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
         grpinf = coreThread.GetPalRegularItem(para.pal.get());
+        coreThread.PushItemToMsgline(grpinf);
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
         grpinf = coreThread.GetPalSegmentItem(para.pal.get());

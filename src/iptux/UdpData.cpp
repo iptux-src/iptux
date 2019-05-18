@@ -337,16 +337,6 @@ void UdpData::SomeoneSendmsg() {
     InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
   }
   g_free(text);
-  // /*/* 注册消息 */
-  // g_cthrd->Lock();
-  // //        if ((commandno & IPMSG_BROADCASTOPT) || (commandno &
-  // //        IPMSG_MULTICASTOPT))
-  // //                grpinf = g_cthrd->GetPalBroadcastItem(pal);
-  // //        else
-  // grpinf = g_cthrd->GetPalRegularItem(pal);
-  // if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
-  //   g_cthrd->PushItemToMsgline(grpinf);
-  // g_cthrd->Unlock();
 
   // /* 标记位处理 先处理底层数据，后面显示窗口*/
   // if (commandno & IPMSG_FILEATTACHOPT) {
