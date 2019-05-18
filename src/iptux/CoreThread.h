@@ -96,7 +96,7 @@ class CoreThread {
    */
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
-
+  
   void UpdateMyInfo();
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;

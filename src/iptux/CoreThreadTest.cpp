@@ -143,5 +143,9 @@ TEST(CoreThread, FullCase) {
   EXPECT_EQ(thread1->GetOnlineCount(), 1);
   EXPECT_TRUE(thread1->GetPal("127.0.0.2"));
 
+  auto pal2InThread1 = thread1->GetPal("127.0.0.2");
+  auto pal1InThread2 = thread2->GetPal("127.0.0.1");
+  thread1->SendMessage(pal2InThread1, "hello world");
+
   Log::setLogLevel(oldLogLevel);
 }

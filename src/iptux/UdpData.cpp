@@ -299,15 +299,15 @@ void UdpData::SomeoneAbsence() {
 void UdpData::SomeoneSendmsg() {
   GroupInfo *grpinf;
   PalInfo *pal;
-  Command cmd(*g_cthrd);
+  Command cmd(coreThread);
   uint32_t commandno, packetno;
   char *text;
   pthread_t pid;
 
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = coreThread.getProgramData();
 
   /* 如果对方兼容iptux协议，则无须再转换编码 */
-  pal = g_cthrd->GetPalFromList(ipv4);
+  pal = coreThread.GetPalFromList(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
       ConvertEncode(pal->encode);
@@ -326,7 +326,7 @@ void UdpData::SomeoneSendmsg() {
   commandno = iptux_get_dec_number(buf, ':', 4);
   packetno = iptux_get_dec_number(buf, ':', 1);
   if (commandno & IPMSG_SENDCHECKOPT) {
-    cmd.SendReply(g_cthrd->getUdpSock(), pal->GetKey(), packetno);
+    cmd.SendReply(coreThread.getUdpSock(), pal->GetKey(), packetno);
   }
   if (packetno <= pal->packetn) return;
   pal->packetn = packetno;
@@ -334,53 +334,47 @@ void UdpData::SomeoneSendmsg() {
   /* 插入消息&在消息队列中注册 */
   text = ipmsg_get_attach(buf, ':', 5);
   if (text && *text != '\0') {
-    /*/* 插入消息 */
-    //                if ((commandno & IPMSG_BROADCASTOPT) || (commandno &
-    //                IPMSG_MULTICASTOPT))
-    //                        InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST,
-    //                        text);
-    //                else
     InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
   }
   g_free(text);
-  /*/* 注册消息 */
-  g_cthrd->Lock();
-  //        if ((commandno & IPMSG_BROADCASTOPT) || (commandno &
-  //        IPMSG_MULTICASTOPT))
-  //                grpinf = g_cthrd->GetPalBroadcastItem(pal);
-  //        else
-  grpinf = g_cthrd->GetPalRegularItem(pal);
-  if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
-    g_cthrd->PushItemToMsgline(grpinf);
-  g_cthrd->Unlock();
+  // /*/* 注册消息 */
+  // g_cthrd->Lock();
+  // //        if ((commandno & IPMSG_BROADCASTOPT) || (commandno &
+  // //        IPMSG_MULTICASTOPT))
+  // //                grpinf = g_cthrd->GetPalBroadcastItem(pal);
+  // //        else
+  // grpinf = g_cthrd->GetPalRegularItem(pal);
+  // if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
+  //   g_cthrd->PushItemToMsgline(grpinf);
+  // g_cthrd->Unlock();
 
-  /* 标记位处理 先处理底层数据，后面显示窗口*/
-  if (commandno & IPMSG_FILEATTACHOPT) {
-    if ((commandno & IPTUX_SHAREDOPT) && (commandno & IPTUX_PASSWDOPT)) {
-      pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedPasswd), pal);
-      pthread_detach(pid);
-    } else
-      RecvPalFile();
-  }
+  // /* 标记位处理 先处理底层数据，后面显示窗口*/
+  // if (commandno & IPMSG_FILEATTACHOPT) {
+  //   if ((commandno & IPTUX_SHAREDOPT) && (commandno & IPTUX_PASSWDOPT)) {
+  //     pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedPasswd), pal);
+  //     pthread_detach(pid);
+  //   } else
+  //     RecvPalFile();
+  // }
 
-  if (grpinf->dialog) {
-    auto window = GTK_WIDGET(grpinf->dialog);
-    auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
-    dlgpr->ShowDialogPeer(dlgpr);
-  }
-  /* 是否直接弹出聊天窗口 */
-  if (g_progdt->IsAutoOpenCharDialog()) {
-    gdk_threads_enter();
-    if (!(grpinf->dialog)) {
-      DialogPeer::PeerDialogEntry(g_mwin, grpinf, g_progdt);
-    } else {
-      gtk_window_present(GTK_WINDOW(grpinf->dialog));
-    }
-    gdk_threads_leave();
-  }
+  // if (grpinf->dialog) {
+  //   auto window = GTK_WIDGET(grpinf->dialog);
+  //   auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
+  //   dlgpr->ShowDialogPeer(dlgpr);
+  // }
+  // /* 是否直接弹出聊天窗口 */
+  // if (g_progdt->IsAutoOpenCharDialog()) {
+  //   gdk_threads_enter();
+  //   if (!(grpinf->dialog)) {
+  //     DialogPeer::PeerDialogEntry(g_mwin, grpinf, g_progdt);
+  //   } else {
+  //     gtk_window_present(GTK_WINDOW(grpinf->dialog));
+  //   }
+  //   gdk_threads_leave();
+  // }
 
-  /* 播放提示音 */
-  if (FLAG_ISSET(g_progdt->sndfgs, 1)) g_sndsys->Playing(g_progdt->msgtip);
+  // /* 播放提示音 */
+  // if (FLAG_ISSET(g_progdt->sndfgs, 1)) g_sndsys->Playing(g_progdt->msgtip);
 }
 
 /**
@@ -390,7 +384,7 @@ void UdpData::SomeoneRecvmsg() {
   uint32_t packetno;
   PalInfo *pal;
 
-  if ((pal = g_cthrd->GetPalFromList(ipv4))) {
+  if ((pal = coreThread.GetPalFromList(ipv4))) {
     packetno = iptux_get_dec_number(buf, ':', 5);
     if (packetno == pal->rpacketn) pal->rpacketn = 0;  //标记此包编号已经被回复
   }
@@ -650,7 +644,7 @@ void UdpData::InsertMessage(PalInfo *pal, GroupBelongType btype,
   para.dtlist.push_back(move(chip));
 
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(move(para));
+  coreThread.InsertMessage(move(para));
 }
 
 void UdpData::ConvertEncode(const char *enc) {
