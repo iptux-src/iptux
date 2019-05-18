@@ -1866,6 +1866,9 @@ void MainWindow::processEventInMainThread(Event* _event) {
             gtk_window_present(GTK_WINDOW(grpinf->dialog));
           }
         }
+        if(coreThread.getUiProgramData()->IsMsgSoundEnabled()) {
+          g_sndsys->Playing(coreThread.getProgramData()->msgtip);
+        }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
         grpinf = coreThread.GetPalSegmentItem(para.pal.get());

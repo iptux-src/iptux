@@ -352,8 +352,6 @@ void UdpData::SomeoneSendmsg() {
   //   auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
   //   dlgpr->ShowDialogPeer(dlgpr);
   // }
-  // /* 播放提示音 */
-  // if (FLAG_ISSET(g_progdt->sndfgs, 1)) g_sndsys->Playing(g_progdt->msgtip);
 }
 
 /**
