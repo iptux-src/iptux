@@ -150,9 +150,8 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
   listen(pcthrd->tcpSock, 5);
   while (pcthrd->started) {
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
-    pthread_create(&pid, NULL, ThreadFunc(TcpData::TcpDataEntry),
-                   GINT_TO_POINTER(subsock));
-    pthread_detach(pid);
+    thread([](CoreThread* coreThread, int subsock){TcpData::TcpDataEntry(coreThread, subsock);}, pcthrd, subsock)
+      .detach();
   }
 }
 
@@ -400,7 +399,9 @@ bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  //关闭网络套接口
       /*/* 删除此图片 */
-      unlink(ptr);  //此文件已无用处
+      if(chipData.GetDeleteFileAfterSent()) {
+        unlink(ptr);  //此文件已无用处
+      }
       return true;
     default:
       g_assert_not_reached();
