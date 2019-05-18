@@ -14,11 +14,11 @@ using namespace iptux;
 TEST(IptuxConfig, SetStringList) {
   auto config = newTestIptuxConfig();
   config->SetStringList("key", vector<string>());
-  EXPECT_EQ(config->GetStringList("key").size(), 0);
+  EXPECT_EQ(int(config->GetStringList("key").size()), 0);
   config->SetStringList("key", vector<string>{"hello", "world!"});
-  EXPECT_EQ(config->GetStringList("key").size(), 2);
+  EXPECT_EQ(int(config->GetStringList("key").size()), 2);
   config->SetStringList("key", vector<string>{"hello"});
-  EXPECT_EQ(config->GetStringList("key").size(), 1);
+  EXPECT_EQ(int(config->GetStringList("key").size()), 1);
 
   const char* boolKey = "boolKey";
   ASSERT_FALSE(config->GetBool(boolKey));
