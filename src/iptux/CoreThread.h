@@ -95,6 +95,7 @@ class CoreThread {
   void UpdateMyInfo();
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
+
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
 
