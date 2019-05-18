@@ -444,7 +444,6 @@ bool CoreThread::SendAskShared(PPalInfo pal) {
 
 void CoreThread::UpdateMyInfo() {
   Command cmd(*this);
-  GSList *tlist;
 
   Lock();
   for(auto pal: pImpl->pallist) {
@@ -455,7 +454,6 @@ void CoreThread::UpdateMyInfo() {
       thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
       t1.detach();
     }
-    tlist = g_slist_next(tlist);
   }
   Unlock();
 }
