@@ -255,6 +255,10 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
   return {};
 }
 
+shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
+  return GetPal(PalKey(stringToInAddr(ipv4)));
+}
+
 PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
     if(palInfo->ipv4 == palKey.GetIpv4()) {

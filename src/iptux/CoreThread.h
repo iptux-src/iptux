@@ -51,6 +51,8 @@ class CoreThread {
 
   CPPalInfo GetPal(PalKey palKey) const;
   PPalInfo GetPal(PalKey palKey);
+  CPPalInfo GetPal(const std::string& ipv4) const;
+  PPalInfo GetPal(const std::string& ipv4);
 
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);

@@ -57,7 +57,7 @@ TEST(CoreThread, SendMessage) {
   try {
     thread->SendMessage(pal, "hello world");
     EXPECT_TRUE(false);
-  } catch(Exception e) {
+  } catch(Exception& e) {
     EXPECT_EQ(e.getErrorCode(), ErrorCode::PAL_KEY_NOT_EXIST);
   }
 
@@ -138,5 +138,10 @@ TEST(CoreThread, FullCase) {
     thread2->Unlock();
     this_thread::sleep_for(10ms);
   }
+
+  EXPECT_TRUE(thread2->GetPal("127.0.0.1"));
+  EXPECT_EQ(thread1->GetOnlineCount(), 1);
+  EXPECT_TRUE(thread1->GetPal("127.0.0.2"));
+
   Log::setLogLevel(oldLogLevel);
 }
