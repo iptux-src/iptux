@@ -63,6 +63,7 @@ class CoreThread {
 
   void registerCallback(const EventCallback &callback);
   void sendFeatureData(PPalInfo pal);
+  void emitSomeoneExit(const PalKey& palKey);
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);
   void emitEvent(std::shared_ptr<const Event> event);
@@ -84,6 +85,7 @@ class CoreThread {
 
   void SendDetectPacket(const std::string& ipv4);
   void SendDetectPacket(in_addr_t ipv4);
+  void SendExit(PPalInfo pal);
 
   /**
    * 插入消息(UI线程安全).

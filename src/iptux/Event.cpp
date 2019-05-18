@@ -20,10 +20,6 @@ CPPalInfo NewPalOnlineEvent::getPalInfo() const {
   return palInfo;
 }
 
-NewPalOnlineEvent* NewPalOnlineEvent::clone() const {
-  return new NewPalOnlineEvent(palInfo);
-}
-
 NewMessageEvent::NewMessageEvent(MsgPara&& msgPara)
   : Event(EventType::NEW_MESSAGE),
     msgPara(msgPara) {}
@@ -32,11 +28,12 @@ const MsgPara& NewMessageEvent::getMsgPara() const {
   return msgPara;
 }
 
-NewMessageEvent* NewMessageEvent::clone() const {
-  MsgPara para = msgPara;
-  return new NewMessageEvent(move(para));
+PalOfflineEvent::PalOfflineEvent(PalKey palKey)
+  : Event(EventType::PAL_OFFLINE),
+    palKey(move(palKey)) {}
+
+const PalKey& PalOfflineEvent::GetPalKey() const {
+  return palKey;
 }
 
-
 }
-

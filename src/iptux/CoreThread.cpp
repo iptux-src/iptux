@@ -478,4 +478,16 @@ void CoreThread::SendDetectPacket(const string& ipv4) {
   Command(*this).SendDetectPacket(udpSock, stringToInAddr(ipv4));
 }
 
+void CoreThread::emitSomeoneExit(const PalKey& palKey) {
+  if(!GetPal(palKey)) {
+    return;
+  }
+  DelPalFromList(palKey.GetIpv4());
+  emitEvent(make_shared<PalOfflineEvent>(palKey));
+}
+
+void CoreThread::SendExit(PPalInfo palInfo) {
+  Command(*this).SendExit(udpSock, palInfo);
+}
+
 }

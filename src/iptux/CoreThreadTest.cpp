@@ -154,5 +154,15 @@ TEST(CoreThread, FullCase) {
   auto event2 = (NewMessageEvent*)(event.get());
   EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
 
+  thread1->SendExit(pal2InThread1);
+  while(thread2->GetOnlineCount() != 0) {
+    this_thread::sleep_for(10ms);
+  }
+
+  thread1->SendDetectPacket("127.0.0.2");
+  while(thread2->GetOnlineCount() != 1) {
+    this_thread::sleep_for(10ms);
+  }
+
   Log::setLogLevel(oldLogLevel);
 }

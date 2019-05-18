@@ -25,13 +25,12 @@
 #include "DialogPeer.h"
 #include "RecvFile.h"
 #include "SendFile.h"
-#include "global.h"
-#include "iptux/config.h"
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
 #include "output.h"
 #include "dialog.h"
+#include "iptux/global.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -137,7 +136,7 @@ void UdpData::DispatchUdpData() {
 void UdpData::SomeoneLost() {
   PalInfo *pal;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread.getProgramData();
 
   /* 创建好友数据 */
   pal = new PalInfo;
@@ -161,10 +160,10 @@ void UdpData::SomeoneLost() {
 
   /* 加入好友列表 */
   gdk_threads_enter();
-  g_cthrd->Lock();
-  g_cthrd->AttachPalToList(pal);
-  g_cthrd->Unlock();
-  g_mwin->AttachItemToPaltree(ipv4);
+  coreThread.Lock();
+  coreThread.AttachPalToList(pal);
+  coreThread.Unlock();
+  // coreThread.AttachItemToPaltree(ipv4);
   gdk_threads_leave();
 }
 
@@ -205,18 +204,7 @@ void UdpData::SomeoneEntry() {
  * 好友退出.
  */
 void UdpData::SomeoneExit() {
-  PalInfo *pal;
-
-  /* 从好友链表中删除 */
-  gdk_threads_enter();
-  if (g_mwin->PaltreeContainItem(ipv4)) g_mwin->DelItemFromPaltree(ipv4);
-  g_cthrd->Lock();
-  if ((pal = g_cthrd->GetPalFromList(ipv4))) {
-    g_cthrd->DelPalFromList(ipv4);
-    pal->setOnline(false);
-  }
-  g_cthrd->Unlock();
-  gdk_threads_leave();
+  coreThread.emitSomeoneExit(PalKey(ipv4));
 }
 
 /**
@@ -566,7 +554,7 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
  * @param pal 好友数据
  */
 void UdpData::UpdatePalInfo(PalInfo *pal) {
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = coreThread.getProgramData();
 
   g_free(pal->segdes);
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());

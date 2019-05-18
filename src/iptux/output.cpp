@@ -14,7 +14,10 @@
 
 #include <string>
 
+#include <sys/time.h>
+
 #include "iptux/deplib.h"
+#include "iptux/utils.h"
 
 using namespace std;
 
@@ -40,15 +43,15 @@ static const char* logLevelAsString(GLogLevelFlags logLevel) {
 }
 
 static string nowAsString() {
-  time_t rawtime;
+  struct timeval tv;
+  gettimeofday(&tv, nullptr);
   struct tm timeinfo;
   char buffer[80];
 
-  time(&rawtime);
-  localtime_r(&rawtime, &timeinfo);
+  localtime_r(&tv.tv_sec, &timeinfo);
 
   strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
-  return buffer;
+  return stringFormat("%s.%03ld", buffer, (tv.tv_usec/1000));
 }
 
 string pretty_fname(const string &fname) {

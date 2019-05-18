@@ -1835,7 +1835,7 @@ void MainWindow::processEvent(shared_ptr<const Event> event) {
 void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if(type == EventType ::NEW_PAL_ONLINE) {
-    auto event = (NewPalOnlineEvent*)(_event.get());
+    auto event = (const NewPalOnlineEvent*)(_event.get());
     auto ipv4 = event->getPalInfo()->ipv4;
     if(PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
@@ -1844,8 +1844,17 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     }
     return;
   }
+
+  if(type == EventType::PAL_OFFLINE) {
+    auto event = (const PalOfflineEvent*)(_event.get());
+    auto ipv4 = event->GetPalKey().GetIpv4();
+    if(PaltreeContainItem(ipv4)) {
+      DelItemFromPaltree(ipv4);
+    }
+  }
+
   if(type == EventType::NEW_MESSAGE) {
-    auto event = (NewMessageEvent*)(_event.get());
+    auto event = (const NewMessageEvent*)(_event.get());
     auto para = event->getMsgPara();
     GroupInfo *grpinf = nullptr;
     SessionAbstract *session;
