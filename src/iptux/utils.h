@@ -95,5 +95,10 @@ std::string stringDump(const std::string& str);
  */
 std::string stringDumpAsCString(const std::string& str);
 
+class Helper {
+ public:
+  static void prepareDir(const std::string& fname);
+};
+
 }  // namespace iptux
 #endif
