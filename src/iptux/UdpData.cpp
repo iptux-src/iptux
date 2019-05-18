@@ -709,7 +709,7 @@ char *UdpData::RecvPalIcon() {
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
            g_get_user_cache_dir(), ipv4);
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
-    LOG_ERROR("write icon to path filed: %s", path);
+    LOG_ERROR("write icon to path failed: %s", path);
     return NULL;
   }
   xwrite(fd, buf + len, size - len);
