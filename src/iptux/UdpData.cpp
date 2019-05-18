@@ -352,17 +352,6 @@ void UdpData::SomeoneSendmsg() {
   //   auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
   //   dlgpr->ShowDialogPeer(dlgpr);
   // }
-  // /* 是否直接弹出聊天窗口 */
-  // if (g_progdt->IsAutoOpenCharDialog()) {
-  //   gdk_threads_enter();
-  //   if (!(grpinf->dialog)) {
-  //     DialogPeer::PeerDialogEntry(g_mwin, grpinf, g_progdt);
-  //   } else {
-  //     gtk_window_present(GTK_WINDOW(grpinf->dialog));
-  //   }
-  //   gdk_threads_leave();
-  // }
-
   // /* 播放提示音 */
   // if (FLAG_ISSET(g_progdt->sndfgs, 1)) g_sndsys->Playing(g_progdt->msgtip);
 }
@@ -384,13 +373,13 @@ void UdpData::SomeoneRecvmsg() {
  * 好友请求本计算机的共享文件.
  */
 void UdpData::SomeoneAskShared() {
-  Command cmd(*g_cthrd);
+  Command cmd(coreThread);
   pthread_t pid;
   PalInfo *pal;
   const char *limit;
   char *passwd;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4))) return;
+  if (!(pal = coreThread.GetPalFromList(ipv4))) return;
 
   limit = g_cthrd->GetAccessPublicLimit();
   if (!limit || *limit == '\0') {

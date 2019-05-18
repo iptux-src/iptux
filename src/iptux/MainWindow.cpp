@@ -1859,6 +1859,13 @@ void MainWindow::processEventInMainThread(Event* _event) {
       case GROUP_BELONG_TYPE_REGULAR:
         grpinf = coreThread.GetPalRegularItem(para.pal.get());
         coreThread.PushItemToMsgline(grpinf);
+        if(coreThread.getProgramData()->IsAutoOpenCharDialog()) {
+          if (!(grpinf->dialog)) {
+            DialogPeer::PeerDialogEntry(g_mwin, grpinf, coreThread.getUiProgramData());
+          } else {
+            gtk_window_present(GTK_WINDOW(grpinf->dialog));
+          }
+        }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
         grpinf = coreThread.GetPalSegmentItem(para.pal.get());
