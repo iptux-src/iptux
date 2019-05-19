@@ -27,8 +27,8 @@ namespace iptux {
       return "ASKSHARED";
     case IPTUX_SENDICON:
       return "SENDICON";
-    case IPTUX_SENDSIGN:
-      return "SENDSIGN";
+    case IPTUX_SEND_SIGN:
+      return "SEND_SIGN";
     case IPTUX_SENDMSG:
       return "SENDMSG";
     default:

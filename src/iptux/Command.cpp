@@ -415,7 +415,7 @@ void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
  */
 void Command::SendMySign(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
-  CreateCommand(IPTUX_SENDSIGN, programData->sign.c_str());
+  CreateCommand(IPTUX_SEND_SIGN, programData->sign.c_str());
   ConvertEncode(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }

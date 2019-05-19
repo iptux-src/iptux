@@ -126,10 +126,15 @@ TEST(CoreThread, SendAskShared) {
 TEST(CoreThread, FullCase) {
   using namespace std::chrono_literals;
   auto oldLogLevel = Log::getLogLevel();
-  Log::setLogLevel(LogLevel::INFO);
+  Log::setLogLevel(LogLevel::DEBUG);
   auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
   auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
-  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\", \"access_shared_limit\": \"qwert\"}");
+  auto config2 = IptuxConfig::newFromString(
+    "{"
+      "\"bind_ip\": \"127.0.0.2\","
+      "\"access_shared_limit\": \"qwert\","
+      "\"personal_sign\": \"smartboy\""
+    "}");
   auto thread2 = new CoreThread(make_shared<ProgramData>(config2));
   try {
     thread2->start();

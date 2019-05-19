@@ -116,7 +116,7 @@ void UdpData::DispatchUdpData() {
     case IPTUX_SENDICON:
       SomeoneSendIcon();
       break;
-    case IPTUX_SENDSIGN:
+    case IPTUX_SEND_SIGN:
       SomeoneSendSign();
       break;
     case IPTUX_SENDMSG:
