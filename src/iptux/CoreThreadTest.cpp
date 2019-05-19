@@ -8,6 +8,7 @@
 #include "iptux/utils.h"
 #include "iptux/Exception.h"
 #include "iptux/output.h"
+#include "iptux/support.h"
 
 using namespace std;
 using namespace iptux;
@@ -125,13 +126,20 @@ TEST(CoreThread, SendAskShared) {
 TEST(CoreThread, FullCase) {
   using namespace std::chrono_literals;
   auto oldLogLevel = Log::getLogLevel();
-  Log::setLogLevel(LogLevel::DEBUG);
+  Log::setLogLevel(LogLevel::INFO);
   auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
   auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
-  thread1->start();
   auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\", \"access_shared_limit\": \"qwert\"}");
   auto thread2 = new CoreThread(make_shared<ProgramData>(config2));
-  thread2->start();
+  try {
+    thread2->start();
+  } catch(BindFailedException& e) {
+    cerr
+      << "bind to 127.0.0.2 failed.\n"
+      << "if you are using mac, please run `sudo ifconfig lo0 alias 127.0.0.2 up` first.\n";
+    throw;
+  }
+  thread1->start();
   thread1->SendDetectPacket("127.0.0.2");
   while(thread2->GetOnlineCount() != 1) {
     this_thread::sleep_for(10ms);

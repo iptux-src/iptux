@@ -19,7 +19,7 @@ TEST(ProgramData, Constructor) {
 }
 
 TEST(ProgramData, WriteAndRead) {
-  auto config = newTestIptuxConfig();
+  auto config = newTestIptuxConfigWithFile();
   ProgramData* core = new ProgramData(config);
   NetSegment netSegment;
   netSegment.startip = "1.2.3.4";

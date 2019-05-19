@@ -8,6 +8,7 @@
 
 namespace iptux {
   std::shared_ptr<IptuxConfig> newTestIptuxConfig();
+  std::shared_ptr<IptuxConfig> newTestIptuxConfigWithFile();
   std::string readTestData(const std::string& fname);
   std::string testDataPath(const std::string& fname);
 }

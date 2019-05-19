@@ -13,6 +13,12 @@ using namespace std;
 namespace iptux {
 
 shared_ptr<IptuxConfig> newTestIptuxConfig() {
+  auto res = IptuxConfig::newFromString("{}");
+  res->SetBool("debug_dont_broadcast", true);
+  return res;
+}
+
+shared_ptr<IptuxConfig> newTestIptuxConfigWithFile() {
   char* fname = g_strdup_printf("/tmp/iptux%d.json", g_random_int());
   auto res = make_shared<IptuxConfig>(fname);
   res->SetBool("debug_dont_broadcast", true);
