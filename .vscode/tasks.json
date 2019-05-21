@@ -6,7 +6,7 @@
         "command": "ninja",
         "args": [],
         "options": {
-            "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
+            "cwd": "${workspaceFolder}/builddir"
         },
         "problemMatcher": {
             "owner": "cpp",
