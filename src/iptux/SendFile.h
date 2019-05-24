@@ -21,7 +21,7 @@ class SendFile {
   SendFile();
   ~SendFile();
 
-  void SendSharedInfoEntry(PalInfo *pal);
+  static void SendSharedInfoEntry(PalInfo *pal);
   void BcstFileInfoEntry(GSList *plist, GSList *flist);
   void RequestDataEntry(int sock, uint32_t fileattr, char *attach);
 

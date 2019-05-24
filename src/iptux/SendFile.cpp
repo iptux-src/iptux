@@ -39,7 +39,7 @@ void SendFile::SendSharedInfoEntry(PalInfo *pal) {
 
   g_cthrd->Lock();
   list = g_cthrd->GetPublicFileList();
-  SendFileInfo(pal, IPTUX_SHAREDOPT, list);
+  SendFile().SendFileInfo(pal, IPTUX_SHAREDOPT, list);
   g_cthrd->Unlock();
 }
 

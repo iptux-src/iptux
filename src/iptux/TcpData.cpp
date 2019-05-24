@@ -210,7 +210,7 @@ void TcpData::RecvMsgPic(PalInfo *pal, const char *path) {
   MsgPara para;
 
   /* 构建消息封装包 */
-  para.pal = g_cthrd->GetPal(pal->GetKey());
+  para.pal = coreThread->GetPal(pal->GetKey());
   para.stype = MessageSourceType::PAL;
   para.btype = GROUP_BELONG_TYPE_REGULAR;
   ChipData chip;
@@ -219,7 +219,7 @@ void TcpData::RecvMsgPic(PalInfo *pal, const char *path) {
   para.dtlist.push_back(chip);
 
   /* 交给某人处理吧 */
-  g_cthrd->InsertMessage(move(para));
+  coreThread->InsertMessage(move(para));
 }
 
 }  // namespace iptux

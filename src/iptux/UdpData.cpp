@@ -803,7 +803,6 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
  * @param pal class PalInfo
  */
 void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PalInfo *pal) {
-  SendFile sfile;
   bool permit;
 
   auto g_progdt = coreThread->getProgramData();
@@ -812,9 +811,11 @@ void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PalInfo *pal) {
     gdk_threads_enter();
     permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal);
     gdk_threads_leave();
-    if (permit) sfile.SendSharedInfoEntry(pal);
+    if (permit) {
+      SendFile::SendSharedInfoEntry(pal);
+    }
   } else
-    sfile.SendSharedInfoEntry(pal);
+    SendFile::SendSharedInfoEntry(pal);
 }
 
 }  // namespace iptux
