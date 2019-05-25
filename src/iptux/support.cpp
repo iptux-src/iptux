@@ -52,7 +52,7 @@ void iptux_open_url(const char *url) {
   execlp("opera", "opera", url, NULL);
   execlp("konqueror", "konqueror", url, NULL);
   execlp("open", "open", url, NULL);
-  pwarning(_("Can't find any available web browser!\n"));
+  LOG_WARN(_("Can't find any available web browser!\n"));
 }
 
 /**

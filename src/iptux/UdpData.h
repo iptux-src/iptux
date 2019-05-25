@@ -69,7 +69,7 @@ class UdpData {
 
  private:
   static void ThreadAskSharedPasswd(PalInfo *pal);
-  static void ThreadAskSharedFile(CoreThread* coreThread, PalInfo *pal);
+  static void ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal);
 };
 
 }  // namespace iptux

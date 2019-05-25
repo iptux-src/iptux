@@ -2,6 +2,7 @@
 #include "ProgramData.h"
 
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 
 #include "iptux/deplib.h"
@@ -11,6 +12,8 @@
 using namespace std;
 
 namespace iptux {
+
+static const char *CONFIG_SHARED_FILE_LIST = "shared_file_list";
 
 /**
  * 类构造函数.
@@ -91,6 +94,12 @@ void ProgramData::WriteProgData() {
   config->SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
   config->SetString("access_shared_limit", passwd);
   WriteNetSegment();
+
+  vector<string> sharedFileList;
+  for(const FileInfo& fileInfo: sharedFileInfos) {
+    sharedFileList.push_back(fileInfo.filepath);
+  }
+  config->SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
   config->Save();
 }
 
@@ -162,6 +171,26 @@ void ProgramData::ReadProgData() {
   passwd = config->GetString("access_shared_limit");
 
   ReadNetSegment();
+
+  /* 读取共享文件数据 */
+  vector<string> sharedFileList = config->GetStringList(CONFIG_SHARED_FILE_LIST);
+
+  /* 分析数据并加入文件链表 */
+  sharedFileInfos.clear();
+  int pbn = 1;
+  for (size_t i = 0; i < sharedFileList.size(); ++i) {
+    struct stat st;
+    if (stat(sharedFileList[i].c_str(), &st) == -1 ||
+        !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+      continue;
+    }
+    /* 加入文件信息到链表 */
+    FileInfo fileInfo;
+    fileInfo.fileid = pbn++;
+    fileInfo.fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR;
+    fileInfo.filepath = strdup(sharedFileList[i].c_str());
+    sharedFileInfos.emplace_back(fileInfo);
+  }
 }
 
 /**

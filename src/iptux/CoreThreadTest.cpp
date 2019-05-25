@@ -126,9 +126,8 @@ TEST(CoreThread, SendAskShared) {
 TEST(CoreThread, FullCase) {
   using namespace std::chrono_literals;
   auto oldLogLevel = Log::getLogLevel();
-  Log::setLogLevel(LogLevel::DEBUG);
-  auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
-  auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
+  Log::setLogLevel(LogLevel::INFO);
+  auto thread1 = newCoreThreadOnIp("127.0.0.1");
   auto config2 = IptuxConfig::newFromString(
     "{"
       "\"bind_ip\": \"127.0.0.2\","

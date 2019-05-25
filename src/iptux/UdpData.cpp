@@ -361,21 +361,24 @@ void UdpData::SomeoneRecvmsg() {
 void UdpData::SomeoneAskShared() {
   Command cmd(coreThread);
   pthread_t pid;
-  PalInfo *pal;
+  PPalInfo pal;
   char *passwd;
 
-  if (!(pal = coreThread.GetPalFromList(ipv4))) return;
+  if (!(pal = coreThread.GetPal(ipv4))) return;
 
   auto limit = coreThread.GetAccessPublicLimit();
   if (limit.empty()) {
-    thread([](CoreThread* coreThread, PalInfo* pal){ThreadAskSharedFile(coreThread, pal);}, &coreThread, pal).detach();
+    thread([](CoreThread* coreThread, PPalInfo pal){
+      ThreadAskSharedFile(coreThread, pal);
+      }, &coreThread, pal).detach();
   } else if (!(iptux_get_dec_number(buf, ':', 4) & IPTUX_PASSWDOPT)) {
     cmd.SendFileInfo(coreThread.getUdpSock(), pal->GetKey(),
                      IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
   } else if ((passwd = ipmsg_get_attach(buf, ':', 5))) {
     if (limit == passwd) {
-      pthread_create(&pid, NULL, ThreadFunc(ThreadAskSharedFile), pal);
-      pthread_detach(pid);
+      thread([](CoreThread* coreThread, PPalInfo pal){
+        ThreadAskSharedFile(coreThread, pal);
+      }, &coreThread, pal).detach();
     }
     g_free(passwd);
   }
@@ -802,20 +805,20 @@ void UdpData::ThreadAskSharedPasswd(PalInfo *pal) {
  * 某好友请求本计算机的共享文件.
  * @param pal class PalInfo
  */
-void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PalInfo *pal) {
+void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal) {
   bool permit;
 
   auto g_progdt = coreThread->getProgramData();
 
   if (g_progdt->IsFilterFileShareRequest()) {
     gdk_threads_enter();
-    permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal);
+    permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal.get());
     gdk_threads_leave();
     if (permit) {
-      SendFile::SendSharedInfoEntry(pal);
+      SendFile::SendSharedInfoEntry(coreThread, pal);
     }
   } else
-    SendFile::SendSharedInfoEntry(pal);
+    SendFile::SendSharedInfoEntry(coreThread, pal);
 }
 
 }  // namespace iptux

@@ -24,9 +24,13 @@
 #include "iptux/global.h"
 #include "iptux/utils.h"
 
+using namespace std;
+
 namespace iptux {
 
-SendFile::SendFile() {}
+SendFile::SendFile(CoreThread* coreThread)
+  : coreThread(coreThread)
+{}
 
 SendFile::~SendFile() {}
 
@@ -34,13 +38,11 @@ SendFile::~SendFile() {}
  * 发送本机共享文件信息入口.
  * @param pal class PalInfo
  */
-void SendFile::SendSharedInfoEntry(PalInfo *pal) {
-  GSList *list;
-
-  g_cthrd->Lock();
-  list = g_cthrd->GetPublicFileList();
-  SendFile().SendFileInfo(pal, IPTUX_SHAREDOPT, list);
-  g_cthrd->Unlock();
+void SendFile::SendSharedInfoEntry(CoreThread* coreThread, PPalInfo pal) {
+  coreThread->Lock();
+  auto fileInfos = coreThread->getProgramData()->GetSharedFileInfos();
+  SendFile(coreThread).SendFileInfo(pal, IPTUX_SHAREDOPT, fileInfos);
+  coreThread->Unlock();
 }
 
 /**
@@ -49,8 +51,8 @@ void SendFile::SendSharedInfoEntry(PalInfo *pal) {
  * @param flist 文件信息链表
  * @note 文件路径链表中的数据将被本函数处理掉
  */
-void SendFile::BcstFileInfoEntry(GSList *plist, GSList *flist) {
-  BcstFileInfo(plist, 0, flist);
+void SendFile::BcstFileInfoEntry(CoreThread* coreThread, GSList *plist, GSList *flist) {
+  SendFile(coreThread).BcstFileInfo(plist, 0, flist);
 }
 
 /**
@@ -59,7 +61,7 @@ void SendFile::BcstFileInfoEntry(GSList *plist, GSList *flist) {
  * @param fileattr 文件类型
  * @param attach 附加数据
  */
-void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach) {
+void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t fileattr, char *attach) {
   struct sockaddr_in addr;
   socklen_t len;
   PalInfo *pal;
@@ -92,7 +94,7 @@ void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach) {
   //         *文件信息可能被删除或修改，必须单独复制一份.
   //         */
   //        file->fileown = pal;
-  ThreadSendFile(sock, file);
+  SendFile(coreThread).ThreadSendFile(sock, file);
 }
 
 /**
@@ -101,13 +103,12 @@ void SendFile::RequestDataEntry(int sock, uint32_t fileattr, char *attach) {
  * @param opttype 命令字选项
  * @param filist 文件信息链表
  */
-void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist) {
+void SendFile::SendFileInfo(PPalInfo pal, uint32_t opttype, vector<FileInfo>& fileInfos) {
   AnalogFS afs;
-  Command cmd(*g_cthrd);
+  Command cmd(*coreThread);
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;
-  GSList *tlist;
   FileInfo *file;
 
   /* 初始化 */
@@ -116,11 +117,9 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist) {
   buf[0] = '\0';
 
   /* 将文件信息写入缓冲区 */
-  tlist = filist;
-  while (tlist) {
-    file = (FileInfo *)tlist->data;
+  for(FileInfo& fileInfo: fileInfos) {
+    auto file = &fileInfo;
     if (access(file->filepath, F_OK) == -1) {
-      tlist = g_slist_next(tlist);
       continue;
     }
     name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
@@ -132,11 +131,10 @@ void SendFile::SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist) {
     g_free(name);
     len += strlen(ptr);
     ptr = buf + len;
-    tlist = g_slist_next(tlist);
   }
 
   /* 发送文件信息 */
-  cmd.SendFileInfo(g_cthrd->getUdpSock(), pal->GetKey(), opttype, buf);
+  cmd.SendFileInfo(coreThread->getUdpSock(), pal->GetKey(), opttype, buf);
 }
 
 /**

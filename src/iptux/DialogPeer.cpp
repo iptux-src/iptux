@@ -423,14 +423,13 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
  * 发送附件给好友
  */
 void DialogPeer::BroadcastEnclosureMsg(GSList *list) {
-  SendFile sfile;
   GSList *plist;
 
   /* 向选中的成员发送附件 */
   plist = NULL;
   plist = g_slist_append(plist, grpinf->member->data);
 
-  sfile.BcstFileInfoEntry(plist, list);
+  SendFile::BcstFileInfoEntry(g_cthrd, plist, list);
   g_slist_free(plist);
 }
 

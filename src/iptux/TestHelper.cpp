@@ -35,5 +35,12 @@ string testDataPath(const string& fname) {
   return stringFormat("%s/src/iptux/testdata/%s", PROJECT_ROOT_PATH, fname.c_str());
 }
 
+std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
+  auto config = newTestIptuxConfig();
+  config->SetString("bind_ip", ip);
+  return make_shared<CoreThread>(make_shared<ProgramData>(config));
+}
+
+
 }
 

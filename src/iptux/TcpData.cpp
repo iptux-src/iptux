@@ -91,7 +91,6 @@ void TcpData::DispatchTcpData() {
  * @param fileattr 文件类型
  */
 void TcpData::RequestData(uint32_t fileattr) {
-  SendFile sfile;
   const char *attachptr;
   char *attach;
 
@@ -112,7 +111,7 @@ void TcpData::RequestData(uint32_t fileattr) {
   }
 
   attach = ipmsg_get_attach(buf, ':', 5);
-  sfile.RequestDataEntry(sock, fileattr, attach);
+  SendFile::RequestDataEntry(coreThread, sock, fileattr, attach);
   g_free(attach);
 }
 
