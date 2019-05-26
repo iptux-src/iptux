@@ -598,11 +598,6 @@ void Command::CreateIptuxExtra(const string &encode) {
  * 创建个人头像的扩展数据.
  */
 void Command::CreateIconExtra(istream& iss) {
-  const gchar *env;
-  char path[MAX_PATHLEN];
-  ssize_t len;
-  int fd;
-
   iss.read(buf+size, MAX_UDPLEN-size);
   size+=iss.gcount();
 }

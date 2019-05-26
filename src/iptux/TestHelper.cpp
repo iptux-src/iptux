@@ -46,6 +46,8 @@ std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
 
 std::tuple<PCoreThread, PCoreThread>
 initAndConnnectThreadsFromConfig(PIptuxConfig c1, PIptuxConfig c2) {
+  c1->SetBool("debug_dont_broadcast", true);
+  c2->SetBool("debug_dont_broadcast", true);
   auto thread1 = make_shared<CoreThread>(make_shared<ProgramData>(c1));
   auto thread2 = make_shared<CoreThread>(make_shared<ProgramData>(c2));
   try {
