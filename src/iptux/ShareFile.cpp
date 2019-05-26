@@ -305,7 +305,11 @@ void ApplySharedData(ShareFile* self) {
   /* 更新密码 */
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "password-button-widget"));
   passwd = (const gchar *)g_object_get_data(G_OBJECT(widget), "password");
-  g_cthrd->SetAccessPublicLimit(passwd);
+  if(!passwd) {
+    g_cthrd->SetAccessPublicLimit("");
+  } else {
+    g_cthrd->SetAccessPublicLimit(passwd);
+  }
 }
 
 /**

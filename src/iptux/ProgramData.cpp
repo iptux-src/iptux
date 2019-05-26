@@ -126,7 +126,7 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
  * @return 描述串
  */
 string ProgramData::FindNetSegDescription(in_addr_t ipv4) const {
-  for (int i = 0; i < netseg.size(); ++i) {
+  for (size_t i = 0; i < netseg.size(); ++i) {
     if (netseg[i].ContainIP(ipv4)) {
       return netseg[i].description;
     }
@@ -209,7 +209,7 @@ void ProgramData::WriteNetSegment() {
   vector<Json::Value> jsons;
 
   pthread_mutex_lock(&mutex);
-  for(int i = 0; i < netseg.size(); ++i) {
+  for(size_t i = 0; i < netseg.size(); ++i) {
     jsons.push_back(netseg[i].ToJsonValue());
   }
   pthread_mutex_unlock(&mutex);
@@ -259,6 +259,32 @@ void ProgramData::SetFlag(int idx, bool flag) {
 ProgramData& ProgramData::SetUsingBlacklist(bool value) {
   SetFlag(1, value);
   return *this;
+}
+
+FileInfo* ProgramData::GetShareFileInfo(uint32_t fileId) {
+  for(const FileInfo& fileInfo: sharedFileInfos) {
+    if(fileInfo.fileid == fileId) {
+      return new FileInfo(fileInfo);
+    }
+  }
+  return nullptr;
+}
+
+FileInfo* ProgramData::GetShareFileInfo(uint32_t packetn, uint32_t filenum) {
+  for(const FileInfo& fileInfo: sharedFileInfos) {
+    if(fileInfo.packetn == packetn && fileInfo.filenum == filenum) {
+      return new FileInfo(fileInfo);
+    }
+  }
+  return nullptr;
+}
+
+void ProgramData::ClearShareFileInfos() {
+  sharedFileInfos.clear();
+}
+
+void ProgramData::AddShareFileInfo(FileInfo fileInfo) {
+  sharedFileInfos.emplace_back(move(fileInfo));
 }
 
 }  // namespace iptux

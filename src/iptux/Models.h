@@ -57,6 +57,8 @@ class PalKey {
   PalKey(in_addr_t ipv4);
   PalKey(in_addr_t ipv4, int port);
 
+  bool operator==(const PalKey& rhs) const;
+
   in_addr_t GetIpv4() const {return ipv4;}
   int GetPort() const {return port;}
   std::string ToString() const;
@@ -123,6 +125,9 @@ class FileInfo {
  public:
   FileInfo();
   ~FileInfo();
+
+  FileInfo(const FileInfo& fileInfo);
+  FileInfo& operator=(const FileInfo& fileInfo);
 
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号

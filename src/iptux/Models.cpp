@@ -93,12 +93,25 @@ FileInfo::FileInfo()
       fileattr(0),
       filesize(-1),
       finishedsize(0),
-      fileown(NULL),
       filepath(NULL),
       filectime(0),
       filemtime(0),
       filenum(0) {}
 FileInfo::~FileInfo() { g_free(filepath); }
+
+FileInfo::FileInfo(const FileInfo& f)
+  : fileid(f.fileid),
+    packetn(f.packetn),
+    fileattr(f.fileattr),
+    filesize(f.filesize),
+    finishedsize(f.finishedsize),
+    fileown(f.fileown),
+    filectime(f.filectime),
+    filemtime(f.filemtime),
+    filenum(f.filenum)
+{
+  filepath = g_strdup(f.filepath);
+}
 
 MsgPara::MsgPara()
     : pal(NULL),
@@ -171,6 +184,11 @@ PalKey::PalKey(in_addr_t ipv4)
 PalKey::PalKey(in_addr_t ipv4, int port)
   : ipv4(ipv4), port(port)
 {}
+
+bool PalKey::operator==(const PalKey& rhs) const {
+  return this->ipv4 == rhs.ipv4
+    && this->port == rhs.port;
+}
 
 string PalKey::ToString() const {
   return stringFormat("%s:%d", inAddrToString(ipv4).c_str(), port);

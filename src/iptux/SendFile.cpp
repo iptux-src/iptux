@@ -163,7 +163,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
     filelist = filist;
     while (filelist) {
       file = (FileInfo *)filelist->data;
-      if (file->fileown == (PalInfo *)pallist->data) {
+      if (file->fileown->GetKey() == ((PalInfo *)pallist->data)->GetKey()) {
         if (access(file->filepath, F_OK) == -1) {
           filelist = g_slist_next(filelist);
           continue;

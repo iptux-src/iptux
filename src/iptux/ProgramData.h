@@ -44,8 +44,8 @@ class ProgramData {
   std::vector<FileInfo>& GetSharedFileInfos() { return sharedFileInfos; }
   void AddShareFileInfo(FileInfo fileInfo);
   void ClearShareFileInfos();
-  FileInfo* GetShareFileInfo(int32_t fileId);
-  FileInfo* GetShareFileInfo(uint32_t packageNum, uint32_t filectime);
+  FileInfo* GetShareFileInfo(uint32_t fileId);
+  FileInfo* GetShareFileInfo(uint32_t packetn, uint32_t filenum);
 
   std::string FindNetSegDescription(in_addr_t ipv4) const;
   void Lock();

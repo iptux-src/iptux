@@ -794,7 +794,7 @@ GSList *UiCoreThread::GetPalEnclosure(PalInfo *pal) {
   GSList *tlist, *palecslist;
   palecslist = NULL;
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist)) {
-    if (((FileInfo *)tlist->data)->fileown == pal) {
+    if (((FileInfo *)tlist->data)->fileown->GetKey() == pal->GetKey()) {
       palecslist = g_slist_append(palecslist, tlist->data);
     }
   }
