@@ -7,6 +7,8 @@
 #include <thread>
 #include <functional>
 #include <fstream>
+#include <memory>
+#include <future>
 
 #include "ipmsg.h"
 #include "support.h"
@@ -27,6 +29,7 @@ struct CoreThread::Impl {
   GSList *blacklist {nullptr};                              //黑名单链表
   bool debugDontBroadcast {false} ;
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+  future<void> udpFuture;
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -63,9 +66,12 @@ void CoreThread::start() {
 
   pthread_t pid;
 
+  pImpl->udpFuture = async([](CoreThread* ct){
+    RecvUdpData(ct);
+  }, this);
   /* 开启UDP监听服务 */
-  pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
-  pthread_detach(pid);
+  // pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
+  // pthread_detach(pid);
   /* 开启TCP监听服务 */
   pthread_create(&pid, NULL, ThreadFunc(RecvTcpData), this);
   pthread_detach(pid);

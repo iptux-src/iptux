@@ -203,13 +203,13 @@ TEST(CoreThread, FullCase_ShareWithPassword) {
   auto oldLogLevel = Log::getLogLevel();
   Log::setLogLevel(LogLevel::INFO);
   auto config1 = IptuxConfig::newFromString("{}");
-  config1->SetString("bind_ip", "127.0.0.1");
+  config1->SetString("bind_ip", "127.0.0.3");
   auto config2 = IptuxConfig::newFromString("{}");
-  config2->SetString("bind_ip", "127.0.0.2");
+  config2->SetString("bind_ip", "127.0.0.4");
   config2->SetString("access_shared_limit", "qwert");
   auto threads = initAndConnnectThreadsFromConfig(config1, config2);
   auto thread1 = get<0>(threads);
   auto thread2 = get<1>(threads);
-  thread1->SendAskShared(thread1->GetPal("127.0.0.2"));
+  thread1->SendAskShared(thread1->GetPal("127.0.0.4"));
   Log::setLogLevel(oldLogLevel);
 }
