@@ -2,6 +2,7 @@
 #include "ProgramData.h"
 
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 
 #include "iptux/deplib.h"
@@ -11,6 +12,8 @@
 using namespace std;
 
 namespace iptux {
+
+static const char *CONFIG_SHARED_FILE_LIST = "shared_file_list";
 
 /**
  * 类构造函数.
@@ -91,6 +94,12 @@ void ProgramData::WriteProgData() {
   config->SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
   config->SetString("access_shared_limit", passwd);
   WriteNetSegment();
+
+  vector<string> sharedFileList;
+  for(const FileInfo& fileInfo: sharedFileInfos) {
+    sharedFileList.push_back(fileInfo.filepath);
+  }
+  config->SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
   config->Save();
 }
 
@@ -117,7 +126,7 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
  * @return 描述串
  */
 string ProgramData::FindNetSegDescription(in_addr_t ipv4) const {
-  for (int i = 0; i < netseg.size(); ++i) {
+  for (size_t i = 0; i < netseg.size(); ++i) {
     if (netseg[i].ContainIP(ipv4)) {
       return netseg[i].description;
     }
@@ -162,6 +171,26 @@ void ProgramData::ReadProgData() {
   passwd = config->GetString("access_shared_limit");
 
   ReadNetSegment();
+
+  /* 读取共享文件数据 */
+  vector<string> sharedFileList = config->GetStringList(CONFIG_SHARED_FILE_LIST);
+
+  /* 分析数据并加入文件链表 */
+  sharedFileInfos.clear();
+  int pbn = 1;
+  for (size_t i = 0; i < sharedFileList.size(); ++i) {
+    struct stat st;
+    if (stat(sharedFileList[i].c_str(), &st) == -1 ||
+        !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+      continue;
+    }
+    /* 加入文件信息到链表 */
+    FileInfo fileInfo;
+    fileInfo.fileid = pbn++;
+    fileInfo.fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR;
+    fileInfo.filepath = strdup(sharedFileList[i].c_str());
+    sharedFileInfos.emplace_back(fileInfo);
+  }
 }
 
 /**
@@ -180,7 +209,7 @@ void ProgramData::WriteNetSegment() {
   vector<Json::Value> jsons;
 
   pthread_mutex_lock(&mutex);
-  for(int i = 0; i < netseg.size(); ++i) {
+  for(size_t i = 0; i < netseg.size(); ++i) {
     jsons.push_back(netseg[i].ToJsonValue());
   }
   pthread_mutex_unlock(&mutex);
@@ -230,6 +259,32 @@ void ProgramData::SetFlag(int idx, bool flag) {
 ProgramData& ProgramData::SetUsingBlacklist(bool value) {
   SetFlag(1, value);
   return *this;
+}
+
+FileInfo* ProgramData::GetShareFileInfo(uint32_t fileId) {
+  for(const FileInfo& fileInfo: sharedFileInfos) {
+    if(fileInfo.fileid == fileId) {
+      return new FileInfo(fileInfo);
+    }
+  }
+  return nullptr;
+}
+
+FileInfo* ProgramData::GetShareFileInfo(uint32_t packetn, uint32_t filenum) {
+  for(const FileInfo& fileInfo: sharedFileInfos) {
+    if(fileInfo.packetn == packetn && fileInfo.filenum == filenum) {
+      return new FileInfo(fileInfo);
+    }
+  }
+  return nullptr;
+}
+
+void ProgramData::ClearShareFileInfos() {
+  sharedFileInfos.clear();
+}
+
+void ProgramData::AddShareFileInfo(FileInfo fileInfo) {
+  sharedFileInfos.emplace_back(move(fileInfo));
 }
 
 }  // namespace iptux

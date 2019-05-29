@@ -7,6 +7,8 @@
 #include <thread>
 #include <functional>
 #include <fstream>
+#include <memory>
+#include <future>
 
 #include "ipmsg.h"
 #include "support.h"
@@ -27,6 +29,9 @@ struct CoreThread::Impl {
   GSList *blacklist {nullptr};                              //黑名单链表
   bool debugDontBroadcast {false} ;
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+  future<void> udpFuture;
+  future<void> tcpFuture;
+  future<void> notifyToAllFuture;
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -61,16 +66,15 @@ void CoreThread::start() {
 
   bind_iptux_port();
 
-  pthread_t pid;
-
-  /* 开启UDP监听服务 */
-  pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
-  pthread_detach(pid);
-  /* 开启TCP监听服务 */
-  pthread_create(&pid, NULL, ThreadFunc(RecvTcpData), this);
-  pthread_detach(pid);
-  /* 通知所有计算机本大爷上线啦 */
-  pthread_create(&notifyToAllThread, NULL, ThreadFunc(SendNotifyToAll), this);
+  pImpl->udpFuture = async([](CoreThread* ct){
+    RecvUdpData(ct);
+  }, this);
+  pImpl->tcpFuture = async([](CoreThread* ct){
+    RecvTcpData(ct);
+  }, this);
+  pImpl->notifyToAllFuture = async([](CoreThread* ct){
+    SendNotifyToAll(ct);
+  }, this);
 }
 
 void CoreThread::bind_iptux_port() {
@@ -160,7 +164,6 @@ void CoreThread::stop() {
     throw "CoreThread not started, or already stopped";
   }
   started = false;
-  pthread_join(notifyToAllThread, nullptr);
   ClearSublayer();
 }
 

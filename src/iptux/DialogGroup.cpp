@@ -457,7 +457,6 @@ GtkWidget *DialogGroup::CreateToolMenu() {
  * @param list 文件链表
  */
 void DialogGroup::BroadcastEnclosureMsg(GSList *list) {
-  SendFile sfile;
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -483,7 +482,7 @@ void DialogGroup::BroadcastEnclosureMsg(GSList *list) {
     gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
     if (active) plist = g_slist_append(plist, pal);
   } while (gtk_tree_model_iter_next(model, &iter));
-  sfile.BcstFileInfoEntry(plist, list);
+  SendFile::BcstFileInfoEntry(g_cthrd, plist, list);
   g_slist_free(plist);
 }
 

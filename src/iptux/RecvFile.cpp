@@ -66,7 +66,7 @@ void RecvFile::ParseFilePara(GData **para) {
   while (extra && *extra) {
     file = DivideFileinfo(&extra);
     file->packetn = packetn;
-    file->fileown = pal;
+    file->fileown = g_cthrd->GetPal(pal->GetKey());
     g_cthrd->PushItemToEnclosureList(file);
   }
 }

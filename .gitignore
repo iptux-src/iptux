@@ -119,3 +119,4 @@ builddir-linux
 coverage.info
 .vscode/settings.json
 .vscode/launch.json
+/vs

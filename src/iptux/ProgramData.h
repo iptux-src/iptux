@@ -40,6 +40,13 @@ class ProgramData {
   const std::vector<NetSegment>& getNetSegments() const;
   void setNetSegments(std::vector<NetSegment>&& netSegments);
 
+  const std::vector<FileInfo>& GetSharedFileInfos() const { return sharedFileInfos; }
+  std::vector<FileInfo>& GetSharedFileInfos() { return sharedFileInfos; }
+  void AddShareFileInfo(FileInfo fileInfo);
+  void ClearShareFileInfos();
+  FileInfo* GetShareFileInfo(uint32_t fileId);
+  FileInfo* GetShareFileInfo(uint32_t packetn, uint32_t filenum);
+
   std::string FindNetSegDescription(in_addr_t ipv4) const;
   void Lock();
   void Unlock();
@@ -91,6 +98,7 @@ class ProgramData {
   pthread_mutex_t mutex;  //锁
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
   std::string passwd;
+  std::vector<FileInfo> sharedFileInfos;
 
  private:
   void InitSublayer();

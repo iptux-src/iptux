@@ -45,8 +45,6 @@ class UiCoreThread: public CoreThread {
 
   void start() override;
 
-  void WriteSharedData();
-
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
 
@@ -72,9 +70,6 @@ class UiCoreThread: public CoreThread {
   void PushItemToEnclosureList(FileInfo *file);
   void PopItemFromEnclosureList(FileInfo *file);
 
-  void AttachFileToPublic(FileInfo *file);
-  void ClearFileFromPublic();
-  GSList *GetPublicFileList();
   void AttachFileToPrivate(FileInfo *file);
   void DelFileFromPrivate(uint32_t fileid);
   FileInfo *GetFileFromAll(uint32_t fileid);
@@ -86,7 +81,6 @@ class UiCoreThread: public CoreThread {
  private:
   void InitSublayer();
   void ClearSublayer() override ;
-  void ReadSharedData();
 
   static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
   static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
@@ -110,7 +104,7 @@ private:
   GQueue msgline;                                 //消息队列
 
   uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
-  GSList *pblist, *prlist;  //文件链表(共享/私有)
+  GSList *prlist;  //文件链表(共享/私有)
   GSList *ecsList;          //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 

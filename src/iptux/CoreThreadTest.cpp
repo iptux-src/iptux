@@ -8,6 +8,7 @@
 #include "iptux/utils.h"
 #include "iptux/Exception.h"
 #include "iptux/output.h"
+#include "iptux/support.h"
 
 using namespace std;
 using namespace iptux;
@@ -125,17 +126,18 @@ TEST(CoreThread, SendAskShared) {
 TEST(CoreThread, FullCase) {
   using namespace std::chrono_literals;
   auto oldLogLevel = Log::getLogLevel();
-  Log::setLogLevel(LogLevel::DEBUG);
-  auto config1 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.1\"}");
-  auto thread1 = new CoreThread(make_shared<ProgramData>(config1));
-  thread1->start();
-  auto config2 = IptuxConfig::newFromString("{\"bind_ip\": \"127.0.0.2\", \"access_shared_limit\": \"qwert\"}");
-  auto thread2 = new CoreThread(make_shared<ProgramData>(config2));
-  thread2->start();
-  thread1->SendDetectPacket("127.0.0.2");
-  while(thread2->GetOnlineCount() != 1) {
-    this_thread::sleep_for(10ms);
-  }
+  Log::setLogLevel(LogLevel::INFO);
+  auto config1 = IptuxConfig::newFromString("{}");
+  config1->SetString("bind_ip", "127.0.0.1");
+  auto config2 = IptuxConfig::newFromString(
+    "{"
+      "\"bind_ip\": \"127.0.0.2\","
+      "\"access_shared_limit\": \"qwert\","
+      "\"personal_sign\": \"smartboy\""
+    "}");
+  auto threads = initAndConnnectThreadsFromConfig(config1, config2);
+  auto thread1 = get<0>(threads);
+  auto thread2 = get<1>(threads);
 
   EXPECT_TRUE(thread2->GetPal("127.0.0.1"));
   EXPECT_EQ(thread1->GetOnlineCount(), 1);
@@ -194,5 +196,20 @@ TEST(CoreThread, FullCase) {
     this_thread::sleep_for(10ms);
   }
 
+  Log::setLogLevel(oldLogLevel);
+}
+
+TEST(CoreThread, FullCase_ShareWithPassword) {
+  auto oldLogLevel = Log::getLogLevel();
+  Log::setLogLevel(LogLevel::INFO);
+  auto config1 = IptuxConfig::newFromString("{}");
+  config1->SetString("bind_ip", "127.0.0.3");
+  auto config2 = IptuxConfig::newFromString("{}");
+  config2->SetString("bind_ip", "127.0.0.4");
+  config2->SetString("access_shared_limit", "qwert");
+  auto threads = initAndConnnectThreadsFromConfig(config1, config2);
+  auto thread1 = get<0>(threads);
+  auto thread2 = get<1>(threads);
+  thread1->SendAskShared(thread1->GetPal("127.0.0.4"));
   Log::setLogLevel(oldLogLevel);
 }

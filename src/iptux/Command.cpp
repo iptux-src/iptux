@@ -415,7 +415,7 @@ void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
  */
 void Command::SendMySign(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
-  CreateCommand(IPTUX_SENDSIGN, programData->sign.c_str());
+  CreateCommand(IPTUX_SEND_SIGN, programData->sign.c_str());
   ConvertEncode(pal->encode);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
@@ -598,11 +598,6 @@ void Command::CreateIptuxExtra(const string &encode) {
  * 创建个人头像的扩展数据.
  */
 void Command::CreateIconExtra(istream& iss) {
-  const gchar *env;
-  char path[MAX_PATHLEN];
-  ssize_t len;
-  int fd;
-
   iss.read(buf+size, MAX_UDPLEN-size);
   size+=iss.gcount();
 }

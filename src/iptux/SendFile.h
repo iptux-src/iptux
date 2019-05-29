@@ -12,23 +12,30 @@
 #ifndef IPTUX_SENDFILE_H
 #define IPTUX_SENDFILE_H
 
+#include <vector>
+
 #include "iptux/Models.h"
+#include "iptux/CoreThread.h"
 
 namespace iptux {
 
 class SendFile {
- public:
-  SendFile();
+ private:
+  explicit SendFile(CoreThread* coreThread);
   ~SendFile();
 
-  void SendSharedInfoEntry(PalInfo *pal);
-  void BcstFileInfoEntry(GSList *plist, GSList *flist);
-  void RequestDataEntry(int sock, uint32_t fileattr, char *attach);
+ public:
+  static void SendSharedInfoEntry(CoreThread* coreThread, PPalInfo pal);
+  static void BcstFileInfoEntry(CoreThread* coreThread, GSList *plist, GSList *flist);
+  static void RequestDataEntry(CoreThread* coreThread, int sock, uint32_t fileattr, char *attach);
 
  private:
-  void SendFileInfo(PalInfo *pal, uint32_t opttype, GSList *filist);
+  void SendFileInfo(PPalInfo pal, uint32_t opttype, std::vector<FileInfo>& filist);
   void BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist);
   void ThreadSendFile(int sock, FileInfo *file);
+
+ private:
+  CoreThread* coreThread;
 };
 
 }  // namespace iptux

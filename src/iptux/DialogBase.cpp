@@ -190,7 +190,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       file->filepath = g_strdup((char *)tlist->data);
       file->filectime = uint32_t(st.st_ctime);
       file->filenum = filenum;
-      file->fileown = (PalInfo *)(pallist->data);
+      file->fileown = g_cthrd->GetPal(((PalInfo *)(pallist->data))->GetKey());
       /* 加入文件信息到中心节点 */
       g_cthrd->Lock();
       g_cthrd->AttachFileToPrivate(file);

@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <atomic>
 
 #include "iptux/ProgramData.h"
 #include "iptux/Event.h"
@@ -119,8 +120,7 @@ class CoreThread {
   pthread_mutex_t mutex;  //锁
 
  private:
-  bool started;
-  pthread_t notifyToAllThread;
+  std::atomic_bool started;
   std::vector<EventCallback> callbacks;
 
  protected:

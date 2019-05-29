@@ -16,20 +16,16 @@
 
 namespace iptux {
 
-#define LOG_DEBUG(format, ...)                                     \
-  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_DEBUG, (format), \
-        ##__VA_ARGS__)
-#define LOG_INFO(format, ...) \
-  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_INFO, (format), ##__VA_ARGS__)
-#define LOG_WARN(format, ...)                                        \
-  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_WARNING, (format), \
-        ##__VA_ARGS__)
-#define LOG_CRIT(format, ...)                                         \
-  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_CRITICAL, (format), \
-        ##__VA_ARGS__)
-#define LOG_ERROR(format, ...)                                     \
-  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_ERROR, (format), \
-        ##__VA_ARGS__)
+#define LOG_DEBUG(...)                                     \
+  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_DEBUG, __VA_ARGS__)
+#define LOG_INFO(...) \
+  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_INFO, __VA_ARGS__)
+#define LOG_WARN(...)                                        \
+  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_WARNING, __VA_ARGS__)
+#define LOG_CRIT(...)                                         \
+  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_CRITICAL, __VA_ARGS__)
+#define LOG_ERROR(...)                                     \
+  DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_ERROR, __VA_ARGS__)
 
 /* 警告信息输出 */
 #ifndef WARNING

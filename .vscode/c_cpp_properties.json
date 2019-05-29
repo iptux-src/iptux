@@ -36,7 +36,8 @@
             "compilerPath": "/usr/local/opt/ccache/libexec/clang",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "clang-x64",
+            "compileCommands": "${workspaceFolder}/builddir/compile_commands.json"
         },
         {
             "name": "Linux-homebrew",
