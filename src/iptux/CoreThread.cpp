@@ -31,6 +31,7 @@ struct CoreThread::Impl {
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
   future<void> udpFuture;
   future<void> tcpFuture;
+  future<void> notifyToAllFuture;
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -71,8 +72,9 @@ void CoreThread::start() {
   pImpl->tcpFuture = async([](CoreThread* ct){
     RecvTcpData(ct);
   }, this);
-  /* 通知所有计算机本大爷上线啦 */
-  pthread_create(&notifyToAllThread, NULL, ThreadFunc(SendNotifyToAll), this);
+  pImpl->notifyToAllFuture = async([](CoreThread* ct){
+    SendNotifyToAll(ct);
+  }, this);
 }
 
 void CoreThread::bind_iptux_port() {
@@ -162,7 +164,6 @@ void CoreThread::stop() {
     throw "CoreThread not started, or already stopped";
   }
   started = false;
-  pthread_join(notifyToAllThread, nullptr);
   ClearSublayer();
 }
 

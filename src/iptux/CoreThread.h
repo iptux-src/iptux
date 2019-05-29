@@ -120,7 +120,6 @@ class CoreThread {
 
  private:
   bool started;
-  pthread_t notifyToAllThread;
   std::vector<EventCallback> callbacks;
 
  protected:
