@@ -30,6 +30,7 @@ struct CoreThread::Impl {
   bool debugDontBroadcast {false} ;
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
   future<void> udpFuture;
+  future<void> tcpFuture;
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -64,17 +65,12 @@ void CoreThread::start() {
 
   bind_iptux_port();
 
-  pthread_t pid;
-
   pImpl->udpFuture = async([](CoreThread* ct){
     RecvUdpData(ct);
   }, this);
-  /* 开启UDP监听服务 */
-  // pthread_create(&pid, NULL, ThreadFunc(RecvUdpData), this);
-  // pthread_detach(pid);
-  /* 开启TCP监听服务 */
-  pthread_create(&pid, NULL, ThreadFunc(RecvTcpData), this);
-  pthread_detach(pid);
+  pImpl->tcpFuture = async([](CoreThread* ct){
+    RecvTcpData(ct);
+  }, this);
   /* 通知所有计算机本大爷上线啦 */
   pthread_create(&notifyToAllThread, NULL, ThreadFunc(SendNotifyToAll), this);
 }
