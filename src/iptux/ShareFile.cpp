@@ -465,11 +465,12 @@ void DeleteFiles(ShareFile* self) {
 }
 
 void SetPassword(ShareFile* self) {
-  GtkWidget *widget, *parent;
+  GtkWidget *widget;
   char *passwd, *epasswd;
 
-  parent = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "dialog-widget"));
-  if (!(passwd = pop_password_settings(parent))) return;
+  if (!(passwd = pop_password_settings(GTK_WIDGET(self)))) {
+    return;
+  }
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "password-button-widget"));
   epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
   g_object_set_data_full(G_OBJECT(widget), "password", epasswd,

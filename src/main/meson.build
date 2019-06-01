@@ -1,5 +1,3 @@
-glog_dep = dependency('libglog')
-
 iptux_sources = files(['iptux.cpp'])
 executable('iptux',
     iptux_sources,
