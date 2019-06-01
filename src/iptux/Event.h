@@ -11,6 +11,7 @@ enum class EventType {
   ICON_UPDATE,
   PASSWORD_REQUIRED,
   PERMISSION_REQUIRED,
+  NEW_SHARE_FILE_FROM_FRIEND,
 };
 
 class Event {
@@ -73,6 +74,16 @@ class PermissionRequiredEvent: public Event {
   const PalKey& GetPalKey() const {return palKey;}
  private:
   PalKey palKey;
+};
+
+class NewShareFileFromFriendEvent: public Event {
+ public:
+  explicit NewShareFileFromFriendEvent(FileInfo fileInfo):
+    Event(EventType::NEW_SHARE_FILE_FROM_FRIEND),
+    fileInfo(fileInfo) {}
+  const FileInfo& GetFileInfo() const {return fileInfo;}
+ private:
+  FileInfo fileInfo;
 };
 }
 

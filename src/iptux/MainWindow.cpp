@@ -14,6 +14,7 @@
 
 #include <string>
 #include <cinttypes>
+#include <glog/logging.h>
 
 #include "iptux/Command.h"
 #include "iptux/DataSettings.h"
@@ -1100,7 +1101,6 @@ gboolean MainWindow::UpdateUI(MainWindow *mwin) {
   GtkWidget *widget;
   char buf[MAX_BUFLEN];
   uint32_t sum;
-  GSList *tlist;
 
   /* 统计当前在线人数 */
   sum = g_cthrd->GetOnlineCount();
@@ -1306,7 +1306,7 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
  */
 gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
                                          gboolean keyboard_mode, GtkTooltip *tooltip,
-                                         MainWindow *self) {
+                                         MainWindow *) {
   GtkTreePath *path;
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1340,7 +1340,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
 void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                        GtkTreeViewColumn *column,
+                                        GtkTreeViewColumn *,
                                         MainWindow *self) {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1468,9 +1468,9 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview,
  * @param time the timestamp at which the data was received
  */
 void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
-                                         GdkDragContext *context, gint x,
+                                         GdkDragContext *, gint x,
                                          gint y, GtkSelectionData *data,
-                                         guint info, guint time,
+                                         guint , guint ,
                                          MainWindow *self) {
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -1578,8 +1578,6 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   GtkTreeIter iter;
   char ipstr[INET_ADDRSTRLEN], *file;
   const gchar *text;
-  GSList *tlist;
-  PalInfo *pal;
 
   /* 获取默认主题 */
   theme = gtk_icon_theme_get_default();
@@ -1621,7 +1619,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
 void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                      GtkTreeViewColumn *column,
+                                      GtkTreeViewColumn *,
                                       MainWindow *self) {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1651,9 +1649,9 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
  * @param time the timestamp at which the data was received
  */
 void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
-                                         GdkDragContext *context, gint x,
+                                         GdkDragContext *, gint x,
                                          gint y, GtkSelectionData *data,
-                                         guint info, guint time,
+                                         guint , guint ,
                                          MainWindow *self) {
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -1700,7 +1698,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
+gboolean MainWindow::MWinConfigureEvent(GtkWidget *,
                                         GdkEventConfigure *event,
                                         MainWindow *self) {
   self->windowConfig.SetWidth(event->width)
@@ -1715,7 +1713,7 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
  * @param pspec he GParamSpec of the property which changed
  * @param dtset data set
  */
-void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
+void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *,
                                     MainWindow *self) {
   self->config->SetInt("mwin_main_paned_divide",
                       gtk_paned_get_position(GTK_PANED(paned)));
@@ -1930,6 +1928,13 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     if (permit) {
       g_cthrd->SendSharedFiles(pal);
     }
+  }
+
+  if(type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
+    auto event = dynamic_cast<const NewShareFileFromFriendEvent*>(_event.get());
+    CHECK_NOTNULL(event);
+    auto file = new FileInfo(event->GetFileInfo());
+    g_cthrd->PushItemToEnclosureList(file);
   }
   LOG_WARN("unknown event type: %d", int(type));
 }

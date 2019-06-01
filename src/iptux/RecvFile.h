@@ -14,15 +14,20 @@
 #ifndef IPTUX_RECVFILE_H
 #define IPTUX_RECVFILE_H
 
+#include <string>
+
 #include "iptux/Models.h"
+#include "iptux/CoreThread.h"
 
 namespace iptux {
 
 class RecvFile {
- public:
+ private:
   RecvFile();
   ~RecvFile();
-  static void RecvEntry(GData *para);
+
+ public:
+  static void RecvEntry(CoreThread* coreThread, PPalInfo pal, const std::string extra, int packeno);
 
  private:
   void ParseFilePara(GData **para);

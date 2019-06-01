@@ -327,11 +327,8 @@ void UdpData::SomeoneSendmsg() {
   if (commandno & IPMSG_FILEATTACHOPT) {
     if ((commandno & IPTUX_SHAREDOPT) && (commandno & IPTUX_PASSWDOPT)) {
       coreThread.emitEvent(make_shared<PasswordRequiredEvent>(pal->GetKey()));
-      // thread([](CoreThread* coreThread, PPalInfo pal){
-      //   ThreadAskSharedPasswd(coreThread, pal);
-      // }, &coreThread, pal).detach();
     } else {
-      //RecvPalFile();
+      RecvPalFile();
     }
   }
 
@@ -768,15 +765,9 @@ void UdpData::RecvPalFile() {
   ptr = iptux_skip_string(buf, size, 1);
   /* 只有当此为共享文件信息或文件信息不为空才需要接收 */
   if ((commandno & IPTUX_SHAREDOPT) || (ptr && *ptr != '\0')) {
-    para = NULL;
-    g_datalist_init(&para);
-    g_datalist_set_data(&para, "palinfo", coreThread.GetPalFromList(ipv4));
-    g_datalist_set_data_full(&para, "extra-data", g_strdup(ptr),
-                             GDestroyNotify(g_free));
-    g_datalist_set_data(&para, "packetno", GUINT_TO_POINTER(packetno));
-    g_datalist_set_data(&para, "commandno", GUINT_TO_POINTER(commandno));
-    pthread_create(&pid, NULL, ThreadFunc(RecvFile::RecvEntry), para);
-    pthread_detach(pid);
+    thread([](CoreThread* coreThread, PPalInfo pal, string data, int packetno){
+      RecvFile::RecvEntry(coreThread, pal, data, packetno);
+    }, &coreThread, coreThread.GetPal(ipv4), ptr, packetno).detach();
   }
 }
 
