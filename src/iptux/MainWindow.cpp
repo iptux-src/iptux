@@ -1928,6 +1928,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     if (permit) {
       g_cthrd->SendSharedFiles(pal);
     }
+    return;
   }
 
   if(type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
@@ -1935,6 +1936,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     CHECK_NOTNULL(event);
     auto file = new FileInfo(event->GetFileInfo());
     g_cthrd->PushItemToEnclosureList(file);
+    return;
   }
   LOG_WARN("unknown event type: %d", int(type));
 }
