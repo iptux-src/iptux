@@ -1922,7 +1922,16 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     }
     return;
   }
-  LOG_WARN("unknown event type: %d", type);
+
+  if(type == EventType::PERMISSION_REQUIRED) {
+    auto event = (const PermissionRequiredEvent*)(_event.get());
+    auto pal = g_cthrd->GetPal(event->GetPalKey());
+    auto permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal.get());
+    if (permit) {
+      g_cthrd->SendSharedFiles(pal);
+    }
+  }
+  LOG_WARN("unknown event type: %d", int(type));
 }
 
 }  // namespace iptux

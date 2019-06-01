@@ -785,17 +785,10 @@ void UdpData::RecvPalFile() {
  * @param pal class PalInfo
  */
 void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal) {
-  bool permit;
-
   auto g_progdt = coreThread->getProgramData();
 
   if (g_progdt->IsFilterFileShareRequest()) {
-    gdk_threads_enter();
-    permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal.get());
-    gdk_threads_leave();
-    if (permit) {
-      SendFile::SendSharedInfoEntry(coreThread, pal);
-    }
+    coreThread->emitEvent(make_shared<PermissionRequiredEvent>(pal->GetKey()));
   } else {
     SendFile::SendSharedInfoEntry(coreThread, pal);
   }

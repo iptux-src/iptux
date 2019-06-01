@@ -92,6 +92,7 @@ class CoreThread {
   void SendDetectPacket(in_addr_t ipv4);
   void SendExit(PPalInfo pal);
   void SendMyIcon(PPalInfo pal, std::istream& iss);
+  void SendSharedFiles(PPalInfo pal);
 
   /**
    * 插入消息(UI线程安全).
