@@ -21,15 +21,12 @@
 
 #include "Command.h"
 #include "CommandMode.h"
-#include "DialogGroup.h"
-#include "DialogPeer.h"
 #include "RecvFile.h"
 #include "SendFile.h"
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
 #include "output.h"
-#include "dialog.h"
 #include "iptux/global.h"
 
 using namespace std;
