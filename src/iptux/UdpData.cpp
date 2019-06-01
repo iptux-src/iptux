@@ -456,14 +456,16 @@ void UdpData::SomeoneBcstmsg() {
 
   /* 检查此消息是否过时 */
   packetno = iptux_get_dec_number(buf, ':', 1);
-  if (packetno <= pal->packetn) return;
+  if (packetno <= pal->packetn) {
+    return;
+  }
   pal->packetn = packetno;
 
   /* 插入消息&在消息队列中注册 */
   text = ipmsg_get_attach(buf, ':', 5);
   if (text && *text != '\0') {
     commandno = iptux_get_dec_number(buf, ':', 4);
-    /*/* 插入消息 */
+    /* 插入消息 */
     switch (GET_OPT(commandno)) {
       case IPTUX_BROADCASTOPT:
         InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST, text);
@@ -479,31 +481,8 @@ void UdpData::SomeoneBcstmsg() {
         InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
         break;
     }
-    /*/* 注册消息 */
-    coreThread.Lock();
-    switch (GET_OPT(commandno)) {
-      case IPTUX_BROADCASTOPT:
-        grpinf = g_cthrd->GetPalBroadcastItem(pal.get());
-        break;
-      case IPTUX_GROUPOPT:
-        grpinf = g_cthrd->GetPalGroupItem(pal.get());
-        break;
-      case IPTUX_SEGMENTOPT:
-        grpinf = g_cthrd->GetPalSegmentItem(pal.get());
-        break;
-      case IPTUX_REGULAROPT:
-      default:
-        grpinf = g_cthrd->GetPalRegularItem(pal.get());
-        break;
-    }
-    if (!grpinf->dialog && !g_cthrd->MsglineContainItem(grpinf))
-      g_cthrd->PushItemToMsgline(grpinf);
-    coreThread.Unlock();
   }
   g_free(text);
-
-  /* 播放提示音 */
-  if (FLAG_ISSET(g_progdt->sndfgs, 1)) g_sndsys->Playing(g_progdt->msgtip);
 }
 
 /**
