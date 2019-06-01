@@ -211,7 +211,7 @@ void UdpData::SomeoneExit() {
  * 好友在线.
  */
 void UdpData::SomeoneAnsEntry() {
-  Command cmd(*g_cthrd);
+  Command cmd(coreThread);
   const char *ptr;
 
   auto g_progdt = coreThread.getProgramData();
@@ -757,8 +757,6 @@ PPalInfo UdpData::AssertPalOnline() {
 void UdpData::RecvPalFile() {
   uint32_t packetno, commandno;
   const char *ptr;
-  pthread_t pid;
-  GData *para;
 
   packetno = iptux_get_dec_number(buf, ':', 1);
   commandno = iptux_get_dec_number(buf, ':', 4);
