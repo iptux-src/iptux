@@ -50,14 +50,14 @@ class UdpData {
   std::shared_ptr<PalInfo> CreatePalInfo();
   void UpdatePalInfo(PalInfo *pal);
 
-  void InsertMessage(PalInfo *pal, GroupBelongType btype, const char *msg);
+  void InsertMessage(PPalInfo pal, GroupBelongType btype, const char *msg);
   void ConvertEncode(const std::string &enc);
   void ConvertEncode(const char *enc);
   char *GetPalGroup();
   char *GetPalIcon();
   char *GetPalEncode();
   char *RecvPalIcon();
-  PalInfo *AssertPalOnline();
+  PPalInfo AssertPalOnline();
   void RecvPalFile();
 
  private:
@@ -68,7 +68,7 @@ class UdpData {
   char *encode;          //原数据编码(NULL意味着utf8)
 
  private:
-  static void ThreadAskSharedPasswd(PalInfo *pal);
+  static void ThreadAskSharedPasswd(CoreThread* coreThread, PPalInfo pal);
   static void ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal);
 };
 
