@@ -152,6 +152,7 @@ int main(int argc, char** argv) {
   auto config = make_shared<IptuxConfig>(configPath);
   dealLog(*config);
 
+  gdk_threads_init();
   Application app(config);
   return app.run(argc, argv);
 }
