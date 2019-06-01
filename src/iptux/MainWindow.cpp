@@ -33,6 +33,7 @@
 #include "iptux/TransWindow.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
+#include "iptux/dialog.h"
 
 using namespace std;
 
@@ -1906,6 +1907,19 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
       }
     }
 
+    return;
+  }
+
+  if(type == EventType::PASSWORD_REQUIRED) {
+    auto event = (const PasswordRequiredEvent*)(_event.get());
+    auto palKey = event->GetPalKey();
+    auto pal = g_cthrd->GetPal(palKey);
+    auto passwd = pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal.get());
+    if (passwd && *passwd != '\0') {
+      auto epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
+      Command(*g_cthrd).SendAskShared(g_cthrd->getUdpSock(), pal->GetKey(), IPTUX_PASSWDOPT, epasswd);
+      g_free(epasswd);
+    }
     return;
   }
   LOG_WARN("unknown event type: %d", type);

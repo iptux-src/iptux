@@ -68,7 +68,6 @@ class UdpData {
   char *encode;          //原数据编码(NULL意味着utf8)
 
  private:
-  static void ThreadAskSharedPasswd(CoreThread* coreThread, PPalInfo pal);
   static void ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal);
 };
 

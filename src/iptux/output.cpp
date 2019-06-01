@@ -13,6 +13,8 @@
 #include "output.h"
 
 #include <string>
+#include <thread>
+#include <sstream>
 
 #include <sys/time.h>
 
@@ -24,6 +26,12 @@ using namespace std;
 namespace iptux {
 
 static LogLevel _level = LogLevel::WARN;
+
+static string getThreadName() {
+  ostringstream oss;
+  oss << this_thread::get_id();
+  return oss.str();
+}
 
 static const char* logLevelAsString(GLogLevelFlags logLevel) {
   switch (logLevel) {
@@ -72,7 +80,9 @@ void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
   va_start(ap, format);
   gchar *msg = g_strdup_vprintf(format, ap);
   va_end(ap);
-  fprintf(stderr, "[%s][iptux][%s]%s:%d:%s:%s\n", nowAsString().c_str(),
+  fprintf(stderr, "[%s][iptux-%s][%s]%s:%d:%s:%s\n",
+          nowAsString().c_str(),
+          getThreadName().c_str(),
           logLevelAsString(level),
           pretty_fname(fname).c_str(), line, func, msg);
   g_free(msg);

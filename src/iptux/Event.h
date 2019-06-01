@@ -9,6 +9,7 @@ enum class EventType {
   NEW_MESSAGE,
   PAL_OFFLINE,
   ICON_UPDATE,
+  PASSWORD_REQUIRED,
 };
 
 class Event {
@@ -52,6 +53,17 @@ class IconUpdateEvent: public Event {
  private:
   PalKey palKey;
 };
+
+class PasswordRequiredEvent: public Event {
+ public:
+  explicit PasswordRequiredEvent(PalKey palKey):
+    Event(EventType::PASSWORD_REQUIRED),
+    palKey(palKey) {}
+  const PalKey& GetPalKey() const {return palKey;}
+ private:
+  PalKey palKey;
+};
+
 }
 
 #endif //IPTUX_EVENT_H

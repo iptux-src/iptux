@@ -326,9 +326,10 @@ void UdpData::SomeoneSendmsg() {
   /* 标记位处理 先处理底层数据，后面显示窗口*/
   if (commandno & IPMSG_FILEATTACHOPT) {
     if ((commandno & IPTUX_SHAREDOPT) && (commandno & IPTUX_PASSWDOPT)) {
-      thread([](CoreThread* coreThread, PPalInfo pal){
-        ThreadAskSharedPasswd(coreThread, pal);
-      }, &coreThread, pal).detach();
+      coreThread.emitEvent(make_shared<PasswordRequiredEvent>(pal->GetKey()));
+      // thread([](CoreThread* coreThread, PPalInfo pal){
+      //   ThreadAskSharedPasswd(coreThread, pal);
+      // }, &coreThread, pal).detach();
     } else {
       //RecvPalFile();
     }
@@ -777,25 +778,6 @@ void UdpData::RecvPalFile() {
     pthread_create(&pid, NULL, ThreadFunc(RecvFile::RecvEntry), para);
     pthread_detach(pid);
   }
-}
-
-/**
- * 请求获取好友共享文件的密码.
- * @param pal class PalInfo
- */
-void UdpData::ThreadAskSharedPasswd(CoreThread* coreThread, PPalInfo pal) {
-  Command cmd(*coreThread);
-  gchar *passwd, *epasswd;
-
-  gdk_threads_enter();
-  passwd = pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal.get());
-  gdk_threads_leave();
-  if (passwd && *passwd != '\0') {
-    epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
-    cmd.SendAskShared(coreThread->getUdpSock(), pal->GetKey(), IPTUX_PASSWDOPT, epasswd);
-    g_free(epasswd);
-  }
-  g_free(passwd);
 }
 
 /**
