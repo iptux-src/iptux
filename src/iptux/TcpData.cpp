@@ -18,7 +18,6 @@
 #include <sys/socket.h>
 
 #include "SendFile.h"
-#include "global.h"
 #include "iptux/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
@@ -192,12 +191,9 @@ void TcpData::RecvSublayerData(int fd, size_t len) {
 void TcpData::RecvPhotoPic(PalInfo *pal, const char *path) {
   g_free(pal->photo);
   pal->photo = g_strdup(path);
-  gdk_threads_enter();
-  g_cthrd->Lock();
-  g_cthrd->UpdatePalToList(pal->ipv4);
-  g_cthrd->Unlock();
-  g_mwin->UpdateItemToPaltree(pal->ipv4);
-  gdk_threads_leave();
+  coreThread->Lock();
+  coreThread->UpdatePalToList(pal->ipv4);
+  coreThread->Unlock();
 }
 
 /**
