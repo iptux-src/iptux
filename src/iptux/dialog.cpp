@@ -12,6 +12,8 @@
 #include "config.h"
 #include "dialog.h"
 
+#include <glog/logging.h>
+
 #include "iptux/callback.h"
 #include "iptux/deplib.h"
 #include "iptux/output.h"
@@ -159,6 +161,7 @@ mark:
  * @return password string
  */
 char *pop_password_settings(GtkWidget *parent) {
+  CHECK_NOTNULL(parent);
   GtkWidget *dialog, *hbox, *passwd, *repeat;
   gchar *text1, *text2;
   gint result;

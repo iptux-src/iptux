@@ -55,7 +55,7 @@ class DialogBase : public SessionAbstract {
   virtual bool SendTextMsg() = 0;
   /* TODO: Group SendTextMsg need add Picture */
   void FeedbackMsg(const gchar *msg);
-  virtual void BroadcastEnclosureMsg(GSList *list){};
+  virtual void BroadcastEnclosureMsg(GSList *){};
 
   // 回调部分
   static void DialogDestory(DialogBase *);

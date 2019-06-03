@@ -17,10 +17,6 @@
 
 #include <cstring>
 
-#include "iptux/UiProgramData.h"
-#include "iptux/RecvFileData.h"
-#include "iptux/callback.h"
-#include "iptux/global.h"
 #include "iptux/utils.h"
 
 using namespace std;
@@ -37,38 +33,28 @@ RecvFile::RecvFile() {}
  */
 RecvFile::~RecvFile() {}
 
+FileInfo * DivideFileinfo(char **extra);
+
 /**
  * 文件接受入口.
  * @param para 文件参数
  */
-void RecvFile::RecvEntry(GData *para) {
-  RecvFile *rfile;
+void RecvFile::RecvEntry(CoreThread* coreThread,
+  PPalInfo pal,
+  const std::string extra,
+  int packetno)
+{
+  auto extra2 = g_strdup(extra.c_str());
+  auto extra3 = extra2;
 
-  rfile = new RecvFile;
-  rfile->ParseFilePara(&para);
-  g_datalist_clear(&para);  // para提供的数据已经没用了，秒掉它
-  delete rfile;  //待接上文件的信息已存入中心节点可以删除了
-}
-/**
- * 分析文件参数.
- * @param para 文件参数
- */
-void RecvFile::ParseFilePara(GData **para) {
-  PalInfo *pal;
-  FileInfo *file;
-  char *extra;
-  uint32_t packetn;
-
-  pal = (PalInfo *)g_datalist_get_data(para, "palinfo");
-  extra = (char *)g_datalist_get_data(para, "extra-data");
-  packetn = GPOINTER_TO_UINT(g_datalist_get_data(para, "packetno"));
-
-  while (extra && *extra) {
-    file = DivideFileinfo(&extra);
-    file->packetn = packetn;
-    file->fileown = g_cthrd->GetPal(pal->GetKey());
-    g_cthrd->PushItemToEnclosureList(file);
+  while (extra3 && *extra3) {
+    auto file = iptux::DivideFileinfo(&extra3);
+    file->packetn = packetno;
+    file->fileown = pal;
+    coreThread->emitEvent(make_shared<NewShareFileFromFriendEvent>(*file));
+    delete file;
   }
+  g_free(extra2);
 }
 
 /**
@@ -76,7 +62,7 @@ void RecvFile::ParseFilePara(GData **para) {
  * @param extra 文件信息串
  * @return 文件信息数据
  */
-FileInfo *RecvFile::DivideFileinfo(char **extra) {
+FileInfo * DivideFileinfo(char **extra) {
   FileInfo *file;
 
   file = new FileInfo;

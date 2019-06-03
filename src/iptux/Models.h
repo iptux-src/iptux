@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef IPTUX_MESS_H
-#define IPTUX_MESS_H
+#ifndef IPTUX_MODELS_H
+#define IPTUX_MODELS_H
 
 #include <string>
 #include <memory>

@@ -22,7 +22,8 @@
 
 #include <glib.h>
 #include <libintl.h>
-#include <execinfo.h>
+
+#include <glog/logging.h>
 
 #include "iptux/Application.h"
 #include "iptux/SoundSystem.h"
@@ -127,24 +128,8 @@ static void dealLog(const IptuxConfig& config) {
 
 
 
-static void segvHandler(int sig) {
-  void *array[99];
-  size_t size;
-
-  // get void*'s for all entries on the stack
-  size = backtrace(array, 99);
-
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, STDERR_FILENO);
-  exit(1);
-}
-
-
 int main(int argc, char** argv) {
-  signal(SIGSEGV, segvHandler);
-  signal(SIGABRT, segvHandler);
-  signal(SIGTRAP, segvHandler);
+  google::InstallFailureSignalHandler();
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -167,6 +152,7 @@ int main(int argc, char** argv) {
   auto config = make_shared<IptuxConfig>(configPath);
   dealLog(*config);
 
+  gdk_threads_init();
   Application app(config);
   return app.run(argc, argv);
 }

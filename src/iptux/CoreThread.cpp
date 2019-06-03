@@ -19,6 +19,7 @@
 #include "Command.h"
 #include "deplib.h"
 #include "iptux/Exception.h"
+#include "iptux/SendFile.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -443,6 +444,10 @@ void CoreThread::InsertMessage(MsgPara&& para) {
 bool CoreThread::SendAskShared(PPalInfo pal) {
   Command(*this).SendAskShared(getUdpSock(), pal, 0, NULL);
   return true;
+}
+
+void CoreThread::SendSharedFiles(PPalInfo pal) {
+  SendFile::SendSharedInfoEntry(this, pal);
 }
 
 void CoreThread::UpdateMyInfo() {

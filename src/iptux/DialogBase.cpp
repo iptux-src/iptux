@@ -514,7 +514,7 @@ void DialogBase::DialogDestory(DialogBase *dialog) { delete dialog; }
 /**
  * 清除提示,这个提示只是窗口闪动的提示
  */
-gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event) {
+gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
   if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
     gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
   return FALSE;
@@ -532,8 +532,8 @@ gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event) {
  * @param time the timestamp at which the data was received
  */
 void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
-                                  gint x, gint y, GtkSelectionData *data,
-                                  guint info, guint time) {
+                                  gint, gint, GtkSelectionData *data,
+                                  guint, guint time) {
   GtkWidget *widget;
   GSList *list;
 
@@ -559,7 +559,7 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean DialogBase::WindowConfigureEvent(GtkWidget *window,
+gboolean DialogBase::WindowConfigureEvent(GtkWidget *,
                                           GdkEventConfigure *event,
                                           GData **dtset) {
   g_datalist_set_data(dtset, "window-width", GINT_TO_POINTER(event->width));
@@ -574,7 +574,7 @@ gboolean DialogBase::WindowConfigureEvent(GtkWidget *window,
  * @param pspec he GParamSpec of the property which changed
  * @param dtset data set
  */
-void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
+void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec * /*pspec*/,
                                     GData **dtset) {
   const gchar *identify;
   gint position;
@@ -847,6 +847,6 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
  * 打开文件传输窗口.
  * @param dlgpr 对话框类
  */
-void DialogBase::OpenTransDlg(DialogBase *dlgpr) { g_mwin->OpenTransWindow(); }
+void DialogBase::OpenTransDlg(DialogBase */*dlgpr*/) { g_mwin->OpenTransWindow(); }
 
 }  // namespace iptux

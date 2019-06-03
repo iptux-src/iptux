@@ -1,6 +1,7 @@
 #include "config.h"
 #include "TransWindow.h"
 
+#include <memory>
 #include <glib/gi18n.h>
 
 #include "iptux/IptuxConfig.h"
@@ -12,6 +13,8 @@
 #include "iptux/UiModels.h"
 
 #define IPTUX_PRIVATE "iptux-private"
+
+using namespace std;
 
 namespace iptux {
 
@@ -33,6 +36,7 @@ static void OpenThisFile(GtkTreeModel *model);
 static void ClearTransTask(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
+static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 
 TransWindow *trans_window_new(GtkWindow *parent) {
   g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
@@ -47,7 +51,7 @@ TransWindow *trans_window_new(GtkWindow *parent) {
   gtk_window_set_transient_for(window, parent);
   gtk_window_set_destroy_with_parent(window, true);
 
-  IptuxConfig *config = static_cast<IptuxConfig *>(g_object_get_data(G_OBJECT(parent), "iptux-config"));
+  auto config = trans_window_get_config(window);
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
   gtk_window_set_default_size(GTK_WINDOW(window),
                               config->GetInt("trans_window_width", 500),
@@ -67,7 +71,6 @@ TransWindow *trans_window_new(GtkWindow *parent) {
   return window;
 }
 
-IptuxConfig *trans_window_get_config(GtkWindow *pWindow);
 /**
  * 文件传输窗口位置&大小改变的响应处理函数.
  * @param window 文件传输窗口
@@ -79,16 +82,16 @@ gboolean TWinConfigureEvent(GtkWindow *window) {
   int width, height;
   gtk_window_get_size(window, &width, &height);
 
-  IptuxConfig* config = trans_window_get_config(window);
+  auto config = trans_window_get_config(window);
   config->SetInt("trans_window_width", width);
   config->SetInt("trans_window_height", height);
   config->Save();
   return FALSE;
 }
 
-IptuxConfig* trans_window_get_config(GtkWindow *window) {
+shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *window) {
   GtkWindow* parent = gtk_window_get_transient_for(window);
-  return static_cast<IptuxConfig *>(g_object_get_data(G_OBJECT(parent), "iptux-config"));
+  return *(static_cast<shared_ptr<IptuxConfig> *>(g_object_get_data(G_OBJECT(parent), "iptux-config")));
 }
 
 GtkTreeModel* trans_window_get_trans_model(GtkWindow* window) {
