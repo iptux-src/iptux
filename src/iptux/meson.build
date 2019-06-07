@@ -25,6 +25,7 @@ configure_file(input : 'TestConfig.h.in',
 
 core_sources = files([
     '../iptux-core/CoreThread.cpp',
+    '../iptux-core/TcpData.cpp',
     '../iptux-core/UdpData.cpp',
 ])
 
@@ -54,7 +55,6 @@ sources = files([
     'ShareFile.cpp',
     'SoundSystem.cpp',
     'StatusIcon.cpp',
-    'TcpData.cpp',
     'TransAbstract.cpp',
     'TransFileModel.cpp',
     'TransWindow.cpp',
