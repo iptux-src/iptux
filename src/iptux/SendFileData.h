@@ -27,6 +27,7 @@ class SendFileData: public TransAbstract {
   void SendFileDataEntry();
   virtual const TransFileModel& getTransFileModel() const;
   virtual void TerminateTrans();
+
  private:
   void CreateUIPara();
   void SendRegularFile();
