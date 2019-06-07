@@ -26,7 +26,6 @@ class BindFailedException: public std::runtime_error {
   }
 };
 
-void iptux_open_url(const char *url);
 void init_iptux_environment();
 char *ipv4_get_lan_name(in_addr_t ipv4);
 

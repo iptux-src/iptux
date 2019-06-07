@@ -11,6 +11,7 @@
 #include "iptux/TransAbstract.h"
 #include "iptux/output.h"
 #include "iptux/UiModels.h"
+#include "iptux/UiHelper.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 

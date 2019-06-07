@@ -15,6 +15,7 @@
 
 #include "iptux-core/deplib.h"
 #include "iptux/support.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 
