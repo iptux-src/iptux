@@ -20,7 +20,7 @@
 
 #include "UiCoreThread.h"
 #include "UiProgramData.h"
-#include "ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "iptux-core/deplib.h"
 #include "iptux-core/output.h"
 #include "utils.h"

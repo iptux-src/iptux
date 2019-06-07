@@ -10,7 +10,7 @@
 #include <memory>
 #include <future>
 
-#include "ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "support.h"
 #include "iptux-core/output.h"
 #include "utils.h"

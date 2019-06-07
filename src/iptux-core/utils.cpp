@@ -26,7 +26,7 @@
 #include <sys/vfs.h>
 #endif
 
-#include "iptux/ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "iptux-core/output.h"
 #include "Exception.h"
 

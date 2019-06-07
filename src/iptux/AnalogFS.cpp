@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "iptux/ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "iptux-core/output.h"
 #include "iptux-core/utils.h"
 

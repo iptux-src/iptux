@@ -21,7 +21,7 @@
 #include "iptux/UiProgramData.h"
 #include "iptux/StatusIcon.h"
 #include "iptux/global.h"
-#include "iptux/ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "iptux-core/support.h"
 #include "iptux/UiHelper.h"
 

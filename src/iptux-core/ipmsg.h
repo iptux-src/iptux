@@ -23,8 +23,9 @@
  * SUCH DAMAGE.
  */
 
-#if !defined(IPTUX_IPMSG_H)
+#ifndef IPTUX_IPMSG_H
 #define IPTUX_IPMSG_H
+
 #define IPMSG_VERSION 0x001
 #define IPMSG_PORT 0x979
 

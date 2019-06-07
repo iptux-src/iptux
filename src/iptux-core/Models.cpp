@@ -15,7 +15,7 @@
 #include <sstream>
 
 #include "iptux-core/utils.h"
-#include "iptux/ipmsg.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 

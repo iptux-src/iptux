@@ -22,7 +22,7 @@
 #include "iptux/AnalogFS.h"
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "iptux-core/output.h"
 #include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
