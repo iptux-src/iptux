@@ -19,7 +19,7 @@
 #include "Command.h"
 #include "deplib.h"
 #include "iptux-core/Exception.h"
-#include "iptux/SendFile.h"
+#include "iptux-core/SendFile.h"
 
 using namespace std;
 using namespace std::placeholders;

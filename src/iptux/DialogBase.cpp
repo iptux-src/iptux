@@ -18,7 +18,7 @@
 
 #include "iptux/AnalogFS.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/SendFile.h"
+#include "iptux-core/SendFile.h"
 #include "iptux/callback.h"
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"

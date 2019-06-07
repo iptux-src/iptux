@@ -36,6 +36,7 @@ core_sources = files([
     '../iptux-core/output.cpp',
     '../iptux-core/Exception.cpp',
     '../iptux-core/IptuxConfig.cpp',
+    '../iptux-core/SendFile.cpp',
 ])
 
 sources = files([
@@ -53,7 +54,6 @@ sources = files([
     'RecvFile.cpp',
     'RecvFileData.cpp',
     'RevisePal.cpp',
-    'SendFile.cpp',
     'SendFileData.cpp',
     'ShareFile.cpp',
     'SoundSystem.cpp',
