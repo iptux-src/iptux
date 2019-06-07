@@ -22,7 +22,7 @@
 #include "iptux/UiProgramData.h"
 #include "iptux/Models.h"
 #include "iptux/UiModels.h"
-#include "iptux/CoreThread.h"
+#include "iptux-core/CoreThread.h"
 
 namespace iptux {
 

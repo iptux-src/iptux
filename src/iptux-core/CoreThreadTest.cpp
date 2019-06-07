@@ -3,7 +3,7 @@
 #include <thread>
 #include <fstream>
 
-#include "iptux/CoreThread.h"
+#include "iptux-core/CoreThread.h"
 #include "iptux/TestHelper.h"
 #include "iptux/utils.h"
 #include "iptux/Exception.h"

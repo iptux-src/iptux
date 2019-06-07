@@ -27,8 +27,10 @@ Application::Application(shared_ptr<IptuxConfig> config)
 : config(config),
   data(nullptr),
   window(nullptr),
-  shareFile(nullptr) {
-  app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
+  shareFile(nullptr)
+{
+  auto application_id = config->GetString("debug_application_id", "io.github.iptux-src.iptux");
+  app = gtk_application_new (application_id.c_str(), G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
 }
@@ -69,6 +71,11 @@ void Application::onStartup(Application& self) {
 }
 
 void Application::onActivate(Application& self) {
+  if(self.started) {
+    return;
+  }
+  self.started = true;
+
   StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
 

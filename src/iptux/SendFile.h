@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "iptux/Models.h"
-#include "iptux/CoreThread.h"
+#include "iptux-core/CoreThread.h"
 
 namespace iptux {
 

@@ -23,12 +23,15 @@ configure_file(input : 'TestConfig.h.in',
                output : 'TestConfig.h',
                configuration : test_conf_data)
 
+core_sources = files([
+    '../iptux-core/CoreThread.cpp'
+])
+
 sources = files([
     'AnalogFS.cpp',
     'Application.cpp',
     'Command.cpp',
     'CommandMode.cpp',
-    'CoreThread.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',
     'DialogBase.cpp',
@@ -94,16 +97,18 @@ sources += [iptux_resource_h, iptux_resource_cpp]
 inc = include_directories('..')
 
 libiptux = static_library('iptux',
-    sources,
+    sources + core_sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep],
     include_directories: inc
 )
 
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
+core_test_sources = files([
+    '../iptux-core/CoreThreadTest.cpp'
+])
 test_sources = files([
     'CommandModeTest.cpp',
-    'CoreThreadTest.cpp',
     'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
     'ModelsTest.cpp',
@@ -116,7 +121,7 @@ test_sources = files([
     'UtilsTest.cpp'
 ])
 libiptux_test = executable('libiptux_test',
-    test_sources,
+    test_sources+core_test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep],
     link_with: [libiptux, libgtest],
     include_directories: [inc, gtest_inc]
