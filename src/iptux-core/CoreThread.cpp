@@ -10,16 +10,16 @@
 #include <memory>
 #include <future>
 
-#include "ipmsg.h"
+#include "iptux-core/ipmsg.h"
 #include "support.h"
-#include "output.h"
+#include "iptux-core/output.h"
 #include "utils.h"
 #include "UdpData.h"
 #include "TcpData.h"
 #include "Command.h"
 #include "deplib.h"
-#include "iptux/Exception.h"
-#include "iptux/SendFile.h"
+#include "iptux-core/Exception.h"
+#include "iptux-core/SendFile.h"
 
 using namespace std;
 using namespace std::placeholders;

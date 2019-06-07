@@ -23,11 +23,9 @@
 #include "CommandMode.h"
 #include "RecvFile.h"
 #include "SendFile.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "utils.h"
-#include "wrapper.h"
-#include "output.h"
-#include "iptux/global.h"
+#include "iptux-core/output.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -156,12 +154,10 @@ void UdpData::SomeoneLost() {
   pal->rpacketn = 0;
 
   /* 加入好友列表 */
-  gdk_threads_enter();
   coreThread.Lock();
   coreThread.AttachPalToList(pal);
   coreThread.Unlock();
   // coreThread.AttachItemToPaltree(ipv4);
-  gdk_threads_leave();
 }
 
 /**
@@ -261,7 +257,6 @@ void UdpData::SomeoneAbsence() {
   }
 
   /* 加入或更新好友列表 */
-  gdk_threads_enter();
   coreThread.Lock();
   if (pal) {
     UpdatePalInfo(pal);
@@ -270,11 +265,6 @@ void UdpData::SomeoneAbsence() {
     coreThread.AttachPalToList(CreatePalInfo());
   }
   coreThread.Unlock();
-  if (g_mwin->PaltreeContainItem(ipv4))
-    g_mwin->UpdateItemToPaltree(ipv4);
-  else
-    g_mwin->AttachItemToPaltree(ipv4);
-  gdk_threads_leave();
 }
 
 /**
@@ -429,7 +419,6 @@ void UdpData::SomeoneSendSign() {
  * 好友广播消息.
  */
 void UdpData::SomeoneBcstmsg() {
-  GroupInfo *grpinf;
   uint32_t commandno, packetno;
   char *text;
 
@@ -670,7 +659,6 @@ char *UdpData::GetPalEncode() {
  * @return 头像文件名
  */
 char *UdpData::RecvPalIcon() {
-  GdkPixbuf *pixbuf;
   char path[MAX_PATHLEN];
   char *iconfile;
   size_t len;
@@ -689,17 +677,7 @@ char *UdpData::RecvPalIcon() {
   }
   xwrite(fd, buf + len, size - len);
   close(fd);
-
-  /* 将头像pixbuf加入内建 */
-  iconfile = NULL;
-  gdk_threads_enter();
-  if ((pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
-    iconfile = g_strdup_printf("%" PRIx32, ipv4);
-    gtk_icon_theme_add_builtin_icon(iconfile, MAX_ICONSIZE, pixbuf);
-    g_object_unref(pixbuf);
-  }
-  gdk_threads_leave();
-
+  iconfile = g_strdup_printf("%" PRIx32, ipv4);
   return iconfile;
 }
 

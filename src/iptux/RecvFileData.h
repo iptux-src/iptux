@@ -12,8 +12,8 @@
 #ifndef IPTUX_RECVFILEDATA_H
 #define IPTUX_RECVFILEDATA_H
 
-#include "iptux/ipmsg.h"
-#include "iptux/Models.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/Models.h"
 #include "iptux/TransAbstract.h"
 
 namespace iptux {

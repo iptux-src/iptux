@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "iptux/UiProgramData.h"
-#include "iptux/TestHelper.h"
+#include "iptux-core/TestHelper.h"
 
 using namespace iptux;
 

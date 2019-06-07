@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 
 namespace iptux {
 

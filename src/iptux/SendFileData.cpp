@@ -22,10 +22,9 @@
 #include <sys/time.h>
 
 #include "iptux/AnalogFS.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/utils.h"
-#include "iptux/wrapper.h"
+#include "iptux-core/utils.h"
 
 namespace iptux {
 

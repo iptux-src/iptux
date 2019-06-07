@@ -19,9 +19,9 @@
 #include "ShareFile.h"
 #include "callback.h"
 #include "global.h"
-#include "iptux/deplib.h"
-#include "support.h"
-#include "utils.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

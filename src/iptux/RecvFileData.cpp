@@ -18,14 +18,13 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 
+#include "iptux-core/Command.h"
 #include "iptux/AnalogFS.h"
-#include "iptux/Command.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/ipmsg.h"
-#include "iptux/output.h"
-#include "iptux/utils.h"
-#include "iptux/wrapper.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/output.h"
+#include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
 
 namespace iptux {

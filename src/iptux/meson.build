@@ -23,38 +23,44 @@ configure_file(input : 'TestConfig.h.in',
                output : 'TestConfig.h',
                configuration : test_conf_data)
 
+core_sources = files([
+    '../iptux-core/Command.cpp',
+    '../iptux-core/CoreThread.cpp',
+    '../iptux-core/Event.cpp',
+    '../iptux-core/TcpData.cpp',
+    '../iptux-core/UdpData.cpp',
+    '../iptux-core/Models.cpp',
+    '../iptux-core/support.cpp',
+    '../iptux-core/utils.cpp',
+    '../iptux-core/ProgramData.cpp',
+    '../iptux-core/output.cpp',
+    '../iptux-core/Exception.cpp',
+    '../iptux-core/IptuxConfig.cpp',
+    '../iptux-core/SendFile.cpp',
+])
+
 sources = files([
     'AnalogFS.cpp',
     'Application.cpp',
-    'Command.cpp',
     'CommandMode.cpp',
-    'CoreThread.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
-    'Event.cpp',
-    'Exception.cpp',
     'HelpDialog.cpp',
-    'IptuxConfig.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
-    'Models.cpp',
-    'ProgramData.cpp',
     'RecvFile.cpp',
     'RecvFileData.cpp',
     'RevisePal.cpp',
-    'SendFile.cpp',
     'SendFileData.cpp',
     'ShareFile.cpp',
     'SoundSystem.cpp',
     'StatusIcon.cpp',
-    'TcpData.cpp',
     'TransAbstract.cpp',
     'TransFileModel.cpp',
     'TransWindow.cpp',
-    'UdpData.cpp',
     'UiCoreThread.cpp',
     'UiHelper.cpp',
     'UiModels.cpp',
@@ -63,10 +69,6 @@ sources = files([
     'callback.cpp',
     'dialog.cpp',
     'global.cpp',
-    'output.cpp',
-    'support.cpp',
-    'utils.cpp',
-    'wrapper.cpp'
 ])
 
 glib_compile_resources = find_program('glib-compile-resources')
@@ -94,29 +96,31 @@ sources += [iptux_resource_h, iptux_resource_cpp]
 inc = include_directories('..')
 
 libiptux = static_library('iptux',
-    sources,
+    sources + core_sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep],
     include_directories: inc
 )
 
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
+core_test_sources = files([
+    '../iptux-core/CoreThreadTest.cpp',
+    '../iptux-core/UdpDataTest.cpp',
+    '../iptux-core/ModelsTest.cpp',
+    '../iptux-core/UtilsTest.cpp',
+    '../iptux-core/ProgramDataTest.cpp',
+    '../iptux-core/IptuxConfigTest.cpp',
+    '../iptux-core/TestHelper.cpp',
+])
 test_sources = files([
     'CommandModeTest.cpp',
-    'CoreThreadTest.cpp',
-    'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
-    'ModelsTest.cpp',
-    'ProgramDataTest.cpp',
-    'TestHelper.cpp',
     'TestMain.cpp',
-    'UdpDataTest.cpp',
     'UiCoreThreadTest.cpp',
     'UiProgramDataTest.cpp',
-    'UtilsTest.cpp'
 ])
 libiptux_test = executable('libiptux_test',
-    test_sources,
+    test_sources+core_test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep],
     link_with: [libiptux, libgtest],
     include_directories: [inc, gtest_inc]

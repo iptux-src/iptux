@@ -1,7 +1,7 @@
 #ifndef IPTUX_EVENT_H
 #define IPTUX_EVENT_H
 
-#include "Models.h"
+#include "iptux-core/Models.h"
 namespace iptux {
 
 enum class EventType {

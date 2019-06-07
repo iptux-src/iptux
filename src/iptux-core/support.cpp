@@ -20,40 +20,12 @@
 
 #include "UiCoreThread.h"
 #include "UiProgramData.h"
-#include "ipmsg.h"
-#include "iptux/deplib.h"
-#include "output.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/output.h"
 #include "utils.h"
 
 namespace iptux {
-
-/**
- * 打开URL.
- * @param url url
- */
-void iptux_open_url(const char *url) {
-  int fd;
-
-  if (fork() != 0) return;
-
-  /* 关闭由iptux打开的所有可能的文件描述符 */
-  fd = 3;
-  while (fd < FD_SETSIZE) {
-    close(fd);
-    fd++;
-  }
-  /* 脱离终端控制 */
-  setsid();
-
-  /* 打开URL */
-  execlp("xdg-open", "xdg-open", url, NULL);
-  /* 测试系统中所有可能被安装的浏览器 */
-  execlp("firefox", "firefox", url, NULL);
-  execlp("opera", "opera", url, NULL);
-  execlp("konqueror", "konqueror", url, NULL);
-  execlp("open", "open", url, NULL);
-  LOG_WARN(_("Can't find any available web browser!\n"));
-}
 
 /**
  * 初始化程序iptux的运行环境.

@@ -4,13 +4,14 @@
 #include <memory>
 #include <glib/gi18n.h>
 
-#include "iptux/IptuxConfig.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
-#include "iptux/deplib.h"
+#include "iptux-core/IptuxConfig.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
+#include "iptux-core/deplib.h"
 #include "iptux/TransAbstract.h"
-#include "iptux/output.h"
+#include "iptux-core/output.h"
 #include "iptux/UiModels.h"
+#include "iptux/UiHelper.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 

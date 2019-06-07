@@ -12,9 +12,9 @@
 #ifndef IPTUX_TCPDATA_H
 #define IPTUX_TCPDATA_H
 
-#include "iptux/ipmsg.h"
-#include "iptux/Models.h"
-#include "iptux/CoreThread.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/CoreThread.h"
 
 namespace iptux {
 

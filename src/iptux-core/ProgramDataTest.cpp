@@ -2,8 +2,8 @@
 
 #include <glib/gstdio.h>
 
-#include "iptux/ProgramData.h"
-#include "iptux/TestHelper.h"
+#include "iptux-core/ProgramData.h"
+#include "iptux-core/TestHelper.h"
 
 using namespace std;
 using namespace iptux;

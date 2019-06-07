@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-#include "Models.h"
+#include "iptux-core/Models.h"
 #include "iptux/TransFileModel.h"
 
 namespace iptux {

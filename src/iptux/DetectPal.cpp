@@ -12,12 +12,12 @@
 #include "config.h"
 #include "DetectPal.h"
 
-#include "iptux/Command.h"
+#include "iptux-core/Command.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/output.h"
+#include "iptux-core/output.h"
 #include "iptux/UiHelper.h"
 
 namespace iptux {

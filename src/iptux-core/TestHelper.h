@@ -4,8 +4,8 @@
 #include <memory>
 #include <string>
 
-#include "iptux/IptuxConfig.h"
-#include "iptux/CoreThread.h"
+#include "iptux-core/IptuxConfig.h"
+#include "iptux-core/CoreThread.h"
 
 namespace iptux {
   std::shared_ptr<IptuxConfig> newTestIptuxConfig();

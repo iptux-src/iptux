@@ -5,8 +5,8 @@
 
 #include <netinet/in.h>
 
-#include "iptux/IptuxConfig.h"
-#include "iptux/Models.h"
+#include "iptux-core/IptuxConfig.h"
+#include "iptux-core/Models.h"
 
 namespace iptux {
 

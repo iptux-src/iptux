@@ -18,6 +18,7 @@ GSList *selection_data_get_path(GtkSelectionData *data);
 void pop_info(GtkWidget *parent, const gchar *format, ...);
 void pop_warning(GtkWidget *parent, const gchar *format, ...);
 void pop_error(const gchar *format, ...);
+void iptux_open_url(const char *url);
 
 }
 #endif //IPTUX_UIHELPER_H

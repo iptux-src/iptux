@@ -12,16 +12,16 @@
 #include "config.h"
 #include "DialogGroup.h"
 
-#include "iptux/Command.h"
+#include "iptux-core/Command.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/SendFile.h"
+#include "iptux-core/SendFile.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/output.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/output.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
 
 using namespace std;

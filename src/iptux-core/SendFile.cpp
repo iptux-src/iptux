@@ -17,12 +17,12 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include "iptux-core/Command.h"
 #include "iptux/AnalogFS.h"
-#include "iptux/Command.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/SendFileData.h"
 #include "iptux/global.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

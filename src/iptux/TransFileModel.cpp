@@ -1,6 +1,6 @@
 #include "config.h"
 #include "TransFileModel.h"
-#include "utils.h"
+#include "iptux-core/utils.h"
 
 #include <glib.h>
 

@@ -17,17 +17,14 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include "iptux/Command.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
 #include "iptux/UiProgramData.h"
-#include "iptux/TcpData.h"
-#include "iptux/UdpData.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/output.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/output.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

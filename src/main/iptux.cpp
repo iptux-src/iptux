@@ -27,8 +27,8 @@
 
 #include "iptux/Application.h"
 #include "iptux/SoundSystem.h"
-#include "iptux/deplib.h"
-#include "iptux/output.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/output.h"
 
 using namespace std;
 using namespace iptux;
