@@ -30,6 +30,7 @@ core_sources = files([
     '../iptux-core/TcpData.cpp',
     '../iptux-core/UdpData.cpp',
     '../iptux-core/Models.cpp',
+    '../iptux-core/support.cpp',
 ])
 
 sources = files([
@@ -67,7 +68,6 @@ sources = files([
     'dialog.cpp',
     'global.cpp',
     'output.cpp',
-    'support.cpp',
     'utils.cpp',
     'wrapper.cpp'
 ])

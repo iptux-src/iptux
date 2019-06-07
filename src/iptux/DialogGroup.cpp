@@ -20,7 +20,7 @@
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux/output.h"
-#include "iptux/support.h"
+#include "iptux-core/support.h"
 #include "iptux/utils.h"
 #include "iptux/UiHelper.h"
 

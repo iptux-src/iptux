@@ -4,7 +4,7 @@
 #include "iptux/UiProgramData.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"
-#include "iptux/support.h"
+#include "iptux-core/support.h"
 #include "iptux/StatusIcon.h"
 #include "HelpDialog.h"
 #include "DataSettings.h"

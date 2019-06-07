@@ -5,7 +5,7 @@
 #include <glib/gi18n.h>
 
 #include "iptux/IptuxConfig.h"
-#include "iptux/support.h"
+#include "iptux-core/support.h"
 #include "iptux/utils.h"
 #include "iptux-core/deplib.h"
 #include "iptux/TransAbstract.h"

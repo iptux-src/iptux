@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 
 #include "iptux-core/deplib.h"
-#include "iptux/support.h"
+#include "iptux-core/support.h"
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"
 #include "iptux/output.h"

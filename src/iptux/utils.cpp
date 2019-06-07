@@ -18,6 +18,7 @@
 #include <cstring>
 #include <cstdint>
 #include <sstream>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/param.h>
 #include <sys/mount.h>

@@ -20,7 +20,7 @@
 #include "callback.h"
 #include "global.h"
 #include "iptux-core/deplib.h"
-#include "support.h"
+#include "iptux-core/support.h"
 #include "utils.h"
 
 using namespace std;

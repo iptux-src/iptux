@@ -8,7 +8,7 @@
 #include "iptux/utils.h"
 #include "iptux/Exception.h"
 #include "iptux/output.h"
-#include "iptux/support.h"
+#include "iptux-core/support.h"
 
 using namespace std;
 using namespace iptux;
