@@ -14,7 +14,7 @@
 
 #include <gtk/gtk.h>
 
-#include "iptux/ProgramData.h"
+#include "iptux-core/ProgramData.h"
 
 namespace iptux {
 

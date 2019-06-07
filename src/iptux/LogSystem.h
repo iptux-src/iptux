@@ -15,7 +15,7 @@
 #include <memory>
 
 #include "iptux-core/Models.h"
-#include "iptux/ProgramData.h"
+#include "iptux-core/ProgramData.h"
 
 namespace iptux {
 

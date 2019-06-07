@@ -32,6 +32,7 @@ core_sources = files([
     '../iptux-core/Models.cpp',
     '../iptux-core/support.cpp',
     '../iptux-core/utils.cpp',
+    '../iptux-core/ProgramData.cpp',
 ])
 
 sources = files([
@@ -48,7 +49,6 @@ sources = files([
     'IptuxConfig.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
-    'ProgramData.cpp',
     'RecvFile.cpp',
     'RecvFileData.cpp',
     'RevisePal.cpp',
@@ -108,13 +108,13 @@ core_test_sources = files([
     '../iptux-core/CoreThreadTest.cpp',
     '../iptux-core/UdpDataTest.cpp',
     '../iptux-core/ModelsTest.cpp',
-    '../iptux-cpre/UtilsTest.cpp'
+    '../iptux-core/UtilsTest.cpp',
+    '../iptux-core/ProgramDataTest.cpp',
 ])
 test_sources = files([
     'CommandModeTest.cpp',
     'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
-    'ProgramDataTest.cpp',
     'TestHelper.cpp',
     'TestMain.cpp',
     'UiCoreThreadTest.cpp',

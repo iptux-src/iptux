@@ -6,7 +6,7 @@
 #include <memory>
 #include <atomic>
 
-#include "iptux/ProgramData.h"
+#include "iptux-core/ProgramData.h"
 #include "iptux-core/Event.h"
 
 namespace iptux {

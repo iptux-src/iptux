@@ -2,7 +2,7 @@
 
 #include <glib/gstdio.h>
 
-#include "iptux/ProgramData.h"
+#include "iptux-core/ProgramData.h"
 #include "iptux/TestHelper.h"
 
 using namespace std;
