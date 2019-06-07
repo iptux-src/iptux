@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/ipmsg.h"
 #include "iptux/utils.h"
 

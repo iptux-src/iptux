@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
 #include "iptux/wrapper.h"

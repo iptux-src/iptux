@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <cstdio>
 
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 
 using namespace std;
 

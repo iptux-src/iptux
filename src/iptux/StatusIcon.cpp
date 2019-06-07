@@ -19,7 +19,7 @@
 #include "ShareFile.h"
 #include "callback.h"
 #include "global.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "support.h"
 #include "utils.h"
 

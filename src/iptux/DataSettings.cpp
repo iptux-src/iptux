@@ -20,7 +20,7 @@
 #include "iptux/SoundSystem.h"
 #include "iptux/callback.h"
 #include "iptux/config.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"
 #include "iptux/output.h"

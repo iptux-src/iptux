@@ -13,7 +13,7 @@
 #include "config.h"
 #include "HelpDialog.h"
 
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/support.h"
 
 namespace iptux {

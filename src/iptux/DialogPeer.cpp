@@ -22,7 +22,7 @@
 #include "iptux/RecvFileData.h"
 #include "iptux/SendFile.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
 #include "iptux/output.h"

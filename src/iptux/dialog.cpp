@@ -15,7 +15,7 @@
 #include <glog/logging.h>
 
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/output.h"
 #include "iptux/UiHelper.h"
 

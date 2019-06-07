@@ -23,7 +23,7 @@
 #include "CommandMode.h"
 #include "RecvFile.h"
 #include "SendFile.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
 #include "output.h"

@@ -18,7 +18,7 @@
 
 #include <sys/time.h>
 
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/utils.h"
 
 using namespace std;

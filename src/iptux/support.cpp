@@ -21,7 +21,7 @@
 #include "UiCoreThread.h"
 #include "UiProgramData.h"
 #include "ipmsg.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "output.h"
 #include "utils.h"
 

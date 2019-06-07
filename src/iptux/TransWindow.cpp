@@ -7,7 +7,7 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/TransAbstract.h"
 #include "iptux/output.h"
 #include "iptux/UiModels.h"

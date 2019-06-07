@@ -26,7 +26,7 @@
 #include "iptux/ShareFile.h"
 #include "iptux/StatusIcon.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux/support.h"
 #include "iptux/utils.h"

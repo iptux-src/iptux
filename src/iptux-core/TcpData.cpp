@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 #include "SendFile.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "utils.h"
 #include "wrapper.h"
 #include "iptux/output.h"

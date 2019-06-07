@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/ipmsg.h"
 #include "iptux/utils.h"
 
