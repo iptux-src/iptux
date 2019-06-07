@@ -18,7 +18,7 @@
 #include "iptux-core/Models.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/UiModels.h"
-#include "iptux/Event.h"
+#include "iptux-core/Event.h"
 #include "iptux/UiCoreThread.h"
 
 namespace iptux {
