@@ -9,8 +9,7 @@ namespace iptux {
 TransFileModel::TransFileModel()
 : fileLength(0),
   finishedLength(0),
-  finished(false),
-  data(nullptr) {
+  finished(false) {
 }
 
 TransFileModel& TransFileModel::setStatus(const std::string& value) {
@@ -68,15 +67,13 @@ TransFileModel& TransFileModel::setFilePath(const std::string& value) {
   return *this;
 }
 
-TransFileModel& TransFileModel::setData(TransAbstract* value) {
-  g_assert_nonnull(value);
-  data = value;
+TransFileModel& TransFileModel::setTaskId(int taskId) {
+  this->taskId = taskId;
   return *this;
 }
 
 void TransFileModel::finish() {
   finished = true;
-  data = nullptr;
 }
 
 const std::string& TransFileModel::getStatus() const {
@@ -140,9 +137,6 @@ const std::string& TransFileModel::getFilePath() const {
   return filePath;
 }
 
-TransAbstract* TransFileModel::getData() const {
-  return data;
-}
 int64_t TransFileModel::getFileLength() const {
   return fileLength;
 }
@@ -150,5 +144,10 @@ int64_t TransFileModel::getFileLength() const {
 bool TransFileModel::isFinished() const {
   return finished;
 }
+
+int TransFileModel::getTaskId() const {
+  return taskId;
+}
+
 
 }

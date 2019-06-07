@@ -443,14 +443,6 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, &para, -1);
   }
 
-  /**
-   * @note 鉴于参数值(*para)的原地址有可能会被重用， 所以当("data"==null)
-   * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
-   */
-  if (!para.getData()) {
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, NULL, -1);
-  }
-
   /* 重设数据 */
   transModelFillFromTransFileModel(model, &iter, para);
   g_action_group_activate_action(

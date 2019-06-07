@@ -113,7 +113,7 @@ void RecvFileData::CreateUIPara() {
       .setRemain(_("Unknown"))
       .setRate("0 B/s")
       .setFilePath(file->filepath)
-      .setData(this);
+      .setTaskId(GetTaskId());
 }
 
 /**

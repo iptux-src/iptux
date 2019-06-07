@@ -114,7 +114,7 @@ void SendFileData::CreateUIPara() {
       .setCost("00:00:00")
       .setRemain(_("Unknown"))
       .setRate("0B/s")
-      .setData(this);
+      .setTaskId(GetTaskId());
 }
 
 /**

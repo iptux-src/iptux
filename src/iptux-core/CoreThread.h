@@ -119,6 +119,7 @@ class CoreThread {
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
 
+  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId);
   bool TerminateTransTask(int taskId);
   void RecvFile(FileInfo* file);
 

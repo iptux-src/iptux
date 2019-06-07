@@ -575,6 +575,14 @@ void CoreThread::RecvFile(FileInfo* file) {
   rfdt->RecvFileDataEntry();
 }
 
+std::unique_ptr<TransFileModel>
+CoreThread::GetTransTaskStat(int taskId) {
+  auto task = pImpl->transTasks.find(taskId);
+  if(task == pImpl->transTasks.end()) {
+    return {};
+  }
+  return make_unique<TransFileModel>(task->second->getTransFileModel());
+}
 
 
 }
