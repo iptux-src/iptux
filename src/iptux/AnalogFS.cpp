@@ -19,7 +19,7 @@
 
 #include "iptux/ipmsg.h"
 #include "iptux/output.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

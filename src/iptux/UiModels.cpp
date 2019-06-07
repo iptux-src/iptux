@@ -5,7 +5,7 @@
 
 #include "iptux-core/Models.h"
 #include "output.h"
-#include "utils.h"
+#include "iptux-core/utils.h"
 #include "ipmsg.h"
 
 using namespace std;

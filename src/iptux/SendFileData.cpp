@@ -24,7 +24,7 @@
 #include "iptux/AnalogFS.h"
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 #include "iptux/wrapper.h"
 
 namespace iptux {

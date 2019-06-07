@@ -5,7 +5,7 @@
 
 #include "iptux-core/CoreThread.h"
 #include "iptux/TestHelper.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 #include "iptux/Exception.h"
 #include "iptux/output.h"
 #include "iptux-core/support.h"

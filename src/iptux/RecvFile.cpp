@@ -17,7 +17,7 @@
 
 #include <cstring>
 
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

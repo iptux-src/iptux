@@ -8,7 +8,7 @@
 
 #include <glib.h>
 
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 #include "iptux-core/support.h"
 
 using namespace std;

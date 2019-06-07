@@ -31,6 +31,7 @@ core_sources = files([
     '../iptux-core/UdpData.cpp',
     '../iptux-core/Models.cpp',
     '../iptux-core/support.cpp',
+    '../iptux-core/utils.cpp',
 ])
 
 sources = files([
@@ -68,7 +69,6 @@ sources = files([
     'dialog.cpp',
     'global.cpp',
     'output.cpp',
-    'utils.cpp',
     'wrapper.cpp'
 ])
 

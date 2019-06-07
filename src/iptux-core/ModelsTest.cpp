@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "iptux-core/Models.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 using namespace iptux;

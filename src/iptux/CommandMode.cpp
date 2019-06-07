@@ -4,7 +4,7 @@
 #include <glib/gi18n.h>
 
 #include "iptux/ipmsg.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

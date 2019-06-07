@@ -22,7 +22,7 @@
 #include "iptux/UiCoreThread.h"
 #include "iptux/SendFileData.h"
 #include "iptux/global.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

@@ -24,7 +24,7 @@
 #include "iptux/global.h"
 #include "iptux/output.h"
 #include "iptux-core/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
 
 using namespace std;
