@@ -34,6 +34,7 @@ core_sources = files([
     '../iptux-core/utils.cpp',
     '../iptux-core/ProgramData.cpp',
     '../iptux-core/output.cpp',
+    '../iptux-core/Exception.cpp',
 ])
 
 sources = files([
@@ -45,7 +46,6 @@ sources = files([
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
-    'Exception.cpp',
     'HelpDialog.cpp',
     'IptuxConfig.cpp',
     'LogSystem.cpp',

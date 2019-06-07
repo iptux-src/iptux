@@ -18,7 +18,7 @@
 #include "TcpData.h"
 #include "Command.h"
 #include "deplib.h"
-#include "iptux/Exception.h"
+#include "iptux-core/Exception.h"
 #include "iptux/SendFile.h"
 
 using namespace std;
