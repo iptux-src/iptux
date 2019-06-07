@@ -66,19 +66,21 @@ void SendFileData::SendFileDataEntry() {
       SendDirFiles();
       break;
     default:
+      CHECK(false);
       break;
   }
-
-  /* 主动更新UI */
-  gdk_threads_enter();
   UpdateUIParaToOver();
-  g_mwin->UpdateItemToTransTree(para);
-  gdk_threads_leave();
 
-  /* 处理成功则播放提示音 */
-  auto g_progdt = g_cthrd->getUiProgramData();
-  if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
-    g_sndsys->Playing(g_progdt->transtip);
+  // /* 主动更新UI */
+  // gdk_threads_enter();
+  // UpdateUIParaToOver();
+  // g_mwin->UpdateItemToTransTree(para);
+  // gdk_threads_leave();
+
+  // /* 处理成功则播放提示音 */
+  // auto g_progdt = g_cthrd->getUiProgramData();
+  // if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
+  //   g_sndsys->Playing(g_progdt->transtip);
 }
 
 /**

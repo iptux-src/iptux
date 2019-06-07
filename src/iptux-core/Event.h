@@ -13,6 +13,7 @@ enum class EventType {
   PERMISSION_REQUIRED,
   NEW_SHARE_FILE_FROM_FRIEND,
   SEND_FILE_STARTED,
+  SEND_FILE_FINISHED,
 };
 
 class Event {
@@ -87,14 +88,27 @@ class NewShareFileFromFriendEvent: public Event {
   FileInfo fileInfo;
 };
 
-class SendFileStartedEvent: public Event {
+class AbstractTaskIdEvent: public Event {
+ protected:
+  AbstractTaskIdEvent(EventType et, int taskId):
+   Event(et),
+   taskId(taskId) {}
  public:
-  explicit SendFileStartedEvent(int taskId):
-    Event(EventType::SEND_FILE_STARTED),
-    taskId(taskId) {}
-  int GetTaskId() const {return taskId;}
+  int GetTaskId() const { return taskId; }
  private:
   int taskId;
+};
+
+class SendFileStartedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit SendFileStartedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::SEND_FILE_STARTED, taskId) {}
+};
+
+class SendFileFinishedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit SendFileFinishedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::SEND_FILE_FINISHED, taskId) {}
 };
 
 }

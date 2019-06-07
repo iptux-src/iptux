@@ -1943,6 +1943,18 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     return;
   }
 
+  if(type == EventType::SEND_FILE_FINISHED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const SendFileFinishedEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    g_mwin->UpdateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (para->isFinished() && FLAG_ISSET(g_progdt->sndfgs, 2)) {
+      g_sndsys->Playing(g_progdt->transtip);
+    }
+    return;
+  }
+
   LOG_WARN("unknown event type: %d", int(type));
 }
 
