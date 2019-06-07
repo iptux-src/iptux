@@ -25,7 +25,6 @@
 #include "iptux/ipmsg.h"
 #include "iptux/output.h"
 #include "iptux-core/utils.h"
-#include "iptux/wrapper.h"
 #include "iptux/UiHelper.h"
 
 namespace iptux {

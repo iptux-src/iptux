@@ -21,7 +21,6 @@
 #include "iptux-core/deplib.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
-#include "iptux/wrapper.h"
 #include "iptux/output.h"
 #include "iptux/Exception.h"
 

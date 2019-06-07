@@ -25,7 +25,6 @@
 #include "SendFile.h"
 #include "iptux-core/deplib.h"
 #include "utils.h"
-#include "wrapper.h"
 #include "output.h"
 
 using namespace std;

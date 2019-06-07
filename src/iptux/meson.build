@@ -69,7 +69,6 @@ sources = files([
     'dialog.cpp',
     'global.cpp',
     'output.cpp',
-    'wrapper.cpp'
 ])
 
 glib_compile_resources = find_program('glib-compile-resources')

@@ -25,7 +25,6 @@
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux-core/utils.h"
-#include "iptux/wrapper.h"
 
 namespace iptux {
 
