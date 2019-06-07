@@ -21,7 +21,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 
-#include "iptux/AnalogFS.h"
+#include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux-core/utils.h"

@@ -14,7 +14,7 @@
 
 #include <sys/stat.h>
 
-#include "iptux/AnalogFS.h"
+#include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"

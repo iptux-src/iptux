@@ -24,6 +24,7 @@ configure_file(input : 'TestConfig.h.in',
                configuration : test_conf_data)
 
 core_sources = files([
+    '../iptux-core/AnalogFS.cpp',
     '../iptux-core/Command.cpp',
     '../iptux-core/CoreThread.cpp',
     '../iptux-core/Event.cpp',
@@ -40,7 +41,6 @@ core_sources = files([
 ])
 
 sources = files([
-    'AnalogFS.cpp',
     'Application.cpp',
     'CommandMode.cpp',
     'DataSettings.cpp',
