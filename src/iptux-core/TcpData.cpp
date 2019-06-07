@@ -20,7 +20,7 @@
 #include "SendFile.h"
 #include "iptux-core/deplib.h"
 #include "utils.h"
-#include "iptux/output.h"
+#include "iptux-core/output.h"
 
 using namespace std;
 

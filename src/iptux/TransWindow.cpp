@@ -9,7 +9,7 @@
 #include "iptux-core/utils.h"
 #include "iptux-core/deplib.h"
 #include "iptux/TransAbstract.h"
-#include "iptux/output.h"
+#include "iptux-core/output.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
 

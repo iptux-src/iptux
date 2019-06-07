@@ -4,7 +4,7 @@
 #include <cstring>
 
 #include "iptux-core/Models.h"
-#include "output.h"
+#include "iptux-core/output.h"
 #include "iptux-core/utils.h"
 #include "ipmsg.h"
 

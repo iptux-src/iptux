@@ -12,7 +12,7 @@
 
 #include "ipmsg.h"
 #include "support.h"
-#include "output.h"
+#include "iptux-core/output.h"
 #include "utils.h"
 #include "UdpData.h"
 #include "TcpData.h"

@@ -27,7 +27,7 @@
 #endif
 
 #include "iptux/ipmsg.h"
-#include "output.h"
+#include "iptux-core/output.h"
 #include "Exception.h"
 
 using namespace std;

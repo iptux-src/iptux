@@ -30,7 +30,7 @@
 #include "iptux/global.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
-#include "iptux/output.h"
+#include "iptux-core/output.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"

@@ -33,6 +33,7 @@ core_sources = files([
     '../iptux-core/support.cpp',
     '../iptux-core/utils.cpp',
     '../iptux-core/ProgramData.cpp',
+    '../iptux-core/output.cpp',
 ])
 
 sources = files([
@@ -68,7 +69,6 @@ sources = files([
     'callback.cpp',
     'dialog.cpp',
     'global.cpp',
-    'output.cpp',
 ])
 
 glib_compile_resources = find_program('glib-compile-resources')

@@ -22,7 +22,7 @@
 #include "UiProgramData.h"
 #include "ipmsg.h"
 #include "iptux-core/deplib.h"
-#include "output.h"
+#include "iptux-core/output.h"
 #include "utils.h"
 
 namespace iptux {
