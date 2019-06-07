@@ -13,7 +13,7 @@
 #define IPTUX_DIALOGGROUP_H
 
 #include "iptux/DialogBase.h"
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
 #include "iptux-core/Models.h"
 #include "iptux/MainWindow.h"

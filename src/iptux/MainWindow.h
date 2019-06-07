@@ -12,7 +12,7 @@
 #ifndef IPTUX_MAINWINDOW_H
 #define IPTUX_MAINWINDOW_H
 
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
 #include "iptux-core/Models.h"

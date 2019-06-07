@@ -12,7 +12,7 @@
 #ifndef IPTUX_STATUSICON_H
 #define IPTUX_STATUSICON_H
 
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 #include "iptux/MainWindow.h"
 
 namespace iptux {

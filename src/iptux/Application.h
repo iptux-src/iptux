@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
 #include "MainWindow.h"
 #include "ShareFile.h"

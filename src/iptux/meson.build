@@ -35,6 +35,7 @@ core_sources = files([
     '../iptux-core/ProgramData.cpp',
     '../iptux-core/output.cpp',
     '../iptux-core/Exception.cpp',
+    '../iptux-core/IptuxConfig.cpp',
 ])
 
 sources = files([
@@ -47,7 +48,6 @@ sources = files([
     'DialogGroup.cpp',
     'DialogPeer.cpp',
     'HelpDialog.cpp',
-    'IptuxConfig.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
     'RecvFile.cpp',
@@ -109,10 +109,10 @@ core_test_sources = files([
     '../iptux-core/ModelsTest.cpp',
     '../iptux-core/UtilsTest.cpp',
     '../iptux-core/ProgramDataTest.cpp',
+    '../iptux-core/IptuxConfigTest.cpp',
 ])
 test_sources = files([
     'CommandModeTest.cpp',
-    'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
     'TestHelper.cpp',
     'TestMain.cpp',

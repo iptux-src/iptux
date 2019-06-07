@@ -14,7 +14,7 @@
 #define IPTUX_DIALOGPEER_H
 
 #include "iptux/DialogBase.h"
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
 #include "iptux/MainWindow.h"
 
