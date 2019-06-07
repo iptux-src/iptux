@@ -21,6 +21,7 @@
 #include "deplib.h"
 #include "iptux-core/Exception.h"
 #include "iptux-core/SendFile.h"
+#include "iptux/RecvFileData.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -567,6 +568,13 @@ bool CoreThread::TerminateTransTask(int taskId) {
   task->second->TerminateTrans();
   return true;
 }
+
+void CoreThread::RecvFile(FileInfo* file) {
+  auto rfdt = make_shared<RecvFileData>(file);
+  RegisterTransTask(rfdt);
+  rfdt->RecvFileDataEntry();
+}
+
 
 
 }

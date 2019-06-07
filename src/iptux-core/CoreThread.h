@@ -120,6 +120,8 @@ class CoreThread {
   int GetOnlineCount() const;
 
   bool TerminateTransTask(int taskId);
+  void RecvFile(FileInfo* file);
+
 
  // these functions should be move to CoreThreadImpl
  public:
