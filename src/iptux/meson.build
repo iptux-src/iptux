@@ -108,6 +108,7 @@ core_test_sources = files([
     '../iptux-core/CoreThreadTest.cpp',
     '../iptux-core/UdpDataTest.cpp',
     '../iptux-core/ModelsTest.cpp',
+    '../iptux-cpre/UtilsTest.cpp'
 ])
 test_sources = files([
     'CommandModeTest.cpp',
@@ -118,7 +119,6 @@ test_sources = files([
     'TestMain.cpp',
     'UiCoreThreadTest.cpp',
     'UiProgramDataTest.cpp',
-    'UtilsTest.cpp'
 ])
 libiptux_test = executable('libiptux_test',
     test_sources+core_test_sources,
