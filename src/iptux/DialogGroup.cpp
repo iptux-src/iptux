@@ -12,7 +12,7 @@
 #include "config.h"
 #include "DialogGroup.h"
 
-#include "iptux/Command.h"
+#include "iptux-core/Command.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/SendFile.h"

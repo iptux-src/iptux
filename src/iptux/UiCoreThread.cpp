@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include "iptux/Command.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
 #include "iptux/UiProgramData.h"

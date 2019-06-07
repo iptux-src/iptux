@@ -18,8 +18,8 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 
+#include "iptux-core/Command.h"
 #include "iptux/AnalogFS.h"
-#include "iptux/Command.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"
 #include "iptux/ipmsg.h"

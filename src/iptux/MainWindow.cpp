@@ -16,7 +16,7 @@
 #include <cinttypes>
 #include <glog/logging.h>
 
-#include "iptux/Command.h"
+#include "iptux-core/Command.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
 #include "iptux/DialogGroup.h"
