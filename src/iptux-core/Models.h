@@ -140,6 +140,7 @@ class FileInfo {
   uint32_t filemtime;    ///<  文件最后修改时间
   uint32_t filenum;      ///<  包内编号
 };
+using PFileInfo = std::shared_ptr<FileInfo>;
 
 /**
  * 碎片数据.

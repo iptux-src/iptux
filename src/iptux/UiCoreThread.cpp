@@ -42,7 +42,6 @@ UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
       brdlist(NULL),
       pbn(1),
       prn(MAX_SHAREDFILE),
-      prlist(NULL),
       ecsList(NULL) {
   logSystem = new LogSystem(data);
   g_queue_init(&msgline);
@@ -423,78 +422,6 @@ void UiCoreThread::PopItemFromMsgline(GroupInfo *grpinf) {
 }
 
 /**
- * 附加文件信息到私有文件链表.
- * @param file 文件信息
- */
-void UiCoreThread::AttachFileToPrivate(FileInfo *file) {
-  prlist = g_slist_append(prlist, file);
-}
-
-/**
- * 从私有文件链表删除指定的文件.
- * @param fileid 文件ID
- */
-void UiCoreThread::DelFileFromPrivate(uint32_t fileid) {
-  GSList *tlist;
-
-  tlist = prlist;
-  while (tlist) {
-    if (((FileInfo *)tlist->data)->fileid == fileid) {
-      delete (FileInfo *)tlist->data;
-      prlist = g_slist_delete_link(prlist, tlist);
-      break;
-    }
-    tlist = g_slist_next(tlist);
-  }
-}
-
-/**
- * 获取指定文件ID的文件信息.
- * @param fileid 文件ID
- * @return 文件信息
- */
-FileInfo *UiCoreThread::GetFileFromAll(uint32_t fileid) {
-  GSList *tlist;
-  if(fileid < MAX_SHAREDFILE) {
-    return getProgramData()->GetShareFileInfo(fileid);
-  }
-
-  tlist = prlist;
-  while (tlist) {
-    if (((FileInfo *)tlist->data)->fileid == fileid) break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return (FileInfo *)(tlist ? tlist->data : NULL);
-}
-
-/**
- * 获取指定文件包编号的文件信息.
- * @param PacketN 文件包ID
- * @return 文件信息
- * 这个函数主要是为了兼容adroid版的信鸽(IPMSG),IPMSG把包编号转换为
- * 16进制放在了本来应该是fileid的地方,在存放文件创建时间的地方放上了包内编号
- * 所以在调用这个函数时,传给packageNum的是fileid,
- * 传的filectime实际上是包内编号
- */
-FileInfo *UiCoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,
-                                                uint32_t filectime) {
-  GSList *tlist;
-
-  tlist = prlist;
-  while (tlist) {
-    if ((((FileInfo *)tlist->data)->packetn == packageNum) &&
-        ((((FileInfo *)tlist->data)->filenum == filectime)))
-      break;
-    tlist = g_slist_next(tlist);
-  }
-  if (tlist != NULL) {
-    return (FileInfo *)(tlist ? tlist->data : NULL);
-  }
-  return g_cthrd->getProgramData()->GetShareFileInfo(packageNum, filectime);
-}
-
-/**
  * 初始化底层数据.
  */
 void UiCoreThread::InitSublayer() {
@@ -521,10 +448,6 @@ void UiCoreThread::ClearSublayer() {
     delete (GroupInfo *) tlist->data;
   g_slist_free(brdlist);
   g_queue_clear(&msgline);
-
-  for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
-  g_slist_free(prlist);
 
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo *)tlist->data;

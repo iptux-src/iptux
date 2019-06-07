@@ -65,23 +65,22 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t filea
   struct sockaddr_in addr;
   socklen_t len;
   PalInfo *pal;
-  FileInfo *file;
   uint32_t fileid;
   uint32_t filectime;
   /* 检查文件属性是否匹配 */
 
   fileid = iptux_get_hex_number(attach, ':', 1);
-  file = (FileInfo *)g_cthrd->GetFileFromAll(fileid);
+  auto file = coreThread->GetPrivateFileById(fileid);
   /* 兼容windows版信鸽(IPMSG) ,这里的信鸽不是飞鸽传书(IPMSG)*/
   if (!file) {
     fileid = iptux_get_dec_number(attach, ':', 1);
-    file = (FileInfo *)g_cthrd->GetFileFromAll(fileid);
+    file = coreThread->GetPrivateFileById(fileid);
   }
   /* 兼容adroid版信鸽(IPMSG) */
   if (!file) {
     fileid = iptux_get_hex_number(attach, ':', 0);
     filectime = iptux_get_dec_number(attach, ':', 1);
-    file = (FileInfo *)g_cthrd->GetFileFromAllWithPacketN(fileid, filectime);
+    file = coreThread->GetPrivateFileByPacketN(fileid, filectime);
   }
   if (!file || GET_MODE(file->fileattr) != GET_MODE(fileattr)) return;
   /* 检查好友数据是否存在 */
@@ -94,7 +93,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t filea
   //         *文件信息可能被删除或修改，必须单独复制一份.
   //         */
   //        file->fileown = pal;
-  SendFile(coreThread).ThreadSendFile(sock, file);
+  SendFile(coreThread).ThreadSendFile(sock, file.get());
 }
 
 /**

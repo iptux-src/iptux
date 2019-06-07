@@ -1,14 +1,15 @@
 #include "config.h"
 #include "CoreThread.h"
 
-#include <gio/gio.h>
-#include <glib/gi18n.h>
-
 #include <thread>
 #include <functional>
 #include <fstream>
 #include <memory>
 #include <future>
+
+#include <gio/gio.h>
+#include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/ipmsg.h"
 #include "support.h"
@@ -30,6 +31,9 @@ struct CoreThread::Impl {
   GSList *blacklist {nullptr};                              //黑名单链表
   bool debugDontBroadcast {false} ;
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+
+  map<uint32_t, shared_ptr<FileInfo>> privateFiles;
+
   future<void> udpFuture;
   future<void> tcpFuture;
   future<void> notifyToAllFuture;
@@ -514,5 +518,39 @@ const string& CoreThread::GetAccessPublicLimit() const {
 void CoreThread::SetAccessPublicLimit(const string& val) {
   programData->SetPasswd(val);
 }
+
+void CoreThread::AddPrivateFile(PFileInfo file) {
+  CHECK(file);
+  CHECK(file->fileid >= MAX_SHAREDFILE);
+  CHECK(pImpl->privateFiles.count(file->fileid) == 0);
+  pImpl->privateFiles[file->fileid] = file;
+}
+
+bool CoreThread::DelPrivateFile(uint32_t id) {
+  return pImpl->privateFiles.erase(id) >= 1;
+}
+
+PFileInfo CoreThread::GetPrivateFileById(uint32_t id) {
+  if(id < MAX_SHAREDFILE) {
+    FileInfo* f = programData->GetShareFileInfo(id);
+    return make_shared<FileInfo>(*f);
+  }
+
+  auto res = pImpl->privateFiles.find(id);
+  if(res == pImpl->privateFiles.end()) {
+    return PFileInfo();
+  }
+  return res->second;
+}
+
+PFileInfo CoreThread::GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime) {
+  for(auto& i: pImpl->privateFiles) {
+    if(i.second->packetn == packageNum && i.second->filenum == filectime) {
+      return i.second;
+    }
+  }
+  return PFileInfo();
+}
+
 
 }

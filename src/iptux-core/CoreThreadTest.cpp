@@ -9,6 +9,7 @@
 #include "iptux-core/Exception.h"
 #include "iptux-core/output.h"
 #include "iptux-core/support.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 using namespace iptux;
@@ -212,4 +213,30 @@ TEST(CoreThread, FullCase_ShareWithPassword) {
   auto thread2 = get<1>(threads);
   thread1->SendAskShared(thread1->GetPal("127.0.0.4"));
   Log::setLogLevel(oldLogLevel);
+}
+
+TEST(CoreThread, PrivateFiles) {
+  auto thread = newCoreThreadOnIp("127.0.0.1");
+  auto file = make_shared<FileInfo>();
+  file->fileid = MAX_SHAREDFILE;
+  file->filepath = g_strdup("hello");
+  thread->AddPrivateFile(file);
+
+  auto file2 = thread->GetPrivateFileById(file->fileid);
+  EXPECT_STREQ(file2->filepath, "hello");
+
+  EXPECT_TRUE(thread->DelPrivateFile(file->fileid));
+  EXPECT_FALSE(thread->DelPrivateFile(file->fileid));
+
+  EXPECT_FALSE(thread->GetPrivateFileById(file->fileid));
+
+  auto file3 = make_shared<FileInfo>();
+  file3->fileid = MAX_SHAREDFILE+1;
+  file3->filepath = g_strdup("world");
+  file3->packetn = 123;
+  file3->filenum = 456;
+  thread->AddPrivateFile(file3);
+
+  auto file4 = thread->GetPrivateFileByPacketN(123, 456);
+  EXPECT_STREQ(file4->filepath, file3->filepath);
 }
