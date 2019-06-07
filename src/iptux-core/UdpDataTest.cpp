@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "iptux/UdpData.h"
+#include "iptux-core/UdpData.h"
 #include "iptux/TestHelper.h"
 #include "iptux/utils.h"
 

@@ -22,7 +22,6 @@
 #include "iptux/MainWindow.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/TcpData.h"
-#include "iptux/UdpData.h"
 #include "iptux/deplib.h"
 #include "iptux/global.h"
 #include "iptux/output.h"

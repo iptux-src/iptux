@@ -24,7 +24,8 @@ configure_file(input : 'TestConfig.h.in',
                configuration : test_conf_data)
 
 core_sources = files([
-    '../iptux-core/CoreThread.cpp'
+    '../iptux-core/CoreThread.cpp',
+    '../iptux-core/UdpData.cpp',
 ])
 
 sources = files([
@@ -57,7 +58,6 @@ sources = files([
     'TransAbstract.cpp',
     'TransFileModel.cpp',
     'TransWindow.cpp',
-    'UdpData.cpp',
     'UiCoreThread.cpp',
     'UiHelper.cpp',
     'UiModels.cpp',
@@ -105,7 +105,8 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 core_test_sources = files([
-    '../iptux-core/CoreThreadTest.cpp'
+    '../iptux-core/CoreThreadTest.cpp',
+    '../iptux-core/UdpDataTest.cpp',
 ])
 test_sources = files([
     'CommandModeTest.cpp',
@@ -115,7 +116,6 @@ test_sources = files([
     'ProgramDataTest.cpp',
     'TestHelper.cpp',
     'TestMain.cpp',
-    'UdpDataTest.cpp',
     'UiCoreThreadTest.cpp',
     'UiProgramDataTest.cpp',
     'UtilsTest.cpp'
