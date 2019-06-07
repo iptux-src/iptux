@@ -70,11 +70,6 @@ class UiCoreThread: public CoreThread {
   void PushItemToEnclosureList(FileInfo *file);
   void PopItemFromEnclosureList(FileInfo *file);
 
-  void AttachFileToPrivate(FileInfo *file);
-  void DelFileFromPrivate(uint32_t fileid);
-  FileInfo *GetFileFromAll(uint32_t fileid);
-  FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
-
   void CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const G_GNUC_PRINTF(3, 4);
   void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
 
@@ -104,7 +99,6 @@ private:
   GQueue msgline;                                 //消息队列
 
   uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
-  GSList *prlist;  //文件链表(共享/私有)
   GSList *ecsList;          //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 

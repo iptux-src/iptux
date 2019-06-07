@@ -62,6 +62,14 @@ class CoreThread {
   virtual void AttachPalToList(PalInfo *pal);
   virtual void AttachPalToList(PPalInfo pal);
 
+  void AddPrivateFile(PFileInfo file);
+  /**
+   * return true if exist, return false if not exist.
+   */
+  bool DelPrivateFile(uint32_t id);
+  PFileInfo GetPrivateFileById(uint32_t id);
+  PFileInfo GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime);
+
   void registerCallback(const EventCallback &callback);
   void sendFeatureData(PPalInfo pal);
   void emitSomeoneExit(const PalKey& palKey);

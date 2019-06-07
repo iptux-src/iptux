@@ -193,7 +193,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       file->fileown = g_cthrd->GetPal(((PalInfo *)(pallist->data))->GetKey());
       /* 加入文件信息到中心节点 */
       g_cthrd->Lock();
-      g_cthrd->AttachFileToPrivate(file);
+      g_cthrd->AddPrivateFile(PFileInfo(file));
       g_cthrd->Unlock();
       /* 添加数据 */
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -669,7 +669,7 @@ void DialogBase::RemoveSelectedEnclosure(GtkWidget *widget) {
                             (GtkTreePath *)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 4, &file, -1);
     dlg->totalsendsize -= file->filesize;
-    g_cthrd->DelFileFromPrivate(file->fileid);
+    g_cthrd->DelPrivateFile(file->fileid);
     list = g_list_next(list);
   }
   g_list_free(list);
