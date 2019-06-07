@@ -26,9 +26,9 @@
 
 #include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
-#include "iptux/global.h"
 #include "iptux-core/utils.h"
 #include "iptux-core/Event.h"
+#include "iptux-core/output.h"
 
 using namespace std;
 
@@ -70,17 +70,7 @@ void SendFileData::SendFileDataEntry() {
       break;
   }
   UpdateUIParaToOver();
-
-  // /* 主动更新UI */
-  // gdk_threads_enter();
-  // UpdateUIParaToOver();
-  // g_mwin->UpdateItemToTransTree(para);
-  // gdk_threads_leave();
-
-  // /* 处理成功则播放提示音 */
-  // auto g_progdt = g_cthrd->getUiProgramData();
-  // if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
-  //   g_sndsys->Playing(g_progdt->transtip);
+  coreThread->emitEvent(make_shared<SendFileFinishedEvent>(GetTaskId()));
 }
 
 /**
@@ -138,11 +128,15 @@ void SendFileData::SendRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
+    LOG_INFO(_("Failed to send the file \"%s\" to %s!"),
                        file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
+    //                    file->filepath, file->fileown->name);
   } else {
-    g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
+    LOG_INFO(_("Send the file \"%s\" to %s successfully!"),
                        file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
+    //                    file->filepath, file->fileown->name);
   }
 }
 
@@ -258,11 +252,15 @@ end:
     /* 关闭堆栈中所有的目录流，并清空堆栈 */
     g_queue_foreach(&dirstack, GFunc(closedir), NULL);
     g_queue_clear(&dirstack);
-    g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Failed to send the directory \"%s\" to %s!"),
+            file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
+    //                    file->filepath, file->fileown->name);
   } else {
-    g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Send the directory \"%s\" to %s successfully!"),
+            file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
+    //                    file->filepath, file->fileown->name);
   }
 }
 
