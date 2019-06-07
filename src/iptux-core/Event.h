@@ -12,6 +12,7 @@ enum class EventType {
   PASSWORD_REQUIRED,
   PERMISSION_REQUIRED,
   NEW_SHARE_FILE_FROM_FRIEND,
+  SEND_FILE_STARTED,
 };
 
 class Event {
@@ -85,6 +86,17 @@ class NewShareFileFromFriendEvent: public Event {
  private:
   FileInfo fileInfo;
 };
+
+class SendFileStartedEvent: public Event {
+ public:
+  explicit SendFileStartedEvent(int taskId):
+    Event(EventType::SEND_FILE_STARTED),
+    taskId(taskId) {}
+  int GetTaskId() const {return taskId;}
+ private:
+  int taskId;
+};
+
 }
 
 #endif //IPTUX_EVENT_H

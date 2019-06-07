@@ -22,6 +22,7 @@
 #include "iptux-core/Command.h"
 #include "iptux-core/AnalogFS.h"
 #include "iptux-core/utils.h"
+#include "iptux/SendFileData.h"
 
 using namespace std;
 
@@ -191,7 +192,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
  * @param file 文件信息
  */
 void SendFile::ThreadSendFile(int sock, PFileInfo file) {
-  auto sfdt = make_shared<SendFileData>(sock, file);
+  auto sfdt = make_shared<SendFileData>(coreThread, sock, file);
   coreThread->RegisterTransTask(sfdt);
   sfdt->SendFileDataEntry();
 }

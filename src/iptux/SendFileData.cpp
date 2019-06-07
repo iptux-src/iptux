@@ -13,6 +13,7 @@
 #include "SendFileData.h"
 
 #include <cinttypes>
+#include <memory>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -27,6 +28,9 @@
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux-core/utils.h"
+#include "iptux-core/Event.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -35,8 +39,8 @@ namespace iptux {
  * @param sk tcp socket
  * @param fl 文件信息数据
  */
-SendFileData::SendFileData(int sk, PFileInfo fl)
-    : sock(sk), file(fl), terminate(false), sumsize(0) {
+SendFileData::SendFileData(CoreThread* coreThread, int sk, PFileInfo fl)
+    : coreThread(coreThread), sock(sk), file(fl), terminate(false), sumsize(0) {
   gettimeofday(&tasktime, NULL);
 }
 
@@ -50,16 +54,8 @@ SendFileData::~SendFileData() { }
  */
 void SendFileData::SendFileDataEntry() {
   CHECK(GetTaskId() > 0);
-
-  /* 创建UI参考数据，并将数据主动加入UI */
-  gdk_threads_enter();
   CreateUIPara();
-  g_mwin->UpdateItemToTransTree(para);
-  auto g_progdt = g_cthrd->getUiProgramData();
-  if (g_progdt->IsAutoOpenFileTrans()) {
-    g_mwin->OpenTransWindow();
-  }
-  gdk_threads_leave();
+  coreThread->emitEvent(make_shared<SendFileStartedEvent>(GetTaskId()));
 
   /* 分类处理 */
   switch (GET_MODE(file->fileattr)) {
@@ -80,6 +76,7 @@ void SendFileData::SendFileDataEntry() {
   gdk_threads_leave();
 
   /* 处理成功则播放提示音 */
+  auto g_progdt = g_cthrd->getUiProgramData();
   if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
     g_sndsys->Playing(g_progdt->transtip);
 }
@@ -276,7 +273,7 @@ end:
 int64_t SendFileData::SendData(int fd, int64_t filesize) {
   int64_t tmpsize, finishsize;
   struct timeval val1, val2;
-  float difftime, progress;
+  float difftime;
   uint32_t rate;
   ssize_t size;
 
@@ -299,7 +296,6 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
     difftime = difftimeval(val2, val1);
     if (difftime >= 1) {
       /* 更新UI参考值 */
-      progress = percent(finishsize, filesize);
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
       para.setFinishedLength(finishsize)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))

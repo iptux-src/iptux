@@ -14,13 +14,14 @@
 
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/Models.h"
+#include "iptux-core/CoreThread.h"
 #include "iptux/TransAbstract.h"
 
 namespace iptux {
 
 class SendFileData: public TransAbstract {
  public:
-  SendFileData(int sk, PFileInfo fl);
+  SendFileData(CoreThread* coreThread, int sk, PFileInfo fl);
   ~SendFileData();
 
   void SendFileDataEntry();
@@ -34,6 +35,7 @@ class SendFileData: public TransAbstract {
   int64_t SendData(int fd, int64_t filesize);
   void UpdateUIParaToOver();
 
+  CoreThread* coreThread;
   int sock;                           //数据套接口
   int taskId;
   PFileInfo file;                     //文件信息

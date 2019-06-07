@@ -1930,6 +1930,19 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     g_cthrd->PushItemToEnclosureList(file);
     return;
   }
+
+  if(type == EventType::SEND_FILE_STARTED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const SendFileStartedEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    g_mwin->UpdateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (g_progdt->IsAutoOpenFileTrans()) {
+       g_mwin->OpenTransWindow();
+    }
+    return;
+  }
+
   LOG_WARN("unknown event type: %d", int(type));
 }
 
