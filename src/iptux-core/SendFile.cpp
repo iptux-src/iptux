@@ -19,9 +19,7 @@
 
 #include "iptux-core/Command.h"
 #include "iptux/AnalogFS.h"
-#include "iptux/UiCoreThread.h"
 #include "iptux/SendFileData.h"
-#include "iptux/global.h"
 #include "iptux-core/utils.h"
 
 using namespace std;
@@ -64,7 +62,6 @@ void SendFile::BcstFileInfoEntry(CoreThread* coreThread, GSList *plist, GSList *
 void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t fileattr, char *attach) {
   struct sockaddr_in addr;
   socklen_t len;
-  PalInfo *pal;
   uint32_t fileid;
   uint32_t filectime;
   /* 检查文件属性是否匹配 */
@@ -86,7 +83,9 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t filea
   /* 检查好友数据是否存在 */
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
-  if (!(pal = g_cthrd->GetPalFromList(addr.sin_addr.s_addr))) return;
+  if (!(coreThread->GetPal(addr.sin_addr.s_addr))) {
+    return;
+  }
 
   /* 发送文件数据 */
   //        /**
@@ -108,7 +107,6 @@ void SendFile::SendFileInfo(PPalInfo pal, uint32_t opttype, vector<FileInfo>& fi
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;
-  FileInfo *file;
 
   /* 初始化 */
   len = 0;
@@ -144,7 +142,7 @@ void SendFile::SendFileInfo(PPalInfo pal, uint32_t opttype, vector<FileInfo>& fi
  */
 void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
   AnalogFS afs;
-  Command cmd(*g_cthrd);
+  Command cmd(*coreThread);
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;
@@ -180,7 +178,7 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
       }
       filelist = g_slist_next(filelist);
     }
-    cmd.SendFileInfo(g_cthrd->getUdpSock(), ((PalInfo *)pallist->data)->GetKey(), opttype,
+    cmd.SendFileInfo(coreThread->getUdpSock(), ((PalInfo *)pallist->data)->GetKey(), opttype,
                      buf);
     pallist = g_slist_next(pallist);
   }
