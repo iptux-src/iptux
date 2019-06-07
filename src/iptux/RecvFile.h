@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
 
 namespace iptux {

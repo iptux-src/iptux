@@ -20,7 +20,7 @@
 #include <queue>
 
 #include "iptux/UiProgramData.h"
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 #include "iptux/UiModels.h"
 #include "iptux-core/CoreThread.h"
 

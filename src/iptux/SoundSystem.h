@@ -17,7 +17,7 @@
 #include <gst/gst.h>
 #endif
 
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 
 namespace iptux {
 

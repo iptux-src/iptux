@@ -15,7 +15,7 @@
 #include "iptux/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 #include "iptux/RecvFileData.h"
 #include "iptux/UiModels.h"
 #include "iptux/Event.h"

@@ -28,6 +28,7 @@ core_sources = files([
     '../iptux-core/CoreThread.cpp',
     '../iptux-core/TcpData.cpp',
     '../iptux-core/UdpData.cpp',
+    '../iptux-core/Models.cpp',
 ])
 
 sources = files([
@@ -45,7 +46,6 @@ sources = files([
     'IptuxConfig.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
-    'Models.cpp',
     'ProgramData.cpp',
     'RecvFile.cpp',
     'RecvFileData.cpp',
@@ -107,12 +107,12 @@ thread_dep = dependency('threads')
 core_test_sources = files([
     '../iptux-core/CoreThreadTest.cpp',
     '../iptux-core/UdpDataTest.cpp',
+    '../iptux-core/ModelsTest.cpp',
 ])
 test_sources = files([
     'CommandModeTest.cpp',
     'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
-    'ModelsTest.cpp',
     'ProgramDataTest.cpp',
     'TestHelper.cpp',
     'TestMain.cpp',

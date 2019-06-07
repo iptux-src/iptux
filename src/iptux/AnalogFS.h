@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 
 #include "iptux/ipmsg.h"
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 
 namespace iptux {
 

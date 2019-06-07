@@ -3,7 +3,7 @@
 
 #include <cstring>
 
-#include "Models.h"
+#include "iptux-core/Models.h"
 #include "output.h"
 #include "utils.h"
 #include "ipmsg.h"

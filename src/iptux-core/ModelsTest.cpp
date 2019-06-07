@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 #include "iptux/utils.h"
 
 using namespace std;
