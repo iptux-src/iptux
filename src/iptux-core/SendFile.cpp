@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 #include "iptux-core/Command.h"
-#include "iptux/AnalogFS.h"
+#include "iptux-core/AnalogFS.h"
 #include "iptux/SendFileData.h"
 #include "iptux-core/utils.h"
 
