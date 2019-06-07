@@ -6,7 +6,7 @@
 
 #include "iptux-core/IptuxConfig.h"
 
-#include "iptux/TestHelper.h"
+#include "iptux-core/TestHelper.h"
 
 using namespace std;
 using namespace iptux;

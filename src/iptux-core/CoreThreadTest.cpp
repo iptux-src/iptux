@@ -4,7 +4,7 @@
 #include <fstream>
 
 #include "iptux-core/CoreThread.h"
-#include "iptux/TestHelper.h"
+#include "iptux-core/TestHelper.h"
 #include "iptux-core/utils.h"
 #include "iptux-core/Exception.h"
 #include "iptux-core/output.h"

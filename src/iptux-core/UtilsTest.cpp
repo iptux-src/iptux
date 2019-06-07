@@ -2,7 +2,7 @@
 
 #include "iptux-core/utils.h"
 #include "iptux-core/Exception.h"
-#include "iptux/TestHelper.h"
+#include "iptux-core/TestHelper.h"
 
 using namespace iptux;
 using namespace std;

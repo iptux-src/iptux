@@ -110,11 +110,11 @@ core_test_sources = files([
     '../iptux-core/UtilsTest.cpp',
     '../iptux-core/ProgramDataTest.cpp',
     '../iptux-core/IptuxConfigTest.cpp',
+    '../iptux-core/TestHelper.cpp',
 ])
 test_sources = files([
     'CommandModeTest.cpp',
     'LogSystemTest.cpp',
-    'TestHelper.cpp',
     'TestMain.cpp',
     'UiCoreThreadTest.cpp',
     'UiProgramDataTest.cpp',
