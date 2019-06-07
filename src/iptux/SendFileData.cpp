@@ -13,6 +13,7 @@
 #include "SendFileData.h"
 
 #include <cinttypes>
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -20,6 +21,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <glog/logging.h>
 
 #include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
@@ -33,10 +35,9 @@ namespace iptux {
  * @param sk tcp socket
  * @param fl 文件信息数据
  */
-SendFileData::SendFileData(int sk, FileInfo *fl)
+SendFileData::SendFileData(int sk, PFileInfo fl)
     : sock(sk), file(fl), terminate(false), sumsize(0) {
   gettimeofday(&tasktime, NULL);
-  /* gettimeofday(&filetime, NULL);//个人感觉没必要 */
 }
 
 /**
@@ -48,6 +49,8 @@ SendFileData::~SendFileData() { }
  * 发送文件数据入口.
  */
 void SendFileData::SendFileDataEntry() {
+  CHECK(GetTaskId() > 0);
+
   /* 创建UI参考数据，并将数据主动加入UI */
   gdk_threads_enter();
   CreateUIPara();

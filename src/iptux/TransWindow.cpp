@@ -12,6 +12,7 @@
 #include "iptux-core/output.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
+#include "iptux/global.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -348,7 +349,7 @@ static void TerminateTransTask(GtkTreeModel *model) {
     return;
   }
 
-  trans->TerminateTrans();
+  g_cthrd->TerminateTransTask(trans->GetTaskId());
 }
 
 
@@ -363,7 +364,9 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
     gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
-    if (trans) trans->TerminateTrans();
+    if (trans) {
+      g_cthrd->TerminateTransTask(trans->GetTaskId());
+    }
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 

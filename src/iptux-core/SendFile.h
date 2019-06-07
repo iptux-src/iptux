@@ -32,7 +32,7 @@ class SendFile {
  private:
   void SendFileInfo(PPalInfo pal, uint32_t opttype, std::vector<FileInfo>& filist);
   void BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist);
-  void ThreadSendFile(int sock, FileInfo *file);
+  void ThreadSendFile(int sock, PFileInfo file);
 
  private:
   CoreThread* coreThread;

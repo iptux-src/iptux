@@ -20,13 +20,12 @@ namespace iptux {
 
 class SendFileData: public TransAbstract {
  public:
-  SendFileData(int sk, FileInfo *fl);
+  SendFileData(int sk, PFileInfo fl);
   ~SendFileData();
 
   void SendFileDataEntry();
   virtual const TransFileModel& getTransFileModel() const;
   virtual void TerminateTrans();
-
  private:
   void CreateUIPara();
   void SendRegularFile();
@@ -36,7 +35,8 @@ class SendFileData: public TransAbstract {
   void UpdateUIParaToOver();
 
   int sock;                           //数据套接口
-  FileInfo *file;                     //文件信息
+  int taskId;
+  PFileInfo file;                     //文件信息
   TransFileModel para;
   bool terminate;                     //终止标志(也作处理结果标识)
   int64_t sumsize;                    //文件(目录)总大小

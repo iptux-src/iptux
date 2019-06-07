@@ -33,6 +33,8 @@ struct CoreThread::Impl {
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
 
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
+  int lastTransTaskId { 0 };
+  map<int, shared_ptr<TransAbstract>> transTasks;
 
   future<void> udpFuture;
   future<void> tcpFuture;
@@ -550,6 +552,20 @@ PFileInfo CoreThread::GetPrivateFileByPacketN(uint32_t packageNum, uint32_t file
     }
   }
   return PFileInfo();
+}
+
+void CoreThread::RegisterTransTask(std::shared_ptr<TransAbstract> task) {
+  pImpl->lastTransTaskId++;
+  pImpl->transTasks[pImpl->lastTransTaskId] = task;
+}
+
+bool CoreThread::TerminateTransTask(int taskId) {
+  auto task = pImpl->transTasks.find(taskId);
+  if(task == pImpl->transTasks.end()) {
+    return false;
+  }
+  task->second->TerminateTrans();
+  return true;
 }
 
 

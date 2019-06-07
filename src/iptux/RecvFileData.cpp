@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/socket.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Command.h"
 #include "iptux-core/AnalogFS.h"
@@ -48,6 +49,8 @@ RecvFileData::~RecvFileData() {}
  * 接收文件数据入口.
  */
 void RecvFileData::RecvFileDataEntry() {
+  CHECK(GetTaskId() > 0);
+
   /* 创建UI参考数据，并将数据主动加入UI */
   gdk_threads_enter();
   CreateUIPara();

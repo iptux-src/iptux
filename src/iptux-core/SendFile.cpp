@@ -14,12 +14,13 @@
 
 #include <cinttypes>
 #include <cstring>
+#include <memory>
+
 #include <unistd.h>
 #include <sys/socket.h>
 
 #include "iptux-core/Command.h"
 #include "iptux-core/AnalogFS.h"
-#include "iptux/SendFileData.h"
 #include "iptux-core/utils.h"
 
 using namespace std;
@@ -92,7 +93,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t filea
   //         *文件信息可能被删除或修改，必须单独复制一份.
   //         */
   //        file->fileown = pal;
-  SendFile(coreThread).ThreadSendFile(sock, file.get());
+  SendFile(coreThread).ThreadSendFile(sock, file);
 }
 
 /**
@@ -189,9 +190,10 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
  * @param sock tcp socket
  * @param file 文件信息
  */
-void SendFile::ThreadSendFile(int sock, FileInfo *file) {
-  SendFileData sfdt(sock, file);
-  sfdt.SendFileDataEntry();
+void SendFile::ThreadSendFile(int sock, PFileInfo file) {
+  auto sfdt = make_shared<SendFileData>(sock, file);
+  coreThread->RegisterTransTask(sfdt);
+  sfdt->SendFileDataEntry();
 }
 
 }  // namespace iptux
