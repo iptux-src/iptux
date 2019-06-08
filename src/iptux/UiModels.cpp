@@ -3,10 +3,10 @@
 
 #include <cstring>
 
-#include "Models.h"
-#include "output.h"
-#include "utils.h"
-#include "ipmsg.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/output.h"
+#include "iptux-core/utils.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -52,7 +52,7 @@ void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, cons
       TransModelColumn::REMAIN, para.getRemain().c_str(),
       TransModelColumn::RATE, para.getRate().c_str(),
       TransModelColumn::FILE_PATH, para.getFilePath().c_str(),
-      TransModelColumn::DATA, para.getData(),
+      TransModelColumn::TASK_ID, para.getTaskId(),
       TransModelColumn::FINISHED, para.isFinished(),
       -1);
 }

@@ -20,9 +20,9 @@
 #include <queue>
 
 #include "iptux/UiProgramData.h"
-#include "iptux/Models.h"
+#include "iptux-core/Models.h"
 #include "iptux/UiModels.h"
-#include "iptux/CoreThread.h"
+#include "iptux-core/CoreThread.h"
 
 namespace iptux {
 
@@ -44,8 +44,6 @@ class UiCoreThread: public CoreThread {
   std::shared_ptr<UiProgramData> getUiProgramData();
 
   void start() override;
-
-  void WriteSharedData();
 
   void InsertMessage(const MsgPara& para);
   void InsertMessage(MsgPara&& para);
@@ -72,21 +70,12 @@ class UiCoreThread: public CoreThread {
   void PushItemToEnclosureList(FileInfo *file);
   void PopItemFromEnclosureList(FileInfo *file);
 
-  void AttachFileToPublic(FileInfo *file);
-  void ClearFileFromPublic();
-  GSList *GetPublicFileList();
-  void AttachFileToPrivate(FileInfo *file);
-  void DelFileFromPrivate(uint32_t fileid);
-  FileInfo *GetFileFromAll(uint32_t fileid);
-  FileInfo *GetFileFromAllWithPacketN(uint32_t packageNum, uint32_t filectime);
-
   void CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const G_GNUC_PRINTF(3, 4);
   void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
 
  private:
   void InitSublayer();
   void ClearSublayer() override ;
-  void ReadSharedData();
 
   static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
   static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
@@ -110,7 +99,6 @@ private:
   GQueue msgline;                                 //消息队列
 
   uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
-  GSList *pblist, *prlist;  //文件链表(共享/私有)
   GSList *ecsList;          //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 

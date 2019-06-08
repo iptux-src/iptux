@@ -19,16 +19,16 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "iptux/HelpDialog.h"
-#include "iptux/RecvFileData.h"
-#include "iptux/SendFile.h"
+#include "iptux-core/SendFile.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
-#include "iptux/output.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/output.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -423,14 +423,13 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
  * 发送附件给好友
  */
 void DialogPeer::BroadcastEnclosureMsg(GSList *list) {
-  SendFile sfile;
   GSList *plist;
 
   /* 向选中的成员发送附件 */
   plist = NULL;
   plist = g_slist_append(plist, grpinf->member->data);
 
-  sfile.BcstFileInfoEntry(plist, list);
+  SendFile::BcstFileInfoEntry(g_cthrd, plist, list);
   g_slist_free(plist);
 }
 
@@ -1067,8 +1066,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
  * @param file 文件信息
  */
 void DialogPeer::ThreadRecvFile(FileInfo *file) {
-  RecvFileData rfdt(file);
-  rfdt.RecvFileDataEntry();
+  g_cthrd->RecvFile(file);
+  // RecvFileData rfdt(file);
+  // rfdt.RecvFileDataEntry();
 }
 /**
  * 获取待发送成员列表.

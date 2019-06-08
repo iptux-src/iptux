@@ -13,8 +13,9 @@
 #include "config.h"
 #include "HelpDialog.h"
 
-#include "iptux/deplib.h"
-#include "iptux/support.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/support.h"
+#include "iptux/UiHelper.h"
 
 namespace iptux {
 
@@ -35,11 +36,6 @@ HelpDialog::~HelpDialog() {}
 GtkWidget* HelpDialog::AboutEntry(GtkWindow* parent) {
   HelpDialog hlp;
   return hlp.CreateAboutDialog(parent);
-}
-
-void HelpDialog::onFaq() {
-  const char *faq = _("http://code.google.com/p/iptux/wiki/FAQ?wl=en");
-  iptux_open_url(faq);
 }
 
 /**

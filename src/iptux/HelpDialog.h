@@ -22,7 +22,6 @@ class HelpDialog {
   ~HelpDialog();
 
   static GtkWidget* AboutEntry(GtkWindow* parent);
-  static void onFaq();
 
  private:
   GtkWidget *CreateAboutDialog(GtkWindow* parent);

@@ -17,24 +17,19 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include "iptux/Command.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
 #include "iptux/UiProgramData.h"
-#include "iptux/TcpData.h"
-#include "iptux/UdpData.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/output.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/output.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
 namespace iptux {
-
-static const char *CONFIG_SHARED_FILE_LIST = "shared_file_list";
-static const char *CONFIG_ACCESS_SHARED_LIMIT = "access_shared_limit";
 
 /**
  * 类构造函数.
@@ -48,8 +43,6 @@ UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
       brdlist(NULL),
       pbn(1),
       prn(MAX_SHAREDFILE),
-      pblist(NULL),
-      prlist(NULL),
       ecsList(NULL) {
   logSystem = new LogSystem(data);
   g_queue_init(&msgline);
@@ -61,29 +54,6 @@ UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
  */
 UiCoreThread::~UiCoreThread() {
   delete logSystem;
-}
-
-/**
- * 写出共享文件数据.
- * @note 与可能修改链表的代码段串行执行，没有加锁的必要
- */
-void UiCoreThread::WriteSharedData() {
-  GSList *tlist;
-
-  /* 获取共享文件链表 */
-  vector<string> sharedFileList;
-  tlist = pblist;
-  while (tlist) {
-    sharedFileList.push_back(string(((FileInfo *)tlist->data)->filepath));
-    tlist = g_slist_next(tlist);
-  }
-  /* 写出数据 */
-  config->SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
-  auto passwd = GetAccessPublicLimit();
-  if (!passwd.empty()) {
-    config->SetString(CONFIG_ACCESS_SHARED_LIMIT, passwd);
-  }
-  config->Save();
 }
 
 /**
@@ -113,7 +83,7 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
   GtkTextIter iter;
   const gchar *data;
 
-  for(int i = 0; i < para->dtlist.size(); ++i) {
+  for(size_t i = 0; i < para->dtlist.size(); ++i) {
     ChipData* chipData = &para->dtlist[i];
     data = chipData->data.c_str();
     switch (chipData->type) {
@@ -453,108 +423,9 @@ void UiCoreThread::PopItemFromMsgline(GroupInfo *grpinf) {
 }
 
 /**
- * 附加文件信息到公有文件链表.
- * @param file 文件信息
- */
-void UiCoreThread::AttachFileToPublic(FileInfo *file) {
-  pblist = g_slist_append(pblist, file);
-}
-
-/**
- * 清空公有文件链表.
- */
-void UiCoreThread::ClearFileFromPublic() {
-  for (GSList *tlist = pblist; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
-  g_slist_free(pblist);
-  pblist = NULL;
-}
-
-/**
- * 获取公有文件链表指针.
- * @return 链表
- */
-GSList *UiCoreThread::GetPublicFileList() { return pblist; }
-
-/**
- * 附加文件信息到私有文件链表.
- * @param file 文件信息
- */
-void UiCoreThread::AttachFileToPrivate(FileInfo *file) {
-  prlist = g_slist_append(prlist, file);
-}
-
-/**
- * 从私有文件链表删除指定的文件.
- * @param fileid 文件ID
- */
-void UiCoreThread::DelFileFromPrivate(uint32_t fileid) {
-  GSList *tlist;
-
-  tlist = prlist;
-  while (tlist) {
-    if (((FileInfo *)tlist->data)->fileid == fileid) {
-      delete (FileInfo *)tlist->data;
-      prlist = g_slist_delete_link(prlist, tlist);
-      break;
-    }
-    tlist = g_slist_next(tlist);
-  }
-}
-
-/**
- * 获取指定文件ID的文件信息.
- * @param fileid 文件ID
- * @return 文件信息
- */
-FileInfo *UiCoreThread::GetFileFromAll(uint32_t fileid) {
-  GSList *tlist;
-
-  tlist = fileid < MAX_SHAREDFILE ? pblist : prlist;
-  while (tlist) {
-    if (((FileInfo *)tlist->data)->fileid == fileid) break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return (FileInfo *)(tlist ? tlist->data : NULL);
-}
-
-/**
- * 获取指定文件包编号的文件信息.
- * @param PacketN 文件包ID
- * @return 文件信息
- * 这个函数主要是为了兼容adroid版的信鸽(IPMSG),IPMSG把包编号转换为
- * 16进制放在了本来应该是fileid的地方,在存放文件创建时间的地方放上了包内编号
- * 所以在调用这个函数时,传给packageNum的是fileid,
- * 传的filectime实际上是包内编号
- */
-FileInfo *UiCoreThread::GetFileFromAllWithPacketN(uint32_t packageNum,
-                                                uint32_t filectime) {
-  GSList *tlist;
-
-  tlist = prlist;
-  while (tlist) {
-    if ((((FileInfo *)tlist->data)->packetn == packageNum) &&
-        ((((FileInfo *)tlist->data)->filenum == filectime)))
-      break;
-    tlist = g_slist_next(tlist);
-  }
-  if (tlist != NULL) return (FileInfo *)(tlist ? tlist->data : NULL);
-  tlist = pblist;
-  while (tlist) {
-    if ((((FileInfo *)tlist->data)->packetn == packageNum) &&
-        ((((FileInfo *)tlist->data)->filenum == filectime)))
-      break;
-    tlist = g_slist_next(tlist);
-  }
-  return (FileInfo *)(tlist ? tlist->data : NULL);
-}
-
-/**
  * 初始化底层数据.
  */
 void UiCoreThread::InitSublayer() {
-  ReadSharedData();
 }
 
 /**
@@ -579,46 +450,11 @@ void UiCoreThread::ClearSublayer() {
   g_slist_free(brdlist);
   g_queue_clear(&msgline);
 
-  for (tlist = pblist; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
-  g_slist_free(pblist);
-  for (tlist = prlist; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
-  g_slist_free(prlist);
-
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo *)tlist->data;
   g_slist_free(ecsList);
   if (timerid > 0) g_source_remove(timerid);
   pthread_mutex_destroy(&mutex);
-}
-
-/**
- * 读取共享文件数据.
- */
-void UiCoreThread::ReadSharedData() {
-  FileInfo *file;
-  struct stat st;
-
-  /* 读取共享文件数据 */
-  vector<string> sharedFileList = config->GetStringList(CONFIG_SHARED_FILE_LIST);
-
-  /* 分析数据并加入文件链表 */
-  for (size_t i = 0; i < sharedFileList.size(); ++i) {
-    if (stat(sharedFileList[i].c_str(), &st) == -1 ||
-        !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
-      continue;
-    }
-    /* 加入文件信息到链表 */
-    file = new FileInfo;
-    pblist = g_slist_append(pblist, file);
-    file->fileid = pbn++;
-    /* file->packetn = 0;//没必要设置此字段 */
-    file->fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR;
-    /* file->filesize = 0;//我可不愿意程序启动时在这儿卡住 */
-    /* file->fileown = NULL;//没必要设置此字段 */
-    file->filepath = strdup(sharedFileList[i].c_str());
-  }
 }
 
 /**
@@ -879,7 +715,7 @@ GSList *UiCoreThread::GetPalEnclosure(PalInfo *pal) {
   GSList *tlist, *palecslist;
   palecslist = NULL;
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist)) {
-    if (((FileInfo *)tlist->data)->fileown == pal) {
+    if (((FileInfo *)tlist->data)->fileown->GetKey() == pal->GetKey()) {
       palecslist = g_slist_append(palecslist, tlist->data);
     }
   }

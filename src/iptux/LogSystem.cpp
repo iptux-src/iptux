@@ -15,9 +15,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "iptux/deplib.h"
-#include "iptux/ipmsg.h"
-#include "iptux/utils.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/utils.h"
 
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER "-------------------------------------"

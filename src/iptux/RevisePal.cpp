@@ -19,10 +19,10 @@
 #include "iptux/UiCoreThread.h"
 #include "iptux/MainWindow.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/ipmsg.h"
-#include "iptux/utils.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/utils.h"
 
 namespace iptux {
 

@@ -89,8 +89,8 @@
                     <attribute name="action">win.about</attribute>
                 </item>
             <item>
-                <attribute name="label" translatable="yes">_FAQ</attribute>
-                <attribute name="action">app.help.faq</attribute>
+                <attribute name="label" translatable="yes">Report Bug</attribute>
+                <attribute name="action">app.help.report_bug</attribute>
             </item>
         </section>
         </submenu>

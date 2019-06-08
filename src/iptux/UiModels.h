@@ -3,8 +3,8 @@
 
 #include <gtk/gtk.h>
 
-#include "Models.h"
-#include "iptux/TransFileModel.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/TransFileModel.h"
 
 namespace iptux {
 
@@ -27,8 +27,9 @@ class GroupInfo {
 enum class TransModelColumn {
   STATUS, TASK, PEER, IP, FILENAME,
   FILE_LENGTH_TEXT, FINISHED_LENGTH_TEXT, PROGRESS, PROGRESS_TEXT, COST,
-  REMAIN, RATE, FILE_PATH, DATA, PARA,
+  REMAIN, RATE, FILE_PATH, PARA,
   FINISHED,
+  TASK_ID,
   N_COLUMNS
 };
 typedef GtkTreeModel TransModel;

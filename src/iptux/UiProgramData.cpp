@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#include "iptux/deplib.h"
-#include "iptux/ipmsg.h"
-#include "iptux/utils.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 

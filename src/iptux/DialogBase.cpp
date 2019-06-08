@@ -16,15 +16,15 @@
 
 #include <sys/stat.h>
 
-#include "iptux/AnalogFS.h"
+#include "iptux-core/AnalogFS.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/SendFile.h"
+#include "iptux-core/SendFile.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/output.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/output.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
 
 using namespace std;
@@ -190,10 +190,10 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       file->filepath = g_strdup((char *)tlist->data);
       file->filectime = uint32_t(st.st_ctime);
       file->filenum = filenum;
-      file->fileown = (PalInfo *)(pallist->data);
+      file->fileown = g_cthrd->GetPal(((PalInfo *)(pallist->data))->GetKey());
       /* 加入文件信息到中心节点 */
       g_cthrd->Lock();
-      g_cthrd->AttachFileToPrivate(file);
+      g_cthrd->AddPrivateFile(PFileInfo(file));
       g_cthrd->Unlock();
       /* 添加数据 */
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -514,7 +514,7 @@ void DialogBase::DialogDestory(DialogBase *dialog) { delete dialog; }
 /**
  * 清除提示,这个提示只是窗口闪动的提示
  */
-gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event) {
+gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
   if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
     gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
   return FALSE;
@@ -532,8 +532,8 @@ gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *event) {
  * @param time the timestamp at which the data was received
  */
 void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
-                                  gint x, gint y, GtkSelectionData *data,
-                                  guint info, guint time) {
+                                  gint, gint, GtkSelectionData *data,
+                                  guint, guint time) {
   GtkWidget *widget;
   GSList *list;
 
@@ -559,7 +559,7 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean DialogBase::WindowConfigureEvent(GtkWidget *window,
+gboolean DialogBase::WindowConfigureEvent(GtkWidget *,
                                           GdkEventConfigure *event,
                                           GData **dtset) {
   g_datalist_set_data(dtset, "window-width", GINT_TO_POINTER(event->width));
@@ -574,7 +574,7 @@ gboolean DialogBase::WindowConfigureEvent(GtkWidget *window,
  * @param pspec he GParamSpec of the property which changed
  * @param dtset data set
  */
-void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
+void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec * /*pspec*/,
                                     GData **dtset) {
   const gchar *identify;
   gint position;
@@ -669,7 +669,7 @@ void DialogBase::RemoveSelectedEnclosure(GtkWidget *widget) {
                             (GtkTreePath *)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 4, &file, -1);
     dlg->totalsendsize -= file->filesize;
-    g_cthrd->DelFileFromPrivate(file->fileid);
+    g_cthrd->DelPrivateFile(file->fileid);
     list = g_list_next(list);
   }
   g_list_free(list);
@@ -847,6 +847,6 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
  * 打开文件传输窗口.
  * @param dlgpr 对话框类
  */
-void DialogBase::OpenTransDlg(DialogBase *dlgpr) { g_mwin->OpenTransWindow(); }
+void DialogBase::OpenTransDlg(DialogBase */*dlgpr*/) { g_mwin->OpenTransWindow(); }
 
 }  // namespace iptux

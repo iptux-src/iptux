@@ -14,13 +14,15 @@
 
 #include <sys/stat.h>
 
-#include "iptux/AnalogFS.h"
-#include "iptux/deplib.h"
+#include "iptux-core/AnalogFS.h"
+#include "iptux-core/deplib.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -187,17 +189,14 @@ void FillFileModel(GtkTreeModel *model) {
   char *filesize;
   const char *filetype;
   FileInfo *file;
-  GSList *tlist;
 
   /* 将现在的共享文件填入model */
-  tlist = g_cthrd->GetPublicFileList();
-  while (tlist) {
-    file = (FileInfo *)tlist->data;
+  for(FileInfo& file: g_cthrd->getProgramData()->GetSharedFileInfos()) {
     /* 获取文件大小 */
-    file->filesize = afs.ftwsize(file->filepath);
-    filesize = numeric_to_size(file->filesize);
+    file.filesize = afs.ftwsize(file.filepath);
+    filesize = numeric_to_size(file.filesize);
     /* 获取文件类型 */
-    switch (GET_MODE(file->fileattr)) {
+    switch (GET_MODE(file.fileattr)) {
       case IPMSG_FILE_REGULAR:
         filetype = _("regular");
         iconname = "text-x-generic-symbolic";
@@ -215,15 +214,13 @@ void FillFileModel(GtkTreeModel *model) {
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter,
                        0, iconname,
-                       1, file->filepath,
+                       1, file.filepath,
                        2, filesize,
                        3, filetype,
-                       4, file->fileattr,
+                       4, file.fileattr,
                        -1);
     /* 烦，释放资源 */
     g_free(filesize);
-    /* 转入下一个节点 */
-    tlist = g_slist_next(tlist);
   }
 }
 
@@ -286,22 +283,21 @@ void ApplySharedData(ShareFile* self) {
 
   /* 更新共享文件链表 */
   g_cthrd->Lock();
-  g_cthrd->ClearFileFromPublic();
+  g_cthrd->getProgramData()->ClearShareFileInfos();
   g_cthrd->PbnQuote() = 1;
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "file-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
       gtk_tree_model_get(model, &iter, 1, &filepath, 4, &fileattr, -1);
-      file = new FileInfo;
-      file->fileid = g_cthrd->PbnQuote()++;
-      /* file->packetn = 0;//没必要设置此字段 */
-      file->fileattr = fileattr;
-      /* file->filesize = 0;//我喜欢延后处理 */
-      /* file->fileown = NULL;//没必要设置此字段 */
-      file->filepath = filepath;
-      if (afs.stat(filepath, &st) == 0) file->filectime = st.st_ctime;
-      g_cthrd->AttachFileToPublic(file);
+      FileInfo file;
+      file.fileid = g_cthrd->PbnQuote()++;
+      file.fileattr = fileattr;
+      file.filepath = filepath;
+      if (afs.stat(filepath, &st) == 0) {
+        file.filectime = st.st_ctime;
+      }
+      g_cthrd->getProgramData()->AddShareFileInfo(move(file));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
   g_cthrd->Unlock();
@@ -309,10 +305,12 @@ void ApplySharedData(ShareFile* self) {
   /* 更新密码 */
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "password-button-widget"));
   passwd = (const gchar *)g_object_get_data(G_OBJECT(widget), "password");
-  g_cthrd->SetAccessPublicLimit(passwd);
-
-  /* 写出共享文件 */
-  g_cthrd->WriteSharedData();
+  if(!passwd) {
+    g_cthrd->SetAccessPublicLimit("");
+  } else {
+    g_cthrd->SetAccessPublicLimit(passwd);
+  }
+  g_cthrd->getUiProgramData()->WriteProgData();
 }
 
 /**
@@ -467,11 +465,12 @@ void DeleteFiles(ShareFile* self) {
 }
 
 void SetPassword(ShareFile* self) {
-  GtkWidget *widget, *parent;
+  GtkWidget *widget;
   char *passwd, *epasswd;
 
-  parent = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "dialog-widget"));
-  if (!(passwd = pop_password_settings(parent))) return;
+  if (!(passwd = pop_password_settings(GTK_WIDGET(self)))) {
+    return;
+  }
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "password-button-widget"));
   epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
   g_object_set_data_full(G_OBJECT(widget), "password", epasswd,

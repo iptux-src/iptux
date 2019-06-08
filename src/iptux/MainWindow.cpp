@@ -14,8 +14,8 @@
 
 #include <string>
 #include <cinttypes>
+#include <glog/logging.h>
 
-#include "iptux/Command.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
 #include "iptux/DialogGroup.h"
@@ -25,14 +25,16 @@
 #include "iptux/ShareFile.h"
 #include "iptux/StatusIcon.h"
 #include "iptux/callback.h"
-#include "iptux/deplib.h"
+#include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
-#include "iptux/output.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
+#include "iptux-core/output.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
+#include "iptux/dialog.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -439,14 +441,6 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   if (!found) {
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, &para, -1);
-  }
-
-  /**
-   * @note 鉴于参数值(*para)的原地址有可能会被重用， 所以当("data"==null)
-   * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
-   */
-  if (!para.getData()) {
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, NULL, -1);
   }
 
   /* 重设数据 */
@@ -1097,19 +1091,17 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
 gboolean MainWindow::UpdateUI(MainWindow *mwin) {
   static uint32_t sumonline = 0;  //避免每次都作一次设置
   GtkWidget *widget;
-  char buf[MAX_BUFLEN];
   uint32_t sum;
-  GSList *tlist;
 
   /* 统计当前在线人数 */
   sum = g_cthrd->GetOnlineCount();
 
   /* 更新UI */
   if (sumonline != sum) {
-    snprintf(buf, MAX_BUFLEN, _("Pals Online: %" PRIu32), sum);
+    auto label = stringFormat(_("Pals Online: %" PRIu32), sum);
     widget =
         GTK_WIDGET(g_datalist_get_data(&mwin->widset, "online-label-widget"));
-    gtk_label_set_text(GTK_LABEL(widget), buf);
+    gtk_label_set_text(GTK_LABEL(widget), label.c_str());
     sumonline = sum;
   }
 
@@ -1262,12 +1254,7 @@ void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &
  * @param grpinf 好友群组信息
  */
 void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
-  Command cmd(*g_cthrd);
-
-  cmd.SendAskShared(g_cthrd->getUdpSock(),
-    g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()),
-    0,
-    NULL);
+  g_cthrd->SendAskShared(g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()));
 }
 
 /**
@@ -1305,7 +1292,7 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
  */
 gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
                                          gboolean keyboard_mode, GtkTooltip *tooltip,
-                                         MainWindow *self) {
+                                         MainWindow *) {
   GtkTreePath *path;
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1339,7 +1326,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
 void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                        GtkTreeViewColumn *column,
+                                        GtkTreeViewColumn *,
                                         MainWindow *self) {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1467,9 +1454,9 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview,
  * @param time the timestamp at which the data was received
  */
 void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
-                                         GdkDragContext *context, gint x,
+                                         GdkDragContext *, gint x,
                                          gint y, GtkSelectionData *data,
-                                         guint info, guint time,
+                                         guint , guint ,
                                          MainWindow *self) {
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -1577,8 +1564,6 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   GtkTreeIter iter;
   char ipstr[INET_ADDRSTRLEN], *file;
   const gchar *text;
-  GSList *tlist;
-  PalInfo *pal;
 
   /* 获取默认主题 */
   theme = gtk_icon_theme_get_default();
@@ -1620,7 +1605,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
  * @param column the GtkTreeViewColumn in which the activation occurred
  */
 void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                      GtkTreeViewColumn *column,
+                                      GtkTreeViewColumn *,
                                       MainWindow *self) {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1650,9 +1635,9 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
  * @param time the timestamp at which the data was received
  */
 void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
-                                         GdkDragContext *context, gint x,
+                                         GdkDragContext *, gint x,
                                          gint y, GtkSelectionData *data,
-                                         guint info, guint time,
+                                         guint , guint ,
                                          MainWindow *self) {
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -1699,7 +1684,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
+gboolean MainWindow::MWinConfigureEvent(GtkWidget *,
                                         GdkEventConfigure *event,
                                         MainWindow *self) {
   self->windowConfig.SetWidth(event->width)
@@ -1714,7 +1699,7 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget *window,
  * @param pspec he GParamSpec of the property which changed
  * @param dtset data set
  */
-void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
+void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *,
                                     MainWindow *self) {
   self->config->SetInt("mwin_main_paned_divide",
                       gtk_paned_get_position(GTK_PANED(paned)));
@@ -1908,7 +1893,61 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
 
     return;
   }
-  LOG_WARN("unknown event type: %d", type);
+
+  if(type == EventType::PASSWORD_REQUIRED) {
+    auto event = (const PasswordRequiredEvent*)(_event.get());
+    auto palKey = event->GetPalKey();
+    auto pal = g_cthrd->GetPal(palKey);
+    auto passwd = pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal.get());
+    if (passwd && *passwd != '\0') {
+      g_cthrd->SendAskSharedWithPassword(palKey, passwd);
+    }
+    return;
+  }
+
+  if(type == EventType::PERMISSION_REQUIRED) {
+    auto event = (const PermissionRequiredEvent*)(_event.get());
+    auto pal = g_cthrd->GetPal(event->GetPalKey());
+    auto permit = pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal.get());
+    if (permit) {
+      g_cthrd->SendSharedFiles(pal);
+    }
+    return;
+  }
+
+  if(type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
+    auto event = dynamic_cast<const NewShareFileFromFriendEvent*>(_event.get());
+    CHECK_NOTNULL(event);
+    auto file = new FileInfo(event->GetFileInfo());
+    g_cthrd->PushItemToEnclosureList(file);
+    return;
+  }
+
+  if(type == EventType::SEND_FILE_STARTED || type == EventType::RECV_FILE_STARTED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    g_mwin->UpdateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (g_progdt->IsAutoOpenFileTrans()) {
+       g_mwin->OpenTransWindow();
+    }
+    return;
+  }
+
+  if(type == EventType::SEND_FILE_FINISHED || type == EventType::RECV_FILE_FINISHED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    g_mwin->UpdateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (para->isFinished() && FLAG_ISSET(g_progdt->sndfgs, 2)) {
+      g_sndsys->Playing(g_progdt->transtip);
+    }
+    return;
+  }
+
+  LOG_WARN("unknown event type: %d", int(type));
 }
 
 }  // namespace iptux

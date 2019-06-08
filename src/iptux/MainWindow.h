@@ -12,13 +12,12 @@
 #ifndef IPTUX_MAINWINDOW_H
 #define IPTUX_MAINWINDOW_H
 
-#include "iptux/IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
-#include "iptux/Models.h"
-#include "iptux/RecvFileData.h"
+#include "iptux-core/Models.h"
 #include "iptux/UiModels.h"
-#include "iptux/Event.h"
+#include "iptux-core/Event.h"
 #include "iptux/UiCoreThread.h"
 
 namespace iptux {

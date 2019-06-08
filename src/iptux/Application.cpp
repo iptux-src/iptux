@@ -3,13 +3,12 @@
 
 #include "iptux/UiProgramData.h"
 #include "iptux/global.h"
-#include "iptux/ipmsg.h"
-#include "iptux/support.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/support.h"
 #include "iptux/StatusIcon.h"
-#include "HelpDialog.h"
 #include "DataSettings.h"
 #include "ShareFile.h"
-#include "output.h"
+#include "iptux-core/output.h"
 #include "dialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/UiHelper.h"
@@ -23,12 +22,20 @@ typedef void (* GActionCallback) (GSimpleAction *action,
 
 namespace iptux {
 
+namespace {
+  void onReportBug() {
+    iptux_open_url("https://github.com/iptux-src/iptux/issues/new");
+  }
+}
+
 Application::Application(shared_ptr<IptuxConfig> config)
 : config(config),
   data(nullptr),
   window(nullptr),
-  shareFile(nullptr) {
-  app = gtk_application_new ("io.github.iptux-src.iptux", G_APPLICATION_FLAGS_NONE);
+  shareFile(nullptr)
+{
+  auto application_id = config->GetString("debug_application_id", "io.github.iptux-src.iptux");
+  app = gtk_application_new (application_id.c_str(), G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
 }
@@ -52,7 +59,7 @@ void Application::onStartup(Application& self) {
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL, {0,0,0}},
       { "preferences", G_ACTION_CALLBACK(onPreferences), NULL, NULL, NULL, {0,0,0}},
-      { "help.faq", G_ACTION_CALLBACK(HelpDialog::onFaq), NULL, NULL, NULL, {0,0,0}},
+      { "help.report_bug", G_ACTION_CALLBACK(onReportBug), NULL, NULL, NULL, {0,0,0}},
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
   };
@@ -69,6 +76,11 @@ void Application::onStartup(Application& self) {
 }
 
 void Application::onActivate(Application& self) {
+  if(self.started) {
+    return;
+  }
+  self.started = true;
+
   StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
 

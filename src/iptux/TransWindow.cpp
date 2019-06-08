@@ -1,17 +1,22 @@
 #include "config.h"
 #include "TransWindow.h"
 
+#include <memory>
 #include <glib/gi18n.h>
 
-#include "iptux/IptuxConfig.h"
-#include "iptux/support.h"
-#include "iptux/utils.h"
-#include "iptux/deplib.h"
-#include "iptux/TransAbstract.h"
-#include "iptux/output.h"
+#include "iptux-core/IptuxConfig.h"
+#include "iptux-core/support.h"
+#include "iptux-core/utils.h"
+#include "iptux-core/deplib.h"
+#include "iptux-core/TransAbstract.h"
+#include "iptux-core/output.h"
 #include "iptux/UiModels.h"
+#include "iptux/UiHelper.h"
+#include "iptux/global.h"
 
 #define IPTUX_PRIVATE "iptux-private"
+
+using namespace std;
 
 namespace iptux {
 
@@ -33,6 +38,7 @@ static void OpenThisFile(GtkTreeModel *model);
 static void ClearTransTask(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
+static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 
 TransWindow *trans_window_new(GtkWindow *parent) {
   g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
@@ -47,7 +53,7 @@ TransWindow *trans_window_new(GtkWindow *parent) {
   gtk_window_set_transient_for(window, parent);
   gtk_window_set_destroy_with_parent(window, true);
 
-  IptuxConfig *config = static_cast<IptuxConfig *>(g_object_get_data(G_OBJECT(parent), "iptux-config"));
+  auto config = trans_window_get_config(window);
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
   gtk_window_set_default_size(GTK_WINDOW(window),
                               config->GetInt("trans_window_width", 500),
@@ -67,7 +73,6 @@ TransWindow *trans_window_new(GtkWindow *parent) {
   return window;
 }
 
-IptuxConfig *trans_window_get_config(GtkWindow *pWindow);
 /**
  * 文件传输窗口位置&大小改变的响应处理函数.
  * @param window 文件传输窗口
@@ -79,16 +84,16 @@ gboolean TWinConfigureEvent(GtkWindow *window) {
   int width, height;
   gtk_window_get_size(window, &width, &height);
 
-  IptuxConfig* config = trans_window_get_config(window);
+  auto config = trans_window_get_config(window);
   config->SetInt("trans_window_width", width);
   config->SetInt("trans_window_height", height);
   config->Save();
   return FALSE;
 }
 
-IptuxConfig* trans_window_get_config(GtkWindow *window) {
+shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *window) {
   GtkWindow* parent = gtk_window_get_transient_for(window);
-  return static_cast<IptuxConfig *>(g_object_get_data(G_OBJECT(parent), "iptux-config"));
+  return *(static_cast<shared_ptr<IptuxConfig> *>(g_object_get_data(G_OBJECT(parent), "iptux-config")));
 }
 
 GtkTreeModel* trans_window_get_trans_model(GtkWindow* window) {
@@ -324,27 +329,21 @@ static void OpenContainingFolder(GtkTreeModel *model) {
 static void TerminateTransTask(GtkTreeModel *model) {
   GtkTreePath *path;
   GtkTreeIter iter;
-  TransAbstract *trans;
   gboolean finished;
+  int taskId;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter,
-                     TransModelColumn ::DATA, &trans,
-                     TransModelColumn ::FINISHED, &finished,
+                     TransModelColumn::TASK_ID, &taskId,
+                     TransModelColumn::FINISHED, &finished,
                      -1);
   if(finished) {
     return;
   }
-
-  if(!trans) {
-    LOG_WARN("task not finished but trans is not null");
-    return;
-  }
-
-  trans->TerminateTrans();
+  g_cthrd->TerminateTransTask(taskId);
 }
 
 
@@ -354,12 +353,12 @@ static void TerminateTransTask(GtkTreeModel *model) {
  */
 static void TerminateAllTransTask(GtkTreeModel *model) {
   GtkTreeIter iter;
-  TransAbstract *trans;
+  int taskId;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
-    if (trans) trans->TerminateTrans();
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    g_cthrd->TerminateTransTask(taskId);
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
@@ -369,16 +368,16 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
  */
 void ClearTransTask(GtkTreeModel *model) {
   GtkTreeIter iter;
-  gpointer data;
+  int taskId;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    mark:
-    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &data, -1);
-    if (!data) {
-      if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
-      break;
-    }
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    // TODO: clear finished task
+    // if (!data) {
+    //   if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
+    //   break;
+    // }
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
@@ -470,7 +469,6 @@ void OpenThisFile(GtkTreeModel *model) {
 gboolean UpdateTransUI(GtkWindow *window) {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  TransAbstract *trans;
 
   GtkWidget* treeview = getPriv(window).transTreeviewWidget;
 
@@ -479,12 +477,11 @@ gboolean UpdateTransUI(GtkWindow *window) {
   if (!gtk_tree_model_get_iter_first(model, &iter)) return TRUE;
 
   /* 更新UI */
+  int taskId;
   do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
-    if (trans) {  //当文件传输类存在时才能更新
-      const TransFileModel& transFileModel = trans->getTransFileModel();  //获取参数
-      transModelFillFromTransFileModel(model, &iter, transFileModel);
-    }
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    auto transFileModel = g_cthrd->GetTransTaskStat(taskId);
+    transModelFillFromTransFileModel(model, &iter, *transFileModel);
   } while (gtk_tree_model_iter_next(model, &iter));
 
   /* 重新调整UI */

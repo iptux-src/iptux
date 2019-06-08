@@ -1,59 +1,23 @@
 gtk_dep = dependency('gtk+-3.0', version: '>=3.12')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
-
-conf_data = configuration_data()
-conf_data.set_quoted('VERSION', meson.project_version())
-# the 1_ prefix is used for compatible with FeiQ
-conf_data.set_quoted('IPTUX_VERSION', '1_iptux '+meson.project_version())
-conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
-conf_data.set('CMAKE_INSTALL_FULL_DATADIR',
-    join_paths(get_option('prefix'), get_option('datadir')))
-if gstreamer_dep.found()
-    conf_data.set('GST_FOUND', true)
-endif
-configure_file(input : 'config.h.in',
-               output : 'config.h',
-               configuration : conf_data)
-
-test_conf_data = configuration_data()
-test_conf_data.set_quoted('PROJECT_ROOT_PATH', meson.source_root())
-configure_file(input : 'TestConfig.h.in',
-               output : 'TestConfig.h',
-               configuration : test_conf_data)
+glog_dep = dependency('libglog')
 
 sources = files([
-    'AnalogFS.cpp',
     'Application.cpp',
-    'Command.cpp',
-    'CommandMode.cpp',
-    'CoreThread.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
-    'Event.cpp',
-    'Exception.cpp',
     'HelpDialog.cpp',
-    'IptuxConfig.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
-    'Models.cpp',
-    'ProgramData.cpp',
-    'RecvFile.cpp',
-    'RecvFileData.cpp',
     'RevisePal.cpp',
-    'SendFile.cpp',
-    'SendFileData.cpp',
     'ShareFile.cpp',
     'SoundSystem.cpp',
     'StatusIcon.cpp',
-    'TcpData.cpp',
-    'TransAbstract.cpp',
-    'TransFileModel.cpp',
     'TransWindow.cpp',
-    'UdpData.cpp',
     'UiCoreThread.cpp',
     'UiHelper.cpp',
     'UiModels.cpp',
@@ -62,10 +26,6 @@ sources = files([
     'callback.cpp',
     'dialog.cpp',
     'global.cpp',
-    'output.cpp',
-    'support.cpp',
-    'utils.cpp',
-    'wrapper.cpp'
 ])
 
 glib_compile_resources = find_program('glib-compile-resources')
@@ -73,6 +33,7 @@ glib_compile_resources = find_program('glib-compile-resources')
 iptux_resource_h = custom_target('iptux_resource_h',
   output : 'IptuxResource.h',
   input : 'resources/iptux.gresource.xml',
+  depend_files: 'resources/gtk/menus.ui',
   command : [glib_compile_resources,
     '--generate-header',
     '--manual-register',
@@ -82,6 +43,7 @@ iptux_resource_h = custom_target('iptux_resource_h',
 iptux_resource_cpp = custom_target('iptux_resource_cpp',
   output : 'IptuxResource.cpp',
   input : 'resources/iptux.gresource.xml',
+  depend_files: 'resources/gtk/menus.ui',
   command : [glib_compile_resources,
     '--generate-source',
     '--manual-register',
@@ -89,35 +51,36 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
     '--sourcedir=' + join_paths(meson.current_source_dir(), 'resources'),
     '@INPUT@'])
 
-sources += [iptux_resource_h, iptux_resource_cpp]
+# TODO: How to support C++?
+# gnome = import('gnome')
+# iptux_resource = gnome.compile_resources(
+#     'IptuxResource',
+#     'resources/iptux.gresource.xml',
+#     source_dir: join_paths(meson.current_source_dir(), 'resources'),
+# )
+
+sources += [iptux_resource_cpp, iptux_resource_h]
 inc = include_directories('..')
 
 libiptux = static_library('iptux',
     sources,
-    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep],
+    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep],
+    link_with: [libiptux_core],
     include_directories: inc
 )
 
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
-    'CommandModeTest.cpp',
-    'CoreThreadTest.cpp',
-    'IptuxConfigTest.cpp',
     'LogSystemTest.cpp',
-    'ModelsTest.cpp',
-    'ProgramDataTest.cpp',
-    'TestHelper.cpp',
     'TestMain.cpp',
-    'UdpDataTest.cpp',
     'UiCoreThreadTest.cpp',
     'UiProgramDataTest.cpp',
-    'UtilsTest.cpp'
 ])
 libiptux_test = executable('libiptux_test',
     test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep],
-    link_with: [libiptux, libgtest],
+    link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
 test('unit test', libiptux_test)
