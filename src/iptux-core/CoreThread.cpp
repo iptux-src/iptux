@@ -6,6 +6,8 @@
 #include <fstream>
 #include <memory>
 #include <future>
+#include <deque>
+#include <mutex>
 
 #include <gio/gio.h>
 #include <glib/gi18n.h>
@@ -36,11 +38,40 @@ struct CoreThread::Impl {
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
   int lastTransTaskId { 0 };
   map<int, shared_ptr<TransAbstract>> transTasks;
+  deque<shared_ptr<const Event>> waitingEvents;
+  std::mutex waitingEventsMutex;
 
   future<void> udpFuture;
   future<void> tcpFuture;
   future<void> notifyToAllFuture;
+  future<void> processEventsFuture;
 };
+
+void CoreThread::processEvents() {
+  while(true) {
+    if(!started) {
+      return;
+    }
+
+    shared_ptr<const Event> event;
+
+    {
+      lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
+      if(!pImpl->waitingEvents.empty()) {
+        event = pImpl->waitingEvents.front();
+        pImpl->waitingEvents.pop_front();
+      }
+    }
+
+    if(!event) {
+      this_thread::sleep_for(10ms);
+    } else {
+      for(auto& callback: callbacks) {
+        callback(event);
+      }
+    }
+  }
+}
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
@@ -79,6 +110,9 @@ void CoreThread::start() {
   }, this);
   pImpl->tcpFuture = async([](CoreThread* ct){
     RecvTcpData(ct);
+  }, this);
+  pImpl->processEventsFuture = async([](CoreThread* ct){
+    ct->processEvents();
   }, this);
   pImpl->notifyToAllFuture = async([](CoreThread* ct){
     SendNotifyToAll(ct);
@@ -346,11 +380,8 @@ void CoreThread::emitNewPalOnline(const PalKey& palKey) {
 }
 
 void CoreThread::emitEvent(shared_ptr<const Event> event) {
-  Lock();
-  for(EventCallback& callback: callbacks) {
-    callback(event);
-  }
-  Unlock();
+  lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
+  pImpl->waitingEvents.push_back(event);
 }
 
 /**

@@ -147,6 +147,7 @@ class CoreThread {
 
  private:
   void bind_iptux_port();
+  void processEvents();
 
  private:
   static void RecvUdpData(CoreThread *pcthrd);
