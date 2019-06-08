@@ -2,25 +2,15 @@ glib_dep = dependency('glib-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 glog_dep = dependency('libglog')
 
-# conf_data = configuration_data()
-# conf_data.set_quoted('VERSION', meson.project_version())
-# # the 1_ prefix is used for compatible with FeiQ
-# conf_data.set_quoted('IPTUX_VERSION', '1_iptux '+meson.project_version())
-# conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
-# conf_data.set('CMAKE_INSTALL_FULL_DATADIR',
-#     join_paths(get_option('prefix'), get_option('datadir')))
-# if gstreamer_dep.found()
-#     conf_data.set('GST_FOUND', true)
-# endif
-# configure_file(input : 'config.h.in',
-#                output : 'config.h',
-#                configuration : conf_data)
-
-# test_conf_data = configuration_data()
-# test_conf_data.set_quoted('PROJECT_ROOT_PATH', meson.source_root())
-# configure_file(input : 'TestConfig.h.in',
-#                output : 'TestConfig.h',
-#                configuration : test_conf_data)
+header_files = files([
+    'CoreThread.h',
+    'ProgramData.h',
+    'IptuxConfig.h',
+    'Event.h',
+    'TransFileModel.h',
+    'Models.h',
+])
+install_headers(header_files, subdir: 'iptux-core')
 
 core_sources = files([
     'AnalogFS.cpp',
@@ -52,7 +42,18 @@ libiptux_core = shared_library('iptux-core',
     core_sources,
     dependencies: [glib_dep, jsoncpp_dep, glog_dep, thread_dep],
     include_directories: inc,
-    install: true
+    install: true,
+    version: so_version,
+)
+
+pkg = import('pkgconfig')
+pkg.generate(
+    description: 'Communicate and Share File in LAN',
+    name: 'iptux-core',
+    version: so_version,
+    requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35'],
+    requires_private: ['libglog'],
+    libraries: [libiptux_core, glog_dep],
 )
 
 core_test_helper_sources = files([
