@@ -39,6 +39,7 @@ namespace iptux {
  */
 RecvFileData::RecvFileData(CoreThread* coreThread, FileInfo *fl)
     : coreThread(coreThread), file(fl), terminate(false), sumsize(0) {
+  buf[0] = '\0';
   gettimeofday(&tasktime, NULL);
   /* gettimeofday(&filetime, NULL);//个人感觉没必要 */
 }

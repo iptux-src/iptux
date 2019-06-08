@@ -354,14 +354,11 @@ static void TerminateTransTask(GtkTreeModel *model) {
 static void TerminateAllTransTask(GtkTreeModel *model) {
   GtkTreeIter iter;
   int taskId;
-  TransAbstract *trans;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
     gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
-    if (trans) {
-      g_cthrd->TerminateTransTask(trans->GetTaskId());
-    }
+    g_cthrd->TerminateTransTask(taskId);
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
@@ -375,7 +372,6 @@ void ClearTransTask(GtkTreeModel *model) {
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    mark:
     gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
     // TODO: clear finished task
     // if (!data) {
@@ -473,7 +469,6 @@ void OpenThisFile(GtkTreeModel *model) {
 gboolean UpdateTransUI(GtkWindow *window) {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  TransAbstract *trans;
 
   GtkWidget* treeview = getPriv(window).transTreeviewWidget;
 

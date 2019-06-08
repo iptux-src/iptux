@@ -41,6 +41,7 @@ namespace iptux {
  */
 SendFileData::SendFileData(CoreThread* coreThread, int sk, PFileInfo fl)
     : coreThread(coreThread), sock(sk), file(fl), terminate(false), sumsize(0) {
+  buf[0] = '\0';
   gettimeofday(&tasktime, NULL);
 }
 
