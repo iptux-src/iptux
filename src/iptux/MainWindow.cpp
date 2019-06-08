@@ -1901,9 +1901,6 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto passwd = pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal.get());
     if (passwd && *passwd != '\0') {
       g_cthrd->SendAskSharedWithPassword(palKey, passwd);
-      // auto epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
-      // Command(*g_cthrd).SendAskShared(g_cthrd->getUdpSock(), pal->GetKey(), IPTUX_PASSWDOPT, epasswd);
-      // g_free(epasswd);
     }
     return;
   }
