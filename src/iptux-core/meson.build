@@ -51,7 +51,8 @@ thread_dep = dependency('threads')
 libiptux_core = shared_library('iptux-core',
     core_sources,
     dependencies: [glib_dep, jsoncpp_dep, glog_dep, thread_dep],
-    include_directories: inc
+    include_directories: inc,
+    install: true
 )
 
 core_test_helper_sources = files([
