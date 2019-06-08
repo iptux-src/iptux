@@ -14,6 +14,8 @@ enum class EventType {
   NEW_SHARE_FILE_FROM_FRIEND,
   SEND_FILE_STARTED,
   SEND_FILE_FINISHED,
+  RECV_FILE_STARTED,
+  RECV_FILE_FINISHED,
 };
 
 class Event {
@@ -111,6 +113,17 @@ class SendFileFinishedEvent: public AbstractTaskIdEvent {
     AbstractTaskIdEvent(EventType::SEND_FILE_FINISHED, taskId) {}
 };
 
+class RecvFileStartedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit RecvFileStartedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::RECV_FILE_STARTED, taskId) {}
+};
+
+class RecvFileFinishedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit RecvFileFinishedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::RECV_FILE_FINISHED, taskId) {}
+};
 }
 
 #endif //IPTUX_EVENT_H

@@ -1931,8 +1931,8 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     return;
   }
 
-  if(type == EventType::SEND_FILE_STARTED) {
-    auto event = CHECK_NOTNULL(dynamic_cast<const SendFileStartedEvent*>(_event.get()));
+  if(type == EventType::SEND_FILE_STARTED || type == EventType::RECV_FILE_STARTED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
     auto para = g_cthrd->GetTransTaskStat(taskId);
     g_mwin->UpdateItemToTransTree(*para);
@@ -1943,8 +1943,8 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     return;
   }
 
-  if(type == EventType::SEND_FILE_FINISHED) {
-    auto event = CHECK_NOTNULL(dynamic_cast<const SendFileFinishedEvent*>(_event.get()));
+  if(type == EventType::SEND_FILE_FINISHED || type == EventType::RECV_FILE_FINISHED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
     auto para = g_cthrd->GetTransTaskStat(taskId);
     g_mwin->UpdateItemToTransTree(*para);

@@ -15,12 +15,13 @@
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/Models.h"
 #include "iptux/TransAbstract.h"
+#include "iptux-core/CoreThread.h"
 
 namespace iptux {
 
 class RecvFileData: public TransAbstract {
  public:
-  RecvFileData(FileInfo *fl);
+  RecvFileData(CoreThread* coreThread, FileInfo *fl);
   virtual ~RecvFileData();
 
   void RecvFileDataEntry();
@@ -35,6 +36,7 @@ class RecvFileData: public TransAbstract {
   int64_t RecvData(int sock, int fd, int64_t filesize, int64_t offset);
   void UpdateUIParaToOver();
 
+  CoreThread* coreThread;
   FileInfo *file;                     //文件信息
   TransFileModel para;
   bool terminate;                     //终止标志(也作处理结果标识)

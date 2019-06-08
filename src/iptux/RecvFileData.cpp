@@ -12,6 +12,8 @@
 #include "config.h"
 #include "RecvFileData.h"
 
+#include <memory>
+
 #include <fcntl.h>
 #include <utime.h>
 #include <unistd.h>
@@ -22,11 +24,12 @@
 #include "iptux-core/Command.h"
 #include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
-#include "iptux/global.h"
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/output.h"
 #include "iptux-core/utils.h"
-#include "iptux/UiHelper.h"
+#include "iptux-core/Event.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -34,8 +37,8 @@ namespace iptux {
  * 类构造函数.
  * @param fl 文件信息数据
  */
-RecvFileData::RecvFileData(FileInfo *fl)
-    : file(fl), terminate(false), sumsize(0) {
+RecvFileData::RecvFileData(CoreThread* coreThread, FileInfo *fl)
+    : coreThread(coreThread), file(fl), terminate(false), sumsize(0) {
   gettimeofday(&tasktime, NULL);
   /* gettimeofday(&filetime, NULL);//个人感觉没必要 */
 }
@@ -51,15 +54,16 @@ RecvFileData::~RecvFileData() {}
 void RecvFileData::RecvFileDataEntry() {
   CHECK(GetTaskId() > 0);
 
-  /* 创建UI参考数据，并将数据主动加入UI */
-  gdk_threads_enter();
   CreateUIPara();
-  g_mwin->UpdateItemToTransTree(para);
-  auto g_progdt = g_cthrd->getUiProgramData();
-  if (g_progdt->IsAutoOpenFileTrans()) {
-    g_mwin->OpenTransWindow();
-  }
-  gdk_threads_leave();
+  coreThread->emitEvent(make_shared<RecvFileStartedEvent>(GetTaskId()));
+  /* 创建UI参考数据，并将数据主动加入UI */
+  // gdk_threads_enter();
+  // g_mwin->UpdateItemToTransTree(para);
+  // auto g_progdt = g_cthrd->getUiProgramData();
+  // if (g_progdt->IsAutoOpenFileTrans()) {
+  //   g_mwin->OpenTransWindow();
+  // }
+  // gdk_threads_leave();
 
   /* 分类处理 */
   switch (GET_MODE(file->fileattr)) {
@@ -73,15 +77,17 @@ void RecvFileData::RecvFileDataEntry() {
       break;
   }
 
-  /* 主动更新UI */
-  gdk_threads_enter();
   UpdateUIParaToOver();
-  g_mwin->UpdateItemToTransTree(para);
-  gdk_threads_leave();
+  coreThread->emitEvent(make_shared<RecvFileFinishedEvent>(GetTaskId()));
 
-  /* 处理成功则播放提示音 */
-  if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
-    g_sndsys->Playing(g_progdt->transtip);
+  // /* 主动更新UI */
+  // gdk_threads_enter();
+  // g_mwin->UpdateItemToTransTree(para);
+  // gdk_threads_leave();
+
+  // /* 处理成功则播放提示音 */
+  // if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
+  //   g_sndsys->Playing(g_progdt->transtip);
 }
 
 /**
@@ -121,14 +127,14 @@ void RecvFileData::CreateUIPara() {
  */
 void RecvFileData::RecvRegularFile() {
   AnalogFS afs;
-  Command cmd(*g_cthrd);
+  Command cmd(*coreThread);
   int64_t finishsize;
   int sock, fd;
   struct utimbuf timebuf;
 
   /* 创建文件传输套接口 */
   if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-    pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+    LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
               strerror(errno));
     exit(1);
   }
@@ -160,10 +166,10 @@ void RecvFileData::RecvRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    g_cthrd->SystemLog(_("Failed to receive the file \"%s\" from %s!"),
+    LOG_ERROR(_("Failed to receive the file \"%s\" from %s!"),
                        file->filepath, file->fileown->name);
   } else {
-    g_cthrd->SystemLog(_("Receive the file \"%s\" from %s successfully!"),
+    LOG_INFO(_("Receive the file \"%s\" from %s successfully!"),
                        file->filepath, file->fileown->name);
   }
   /* 关闭文件传输套接口 */
@@ -175,7 +181,7 @@ void RecvFileData::RecvRegularFile() {
  */
 void RecvFileData::RecvDirFiles() {
   AnalogFS afs;
-  Command cmd(*g_cthrd);
+  Command cmd(*coreThread);
   gchar *dirname, *pathname, *filename, *filectime, *filemtime;
   int64_t filesize, finishsize;
   uint32_t headsize, fileattr;
@@ -187,7 +193,7 @@ void RecvFileData::RecvDirFiles() {
 
   /* 创建文件传输套接口 */
   if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-    pop_error(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+    LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
               strerror(errno));
     exit(1);
   }
@@ -296,10 +302,10 @@ void RecvFileData::RecvDirFiles() {
 end:
   if (!result) {
     terminate = true;
-    g_cthrd->SystemLog(_("Failed to receive the directory \"%s\" from %s!"),
+    LOG_ERROR(_("Failed to receive the directory \"%s\" from %s!"),
                        file->filepath, file->fileown->name);
   } else {
-    g_cthrd->SystemLog(_("Receive the directory \"%s\" from %s successfully!"),
+    LOG_INFO(_("Receive the directory \"%s\" from %s successfully!"),
                        file->filepath, file->fileown->name);
   }
   /* 关闭文件传输套接口 */

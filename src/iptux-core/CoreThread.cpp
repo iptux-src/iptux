@@ -570,7 +570,7 @@ bool CoreThread::TerminateTransTask(int taskId) {
 }
 
 void CoreThread::RecvFile(FileInfo* file) {
-  auto rfdt = make_shared<RecvFileData>(file);
+  auto rfdt = make_shared<RecvFileData>(this, file);
   RegisterTransTask(rfdt);
   rfdt->RecvFileDataEntry();
 }
