@@ -6,7 +6,6 @@
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/support.h"
 #include "iptux/StatusIcon.h"
-#include "HelpDialog.h"
 #include "DataSettings.h"
 #include "ShareFile.h"
 #include "iptux-core/output.h"
@@ -22,6 +21,12 @@ typedef void (* GActionCallback) (GSimpleAction *action,
 #define	G_ACTION_CALLBACK(f)			 ((GActionCallback) (f))
 
 namespace iptux {
+
+namespace {
+  void onReportBug() {
+    iptux_open_url("https://github.com/iptux-src/iptux/issues/new");
+  }
+}
 
 Application::Application(shared_ptr<IptuxConfig> config)
 : config(config),
@@ -54,7 +59,7 @@ void Application::onStartup(Application& self) {
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL, {0,0,0}},
       { "preferences", G_ACTION_CALLBACK(onPreferences), NULL, NULL, NULL, {0,0,0}},
-      { "help.faq", G_ACTION_CALLBACK(HelpDialog::onFaq), NULL, NULL, NULL, {0,0,0}},
+      { "help.report_bug", G_ACTION_CALLBACK(onReportBug), NULL, NULL, NULL, {0,0,0}},
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
   };

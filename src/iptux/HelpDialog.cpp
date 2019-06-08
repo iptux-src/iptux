@@ -38,11 +38,6 @@ GtkWidget* HelpDialog::AboutEntry(GtkWindow* parent) {
   return hlp.CreateAboutDialog(parent);
 }
 
-void HelpDialog::onFaq() {
-  const char *faq = _("http://code.google.com/p/iptux/wiki/FAQ?wl=en");
-  iptux_open_url(faq);
-}
-
 /**
  * 创建关于对话框.
  */
