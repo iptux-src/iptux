@@ -3,29 +3,6 @@ jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
 glog_dep = dependency('libglog')
 
-core_sources = files([
-    '../iptux-core/AnalogFS.cpp',
-    '../iptux-core/Command.cpp',
-    '../iptux-core/CoreThread.cpp',
-    '../iptux-core/Event.cpp',
-    '../iptux-core/TcpData.cpp',
-    '../iptux-core/UdpData.cpp',
-    '../iptux-core/Models.cpp',
-    '../iptux-core/support.cpp',
-    '../iptux-core/utils.cpp',
-    '../iptux-core/ProgramData.cpp',
-    '../iptux-core/output.cpp',
-    '../iptux-core/Exception.cpp',
-    '../iptux-core/IptuxConfig.cpp',
-    '../iptux-core/SendFile.cpp',
-    '../iptux-core/RecvFile.cpp',
-    '../iptux-core/RecvFileData.cpp',
-    '../iptux-core/SendFileData.cpp',
-    '../iptux-core/CommandMode.cpp',
-    '../iptux-core/TransAbstract.cpp',
-    '../iptux-core/TransFileModel.cpp',
-])
-
 sources = files([
     'Application.cpp',
     'DataSettings.cpp',
@@ -76,23 +53,14 @@ sources += [iptux_resource_h, iptux_resource_cpp]
 inc = include_directories('..')
 
 libiptux = static_library('iptux',
-    sources + core_sources,
+    sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep],
+    link_with: [libiptux_core],
     include_directories: inc
 )
 
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
-core_test_sources = files([
-    '../iptux-core/CoreThreadTest.cpp',
-    '../iptux-core/UdpDataTest.cpp',
-    '../iptux-core/ModelsTest.cpp',
-    '../iptux-core/UtilsTest.cpp',
-    '../iptux-core/ProgramDataTest.cpp',
-    '../iptux-core/IptuxConfigTest.cpp',
-    '../iptux-core/TestHelper.cpp',
-    '../iptux-core/CommandModeTest.cpp',
-])
 test_sources = files([
     'LogSystemTest.cpp',
     'TestMain.cpp',
@@ -100,9 +68,9 @@ test_sources = files([
     'UiProgramDataTest.cpp',
 ])
 libiptux_test = executable('libiptux_test',
-    test_sources+core_test_sources,
+    test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep],
-    link_with: [libiptux, libgtest],
+    link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
 test('unit test', libiptux_test)
