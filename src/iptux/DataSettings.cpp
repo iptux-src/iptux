@@ -19,7 +19,6 @@
 #include "iptux/UiProgramData.h"
 #include "iptux/SoundSystem.h"
 #include "iptux/callback.h"
-#include "iptux/config.h"
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux-core/ipmsg.h"
