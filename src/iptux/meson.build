@@ -33,6 +33,7 @@ glib_compile_resources = find_program('glib-compile-resources')
 iptux_resource_h = custom_target('iptux_resource_h',
   output : 'IptuxResource.h',
   input : 'resources/iptux.gresource.xml',
+  depend_files: 'resources/gtk/menus.ui',
   command : [glib_compile_resources,
     '--generate-header',
     '--manual-register',
@@ -42,6 +43,7 @@ iptux_resource_h = custom_target('iptux_resource_h',
 iptux_resource_cpp = custom_target('iptux_resource_cpp',
   output : 'IptuxResource.cpp',
   input : 'resources/iptux.gresource.xml',
+  depend_files: 'resources/gtk/menus.ui',
   command : [glib_compile_resources,
     '--generate-source',
     '--manual-register',
@@ -49,7 +51,15 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
     '--sourcedir=' + join_paths(meson.current_source_dir(), 'resources'),
     '@INPUT@'])
 
-sources += [iptux_resource_h, iptux_resource_cpp]
+# TODO: How to support C++?
+# gnome = import('gnome')
+# iptux_resource = gnome.compile_resources(
+#     'IptuxResource',
+#     'resources/iptux.gresource.xml',
+#     source_dir: join_paths(meson.current_source_dir(), 'resources'),
+# )
+
+sources += [iptux_resource_cpp, iptux_resource_h]
 inc = include_directories('..')
 
 libiptux = static_library('iptux',
