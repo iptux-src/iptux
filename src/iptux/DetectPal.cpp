@@ -12,7 +12,6 @@
 #include "config.h"
 #include "DetectPal.h"
 
-#include "iptux-core/Command.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/callback.h"
 #include "iptux-core/deplib.h"
@@ -106,7 +105,6 @@ GtkWidget *DetectPal::CreateInputArea() {
  */
 void DetectPal::SendDetectPacket() {
   GtkWidget *widget, *parent;
-  Command cmd(*g_cthrd);
   in_addr_t ipv4;
   const char *text;
 
@@ -120,7 +118,7 @@ void DetectPal::SendDetectPacket() {
     return;
   }
 
-  cmd.SendDetectPacket(g_cthrd->getUdpSock(), ipv4);
+  g_cthrd->SendDetectPacket(ipv4);
   pop_info(parent, _("The notification has been sent to %s."), text);
   gtk_entry_set_text(GTK_ENTRY(widget), "");
 }
