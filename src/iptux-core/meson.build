@@ -53,7 +53,7 @@ pkg.generate(
     version: so_version,
     requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35'],
     requires_private: ['libglog'],
-    libraries: [libiptux_core],
+    libraries: [libiptux_core, glog_dep],
 )
 
 core_test_helper_sources = files([
