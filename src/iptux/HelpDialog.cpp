@@ -49,7 +49,7 @@ GtkWidget *HelpDialog::CreateAboutDialog(GtkWindow* parent) {
   const char *authors[] = {
       "Jally <jallyx@163.com>",
       "ManPT <pentie@gmail.com>",
-      "LI Daobing <lidaobing@gmail.com>",
+      "LI Daobing https://github.com/lidaobing",
       nullptr
   };
   const char *artists[] = {
