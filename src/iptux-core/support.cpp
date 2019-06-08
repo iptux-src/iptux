@@ -18,8 +18,6 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include "UiCoreThread.h"
-#include "UiProgramData.h"
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/deplib.h"
 #include "iptux-core/output.h"

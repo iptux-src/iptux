@@ -8,7 +8,7 @@
 
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/Event.h"
-#include "iptux/TransAbstract.h"
+#include "iptux-core/TransAbstract.h"
 
 namespace iptux {
 
@@ -147,6 +147,7 @@ class CoreThread {
 
  private:
   void bind_iptux_port();
+  void processEvents();
 
  private:
   static void RecvUdpData(CoreThread *pcthrd);
