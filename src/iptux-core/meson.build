@@ -46,6 +46,16 @@ libiptux_core = shared_library('iptux-core',
     version: so_version,
 )
 
+pkg = import('pkgconfig')
+pkg.generate(
+    description: 'Communicate and Share File in LAN',
+    name: 'iptux-core',
+    version: so_version,
+    requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35'],
+    requires_private: ['libglog'],
+    libraries: [libiptux_core],
+)
+
 core_test_helper_sources = files([
     'TestHelper.cpp',
 ])
