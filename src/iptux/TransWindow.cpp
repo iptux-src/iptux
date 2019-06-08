@@ -8,7 +8,7 @@
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
 #include "iptux-core/deplib.h"
-#include "iptux/TransAbstract.h"
+#include "iptux-core/TransAbstract.h"
 #include "iptux-core/output.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"

@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/Models.h"
-#include "iptux/TransFileModel.h"
+#include "iptux-core/TransFileModel.h"
 
 namespace iptux {
 

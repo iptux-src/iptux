@@ -8,7 +8,7 @@
 
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/Event.h"
-#include "iptux/TransAbstract.h"
+#include "iptux-core/TransAbstract.h"
 
 namespace iptux {
 

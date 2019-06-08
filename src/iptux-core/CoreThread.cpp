@@ -12,16 +12,16 @@
 #include <glog/logging.h>
 
 #include "iptux-core/ipmsg.h"
-#include "support.h"
+#include "iptux-core/support.h"
 #include "iptux-core/output.h"
-#include "utils.h"
-#include "UdpData.h"
-#include "TcpData.h"
-#include "Command.h"
-#include "deplib.h"
+#include "iptux-core/utils.h"
+#include "iptux-core/UdpData.h"
+#include "iptux-core/TcpData.h"
+#include "iptux-core/Command.h"
+#include "iptux-core/deplib.h"
 #include "iptux-core/Exception.h"
 #include "iptux-core/SendFile.h"
-#include "iptux/RecvFileData.h"
+#include "iptux-core/RecvFileData.h"
 
 using namespace std;
 using namespace std::placeholders;

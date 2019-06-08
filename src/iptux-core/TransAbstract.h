@@ -1,7 +1,7 @@
 #ifndef IPTUX_TRANSABSTRACT_H
 #define IPTUX_TRANSABSTRACT_H
 
-#include "iptux/TransFileModel.h"
+#include "iptux-core/TransFileModel.h"
 
 namespace iptux {
 /**
