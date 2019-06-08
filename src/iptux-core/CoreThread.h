@@ -98,6 +98,7 @@ class CoreThread {
   void AsyncSendMsgPara(MsgPara&& msgPara);
 
   bool SendAskShared(PPalInfo pal);
+  bool SendAskSharedWithPassword(const PalKey& palKey, const std::string& password);
 
   void SendDetectPacket(const std::string& ipv4);
   void SendDetectPacket(in_addr_t ipv4);

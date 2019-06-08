@@ -615,5 +615,11 @@ CoreThread::GetTransTaskStat(int taskId) {
   return make_unique<TransFileModel>(task->second->getTransFileModel());
 }
 
+bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey, const std::string& password) {
+  auto epasswd = g_base64_encode((const guchar*)(password.c_str()), password.size());
+  Command(*this).SendAskShared(udpSock, palKey, IPTUX_PASSWDOPT, epasswd);
+  g_free(epasswd);
+}
+
 
 }

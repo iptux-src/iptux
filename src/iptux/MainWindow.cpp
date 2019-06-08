@@ -16,7 +16,6 @@
 #include <cinttypes>
 #include <glog/logging.h>
 
-#include "iptux-core/Command.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
 #include "iptux/DialogGroup.h"
@@ -35,6 +34,7 @@
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
 #include "iptux/dialog.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -1091,7 +1091,6 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
 gboolean MainWindow::UpdateUI(MainWindow *mwin) {
   static uint32_t sumonline = 0;  //避免每次都作一次设置
   GtkWidget *widget;
-  char buf[MAX_BUFLEN];
   uint32_t sum;
 
   /* 统计当前在线人数 */
@@ -1099,10 +1098,10 @@ gboolean MainWindow::UpdateUI(MainWindow *mwin) {
 
   /* 更新UI */
   if (sumonline != sum) {
-    snprintf(buf, MAX_BUFLEN, _("Pals Online: %" PRIu32), sum);
+    auto label = stringFormat(_("Pals Online: %" PRIu32), sum);
     widget =
         GTK_WIDGET(g_datalist_get_data(&mwin->widset, "online-label-widget"));
-    gtk_label_set_text(GTK_LABEL(widget), buf);
+    gtk_label_set_text(GTK_LABEL(widget), label.c_str());
     sumonline = sum;
   }
 
@@ -1255,12 +1254,7 @@ void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &
  * @param grpinf 好友群组信息
  */
 void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
-  Command cmd(*g_cthrd);
-
-  cmd.SendAskShared(g_cthrd->getUdpSock(),
-    g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()),
-    0,
-    NULL);
+  g_cthrd->SendAskShared(g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()));
 }
 
 /**
@@ -1906,9 +1900,10 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto pal = g_cthrd->GetPal(palKey);
     auto passwd = pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal.get());
     if (passwd && *passwd != '\0') {
-      auto epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
-      Command(*g_cthrd).SendAskShared(g_cthrd->getUdpSock(), pal->GetKey(), IPTUX_PASSWDOPT, epasswd);
-      g_free(epasswd);
+      g_cthrd->SendAskSharedWithPassword(palKey, passwd);
+      // auto epasswd = g_base64_encode((guchar *)passwd, strlen(passwd));
+      // Command(*g_cthrd).SendAskShared(g_cthrd->getUdpSock(), pal->GetKey(), IPTUX_PASSWDOPT, epasswd);
+      // g_free(epasswd);
     }
     return;
   }
