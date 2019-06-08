@@ -12,6 +12,10 @@ enum class EventType {
   PASSWORD_REQUIRED,
   PERMISSION_REQUIRED,
   NEW_SHARE_FILE_FROM_FRIEND,
+  SEND_FILE_STARTED,
+  SEND_FILE_FINISHED,
+  RECV_FILE_STARTED,
+  RECV_FILE_FINISHED,
 };
 
 class Event {
@@ -84,6 +88,41 @@ class NewShareFileFromFriendEvent: public Event {
   const FileInfo& GetFileInfo() const {return fileInfo;}
  private:
   FileInfo fileInfo;
+};
+
+class AbstractTaskIdEvent: public Event {
+ protected:
+  AbstractTaskIdEvent(EventType et, int taskId):
+   Event(et),
+   taskId(taskId) {}
+ public:
+  int GetTaskId() const { return taskId; }
+ private:
+  int taskId;
+};
+
+class SendFileStartedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit SendFileStartedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::SEND_FILE_STARTED, taskId) {}
+};
+
+class SendFileFinishedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit SendFileFinishedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::SEND_FILE_FINISHED, taskId) {}
+};
+
+class RecvFileStartedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit RecvFileStartedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::RECV_FILE_STARTED, taskId) {}
+};
+
+class RecvFileFinishedEvent: public AbstractTaskIdEvent {
+ public:
+  explicit RecvFileFinishedEvent(int taskId):
+    AbstractTaskIdEvent(EventType::RECV_FILE_FINISHED, taskId) {}
 };
 }
 

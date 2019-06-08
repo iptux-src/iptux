@@ -19,7 +19,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "iptux/HelpDialog.h"
-#include "iptux/RecvFileData.h"
 #include "iptux-core/SendFile.h"
 #include "iptux/callback.h"
 #include "iptux-core/deplib.h"
@@ -29,6 +28,7 @@
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -1066,8 +1066,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
  * @param file 文件信息
  */
 void DialogPeer::ThreadRecvFile(FileInfo *file) {
-  RecvFileData rfdt(file);
-  rfdt.RecvFileDataEntry();
+  g_cthrd->RecvFile(file);
+  // RecvFileData rfdt(file);
+  // rfdt.RecvFileDataEntry();
 }
 /**
  * 获取待发送成员列表.

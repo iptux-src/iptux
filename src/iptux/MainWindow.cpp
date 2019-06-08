@@ -443,14 +443,6 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, &para, -1);
   }
 
-  /**
-   * @note 鉴于参数值(*para)的原地址有可能会被重用， 所以当("data"==null)
-   * 时应该清空参数指针值，以防止其他后来项误认此项为自己的大本营.
-   */
-  if (!para.getData()) {
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, NULL, -1);
-  }
-
   /* 重设数据 */
   transModelFillFromTransFileModel(model, &iter, para);
   g_action_group_activate_action(
@@ -1938,6 +1930,31 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     g_cthrd->PushItemToEnclosureList(file);
     return;
   }
+
+  if(type == EventType::SEND_FILE_STARTED || type == EventType::RECV_FILE_STARTED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    g_mwin->UpdateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (g_progdt->IsAutoOpenFileTrans()) {
+       g_mwin->OpenTransWindow();
+    }
+    return;
+  }
+
+  if(type == EventType::SEND_FILE_FINISHED || type == EventType::RECV_FILE_FINISHED) {
+    auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    g_mwin->UpdateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (para->isFinished() && FLAG_ISSET(g_progdt->sndfgs, 2)) {
+      g_sndsys->Playing(g_progdt->transtip);
+    }
+    return;
+  }
+
   LOG_WARN("unknown event type: %d", int(type));
 }
 

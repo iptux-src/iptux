@@ -5,8 +5,6 @@
 
 namespace iptux {
 
-class TransAbstract;
-
 class TransFileModel {
  public:
   TransFileModel();
@@ -22,13 +20,7 @@ class TransFileModel {
   TransFileModel &setRemain(const std::string &value);
   TransFileModel &setRate(const std::string &value);
   TransFileModel &setFilePath(const std::string &value);
-
-  /**
-   *
-   * @param value not null
-   * @return
-   */
-  TransFileModel &setData(TransAbstract *value);
+  TransFileModel &setTaskId(int taskId);
   void finish();
 
   const std::string &getStatus() const;
@@ -45,8 +37,8 @@ class TransFileModel {
   const std::string &getRemain() const;
   const std::string &getRate() const;
   const std::string &getFilePath() const;
-  TransAbstract *getData() const;
   bool isFinished() const;
+  int getTaskId() const;
 
  private:
   std::string status;
@@ -61,7 +53,7 @@ class TransFileModel {
   std::string rate;
   std::string filePath;
   bool finished;
-  TransAbstract *data;
+  int taskId;
 };
 
 }

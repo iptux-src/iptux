@@ -52,7 +52,7 @@ void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, cons
       TransModelColumn::REMAIN, para.getRemain().c_str(),
       TransModelColumn::RATE, para.getRate().c_str(),
       TransModelColumn::FILE_PATH, para.getFilePath().c_str(),
-      TransModelColumn::DATA, para.getData(),
+      TransModelColumn::TASK_ID, para.getTaskId(),
       TransModelColumn::FINISHED, para.isFinished(),
       -1);
 }

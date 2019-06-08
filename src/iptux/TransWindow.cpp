@@ -12,6 +12,7 @@
 #include "iptux-core/output.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
+#include "iptux/global.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -328,27 +329,21 @@ static void OpenContainingFolder(GtkTreeModel *model) {
 static void TerminateTransTask(GtkTreeModel *model) {
   GtkTreePath *path;
   GtkTreeIter iter;
-  TransAbstract *trans;
   gboolean finished;
+  int taskId;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return;
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter,
-                     TransModelColumn ::DATA, &trans,
-                     TransModelColumn ::FINISHED, &finished,
+                     TransModelColumn::TASK_ID, &taskId,
+                     TransModelColumn::FINISHED, &finished,
                      -1);
   if(finished) {
     return;
   }
-
-  if(!trans) {
-    LOG_WARN("task not finished but trans is not null");
-    return;
-  }
-
-  trans->TerminateTrans();
+  g_cthrd->TerminateTransTask(taskId);
 }
 
 
@@ -358,12 +353,12 @@ static void TerminateTransTask(GtkTreeModel *model) {
  */
 static void TerminateAllTransTask(GtkTreeModel *model) {
   GtkTreeIter iter;
-  TransAbstract *trans;
+  int taskId;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
-    if (trans) trans->TerminateTrans();
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    g_cthrd->TerminateTransTask(taskId);
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
@@ -373,16 +368,16 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
  */
 void ClearTransTask(GtkTreeModel *model) {
   GtkTreeIter iter;
-  gpointer data;
+  int taskId;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
-    mark:
-    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &data, -1);
-    if (!data) {
-      if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
-      break;
-    }
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    // TODO: clear finished task
+    // if (!data) {
+    //   if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
+    //   break;
+    // }
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
@@ -474,7 +469,6 @@ void OpenThisFile(GtkTreeModel *model) {
 gboolean UpdateTransUI(GtkWindow *window) {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  TransAbstract *trans;
 
   GtkWidget* treeview = getPriv(window).transTreeviewWidget;
 
@@ -483,12 +477,11 @@ gboolean UpdateTransUI(GtkWindow *window) {
   if (!gtk_tree_model_get_iter_first(model, &iter)) return TRUE;
 
   /* 更新UI */
+  int taskId;
   do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::DATA, &trans, -1);
-    if (trans) {  //当文件传输类存在时才能更新
-      const TransFileModel& transFileModel = trans->getTransFileModel();  //获取参数
-      transModelFillFromTransFileModel(model, &iter, transFileModel);
-    }
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    auto transFileModel = g_cthrd->GetTransTaskStat(taskId);
+    transModelFillFromTransFileModel(model, &iter, *transFileModel);
   } while (gtk_tree_model_iter_next(model, &iter));
 
   /* 重新调整UI */

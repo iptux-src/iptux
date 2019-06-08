@@ -25,6 +25,7 @@
 #include "iptux-core/output.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 

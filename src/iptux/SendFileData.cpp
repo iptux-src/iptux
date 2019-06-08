@@ -13,6 +13,8 @@
 #include "SendFileData.h"
 
 #include <cinttypes>
+#include <memory>
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -20,11 +22,15 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <glog/logging.h>
 
 #include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
-#include "iptux/global.h"
 #include "iptux-core/utils.h"
+#include "iptux-core/Event.h"
+#include "iptux-core/output.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -33,10 +39,10 @@ namespace iptux {
  * @param sk tcp socket
  * @param fl 文件信息数据
  */
-SendFileData::SendFileData(int sk, FileInfo *fl)
-    : sock(sk), file(fl), terminate(false), sumsize(0) {
+SendFileData::SendFileData(CoreThread* coreThread, int sk, PFileInfo fl)
+    : coreThread(coreThread), sock(sk), file(fl), terminate(false), sumsize(0) {
+  buf[0] = '\0';
   gettimeofday(&tasktime, NULL);
-  /* gettimeofday(&filetime, NULL);//个人感觉没必要 */
 }
 
 /**
@@ -48,15 +54,9 @@ SendFileData::~SendFileData() { }
  * 发送文件数据入口.
  */
 void SendFileData::SendFileDataEntry() {
-  /* 创建UI参考数据，并将数据主动加入UI */
-  gdk_threads_enter();
+  CHECK(GetTaskId() > 0);
   CreateUIPara();
-  g_mwin->UpdateItemToTransTree(para);
-  auto g_progdt = g_cthrd->getUiProgramData();
-  if (g_progdt->IsAutoOpenFileTrans()) {
-    g_mwin->OpenTransWindow();
-  }
-  gdk_threads_leave();
+  coreThread->emitEvent(make_shared<SendFileStartedEvent>(GetTaskId()));
 
   /* 分类处理 */
   switch (GET_MODE(file->fileattr)) {
@@ -67,18 +67,11 @@ void SendFileData::SendFileDataEntry() {
       SendDirFiles();
       break;
     default:
+      CHECK(false);
       break;
   }
-
-  /* 主动更新UI */
-  gdk_threads_enter();
   UpdateUIParaToOver();
-  g_mwin->UpdateItemToTransTree(para);
-  gdk_threads_leave();
-
-  /* 处理成功则播放提示音 */
-  if (!terminate && FLAG_ISSET(g_progdt->sndfgs, 2))
-    g_sndsys->Playing(g_progdt->transtip);
+  coreThread->emitEvent(make_shared<SendFileFinishedEvent>(GetTaskId()));
 }
 
 /**
@@ -111,7 +104,7 @@ void SendFileData::CreateUIPara() {
       .setCost("00:00:00")
       .setRemain(_("Unknown"))
       .setRate("0B/s")
-      .setData(this);
+      .setTaskId(GetTaskId());
 }
 
 /**
@@ -136,11 +129,15 @@ void SendFileData::SendRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
+    LOG_INFO(_("Failed to send the file \"%s\" to %s!"),
                        file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
+    //                    file->filepath, file->fileown->name);
   } else {
-    g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
+    LOG_INFO(_("Send the file \"%s\" to %s successfully!"),
                        file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
+    //                    file->filepath, file->fileown->name);
   }
 }
 
@@ -256,11 +253,15 @@ end:
     /* 关闭堆栈中所有的目录流，并清空堆栈 */
     g_queue_foreach(&dirstack, GFunc(closedir), NULL);
     g_queue_clear(&dirstack);
-    g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Failed to send the directory \"%s\" to %s!"),
+            file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
+    //                    file->filepath, file->fileown->name);
   } else {
-    g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Send the directory \"%s\" to %s successfully!"),
+            file->filepath, file->fileown->name);
+    // g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
+    //                    file->filepath, file->fileown->name);
   }
 }
 
@@ -273,7 +274,7 @@ end:
 int64_t SendFileData::SendData(int fd, int64_t filesize) {
   int64_t tmpsize, finishsize;
   struct timeval val1, val2;
-  float difftime, progress;
+  float difftime;
   uint32_t rate;
   ssize_t size;
 
@@ -296,7 +297,6 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
     difftime = difftimeval(val2, val1);
     if (difftime >= 1) {
       /* 更新UI参考值 */
-      progress = percent(finishsize, filesize);
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
       para.setFinishedLength(finishsize)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))

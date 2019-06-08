@@ -8,6 +8,7 @@
 
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/Event.h"
+#include "iptux/TransAbstract.h"
 
 namespace iptux {
 
@@ -117,6 +118,15 @@ class CoreThread {
   void UpdateMyInfo();
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
+
+  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId);
+  bool TerminateTransTask(int taskId);
+  void RecvFile(FileInfo* file);
+
+
+ // these functions should be move to CoreThreadImpl
+ public:
+  void RegisterTransTask(std::shared_ptr<TransAbstract> task);
 
  public:
   static void SendNotifyToAll(CoreThread *pcthrd);
