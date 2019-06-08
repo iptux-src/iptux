@@ -12,7 +12,6 @@
 #include "config.h"
 #include "DialogGroup.h"
 
-#include "iptux-core/Command.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/HelpDialog.h"
 #include "iptux-core/SendFile.h"
@@ -23,6 +22,7 @@
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"
+#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -491,7 +491,6 @@ void DialogGroup::BroadcastEnclosureMsg(GSList *list) {
  * @param msg 文本消息
  */
 void DialogGroup::BroadcastTextMsg(const gchar *msg) {
-  Command cmd(*g_cthrd);
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -524,9 +523,10 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
             opttype = IPTUX_REGULAROPT;
             break;
         }
-        cmd.SendUnitMsg(g_cthrd->getUdpSock(), g_cthrd->GetPal(pal->GetKey()), opttype, msg);
-      } else
-        cmd.SendGroupMsg(g_cthrd->getUdpSock(), g_cthrd->GetPal(pal->GetKey()), msg);
+        g_cthrd->SendUnitMessage(pal->GetKey(), opttype, msg);
+      } else {
+        g_cthrd->SendGroupMessage(pal->GetKey(), msg);
+      }
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 }

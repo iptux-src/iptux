@@ -525,7 +525,11 @@ CoreThread::GetOnlineCount() const {
 }
 
 void CoreThread::SendDetectPacket(const string& ipv4) {
-  Command(*this).SendDetectPacket(udpSock, stringToInAddr(ipv4));
+  SendDetectPacket(stringToInAddr(ipv4));
+}
+
+void CoreThread::SendDetectPacket(in_addr_t ipv4) {
+  Command(*this).SendDetectPacket(udpSock, ipv4);
 }
 
 void CoreThread::emitSomeoneExit(const PalKey& palKey) {
@@ -619,6 +623,15 @@ bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey, const std::stri
   auto epasswd = g_base64_encode((const guchar*)(password.c_str()), password.size());
   Command(*this).SendAskShared(udpSock, palKey, IPTUX_PASSWDOPT, epasswd);
   g_free(epasswd);
+  return true;
+}
+
+void CoreThread::SendUnitMessage(const PalKey& palKey, uint32_t opttype, const string& message) {
+  Command(*this).SendUnitMsg(udpSock, GetPal(palKey), opttype, message.c_str());
+}
+
+void CoreThread::SendGroupMessage(const PalKey& palKey, const std::string& message) {
+  Command(*this).SendGroupMsg(udpSock, GetPal(palKey), message.c_str());
 }
 
 

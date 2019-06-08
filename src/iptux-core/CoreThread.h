@@ -96,6 +96,8 @@ class CoreThread {
   bool SendMessage(PPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
+  void SendUnitMessage(const PalKey& palKey, uint32_t opttype, const std::string& message);
+  void SendGroupMessage(const PalKey& palKey, const std::string& message);
 
   bool SendAskShared(PPalInfo pal);
   bool SendAskSharedWithPassword(const PalKey& palKey, const std::string& password);
