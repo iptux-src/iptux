@@ -2,6 +2,16 @@ glib_dep = dependency('glib-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 glog_dep = dependency('libglog')
 
+header_files = files([
+    'CoreThread.h',
+    'ProgramData.h',
+    'IptuxConfig.h',
+    'Event.h',
+    'TransFileModel.h',
+    'Models.h',
+])
+install_headers(header_files, subdir: 'iptux-core')
+
 core_sources = files([
     'AnalogFS.cpp',
     'Command.cpp',

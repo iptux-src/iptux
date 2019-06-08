@@ -8,9 +8,11 @@
 
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/Event.h"
-#include "iptux-core/TransAbstract.h"
+#include "iptux-core/TransFileModel.h"
 
 namespace iptux {
+
+class TransAbstract;
 
 using EventCallback = std::function<void(std::shared_ptr<const Event>)>;
 

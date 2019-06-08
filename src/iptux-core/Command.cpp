@@ -23,6 +23,7 @@
 #include "iptux-core/utils.h"
 #include "iptux-core/output.h"
 #include "iptux-core/Exception.h"
+#include "iptux-core/TransAbstract.h"
 
 using namespace std;
 

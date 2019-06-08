@@ -18,6 +18,7 @@
 #include <cstring>
 
 #include "iptux-core/utils.h"
+#include "iptux-core/TransAbstract.h"
 
 using namespace std;
 
