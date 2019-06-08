@@ -47,9 +47,10 @@ core_sources = files([
 
 inc = include_directories('..')
 
-libiptux_core = static_library('iptux-core',
+thread_dep = dependency('threads')
+libiptux_core = shared_library('iptux-core',
     core_sources,
-    dependencies: [glib_dep, jsoncpp_dep, glog_dep],
+    dependencies: [glib_dep, jsoncpp_dep, glog_dep, thread_dep],
     include_directories: inc
 )
 
@@ -64,7 +65,6 @@ libiptux_core_test_helper = static_library('iptux-test-helper',
 )
 
 gtest_inc = include_directories('../googletest/include')
-thread_dep = dependency('threads')
 core_test_sources = files([
     'CoreThreadTest.cpp',
     'UdpDataTest.cpp',
