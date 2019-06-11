@@ -10,6 +10,7 @@ enum class ErrorCode {
   UDP_BIND_FAILED,
   INVALID_IP_ADDRESS,
   PAL_KEY_NOT_EXIST,
+  CREATE_TCP_SOCKET_FAILED,
 };
 
 class Exception : public std::runtime_error {
