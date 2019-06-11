@@ -19,6 +19,8 @@ static string ec2str(ErrorCode ec) {
       return "PAL_KEY_NOT_EXIST";
     case ErrorCode ::INVALID_IP_ADDRESS:
       return "INVALID_IP_ADDRESS";
+    case ErrorCode::CREATE_TCP_SOCKET_FAILED:
+      return "CREATE_TCP_SOCKET_FAILED";
     default:
       return stringFormat("UNKNOWN ERROR CODE: %d", int(ec));
   }

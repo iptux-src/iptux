@@ -28,6 +28,7 @@
 #include "iptux-core/output.h"
 #include "iptux-core/utils.h"
 #include "iptux-core/Event.h"
+#include "iptux-core/Exception.h"
 
 using namespace std;
 
@@ -137,7 +138,7 @@ void RecvFileData::RecvRegularFile() {
   if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
     LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
               strerror(errno));
-    exit(1);
+    throw Exception(ErrorCode::CREATE_TCP_SOCKET_FAILED);
   }
   /* 请求文件数据 */
   if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn, file->fileid, 0)) {
@@ -196,7 +197,7 @@ void RecvFileData::RecvDirFiles() {
   if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
     LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
               strerror(errno));
-    exit(1);
+    throw Exception(ErrorCode::CREATE_TCP_SOCKET_FAILED);
   }
   /* 请求目录文件 */
   if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn, file->fileid)) {

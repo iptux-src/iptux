@@ -409,7 +409,7 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
       LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
                 strerror(errno));
-      exit(1);
+      throw Exception(ErrorCode::CREATE_TCP_SOCKET_FAILED);
     }
     cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
     close(sock);
