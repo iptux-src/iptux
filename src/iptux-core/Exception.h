@@ -6,6 +6,8 @@
 namespace iptux {
 
 enum class ErrorCode {
+  TCP_BIND_FAILED,
+  UDP_BIND_FAILED,
   INVALID_IP_ADDRESS,
   PAL_KEY_NOT_EXIST,
 };
