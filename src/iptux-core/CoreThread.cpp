@@ -145,10 +145,10 @@ void CoreThread::bind_iptux_port() {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
+    auto errmsg = stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
                                          bind_ip.c_str(), port, strerror(ec));
-    LOG_WARN("%s", errmsg);
-    throw BindFailedException(ec, errmsg);
+    LOG_ERROR("%s", errmsg.c_str());
+    throw Exception(ErrorCode::TCP_BIND_FAILED, errmsg);
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
@@ -157,10 +157,10 @@ void CoreThread::bind_iptux_port() {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
+    auto errmsg = stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
                                          bind_ip.c_str(), port, strerror(ec));
-    LOG_WARN("%s", errmsg);
-    throw BindFailedException(ec, errmsg);
+    LOG_ERROR("%s", errmsg.c_str());
+    throw Exception(ErrorCode::UDP_BIND_FAILED, errmsg);
   } else {
     LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
   }
