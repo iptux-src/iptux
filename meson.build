@@ -4,8 +4,7 @@ project('iptux', 'cpp',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
 so_version = '0.8.0'
 subdir('src')
-subdir('pixmaps')
-subdir('sound')
+subdir('share')
 subdir('desktop')
 subdir('po')
 subdir('examples')

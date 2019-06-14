@@ -11,8 +11,12 @@ conf_data.set_quoted('VERSION', meson.project_version())
 # the 1_ prefix is used for compatible with FeiQ
 conf_data.set_quoted('IPTUX_VERSION', '1_iptux '+meson.project_version())
 conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
-conf_data.set('CMAKE_INSTALL_FULL_DATADIR',
-    join_paths(get_option('prefix'), get_option('datadir')))
+conf_data.set('SHARE_DIR', join_paths(get_option('prefix'), get_option('datadir')))
+if get_option('dev')
+    conf_data.set('SHARE_IPTUX_DIR', join_paths(meson.source_root(), 'share'))
+else
+    conf_data.set('SHARE_IPTUX_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'iptux'))
+endif
 if gstreamer_dep.found()
     conf_data.set('GST_FOUND', true)
 endif
