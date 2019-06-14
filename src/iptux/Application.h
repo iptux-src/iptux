@@ -24,7 +24,7 @@ private:
   GtkApplication* app;
   MainWindow* window;
   ShareFile* shareFile;
-  bool started;
+  bool started {false};
 
 private:
   static void onStartup (Application& self);
