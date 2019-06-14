@@ -1,9 +1,11 @@
-iptux_sources = files(['iptux.cpp'])
+iptux_sources = files(['iptux.cpp', '../iptux/UiCallbacks.cpp'])
+gmodule_dep = dependency('gmodule-export-2.0')
 executable('iptux',
     iptux_sources,
     include_directories: inc,
-    # dependencies: [libiptux],
-    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep, glog_dep],
+    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep, glog_dep, gmodule_dep],
     link_with: [libiptux],
-    install: true
+    cpp_args: '-rdynamic',
+    export_dynamic: true,
+    install: true,
 )

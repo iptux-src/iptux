@@ -87,6 +87,7 @@ class MainWindow {
 
   ActiveWindowType activeWindowType;
   void* activeWindow;
+  GtkBuilder* builder;
 
  private:
   void InitSublayer();
