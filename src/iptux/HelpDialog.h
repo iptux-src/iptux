@@ -21,10 +21,10 @@ class HelpDialog {
   HelpDialog();
   ~HelpDialog();
 
-  static GtkWidget* AboutEntry(GtkWindow* parent);
+  static GtkWidget* AboutEntry(GtkAboutDialog* dlg, GtkWindow* parent);
 
  private:
-  GtkWidget *CreateAboutDialog(GtkWindow* parent);
+  GtkWidget *CreateAboutDialog(GtkAboutDialog* dlg, GtkWindow* parent);
   void RunHelpDialog(GtkWidget **dialog);
 
   static GtkWidget *about;

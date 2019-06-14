@@ -66,7 +66,7 @@ libiptux = static_library('iptux',
     sources,
     dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep],
     link_with: [libiptux_core],
-    include_directories: inc
+    include_directories: inc,
 )
 
 gtest_inc = include_directories('../googletest/include')

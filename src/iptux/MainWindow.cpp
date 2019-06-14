@@ -62,6 +62,8 @@ MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
   activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
+  builder = gtk_builder_new_from_file(__UI_PATH "/ui.xml");
+  gtk_builder_connect_signals(builder, nullptr);
   g_cthrd->registerCallback([&](shared_ptr<const Event> event) { this->processEvent(event); });
 }
 
@@ -1519,7 +1521,10 @@ void MainWindow::onFind(void*, void*, MainWindow&self) {
 }
 
 void MainWindow::onAbout(void*, void*, MainWindow&self) {
-  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(GTK_WINDOW(self.window))));
+  auto aboutDialog = GTK_ABOUT_DIALOG(
+    CHECK_NOTNULL(gtk_builder_get_object(self.builder, "about_dialog"))
+  );
+  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(aboutDialog, GTK_WINDOW(self.window))));
 }
 
 /**
