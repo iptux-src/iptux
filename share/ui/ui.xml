@@ -9,7 +9,7 @@
     <property name="program_name">iptux</property>
     <property name="version">VERSION</property>
     <property name="copyright" translatable="yes">Copyright © 2008-2009, Jally
-Copyright © 2019, LI Daobing</property>
+Copyright © 2013-2015,2017-2019, LI Daobing</property>
     <property name="comments" translatable="yes">A GTK+ based LAN Messenger.</property>
     <property name="website">https://github.com/iptux-src/iptux</property>
     <property name="authors">Jally &lt;jallyx@163.com&gt;
