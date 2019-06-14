@@ -11,17 +11,18 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [iptux: 飞鸽传书 GNU/Linux 版](#iptux-%E9%A3%9E%E9%B8%BD%E4%BC%A0%E4%B9%A6-gnulinux-%E7%89%88)
-  - [Install](#install)
-    - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu)
-    - [Mac OS X](#mac-os-x)
-  - [Build from source](#build-from-source)
-    - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu-1)
-    - [Mac OS X](#mac-os-x-1)
-  - [Usage](#usage)
-    - [Compatible list](#compatible-list)
-  - [Contributing](#contributing)
-    - [How to update `po/iptux.pot`](#how-to-update-poiptuxpot)
+- [Install](#install)
+  - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu)
+  - [Mac OS X](#mac-os-x)
+- [Build from source](#build-from-source)
+  - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu-1)
+  - [Mac OS X](#mac-os-x-1)
+- [Usage](#usage)
+  - [Compatible list](#compatible-list)
+- [Develop](#develop)
+- [Contributing](#contributing)
+  - [How to update `po/iptux.pot`](#how-to-update-poiptuxpot)
+- [Stargazers over time](#stargazers-over-time)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -105,6 +106,10 @@ iptux
 ### Compatible list
 
 check https://github.com/iptux-src/iptux/wiki/Compatible-List
+
+## Develop
+
+* use `meson -Ddev=true builddir` to build an iptux which can use resource in source directory.
 
 ## Contributing
 
