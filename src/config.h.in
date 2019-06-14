@@ -7,9 +7,9 @@
 #mesondefine GETTEXT_PACKAGE
 #define IPTUX_RESOURCE "/io/github/iptux-src/"
 
-#define __PIXMAPS_PATH "@CMAKE_INSTALL_FULL_DATADIR@/iptux/pixmaps"
-#define __LOCALE_PATH "@CMAKE_INSTALL_FULL_DATADIR@/locale"
-#define __SOUND_PATH "@CMAKE_INSTALL_FULL_DATADIR@/iptux/sound"
+#define __PIXMAPS_PATH "@SHARE_IPTUX_DIR@/pixmaps"
+#define __LOCALE_PATH "@SHARE_DIR@/locale"
+#define __SOUND_PATH "@SHARE_IPTUX_DIR@/sound"
 
 #mesondefine GST_FOUND
 
