@@ -1525,6 +1525,7 @@ void MainWindow::onAbout(void*, void*, MainWindow&self) {
     CHECK_NOTNULL(gtk_builder_get_object(self.builder, "about_dialog"))
   );
   gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(aboutDialog, GTK_WINDOW(self.window))));
+  gtk_widget_hide(GTK_WIDGET(aboutDialog));
 }
 
 /**

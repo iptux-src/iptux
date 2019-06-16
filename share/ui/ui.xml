@@ -21,7 +21,6 @@ ManPT &lt;pentie@gmail.com&gt;</property>
     <property name="logo_icon_name">iptux</property>
     <property name="license_type">gpl-2-0</property>
     <signal name="activate-link" handler="iptux_on_activate_link" swapped="no"/>
-    <signal name="delete-event" handler="gtk_widget_hide" swapped="no"/>
     <child>
       <placeholder/>
     </child>
