@@ -1,3 +1,4 @@
+./desktop/iptux.desktop.in
 ./share/ui/main.ui
 ./src/iptux/resources/gtk/menus.ui
 ./src/iptux/DialogBase.cpp

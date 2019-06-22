@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2019-06-22 21:36+0800\n"
+"POT-Creation-Date: 2019-06-22 22:45+0800\n"
 "PO-Revision-Date: 2018-01-22 06:45+0000\n"
 "Last-Translator: zhangjiejing <Unknown>\n"
 "Language-Team: German <de@li.org>\n"
@@ -17,6 +17,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
 "X-Generator: Launchpad (build 18532)\n"
+
+#: desktop/iptux.desktop.in:3 src/iptux/StatusIcon.cpp:221
+#: src/iptux/MainWindow.cpp:545
+msgid "iptux"
+msgstr "iptux"
+
+#: desktop/iptux.desktop.in:4
+msgid "LAN communication software"
+msgstr ""
+
+#: desktop/iptux.desktop.in:5
+msgid "chat;talk;im;message;ipmsg;feige;"
+msgstr ""
+
+#: desktop/iptux.desktop.in:9
+#, fuzzy
+msgid "iptux-icon"
+msgstr "iptux"
 
 #: share/ui/main.ui:11
 msgid ""
@@ -234,10 +252,6 @@ msgstr "_Anzeigen"
 #, c-format
 msgid "To be read: %u messages"
 msgstr "Ungelesen: %u Nachrichten"
-
-#: src/iptux/StatusIcon.cpp:221 src/iptux/MainWindow.cpp:545
-msgid "iptux"
-msgstr "iptux"
 
 #: src/iptux/LogSystem.cpp:62
 #, c-format

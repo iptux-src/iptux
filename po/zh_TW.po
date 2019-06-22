@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2019-06-22 21:36+0800\n"
+"POT-Creation-Date: 2019-06-22 22:45+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -17,6 +17,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: desktop/iptux.desktop.in:3 src/iptux/StatusIcon.cpp:221
+#: src/iptux/MainWindow.cpp:545
+msgid "iptux"
+msgstr "信使(iptux)"
+
+#: desktop/iptux.desktop.in:4
+msgid "LAN communication software"
+msgstr ""
+
+#: desktop/iptux.desktop.in:5
+msgid "chat;talk;im;message;ipmsg;feige;"
+msgstr ""
+
+#: desktop/iptux.desktop.in:9
+#, fuzzy
+msgid "iptux-icon"
+msgstr "信使(iptux)"
 
 #: share/ui/main.ui:11
 msgid ""
@@ -231,10 +249,6 @@ msgstr "顯示(_S)"
 #, c-format
 msgid "To be read: %u messages"
 msgstr "未讀訊息: %u條"
-
-#: src/iptux/StatusIcon.cpp:221 src/iptux/MainWindow.cpp:545
-msgid "iptux"
-msgstr "信使(iptux)"
 
 #: src/iptux/LogSystem.cpp:62
 #, c-format
