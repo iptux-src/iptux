@@ -62,7 +62,7 @@ MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
   activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
-  builder = gtk_builder_new_from_file(__UI_PATH "/ui.xml");
+  builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
   g_cthrd->registerCallback([&](shared_ptr<const Event> event) { this->processEvent(event); });
 }
