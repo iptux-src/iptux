@@ -1,4 +1,4 @@
-gtk_dep = dependency('gtk+-3.0', version: '>=3.12')
+gtk_dep = dependency('gtk+-3.0', version: '>=3.22')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
 glog_dep = dependency('libglog')
