@@ -9,6 +9,8 @@
 #include <deque>
 #include <mutex>
 
+#include <poll.h>
+
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <glog/logging.h>
@@ -177,6 +179,16 @@ void CoreThread::RecvUdpData(CoreThread *self) {
   ssize_t size;
 
   while (self->started) {
+    struct pollfd pfd = {self->udpSock, POLLIN, 0};
+    int ret = poll(&pfd, 1, 10);
+    if(ret == -1) {
+      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
+      return;
+    }
+    if(ret == 0) {
+      continue;
+    }
+    CHECK(ret == 1);
     len = sizeof(addr);
     if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr *)&addr, &len)) == -1)
@@ -195,6 +207,16 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
 
   listen(pcthrd->tcpSock, 5);
   while (pcthrd->started) {
+    struct pollfd pfd = {pcthrd->tcpSock, POLLIN, 0};
+    int ret = poll(&pfd, 1, 10);
+    if(ret == -1) {
+      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
+      return;
+    }
+    if(ret == 0) {
+      continue;
+    }
+    CHECK(ret == 1);
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
     thread([](CoreThread* coreThread, int subsock){TcpData::TcpDataEntry(coreThread, subsock);}, pcthrd, subsock)
       .detach();
@@ -207,6 +229,10 @@ void CoreThread::stop() {
   }
   started = false;
   ClearSublayer();
+  pImpl->udpFuture.wait();
+  pImpl->tcpFuture.wait();
+  pImpl->processEventsFuture.wait();
+  pImpl->notifyToAllFuture.wait();
 }
 
 void CoreThread::ClearSublayer() {

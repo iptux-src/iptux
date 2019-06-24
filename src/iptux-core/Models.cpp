@@ -125,7 +125,29 @@ ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
 ChipData::~ChipData() {}
 
 NetSegment::NetSegment() {}
+
+NetSegment::NetSegment(string startip, string endip, string description)
+  : startip(startip), endip(endip), description(description)
+{}
+
 NetSegment::~NetSegment() {}
+
+uint64_t NetSegment::Count() const {
+  uint32_t start = inAddrToUint32(stringToInAddr(startip));
+  uint32_t end = inAddrToUint32(stringToInAddr(endip));
+  if(start > end) {
+    return 0;
+  }
+  return uint64_t(end) - uint64_t(start) + 1;
+}
+
+std::string NetSegment::NthIp(uint64_t i) const {
+  uint32_t start = inAddrToUint32(stringToInAddr(startip));
+  uint64_t res = start + i;
+  return inAddrToString(inAddrFromUint32(res));
+}
+
+
 
 bool NetSegment::ContainIP(in_addr ipv4) const {
   return ipv4Compare(stringToInAddr(startip), ipv4) <= 0

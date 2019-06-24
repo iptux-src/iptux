@@ -19,9 +19,7 @@ TEST(PalKey, CopyConstructor) {
 }
 
 TEST(NetSegment, ContainIP) {
-  NetSegment netSegment;
-  netSegment.startip = "1.2.3.4";
-  netSegment.endip = "1.2.4.5";
+  NetSegment netSegment("1.2.3.4", "1.2.4.5", "");
 
   vector<string> ips = {
     "1.2.3.4",

@@ -40,8 +40,6 @@ void FLAG_SET(uint8_t &num, int bit, bool value);
     ;
 
 typedef void *(*ThreadFunc)(void *);
-void ipv4_order(in_addr *ip1, in_addr *ip2);
-
 char *iptux_string_validate(const char *s, const std::string &codeset,
                             char **encode);
 char *convert_encode(const char *string, const char *tocode,
@@ -71,8 +69,11 @@ char *ipmsg_get_pathname_full(const char *path, const char *name);
 
 bool ipv4Equal(const in_addr& ip1, const in_addr& ip2);
 int ipv4Compare(const in_addr& ip1, const in_addr& ip2);
+
 std::string inAddrToString(in_addr ipv4);
 in_addr stringToInAddr(const std::string& s);
+uint32_t inAddrToUint32(in_addr ipv4);
+in_addr inAddrFromUint32(uint32_t value);
 
 template<typename ... Args>
 std::string stringFormat( const char* format, Args ... args )
