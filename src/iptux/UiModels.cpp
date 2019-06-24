@@ -94,11 +94,17 @@ gint paltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
   if (agrpinf->type == GROUP_BELONG_TYPE_REGULAR &&
       bgrpinf->type == GROUP_BELONG_TYPE_REGULAR)
-    result = ntohl(agrpinf->grpid) - ntohl(bgrpinf->grpid);
-  else
-    result = 0;
+  {
+    if(agrpinf->grpid < bgrpinf->grpid) {
+      return -1;
+    }
+    if(agrpinf->grpid == bgrpinf->grpid) {
+      return 0;
+    }
+    return 1;
+  }
 
-  return result;
+  return 0;
 }
 
 
