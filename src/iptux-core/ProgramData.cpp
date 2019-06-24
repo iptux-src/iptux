@@ -125,7 +125,7 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
  * @param ipv4 ipv4
  * @return 描述串
  */
-string ProgramData::FindNetSegDescription(in_addr_t ipv4) const {
+string ProgramData::FindNetSegDescription(in_addr ipv4) const {
   for (size_t i = 0; i < netseg.size(); ++i) {
     if (netseg[i].ContainIP(ipv4)) {
       return netseg[i].description;

@@ -91,8 +91,7 @@ void SendFileData::TerminateTrans() { terminate = true; }
  * 创建UI参考数据.
  */
 void SendFileData::CreateUIPara() {
-  struct in_addr addr;
-  addr.s_addr = file->fileown->ipv4;
+  struct in_addr addr = file->fileown->ipv4;
 
   para.setStatus("tip-send")
       .setTask(_("send"))

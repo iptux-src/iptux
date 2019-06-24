@@ -203,7 +203,7 @@ void DialogGroup::SaveUILayout() {
 GtkWindow *DialogGroup::CreateMainWindow() {
   char buf[MAX_BUFLEN];
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
+  snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name.c_str());
   gtk_window_set_title(GTK_WINDOW(window), buf);
   gtk_window_set_default_size(GTK_WINDOW(window),
                               config->GetInt("group_window_width", 500),
@@ -588,13 +588,10 @@ gint DialogGroup::MemberTreeCompareByNameFunc(GtkTreeModel *model,
 gint DialogGroup::MemberTreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
                                             GtkTreeIter *b) {
   PalInfo *apal, *bpal;
-  gint result;
 
   gtk_tree_model_get(model, a, 3, &apal, -1);
   gtk_tree_model_get(model, b, 3, &bpal, -1);
-  result = ntohl(apal->ipv4) - ntohl(bpal->ipv4);
-
-  return result;
+  return ipv4Compare(apal->ipv4, bpal->ipv4);
 }
 
 /**

@@ -27,14 +27,14 @@ class CoreThread {
   int getUdpSock() const;
 
   std::shared_ptr<ProgramData> getProgramData();
-  bool BlacklistContainItem(in_addr_t ipv4) const;
+  bool BlacklistContainItem(in_addr ipv4) const;
 
   /**
    * @brief add ipaddress to block list
    *
    * @param ipv4 the ip address
    */
-  void AddBlockIp(in_addr_t ipv4);
+  void AddBlockIp(in_addr ipv4);
 
   /**
    * @brief whether the ipv4 address is blocked?
@@ -43,7 +43,7 @@ class CoreThread {
    * @return true if blocked
    * @return false if not blocked
    */
-  bool IsBlocked(in_addr_t ipv4) const;
+  bool IsBlocked(in_addr ipv4) const;
 
   void Lock();
   void Unlock();
@@ -103,7 +103,7 @@ class CoreThread {
   bool SendAskSharedWithPassword(const PalKey& palKey, const std::string& password);
 
   void SendDetectPacket(const std::string& ipv4);
-  void SendDetectPacket(in_addr_t ipv4);
+  void SendDetectPacket(in_addr ipv4);
   void SendExit(PPalInfo pal);
   void SendMyIcon(PPalInfo pal, std::istream& iss);
   void SendSharedFiles(PPalInfo pal);

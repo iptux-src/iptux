@@ -22,7 +22,7 @@ using namespace std;
 namespace iptux {
 
 PalInfo::PalInfo()
-    : ipv4(0),
+    : ipv4({0}),
       segdes(NULL),
       version(NULL),
       user(NULL),
@@ -125,18 +125,33 @@ ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
 ChipData::~ChipData() {}
 
 NetSegment::NetSegment() {}
+
+NetSegment::NetSegment(string startip, string endip, string description)
+  : startip(startip), endip(endip), description(description)
+{}
+
 NetSegment::~NetSegment() {}
 
-bool NetSegment::ContainIP(in_addr_t ipv4) const {
-  ipv4 = ntohl(ipv4);
+uint64_t NetSegment::Count() const {
+  uint32_t start = inAddrToUint32(inAddrFromString(startip));
+  uint32_t end = inAddrToUint32(inAddrFromString(endip));
+  if(start > end) {
+    return 0;
+  }
+  return uint64_t(end) - uint64_t(start) + 1;
+}
 
-  in_addr_t startip2, endip2;
-  inet_pton(AF_INET, startip.c_str(), &startip2);
-  startip2 = ntohl(startip2);
-  inet_pton(AF_INET, endip.c_str(), &endip2);
-  endip2 = ntohl(endip2);
-  ipv4_order(&startip2, &endip2);
-  return ipv4 >= startip2 && ipv4 <= endip2;
+std::string NetSegment::NthIp(uint64_t i) const {
+  uint32_t start = inAddrToUint32(inAddrFromString(startip));
+  uint64_t res = start + i;
+  return inAddrToString(inAddrFromUint32(res));
+}
+
+
+
+bool NetSegment::ContainIP(in_addr ipv4) const {
+  return ipv4Compare(inAddrFromString(startip), ipv4) <= 0
+    && ipv4Compare(ipv4, inAddrFromString(endip)) <= 0;
 }
 
 Json::Value NetSegment::ToJsonValue() const {
@@ -177,16 +192,16 @@ string ChipData::ToString() const {
   return oss.str();
 }
 
-PalKey::PalKey(in_addr_t ipv4)
+PalKey::PalKey(in_addr ipv4)
   : ipv4(ipv4), port(IPTUX_DEFAULT_PORT)
 {}
 
-PalKey::PalKey(in_addr_t ipv4, int port)
+PalKey::PalKey(in_addr ipv4, int port)
   : ipv4(ipv4), port(port)
 {}
 
 bool PalKey::operator==(const PalKey& rhs) const {
-  return this->ipv4 == rhs.ipv4
+  return ipv4Equal(this->ipv4, rhs.ipv4)
     && this->port == rhs.port;
 }
 

@@ -107,9 +107,7 @@ void RecvFileData::TerminateTrans() { terminate = true; }
  * 创建UI参考数据.
  */
 void RecvFileData::CreateUIPara() {
-  struct in_addr addr;
-
-  addr.s_addr = file->fileown->ipv4;
+  struct in_addr addr = file->fileown->ipv4;
   para.setStatus("tip-recv")
       .setTask(_("receive"))
       .setPeer(file->fileown->name)

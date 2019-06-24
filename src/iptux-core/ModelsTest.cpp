@@ -12,16 +12,14 @@ TEST(PalInfo, GetKey) {
 }
 
 TEST(PalKey, CopyConstructor) {
-  PalKey key1(stringToInAddr("1.2.3.4"), 1234);
+  PalKey key1(inAddrFromString("1.2.3.4"), 1234);
   PalKey key2 = key1;
   ASSERT_EQ(key1.ToString(), "1.2.3.4:1234");
   ASSERT_EQ(key2.ToString(), "1.2.3.4:1234");
 }
 
 TEST(NetSegment, ContainIP) {
-  NetSegment netSegment;
-  netSegment.startip = "1.2.3.4";
-  netSegment.endip = "1.2.4.5";
+  NetSegment netSegment("1.2.3.4", "1.2.4.5", "");
 
   vector<string> ips = {
     "1.2.3.4",
@@ -33,8 +31,8 @@ TEST(NetSegment, ContainIP) {
   };
 
   for (const string& ip: ips) {
-    in_addr_t ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1), 1) << ip;
+    in_addr ip1;
+    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1.s_addr), 1) << ip;
     ASSERT_TRUE(netSegment.ContainIP(ip1));
   }
 
@@ -45,7 +43,7 @@ TEST(NetSegment, ContainIP) {
     "100.100.100.100",
   };
   for (const string& ip: ips2) {
-    in_addr_t ip1;
+    in_addr ip1;
     ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1), 1) << ip;
     ASSERT_FALSE(netSegment.ContainIP(ip1));
   }

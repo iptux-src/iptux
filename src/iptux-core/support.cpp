@@ -66,36 +66,19 @@ void init_iptux_environment() {
  * @param ipv4 ipv4
  * @return name
  */
-char *ipv4_get_lan_name(in_addr_t ipv4) {
+char *ipv4_get_lan_name(in_addr ipv4) {
   /**
    * @note 局域网网段划分，每两个为一组，以NULL标识结束.
    */
-  const char *localgroup[] = {
+  static const char *localgroup[] = {
       "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
       "192.168.0.0", "192.168.255.255", NULL};
-  in_addr_t startip, endip;
-  uint8_t count;
-  char *ipstr;
-
-  ipv4 = ntohl(ipv4);
-  ipstr = NULL;
-
-  count = 0;
-  while (localgroup[count << 1]) {
-    inet_pton(AF_INET, localgroup[count << 1], &startip);
-    startip = ntohl(startip);
-    inet_pton(AF_INET, localgroup[(count << 1) + 1], &endip);
-    endip = ntohl(endip);
-    ipv4_order(&startip, &endip);
-    if (startip <= ipv4 && endip >= ipv4) {
-      ipstr = g_strdup_printf("%s~%s", localgroup[count << 1],
-                              localgroup[(count << 1) + 1]);
-      break;
+  for(int i = 0; i < 6; i+=2) {
+    if(NetSegment(localgroup[i], localgroup[i+1], "").ContainIP(ipv4)) {
+      return g_strdup_printf("%s~%s", localgroup[i], localgroup[i+1]);
     }
-    count++;
   }
-
-  return ipstr;
+  return nullptr;
 }
 
 /**

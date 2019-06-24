@@ -9,6 +9,8 @@
 #include <deque>
 #include <mutex>
 
+#include <poll.h>
+
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <glog/logging.h>
@@ -140,7 +142,7 @@ void CoreThread::bind_iptux_port() {
   addr.sin_port = htons(port);
 
   auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
-  addr.sin_addr.s_addr = stringToInAddr(bind_ip);
+  addr.sin_addr = inAddrFromString(bind_ip);
   if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
@@ -177,12 +179,22 @@ void CoreThread::RecvUdpData(CoreThread *self) {
   ssize_t size;
 
   while (self->started) {
+    struct pollfd pfd = {self->udpSock, POLLIN, 0};
+    int ret = poll(&pfd, 1, 10);
+    if(ret == -1) {
+      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
+      return;
+    }
+    if(ret == 0) {
+      continue;
+    }
+    CHECK(ret == 1);
     len = sizeof(addr);
     if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, addr.sin_port, buf, size);
+    UdpData::UdpDataEntry(*self, addr.sin_addr, addr.sin_port, buf, size);
   }
 }
 
@@ -195,6 +207,16 @@ void CoreThread::RecvTcpData(CoreThread *pcthrd) {
 
   listen(pcthrd->tcpSock, 5);
   while (pcthrd->started) {
+    struct pollfd pfd = {pcthrd->tcpSock, POLLIN, 0};
+    int ret = poll(&pfd, 1, 10);
+    if(ret == -1) {
+      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
+      return;
+    }
+    if(ret == 0) {
+      continue;
+    }
+    CHECK(ret == 1);
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
     thread([](CoreThread* coreThread, int subsock){TcpData::TcpDataEntry(coreThread, subsock);}, pcthrd, subsock)
       .detach();
@@ -207,6 +229,10 @@ void CoreThread::stop() {
   }
   started = false;
   ClearSublayer();
+  pImpl->udpFuture.wait();
+  pImpl->tcpFuture.wait();
+  pImpl->processEventsFuture.wait();
+  pImpl->notifyToAllFuture.wait();
 }
 
 void CoreThread::ClearSublayer() {
@@ -245,11 +271,11 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  * @param ipv4 ipv4
  * @return 是否包含
  */
-bool CoreThread::BlacklistContainItem(in_addr_t ipv4) const {
-  return g_slist_find(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
+bool CoreThread::BlacklistContainItem(in_addr ipv4) const {
+  return g_slist_find(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
-bool CoreThread::IsBlocked(in_addr_t ipv4) const {
+bool CoreThread::IsBlocked(in_addr ipv4) const {
   return programData->IsUsingBlacklist() and BlacklistContainItem(ipv4);
 }
 
@@ -283,7 +309,7 @@ void CoreThread::ClearAllPalFromList() {
  */
 const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
   for(auto palInfo: pImpl->pallist) {
-    if(palInfo->ipv4 == palKey.GetIpv4()) {
+    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo.get();
     }
   }
@@ -292,7 +318,7 @@ const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
 
 shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
-    if(palInfo->ipv4 == palKey.GetIpv4()) {
+    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo;
     }
   }
@@ -300,12 +326,12 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
 }
 
 shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
-  return GetPal(PalKey(stringToInAddr(ipv4)));
+  return GetPal(PalKey(inAddrFromString(ipv4)));
 }
 
 PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
-    if(palInfo->ipv4 == palKey.GetIpv4()) {
+    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo.get();
     }
   }
@@ -420,8 +446,8 @@ void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
     Command(*this).SendMyIcon(udpSock, pal, iss);
 }
 
-void CoreThread::AddBlockIp(in_addr_t ipv4) {
-  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
+void CoreThread::AddBlockIp(in_addr ipv4) {
+  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
 bool CoreThread::SendMessage(PPalInfo palInfo, const string& message) {
@@ -525,10 +551,10 @@ CoreThread::GetOnlineCount() const {
 }
 
 void CoreThread::SendDetectPacket(const string& ipv4) {
-  SendDetectPacket(stringToInAddr(ipv4));
+  SendDetectPacket(inAddrFromString(ipv4));
 }
 
-void CoreThread::SendDetectPacket(in_addr_t ipv4) {
+void CoreThread::SendDetectPacket(in_addr ipv4) {
   Command(*this).SendDetectPacket(udpSock, ipv4);
 }
 

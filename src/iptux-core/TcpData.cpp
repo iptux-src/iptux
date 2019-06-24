@@ -56,7 +56,7 @@ void TcpData::DispatchTcpData() {
   socklen_t socklen;
   socklen = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &socklen);
-  LOG_DEBUG("received tcp message from %s:%d", inAddrToString(addr.sin_addr.s_addr).c_str(), int(addr.sin_port));
+  LOG_DEBUG("received tcp message from %s:%d", inAddrToString(addr.sin_addr).c_str(), int(addr.sin_port));
 
   uint32_t commandno;
   ssize_t len;
@@ -128,7 +128,7 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   /* 检查好友是否存在 */
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
-  if (!(pal = coreThread->GetPalFromList(addr.sin_addr.s_addr))) {
+  if (!(pal = coreThread->GetPalFromList(addr.sin_addr))) {
     return;
   }
 

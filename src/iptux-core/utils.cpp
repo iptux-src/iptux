@@ -35,21 +35,6 @@ using namespace std;
 namespace iptux {
 
 /**
- * 对两个主机序的ipv4地址进行排序.
- * @param ip1 ipv4(host byte order)
- * @param ip2 ipv4(host byte order)
- */
-void ipv4_order(in_addr_t *ip1, in_addr_t *ip2) {
-  in_addr_t ip;
-
-  if (*ip1 > *ip2) {
-    ip = *ip1;
-    *ip1 = *ip2;
-    *ip2 = ip;
-  }
-}
-
-/**
  * 检查串(string)是否为有效的utf8串，若不是则根据字符集(codeset)来进行转码.
  * @param string 待检查的字符串
  * @param codeset 字符集编码，e.g.<gb18030,big5>
@@ -492,8 +477,9 @@ void FLAG_SET(uint8_t &num, int bit, bool value) {
   }
 }
 
-std::string inAddrToString(in_addr_t ipv4) {
+std::string inAddrToString(in_addr inAddr) {
   ostringstream oss;
+  auto ipv4 = inAddr.s_addr;
   oss << int(ipv4 & 0xff) << "."
       << int((ipv4 & 0xff00) >> 8) << "."
       << int((ipv4 & 0xff0000) >> 16) << "."
@@ -501,9 +487,9 @@ std::string inAddrToString(in_addr_t ipv4) {
   return oss.str();
 }
 
-in_addr_t stringToInAddr(const std::string& s) {
-  in_addr_t res;
-  if(inet_pton(AF_INET, s.c_str(), &res) == 1) {
+in_addr inAddrFromString(const std::string& s) {
+  in_addr res;
+  if(inet_pton(AF_INET, s.c_str(), &res.s_addr) == 1) {
     return res;
   }
   throw Exception(ErrorCode::INVALID_IP_ADDRESS);
@@ -765,5 +751,32 @@ ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset) {
 
   return offset;
 }
+
+int ipv4Compare(const in_addr& ip1, const in_addr& ip2) {
+  uint32_t i1 = inAddrToUint32(ip1);
+  uint32_t i2 = inAddrToUint32(ip2);
+  if(i1 < i2) {
+    return -1;
+  }
+  if(i1 == i2) {
+    return 0;
+  }
+  return 1;
+}
+
+bool ipv4Equal(const in_addr& ip1, const in_addr& ip2) {
+  return ip1.s_addr == ip2.s_addr;
+}
+
+uint32_t inAddrToUint32(in_addr ipv4) {
+  return ntohl(ipv4.s_addr);
+}
+
+in_addr inAddrFromUint32(uint32_t value) {
+  in_addr res;
+  res.s_addr = htonl(value);
+  return res;
+}
+
 
 }  // namespace iptux

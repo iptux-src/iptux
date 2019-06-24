@@ -148,7 +148,7 @@ void MainWindow::AlterWindowMode() {
  * @param ipv4 ipv4
  * @return 是否包含
  */
-bool MainWindow::PaltreeContainItem(in_addr_t ipv4) {
+bool MainWindow::PaltreeContainItem(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter iter;
   GroupInfo *grpinf;
@@ -168,7 +168,7 @@ bool MainWindow::PaltreeContainItem(in_addr_t ipv4) {
  * 更新此IP地址好友在好友树(paltree)中的信息数据.
  * @param ipv4 ipv4
  */
-void MainWindow::UpdateItemToPaltree(in_addr_t ipv4) {
+void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
   GroupInfo *pgrpinf, *grpinf;
@@ -220,7 +220,7 @@ void MainWindow::UpdateItemToPaltree(in_addr_t ipv4) {
  * 附加此IP地址的好友到好友树(paltree).
  * @param ipv4 ipv4
  */
-void MainWindow::AttachItemToPaltree(in_addr_t ipv4) {
+void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
   GroupInfo *pgrpinf, *grpinf;
@@ -273,7 +273,7 @@ void MainWindow::AttachItemToPaltree(in_addr_t ipv4) {
  * 从好友树(paltree)中删除此IP地址的好友.
  * @param ipv4 ipv4
  */
-void MainWindow::DelItemFromPaltree(in_addr_t ipv4) {
+void MainWindow::DelItemFromPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
   GroupInfo *pgrpinf, *grpinf;
@@ -1267,18 +1267,19 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
   PalInfo *pal;
 
   /* 从UI中移除 */
-  if (g_mwin->PaltreeContainItem(grpinf->grpid))
-    g_mwin->DelItemFromPaltree(grpinf->grpid);
+  if (g_mwin->PaltreeContainItem(inAddrFromUint32(grpinf->grpid))) {
+    g_mwin->DelItemFromPaltree(inAddrFromUint32(grpinf->grpid));
+  }
 
   g_cthrd->Lock();
   /* 从数据中心点移除 */
-  if ((pal = g_cthrd->GetPalFromList(grpinf->grpid))) {
-    g_cthrd->DelPalFromList(grpinf->grpid);
+  if ((pal = g_cthrd->GetPalFromList(inAddrFromUint32(grpinf->grpid)))) {
+    g_cthrd->DelPalFromList(inAddrFromUint32(grpinf->grpid));
     pal->setOnline(false);
   }
   /* 加入黑名单 */
-  if (!g_cthrd->BlacklistContainItem(grpinf->grpid)) {
-    g_cthrd->AddBlockIp(grpinf->grpid);
+  if (!g_cthrd->BlacklistContainItem(inAddrFromUint32(grpinf->grpid))) {
+    g_cthrd->AddBlockIp(inAddrFromUint32(grpinf->grpid));
   }
   g_cthrd->Unlock();
 }
