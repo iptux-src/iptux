@@ -27,7 +27,7 @@ class UdpData {
   ~UdpData();
 
   static void UdpDataEntry(CoreThread& coreThread,
-                           in_addr_t ipv4,
+                           in_addr ipv4,
                            int port,
                            const char buf[],
                            size_t size);
@@ -62,7 +62,7 @@ class UdpData {
 
  private:
   CoreThread& coreThread;
-  in_addr_t ipv4;        //数据来自
+  in_addr ipv4;        //数据来自
   size_t size;           //缓冲区数据有效长度
   char buf[MAX_UDPLEN];  //数据缓冲区
   char *encode;          //原数据编码(NULL意味着utf8)

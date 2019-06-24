@@ -36,7 +36,7 @@ namespace iptux {
  * 类构造函数.
  */
 UdpData::UdpData(CoreThread& coreThread)
-    : coreThread(coreThread), ipv4(0), size(0), encode(NULL) {}
+    : coreThread(coreThread), ipv4({0}), size(0), encode(NULL) {}
 
 /**
  * 类析构函数.
@@ -50,7 +50,7 @@ UdpData::~UdpData() { g_free(encode); }
  * @param size 数据有效长度
  */
 void UdpData::UdpDataEntry(CoreThread& coreThread,
-                           in_addr_t ipv4,
+                           in_addr ipv4,
                            int port,
                            const char buf[],
                            size_t size) {

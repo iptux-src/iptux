@@ -22,7 +22,7 @@ using namespace std;
 namespace iptux {
 
 PalInfo::PalInfo()
-    : ipv4(0),
+    : ipv4({0}),
       segdes(NULL),
       version(NULL),
       user(NULL),
@@ -127,16 +127,9 @@ ChipData::~ChipData() {}
 NetSegment::NetSegment() {}
 NetSegment::~NetSegment() {}
 
-bool NetSegment::ContainIP(in_addr_t ipv4) const {
-  ipv4 = ntohl(ipv4);
-
-  in_addr_t startip2, endip2;
-  inet_pton(AF_INET, startip.c_str(), &startip2);
-  startip2 = ntohl(startip2);
-  inet_pton(AF_INET, endip.c_str(), &endip2);
-  endip2 = ntohl(endip2);
-  ipv4_order(&startip2, &endip2);
-  return ipv4 >= startip2 && ipv4 <= endip2;
+bool NetSegment::ContainIP(in_addr ipv4) const {
+  return ipv4Compare(stringToInAddr(startip), ipv4) <= 0
+    && ipv4Compare(ipv4, stringToInAddr(endip)) <= 0;
 }
 
 Json::Value NetSegment::ToJsonValue() const {
@@ -177,16 +170,16 @@ string ChipData::ToString() const {
   return oss.str();
 }
 
-PalKey::PalKey(in_addr_t ipv4)
+PalKey::PalKey(in_addr ipv4)
   : ipv4(ipv4), port(IPTUX_DEFAULT_PORT)
 {}
 
-PalKey::PalKey(in_addr_t ipv4, int port)
+PalKey::PalKey(in_addr ipv4, int port)
   : ipv4(ipv4), port(port)
 {}
 
 bool PalKey::operator==(const PalKey& rhs) const {
-  return this->ipv4 == rhs.ipv4
+  return ipv4Equal(this->ipv4, rhs.ipv4)
     && this->port == rhs.port;
 }
 

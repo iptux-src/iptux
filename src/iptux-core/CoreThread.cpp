@@ -140,7 +140,7 @@ void CoreThread::bind_iptux_port() {
   addr.sin_port = htons(port);
 
   auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
-  addr.sin_addr.s_addr = stringToInAddr(bind_ip);
+  addr.sin_addr = stringToInAddr(bind_ip);
   if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
@@ -182,7 +182,7 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(*self, addr.sin_addr.s_addr, addr.sin_port, buf, size);
+    UdpData::UdpDataEntry(*self, addr.sin_addr, addr.sin_port, buf, size);
   }
 }
 
@@ -245,11 +245,11 @@ void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
  * @param ipv4 ipv4
  * @return 是否包含
  */
-bool CoreThread::BlacklistContainItem(in_addr_t ipv4) const {
-  return g_slist_find(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
+bool CoreThread::BlacklistContainItem(in_addr ipv4) const {
+  return g_slist_find(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
-bool CoreThread::IsBlocked(in_addr_t ipv4) const {
+bool CoreThread::IsBlocked(in_addr ipv4) const {
   return programData->IsUsingBlacklist() and BlacklistContainItem(ipv4);
 }
 
@@ -283,7 +283,7 @@ void CoreThread::ClearAllPalFromList() {
  */
 const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
   for(auto palInfo: pImpl->pallist) {
-    if(palInfo->ipv4 == palKey.GetIpv4()) {
+    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo.get();
     }
   }
@@ -292,7 +292,7 @@ const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
 
 shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
-    if(palInfo->ipv4 == palKey.GetIpv4()) {
+    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo;
     }
   }
@@ -305,7 +305,7 @@ shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
 
 PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
-    if(palInfo->ipv4 == palKey.GetIpv4()) {
+    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo.get();
     }
   }
@@ -420,8 +420,8 @@ void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
     Command(*this).SendMyIcon(udpSock, pal, iss);
 }
 
-void CoreThread::AddBlockIp(in_addr_t ipv4) {
-  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4));
+void CoreThread::AddBlockIp(in_addr ipv4) {
+  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
 bool CoreThread::SendMessage(PPalInfo palInfo, const string& message) {
@@ -528,7 +528,7 @@ void CoreThread::SendDetectPacket(const string& ipv4) {
   SendDetectPacket(stringToInAddr(ipv4));
 }
 
-void CoreThread::SendDetectPacket(in_addr_t ipv4) {
+void CoreThread::SendDetectPacket(in_addr ipv4) {
   Command(*this).SendDetectPacket(udpSock, ipv4);
 }
 

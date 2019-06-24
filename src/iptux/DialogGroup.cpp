@@ -588,13 +588,10 @@ gint DialogGroup::MemberTreeCompareByNameFunc(GtkTreeModel *model,
 gint DialogGroup::MemberTreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
                                             GtkTreeIter *b) {
   PalInfo *apal, *bpal;
-  gint result;
 
   gtk_tree_model_get(model, a, 3, &apal, -1);
   gtk_tree_model_get(model, b, 3, &bpal, -1);
-  result = ntohl(apal->ipv4) - ntohl(bpal->ipv4);
-
-  return result;
+  return ipv4Compare(apal->ipv4, bpal->ipv4);
 }
 
 /**

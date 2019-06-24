@@ -53,7 +53,7 @@ PPalInfo getAndCheckPalInfo(CoreThread& coreThread, const PalKey& palKey) {
  * @return true means succcess
  * @return false means failed
  */
-static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, in_addr_t ipv4, int port) {
+static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, in_addr ipv4, int port) {
   if(Log::IsDebugEnabled()) {
     LOG_DEBUG("send udp message to %s:%d, size %d\n%s", inAddrToString(ipv4).c_str(),
       port, int(len), stringDump(string((const char*)buf, len)).c_str());
@@ -64,11 +64,11 @@ static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, i
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = ipv4;
+  addr.sin_addr = ipv4;
   return sendto(sockfd, buf, len, flags, (struct sockaddr *)(&addr), sizeof(struct sockaddr_in)) != -1;
 }
 
-static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, in_addr_t ipv4) {
+static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, in_addr ipv4) {
   return commandSendTo(sockfd, buf, len, flags, ipv4, IPTUX_DEFAULT_PORT);
 }
 
@@ -99,7 +99,9 @@ void Command::BroadCast(int sock) {
 
   tlist = list = get_sys_broadcast_addr(sock);
   while (tlist) {
-    commandSendTo(sock, buf, size, 0, GPOINTER_TO_UINT(tlist->data));
+    in_addr ipv4;
+    ipv4.s_addr = GPOINTER_TO_UINT(tlist->data);
+    commandSendTo(sock, buf, size, 0, ipv4);
     g_usleep(9999);
     tlist = g_slist_next(tlist);
   }
@@ -111,9 +113,6 @@ void Command::BroadCast(int sock) {
  * @param sock udp socket
  */
 void Command::DialUp(int sock) {
-  in_addr_t startip, endip, ipv4;
-  NetSegment *pns;
-
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
@@ -124,18 +123,12 @@ void Command::DialUp(int sock) {
   programData->Lock();
   vector<NetSegment> list = programData->copyNetSegments();
   programData->Unlock();
-  for(int i = 0; i < int(list.size()); ++i) {
-    pns = &list[i];
-    inet_pton(AF_INET, pns->startip.c_str(), &startip);
-    startip = ntohl(startip);
-    inet_pton(AF_INET, pns->endip.c_str(), &endip);
-    endip = ntohl(endip);
-    ipv4_order(&startip, &endip);
-    ipv4 = startip;
-    while (ipv4 <= endip) {
-      commandSendTo(sock, buf, size, 0, htonl(ipv4));
+  for(const NetSegment& ns: list) {
+    uint64_t c = ns.Count();
+    for(uint64_t j = 0; j < c; ++j) {
+      auto ip = ns.NthIp(j);
+      commandSendTo(sock, buf, size, 0, stringToInAddr(ip));
       g_usleep(999);
-      ipv4++;
     }
   }
 }
@@ -184,7 +177,7 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
  * @param sock udp socket
  * @param ipv4 ipv4 address
  */
-void Command::SendDetectPacket(int sock, in_addr_t ipv4) {
+void Command::SendDetectPacket(int sock, in_addr ipv4) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
@@ -300,7 +293,7 @@ bool Command::SendAskData(int sock, CPPalInfo pal, uint32_t packetno,
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr.s_addr = pal->ipv4;
+  addr.sin_addr = pal->ipv4;
 
   if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
@@ -345,7 +338,7 @@ bool Command::SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno,
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr.s_addr = pal->ipv4;
+  addr.sin_addr = pal->ipv4;
 
   if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
@@ -439,7 +432,7 @@ void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
   bzero(&addr, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr.s_addr = pal->ipv4;
+  addr.sin_addr = pal->ipv4;
 
   if (((connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||

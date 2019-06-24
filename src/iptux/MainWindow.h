@@ -46,10 +46,10 @@ class MainWindow {
   void CreateWindow();
   void AlterWindowMode();
 
-  bool PaltreeContainItem(in_addr_t ipv4);
-  void UpdateItemToPaltree(in_addr_t ipv4);
-  void AttachItemToPaltree(in_addr_t ipv4);
-  void DelItemFromPaltree(in_addr_t ipv4);
+  bool PaltreeContainItem(in_addr ipv4);
+  void UpdateItemToPaltree(in_addr ipv4);
+  void AttachItemToPaltree(in_addr ipv4);
+  void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
   void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
   void setActiveWindow(ActiveWindowType t, void* activeWindow);

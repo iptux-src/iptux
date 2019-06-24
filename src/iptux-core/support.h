@@ -27,7 +27,7 @@ class BindFailedException: public std::runtime_error {
 };
 
 void init_iptux_environment();
-char *ipv4_get_lan_name(in_addr_t ipv4);
+char *ipv4_get_lan_name(in_addr ipv4);
 
 void socket_enable_broadcast(int sock);
 void socket_enable_reuse(int sock);

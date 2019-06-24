@@ -105,7 +105,7 @@ GtkWidget *DetectPal::CreateInputArea() {
  */
 void DetectPal::SendDetectPacket() {
   GtkWidget *widget, *parent;
-  in_addr_t ipv4;
+  in_addr ipv4;
   const char *text;
 
   parent = GTK_WIDGET(g_datalist_get_data(&widset, "dialog-widget"));

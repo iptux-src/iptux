@@ -85,7 +85,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t filea
   /* 检查好友数据是否存在 */
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
-  if (!(coreThread->GetPal(addr.sin_addr.s_addr))) {
+  if (!(coreThread->GetPal(addr.sin_addr))) {
     return;
   }
 

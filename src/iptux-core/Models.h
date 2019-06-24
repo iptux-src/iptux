@@ -54,16 +54,16 @@ typedef enum {
 
 class PalKey {
  public:
-  PalKey(in_addr_t ipv4);
-  PalKey(in_addr_t ipv4, int port);
+  PalKey(in_addr ipv4);
+  PalKey(in_addr ipv4, int port);
 
   bool operator==(const PalKey& rhs) const;
 
-  in_addr_t GetIpv4() const {return ipv4;}
+  in_addr GetIpv4() const {return ipv4;}
   int GetPort() const {return port;}
   std::string ToString() const;
  private:
-  in_addr_t ipv4;
+  in_addr ipv4;
   int port;
 };
 
@@ -84,7 +84,7 @@ class PalInfo {
     return ipv4;
   }
 
-  in_addr_t ipv4;  ///< 好友IP
+  in_addr ipv4;  ///< 好友IP
   char *segdes;    ///< 所在网段描述
   char *version;   ///< 版本串 *
   char *user;      ///< 好友用户 *
@@ -180,10 +180,17 @@ class MsgPara {
  */
 class NetSegment {
  public:
+  NetSegment(std::string startIp, std::string endIp, std::string description);
   NetSegment();
   ~NetSegment();
 
-  bool ContainIP(in_addr_t ipv4) const;
+  bool ContainIP(in_addr ipv4) const;
+  /**
+   * @brief return the ip count in this segment
+   *
+   */
+  uint64_t Count() const;
+  std::string NthIp(uint64_t i) const;
 
   std::string startip;      ///< IP起始地址 *
   std::string endip;        ///< IP终止地址 *
