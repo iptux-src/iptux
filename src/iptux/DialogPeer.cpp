@@ -109,7 +109,7 @@ void DialogPeer::UpdatePalData(PalInfo *pal) {
  * 插入好友数据.
  * @param pal 好友信息
  */
-void DialogPeer::InsertPalData(PalInfo *pal) {
+void DialogPeer::InsertPalData(PalInfo *) {
   //此函数暂且无须实现
 }
 
@@ -117,7 +117,7 @@ void DialogPeer::InsertPalData(PalInfo *pal) {
  * 删除好友数据.
  * @param pal 好友信息
  */
-void DialogPeer::DelPalData(PalInfo *pal) {
+void DialogPeer::DelPalData(PalInfo *) {
   //此函数暂且无须实现
 }
 
@@ -519,7 +519,7 @@ void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
   if (grpinf->member) {
     para.pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
   } else {
-    para.pal = g_cthrd->GetPal(grpinf->grpid);
+    para.pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
   }
 
   para.stype = MessageSourceType::SELF;
@@ -540,7 +540,7 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
 
   para = new MsgPara;
   if (!(grpinf->member)) {
-    para->pal = g_cthrd->GetPal(grpinf->grpid);
+    para->pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
   } else {
     para->pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
   }
@@ -559,7 +559,7 @@ void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
   PPalInfo pal;
 
   if (!(grpinf->member)) {
-    pal = g_cthrd->GetPal(grpinf->grpid);
+    pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
   } else {
     pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
   }

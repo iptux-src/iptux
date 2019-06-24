@@ -321,7 +321,7 @@ GroupInfo *UiCoreThread::GetPalRegularItem(PalInfo *pal) {
 
   tlist = groupInfos;
   while (tlist) {
-    if (((GroupInfo *)tlist->data)->grpid == pal->ipv4) break;
+    if (((GroupInfo *)tlist->data)->grpid == inAddrToUint32(pal->ipv4)) break;
     tlist = g_slist_next(tlist);
   }
 
@@ -588,7 +588,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
   GroupInfo *grpinf;
 
   grpinf = new GroupInfo;
-  grpinf->grpid = pal->ipv4;
+  grpinf->grpid = inAddrToUint32(pal->ipv4);
   grpinf->type = GROUP_BELONG_TYPE_REGULAR;
   grpinf->name = g_strdup(pal->name);
   grpinf->member = NULL;
