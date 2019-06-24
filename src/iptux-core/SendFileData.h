@@ -38,7 +38,6 @@ class SendFileData: public TransAbstract {
 
   CoreThread* coreThread;
   int sock;                           //数据套接口
-  int taskId;
   PFileInfo file;                     //文件信息
   TransFileModel para;
   bool terminate;                     //终止标志(也作处理结果标识)

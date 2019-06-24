@@ -155,7 +155,7 @@ void UdpData::SomeoneLost() {
 
   /* 加入好友列表 */
   coreThread.Lock();
-  coreThread.AttachPalToList(pal);
+  coreThread.AttachPalToList(PPalInfo(pal));
   coreThread.Unlock();
   // coreThread.AttachItemToPaltree(ipv4);
 }
@@ -239,13 +239,13 @@ void UdpData::SomeoneAnsEntry() {
  * 好友更改个人信息.
  */
 void UdpData::SomeoneAbsence() {
-  PalInfo *pal;
+  PPalInfo pal;
   const char *ptr;
 
   auto g_progdt = coreThread.getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
-  pal = coreThread.GetPalFromList(ipv4);  //利用好友链表只增不减的特性，无须加锁
+  pal = coreThread.GetPal(ipv4);  //利用好友链表只增不减的特性，无须加锁
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
@@ -259,7 +259,7 @@ void UdpData::SomeoneAbsence() {
   /* 加入或更新好友列表 */
   coreThread.Lock();
   if (pal) {
-    UpdatePalInfo(pal);
+    UpdatePalInfo(pal.get());
     coreThread.UpdatePalToList(ipv4);
   } else {
     coreThread.AttachPalToList(CreatePalInfo());
@@ -331,9 +331,9 @@ void UdpData::SomeoneSendmsg() {
  */
 void UdpData::SomeoneRecvmsg() {
   uint32_t packetno;
-  PalInfo *pal;
+  PPalInfo pal;
 
-  if ((pal = coreThread.GetPalFromList(ipv4))) {
+  if ((pal = coreThread.GetPal(ipv4))) {
     packetno = iptux_get_dec_number(buf, ':', 5);
     if (packetno == pal->rpacketn) pal->rpacketn = 0;  //标记此包编号已经被回复
   }
@@ -371,10 +371,10 @@ void UdpData::SomeoneAskShared() {
  * 好友发送头像数据.
  */
 void UdpData::SomeoneSendIcon() {
-  PalInfo *pal;
+  PPalInfo pal;
   char *iconfile;
 
-  if (!(pal = coreThread.GetPalFromList(ipv4)) || pal->isChanged()) {
+  if (!(pal = coreThread.GetPal(ipv4)) || pal->isChanged()) {
     return;
   }
 
@@ -390,10 +390,10 @@ void UdpData::SomeoneSendIcon() {
  * 好友发送个性签名.
  */
 void UdpData::SomeoneSendSign() {
-  PalInfo *pal;
+  PPalInfo pal;
   char *sign;
 
-  if (!(pal = coreThread.GetPalFromList(ipv4))) return;
+  if (!(pal = coreThread.GetPal(ipv4))) return;
 
   /* 若好友不兼容iptux协议，则需转码 */
   if (!pal->isCompatible()) {
@@ -669,7 +669,7 @@ char *UdpData::RecvPalIcon() {
 
   /* 将头像数据刷入磁盘 */
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
-           g_get_user_cache_dir(), ipv4);
+           g_get_user_cache_dir(), inAddrToUint32(ipv4));
   Helper::prepareDir(path);
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
     LOG_ERROR("write icon to path failed: %s", path);
@@ -677,7 +677,7 @@ char *UdpData::RecvPalIcon() {
   }
   xwrite(fd, buf + len, size - len);
   close(fd);
-  iconfile = g_strdup_printf("%" PRIx32, ipv4);
+  iconfile = g_strdup_printf("%" PRIx32, inAddrToUint32(ipv4));
   return iconfile;
 }
 

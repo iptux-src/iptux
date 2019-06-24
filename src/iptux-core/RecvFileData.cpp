@@ -270,7 +270,7 @@ void RecvFileData::RecvDirFiles() {
     }
 
     /* 处理缓冲区剩余数据&读取文件数据 */
-    size = len < filesize ? len : filesize;
+    size = int64_t(len) < filesize ? int64_t(len) : filesize;
     if (xwrite(fd, buf + headsize, size) == -1) {
       close(fd);
       goto end;
