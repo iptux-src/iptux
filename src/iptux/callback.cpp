@@ -15,7 +15,7 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
-#include <gdk/gdkkeysyms.h>
+#include <gdk/gdk.h>
 
 #include "iptux/MainWindow.h"
 #include "iptux/UiProgramData.h"
@@ -39,7 +39,7 @@ namespace iptux {
  * @param text text string
  * @return Gtk+库所需
  */
-gboolean entry_query_tooltip(GtkWidget *entry, gint x, gint y, gboolean key,
+gboolean entry_query_tooltip(GtkWidget */* entry */, gint /* x */, gint /* y */, gboolean /* key */,
                              GtkTooltip *tooltip, char *text) {
   GtkWidget *label;
 
@@ -193,7 +193,7 @@ void model_turn_select(GtkTreeModel *model, gchar *path) {
     gtk_tree_store_set(GTK_TREE_STORE(model), &iter, 0, !active, -1);
 }
 
-void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
+void textview_follow_if_link(GtkWidget* textview, GtkTextIter *iter) {
   GSList *tags, *tmp;
 
   tmp = tags = gtk_text_iter_get_tags(iter);
@@ -201,7 +201,7 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
     auto tag = (GtkTextTag *)tmp->data;
     gchar* url;
     if ((url = (gchar *)g_object_get_data(G_OBJECT(tag), "url"))) {
-      if (!gtk_show_uri(NULL, url, GDK_CURRENT_TIME, NULL)) {
+      if (!gtk_show_uri_on_window(GTK_WINDOW(gtk_widget_get_toplevel(textview)), url, GDK_CURRENT_TIME, NULL)) {
         iptux_open_url(url);
       }
       break;
@@ -211,8 +211,7 @@ void textview_follow_if_link(GtkWidget *textview, GtkTextIter *iter) {
   g_slist_free(tags);
 }
 
-void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y,
-                                        shared_ptr<UiProgramData> progdt) {
+void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y) {
   GSList *tags, *tmp;
   GtkTextIter iter;
   gboolean hovering;
@@ -293,21 +292,23 @@ gboolean textview_motion_notify_event(GtkWidget *textview,
   gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                                         GTK_TEXT_WINDOW_WIDGET, event->x,
                                         event->y, &x, &y);
-  textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y, g_cthrd->getUiProgramData());
-  gdk_window_get_pointer(gtk_widget_get_window(textview), NULL, NULL, NULL);
+  textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), x, y);
 
   return FALSE;
 }
 
 gboolean textview_visibility_notify_event(GtkWidget *textview,
-                                          GdkEventVisibility *event) {
+                                          GdkEventVisibility *) {
   gint wx, wy, bx, by;
 
-  gdk_window_get_pointer(gtk_widget_get_window(textview), &wx, &wy, NULL);
+  auto window = gtk_widget_get_window(textview);
+  auto display = gdk_window_get_display(window);
+  auto seat = gdk_display_get_default_seat(display);
+  auto device = gdk_seat_get_pointer(seat);
+  gdk_window_get_device_position(window, device, &wx, &wy, NULL);
   gtk_text_view_window_to_buffer_coords(
       GTK_TEXT_VIEW(textview), GTK_TEXT_WINDOW_WIDGET, wx, wy, &bx, &by);
-  textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by,
-                                     g_cthrd->getUiProgramData());
+  textview_set_cursor_if_appropriate(GTK_TEXT_VIEW(textview), bx, by);
 
   return FALSE;
 }
