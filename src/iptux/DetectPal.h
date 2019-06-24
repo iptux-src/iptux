@@ -18,17 +18,11 @@ namespace iptux {
 
 class DetectPal {
  public:
-  DetectPal();
-  ~DetectPal();
-
-  static void DetectEntry(GtkWidget *parent);
-
+  DetectPal(GtkBuilder* builder, GtkWindow* parent);
+  void run();
  private:
-  GtkWidget *CreateMainDialog(GtkWidget *parent);
-  GtkWidget *CreateInputArea();
-  void SendDetectPacket();
-
-  GData *widset;
+  GtkDialog* detectPalDialog;
+  GtkEntry* detectPalIpv4Entry;
 };
 
 }  // namespace iptux

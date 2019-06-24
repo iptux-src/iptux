@@ -1179,7 +1179,8 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
 }
 
 void MainWindow::onDetect(void*, void*, MainWindow& self) {
-  DetectPal::DetectEntry(self.window);
+  DetectPal pal(self.builder, GTK_WINDOW(self.window));
+  pal.run();
 }
 
 
