@@ -29,13 +29,13 @@ TEST(CoreThread, IsBlocked) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  EXPECT_FALSE(thread->IsBlocked(stringToInAddr("1.2.3.4")));
-  thread->AddBlockIp(stringToInAddr("1.2.3.4"));
-  EXPECT_FALSE(thread->IsBlocked(stringToInAddr("1.2.3.4")));
+  EXPECT_FALSE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
+  thread->AddBlockIp(inAddrFromString("1.2.3.4"));
+  EXPECT_FALSE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
   core->SetUsingBlacklist(true);
-  EXPECT_TRUE(thread->IsBlocked(stringToInAddr("1.2.3.4")));
+  EXPECT_TRUE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
   core->SetUsingBlacklist(false);
-  EXPECT_FALSE(thread->IsBlocked(stringToInAddr("1.2.3.4")));
+  EXPECT_FALSE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
   delete thread;
 }
 

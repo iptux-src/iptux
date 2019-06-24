@@ -133,8 +133,8 @@ NetSegment::NetSegment(string startip, string endip, string description)
 NetSegment::~NetSegment() {}
 
 uint64_t NetSegment::Count() const {
-  uint32_t start = inAddrToUint32(stringToInAddr(startip));
-  uint32_t end = inAddrToUint32(stringToInAddr(endip));
+  uint32_t start = inAddrToUint32(inAddrFromString(startip));
+  uint32_t end = inAddrToUint32(inAddrFromString(endip));
   if(start > end) {
     return 0;
   }
@@ -142,7 +142,7 @@ uint64_t NetSegment::Count() const {
 }
 
 std::string NetSegment::NthIp(uint64_t i) const {
-  uint32_t start = inAddrToUint32(stringToInAddr(startip));
+  uint32_t start = inAddrToUint32(inAddrFromString(startip));
   uint64_t res = start + i;
   return inAddrToString(inAddrFromUint32(res));
 }
@@ -150,8 +150,8 @@ std::string NetSegment::NthIp(uint64_t i) const {
 
 
 bool NetSegment::ContainIP(in_addr ipv4) const {
-  return ipv4Compare(stringToInAddr(startip), ipv4) <= 0
-    && ipv4Compare(ipv4, stringToInAddr(endip)) <= 0;
+  return ipv4Compare(inAddrFromString(startip), ipv4) <= 0
+    && ipv4Compare(ipv4, inAddrFromString(endip)) <= 0;
 }
 
 Json::Value NetSegment::ToJsonValue() const {

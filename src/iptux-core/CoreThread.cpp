@@ -142,7 +142,7 @@ void CoreThread::bind_iptux_port() {
   addr.sin_port = htons(port);
 
   auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
-  addr.sin_addr = stringToInAddr(bind_ip);
+  addr.sin_addr = inAddrFromString(bind_ip);
   if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
@@ -326,7 +326,7 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
 }
 
 shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
-  return GetPal(PalKey(stringToInAddr(ipv4)));
+  return GetPal(PalKey(inAddrFromString(ipv4)));
 }
 
 PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
@@ -551,7 +551,7 @@ CoreThread::GetOnlineCount() const {
 }
 
 void CoreThread::SendDetectPacket(const string& ipv4) {
-  SendDetectPacket(stringToInAddr(ipv4));
+  SendDetectPacket(inAddrFromString(ipv4));
 }
 
 void CoreThread::SendDetectPacket(in_addr ipv4) {

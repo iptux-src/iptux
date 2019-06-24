@@ -71,7 +71,7 @@ bool ipv4Equal(const in_addr& ip1, const in_addr& ip2);
 int ipv4Compare(const in_addr& ip1, const in_addr& ip2);
 
 std::string inAddrToString(in_addr ipv4);
-in_addr stringToInAddr(const std::string& s);
+in_addr inAddrFromString(const std::string& s);
 uint32_t inAddrToUint32(in_addr ipv4);
 in_addr inAddrFromUint32(uint32_t value);
 

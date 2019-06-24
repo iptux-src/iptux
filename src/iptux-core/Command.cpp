@@ -127,7 +127,7 @@ void Command::DialUp(int sock) {
     uint64_t c = ns.Count();
     for(uint64_t j = 0; j < c; ++j) {
       auto ip = ns.NthIp(j);
-      commandSendTo(sock, buf, size, 0, stringToInAddr(ip));
+      commandSendTo(sock, buf, size, 0, inAddrFromString(ip));
       g_usleep(999);
     }
   }

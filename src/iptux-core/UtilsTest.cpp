@@ -32,11 +32,11 @@ TEST(Utils, numeric_to_size) {
   EXPECT_STREQ(numeric_to_size(-1024), "-1024B");
 }
 
-TEST(Utils, stringToInAddr) {
-  EXPECT_EQ(stringToInAddr("127.0.0.1").s_addr, 0x100007fu);
-  EXPECT_EQ(stringToInAddr("1.2.3.4").s_addr, 0x4030201u);
-  EXPECT_EQ(stringToInAddr("1.2.3.255").s_addr, 0xff030201u);
-  EXPECT_EQ(stringToInAddr("255.2.3.4").s_addr, 0x40302ffu);
+TEST(Utils, inAddrFromString) {
+  EXPECT_EQ(inAddrFromString("127.0.0.1").s_addr, 0x100007fu);
+  EXPECT_EQ(inAddrFromString("1.2.3.4").s_addr, 0x4030201u);
+  EXPECT_EQ(inAddrFromString("1.2.3.255").s_addr, 0xff030201u);
+  EXPECT_EQ(inAddrFromString("255.2.3.4").s_addr, 0x40302ffu);
 
   vector<string> cases = {
       "",
@@ -50,7 +50,7 @@ TEST(Utils, stringToInAddr) {
 
   for(const string& c: cases) {
     try {
-      stringToInAddr(c);
+      inAddrFromString(c);
       EXPECT_TRUE(false) << c;
     } catch(Exception& e) {
       ASSERT_EQ(e.getErrorCode(), ErrorCode::INVALID_IP_ADDRESS);
@@ -92,9 +92,9 @@ TEST(Utils, stringDumpAsCString) {
 }
 
 TEST(Utils, ipv4Compare) {
-  EXPECT_LT(ipv4Compare(stringToInAddr("1.2.3.4"), stringToInAddr("1.2.3.5")), 0);
-  EXPECT_LT(ipv4Compare(stringToInAddr("1.2.3.4"), stringToInAddr("1.2.4.0")), 0);
-  EXPECT_EQ(ipv4Compare(stringToInAddr("1.2.3.5"), stringToInAddr("1.2.3.5")), 0);
-  EXPECT_GT(ipv4Compare(stringToInAddr("1.2.3.5"), stringToInAddr("1.2.3.4")), 0);
-  EXPECT_GT(ipv4Compare(stringToInAddr("1.2.4.0"), stringToInAddr("1.2.3.4")), 0);
+  EXPECT_LT(ipv4Compare(inAddrFromString("1.2.3.4"), inAddrFromString("1.2.3.5")), 0);
+  EXPECT_LT(ipv4Compare(inAddrFromString("1.2.3.4"), inAddrFromString("1.2.4.0")), 0);
+  EXPECT_EQ(ipv4Compare(inAddrFromString("1.2.3.5"), inAddrFromString("1.2.3.5")), 0);
+  EXPECT_GT(ipv4Compare(inAddrFromString("1.2.3.5"), inAddrFromString("1.2.3.4")), 0);
+  EXPECT_GT(ipv4Compare(inAddrFromString("1.2.4.0"), inAddrFromString("1.2.3.4")), 0);
 }
