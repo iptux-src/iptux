@@ -61,7 +61,7 @@ static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, i
     LOG_INFO("send udp message to %s:%d, size %d", inAddrToString(ipv4).c_str(), port, int(len));
   }
   struct sockaddr_in addr;
-  bzero(&addr, sizeof(addr));
+  memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr = ipv4;
@@ -290,7 +290,7 @@ bool Command::SendAskData(int sock, CPPalInfo pal, uint32_t packetno,
     CreateCommand(IPMSG_GETFILEDATA, attrstr);
   ConvertEncode(pal->encode);
 
-  bzero(&addr, sizeof(addr));
+  memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr = pal->ipv4;
@@ -335,7 +335,7 @@ bool Command::SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno,
   CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
   ConvertEncode(pal->encode);
 
-  bzero(&addr, sizeof(addr));
+  memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr = pal->ipv4;
@@ -429,7 +429,7 @@ void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
   CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
   ConvertEncode(pal->encode);
 
-  bzero(&addr, sizeof(addr));
+  memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(IPTUX_DEFAULT_PORT);
   addr.sin_addr = pal->ipv4;
