@@ -242,7 +242,7 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   }
   /*/* 更新分组模式下的群组 */
   if ((grpinf = GetPalPrevGroupItem(pal))) {
-    if (!pal->group || strcmp(grpinf->name, pal->group) != 0) {
+    if (!pal->group || strcmp(grpinf->name.c_str(), pal->group) != 0) {
       DelPalFromGroupInfoItem(grpinf, pal);
       if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
       AttachPalToGroupInfoItem(grpinf, pal);
@@ -379,7 +379,7 @@ GroupInfo *UiCoreThread::GetPalGroupItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo *UiCoreThread::GetPalBroadcastItem(PalInfo *pal) {
+GroupInfo *UiCoreThread::GetPalBroadcastItem(PalInfo *) {
   return (GroupInfo *)(brdlist ? brdlist->data : NULL);
 }
 
@@ -653,7 +653,7 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *pal) {
+GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *) {
   GroupInfo *grpinf;
   char *name;
 

@@ -73,7 +73,7 @@ gint paltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
 
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
-  result = strcmp(agrpinf->name, bgrpinf->name);
+  result = strcmp(agrpinf->name.c_str(), bgrpinf->name.c_str());
 
   return result;
 }
@@ -201,7 +201,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     info = g_strdup_printf("%s\n%s", pal->name, ipstr);
   } else
-    info = g_strdup(grpinf->name);
+    info = g_strdup(grpinf->name.c_str());
 
   /* 创建扩展信息 */
   if (grpinf->type == GROUP_BELONG_TYPE_REGULAR)
@@ -247,12 +247,10 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
 GroupInfo::GroupInfo()
     : grpid(0),
       type(GROUP_BELONG_TYPE_REGULAR),
-      name(NULL),
       member(NULL),
       buffer(NULL),
       dialog(NULL) {}
 GroupInfo::~GroupInfo() {
-  g_free(name);
   g_slist_free(member);
   g_object_unref(buffer);
 }
