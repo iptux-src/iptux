@@ -764,7 +764,7 @@ int ipv4Compare(const in_addr& ip1, const in_addr& ip2) {
   return 1;
 }
 
-bool iptux::ipv4Equal(const in_addr& ip1, const in_addr& ip2) {
+bool ipv4Equal(const in_addr& ip1, const in_addr& ip2) {
   return ip1.s_addr == ip2.s_addr;
 }
 
