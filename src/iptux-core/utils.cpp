@@ -520,7 +520,7 @@ std::string stringDump(const std::string& str) {
     }
     oss << " |";
     for(int j = 0; j < 16; ++j) {
-      if(i+j >= str.size()) {
+      if(i+j >= int(str.size())) {
         break;
       }
       char c = str[i+j];
@@ -549,7 +549,7 @@ std::string stringDumpAsCString(const std::string& str) {
   oss << '"';
   for(int i = 0; i < int(str.size()); ++i) {
     if(uint8_t(str[i]) < 0x20) {
-      oss << tables[str[i]];
+      oss << tables[int(str[i])];
     } else if (str[i] == '"') {
       oss << "\\\"";
     } else if (str[i] == '\\') {

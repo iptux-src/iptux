@@ -345,10 +345,10 @@ PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
  * 鉴于群组中只能包含在线的好友，所以若某群组中包含了此好友，则必须从此群组中删除此好友
  */
 void CoreThread::DelPalFromList(PalKey palKey) {
-  PalInfo *pal;
+  PPalInfo pal;
 
   /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPalFromList(palKey))) return;
+  if (!(pal = GetPal(palKey))) return;
   pal->setOnline(false);
 }
 
@@ -361,9 +361,9 @@ void CoreThread::DelPalFromList(PalKey palKey) {
  * @note 群组中被更新的成员信息也应该在界面上做出相应更新
  */
 void CoreThread::UpdatePalToList(PalKey palKey) {
-  PalInfo *pal;
+  PPalInfo pal;
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
-  if (!(pal = GetPalFromList(palKey))) {
+  if (!(pal = GetPal(palKey))) {
     return;
   }
   pal->setOnline(true);

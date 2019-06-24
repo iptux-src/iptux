@@ -122,13 +122,13 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   char path[MAX_PATHLEN];
   struct sockaddr_in addr;
   socklen_t len;
-  PalInfo *pal;
+  PPalInfo pal;
   int fd;
 
   /* 检查好友是否存在 */
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
-  if (!(pal = coreThread->GetPalFromList(addr.sin_addr))) {
+  if (!(pal = coreThread->GetPal(addr.sin_addr))) {
     return;
   }
 
@@ -136,16 +136,16 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   switch (GET_OPT(cmdopt)) {
     case IPTUX_PHOTOPICOPT:
       snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/%" PRIx32,
-               g_get_user_cache_dir(), pal->ipv4);
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4));
       break;
     case IPTUX_MSGPICOPT:
       snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
-               g_get_user_cache_dir(), pal->ipv4, count++, time(NULL));
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++, time(NULL));
       break;
     default:
       snprintf(path, MAX_PATHLEN,
                "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
-               g_get_user_cache_dir(), pal->ipv4, count++, time(NULL));
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++, time(NULL));
       break;
   }
 
@@ -157,10 +157,10 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   /* 分派数据 */
   switch (GET_OPT(cmdopt)) {
     case IPTUX_PHOTOPICOPT:
-      RecvPhotoPic(pal, path);
+      RecvPhotoPic(pal.get(), path);
       break;
     case IPTUX_MSGPICOPT:
-      RecvMsgPic(pal, path);
+      RecvMsgPic(pal.get(), path);
       break;
     default:
       break;
