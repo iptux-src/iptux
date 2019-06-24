@@ -137,7 +137,7 @@ void CoreThread::bind_iptux_port() {
     throw BindFailedException(ec, errmsg);
   }
 
-  bzero(&addr, sizeof(addr));
+  memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
 
