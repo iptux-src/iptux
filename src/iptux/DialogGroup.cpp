@@ -203,7 +203,7 @@ void DialogGroup::SaveUILayout() {
 GtkWindow *DialogGroup::CreateMainWindow() {
   char buf[MAX_BUFLEN];
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name);
+  snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name.c_str());
   gtk_window_set_title(GTK_WINDOW(window), buf);
   gtk_window_set_default_size(GTK_WINDOW(window),
                               config->GetInt("group_window_width", 500),
