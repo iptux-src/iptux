@@ -1009,7 +1009,7 @@ void DataSettings::ObtainSystemValue() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
   g_free(g_progdt->font);
   g_progdt->font =
-      g_strdup(gtk_font_button_get_font_name(GTK_FONT_BUTTON(widget)));
+      g_strdup(gtk_font_chooser_get_font(GTK_FONT_CHOOSER(widget)));
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
   g_progdt->SetFlag(7, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
@@ -1286,8 +1286,7 @@ gboolean DataSettings::PopupPickMenu(GtkWidget *treeview,
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   menu = CreatePopupMenu(model);
   gtk_widget_show_all(menu);
-  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button,
-                 event->time);
+  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)(event));
 
   return TRUE;
 }
