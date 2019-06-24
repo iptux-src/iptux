@@ -753,10 +753,12 @@ ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset) {
 }
 
 int ipv4Compare(const in_addr& ip1, const in_addr& ip2) {
-  if(ip1.s_addr < ip2.s_addr) {
+  uint32_t i1 = inAddrToUint32(ip1);
+  uint32_t i2 = inAddrToUint32(ip2);
+  if(i1 < i2) {
     return -1;
   }
-  if(ip1.s_addr == ip2.s_addr) {
+  if(i1 == i2) {
     return 0;
   }
   return 1;
