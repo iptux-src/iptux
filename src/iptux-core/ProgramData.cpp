@@ -187,7 +187,7 @@ void ProgramData::ReadProgData() {
     /* 加入文件信息到链表 */
     FileInfo fileInfo;
     fileInfo.fileid = pbn++;
-    fileInfo.fileattr = S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR;
+    fileInfo.fileattr = S_ISREG(st.st_mode) ? FileAttr::REGULAR : FileAttr::DIRECTORY;
     fileInfo.filepath = strdup(sharedFileList[i].c_str());
     sharedFileInfos.emplace_back(fileInfo);
   }

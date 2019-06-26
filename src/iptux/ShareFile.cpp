@@ -196,12 +196,12 @@ void FillFileModel(GtkTreeModel *model) {
     file.filesize = afs.ftwsize(file.filepath);
     filesize = numeric_to_size(file.filesize);
     /* 获取文件类型 */
-    switch (GET_MODE(file.fileattr)) {
-      case IPMSG_FILE_REGULAR:
+    switch (file.fileattr) {
+      case FileAttr::REGULAR:
         filetype = _("regular");
         iconname = "text-x-generic-symbolic";
         break;
-      case IPMSG_FILE_DIR:
+      case FileAttr::DIRECTORY:
         filetype = _("directory");
         iconname = "folder-symbolic";
         break;
@@ -275,7 +275,6 @@ void ApplySharedData(ShareFile* self) {
   GtkTreeModel *model;
   GtkTreeIter iter;
   FileInfo *file;
-  uint32_t fileattr;
   gchar *filepath;
   const gchar *passwd;
   AnalogFS afs;
@@ -289,6 +288,7 @@ void ApplySharedData(ShareFile* self) {
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
+      FileAttr fileattr;
       gtk_tree_model_get(model, &iter, 1, &filepath, 4, &fileattr, -1);
       FileInfo file;
       file.fileid = g_cthrd->PbnQuote()++;

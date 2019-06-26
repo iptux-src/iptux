@@ -28,7 +28,7 @@ class TcpData {
  private:
   void DispatchTcpData();
 
-  void RequestData(uint32_t fileattr);
+  void RequestData(FileAttr fileattr);
   void RecvSublayer(uint32_t cmdopt);
 
   void RecvSublayerData(int fd, size_t len);

@@ -185,7 +185,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       file->fileid = g_cthrd->PrnQuote()++;
       /* file->packetn = 0;//没必要设置此字段 */
       file->fileattr =
-          S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR;
+          S_ISREG(st.st_mode) ? FileAttr::REGULAR : FileAttr::DIRECTORY;
       file->filesize = filesize;
       file->filepath = g_strdup((char *)tlist->data);
       file->filectime = uint32_t(st.st_ctime);

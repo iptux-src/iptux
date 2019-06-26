@@ -71,10 +71,10 @@ void TcpData::DispatchTcpData() {
   commandno = iptux_get_dec_number(buf, ':', 4);  //获取命令字
   switch (GET_MODE(commandno)) {
     case IPMSG_GETFILEDATA:
-      RequestData(IPMSG_FILE_REGULAR);
+      RequestData(FileAttr::REGULAR);
       break;
     case IPMSG_GETDIRFILES:
-      RequestData(IPMSG_FILE_DIR);
+      RequestData(FileAttr::DIRECTORY);
       break;
     case IPTUX_SENDSUBLAYER:
       RecvSublayer(GET_OPT(commandno));
@@ -88,18 +88,18 @@ void TcpData::DispatchTcpData() {
  * 请求文件(目录)数据.
  * @param fileattr 文件类型
  */
-void TcpData::RequestData(uint32_t fileattr) {
+void TcpData::RequestData(FileAttr fileattr) {
   const char *attachptr;
   char *attach;
 
   attachptr = iptux_skip_section(buf, ':', 5);
-  switch (GET_MODE(fileattr)) {
-    case IPMSG_FILE_REGULAR:
+  switch (fileattr) {
+    case FileAttr::REGULAR:
       read_ipmsg_filedata(sock, (void *)attachptr,
                           buf + MAX_SOCKLEN - attachptr,
                           buf + size - attachptr);
       break;
-    case IPMSG_FILE_DIR:
+    case FileAttr::DIRECTORY:
       read_ipmsg_dirfiles(sock, (void *)attachptr,
                           buf + MAX_SOCKLEN - attachptr,
                           buf + size - attachptr);

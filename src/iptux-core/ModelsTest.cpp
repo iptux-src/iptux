@@ -53,3 +53,11 @@ TEST(ChipData, ToString) {
   EXPECT_EQ(ChipData().ToString(), "ChipData(MessageContentType::STRING, )");
 }
 
+TEST(FileAttr, Convert) {
+  EXPECT_EQ(FileAttr(0), FileAttr::UNKNOWN);
+  EXPECT_EQ(FileAttr(1), FileAttr::REGULAR);
+  EXPECT_EQ(FileAttr(2), FileAttr::DIRECTORY);
+  EXPECT_EQ(FileAttr(3), FileAttr(3));
+  EXPECT_EQ(FileAttr(-1), FileAttr(-1));
+}
+

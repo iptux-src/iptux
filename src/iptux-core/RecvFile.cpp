@@ -19,6 +19,7 @@
 
 #include "iptux-core/utils.h"
 #include "iptux-core/TransAbstract.h"
+#include "iptux-core/Exception.h"
 
 using namespace std;
 
@@ -68,11 +69,15 @@ FileInfo * DivideFileinfo(char **extra) {
 
   file = new FileInfo;
   file->fileid = iptux_get_dec_number(*extra, ':', 0);
-  file->fileattr = iptux_get_hex_number(*extra, ':', 4);
+  file->fileattr = FileAttr(iptux_get_hex_number(*extra, ':', 4));
   file->filesize = iptux_get_hex64_number(*extra, ':', 2);
   file->filepath = ipmsg_get_filename(*extra, ':', 1);
   file->filectime = iptux_get_hex_number(*extra, ':', 3);
   file->finishedsize = 0;
+
+  if(!FileAttrIsValid(file->fileattr)) {
+    throw Exception(ErrorCode::INVALID_FILE_ATTR);
+  }
 
   //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
   *extra = strchr(*extra, '\a');

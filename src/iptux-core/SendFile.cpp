@@ -61,7 +61,7 @@ void SendFile::BcstFileInfoEntry(CoreThread* coreThread, GSList *plist, GSList *
  * @param fileattr 文件类型
  * @param attach 附加数据
  */
-void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t fileattr, char *attach) {
+void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, FileAttr fileattr, char *attach) {
   struct sockaddr_in addr;
   socklen_t len;
   uint32_t fileid;
@@ -81,7 +81,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, uint32_t filea
     filectime = iptux_get_dec_number(attach, ':', 1);
     file = coreThread->GetPrivateFileByPacketN(fileid, filectime);
   }
-  if (!file || GET_MODE(file->fileattr) != GET_MODE(fileattr)) return;
+  if (!file || file->fileattr != fileattr) return;
   /* 检查好友数据是否存在 */
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
