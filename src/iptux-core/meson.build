@@ -34,7 +34,7 @@ core_sources += files([
     'internal/support.cpp',
     'internal/TcpData.cpp',
     'internal/TransAbstract.cpp',
-    'UdpData.cpp',
+    'internal/UdpData.cpp',
     'utils.cpp',
 ])
 
@@ -73,7 +73,7 @@ libiptux_core_test_helper = static_library('iptux-test-helper',
 gtest_inc = include_directories('../googletest/include')
 core_test_sources = files([
     'CoreThreadTest.cpp',
-    'UdpDataTest.cpp',
+    'internal/UdpDataTest.cpp',
     'ModelsTest.cpp',
     'UtilsTest.cpp',
     'ProgramDataTest.cpp',
