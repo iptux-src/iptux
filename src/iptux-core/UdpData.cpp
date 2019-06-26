@@ -19,13 +19,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "Command.h"
-#include "CommandMode.h"
-#include "RecvFile.h"
-#include "SendFile.h"
+#include "iptux-core/CommandMode.h"
 #include "iptux-core/deplib.h"
-#include "utils.h"
+#include "iptux-core/internal/Command.h"
 #include "iptux-core/output.h"
+#include "iptux-core/RecvFile.h"
+#include "iptux-core/SendFile.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 using namespace std::placeholders;

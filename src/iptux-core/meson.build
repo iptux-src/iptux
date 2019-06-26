@@ -14,7 +14,7 @@ install_headers(header_files, subdir: 'iptux-core')
 
 core_sources = files([
     'internal/AnalogFS.cpp',
-    'Command.cpp',
+    'internal/Command.cpp',
     'CoreThread.cpp',
     'Event.cpp',
     'TcpData.cpp',

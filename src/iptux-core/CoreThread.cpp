@@ -15,17 +15,17 @@
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 
-#include "iptux-core/ipmsg.h"
-#include "iptux-core/support.h"
-#include "iptux-core/output.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/UdpData.h"
-#include "iptux-core/TcpData.h"
-#include "iptux-core/Command.h"
 #include "iptux-core/deplib.h"
 #include "iptux-core/Exception.h"
-#include "iptux-core/SendFile.h"
+#include "iptux-core/internal/Command.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/output.h"
 #include "iptux-core/RecvFileData.h"
+#include "iptux-core/SendFile.h"
+#include "iptux-core/support.h"
+#include "iptux-core/TcpData.h"
+#include "iptux-core/UdpData.h"
+#include "iptux-core/utils.h"
 
 using namespace std;
 using namespace std::placeholders;
