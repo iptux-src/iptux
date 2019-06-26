@@ -1,5 +1,7 @@
 coverage:
   ignore:
+    - "^src/iptux-core/Test.*"
+    - "^src/iptux-core/.*Test.cpp$"
     - "^src/iptux/Test.*"
     - "^src/iptux/.*Test.cpp$"
     - "^src/googletest.*"

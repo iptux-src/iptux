@@ -59,11 +59,11 @@ void SendFileData::SendFileDataEntry() {
   coreThread->emitEvent(make_shared<SendFileStartedEvent>(GetTaskId()));
 
   /* 分类处理 */
-  switch (GET_MODE(file->fileattr)) {
-    case IPMSG_FILE_REGULAR:
+  switch (file->fileattr) {
+    case FileAttr::REGULAR:
       SendRegularFile();
       break;
-    case IPMSG_FILE_DIR:
+    case FileAttr::DIRECTORY:
       SendDirFiles();
       break;
     default:
@@ -319,7 +319,7 @@ void SendFileData::UpdateUIParaToOver() {
   statusfile = terminate ? "tip-error" : "tip-finish";
   para.setStatus(statusfile);
 
-  if (!terminate && GET_MODE(file->fileattr) == IPMSG_FILE_DIR) {
+  if (!terminate && file->fileattr == FileAttr::REGULAR) {
     para.setFilename(ipmsg_get_filename_me(file->filepath, NULL))
         .setFileLength(sumsize);
   }

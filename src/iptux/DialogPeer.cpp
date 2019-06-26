@@ -873,11 +873,11 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
     while (ecslist) {
       file = (FileInfo *)ecslist->data;
       filesize = numeric_to_size(file->filesize);
-      switch (GET_MODE(file->fileattr)) {
-        case IPMSG_FILE_REGULAR:
+      switch (file->fileattr) {
+        case FileAttr::REGULAR:
           iconname = "text-x-generic-symbolic";
           break;
-        case IPMSG_FILE_DIR:
+        case FileAttr::DIRECTORY:
           iconname = "folder-symbolic";
           break;
         default:

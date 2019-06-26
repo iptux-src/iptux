@@ -13,6 +13,7 @@
 #include "ShareFile.h"
 
 #include <sys/stat.h>
+#include <glog/logging.h>
 
 #include "iptux-core/AnalogFS.h"
 #include "iptux-core/deplib.h"
@@ -188,7 +189,6 @@ void FillFileModel(GtkTreeModel *model) {
   GtkTreeIter iter;
   char *filesize;
   const char *filetype;
-  FileInfo *file;
 
   /* 将现在的共享文件填入model */
   for(FileInfo& file: g_cthrd->getProgramData()->GetSharedFileInfos()) {
@@ -196,12 +196,12 @@ void FillFileModel(GtkTreeModel *model) {
     file.filesize = afs.ftwsize(file.filepath);
     filesize = numeric_to_size(file.filesize);
     /* 获取文件类型 */
-    switch (GET_MODE(file.fileattr)) {
-      case IPMSG_FILE_REGULAR:
+    switch (file.fileattr) {
+      case FileAttr::REGULAR:
         filetype = _("regular");
         iconname = "text-x-generic-symbolic";
         break;
-      case IPMSG_FILE_DIR:
+      case FileAttr::DIRECTORY:
         filetype = _("directory");
         iconname = "folder-symbolic";
         break;
@@ -274,8 +274,6 @@ void ApplySharedData(ShareFile* self) {
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  FileInfo *file;
-  uint32_t fileattr;
   gchar *filepath;
   const gchar *passwd;
   AnalogFS afs;
@@ -289,6 +287,7 @@ void ApplySharedData(ShareFile* self) {
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
+      FileAttr fileattr;
       gtk_tree_model_get(model, &iter, 1, &filepath, 4, &fileattr, -1);
       FileInfo file;
       file.fileid = g_cthrd->PbnQuote()++;
@@ -328,7 +327,7 @@ void AttachSharedFiles(ShareFile* self, GSList *list) {
   GSList *tlist;
   char *filesize;
   const char *filetype;
-  uint32_t fileattr;
+  FileAttr fileattr;
 
   /* 插入文件树 */
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "file-treeview-widget"));
@@ -346,15 +345,15 @@ void AttachSharedFiles(ShareFile* self, GSList *list) {
     /* 获取文件类型 */
     if (S_ISREG(st.st_mode)) {
       filetype = _("regular");
-      fileattr = IPMSG_FILE_REGULAR;
+      fileattr = FileAttr::REGULAR;
       iconname = "text-x-generic-symbolic";
     } else if (S_ISDIR(st.st_mode)) {
       filetype = _("directory");
-      fileattr = IPMSG_FILE_DIR;
+      fileattr = FileAttr::DIRECTORY;
       iconname = "folder-symbolic";
     } else {
       filetype = _("unknown");
-      fileattr = 0;
+      fileattr = FileAttr::UNKNOWN;
       iconname = NULL;
     }
     /* 添加数据 */
@@ -378,13 +377,15 @@ void AttachSharedFiles(ShareFile* self, GSList *list) {
  * @param fileattr 文件类型
  * @return 文件链表
  */
-GSList * PickSharedFile(ShareFile* self, uint32_t fileattr) {
+GSList * PickSharedFile(ShareFile* self, FileAttr fileattr) {
   GtkWidget *dialog;
   GtkFileChooserAction action;
   const char *title;
   GSList *list;
 
-  if (GET_MODE(fileattr) == IPMSG_FILE_REGULAR) {
+  CHECK(FileAttrIsValid(fileattr));
+
+  if (fileattr == FileAttr::REGULAR) {
     action = GTK_FILE_CHOOSER_ACTION_OPEN;
     title = _("Choose the files to share");
   } else {
@@ -424,7 +425,7 @@ GSList * PickSharedFile(ShareFile* self, uint32_t fileattr) {
 void AddRegular(ShareFile *sfile) {
   GSList *list;
 
-  list = PickSharedFile(sfile, IPMSG_FILE_REGULAR);
+  list = PickSharedFile(sfile, FileAttr::REGULAR);
   AttachSharedFiles(sfile, list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -437,7 +438,7 @@ void AddRegular(ShareFile *sfile) {
 void AddFolder(ShareFile *sfile) {
   GSList *list;
 
-  list = PickSharedFile(sfile, IPMSG_FILE_DIR);
+  list = PickSharedFile(sfile, FileAttr::DIRECTORY);
   AttachSharedFiles(sfile, list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -497,8 +498,8 @@ void ClearPassword(ShareFile* self) {
  * @param time the timestamp at which the data was received
  */
 void DragDataReceived(ShareFile *sfile, GdkDragContext *context,
-                                 gint x, gint y, GtkSelectionData *data,
-                                 guint info, guint time) {
+                                 gint , gint , GtkSelectionData *data,
+                                 guint , guint time) {
   GSList *list;
   if (!ValidateDragData(data, context, time)) {
     return;
@@ -522,17 +523,18 @@ void DragDataReceived(ShareFile *sfile, GdkDragContext *context,
 gint FileTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
                                     GtkTreeIter *b) {
   gchar *afilepath, *bfilepath;
-  uint32_t afileattr, bfileattr;
+  FileAttr afileattr, bfileattr;
   gint result;
 
   gtk_tree_model_get(model, a, 1, &afilepath, 4, &afileattr, -1);
   gtk_tree_model_get(model, b, 1, &bfilepath, 4, &bfileattr, -1);
-  if (GET_MODE(afileattr) == GET_MODE(bfileattr))
+  if (afileattr == bfileattr) {
     result = strcmp(afilepath, bfilepath);
-  else if (GET_MODE(afileattr) == IPMSG_FILE_REGULAR)
+  } else if (afileattr == FileAttr::REGULAR) {
     result = 1;
-  else
+  } else {
     result = -1;
+  }
   g_free(afilepath);
   g_free(bfilepath);
 

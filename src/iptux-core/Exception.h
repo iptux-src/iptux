@@ -11,6 +11,7 @@ enum class ErrorCode {
   INVALID_IP_ADDRESS,
   PAL_KEY_NOT_EXIST,
   CREATE_TCP_SOCKET_FAILED,
+  INVALID_FILE_ATTR,
 };
 
 class Exception : public std::runtime_error {

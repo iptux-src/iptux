@@ -15,6 +15,7 @@
 #include "DialogBase.h"
 
 #include <sys/stat.h>
+#include <glog/logging.h>
 
 #include "iptux-core/AnalogFS.h"
 #include "iptux/HelpDialog.h"
@@ -185,7 +186,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       file->fileid = g_cthrd->PrnQuote()++;
       /* file->packetn = 0;//没必要设置此字段 */
       file->fileattr =
-          S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR;
+          S_ISREG(st.st_mode) ? FileAttr::REGULAR : FileAttr::DIRECTORY;
       file->filesize = filesize;
       file->filepath = g_strdup((char *)tlist->data);
       file->filectime = uint32_t(st.st_ctime);
@@ -382,18 +383,20 @@ GtkWidget *DialogBase::CreateFileMenu() {
  * @param fileattr 文件类型
  * @return 文件链表
  */
-GSList *DialogBase::PickEnclosure(uint32_t fileattr) {
+GSList *DialogBase::PickEnclosure(FileAttr fileattr) {
   GtkWidget *dialog;
   GtkFileChooserAction action;
   const char *title;
   GSList *list;
 
-  if (GET_MODE(fileattr) == IPMSG_FILE_REGULAR) {
+  if (fileattr == FileAttr::REGULAR) {
     action = GTK_FILE_CHOOSER_ACTION_OPEN;
     title = _("Choose enclosure files");
-  } else {
+  } else if(fileattr == FileAttr::DIRECTORY) {
     action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
     title = _("Choose enclosure folders");
+  } else {
+    CHECK(false);
   }
   dialog = gtk_file_chooser_dialog_new(
       title, GTK_WINDOW(window), action,
@@ -477,7 +480,7 @@ void DialogBase::FeedbackMsg(const gchar *msg) {
 void DialogBase::AttachRegular(DialogBase *dlgpr) {
   GSList *list;
 
-  if (!(list = dlgpr->PickEnclosure(IPMSG_FILE_REGULAR))) return;
+  if (!(list = dlgpr->PickEnclosure(FileAttr::REGULAR))) return;
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -490,7 +493,7 @@ void DialogBase::AttachRegular(DialogBase *dlgpr) {
 void DialogBase::AttachFolder(DialogBase *dlgpr) {
   GSList *list;
 
-  if (!(list = dlgpr->PickEnclosure(IPMSG_FILE_DIR))) return;
+  if (!(list = dlgpr->PickEnclosure(FileAttr::DIRECTORY))) return;
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);

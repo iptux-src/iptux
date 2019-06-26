@@ -49,7 +49,7 @@ class DialogBase : public SessionAbstract {
 
   void MainWindowSignalSetup(GtkWindow *window);
   GtkTreeModel *CreateFileSendModel();
-  GSList *PickEnclosure(uint32_t fileattr);
+  GSList *PickEnclosure(FileAttr fileattr);
 
   bool SendEnclosureMsg();
   virtual bool SendTextMsg() = 0;

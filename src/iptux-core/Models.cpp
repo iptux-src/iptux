@@ -90,7 +90,7 @@ void PalInfo::setChanged(bool value) {
 FileInfo::FileInfo()
     : fileid(0),
       packetn(0),
-      fileattr(0),
+      fileattr(FileAttr::UNKNOWN),
       filesize(-1),
       finishedsize(0),
       filepath(NULL),

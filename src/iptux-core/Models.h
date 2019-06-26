@@ -118,6 +118,16 @@ using PPalInfo = std::shared_ptr<PalInfo>;
 /// const pointer to PalInfo
 using CPPalInfo = std::shared_ptr<const PalInfo>;
 
+enum class FileAttr: std::uint32_t {
+  UNKNOWN,
+  REGULAR,
+  DIRECTORY
+};
+
+constexpr bool FileAttrIsValid(FileAttr attr) {
+  return attr == FileAttr::REGULAR || attr == FileAttr::DIRECTORY;
+}
+
 /**
  * 文件信息.
  */
@@ -131,7 +141,7 @@ class FileInfo {
 
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号
-  uint32_t fileattr;     ///< 文件属性
+  FileAttr fileattr;     ///< 文件属性
   int64_t filesize;      ///< 文件大小
   int64_t finishedsize;  ///< 已完成大小
   PPalInfo fileown;      ///< 文件拥有者(来自好友*)

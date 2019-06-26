@@ -68,11 +68,11 @@ void RecvFileData::RecvFileDataEntry() {
   // gdk_threads_leave();
 
   /* 分类处理 */
-  switch (GET_MODE(file->fileattr)) {
-    case IPMSG_FILE_REGULAR:
+  switch (file->fileattr) {
+    case FileAttr::REGULAR:
       RecvRegularFile();
       break;
-    case IPMSG_FILE_DIR:
+    case FileAttr::DIRECTORY:
       RecvDirFiles();
       break;
     default:
@@ -371,7 +371,7 @@ void RecvFileData::UpdateUIParaToOver() {
   statusfile = terminate ? "tip-error" : "tip-finish";
   para.setStatus(statusfile);
 
-  if (!terminate && GET_MODE(file->fileattr) == IPMSG_FILE_DIR) {
+  if (!terminate && file->fileattr == FileAttr::DIRECTORY) {
     para.setFilename(ipmsg_get_filename_me(file->filepath, NULL));
     para.setFileLength(sumsize);
     file->finishedsize = file->filesize;
