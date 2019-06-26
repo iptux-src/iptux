@@ -24,7 +24,7 @@
 #include <sys/time.h>
 #include <glog/logging.h>
 
-#include "iptux-core/AnalogFS.h"
+#include "iptux-core/internal/AnalogFS.h"
 #include "iptux-core/deplib.h"
 #include "iptux-core/utils.h"
 #include "iptux-core/Event.h"

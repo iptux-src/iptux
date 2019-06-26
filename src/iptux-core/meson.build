@@ -13,7 +13,7 @@ header_files = files([
 install_headers(header_files, subdir: 'iptux-core')
 
 core_sources = files([
-    'AnalogFS.cpp',
+    'internal/AnalogFS.cpp',
     'Command.cpp',
     'CoreThread.cpp',
     'Event.cpp',
@@ -41,6 +41,7 @@ thread_dep = dependency('threads')
 libiptux_core = shared_library('iptux-core',
     core_sources,
     dependencies: [glib_dep, jsoncpp_dep, glog_dep, thread_dep],
+    link_with: [libiptux_utils],
     include_directories: inc,
     install: true,
     version: so_version,

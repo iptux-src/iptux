@@ -17,16 +17,17 @@
 #include <sys/stat.h>
 #include <glog/logging.h>
 
-#include "iptux-core/AnalogFS.h"
-#include "iptux/HelpDialog.h"
-#include "iptux-core/SendFile.h"
-#include "iptux/callback.h"
 #include "iptux-core/deplib.h"
-#include "iptux/global.h"
 #include "iptux-core/output.h"
+#include "iptux-core/SendFile.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
+#include "iptux/callback.h"
+#include "iptux/global.h"
+#include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
+#include "iptux-utils/utils.h"
+
 
 using namespace std;
 
@@ -153,7 +154,6 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   const char *iconname;
   struct stat st;
   const GSList *tlist, *pallist;
-  AnalogFS afs;
   int64_t filesize;
   char *filename, *filepath, *progresstip;
   FileInfo *file;
@@ -178,7 +178,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
     } else {
       iconname = NULL;
     }
-    filesize = afs.ftwsize((char *)tlist->data);
+    filesize = utils::fileOrDirectorySize((char *)tlist->data);
     filename = ipmsg_get_filename_me((char *)tlist->data, &filepath);
     pallist = GetSelPal();
     while (pallist) {
@@ -803,7 +803,7 @@ GtkTreeModel *DialogBase::CreateFileSendModel() {
 gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  char progresstip[MAX_BUFLEN];
+  string progresstip;
   GtkTreeView *treeview;
   GtkWidget *pbar;
   float progress;
@@ -830,20 +830,20 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
 
   if (dlggrp->totalsendsize == 0) {
     progress = 0;
-    snprintf(progresstip, MAX_BUFLEN, "%s", _("Sending Progress."));
+    progresstip = _("Sending Progress.");
   } else {
     progress = percent(sentsize, dlggrp->totalsendsize) / 100;
-    snprintf(progresstip, MAX_BUFLEN, _("%s of %s Sent."),
+    progresstip = stringFormat(_("%s of %s Sent."),
              numeric_to_size(sentsize), numeric_to_size(dlggrp->totalsendsize));
   }
   if (progress == 1) {
     g_source_remove(dlggrp->timersend);
     dlggrp->timersend = 0;
     gtk_list_store_clear(GTK_LIST_STORE(model));
-    snprintf(progresstip, MAX_BUFLEN, "%s", _("Mission Completed!"));
+    progresstip = _("Mission Completed!");
   }
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(pbar), progress);
-  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), _(progresstip));
+  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), progresstip.c_str());
   return TRUE;
 }
 /**

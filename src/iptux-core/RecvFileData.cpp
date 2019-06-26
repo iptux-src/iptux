@@ -22,7 +22,7 @@
 #include <glog/logging.h>
 
 #include "iptux-core/Command.h"
-#include "iptux-core/AnalogFS.h"
+#include "iptux-core/internal/AnalogFS.h"
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/output.h"
