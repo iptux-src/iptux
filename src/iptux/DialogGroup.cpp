@@ -18,7 +18,7 @@
 #include "iptux/callback.h"
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
 #include "iptux/UiHelper.h"

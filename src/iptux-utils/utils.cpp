@@ -7,7 +7,7 @@
 
 #include <glib/gi18n.h>
 
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 

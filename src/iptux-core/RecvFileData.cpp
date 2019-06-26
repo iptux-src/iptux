@@ -27,7 +27,7 @@
 #include "iptux-core/internal/AnalogFS.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux-core/utils.h"
 
 using namespace std;

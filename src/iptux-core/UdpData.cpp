@@ -22,7 +22,7 @@
 #include "iptux-core/deplib.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/CommandMode.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux-core/RecvFile.h"
 #include "iptux-core/SendFile.h"
 #include "iptux-core/utils.h"

@@ -9,7 +9,7 @@
 
 #include <glib/gi18n.h>
 
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux-core/support.h"
 #include "iptux/global.h"
 

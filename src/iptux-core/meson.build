@@ -27,7 +27,6 @@ core_sources += files([
     'internal/AnalogFS.cpp',
     'internal/Command.cpp',
     'internal/CommandMode.cpp',
-    'output.cpp',
     'RecvFile.cpp',
     'RecvFileData.cpp',
     'SendFile.cpp',

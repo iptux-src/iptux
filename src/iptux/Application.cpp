@@ -8,7 +8,7 @@
 #include "iptux/StatusIcon.h"
 #include "DataSettings.h"
 #include "ShareFile.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "dialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/UiHelper.h"

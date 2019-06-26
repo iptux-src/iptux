@@ -20,7 +20,7 @@
 
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/deplib.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "utils.h"
 
 namespace iptux {

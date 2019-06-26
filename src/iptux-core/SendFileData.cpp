@@ -28,7 +28,7 @@
 #include "iptux-core/deplib.h"
 #include "iptux-core/utils.h"
 #include "iptux-core/Event.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 

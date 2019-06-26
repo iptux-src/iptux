@@ -19,7 +19,7 @@
 #include "iptux-core/Exception.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux-core/RecvFileData.h"
 #include "iptux-core/SendFile.h"
 #include "iptux-core/support.h"

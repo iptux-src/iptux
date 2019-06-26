@@ -16,7 +16,7 @@
 
 #include "iptux/callback.h"
 #include "iptux-core/deplib.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux/UiHelper.h"
 
 namespace iptux {
