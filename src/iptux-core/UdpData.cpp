@@ -22,10 +22,10 @@
 #include "iptux-core/deplib.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/CommandMode.h"
-#include "iptux-utils/output.h"
-#include "iptux-core/RecvFile.h"
+#include "iptux-core/internal/RecvFile.h"
 #include "iptux-core/SendFile.h"
 #include "iptux-core/utils.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 using namespace std::placeholders;
