@@ -24,6 +24,7 @@
 #include <libintl.h>
 
 #include <glog/logging.h>
+#include <glib/gi18n.h>
 
 #include "iptux/Application.h"
 #include "iptux/SoundSystem.h"

@@ -12,6 +12,8 @@
 #include "config.h"
 #include "StatusIcon.h"
 
+#include <glib/gi18n.h>
+
 #include "callback.h"
 #include "DataSettings.h"
 #include "DetectPal.h"

@@ -169,8 +169,8 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
 
   /* 确定当前被选中的路径 */
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), GINT(event->x),
-                                    GINT(event->y), &path, NULL, NULL, NULL)) {
+  if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), (event->x),
+                                    (event->y), &path, NULL, NULL, NULL)) {
     g_object_set_data_full(G_OBJECT(model), "selected-path", path,
                            GDestroyNotify(gtk_tree_path_free));
   } else {

@@ -12,6 +12,12 @@
 #define __SOUND_PATH "@SHARE_IPTUX_DIR@/sound"
 #define __UI_PATH "@SHARE_IPTUX_DIR@/ui"
 
+#define IPTUX_PATH "/iptux"
+#define LOG_PATH "/iptux/log"
+#define PIC_PATH "/iptux/pic"
+#define ICON_PATH "/iptux/icon"
+#define PHOTO_PATH "/iptux/photo"
+
 #mesondefine GST_FOUND
 
 #if defined(__APPLE__) || defined(__CYGWIN__)

@@ -15,6 +15,7 @@
 #include <string>
 #include <cinttypes>
 #include <glog/logging.h>
+#include <glib/gi18n.h>
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
@@ -1375,8 +1376,8 @@ gboolean MainWindow::PaltreePopupMenu(GtkWidget *treeview,
 
   /* 检查事件是否可用 */
   if (event->button != GDK_BUTTON_SECONDARY ||
-      !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), GINT(event->x),
-                                     GINT(event->y), &path, NULL, NULL, NULL)) {
+      !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), (event->x),
+                                     (event->y), &path, NULL, NULL, NULL)) {
     return FALSE;
   }
 
@@ -1413,8 +1414,8 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview,
 
   /* 检查事件的合法性 */
   if (event->button != 1 || !gtk_tree_view_get_path_at_pos(
-                                GTK_TREE_VIEW(treeview), GINT(event->x),
-                                GINT(event->y), &path, &column, &cellx, NULL))
+                                GTK_TREE_VIEW(treeview), (event->x),
+                                (event->y), &path, &column, &cellx, NULL))
     return FALSE;
 
   /* 检查此行是否可展开 */

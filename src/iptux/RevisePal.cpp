@@ -15,6 +15,7 @@
 #include <cinttypes>
 #include <dirent.h>
 #include <unistd.h>
+#include <glib/gi18n.h>
 
 #include "iptux/UiCoreThread.h"
 #include "iptux/MainWindow.h"

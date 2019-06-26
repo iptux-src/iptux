@@ -13,6 +13,7 @@
 #include "dialog.h"
 
 #include <glog/logging.h>
+#include <glib/gi18n.h>
 
 #include "iptux/callback.h"
 #include "iptux-core/deplib.h"

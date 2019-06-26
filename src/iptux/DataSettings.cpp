@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <dirent.h>
 
+#include <glib/gi18n.h>
+
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
 #include "iptux-utils/utils.h"

@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <glib/gi18n.h>
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
@@ -26,6 +27,8 @@
 #include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
+
+#define OCCUPY_OBJECT 0x01
 
 using namespace std;
 

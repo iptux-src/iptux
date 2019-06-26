@@ -14,6 +14,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <glib/gi18n.h>
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"

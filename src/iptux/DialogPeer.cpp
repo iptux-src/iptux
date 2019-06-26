@@ -14,9 +14,12 @@
 #include "DialogPeer.h"
 
 #include <cinttypes>
+
 #include <unistd.h>
 #include <sys/socket.h>
+
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
@@ -27,6 +30,9 @@
 #include "iptux/global.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
+
+#define ATOM_OBJECT 0xFFFC
+#define OCCUPY_OBJECT 0x01
 
 using namespace std;
 

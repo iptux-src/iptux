@@ -16,8 +16,11 @@
 #include <cinttypes>
 #include <thread>
 #include <functional>
+
 #include <fcntl.h>
 #include <unistd.h>
+
+#include <glib/gi18n.h>
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/internal/Command.h"
@@ -26,6 +29,8 @@
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
+
+#define NULL_OBJECT 0x02
 
 using namespace std;
 using namespace std::placeholders;
