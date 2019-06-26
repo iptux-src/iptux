@@ -17,7 +17,7 @@
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/utils.h"
+#include "iptux-utils/utils.h"
 
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER "-------------------------------------"

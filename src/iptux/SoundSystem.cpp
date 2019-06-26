@@ -19,7 +19,7 @@
 
 #include "iptux/UiProgramData.h"
 #include "iptux-utils/output.h"
-#include "iptux-core/utils.h"
+#include "iptux-utils/utils.h"
 #include "iptux/global.h"
 
 using namespace std;

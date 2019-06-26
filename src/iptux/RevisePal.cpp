@@ -22,7 +22,7 @@
 #include "iptux-core/deplib.h"
 #include "iptux/global.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/utils.h"
+#include "iptux-utils/utils.h"
 
 namespace iptux {
 

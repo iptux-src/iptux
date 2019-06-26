@@ -35,7 +35,6 @@ core_sources += files([
     'internal/TcpData.cpp',
     'internal/TransAbstract.cpp',
     'internal/UdpData.cpp',
-    'utils.cpp',
 ])
 
 inc = include_directories('..')

@@ -21,7 +21,7 @@
 
 #include "iptux-core/internal/AnalogFS.h"
 #include "iptux-core/internal/Command.h"
-#include "iptux-core/internal/SendFileData.h"
+#include "iptux-core/SendFileData.h"
 #include "iptux-utils/utils.h"
 
 using namespace std;

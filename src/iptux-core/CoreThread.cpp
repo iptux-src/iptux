@@ -24,7 +24,7 @@
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpData.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/utils.h"
+#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 
 using namespace std;

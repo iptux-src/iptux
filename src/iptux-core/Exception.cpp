@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "iptux-core/utils.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 

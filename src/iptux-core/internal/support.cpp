@@ -21,7 +21,7 @@
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/deplib.h"
 #include "iptux-utils/output.h"
-#include "utils.h"
+#include "iptux-utils/utils.h"
 
 namespace iptux {
 
