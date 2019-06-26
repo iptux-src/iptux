@@ -15,7 +15,7 @@
 #include "iptux-core/ipmsg.h"
 #include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
-#include "iptux-core/TransAbstract.h"
+#include "iptux-core/internal/TransAbstract.h"
 
 namespace iptux {
 
