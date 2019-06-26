@@ -22,7 +22,7 @@
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/TcpData.h"
+#include "iptux-core/internal/TcpData.h"
 #include "iptux-core/UdpData.h"
 #include "iptux-core/utils.h"
 #include "iptux-utils/output.h"
