@@ -19,9 +19,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "iptux-core/CommandMode.h"
 #include "iptux-core/deplib.h"
 #include "iptux-core/internal/Command.h"
+#include "iptux-core/internal/CommandMode.h"
 #include "iptux-core/output.h"
 #include "iptux-core/RecvFile.h"
 #include "iptux-core/SendFile.h"
