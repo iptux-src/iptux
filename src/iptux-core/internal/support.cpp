@@ -26,26 +26,6 @@
 namespace iptux {
 
 /**
- * 获取局域网网段名称.
- * @param ipv4 ipv4
- * @return name
- */
-char *ipv4_get_lan_name(in_addr ipv4) {
-  /**
-   * @note 局域网网段划分，每两个为一组，以NULL标识结束.
-   */
-  static const char *localgroup[] = {
-      "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
-      "192.168.0.0", "192.168.255.255", NULL};
-  for(int i = 0; i < 6; i+=2) {
-    if(NetSegment(localgroup[i], localgroup[i+1], "").ContainIP(ipv4)) {
-      return g_strdup_printf("%s~%s", localgroup[i], localgroup[i+1]);
-    }
-  }
-  return nullptr;
-}
-
-/**
  * 让套接口支持广播.
  * @param sock socket
  */

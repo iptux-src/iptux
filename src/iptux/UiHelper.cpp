@@ -9,6 +9,7 @@
 
 #include <glib/gi18n.h>
 
+#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 #include "iptux/global.h"
 
@@ -195,6 +196,26 @@ void pop_error(const gchar *format, ...) {
   gtk_window_set_title(GTK_WINDOW(dialog), _("Error"));
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
+}
+
+/**
+ * 获取局域网网段名称.
+ * @param ipv4 ipv4
+ * @return name
+ */
+string ipv4_get_lan_name(in_addr ipv4) {
+  /**
+   * @note 局域网网段划分，每两个为一组，以NULL标识结束.
+   */
+  static const char *localgroup[] = {
+      "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
+      "192.168.0.0", "192.168.255.255", NULL};
+  for(int i = 0; i < 6; i+=2) {
+    if(NetSegment(localgroup[i], localgroup[i+1], "").ContainIP(ipv4)) {
+      return stringFormat("%s~%s", localgroup[i], localgroup[i+1]);
+    }
+  }
+  return "";
 }
 
 }
