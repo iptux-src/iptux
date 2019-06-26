@@ -17,13 +17,12 @@
 #include <glib/gi18n.h>
 #include <gdk/gdk.h>
 
-#include "iptux/MainWindow.h"
-#include "iptux/UiProgramData.h"
-#include "iptux/StatusIcon.h"
-#include "iptux/global.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/support.h"
+#include "iptux/global.h"
+#include "iptux/MainWindow.h"
+#include "iptux/StatusIcon.h"
 #include "iptux/UiHelper.h"
+#include "iptux/UiProgramData.h"
 
 using namespace std;
 

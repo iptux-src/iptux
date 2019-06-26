@@ -15,17 +15,16 @@
 #include <unistd.h>
 #include <dirent.h>
 
-#include "iptux/UiCoreThread.h"
-#include "iptux/UiProgramData.h"
-#include "iptux/SoundSystem.h"
-#include "iptux/callback.h"
 #include "iptux-core/deplib.h"
-#include "iptux/global.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-utils/output.h"
-#include "iptux-core/support.h"
 #include "iptux-core/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux/callback.h"
+#include "iptux/global.h"
+#include "iptux/SoundSystem.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
+#include "iptux/UiProgramData.h"
 
 using namespace std;
 

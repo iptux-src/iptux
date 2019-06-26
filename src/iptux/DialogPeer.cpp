@@ -20,7 +20,6 @@
 
 #include "iptux-core/deplib.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/support.h"
 #include "iptux-core/utils.h"
 #include "iptux-utils/output.h"
 #include "iptux/callback.h"

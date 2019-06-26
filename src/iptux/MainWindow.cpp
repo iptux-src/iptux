@@ -16,25 +16,24 @@
 #include <cinttypes>
 #include <glog/logging.h>
 
+#include "iptux-core/deplib.h"
+#include "iptux-core/ipmsg.h"
+#include "iptux-core/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux/callback.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
+#include "iptux/dialog.h"
 #include "iptux/DialogGroup.h"
 #include "iptux/DialogPeer.h"
+#include "iptux/global.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
 #include "iptux/StatusIcon.h"
-#include "iptux/callback.h"
-#include "iptux-core/deplib.h"
-#include "iptux/global.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
-#include "iptux-utils/output.h"
 #include "iptux/TransWindow.h"
-#include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
-#include "iptux/dialog.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux/UiModels.h"
 
 using namespace std;
 

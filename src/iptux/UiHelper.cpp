@@ -10,7 +10,6 @@
 #include <glib/gi18n.h>
 
 #include "iptux-utils/output.h"
-#include "iptux-core/support.h"
 #include "iptux/global.h"
 
 using namespace std;
@@ -44,24 +43,6 @@ void iptux_open_url(const char *url) {
   execlp("open", "open", url, NULL);
   LOG_WARN(_("Can't find any available web browser!\n"));
 }
-
-
-/**
- * 绑定iptux程序的服务监听端口.
- */
-
-/**
- * 程序必要初始化.
- */
-void iptux_init() {
-  init_iptux_environment();
-
-  g_sndsys->InitSublayer();
-
-  signal(SIGPIPE, SIG_IGN);
-  g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
-}
-
 
 bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
                       guint time) {

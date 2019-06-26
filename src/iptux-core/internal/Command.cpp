@@ -19,11 +19,11 @@
 #include <sys/socket.h>
 
 #include "iptux-core/deplib.h"
-#include "iptux-core/support.h"
+#include "iptux-core/Exception.h"
+#include "iptux-core/internal/support.h"
+#include "iptux-core/TransAbstract.h"
 #include "iptux-core/utils.h"
 #include "iptux-utils/output.h"
-#include "iptux-core/Exception.h"
-#include "iptux-core/TransAbstract.h"
 
 using namespace std;
 

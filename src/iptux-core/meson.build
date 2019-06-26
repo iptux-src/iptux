@@ -31,7 +31,7 @@ core_sources += files([
     'internal/RecvFileData.cpp',
     'internal/SendFile.cpp',
     'internal/SendFileData.cpp',
-    'support.cpp',
+    'internal/support.cpp',
     'TcpData.cpp',
     'TransAbstract.cpp',
     'UdpData.cpp',

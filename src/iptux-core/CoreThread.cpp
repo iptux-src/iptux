@@ -10,7 +10,7 @@
 #include <mutex>
 
 #include <poll.h>
-
+#include <sys/stat.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <glog/logging.h>
@@ -20,8 +20,8 @@
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
+#include "iptux-core/internal/support.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/support.h"
 #include "iptux-core/TcpData.h"
 #include "iptux-core/UdpData.h"
 #include "iptux-core/utils.h"
@@ -31,6 +31,45 @@ using namespace std;
 using namespace std::placeholders;
 
 namespace iptux {
+
+namespace {
+  /**
+ * 初始化程序iptux的运行环境.
+ * cache iptux {pic, photo, icon} \n
+ * config iptux {log, photo, icon} \n
+ */
+void init_iptux_environment() {
+  const char *env;
+  char path[MAX_PATHLEN];
+
+  env = g_get_user_cache_dir();
+  if (access(env, F_OK) != 0) mkdir(env, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" PIC_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+
+  env = g_get_user_config_dir();
+  if (access(env, F_OK) != 0) mkdir(env, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
+  if (access(path, F_OK) != 0) mkdir(path, 0777);
+}
+
+}
 
 struct CoreThread::Impl {
   GSList *blacklist {nullptr};                              //黑名单链表
@@ -104,7 +143,7 @@ void CoreThread::start() {
     throw "CoreThread already started, can't start twice";
   }
   started = true;
-
+  init_iptux_environment();
   bind_iptux_port();
 
   pImpl->udpFuture = async([](CoreThread* ct){
@@ -134,7 +173,7 @@ void CoreThread::bind_iptux_port() {
     const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
                                          strerror(ec));
     LOG_WARN("%s", errmsg);
-    throw BindFailedException(ec, errmsg);
+    throw Exception(ErrorCode::SOCKET_CREATE_FAILED, errmsg);
   }
 
   memset(&addr, '\0', sizeof(addr));
