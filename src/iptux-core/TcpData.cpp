@@ -17,9 +17,9 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#include "SendFile.h"
 #include "iptux-core/deplib.h"
-#include "utils.h"
+#include "iptux-core/internal/SendFile.h"
+#include "iptux-core/utils.h"
 #include "iptux-utils/output.h"
 
 using namespace std;

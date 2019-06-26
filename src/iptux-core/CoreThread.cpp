@@ -19,8 +19,8 @@
 #include "iptux-core/Exception.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
+#include "iptux-core/internal/SendFile.h"
 #include "iptux-core/ipmsg.h"
-#include "iptux-core/SendFile.h"
 #include "iptux-core/support.h"
 #include "iptux-core/TcpData.h"
 #include "iptux-core/UdpData.h"
@@ -659,6 +659,11 @@ void CoreThread::SendUnitMessage(const PalKey& palKey, uint32_t opttype, const s
 void CoreThread::SendGroupMessage(const PalKey& palKey, const std::string& message) {
   Command(*this).SendGroupMsg(udpSock, GetPal(palKey), message.c_str());
 }
+
+void CoreThread::BcstFileInfoEntry(GSList *plist, GSList *flist) {
+  SendFile::BcstFileInfoEntry(this, plist, flist);
+}
+
 
 
 }

@@ -108,6 +108,8 @@ class CoreThread {
   void SendMyIcon(PPalInfo pal, std::istream& iss);
   void SendSharedFiles(PPalInfo pal);
 
+  void BcstFileInfoEntry(GSList *plist, GSList *flist);
+
   /**
    * 插入消息(UI线程安全).
    * @param para 消息参数封装包

@@ -12,17 +12,16 @@
 #include "config.h"
 #include "DialogGroup.h"
 
-#include "iptux/DialogPeer.h"
-#include "iptux/HelpDialog.h"
-#include "iptux-core/SendFile.h"
-#include "iptux/callback.h"
 #include "iptux-core/deplib.h"
-#include "iptux/global.h"
-#include "iptux-utils/output.h"
+#include "iptux-core/ipmsg.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux/callback.h"
+#include "iptux/DialogPeer.h"
+#include "iptux/global.h"
+#include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
-#include "iptux-core/ipmsg.h"
 
 using namespace std;
 
@@ -482,7 +481,7 @@ void DialogGroup::BroadcastEnclosureMsg(GSList *list) {
     gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
     if (active) plist = g_slist_append(plist, pal);
   } while (gtk_tree_model_iter_next(model, &iter));
-  SendFile::BcstFileInfoEntry(g_cthrd, plist, list);
+  g_cthrd->BcstFileInfoEntry(plist, list);
   g_slist_free(plist);
 }
 

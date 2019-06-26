@@ -18,15 +18,14 @@
 #include <glog/logging.h>
 
 #include "iptux-core/deplib.h"
-#include "iptux-utils/output.h"
-#include "iptux-core/SendFile.h"
 #include "iptux-core/support.h"
 #include "iptux-core/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 #include "iptux/callback.h"
 #include "iptux/global.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
-#include "iptux-utils/utils.h"
 
 
 using namespace std;
