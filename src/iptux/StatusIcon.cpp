@@ -12,16 +12,17 @@
 #include "config.h"
 #include "StatusIcon.h"
 
+#include <glib/gi18n.h>
+
+#include "callback.h"
 #include "DataSettings.h"
 #include "DetectPal.h"
 #include "DialogGroup.h"
 #include "DialogPeer.h"
-#include "ShareFile.h"
-#include "callback.h"
 #include "global.h"
-#include "iptux-core/deplib.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
+
+#include "iptux-utils/utils.h"
+#include "ShareFile.h"
 
 using namespace std;
 
@@ -217,8 +218,7 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x,
   if ((len = g_cthrd->GetMsglineItems())) {
     msgstr = g_strdup_printf(_("To be read: %u messages"), len);
   } else {
-    msgstr = get_sys_host_addr_string(g_cthrd->getUdpSock());
-    msgstr = msgstr ? msgstr : g_strdup(_("iptux"));
+    msgstr = g_strdup(_("iptux"));
   }
   g_cthrd->Unlock();
   /* 设置信息提示串 */

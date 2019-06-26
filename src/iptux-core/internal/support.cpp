@@ -18,68 +18,12 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include "iptux-core/ipmsg.h"
-#include "iptux-core/deplib.h"
-#include "iptux-core/output.h"
-#include "utils.h"
+#include "iptux-core/internal/ipmsg.h"
+
+#include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 namespace iptux {
-
-/**
- * 初始化程序iptux的运行环境.
- * cache iptux {pic, photo, icon} \n
- * config iptux {log, photo, icon} \n
- */
-void init_iptux_environment() {
-  const char *env;
-  char path[MAX_PATHLEN];
-
-  env = g_get_user_cache_dir();
-  if (access(env, F_OK) != 0) mkdir(env, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" PIC_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-
-  env = g_get_user_config_dir();
-  if (access(env, F_OK) != 0) mkdir(env, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
-}
-
-/**
- * 获取局域网网段名称.
- * @param ipv4 ipv4
- * @return name
- */
-char *ipv4_get_lan_name(in_addr ipv4) {
-  /**
-   * @note 局域网网段划分，每两个为一组，以NULL标识结束.
-   */
-  static const char *localgroup[] = {
-      "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
-      "192.168.0.0", "192.168.255.255", NULL};
-  for(int i = 0; i < 6; i+=2) {
-    if(NetSegment(localgroup[i], localgroup[i+1], "").ContainIP(ipv4)) {
-      return g_strdup_printf("%s~%s", localgroup[i], localgroup[i+1]);
-    }
-  }
-  return nullptr;
-}
 
 /**
  * 让套接口支持广播.

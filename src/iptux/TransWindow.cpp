@@ -5,11 +5,9 @@
 #include <glib/gi18n.h>
 
 #include "iptux-core/IptuxConfig.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/deplib.h"
-#include "iptux-core/TransAbstract.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/utils.h"
+
+#include "iptux-utils/output.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
 #include "iptux/global.h"
@@ -171,8 +169,8 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
 
   /* 确定当前被选中的路径 */
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), GINT(event->x),
-                                    GINT(event->y), &path, NULL, NULL, NULL)) {
+  if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), (event->x),
+                                    (event->y), &path, NULL, NULL, NULL)) {
     g_object_set_data_full(G_OBJECT(model), "selected-path", path,
                            GDestroyNotify(gtk_tree_path_free));
   } else {

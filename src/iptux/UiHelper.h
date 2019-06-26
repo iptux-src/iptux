@@ -1,11 +1,12 @@
 #ifndef IPTUX_UIHELPER_H
 #define IPTUX_UIHELPER_H
 
+#include <string>
+
+#include <arpa/inet.h>
 #include <gtk/gtk.h>
 
 namespace iptux {
-
-void iptux_init();
 
 bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
                       guint time);
@@ -19,6 +20,7 @@ void pop_info(GtkWidget *parent, const gchar *format, ...);
 void pop_warning(GtkWidget *parent, const gchar *format, ...);
 void pop_error(const gchar *format, ...);
 void iptux_open_url(const char *url);
+std::string ipv4_get_lan_name(in_addr ipv4);
 
 }
 #endif //IPTUX_UIHELPER_H

@@ -15,26 +15,25 @@
 #include <string>
 #include <cinttypes>
 #include <glog/logging.h>
+#include <glib/gi18n.h>
 
+#include "iptux-core/Const.h"
+#include "iptux-utils/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux/callback.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
+#include "iptux/dialog.h"
 #include "iptux/DialogGroup.h"
 #include "iptux/DialogPeer.h"
+#include "iptux/global.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
 #include "iptux/StatusIcon.h"
-#include "iptux/callback.h"
-#include "iptux-core/deplib.h"
-#include "iptux/global.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/output.h"
 #include "iptux/TransWindow.h"
-#include "iptux/UiModels.h"
 #include "iptux/UiHelper.h"
-#include "iptux/dialog.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux/UiModels.h"
 
 using namespace std;
 
@@ -1376,8 +1375,8 @@ gboolean MainWindow::PaltreePopupMenu(GtkWidget *treeview,
 
   /* 检查事件是否可用 */
   if (event->button != GDK_BUTTON_SECONDARY ||
-      !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), GINT(event->x),
-                                     GINT(event->y), &path, NULL, NULL, NULL)) {
+      !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), (event->x),
+                                     (event->y), &path, NULL, NULL, NULL)) {
     return FALSE;
   }
 
@@ -1414,8 +1413,8 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview,
 
   /* 检查事件的合法性 */
   if (event->button != 1 || !gtk_tree_view_get_path_at_pos(
-                                GTK_TREE_VIEW(treeview), GINT(event->x),
-                                GINT(event->y), &path, &column, &cellx, NULL))
+                                GTK_TREE_VIEW(treeview), (event->x),
+                                (event->y), &path, &column, &cellx, NULL))
     return FALSE;
 
   /* 检查此行是否可展开 */

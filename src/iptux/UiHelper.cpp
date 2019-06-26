@@ -9,8 +9,8 @@
 
 #include <glib/gi18n.h>
 
-#include "iptux-core/output.h"
-#include "iptux-core/support.h"
+#include "iptux-utils/utils.h"
+#include "iptux-utils/output.h"
 #include "iptux/global.h"
 
 using namespace std;
@@ -44,24 +44,6 @@ void iptux_open_url(const char *url) {
   execlp("open", "open", url, NULL);
   LOG_WARN(_("Can't find any available web browser!\n"));
 }
-
-
-/**
- * 绑定iptux程序的服务监听端口.
- */
-
-/**
- * 程序必要初始化.
- */
-void iptux_init() {
-  init_iptux_environment();
-
-  g_sndsys->InitSublayer();
-
-  signal(SIGPIPE, SIG_IGN);
-  g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
-}
-
 
 bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
                       guint time) {
@@ -214,6 +196,26 @@ void pop_error(const gchar *format, ...) {
   gtk_window_set_title(GTK_WINDOW(dialog), _("Error"));
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
+}
+
+/**
+ * 获取局域网网段名称.
+ * @param ipv4 ipv4
+ * @return name
+ */
+string ipv4_get_lan_name(in_addr ipv4) {
+  /**
+   * @note 局域网网段划分，每两个为一组，以NULL标识结束.
+   */
+  static const char *localgroup[] = {
+      "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
+      "192.168.0.0", "192.168.255.255", NULL};
+  for(int i = 0; i < 6; i+=2) {
+    if(NetSegment(localgroup[i], localgroup[i+1], "").ContainIP(ipv4)) {
+      return stringFormat("%s~%s", localgroup[i], localgroup[i+1]);
+    }
+  }
+  return "";
 }
 
 }

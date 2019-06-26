@@ -1,30 +1,39 @@
 #include "config.h"
 #include "Application.h"
 
-#include "iptux/UiProgramData.h"
+#include <sys/stat.h>
+#include <glib/gi18n.h>
+
+#include "iptux-core/Exception.h"
+#include "iptux-utils/output.h"
+#include "iptux/DataSettings.h"
+#include "iptux/dialog.h"
 #include "iptux/global.h"
-#include "iptux-core/ipmsg.h"
-#include "iptux-core/support.h"
-#include "iptux/StatusIcon.h"
-#include "DataSettings.h"
-#include "ShareFile.h"
-#include "iptux-core/output.h"
-#include "dialog.h"
 #include "iptux/IptuxResource.h"
+#include "iptux/ShareFile.h"
+#include "iptux/StatusIcon.h"
 #include "iptux/UiHelper.h"
+#include "iptux/UiProgramData.h"
 
 using namespace std;
 
 typedef void (* GActionCallback) (GSimpleAction *action,
                    GVariant      *parameter,
                    gpointer       user_data) ;
-#define	G_ACTION_CALLBACK(f)			 ((GActionCallback) (f))
+#define	G_ACTION_CALLBACK(f)			   ((GActionCallback) (f))
 
 namespace iptux {
 
 namespace {
   void onReportBug() {
     iptux_open_url("https://github.com/iptux-src/iptux/issues/new");
+  }
+
+  void iptux_init() {
+    g_sndsys->InitSublayer();
+
+    signal(SIGPIPE, SIG_IGN);
+    g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
   }
 }
 
@@ -88,7 +97,7 @@ void Application::onActivate(Application& self) {
   self.window->CreateWindow();
   try {
     g_cthrd->start();
-  } catch (const BindFailedException& e) {
+  } catch (const Exception& e) {
     pop_warning(self.window->getWindow(), "%s", e.what());
     exit(1);
   }

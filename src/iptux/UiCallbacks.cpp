@@ -1,7 +1,7 @@
 #include "config.h"
 #include "UiCallbacks.h"
 
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 

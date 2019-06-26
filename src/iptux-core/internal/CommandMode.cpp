@@ -3,8 +3,8 @@
 
 #include <glib/gi18n.h>
 
-#include "iptux-core/ipmsg.h"
-#include "iptux-core/utils.h"
+#include "iptux-core/internal/ipmsg.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 

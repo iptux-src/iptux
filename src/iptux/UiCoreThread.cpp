@@ -16,16 +16,18 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <glib/gi18n.h>
 
+#include "iptux-core/Const.h"
+#include "iptux-utils/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux/global.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
+#include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
-#include "iptux-core/deplib.h"
-#include "iptux/global.h"
-#include "iptux-core/output.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/ipmsg.h"
+
+#define OCCUPY_OBJECT 0x01
 
 using namespace std;
 
@@ -335,13 +337,11 @@ GroupInfo *UiCoreThread::GetPalRegularItem(PalInfo *pal) {
  */
 GroupInfo *UiCoreThread::GetPalSegmentItem(PalInfo *pal) {
   GSList *tlist;
-  char *name;
   GQuark grpid;
 
   /* 获取局域网网段ID */
-  name = ipv4_get_lan_name(pal->ipv4);
-  grpid = g_quark_from_string(name ? name : _("Others"));
-  g_free(name);
+  auto name = ipv4_get_lan_name(pal->ipv4);
+  grpid = g_quark_from_string(name.empty() ? _("Others") : name.c_str());
 
   tlist = sgmlist;
   while (tlist) {
@@ -605,14 +605,15 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
  */
 GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
   GroupInfo *grpinf;
-  char *name;
 
   /* 获取局域网网段名称 */
-  name = ipv4_get_lan_name(pal->ipv4);
-  name = name ? name : g_strdup(_("Others"));
+  auto name = ipv4_get_lan_name(pal->ipv4);
+  if(name.empty()) {
+    name = _("Others");
+  }
 
   grpinf = new GroupInfo;
-  grpinf->grpid = g_quark_from_static_string(name);
+  grpinf->grpid = g_quark_from_static_string(name.c_str());
   grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
   grpinf->member = NULL;

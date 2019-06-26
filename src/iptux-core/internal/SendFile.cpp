@@ -19,10 +19,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#include "iptux-core/Command.h"
-#include "iptux-core/AnalogFS.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/SendFileData.h"
+#include "iptux-core/internal/AnalogFS.h"
+#include "iptux-core/internal/Command.h"
+#include "iptux-core/internal/SendFileData.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 
 #include "CommandMode.h"
 
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/internal/ipmsg.h"
 
 using namespace iptux;
 using namespace std;

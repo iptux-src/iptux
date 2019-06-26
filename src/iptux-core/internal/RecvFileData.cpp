@@ -21,14 +21,16 @@
 #include <sys/socket.h>
 #include <glog/logging.h>
 
-#include "iptux-core/Command.h"
-#include "iptux-core/AnalogFS.h"
-#include "iptux-core/deplib.h"
-#include "iptux-core/ipmsg.h"
-#include "iptux-core/output.h"
-#include "iptux-core/utils.h"
+#include <glib/gi18n.h>
+
+
 #include "iptux-core/Event.h"
 #include "iptux-core/Exception.h"
+#include "iptux-core/internal/AnalogFS.h"
+#include "iptux-core/internal/Command.h"
+#include "iptux-core/internal/ipmsg.h"
+#include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 

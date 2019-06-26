@@ -15,7 +15,7 @@
 #include <string>
 
 #include "iptux-core/IptuxConfig.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
 

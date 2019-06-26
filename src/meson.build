@@ -30,6 +30,7 @@ configure_file(input : 'TestConfig.h.in',
                output : 'TestConfig.h',
                configuration : test_conf_data)
 
+subdir('iptux-utils')
 subdir('iptux-core')
 subdir('iptux')
 subdir('main')

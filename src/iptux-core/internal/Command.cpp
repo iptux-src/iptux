@@ -18,12 +18,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "iptux-core/deplib.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/output.h"
+#include <glib/gi18n.h>
+
+
 #include "iptux-core/Exception.h"
-#include "iptux-core/TransAbstract.h"
+#include "iptux-core/internal/support.h"
+#include "iptux-core/internal/TransAbstract.h"
+#include "iptux-utils/utils.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 

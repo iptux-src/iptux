@@ -14,21 +14,24 @@
 #include "DialogPeer.h"
 
 #include <cinttypes>
+
 #include <unistd.h>
 #include <sys/socket.h>
-#include <gdk/gdkkeysyms.h>
 
-#include "iptux/HelpDialog.h"
-#include "iptux-core/SendFile.h"
+#include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
+
+#include "iptux-core/Const.h"
+#include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 #include "iptux/callback.h"
-#include "iptux-core/deplib.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
-#include "iptux-core/output.h"
-#include "iptux-core/support.h"
-#include "iptux-core/utils.h"
+#include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
-#include "iptux-core/ipmsg.h"
+
+#define ATOM_OBJECT 0xFFFC
+#define OCCUPY_OBJECT 0x01
 
 using namespace std;
 
@@ -428,8 +431,7 @@ void DialogPeer::BroadcastEnclosureMsg(GSList *list) {
   /* 向选中的成员发送附件 */
   plist = NULL;
   plist = g_slist_append(plist, grpinf->member->data);
-
-  SendFile::BcstFileInfoEntry(g_cthrd, plist, list);
+  g_cthrd->BcstFileInfoEntry(plist, list);
   g_slist_free(plist);
 }
 

@@ -18,8 +18,8 @@
 #include <glib/gi18n.h>
 
 #include "iptux/UiProgramData.h"
-#include "iptux-core/output.h"
-#include "iptux-core/utils.h"
+#include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 #include "iptux/global.h"
 
 using namespace std;

@@ -17,8 +17,8 @@
 
 #include <cstring>
 
-#include "iptux-core/utils.h"
-#include "iptux-core/TransAbstract.h"
+#include "iptux-utils/utils.h"
+#include "iptux-core/internal/TransAbstract.h"
 #include "iptux-core/Exception.h"
 
 using namespace std;

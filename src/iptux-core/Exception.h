@@ -6,12 +6,13 @@
 namespace iptux {
 
 enum class ErrorCode {
-  TCP_BIND_FAILED,
-  UDP_BIND_FAILED,
-  INVALID_IP_ADDRESS,
-  PAL_KEY_NOT_EXIST,
   CREATE_TCP_SOCKET_FAILED,
   INVALID_FILE_ATTR,
+  INVALID_IP_ADDRESS,
+  PAL_KEY_NOT_EXIST,
+  SOCKET_CREATE_FAILED,
+  TCP_BIND_FAILED,
+  UDP_BIND_FAILED,
 };
 
 class Exception : public std::runtime_error {

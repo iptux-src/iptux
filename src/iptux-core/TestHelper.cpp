@@ -8,8 +8,9 @@
 
 #include <glib.h>
 
-#include "iptux-core/utils.h"
-#include "iptux-core/support.h"
+#include "iptux-utils/utils.h"
+#include "iptux-core/Exception.h"
+#include "iptux-core/internal/support.h"
 
 using namespace std;
 
@@ -52,7 +53,7 @@ initAndConnnectThreadsFromConfig(PIptuxConfig c1, PIptuxConfig c2) {
   auto thread2 = make_shared<CoreThread>(make_shared<ProgramData>(c2));
   try {
     thread2->start();
-  } catch(BindFailedException& e) {
+  } catch(Exception& e) {
     cerr
       << "bind to "<< c2->GetString("bind_ip") << " failed.\n"
       << "if you are using mac, please run `sudo ifconfig lo0 alias " << c2->GetString("bind_ip")

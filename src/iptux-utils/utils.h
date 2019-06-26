@@ -112,5 +112,20 @@ ssize_t read_ipmsg_filedata(int fd, void *buf, size_t count, size_t offset);
 ssize_t read_ipmsg_dirfiles(int fd, void *buf, size_t count, size_t offset);
 ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset);
 
+namespace utils {
+
+/**
+ * @brief calculate the file or directory size;
+ *
+ * return 0 if not exist.
+ *
+ * @param fileOrDirName
+ * @return int64_t
+ */
+int64_t fileOrDirectorySize(const std::string& fileOrDirName);
+
+}
+
+
 }  // namespace iptux
 #endif

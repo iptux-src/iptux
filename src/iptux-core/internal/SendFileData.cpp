@@ -22,13 +22,15 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <glog/logging.h>
 
-#include "iptux-core/AnalogFS.h"
-#include "iptux-core/deplib.h"
-#include "iptux-core/utils.h"
+#include <glog/logging.h>
+#include <glib/gi18n.h>
+
+#include "iptux-core/internal/AnalogFS.h"
+
+#include "iptux-utils/utils.h"
 #include "iptux-core/Event.h"
-#include "iptux-core/output.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 

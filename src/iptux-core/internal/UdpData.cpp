@@ -16,16 +16,21 @@
 #include <cinttypes>
 #include <thread>
 #include <functional>
+
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "Command.h"
-#include "CommandMode.h"
-#include "RecvFile.h"
-#include "SendFile.h"
-#include "iptux-core/deplib.h"
-#include "utils.h"
-#include "iptux-core/output.h"
+#include <glib/gi18n.h>
+
+
+#include "iptux-core/internal/Command.h"
+#include "iptux-core/internal/CommandMode.h"
+#include "iptux-core/internal/RecvFile.h"
+#include "iptux-core/internal/SendFile.h"
+#include "iptux-utils/utils.h"
+#include "iptux-utils/output.h"
+
+#define NULL_OBJECT 0x02
 
 using namespace std;
 using namespace std::placeholders;

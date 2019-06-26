@@ -3,10 +3,10 @@
 
 #include <cstring>
 
+#include "iptux-core/Const.h"
 #include "iptux-core/Models.h"
-#include "iptux-core/output.h"
-#include "iptux-core/utils.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 

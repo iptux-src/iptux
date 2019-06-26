@@ -4,35 +4,37 @@ glog_dep = dependency('libglog')
 
 header_files = files([
     'CoreThread.h',
-    'ProgramData.h',
-    'IptuxConfig.h',
     'Event.h',
-    'TransFileModel.h',
+    'Exception.h',
+    'IptuxConfig.h',
     'Models.h',
+    'ProgramData.h',
+    'TransFileModel.h',
 ])
 install_headers(header_files, subdir: 'iptux-core')
 
 core_sources = files([
-    'AnalogFS.cpp',
-    'Command.cpp',
     'CoreThread.cpp',
     'Event.cpp',
-    'TcpData.cpp',
-    'UdpData.cpp',
-    'Models.cpp',
-    'support.cpp',
-    'utils.cpp',
-    'ProgramData.cpp',
-    'output.cpp',
     'Exception.cpp',
     'IptuxConfig.cpp',
-    'SendFile.cpp',
-    'RecvFile.cpp',
-    'RecvFileData.cpp',
-    'SendFileData.cpp',
-    'CommandMode.cpp',
-    'TransAbstract.cpp',
+    'Models.cpp',
+    'ProgramData.cpp',
     'TransFileModel.cpp',
+])
+
+core_sources += files([
+    'internal/AnalogFS.cpp',
+    'internal/Command.cpp',
+    'internal/CommandMode.cpp',
+    'internal/RecvFile.cpp',
+    'internal/RecvFileData.cpp',
+    'internal/SendFile.cpp',
+    'internal/SendFileData.cpp',
+    'internal/support.cpp',
+    'internal/TcpData.cpp',
+    'internal/TransAbstract.cpp',
+    'internal/UdpData.cpp',
 ])
 
 inc = include_directories('..')
@@ -41,6 +43,7 @@ thread_dep = dependency('threads')
 libiptux_core = shared_library('iptux-core',
     core_sources,
     dependencies: [glib_dep, jsoncpp_dep, glog_dep, thread_dep],
+    link_with: [libiptux_utils],
     include_directories: inc,
     install: true,
     version: so_version,
@@ -69,12 +72,12 @@ libiptux_core_test_helper = static_library('iptux-test-helper',
 gtest_inc = include_directories('../googletest/include')
 core_test_sources = files([
     'CoreThreadTest.cpp',
-    'UdpDataTest.cpp',
+    'internal/UdpDataTest.cpp',
     'ModelsTest.cpp',
     'UtilsTest.cpp',
     'ProgramDataTest.cpp',
     'IptuxConfigTest.cpp',
-    'CommandModeTest.cpp',
+    'internal/CommandModeTest.cpp',
     'TestMain.cpp',
 ])
 libiptux_core_test = executable('libiptux_core_test',

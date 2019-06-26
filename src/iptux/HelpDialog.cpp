@@ -13,8 +13,9 @@
 #include "config.h"
 #include "HelpDialog.h"
 
-#include "iptux-core/deplib.h"
-#include "iptux-core/support.h"
+#include <glib/gi18n.h>
+
+
 #include "iptux/UiHelper.h"
 
 namespace iptux {
