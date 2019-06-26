@@ -21,8 +21,6 @@
 #include <sys/socket.h>
 #include <glog/logging.h>
 
-#include <glib/gi18n.h>
-
 
 #include "iptux-core/Event.h"
 #include "iptux-core/Exception.h"

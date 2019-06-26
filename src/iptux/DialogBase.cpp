@@ -18,7 +18,7 @@
 #include <glog/logging.h>
 #include <glib/gi18n.h>
 
-#include "iptux-core/deplib.h"
+
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"

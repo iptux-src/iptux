@@ -22,9 +22,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-
 #include <glog/logging.h>
-#include <glib/gi18n.h>
 
 #include "iptux-core/internal/AnalogFS.h"
 

@@ -12,7 +12,7 @@
 #ifndef IPTUX_SENDFILEDATA_H
 #define IPTUX_SENDFILEDATA_H
 
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/internal/TransAbstract.h"

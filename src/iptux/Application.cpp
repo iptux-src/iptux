@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 #include <glib/gi18n.h>
 
-#include "iptux-core/ipmsg.h"
 #include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
 #include "iptux/DataSettings.h"

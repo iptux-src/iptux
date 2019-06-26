@@ -17,13 +17,12 @@
 #include <unistd.h>
 #include <glib/gi18n.h>
 
-#include "iptux/UiCoreThread.h"
-#include "iptux/MainWindow.h"
-#include "iptux/callback.h"
-#include "iptux-core/deplib.h"
-#include "iptux/global.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
+#include "iptux/callback.h"
+#include "iptux/global.h"
+#include "iptux/MainWindow.h"
+#include "iptux/UiCoreThread.h"
 
 namespace iptux {
 

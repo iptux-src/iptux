@@ -15,7 +15,6 @@
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 
-#include "iptux-core/deplib.h"
 #include "iptux-core/Exception.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
@@ -23,7 +22,7 @@
 #include "iptux-core/internal/support.h"
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpData.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 

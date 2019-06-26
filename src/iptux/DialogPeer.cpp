@@ -21,8 +21,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 
-#include "iptux-core/deplib.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/callback.h"

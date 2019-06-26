@@ -17,7 +17,7 @@
 #include <glib/gi18n.h>
 #include <gdk/gdk.h>
 
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/Const.h"
 #include "iptux/global.h"
 #include "iptux/MainWindow.h"
 #include "iptux/StatusIcon.h"

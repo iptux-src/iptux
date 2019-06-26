@@ -20,7 +20,7 @@
 #include "DialogGroup.h"
 #include "DialogPeer.h"
 #include "global.h"
-#include "iptux-core/deplib.h"
+
 #include "iptux-utils/utils.h"
 #include "ShareFile.h"
 

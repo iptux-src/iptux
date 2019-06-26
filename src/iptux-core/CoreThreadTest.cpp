@@ -6,7 +6,7 @@
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Exception.h"
 #include "iptux-core/internal/support.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/TestHelper.h"
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"

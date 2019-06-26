@@ -20,7 +20,7 @@
 
 #include <glib/gi18n.h>
 
-#include "iptux-core/deplib.h"
+
 #include "iptux-core/Exception.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-core/internal/TransAbstract.h"

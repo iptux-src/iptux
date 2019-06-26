@@ -5,8 +5,8 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 
-#include "iptux-core/deplib.h"
-#include "iptux-core/ipmsg.h"
+
+#include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/utils.h"
 
 using namespace std;

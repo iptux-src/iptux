@@ -18,7 +18,7 @@
 #include <unistd.h>
 
 #include "iptux-utils/utils.h"
-#include "iptux-core/ipmsg.h"
+#include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 
