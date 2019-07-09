@@ -232,7 +232,8 @@ void CoreThread::RecvUdpData(CoreThread *self) {
                          (struct sockaddr *)&addr, &len)) == -1)
       continue;
     if (size != MAX_UDPLEN) buf[size] = '\0';
-    UdpData::UdpDataEntry(*self, addr.sin_addr, addr.sin_port, buf, size);
+    auto port = ntohs(addr.sin_port);
+    UdpData::UdpDataEntry(*self, addr.sin_addr, port, buf, size);
   }
 }
 
