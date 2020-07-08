@@ -18,6 +18,7 @@ class Iptux < Formula
   depends_on 'cmake' => :build unless build.head?
   depends_on 'meson' => :build if build.head?
   depends_on 'ninja' => :build if build.head?
+  depends_on 'glog' => :build if build.head?
   unless OS.mac?
     depends_on "linuxbrew/xorg/xorg"
   end
