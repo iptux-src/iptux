@@ -55,7 +55,7 @@ string getConfigPath() {
 
 static gboolean version = FALSE;
 static gchar* configFilename = nullptr;
-static gchar* log = nullptr;
+static gchar* logger = nullptr;
 static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 
 static GOptionEntry entries[] = {
@@ -63,7 +63,7 @@ static GOptionEntry entries[] = {
      "Output version information and exit", NULL},
     {"config", 'c', 0, G_OPTION_ARG_FILENAME, &configFilename,
      "Specify config path", "CONFIG_PATH"},
-    {"log", 'l', 0, G_OPTION_ARG_STRING, &log,
+    {"log", 'l', 0, G_OPTION_ARG_STRING, &logger,
      "Specify log level: DEBUG, INFO, WARN, default is WARN", "LEVEL"},
     {NULL}};
 
@@ -115,8 +115,8 @@ static void dealLog(const IptuxConfig& config) {
     logStr = config.GetString("log_level");
   }
 
-  if (log != nullptr) {
-    logStr = log;
+  if (logger != nullptr) {
+    logStr = logger;
   }
 
   g_log_set_handler("iptux",
@@ -131,7 +131,7 @@ static void dealLog(const IptuxConfig& config) {
   } else if (logStr == "WARN") {
     logLevel = G_LOG_LEVEL_WARNING;
   } else {
-    LOG_ERROR("unknown log level: %s", log);
+    LOG_ERROR("unknown log level: %s", logger);
   }
 }
 
