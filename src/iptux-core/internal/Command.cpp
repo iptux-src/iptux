@@ -52,7 +52,7 @@ PPalInfo getAndCheckPalInfo(CoreThread& coreThread, const PalKey& palKey) {
  * @param flags
  * @param dest_addr
  * @param addrlen
- * @return true means succcess
+ * @return true means success
  * @return false means failed
  */
 static bool commandSendTo(int sockfd, const void * buf, size_t len, int flags, in_addr ipv4, int port) {

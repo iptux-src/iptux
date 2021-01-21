@@ -203,7 +203,7 @@ void StatusIcon::onPopupMenu(StatusIcon *self, guint button, guint time) {
  * @param statusicon the object which received the signal
  * @param x the x coordinate of the cursor position
  * @param y the y coordinate of the cursor position
- * @param key TRUE if the tooltip was trigged using the keyboard
+ * @param key TRUE if the tooltip was triggered using the keyboard
  * @param tooltip a GtkTooltip
  * @return Gtk+库所需
  */

@@ -32,7 +32,7 @@ namespace iptux {
     case IPTUX_SENDMSG:
       return "SENDMSG";
     default:
-      return stringFormat(_("unkown command mode: %d"), mode);
+      return stringFormat(_("unknown command mode: %d"), mode);
     }
   }
 }

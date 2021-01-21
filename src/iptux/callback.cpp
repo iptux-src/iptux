@@ -33,7 +33,7 @@ namespace iptux {
  * @param entry entry
  * @param x the x coordinate of the cursor position
  * @param y the y coordinate of the cursor position
- * @param key TRUE if the tooltip was trigged using the keyboard
+ * @param key TRUE if the tooltip was triggered using the keyboard
  * @param tooltip a GtkTooltip
  * @param text text string
  * @return Gtk+库所需
