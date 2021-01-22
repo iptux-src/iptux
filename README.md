@@ -72,7 +72,7 @@ brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/hom
 * for Ubuntu 16.04, please check 0.7.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-7
 
 ```sh
-sudo apt-get install git libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ make meson
+sudo apt-get install git libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ make meson libgoogle-glog-dev
 # if you need the sound support
 sudo apt-get install libgstreamer1.0-dev gstreamer1.0-plugins-good gstreamer1.0-alsa
 # endif
