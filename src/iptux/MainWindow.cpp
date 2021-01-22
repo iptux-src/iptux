@@ -1289,7 +1289,7 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
  * @param treeview the object which received the signal
  * @param x the x coordinate of the cursor position
  * @param y the y coordinate of the cursor position
- * @param keyboard_mode TRUE if the tooltip was trigged using the keyboard
+ * @param keyboard_mode TRUE if the tooltip was triggered using the keyboard
  * @param tooltip a GtkTooltip
  * @return Gtk+库所需
  */
@@ -1584,7 +1584,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   /* 将符合条件的好友加入好友清单 */
   for(auto pal: g_cthrd->GetPalList()) {
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-    /* Search friends case ingore is better. */
+    /* Search friends case ignore is better. */
     if (*text == '\0' || strcasestr(pal->name, text) ||
         (pal->group && strcasestr(pal->group, text)) ||
         strcasestr(ipstr, text) || strcasestr(pal->user, text) ||
