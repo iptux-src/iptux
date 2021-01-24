@@ -78,10 +78,10 @@ in_addr inAddrFromUint32(uint32_t value);
 template<typename ... Args>
 std::string stringFormat( const char* format, Args ... args )
 {
-    size_t size = snprintf( nullptr, 0, format, args ... ) + 1; // Extra space for '\0'
-    std::unique_ptr<char[]> buf( new char[ size ] );
-    snprintf( buf.get(), size, format, args ... );
-    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+  gchar* buf = g_strdup_printf(format, args...);
+  std::string res(buf, strlen(buf));
+  g_free(buf);
+  return res;
 }
 
 /**
