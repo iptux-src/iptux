@@ -76,7 +76,7 @@ uint32_t inAddrToUint32(in_addr ipv4);
 in_addr inAddrFromUint32(uint32_t value);
 
 template<typename ... Args>
-std::string stringFormat( const char* format, Args ... args )
+std::string stringFormat( const char* format, Args ... args ) G_GNUC_PRINTF (1, 2)
 {
   gchar* buf = g_strdup_printf(format, args...);
   std::string res(buf, strlen(buf));
