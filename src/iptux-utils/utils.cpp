@@ -33,7 +33,7 @@
 
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
-#include "iptux-core/Exception.h"
+#include "iptux-utils/Exception.h"
 
 using namespace std;
 
