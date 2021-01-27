@@ -14,3 +14,25 @@ libiptux_utils = static_library('iptux-utils',
     include_directories: inc,
 )
 
+utils_test_helper_sources = files([
+    'TestHelper.cpp',
+])
+libiptux_utils_test_helper = static_library('iptux-utils-test-helper',
+    utils_test_helper_sources,
+    dependencies: [glib_dep],
+    link_with: [libiptux_utils],
+    include_directories: inc
+)
+
+gtest_inc = include_directories('../googletest/include')
+utils_test_sources = files([
+    'UtilsTest.cpp',
+    'TestMain.cpp',
+])
+libiptux_utils_test = executable('libiptux_utils_test',
+    utils_test_sources,
+    dependencies: [glib_dep],
+    link_with: [libiptux_utils, libgtest, libiptux_utils_test_helper],
+    include_directories: [inc, gtest_inc]
+)
+test('iptux utils unit test', libiptux_utils_test)

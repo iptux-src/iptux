@@ -65,7 +65,7 @@ core_test_helper_sources = files([
 libiptux_core_test_helper = static_library('iptux-test-helper',
     core_test_helper_sources,
     dependencies: [glib_dep, jsoncpp_dep, glog_dep],
-    link_with: [libiptux_core],
+    link_with: [libiptux_core, libiptux_utils_test_helper],
     include_directories: inc
 )
 
@@ -74,7 +74,6 @@ core_test_sources = files([
     'CoreThreadTest.cpp',
     'internal/UdpDataTest.cpp',
     'ModelsTest.cpp',
-    'UtilsTest.cpp',
     'ProgramDataTest.cpp',
     'IptuxConfigTest.cpp',
     'internal/CommandModeTest.cpp',

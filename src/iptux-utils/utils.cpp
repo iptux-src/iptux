@@ -31,13 +31,16 @@
 #endif
 
 
-#include "iptux-core/internal/ipmsg.h"
+// #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/Exception.h"
 
 using namespace std;
 
 namespace iptux {
+
+  static const int MAX_PATHLEN = 1024;
+  static const int MAX_BUFLEN = 1024;
 
 /**
  * 检查串(string)是否为有效的utf8串，若不是则根据字符集(codeset)来进行转码.
@@ -103,7 +106,6 @@ char *convert_encode(const char *string, const char *tocode,
  * @return 新文件路径 *
  */
 char *assert_filename_inexist(const char *path) {
-  char buf[MAX_PATHLEN];
   const char *ptr;
   uint16_t count;
 
@@ -112,15 +114,15 @@ char *assert_filename_inexist(const char *path) {
   ptr = strrchr(path, '/');
   ptr = ptr ? ptr + 1 : path;
   count = 1;
+  string res;
   while (count) {
-    snprintf(buf, MAX_PATHLEN, "%.*s%" PRIu16 "_%s", (int)(ptr - path), path,
+    res = stringFormat("%.*s%" PRIu16 "_%s", (int)(ptr - path), path,
              count, ptr);
-    if (access(buf, F_OK) != 0) break;
+    if (access(res.c_str(), F_OK) != 0) break;
     count++;
   }
 
-  /* 概率极低，不妨忽略错误情形 */
-  return g_strdup(buf);
+  return g_strdup(res.c_str());
 }
 
 /**

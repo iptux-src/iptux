@@ -5,6 +5,7 @@
 
 namespace iptux {
   std::string readTestData(const std::string& fname);
+  std::string testDataPath(const std::string& fname);
 }
 
 

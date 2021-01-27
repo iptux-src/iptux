@@ -30,15 +30,6 @@ shared_ptr<IptuxConfig> newTestIptuxConfigWithFile() {
   return res;
 }
 
-string readTestData(const string& fname) {
-  ifstream ifs(testDataPath(fname));
-  return string(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
-}
-
-string testDataPath(const string& fname) {
-  return stringFormat("%s/src/iptux/testdata/%s", PROJECT_ROOT_PATH, fname.c_str());
-}
-
 std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
   auto config = newTestIptuxConfig();
   config->SetString("bind_ip", ip);
