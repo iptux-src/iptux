@@ -31,7 +31,6 @@
 #endif
 
 
-// #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/Exception.h"
 
@@ -539,7 +538,7 @@ std::string stringDump(const std::string& str) {
     }
     oss << "|\n";
   }
-  oss << stringFormat("%08x\n", str.size());;
+  oss << stringFormat("%08lx\n", str.size());;
   return oss.str();
 }
 
