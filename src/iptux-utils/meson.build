@@ -3,6 +3,7 @@ glib_dep = dependency('glib-2.0', version: '>=2.35')
 sources = files([
     'output.cpp',
     'utils.cpp',
+    'Exception.cpp',
 ])
 
 inc = include_directories('..')
