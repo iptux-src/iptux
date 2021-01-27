@@ -1,4 +1,5 @@
 glib_dep = dependency('glib-2.0', version: '>=2.35')
+thread_dep = dependency('threads')
 
 sources = files([
     'output.cpp',
@@ -31,7 +32,7 @@ utils_test_sources = files([
 ])
 libiptux_utils_test = executable('libiptux_utils_test',
     utils_test_sources,
-    dependencies: [glib_dep],
+    dependencies: [glib_dep, thread_dep],
     link_with: [libiptux_utils, libgtest, libiptux_utils_test_helper],
     include_directories: [inc, gtest_inc]
 )
