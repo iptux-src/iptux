@@ -76,7 +76,7 @@ FileInfo * DivideFileinfo(char **extra) {
   file->finishedsize = 0;
 
   if(!FileAttrIsValid(file->fileattr)) {
-    throw Exception(ErrorCode::INVALID_FILE_ATTR);
+    throw Exception(INVALID_FILE_ATTR);
   }
 
   //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)

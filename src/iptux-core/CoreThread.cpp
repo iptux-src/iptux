@@ -172,7 +172,7 @@ void CoreThread::bind_iptux_port() {
     const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
                                          strerror(ec));
     LOG_WARN("%s", errmsg);
-    throw Exception(ErrorCode::SOCKET_CREATE_FAILED, errmsg);
+    throw Exception(SOCKET_CREATE_FAILED, errmsg);
   }
 
   memset(&addr, '\0', sizeof(addr));
@@ -188,7 +188,7 @@ void CoreThread::bind_iptux_port() {
     auto errmsg = stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
                                          bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
-    throw Exception(ErrorCode::TCP_BIND_FAILED, errmsg);
+    throw Exception(TCP_BIND_FAILED, errmsg);
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
@@ -200,7 +200,7 @@ void CoreThread::bind_iptux_port() {
     auto errmsg = stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
                                          bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
-    throw Exception(ErrorCode::UDP_BIND_FAILED, errmsg);
+    throw Exception(UDP_BIND_FAILED, errmsg);
   } else {
     LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
   }
@@ -474,7 +474,7 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
       LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
                 strerror(errno));
-      throw Exception(ErrorCode::CREATE_TCP_SOCKET_FAILED);
+      throw Exception(CREATE_TCP_SOCKET_FAILED);
     }
     cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
     close(sock);

@@ -37,7 +37,7 @@ static
 PPalInfo getAndCheckPalInfo(CoreThread& coreThread, const PalKey& palKey) {
   auto res = coreThread.GetPal(palKey);
   if(!res) {
-    throw Exception(ErrorCode::PAL_KEY_NOT_EXIST, stringFormat("palkey not exist: %s", palKey.ToString().c_str()));
+    throw Exception(PAL_KEY_NOT_EXIST, stringFormat("palkey not exist: %s", palKey.ToString().c_str()));
   }
   return res;
 }
@@ -200,7 +200,7 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char *msg) {
 
   auto pal2 = coreThread.GetPal(pal->GetKey());
   if(!pal2) {
-    throw Exception(ErrorCode::PAL_KEY_NOT_EXIST);
+    throw Exception(PAL_KEY_NOT_EXIST);
   }
 
   pal2->rpacketn = packetno = packetn;  //此数据包需要检验回复

@@ -61,7 +61,7 @@ TEST(CoreThread, SendMessage) {
     thread->SendMessage(pal, "hello world");
     EXPECT_TRUE(false);
   } catch(Exception& e) {
-    EXPECT_EQ(e.getErrorCode(), ErrorCode::PAL_KEY_NOT_EXIST);
+    EXPECT_EQ(e.getErrorCode(), PAL_KEY_NOT_EXIST);
   }
 
   thread->AttachPalToList(pal);

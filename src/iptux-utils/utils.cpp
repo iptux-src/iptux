@@ -497,7 +497,7 @@ in_addr inAddrFromString(const std::string& s) {
   if(inet_pton(AF_INET, s.c_str(), &res.s_addr) == 1) {
     return res;
   }
-  throw Exception(ErrorCode::INVALID_IP_ADDRESS);
+  throw Exception(INVALID_IP_ADDRESS);
 }
 
 std::string stringDump(const std::string& str) {

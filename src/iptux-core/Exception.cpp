@@ -9,33 +9,26 @@ using namespace std;
 
 namespace iptux {
 
-static string ec2str(ErrorCode ec) {
-  switch(ec) {
-    case ErrorCode::TCP_BIND_FAILED:
-      return "TCP_BIND_FAILED";
-    case ErrorCode::UDP_BIND_FAILED:
-      return "UDP_BIND_FAILED";
-    case ErrorCode::PAL_KEY_NOT_EXIST:
-      return "PAL_KEY_NOT_EXIST";
-    case ErrorCode ::INVALID_IP_ADDRESS:
-      return "INVALID_IP_ADDRESS";
-    case ErrorCode::CREATE_TCP_SOCKET_FAILED:
-      return "CREATE_TCP_SOCKET_FAILED";
-    default:
-      return stringFormat("UNKNOWN ERROR CODE: %d", int(ec));
-  }
-}
+const ErrorCode INVALID_IP_ADDRESS(4001, "INVALID_IP_ADDRESS");
 
-Exception::Exception(ErrorCode ec)
-: Exception(ec, ec2str(ec))
+const ErrorCode CREATE_TCP_SOCKET_FAILED(5001, "CREATE_TCP_SOCKET_FAILED");
+const ErrorCode SOCKET_CREATE_FAILED(5002, "SOCKET_CREATE_FAILED");
+const ErrorCode INVALID_FILE_ATTR(5003, "INVALID_FILE_ATTR");
+const ErrorCode PAL_KEY_NOT_EXIST(5004, "PAL_KEY_NOT_EXIST");
+const ErrorCode TCP_BIND_FAILED(5005, "TCP_BIND_FAILED");
+const ErrorCode UDP_BIND_FAILED(5006, "UDP_BIND_FAILED");
+
+
+Exception::Exception(const ErrorCode& ec)
+: Exception(ec, ec.getMessage())
 {
 }
 
-ErrorCode Exception::getErrorCode() const {
+const ErrorCode& Exception::getErrorCode() const {
   return ec;
 }
 
-Exception::Exception(ErrorCode ec, const std::string& reason)
+Exception::Exception(const ErrorCode& ec, const std::string& reason)
     : runtime_error(reason),
       ec(ec)
 {

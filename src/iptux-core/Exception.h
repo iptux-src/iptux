@@ -5,26 +5,45 @@
 
 namespace iptux {
 
-enum class ErrorCode {
-  CREATE_TCP_SOCKET_FAILED,
-  INVALID_FILE_ATTR,
-  INVALID_IP_ADDRESS,
-  PAL_KEY_NOT_EXIST,
-  SOCKET_CREATE_FAILED,
-  TCP_BIND_FAILED,
-  UDP_BIND_FAILED,
+class ErrorCode {
+ private:
+  int code;
+  const std::string& message;
+ public:
+  ErrorCode(int code, const std::string& message)
+  : code(code), message(message)
+  {}
+  ErrorCode(const ErrorCode&) = delete;
+  ErrorCode& operator=(const ErrorCode&) = delete;
+
+  int getCode() const;
+  const std::string& getMessage() const {
+    return message;
+  }
+
+  bool operator==(const ErrorCode& rhs) const {
+    return this->code == rhs.code;
+  }
 };
+
+extern const ErrorCode CREATE_TCP_SOCKET_FAILED;
+extern const ErrorCode INVALID_IP_ADDRESS;
+extern const ErrorCode INVALID_FILE_ATTR;
+extern const ErrorCode PAL_KEY_NOT_EXIST;
+extern const ErrorCode SOCKET_CREATE_FAILED;
+extern const ErrorCode TCP_BIND_FAILED;
+extern const ErrorCode UDP_BIND_FAILED;
 
 class Exception : public std::runtime_error {
  public:
-  explicit Exception(ErrorCode ec);
-  Exception(ErrorCode ec, const std::string& reason);
-  Exception(ErrorCode ec, std::exception* causedBy);
-  Exception(ErrorCode ec, const std::string& reason, std::exception* causedBy);
+  explicit Exception(const ErrorCode& ec);
+  Exception(const ErrorCode& ec, const std::string& reason);
+  Exception(const ErrorCode& ec, std::exception* causedBy);
+  Exception(const ErrorCode& ec, const std::string& reason, std::exception* causedBy);
 
-  ErrorCode getErrorCode() const;
+  const ErrorCode& getErrorCode() const;
  private:
-  ErrorCode ec;
+  const ErrorCode& ec;
 };
 
 }

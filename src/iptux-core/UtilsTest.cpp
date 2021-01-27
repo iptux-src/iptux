@@ -53,7 +53,7 @@ TEST(Utils, inAddrFromString) {
       inAddrFromString(c);
       EXPECT_TRUE(false) << c;
     } catch(Exception& e) {
-      ASSERT_EQ(e.getErrorCode(), ErrorCode::INVALID_IP_ADDRESS);
+      ASSERT_EQ(e.getErrorCode(), INVALID_IP_ADDRESS);
     }
   }
 }
