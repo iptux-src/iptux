@@ -8,7 +8,7 @@ namespace iptux {
 class ErrorCode {
  private:
   int code;
-  const std::string& message;
+  const std::string message;
  public:
   ErrorCode(int code, const std::string& message)
   : code(code), message(message)
