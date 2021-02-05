@@ -2,13 +2,14 @@
 #define IPTUX_UTILS_EXCEPTION_H
 
 #include <stdexcept>
+#include <string>
 
 namespace iptux {
 
 class ErrorCode {
  private:
   int code;
-  const std::string message;
+  std::string message;
  public:
   ErrorCode(int code, const std::string& message)
   : code(code), message(message)
