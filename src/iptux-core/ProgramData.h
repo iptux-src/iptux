@@ -34,9 +34,9 @@ class ProgramData {
 
   std::shared_ptr<IptuxConfig> getConfig();
 
+  /** Sync ProgramData to ConfigFile */
   void WriteProgData();
 
-  std::vector<NetSegment> copyNetSegments() const;
   const std::vector<NetSegment>& getNetSegments() const;
   void setNetSegments(std::vector<NetSegment>&& netSegments);
 

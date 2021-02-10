@@ -103,14 +103,6 @@ void ProgramData::WriteProgData() {
   config->Save();
 }
 
-/**
- * 深拷贝一份网段数据.
- * @return 网段数据
- */
-vector<NetSegment> ProgramData::copyNetSegments() const {
-  return netseg;
-}
-
 const std::vector<NetSegment>& ProgramData::getNetSegments() const {
   return netseg;
 }

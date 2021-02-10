@@ -123,7 +123,7 @@ void Command::DialUp(int sock) {
 
   //与某些代码片段的获取网段描述相冲突，必须复制出来使用
   programData->Lock();
-  vector<NetSegment> list = programData->copyNetSegments();
+  vector<NetSegment> list = programData->getNetSegments();
   programData->Unlock();
   for(const NetSegment& ns: list) {
     uint64_t c = ns.Count();
