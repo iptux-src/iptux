@@ -656,8 +656,10 @@ PFileInfo CoreThread::GetPrivateFileByPacketN(uint32_t packageNum, uint32_t file
 }
 
 void CoreThread::RegisterTransTask(std::shared_ptr<TransAbstract> task) {
-  pImpl->lastTransTaskId++;
-  pImpl->transTasks[pImpl->lastTransTaskId] = task;
+  int taskId = ++(pImpl->lastTransTaskId);
+  task->SetTaskId(taskId);
+  pImpl->transTasks[taskId] = task;
+  LOG_INFO("add trans task %d", taskId);
 }
 
 bool CoreThread::TerminateTransTask(int taskId) {
