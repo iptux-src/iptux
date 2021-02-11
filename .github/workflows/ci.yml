@@ -49,3 +49,29 @@ jobs:
       run: xvfb-run ninja -v -C builddir test
     - name: install
       run: sudo ninja -C builddir install
+
+  codecov:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: apt install
+      run: sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb
+    - name: meson
+      run: meson -D b_coverage=true builddir
+    - name: build
+      run: ninja -v -C builddir
+    - name: test
+      run: xvfb-run ninja -v -C builddir test
+    - name: install
+      run: sudo ninja -C builddir install
+    - name: lcov
+      run: |
+        lcov --directory . --capture --output-file coverage.info; # capture coverage info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info; # filter out system
+        lcov --remove coverage.info '*Test*' --output-file coverage.info; # filter out system
+        lcov --remove coverage.info '*gtest*' --output-file coverage.info; # filter out system
+        lcov --list coverage.info; #debug info        
+    - uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: true # optional (default = false)
+        verbose: true # optional (default = false)
