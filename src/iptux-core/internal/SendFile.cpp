@@ -23,6 +23,7 @@
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/SendFileData.h"
 #include "iptux-utils/utils.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 
@@ -89,6 +90,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread, int sock, FileAttr filea
   len = sizeof(addr);
   getpeername(sock, (struct sockaddr *)&addr, &len);
   if (!(coreThread->GetPal(addr.sin_addr))) {
+    LOG_INFO("Pal not exist: %s", inAddrToString(addr.sin_addr).c_str());
     return;
   }
 
