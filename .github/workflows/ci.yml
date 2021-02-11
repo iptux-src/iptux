@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         runs-on: [ubuntu-18.04, ubuntu-20.04]
+    runs-on: ${{ matrix.runs-on }}
     steps:
     - uses: actions/checkout@v2
     - name: apt install
