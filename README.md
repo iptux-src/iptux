@@ -112,6 +112,7 @@ check https://github.com/iptux-src/iptux/wiki/Compatible-List
 
 * use `meson -Ddev=true builddir` to build an iptux which can use resource in source directory.
 * start 2 iptux on one machine for test
+  * It's a known bug that you can not send file between 127.0.0.2 and 127.0.0.3
 ```sh
 iptux -b 127.0.0.2 &
 iptux -b 127.0.0.3 &
