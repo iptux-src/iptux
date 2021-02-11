@@ -541,7 +541,11 @@ GtkWidget *MainWindow::CreateMainWindow() {
       GDK_HINT_USER_SIZE);
   window = gtk_application_window_new(app);
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
-  gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
+  if(config->GetString("bind_ip").empty()) {
+    gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
+  } else {
+    gtk_window_set_title(GTK_WINDOW(window), stringFormat("%s - %s", _("iptux"), config->GetString("bind_ip").c_str()).c_str());
+  }
   gtk_window_set_default_size(GTK_WINDOW(window), windowConfig.GetWidth(),
                               windowConfig.GetHeight());
   gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
