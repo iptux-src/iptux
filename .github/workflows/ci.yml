@@ -70,7 +70,7 @@ jobs:
         lcov --remove coverage.info '/usr/*' --output-file coverage.info; # filter out system
         lcov --remove coverage.info '*Test*' --output-file coverage.info; # filter out system
         lcov --remove coverage.info '*gtest*' --output-file coverage.info; # filter out system
-        lcov --list coverage.info; #debug info        
+        lcov --list coverage.info; #debug info
     - uses: codecov/codecov-action@v1
       with:
         fail_ci_if_error: true # optional (default = false)
