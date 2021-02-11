@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: meson
+      run: meson builddir
+    - name: build and test
+      run: ninja -C builddir test
+    - name: install
+      run: ninja -C builddir install
