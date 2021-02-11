@@ -26,12 +26,13 @@ class SendFile {
 
  public:
   static void SendSharedInfoEntry(CoreThread* coreThread, PPalInfo pal);
-  static void BcstFileInfoEntry(CoreThread* coreThread, GSList *plist, GSList *flist);
+  static void BcstFileInfoEntry(CoreThread* coreThread, const std::vector<const PalInfo*>& pals, 
+    const std::vector<FileInfo*>& files);
   static void RequestDataEntry(CoreThread* coreThread, int sock, FileAttr fileattr, char *attach);
 
  private:
   void SendFileInfo(PPalInfo pal, uint32_t opttype, std::vector<FileInfo>& filist);
-  void BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist);
+  void BcstFileInfo(const std::vector<const PalInfo*>& pals, uint32_t opttype, const std::vector<FileInfo*>& files);
   void ThreadSendFile(int sock, PFileInfo file);
 
  private:

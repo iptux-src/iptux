@@ -108,7 +108,8 @@ class CoreThread {
   void SendMyIcon(PPalInfo pal, std::istream& iss);
   void SendSharedFiles(PPalInfo pal);
 
-  void BcstFileInfoEntry(GSList *plist, GSList *flist);
+  void BcstFileInfoEntry(const std::vector<const PalInfo* >& pals,
+    const std::vector<FileInfo*>& files);
 
   /**
    * 插入消息(UI线程安全).

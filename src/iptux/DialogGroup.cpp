@@ -455,34 +455,30 @@ GtkWidget *DialogGroup::CreateToolMenu() {
  * 向选中的好友广播附件消息.
  * @param list 文件链表
  */
-void DialogGroup::BroadcastEnclosureMsg(GSList *list) {
+void DialogGroup::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
   GtkWidget *widget;
   GtkTreeModel *model;
   GtkTreeIter iter;
   gboolean active;
   PalInfo *pal;
-  GSList *plist;
+
+  vector<const PalInfo*> pals;
 
   /* 考察是否有成员 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "member-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   if (!gtk_tree_model_get_iter_first(model, &iter)) {
-    /**
-     * @note 链表(list)的数据本来应该由(sfile.BcstFileInfoEntry())接手的，
-     * 既然已经没有那个机会了， 当然就只好在这儿手动释放了.
-     */
-    g_slist_foreach(list, GFunc(g_free), NULL);
     return;
   }
 
   /* 向选中的成员发送附件 */
-  plist = NULL;
   do {
     gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
-    if (active) plist = g_slist_append(plist, pal);
+    if (active) {
+      pals.push_back(pal);
+    }
   } while (gtk_tree_model_iter_next(model, &iter));
-  g_cthrd->BcstFileInfoEntry(plist, list);
-  g_slist_free(plist);
+  g_cthrd->BcstFileInfoEntry(pals, files);
 }
 
 /**

@@ -51,9 +51,12 @@ void SendFile::SendSharedInfoEntry(CoreThread* coreThread, PPalInfo pal) {
  * @param flist 文件信息链表
  * @note 文件路径链表中的数据将被本函数处理掉
  */
-void SendFile::BcstFileInfoEntry(CoreThread* coreThread, GSList *plist, GSList *flist) {
-  SendFile(coreThread).BcstFileInfo(plist, 0, flist);
-}
+void SendFile::BcstFileInfoEntry(CoreThread* coreThread, const vector<const PalInfo*>& pals, 
+    const std::vector<FileInfo*>& files)
+  {
+    SendFile(coreThread).BcstFileInfo(pals, 0, files);
+  }
+
 
 /**
  * 请求文件数据入口.
@@ -142,29 +145,22 @@ void SendFile::SendFileInfo(PPalInfo pal, uint32_t opttype, vector<FileInfo>& fi
  * @param opttype 命令字选项
  * @param filist 文件信息链表
  */
-void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
+void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals, uint32_t opttype, const std::vector<FileInfo*>& files) {
   AnalogFS afs;
   Command cmd(*coreThread);
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;
-  GSList *pallist, *filelist;
-  FileInfo *file;
-
+  
   /* 初始化 */
   len = 0;
   ptr = buf;
   buf[0] = '\0';
-  pallist = plist;
 
-  /* 将文件信息写入缓冲区 */
-  while (pallist) {
-    filelist = filist;
-    while (filelist) {
-      file = (FileInfo *)filelist->data;
-      if (file->fileown->GetKey() == ((PalInfo *)pallist->data)->GetKey()) {
+  for(auto pal: pals) {
+    for(auto file: files) {
+      if (file->fileown->GetKey() == pal->GetKey()) {
         if (access(file->filepath, F_OK) == -1) {
-          filelist = g_slist_next(filelist);
           continue;
         }
         name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
@@ -178,13 +174,12 @@ void SendFile::BcstFileInfo(GSList *plist, uint32_t opttype, GSList *filist) {
         len += strlen(ptr);
         ptr = buf + len;
       }
-      filelist = g_slist_next(filelist);
     }
-    cmd.SendFileInfo(coreThread->getUdpSock(), ((PalInfo *)pallist->data)->GetKey(), opttype,
+    cmd.SendFileInfo(coreThread->getUdpSock(), pal->GetKey(), opttype,
                      buf);
-    pallist = g_slist_next(pallist);
   }
 }
+
 
 /**
  * 发送文件数据.

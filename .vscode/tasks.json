@@ -20,45 +20,53 @@
                 "$gcc"
             ]
         },
-            {
-                   "type": "shell",
-                  "label": "ninja",
-                   "command": "ninja",
-                 "args": [],
-                 "options": {
-                     "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
-                 },
-                 "problemMatcher": {
-                     "owner": "cpp",
-                     "fileLocation": [
-                         "relative",
-                         "${workspaceFolder}/builddir"
-                     ],
-                     "pattern": {
-                         "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                         "file": 1,
-                         "line": 2,
-                         "column": 3,
-                         "severity": 4,
-                         "message": 5
-                     }
-                 },
-                 "group": {
-                     "kind": "build",
-                     "isDefault": true
-                 }
-             },
-             {
-                 "type": "shell",
-                 "label": "ninja clean",
-                 "command": "ninja",
-                 "args": [
-                     "clean"
-                 ],
-                 "options": {
-                     "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
-                 },
-                 "problemMatcher": []
-             }
+        {
+            "type": "shell",
+            "label": "ninja",
+            "command": "ninja",
+            "args": [],
+            "options": {
+                "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/builddir"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "ninja clean",
+            "command": "ninja",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Meson: Build Project",
+            "options": {
+                "cwd": "/Users/lidaobing/workspace/lidaobing/iptux/builddir"
+            },
+            "command": "meson compile"
+        }
     ]
 }

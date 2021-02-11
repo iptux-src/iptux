@@ -701,10 +701,8 @@ void CoreThread::SendGroupMessage(const PalKey& palKey, const std::string& messa
   Command(*this).SendGroupMsg(udpSock, GetPal(palKey), message.c_str());
 }
 
-void CoreThread::BcstFileInfoEntry(GSList *plist, GSList *flist) {
-  SendFile::BcstFileInfoEntry(this, plist, flist);
+void CoreThread::BcstFileInfoEntry(const vector<const PalInfo*>& pals, const vector<FileInfo*>& files) {
+  SendFile::BcstFileInfoEntry(this, pals, files);
 }
-
-
 
 }
