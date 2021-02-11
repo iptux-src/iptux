@@ -31,6 +31,8 @@ namespace iptux {
       return "SEND_SIGN";
     case IPTUX_SENDMSG:
       return "SENDMSG";
+    case IPMSG_GETFILEDATA:
+      return "GETFILEDATA";
     default:
       return stringFormat(_("unknown command mode: %d"), mode);
     }
