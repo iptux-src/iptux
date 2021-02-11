@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         runs-on: [ubuntu-18.04, ubuntu-20.04]
-        compiler: [g++, clang]
+        compiler: [g++, clang++]
     runs-on: ${{ matrix.runs-on }}
     steps:
     - uses: actions/checkout@v2
