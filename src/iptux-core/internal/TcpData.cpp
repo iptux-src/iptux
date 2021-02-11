@@ -19,6 +19,7 @@
 
 
 #include "iptux-core/internal/SendFile.h"
+#include "iptux-core/internal/CommandMode.h"
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 
@@ -69,6 +70,10 @@ void TcpData::DispatchTcpData() {
   /* 分派消息 */
   size = len;  //设置缓冲区数据的有效长度
   commandno = iptux_get_dec_number(buf, ':', 4);  //获取命令字
+  LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s", 
+    inAddrToString(addr.sin_addr).c_str(),
+    commandno, 
+    CommandMode(GET_MODE(commandno)).toString().c_str());
   switch (GET_MODE(commandno)) {
     case IPMSG_GETFILEDATA:
       RequestData(FileAttr::REGULAR);
