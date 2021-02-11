@@ -7,7 +7,25 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-on-mac:
+    strategy:
+      matrix:
+        runs-on: [macos-11.0, macos-10.15]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: brew install
+      run: brew install meson gettext gtk+3 jsoncpp glog
+    - name: meson
+      run: meson builddir
+    - name: build
+      run: ninja -v -C builddir
+    - name: test
+      run: ninja -v -C builddir test
+    - name: install
+      run: ninja -C builddir install
+
+  build-on-linux:
     strategy:
       matrix:
         runs-on: [ubuntu-18.04, ubuntu-20.04]
