@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ master ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -13,9 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: apt install
+      run: sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb
     - name: meson
       run: meson builddir
-    - name: build and test
-      run: ninja -C builddir test
+    - name: build
+      run: ninja -v -C builddir
+    - name: test
+      run: xvfb-run ninja -v -C builddir test
     - name: install
-      run: ninja -C builddir install
+      run: sudo ninja -C builddir install
