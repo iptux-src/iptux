@@ -21,7 +21,11 @@ jobs:
     - name: build
       run: ninja -v -C builddir
     - name: test
-      run: ninja -v -C builddir test
+      run: |
+        sudo ifconfig lo0 alias 127.0.0.2 up
+        sudo ifconfig lo0 alias 127.0.0.3 up
+        sudo ifconfig lo0 alias 127.0.0.4 up
+        ninja -v -C builddir test
     - name: install
       run: ninja -C builddir install
 
