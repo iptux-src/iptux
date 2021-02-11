@@ -430,7 +430,6 @@ bool DialogBase::SendEnclosureMsg() {
   GtkWidget *treeview;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GSList *list;
   gchar *filepath;
   FileInfo *file;
 
@@ -440,14 +439,13 @@ bool DialogBase::SendEnclosureMsg() {
   if (!gtk_tree_model_get_iter_first(model, &iter)) return false;
 
   /* 获取文件并发送 */
-  list = NULL;
+  vector<FileInfo*> files;
   do {
     gtk_tree_model_get(model, &iter, 3, &filepath, 4, &file, -1);
-    list = g_slist_append(list, file);
+    files.push_back(file);
   } while (gtk_tree_model_iter_next(model, &iter));
 
-  BroadcastEnclosureMsg(list);
-  g_slist_free(list);
+  BroadcastEnclosureMsg(files);
   timersend = gdk_threads_add_timeout(400, (GSourceFunc)UpdateFileSendUI, this);
   return true;
 }

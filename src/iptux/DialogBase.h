@@ -55,7 +55,7 @@ class DialogBase : public SessionAbstract {
   virtual bool SendTextMsg() = 0;
   /* TODO: Group SendTextMsg need add Picture */
   void FeedbackMsg(const gchar *msg);
-  virtual void BroadcastEnclosureMsg(GSList *){};
+  virtual void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) = 0;
 
   // 回调部分
   static void DialogDestory(DialogBase *);

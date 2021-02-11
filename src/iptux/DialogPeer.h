@@ -27,11 +27,11 @@ class DialogPeer : public DialogBase {
 
   static void PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf, std::shared_ptr<UiProgramData> progdt);
 
-  virtual void UpdatePalData(PalInfo *pal);
-  virtual void InsertPalData(PalInfo *pal);
-  virtual void DelPalData(PalInfo *pal);
-  virtual void ClearAllPalData();
-  virtual GSList *GetSelPal();
+  void UpdatePalData(PalInfo *pal) override;
+  void InsertPalData(PalInfo *pal) override;
+  void DelPalData(PalInfo *pal) override;
+  void ClearAllPalData() override;
+  GSList *GetSelPal() override;
   static void ShowDialogPeer(DialogPeer *dlgpr);
   void insertPicture();
 
@@ -55,9 +55,10 @@ class DialogPeer : public DialogBase {
   GtkTreeModel *CreateFileToReceiveModel();
   GtkWidget *CreateFileReceivedTree(GtkTreeModel *model);
   GtkTreeModel *CreateFileReceivedModel();
-  GtkWidget *CreateFileMenu();
+  GtkWidget *CreateFileMenu() override;
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
-  void BroadcastEnclosureMsg(GSList *list);
+  void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
+
   bool SendTextMsg();
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara *PackageMsg(const std::vector<ChipData>& dtlist);

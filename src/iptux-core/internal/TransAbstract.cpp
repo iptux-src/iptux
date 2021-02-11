@@ -5,7 +5,9 @@ namespace iptux {
 TransAbstract::TransAbstract() {}
 TransAbstract::~TransAbstract() {}
 
-  // void SetTaskId(int taskId);
+void TransAbstract::SetTaskId(int taskId) {
+  this->taskId = taskId;
+}
 
 int TransAbstract::GetTaskId() {
   return taskId;

@@ -59,7 +59,7 @@ class DialogGroup : public DialogBase {
   GtkWidget *CreateMemberTree(GtkTreeModel *model);
 
   bool SendTextMsg();
-  void BroadcastEnclosureMsg(GSList *list);
+  void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
   void BroadcastTextMsg(const gchar *msg);
 
   static GtkWidget *CreatePopupMenu(GtkTreeModel *model);

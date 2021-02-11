@@ -656,8 +656,10 @@ PFileInfo CoreThread::GetPrivateFileByPacketN(uint32_t packageNum, uint32_t file
 }
 
 void CoreThread::RegisterTransTask(std::shared_ptr<TransAbstract> task) {
-  pImpl->lastTransTaskId++;
-  pImpl->transTasks[pImpl->lastTransTaskId] = task;
+  int taskId = ++(pImpl->lastTransTaskId);
+  task->SetTaskId(taskId);
+  pImpl->transTasks[taskId] = task;
+  LOG_INFO("add trans task %d", taskId);
 }
 
 bool CoreThread::TerminateTransTask(int taskId) {
@@ -699,10 +701,8 @@ void CoreThread::SendGroupMessage(const PalKey& palKey, const std::string& messa
   Command(*this).SendGroupMsg(udpSock, GetPal(palKey), message.c_str());
 }
 
-void CoreThread::BcstFileInfoEntry(GSList *plist, GSList *flist) {
-  SendFile::BcstFileInfoEntry(this, plist, flist);
+void CoreThread::BcstFileInfoEntry(const vector<const PalInfo*>& pals, const vector<FileInfo*>& files) {
+  SendFile::BcstFileInfoEntry(this, pals, files);
 }
-
-
 
 }
