@@ -29,23 +29,30 @@
 #include "iptux/Application.h"
 #include "iptux/SoundSystem.h"
 
+#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 
 using namespace std;
 using namespace iptux;
 
+static gboolean version = FALSE;
+static gchar* configFilename = nullptr;
+static gchar* logger = nullptr;
+static gchar* bindIp = nullptr;
+static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
+
 string getConfigPath() {
-  const char* res1 =
-      g_build_path("/", g_getenv("HOME"), ".iptux", "config.json", NULL);
+  const char* res1;
+  if(bindIp== nullptr) {
+    res1 = g_build_path("/", g_getenv("HOME"), ".iptux", "config.json", NULL);
+  } else {
+    res1 = g_build_path("/", g_getenv("HOME"), ".iptux", 
+      stringFormat("config.%s.json", bindIp).c_str(), NULL);
+  }
   string res2(res1);
   g_free(gpointer(res1));
   return res2;
 }
-
-static gboolean version = FALSE;
-static gchar* configFilename = nullptr;
-static gchar* logger = nullptr;
-static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 
 static GOptionEntry entries[] = {
     {"version", 'v', 0, G_OPTION_ARG_NONE, &version,
@@ -54,6 +61,8 @@ static GOptionEntry entries[] = {
      "Specify config path", "CONFIG_PATH"},
     {"log", 'l', 0, G_OPTION_ARG_STRING, &logger,
      "Specify log level: DEBUG, INFO, WARN, default is WARN", "LEVEL"},
+    {"bind", 'b', 0, G_OPTION_ARG_STRING, &bindIp,
+     "Specify bind IP, like 127.0.0.2", "IP"},
     {NULL}};
 
 static string nowAsString() {
@@ -152,7 +161,9 @@ int main(int argc, char** argv) {
   string configPath = configFilename ? configFilename : getConfigPath();
   auto config = make_shared<IptuxConfig>(configPath);
   dealLog(*config);
-
+  if(bindIp) {
+    config->SetString("bind_ip", bindIp);
+  }
   Application app(config);
   return app.run(argc, argv);
 }
