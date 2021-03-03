@@ -121,7 +121,7 @@ PalTreeModel * palTreeModelNew() {
   model = gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS),
                              GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF, G_TYPE_STRING,
                              G_TYPE_STRING, PANGO_TYPE_ATTR_LIST,
-                             GDK_TYPE_COLOR, G_TYPE_POINTER);
+                             GDK_TYPE_RGBA, G_TYPE_POINTER);
   palTreeModelSetSortKey(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
   gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
                                        GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
