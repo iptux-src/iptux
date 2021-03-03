@@ -88,8 +88,6 @@ gint paltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
 gint paltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
                                         GtkTreeIter *b) {
   GroupInfo *agrpinf, *bgrpinf;
-  gint result;
-
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
   if (agrpinf->type == GROUP_BELONG_TYPE_REGULAR &&
