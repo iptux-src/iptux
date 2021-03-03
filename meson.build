@@ -5,6 +5,5 @@ project('iptux', 'cpp',
 so_version = '0.8.0'
 subdir('src')
 subdir('share')
-subdir('desktop')
 subdir('po')
 subdir('examples')
