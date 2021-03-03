@@ -1,4 +1,3 @@
-install_subdir('hicolor', install_dir: 'share/icons')
 i18n = import('i18n')
 i18n.merge_file('iptux.desktop',
     type: 'desktop',
