@@ -417,6 +417,7 @@ void MainWindow::OpenTransWindow() {
     transWindow = GTK_WIDGET(trans_window_new(GTK_WINDOW(window)));
     gtk_widget_show_all(transWindow);
     gtk_widget_hide(transWindow);
+    g_signal_connect_swapped(transWindow, "delete-event", G_CALLBACK(onTransWindowDelete), this);
   }
   gtk_window_present(GTK_WINDOW(transWindow));
 }
@@ -1814,6 +1815,11 @@ gboolean MainWindow::processEventCallback(gpointer data) {
   callback->window->processEventInMainThread(callback->event);
   delete callback;
   return G_SOURCE_REMOVE;
+}
+
+gboolean MainWindow::onTransWindowDelete(MainWindow& self) {
+  self.transWindow = nullptr;
+  return FALSE;
 }
 
 
