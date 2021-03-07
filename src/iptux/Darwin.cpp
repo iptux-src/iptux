@@ -1,5 +1,6 @@
 #include "Darwin.h"
 
+#include <glib/gi18n.h>
 #include <gtkosxapplication.h>
 
 using namespace std;
@@ -12,7 +13,7 @@ namespace iptux {
     GError *error = nullptr;
     auto pixbuf = gtk_icon_theme_load_icon(theme, "network-transmit", 64, GtkIconLookupFlags(0), &error);
     if(!pixbuf) {
-      g_warning ("Couldn’t load icon: %s", error->message);
+      g_warning (_("Couldn’t load icon: %s"), error->message);
       g_error_free (error);
       return;
     }
