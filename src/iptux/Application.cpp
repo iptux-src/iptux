@@ -39,6 +39,13 @@ namespace {
     signal(SIGPIPE, SIG_IGN);
     g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
   }
+
+  void init_theme() {
+    auto theme = gtk_icon_theme_get_default();
+    gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/icon");
+    gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/menu");
+    gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/tip");
+  }
 }
 
 Application::Application(shared_ptr<IptuxConfig> config)
@@ -67,6 +74,8 @@ void Application::onStartup(Application& self) {
   g_cthrd = new UiCoreThread(self.data);
   self.window = new MainWindow(self.app, *g_cthrd);
   g_mwin = self.window;
+
+  init_theme();
 
   iptux_register_resource();
   GActionEntry app_entries[] =  {

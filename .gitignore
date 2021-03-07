@@ -121,3 +121,4 @@ coverage.info
 .vscode/launch.json
 /vs
 .vscode/tasks.json
+.DS_Store

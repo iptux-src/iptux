@@ -11,7 +11,7 @@ namespace iptux {
     auto app = gtkosx_application_get();
     auto theme = gtk_icon_theme_get_default();
     GError *error = nullptr;
-    auto pixbuf = gtk_icon_theme_load_icon(theme, "network-transmit", 64, GtkIconLookupFlags(0), &error);
+    auto pixbuf = gtk_icon_theme_load_icon(theme, "icon-bug", 64, GtkIconLookupFlags(0), &error);
     if(!pixbuf) {
       g_warning (_("Couldn’t load icon: %s"), error->message);
       g_error_free (error);
