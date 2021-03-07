@@ -10,4 +10,6 @@ TEST(Application, Constructor) {
   gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
   Application app(config);
+  app.startup();
+  app.activate();
 }

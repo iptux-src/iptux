@@ -69,6 +69,14 @@ int Application::run(int argc, char** argv) {
   return g_application_run (G_APPLICATION (app), argc, argv);
 }
 
+void Application::startup() {
+  Application::onStartup(*this);
+}
+
+void Application::activate() {
+  Application::onActivate(*this);
+}
+
 void Application::onStartup(Application& self) {
   self.data = make_shared<UiProgramData>(self.config);
   g_cthrd = new UiCoreThread(self.data);

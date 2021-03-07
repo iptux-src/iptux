@@ -26,6 +26,11 @@ private:
   ShareFile* shareFile;
   bool started {false};
 
+public:
+  // for test
+  void startup();
+  void activate();
+
 private:
   static void onStartup (Application& self);
   static void onActivate (Application& self);
