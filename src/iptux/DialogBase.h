@@ -71,7 +71,7 @@ class DialogBase : public SessionAbstract {
                                        GdkEventConfigure *event, GData **dtset);
   static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                  GData **dtset);
-  static gint EncosureTreePopup(GtkWidget *widget, GdkEvent *event);
+  static gint EnclosureTreePopup(GtkWidget *widget, GdkEvent *event);
   static gboolean UpdateFileSendUI(DialogBase *dlggrp);
   static void RemoveSelectedEnclosure(GtkWidget *widget);
   static void OpenTransDlg(DialogBase *dlgpr);

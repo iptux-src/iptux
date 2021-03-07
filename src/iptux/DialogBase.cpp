@@ -625,7 +625,7 @@ void DialogBase::RemoveSelectedFromTree(GtkWidget *widget) {
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogBase::EncosureTreePopup(GtkWidget *treeview, GdkEvent *event) {
+gint DialogBase::EnclosureTreePopup(GtkWidget *treeview, GdkEvent *event) {
   GtkWidget *menu, *menuitem;
   GdkEventButton *event_button;
 
@@ -772,7 +772,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(EncosureTreePopup), view);
+                           G_CALLBACK(EnclosureTreePopup), view);
   return view;
 }
 
