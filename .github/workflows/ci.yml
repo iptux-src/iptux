@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '**' ]
   pull_request:
     branches: [ master ]
 
@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: brew install
-      run: brew install meson gettext gtk+3 jsoncpp glog
+      run: brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration
     - name: meson
       run: meson builddir
     - name: build

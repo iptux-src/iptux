@@ -62,9 +62,17 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 sources += [iptux_resource_cpp, iptux_resource_h]
 inc = include_directories('..')
 
+dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep]
+
+if host_machine.system() == 'darwin'
+    gtk_mac_integration_dep = dependency('gtk-mac-integration-gtk3')
+    dependencies += [gtk_mac_integration_dep]
+    sources += ['Darwin.cpp']
+endif
+
 libiptux = static_library('iptux',
     sources,
-    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep],
+    dependencies: dependencies,
     link_with: [libiptux_core],
     include_directories: inc,
 )

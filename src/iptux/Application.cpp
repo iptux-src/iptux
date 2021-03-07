@@ -15,6 +15,10 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 
+#if SYSTEM_DARWIN
+#include "iptux/Darwin.h"
+#endif
+
 using namespace std;
 
 typedef void (* GActionCallback) (GSimpleAction *action,
@@ -34,6 +38,13 @@ namespace {
 
     signal(SIGPIPE, SIG_IGN);
     g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
+  }
+
+  void init_theme() {
+    auto theme = gtk_icon_theme_get_default();
+    gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/icon");
+    gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/menu");
+    gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/tip");
   }
 }
 
@@ -64,6 +75,8 @@ void Application::onStartup(Application& self) {
   self.window = new MainWindow(self.app, *g_cthrd);
   g_mwin = self.window;
 
+  init_theme();
+
   iptux_register_resource();
   GActionEntry app_entries[] =  {
       { "quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL, {0,0,0}},
@@ -82,6 +95,10 @@ void Application::onStartup(Application& self) {
   auto menubar = G_MENU_MODEL (gtk_builder_get_object (builder, "menubar"));
   gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
   g_object_unref (builder);
+
+#if SYSTEM_DARWIN
+  install_darwin_icon();
+#endif
 }
 
 void Application::onActivate(Application& self) {

@@ -1,9 +1,15 @@
-# [unreleased] (2019-XX-XX)
+# [unreleased] (2021-XX-XX)
+
+## Features
 
 * [#?] add a config option `bind_ip` to specify binding ip.
+* [#?] switch to GTK+3, and use `GtkApplication`.
+* [#?] show icon under macOS.
+
+## Bugs
+
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
-* [#?] switch to GTK+3, and use `GtkApplication`.
 * [#125] fix crash on UdpData::SomeoneSendmsg.
 * [#140] fix crash on TransWindow::TerminateTransTask.
 * [#132] fix file accepted when cancel the directory chooser dialog.

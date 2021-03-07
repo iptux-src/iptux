@@ -38,7 +38,8 @@
                 "/opt/homebrew/Cellar/pcre/8.44/include",
                 "/opt/homebrew/Cellar/jsoncpp/1.9.4_1/include",
                 "/opt/homebrew/Cellar/glog/0.4.0/include",
-                "/opt/homebrew/Cellar/xorgproto/2021.3/include"
+                "/opt/homebrew/Cellar/xorgproto/2021.3/include",
+                "/opt/homebrew/Cellar/gtk-mac-integration/3.0.0/include/"
             ],
             "defines": [],
             "macFrameworkPath": [

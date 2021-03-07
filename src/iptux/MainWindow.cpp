@@ -1780,10 +1780,6 @@ void MainWindow::InitThemeSublayerData() {
   GdkPixbuf *pixbuf;
 
   theme = gtk_icon_theme_get_default();
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH);
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/icon");
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/menu");
-  gtk_icon_theme_append_search_path(theme, __PIXMAPS_PATH "/tip");
 
   factory = gtk_icon_factory_new();
   gtk_icon_factory_add_default(factory);
