@@ -195,7 +195,7 @@ void StatusIcon::onPopupMenu(StatusIcon *self, guint button, guint time) {
 
   menu = self->CreatePopupMenu();
   gtk_widget_show_all(menu);
-  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, time);
+  gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
 }
 
 /**

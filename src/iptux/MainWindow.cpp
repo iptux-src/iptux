@@ -1394,9 +1394,7 @@ gboolean MainWindow::PaltreePopupMenu(GtkWidget *treeview,
   /* 弹出菜单 */
   menu = CreatePaltreePopupMenu(grpinf);
   gtk_widget_show_all(menu);
-  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button,
-                 event->time);
-
+  gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
   return TRUE;
 }
 
