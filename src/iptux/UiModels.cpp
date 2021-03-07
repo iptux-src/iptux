@@ -119,7 +119,7 @@ PalTreeModel * palTreeModelNew() {
   model = gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS),
                              GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF, G_TYPE_STRING,
                              G_TYPE_STRING, PANGO_TYPE_ATTR_LIST,
-                             GDK_TYPE_COLOR, G_TYPE_POINTER);
+                             GDK_TYPE_RGBA, G_TYPE_POINTER);
   palTreeModelSetSortKey(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
   gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
                                        GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
@@ -156,7 +156,8 @@ void groupInfo2PalTreeModel(GroupInfo *grpinf,
   palTreeModelFillFromGroupInfo(model, iter, grpinf, font);
 }
 
-static const GdkColor color = {0xff, 0x5252, 0xb8b8, 0x3838};
+static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
+
 
 /**
  * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
