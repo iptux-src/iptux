@@ -67,6 +67,7 @@ dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep]
 if host_machine.system() == 'darwin'
     gtk_mac_integration_dep = dependency('gtk-mac-integration-gtk3')
     dependencies += [gtk_mac_integration_dep]
+    sources += ['Darwin.cpp']
 endif
 
 libiptux = static_library('iptux',

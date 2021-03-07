@@ -15,6 +15,10 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 
+#if SYSTEM_DARWIN
+#include "iptux/Darwin.h"
+#endif
+
 using namespace std;
 
 typedef void (* GActionCallback) (GSimpleAction *action,
@@ -82,6 +86,10 @@ void Application::onStartup(Application& self) {
   auto menubar = G_MENU_MODEL (gtk_builder_get_object (builder, "menubar"));
   gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
   g_object_unref (builder);
+
+#if SYSTEM_DARWIN
+  install_darwin_icon();
+#endif
 }
 
 void Application::onActivate(Application& self) {
