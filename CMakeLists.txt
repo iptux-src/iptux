@@ -3,9 +3,12 @@ project (iptux
 	VERSION 0.7.5)
 
 set (CMAKE_CXX_STANDARD 11)
-if (APPLE AND EXISTS /usr/local/opt/gettext)
-    list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/gettext")
-    set(CMAKE_EXE_LINKER_FLAGS "-L/usr/local/opt/gettext/lib")
+if (APPLE AND EXISTS /opt/homebrew/opt/gettext)
+  list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/gettext")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/opt/homebrew/lib -L/opt/homebrew/opt/gettext/lib")
+elseif(APPLE AND EXISTS /usr/local/opt/gettext)
+  list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/gettext")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/usr/local/opt/gettext/lib")
 endif()
 
 include(GNUInstallDirs)
