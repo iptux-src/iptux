@@ -17,9 +17,17 @@ if get_option('dev')
 else
     conf_data.set('SHARE_IPTUX_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'iptux'))
 endif
+
 if gstreamer_dep.found()
     conf_data.set('GST_FOUND', true)
 endif
+
+if host_machine.system() == 'darwin'
+    conf_data.set('SYSTEM_DARWIN', 1)
+else
+    conf_data.set('SYSTEM_DARWIN', 0)
+endif
+
 configure_file(input : 'config.h.in',
                output : 'config.h',
                configuration : conf_data)
