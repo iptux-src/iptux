@@ -20,14 +20,14 @@ jobs:
       run: meson builddir
     - name: build
       run: ninja -v -C builddir
+    - name: install
+      run: ninja -C builddir install
     - name: test
       run: |
         sudo ifconfig lo0 alias 127.0.0.2 up
         sudo ifconfig lo0 alias 127.0.0.3 up
         sudo ifconfig lo0 alias 127.0.0.4 up
         ninja -v -C builddir test
-    - name: install
-      run: ninja -C builddir install
 
   build-on-linux:
     strategy:
@@ -45,10 +45,10 @@ jobs:
         CXX: ${{ matrix.compiler }}
     - name: build
       run: ninja -v -C builddir
-    - name: test
-      run: xvfb-run ninja -v -C builddir test
     - name: install
       run: sudo ninja -C builddir install
+    - name: test
+      run: xvfb-run ninja -v -C builddir test
 
   codecov:
     runs-on: ubuntu-20.04
@@ -60,10 +60,10 @@ jobs:
       run: meson -D b_coverage=true builddir
     - name: build
       run: ninja -v -C builddir
-    - name: test
-      run: xvfb-run ninja -v -C builddir test
     - name: install
       run: sudo ninja -C builddir install
+    - name: test
+      run: xvfb-run ninja -v -C builddir test
     - name: lcov
       run: |
         lcov --directory . --capture --output-file coverage.info; # capture coverage info

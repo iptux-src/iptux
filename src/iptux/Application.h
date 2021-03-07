@@ -20,6 +20,7 @@ class Application {
 private:
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<UiProgramData> data;
+  std::shared_ptr<UiCoreThread> cthrd;
 
   GtkApplication* app;
   MainWindow* window;
