@@ -763,7 +763,7 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model) {
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
                                       "text", PalTreeModelColumn ::INFO,
                                       "attributes", PalTreeModelColumn ::STYLE,
-                                      "foreground-gdk", PalTreeModelColumn ::COLOR,
+                                      "foreground-rgba", PalTreeModelColumn ::COLOR,
                                       NULL);
   /* 扩展信息区域 */
   cell = gtk_cell_renderer_text_new();
@@ -772,7 +772,7 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model) {
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
                                       "text", PalTreeModelColumn ::EXTRAS,
                                       "attributes", PalTreeModelColumn ::STYLE,
-                                      "foreground-gdk", PalTreeModelColumn ::COLOR,
+                                      "foreground-rgba", PalTreeModelColumn ::COLOR,
                                       NULL);
 
   /* 连接信号 */
@@ -938,17 +938,17 @@ bool MainWindow::GroupGetPaltreeItemWithParent(GtkTreeModel *model,
  */
 void MainWindow::BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                          bool blinking) {
-  static GdkColor color1 = {0xff, 0x5252, 0xb8b8, 0x3838},
-                  color2 = {0xff, 0x0000, 0x0000, 0xffff};
-  GdkColor *color;
+  static GdkRGBA color1 = {0.3216, 0.7216, 0.2196, 0.0},
+                 color2 = {0.0, 0.0, 1.0, 0.0};
+  GdkRGBA *color;
 
   if (blinking) {
     gtk_tree_model_get(model, iter, 5, &color, -1);
-    if ((color->red == color1.red) && (color->green == color1.green) &&
-        (color->blue == color1.blue))
+    if(gdk_rgba_equal(color, &color1)) {
       gtk_tree_store_set(GTK_TREE_STORE(model), iter, 5, &color2, -1);
-    else
+    } else {
       gtk_tree_store_set(GTK_TREE_STORE(model), iter, 5, &color1, -1);
+    }
   } else
     gtk_tree_store_set(GTK_TREE_STORE(model), iter, 5, &color1, -1);
 }

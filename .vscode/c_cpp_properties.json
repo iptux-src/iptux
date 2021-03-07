@@ -6,6 +6,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/builddir/src",
                 "${workspaceFolder}/src/googletest/include",
+                "/Library/Developer/CommandLineTools/usr/include/c++/v1/",
                 "/opt/homebrew/Cellar/libffi/3.3_2/include",
                 "/opt/homebrew/Cellar/gtk+3/3.24.26/include/gtk-3.0",
                 "/opt/homebrew/Cellar/glib/2.66.7/include/gio-unix-2.0",
