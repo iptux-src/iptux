@@ -42,10 +42,6 @@ static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
   g_assert(parent != nullptr);
-  // g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
-  // g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
-  g_assert(g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed") != nullptr);
-
   GtkWindow *window;
 
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
@@ -67,7 +63,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_signal_connect(window, "delete-event", G_CALLBACK(gtk_widget_hide), NULL);
   g_signal_connect(window, "configure-event", G_CALLBACK(TWinConfigureEvent), NULL);
   g_signal_connect_swapped(
-      g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed"),
+      g_action_map_lookup_action(G_ACTION_MAP(app->getApp()), "trans_model_changed"),
       "activate",
       G_CALLBACK(UpdateTransUI),
       window

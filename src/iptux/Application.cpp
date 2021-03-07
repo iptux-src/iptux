@@ -96,6 +96,7 @@ void Application::onStartup(Application& self) {
       { "help.report_bug", G_ACTION_CALLBACK(onReportBug), NULL, NULL, NULL, {0,0,0}},
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
+      { "trans_model_changed" },
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),

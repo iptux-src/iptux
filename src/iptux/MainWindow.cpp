@@ -108,7 +108,6 @@ void MainWindow::CreateWindow() {
       { "about", G_ACTION_CALLBACK(onAbout)},
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
       { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
-      { "trans_model_changed"},
   };
 
   add_accelerator(app->getApp(), "win.refresh", "F5");
@@ -447,7 +446,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   /* 重设数据 */
   transModelFillFromTransFileModel(model, &iter, para);
   g_action_group_activate_action(
-      G_ACTION_GROUP(window),
+      G_ACTION_GROUP(app->getApp()),
       "trans_model_changed",
       nullptr
   );
