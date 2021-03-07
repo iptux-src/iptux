@@ -59,7 +59,7 @@ class DialogPeer : public DialogBase {
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
 
-  bool SendTextMsg();
+  bool SendTextMsg() override;
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara *PackageMsg(const std::vector<ChipData>& dtlist);
   //回调处理部分
