@@ -36,6 +36,10 @@ TransModel* transModelNew() {
   return GTK_TREE_MODEL(model);
 }
 
+void transModelDelete(TransModel* model) {
+  g_object_unref(model);
+}
+
 void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel& para) {
   gtk_list_store_set(
       GTK_LIST_STORE(model), iter,

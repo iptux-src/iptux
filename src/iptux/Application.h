@@ -5,10 +5,12 @@
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
-#include "MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "ShareFile.h"
 
 namespace iptux {
+
+class MainWindow;
 
 class Application {
  public:
@@ -17,14 +19,25 @@ class Application {
 
   int run(int argc, char** argv);
 
+  GtkApplication* getApp() {return app;}
+  std::shared_ptr<IptuxConfig> getConfig() { return config; }
+  TransModel* getTransModel() { return transModel; }
+
 private:
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<UiProgramData> data;
+  std::shared_ptr<UiCoreThread> cthrd;
 
   GtkApplication* app;
   MainWindow* window;
   ShareFile* shareFile;
+  TransModel* transModel;
   bool started {false};
+
+public:
+  // for test
+  void startup();
+  void activate();
 
 private:
   static void onStartup (Application& self);

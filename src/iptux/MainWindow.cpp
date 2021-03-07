@@ -45,7 +45,7 @@ static gchar* palInfo2HintMarkup(const PalInfo *pal);
 /**
  * 类构造函数.
  */
-MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
+MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
     : app(app),
       coreThread(coreThread),
       window(nullptr),
@@ -93,8 +93,7 @@ void MainWindow::CreateWindow() {
   /* 创建主窗口 */
   window = CreateMainWindow();
   g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-  g_object_set_data_full(G_OBJECT(window), "trans-model", transModelNew(),
-                           GDestroyNotify(g_object_unref));
+  g_object_set_data(G_OBJECT(window), "trans-model", app->getTransModel());
 
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
@@ -109,12 +108,11 @@ void MainWindow::CreateWindow() {
       { "about", G_ACTION_CALLBACK(onAbout)},
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
       { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
-      { "trans_model_changed"},
   };
 
-  add_accelerator(app, "win.refresh", "F5");
-  add_accelerator(app, "win.detect", "<Primary>D");
-  add_accelerator(app, "win.find", "<Primary>F");
+  add_accelerator(app->getApp(), "win.refresh", "F5");
+  add_accelerator(app->getApp(), "win.detect", "<Primary>D");
+  add_accelerator(app->getApp(), "win.find", "<Primary>F");
 
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -414,7 +412,7 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
  */
 void MainWindow::OpenTransWindow() {
   if(transWindow == nullptr) {
-    transWindow = GTK_WIDGET(trans_window_new(GTK_WINDOW(window)));
+    transWindow = GTK_WIDGET(trans_window_new(app, GTK_WINDOW(window)));
     gtk_widget_show_all(transWindow);
     gtk_widget_hide(transWindow);
     g_signal_connect_swapped(transWindow, "delete-event", G_CALLBACK(onTransWindowDelete), this);
@@ -448,7 +446,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   /* 重设数据 */
   transModelFillFromTransFileModel(model, &iter, para);
   g_action_group_activate_action(
-      G_ACTION_GROUP(window),
+      G_ACTION_GROUP(app->getApp()),
       "trans_model_changed",
       nullptr
   );
@@ -540,7 +538,7 @@ GtkWidget *MainWindow::CreateMainWindow() {
       GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE | GDK_HINT_BASE_SIZE |
       /*GDK_HINT_RESIZE_INC |*/ GDK_HINT_WIN_GRAVITY | GDK_HINT_USER_POS |
       GDK_HINT_USER_SIZE);
-  window = gtk_application_window_new(app);
+  window = gtk_application_window_new(app->getApp());
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
   if(config->GetString("bind_ip").empty()) {
     gtk_window_set_title(GTK_WINDOW(window), _("iptux"));

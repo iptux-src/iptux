@@ -58,10 +58,13 @@ Application::Application(shared_ptr<IptuxConfig> config)
   app = gtk_application_new (application_id.c_str(), G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
+
+  transModel = transModelNew();
 }
 
 Application::~Application() {
   g_object_unref(app);
+  transModelDelete(transModel);
   delete window;
 }
 
@@ -69,10 +72,19 @@ int Application::run(int argc, char** argv) {
   return g_application_run (G_APPLICATION (app), argc, argv);
 }
 
+void Application::startup() {
+  Application::onStartup(*this);
+}
+
+void Application::activate() {
+  Application::onActivate(*this);
+}
+
 void Application::onStartup(Application& self) {
   self.data = make_shared<UiProgramData>(self.config);
-  g_cthrd = new UiCoreThread(self.data);
-  self.window = new MainWindow(self.app, *g_cthrd);
+  self.cthrd = make_shared<UiCoreThread>(self.data);
+  g_cthrd = self.cthrd.get();
+  self.window = new MainWindow(&self, *g_cthrd);
   g_mwin = self.window;
 
   init_theme();
@@ -84,6 +96,7 @@ void Application::onStartup(Application& self) {
       { "help.report_bug", G_ACTION_CALLBACK(onReportBug), NULL, NULL, NULL, {0,0,0}},
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
+      { "trans_model_changed" },
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),

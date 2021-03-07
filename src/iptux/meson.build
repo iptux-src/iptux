@@ -83,6 +83,7 @@ test_sources = files([
     'ApplicationTest.cpp',
     'LogSystemTest.cpp',
     'TestMain.cpp',
+    'TransWindowTest.cpp',
     'UiCoreThreadTest.cpp',
     'UiProgramDataTest.cpp',
 ])

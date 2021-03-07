@@ -34,6 +34,7 @@ enum class TransModelColumn {
 };
 typedef GtkTreeModel TransModel;
 TransModel* transModelNew();
+void transModelDelete(TransModel*);
 void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel&);
 
 enum class PalTreeModelSortKey {

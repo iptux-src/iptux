@@ -3,10 +3,12 @@
 
 #include <gtk/gtk.h>
 
+#include "iptux/Application.h"
+
 namespace iptux {
 
 typedef GtkWindow TransWindow;
-TransWindow* trans_window_new(GtkWindow* parent);
+TransWindow* trans_window_new(Application* app, GtkWindow* parent);
 
 }
 

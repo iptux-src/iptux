@@ -20,6 +20,7 @@ namespace iptux {
 
 class TransWindowPrivate {
  public:
+  Application* app;
   GtkWidget* transTreeviewWidget;
 
  public:
@@ -38,18 +39,18 @@ static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 
-TransWindow *trans_window_new(GtkWindow *parent) {
-  g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
-  g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
-  g_assert(g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed") != nullptr);
-
+TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
+  g_assert(app != nullptr);
   GtkWindow *window;
 
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   TransWindowPrivate* priv = new TransWindowPrivate;
+  priv->app = app;
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv, GDestroyNotify(TransWindowPrivate::destroy));
-  gtk_window_set_transient_for(window, parent);
-  gtk_window_set_destroy_with_parent(window, true);
+  if(parent) {
+    gtk_window_set_transient_for(window, parent);
+    gtk_window_set_destroy_with_parent(window, true);
+  }
 
   auto config = trans_window_get_config(window);
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
@@ -63,7 +64,7 @@ TransWindow *trans_window_new(GtkWindow *parent) {
   g_signal_connect(window, "delete-event", G_CALLBACK(gtk_widget_hide), NULL);
   g_signal_connect(window, "configure-event", G_CALLBACK(TWinConfigureEvent), NULL);
   g_signal_connect_swapped(
-      g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed"),
+      g_action_map_lookup_action(G_ACTION_MAP(app->getApp()), "trans_model_changed"),
       "activate",
       G_CALLBACK(UpdateTransUI),
       window
@@ -90,13 +91,11 @@ gboolean TWinConfigureEvent(GtkWindow *window) {
 }
 
 shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *window) {
-  GtkWindow* parent = gtk_window_get_transient_for(window);
-  return *(static_cast<shared_ptr<IptuxConfig> *>(g_object_get_data(G_OBJECT(parent), "iptux-config")));
+  return getPriv(window).app->getConfig();
 }
 
-GtkTreeModel* trans_window_get_trans_model(GtkWindow* window) {
-  GtkWindow* parent = gtk_window_get_transient_for(window);
-  return GTK_TREE_MODEL(g_object_get_data(G_OBJECT(parent), "trans-model"));
+TransModel* trans_window_get_trans_model(GtkWindow* window) {
+  return getPriv(window).app->getTransModel();
 }
 
 
