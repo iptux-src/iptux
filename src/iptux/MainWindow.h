@@ -172,6 +172,7 @@ class MainWindow {
   static void onSortType (GSimpleAction *action, GVariant* value, MainWindow& self);
   static void onSortBy (GSimpleAction *action, GVariant* value, MainWindow& self);
   static void onActive(MainWindow& self);
+  static gboolean onTransWindowDelete(MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
 };
 
