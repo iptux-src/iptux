@@ -41,15 +41,16 @@ static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 
 TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
-  g_assert(parent != nullptr);
   GtkWindow *window;
 
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   TransWindowPrivate* priv = new TransWindowPrivate;
   priv->app = app;
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv, GDestroyNotify(TransWindowPrivate::destroy));
-  gtk_window_set_transient_for(window, parent);
-  gtk_window_set_destroy_with_parent(window, true);
+  if(parent) {
+    gtk_window_set_transient_for(window, parent);
+    gtk_window_set_destroy_with_parent(window, true);
+  }
 
   auto config = trans_window_get_config(window);
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
