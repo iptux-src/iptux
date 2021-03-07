@@ -86,7 +86,7 @@ iptux
 ### Mac OS X
 
 ```sh
-brew install gettext gtk+3 jsoncpp meson
+brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration
 # if you need the sound support
 brew install gstreamer
 brew install gst-plugins-base --with-libogg --with-libvorbis
