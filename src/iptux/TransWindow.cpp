@@ -20,6 +20,7 @@ namespace iptux {
 
 class TransWindowPrivate {
  public:
+  Application* app;
   GtkWidget* transTreeviewWidget;
 
  public:
@@ -38,8 +39,10 @@ static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 
-TransWindow *trans_window_new(GtkWindow *parent) {
-  g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
+TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
+  g_assert(app != nullptr);
+  g_assert(parent != nullptr);
+  // g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
   g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
   g_assert(g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed") != nullptr);
 
@@ -47,6 +50,7 @@ TransWindow *trans_window_new(GtkWindow *parent) {
 
   window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   TransWindowPrivate* priv = new TransWindowPrivate;
+  priv->app = app;
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv, GDestroyNotify(TransWindowPrivate::destroy));
   gtk_window_set_transient_for(window, parent);
   gtk_window_set_destroy_with_parent(window, true);
@@ -90,8 +94,7 @@ gboolean TWinConfigureEvent(GtkWindow *window) {
 }
 
 shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *window) {
-  GtkWindow* parent = gtk_window_get_transient_for(window);
-  return *(static_cast<shared_ptr<IptuxConfig> *>(g_object_get_data(G_OBJECT(parent), "iptux-config")));
+  return getPriv(window).app->getConfig();
 }
 
 GtkTreeModel* trans_window_get_trans_model(GtkWindow* window) {

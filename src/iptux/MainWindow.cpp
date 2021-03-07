@@ -45,7 +45,7 @@ static gchar* palInfo2HintMarkup(const PalInfo *pal);
 /**
  * 类构造函数.
  */
-MainWindow::MainWindow(GtkApplication* app, UiCoreThread& coreThread)
+MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
     : app(app),
       coreThread(coreThread),
       window(nullptr),
@@ -112,9 +112,9 @@ void MainWindow::CreateWindow() {
       { "trans_model_changed"},
   };
 
-  add_accelerator(app, "win.refresh", "F5");
-  add_accelerator(app, "win.detect", "<Primary>D");
-  add_accelerator(app, "win.find", "<Primary>F");
+  add_accelerator(app->getApp(), "win.refresh", "F5");
+  add_accelerator(app->getApp(), "win.detect", "<Primary>D");
+  add_accelerator(app->getApp(), "win.find", "<Primary>F");
 
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -414,7 +414,7 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
  */
 void MainWindow::OpenTransWindow() {
   if(transWindow == nullptr) {
-    transWindow = GTK_WIDGET(trans_window_new(GTK_WINDOW(window)));
+    transWindow = GTK_WIDGET(trans_window_new(app, GTK_WINDOW(window)));
     gtk_widget_show_all(transWindow);
     gtk_widget_hide(transWindow);
     g_signal_connect_swapped(transWindow, "delete-event", G_CALLBACK(onTransWindowDelete), this);
@@ -540,7 +540,7 @@ GtkWidget *MainWindow::CreateMainWindow() {
       GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE | GDK_HINT_BASE_SIZE |
       /*GDK_HINT_RESIZE_INC |*/ GDK_HINT_WIN_GRAVITY | GDK_HINT_USER_POS |
       GDK_HINT_USER_SIZE);
-  window = gtk_application_window_new(app);
+  window = gtk_application_window_new(app->getApp());
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
   if(config->GetString("bind_ip").empty()) {
     gtk_window_set_title(GTK_WINDOW(window), _("iptux"));

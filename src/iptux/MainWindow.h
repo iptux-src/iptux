@@ -13,12 +13,14 @@
 #define IPTUX_MAINWINDOW_H
 
 #include "iptux-core/IptuxConfig.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/Event.h"
+
 #include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
-#include "iptux-core/Models.h"
 #include "iptux/UiModels.h"
-#include "iptux-core/Event.h"
 #include "iptux/UiCoreThread.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
@@ -38,7 +40,7 @@ enum class ActiveWindowType {
  */
 class MainWindow {
  public:
-  MainWindow(GtkApplication* app, UiCoreThread& coreThread);
+  MainWindow(Application* app, UiCoreThread& coreThread);
   ~MainWindow();
 
   GtkWidget* getWindow();
@@ -69,7 +71,7 @@ class MainWindow {
   void processEvent(std::shared_ptr<const Event> event);
 
  private:
-  GtkApplication* app;
+  Application* app;
   UiCoreThread& coreThread;
   GtkWidget* window;
   GtkWidget* transWindow;

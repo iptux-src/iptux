@@ -5,10 +5,12 @@
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
-#include "MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "ShareFile.h"
 
 namespace iptux {
+
+class MainWindow;
 
 class Application {
  public:
@@ -16,6 +18,9 @@ class Application {
   ~Application();
 
   int run(int argc, char** argv);
+
+  GtkApplication* getApp() {return app;}
+  std::shared_ptr<IptuxConfig> getConfig() { return config; }
 
 private:
   std::shared_ptr<IptuxConfig> config;
