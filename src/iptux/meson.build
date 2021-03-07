@@ -80,6 +80,7 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
+    'ApplicationTest.cpp',
     'LogSystemTest.cpp',
     'TestMain.cpp',
     'UiCoreThreadTest.cpp',
@@ -91,6 +92,6 @@ libiptux_test = executable('libiptux_test',
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('unit test', libiptux_test)
+test('iptux ui unit test', libiptux_test)
 
 
