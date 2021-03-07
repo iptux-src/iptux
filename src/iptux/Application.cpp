@@ -58,10 +58,13 @@ Application::Application(shared_ptr<IptuxConfig> config)
   app = gtk_application_new (application_id.c_str(), G_APPLICATION_FLAGS_NONE);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
+
+  transModel = transModelNew();
 }
 
 Application::~Application() {
   g_object_unref(app);
+  transModelDelete(transModel);
   delete window;
 }
 

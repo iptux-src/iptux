@@ -21,6 +21,7 @@ class Application {
 
   GtkApplication* getApp() {return app;}
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
+  TransModel* getTransModel() { return transModel; }
 
 private:
   std::shared_ptr<IptuxConfig> config;
@@ -30,6 +31,7 @@ private:
   GtkApplication* app;
   MainWindow* window;
   ShareFile* shareFile;
+  TransModel* transModel;
   bool started {false};
 
 public:

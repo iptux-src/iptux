@@ -43,7 +43,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
   g_assert(parent != nullptr);
   // g_assert(g_object_get_data(G_OBJECT(parent), "iptux-config") != nullptr);
-  g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
+  // g_assert(g_object_get_data(G_OBJECT(parent), "trans-model") != nullptr);
   g_assert(g_action_map_lookup_action(G_ACTION_MAP(parent), "trans_model_changed") != nullptr);
 
   GtkWindow *window;
@@ -97,9 +97,8 @@ shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *window) {
   return getPriv(window).app->getConfig();
 }
 
-GtkTreeModel* trans_window_get_trans_model(GtkWindow* window) {
-  GtkWindow* parent = gtk_window_get_transient_for(window);
-  return GTK_TREE_MODEL(g_object_get_data(G_OBJECT(parent), "trans-model"));
+TransModel* trans_window_get_trans_model(GtkWindow* window) {
+  return getPriv(window).app->getTransModel();
 }
 
 
