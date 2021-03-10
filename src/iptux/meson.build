@@ -2,6 +2,7 @@ gtk_dep = dependency('gtk+-3.0', version: '>=3.22')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
 glog_dep = dependency('libglog')
+gflags_dep = dependency('gflags')
 
 sources = files([
     'Application.cpp',
@@ -62,7 +63,7 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 sources += [iptux_resource_cpp, iptux_resource_h]
 inc = include_directories('..')
 
-dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep]
+dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep, gflags_dep]
 
 if host_machine.system() == 'darwin'
     gtk_mac_integration_dep = dependency('gtk-mac-integration-gtk3')

@@ -1,6 +1,7 @@
 glib_dep = dependency('glib-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 glog_dep = dependency('libglog')
+gflags_dep = dependency('gflags')
 
 header_files = files([
     'CoreThread.h',
@@ -42,7 +43,7 @@ inc = include_directories('..')
 thread_dep = dependency('threads')
 libiptux_core = shared_library('iptux-core',
     core_sources,
-    dependencies: [glib_dep, jsoncpp_dep, glog_dep, thread_dep],
+    dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, thread_dep],
     link_with: [libiptux_utils],
     include_directories: inc,
     install: true,
@@ -55,7 +56,7 @@ pkg.generate(
     name: 'iptux-core',
     version: so_version,
     requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35'],
-    requires_private: ['libglog'],
+    requires_private: ['libglog', 'gflags'],
     libraries: [libiptux_core, glog_dep],
 )
 

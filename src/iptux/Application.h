@@ -46,6 +46,7 @@ private:
   static void onPreferences (void *, void *, Application& self);
   static void onToolsTransmission (void *, void *, Application& self);
   static void onToolsSharedManagement (void *, void *, Application& self);
+  static void onTransModelClear (void *, void *, Application& self);
 };
 
 }

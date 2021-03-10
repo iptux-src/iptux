@@ -34,7 +34,6 @@ static GtkWidget * CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow *window);
 static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
 static void OpenThisFile(GtkTreeModel *model);
-static void ClearTransTask(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
@@ -43,7 +42,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
   GtkWindow *window;
 
-  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+  window = GTK_WINDOW(gtk_application_window_new(app->getApp()));
   TransWindowPrivate* priv = new TransWindowPrivate;
   priv->app = app;
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv, GDestroyNotify(TransWindowPrivate::destroy));
@@ -64,7 +63,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_signal_connect(window, "delete-event", G_CALLBACK(gtk_widget_hide), NULL);
   g_signal_connect(window, "configure-event", G_CALLBACK(TWinConfigureEvent), NULL);
   g_signal_connect_swapped(
-      g_action_map_lookup_action(G_ACTION_MAP(app->getApp()), "trans_model_changed"),
+      g_action_map_lookup_action(G_ACTION_MAP(app->getApp()), "trans_model.changed"),
       "activate",
       G_CALLBACK(UpdateTransUI),
       window
@@ -98,26 +97,6 @@ TransModel* trans_window_get_trans_model(GtkWindow* window) {
   return getPriv(window).app->getTransModel();
 }
 
-
-/**
- * 清理文件传输任务.
- * @param widset widget set
- */
-static void ClearTransWindow(GtkWidget *window) {
-  GtkWidget *treeview;
-  GtkTreeModel *model;
-
-  /* 考察是否需要清理UI */
-  treeview = getPriv(GTK_WINDOW(window)).transTreeviewWidget;
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  ClearTransTask(model);
-
-  /* 重新调整UI */
-  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
-}
-
-
-
 /**
  * 创建文件传输窗口其他区域.
  * @return 主窗体
@@ -144,7 +123,7 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
   button = gtk_button_new_with_label(_("Clear"));
   gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_icon_name("edit-clear-symbolic", GTK_ICON_SIZE_BUTTON));
   gtk_box_pack_start(GTK_BOX(hbb), button, FALSE, FALSE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(ClearTransWindow), window);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "app.trans_model.clear");
   gtk_widget_show_all(box);
   return box;
 }
@@ -180,6 +159,7 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
   if(menu == nullptr) {
     return true;
   }
+  gtk_menu_attach_to_widget(GTK_MENU(menu), treeview, nullptr);
   gtk_widget_show_all(menu);
   gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
   return TRUE;
@@ -358,26 +338,6 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
 }
 
 /**
- * 清理文件传输任务.
- * @param model trans-model
- */
-void ClearTransTask(GtkTreeModel *model) {
-  GtkTreeIter iter;
-  int taskId;
-
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
-  do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
-    // TODO: clear finished task
-    // if (!data) {
-    //   if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
-    //   break;
-    // }
-  } while (gtk_tree_model_iter_next(model, &iter));
-}
-
-
-/**
  * 为文件传输树(trans-tree)创建弹出菜单.
  * @param model trans-model
  * @return 菜单
@@ -422,8 +382,7 @@ GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
 
   menuitem = gtk_menu_item_new_with_label(_("Clear Tasklist"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(ClearTransTask),
-                           model);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.trans_model.clear");
 
   return menu;
 }
