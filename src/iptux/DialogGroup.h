@@ -33,9 +33,10 @@ class DialogGroup : public DialogBase {
   virtual void DelPalData(PalInfo *pal);
   virtual void ClearAllPalData();
   virtual GSList *GetSelPal();
-
+  GtkWindow* getWindow() override { return window; }
  private:
   MainWindow* mainWindow;
+  GtkWindow* window;
   std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;
   GtkWidget* memberEnclosurePaned;

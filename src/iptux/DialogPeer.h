@@ -22,10 +22,10 @@ namespace iptux {
 
 class DialogPeer : public DialogBase {
  public:
-  DialogPeer(MainWindow* mainWindow, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
+  DialogPeer(Application* app, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
   virtual ~DialogPeer();
 
-  static void PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf, std::shared_ptr<UiProgramData> progdt);
+  static void PeerDialogEntry(Application* app, GroupInfo *grpinf, std::shared_ptr<UiProgramData> progdt);
 
   void UpdatePalData(PalInfo *pal) override;
   void InsertPalData(PalInfo *pal) override;
@@ -34,8 +34,9 @@ class DialogPeer : public DialogBase {
   GSList *GetSelPal() override;
   static void ShowDialogPeer(DialogPeer *dlgpr);
   void insertPicture();
-
+  GtkWindow* getWindow() override { return GTK_WINDOW(window); }
  private:
+  Application* app;
   MainWindow* mainWindow;
 
  private:
@@ -74,6 +75,7 @@ class DialogPeer : public DialogBase {
   static void onActive(DialogPeer& self);
 
  protected:
+  GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   int64_t torcvsize;  //总计待接收大小(包括已接收)
   int64_t rcvdsize;   //总计已接收大小

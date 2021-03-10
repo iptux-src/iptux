@@ -29,7 +29,6 @@ class DialogBase : public SessionAbstract {
   virtual ~DialogBase();
 
   void ClearHistoryTextView();
-
  protected:
   void InitSublayerGeneral();
   void ClearSublayerGeneral();
@@ -45,6 +44,7 @@ class DialogBase : public SessionAbstract {
   virtual GtkWidget *CreateFileMenu();
   virtual GtkWidget *CreateFileSendArea();
   virtual GtkWidget *CreateFileSendTree(GtkTreeModel *model);
+  virtual GtkWindow* getWindow() = 0;
   virtual GSList *GetSelPal() { return NULL; };
 
   void MainWindowSignalSetup(GtkWindow *window);
@@ -77,7 +77,6 @@ class DialogBase : public SessionAbstract {
   static void OpenTransDlg(DialogBase *dlgpr);
 
  protected:
-  GtkWindow* window;
   std::shared_ptr<UiProgramData> progdt;
   GData *widset;            //窗体集
   GData *mdlset;            //数据model集

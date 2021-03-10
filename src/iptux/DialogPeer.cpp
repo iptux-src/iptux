@@ -41,9 +41,10 @@ namespace iptux {
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, shared_ptr<UiProgramData> progdt)
+DialogPeer::DialogPeer(Application* app, GroupInfo *grp, shared_ptr<UiProgramData> progdt)
     : DialogBase(grp, progdt),
-      mainWindow(mainWindow),
+      app(app),
+      mainWindow(app->getMainWindow()),
       config(mainWindow->getConfig()),
       torcvsize(0),
       rcvdsize(0),
@@ -66,12 +67,12 @@ DialogPeer::~DialogPeer() {
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
+void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf,
                                  shared_ptr<UiProgramData> progdt) {
   DialogPeer *dlgpr;
   GtkWidget *window, *widget;
 
-  dlgpr = new DialogPeer(mainWindow, grpinf, progdt);
+  dlgpr = new DialogPeer(app, grpinf, progdt);
   window = GTK_WIDGET(dlgpr->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
@@ -192,7 +193,7 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   PalInfo *palinfor;
   char ipstr[INET_ADDRSTRLEN];
 
-  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+  window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
   palinfor = (PalInfo *)grpinf->member->data;
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
   snprintf(buf, MAX_BUFLEN, _("Talk with %s(%s) IP:%s"), palinfor->name,
@@ -208,11 +209,11 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   grpinf->dialog = GTK_WIDGET(window);
   g_object_set_data(G_OBJECT(window), "dialog", this);
 
-  MainWindowSignalSetup(window);
+  MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
   g_signal_connect_swapped(GTK_WIDGET(window), "notify::is-active", G_CALLBACK(onActive), this);
-  return window;
+  return GTK_WINDOW(window);
 }
 
 /**

@@ -69,6 +69,7 @@ class MainWindow {
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
 
   void processEvent(std::shared_ptr<const Event> event);
+  Application* getApp() { return app; }
 
  private:
   Application* app;
