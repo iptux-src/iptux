@@ -15,6 +15,7 @@
 * [#132] fix file accepted when cancel the directory chooser dialog.
 * [#154] fix sound system.
 * [#52] fix bind problem.
+* [#144] crash on drag text.
 
 ### refactor
 

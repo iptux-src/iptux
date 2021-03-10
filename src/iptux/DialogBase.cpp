@@ -213,11 +213,12 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   }
   //计算待发送文件总计大小
   totalsendsize = 0;
-  gtk_tree_model_get_iter_first(model, &iter);
-  do {  //遍历待发送model
-    gtk_tree_model_get(model, &iter, 4, &file, -1);
-    totalsendsize += file->filesize;
-  } while (gtk_tree_model_iter_next(model, &iter));
+  if(gtk_tree_model_get_iter_first(model, &iter)) {
+    do {  //遍历待发送model
+      gtk_tree_model_get(model, &iter, 4, &file, -1);
+      totalsendsize += file->filesize;
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
 
   pbar =
       GTK_WIDGET(g_datalist_get_data(&widset, "file-send-progress-bar-widget"));
