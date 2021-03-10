@@ -46,7 +46,7 @@ string getConfigPath() {
   if(bindIp== nullptr) {
     res1 = g_build_path("/", g_getenv("HOME"), ".iptux", "config.json", NULL);
   } else {
-    res1 = g_build_path("/", g_getenv("HOME"), ".iptux", 
+    res1 = g_build_path("/", g_getenv("HOME"), ".iptux",
       stringFormat("config.%s.json", bindIp).c_str(), NULL);
   }
   string res2(res1);

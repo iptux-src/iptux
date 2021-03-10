@@ -447,7 +447,7 @@ void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   transModelFillFromTransFileModel(model, &iter, para);
   g_action_group_activate_action(
       G_ACTION_GROUP(app->getApp()),
-      "trans_model_changed",
+      "trans_model.changed",
       nullptr
   );
 }

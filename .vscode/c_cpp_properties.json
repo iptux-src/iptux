@@ -3,10 +3,12 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**",
                 "${workspaceFolder}/builddir/src",
                 "${workspaceFolder}/src/googletest/include",
-                "/Library/Developer/CommandLineTools/usr/include/c++/v1/",
+                "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1",
+                "/Library/Developer/CommandLineTools/usr/lib/clang/12.0.0/include",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include",
+                "/Library/Developer/CommandLineTools/usr/include",
                 "/opt/homebrew/Cellar/libffi/3.3_2/include",
                 "/opt/homebrew/Cellar/gtk+3/3.24.26/include/gtk-3.0",
                 "/opt/homebrew/Cellar/glib/2.66.7/include/gio-unix-2.0",
@@ -44,12 +46,12 @@
             ],
             "defines": [],
             "macFrameworkPath": [
-                "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk/System/Library/Frameworks"
             ],
-            "compilerPath": "/usr/local/opt/ccache/libexec/clang",
+            "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode": "macos-clang-x64",
             "compileCommands": "${workspaceFolder}/builddir/compile_commands.json"
         },
         {

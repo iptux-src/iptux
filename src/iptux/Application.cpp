@@ -96,7 +96,8 @@ void Application::onStartup(Application& self) {
       { "help.report_bug", G_ACTION_CALLBACK(onReportBug), NULL, NULL, NULL, {0,0,0}},
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
-      { "trans_model_changed" },
+      { "trans_model.changed" },
+      { "trans_model.clear", G_ACTION_CALLBACK(onTransModelClear)},
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),
@@ -158,4 +159,23 @@ void Application::onToolsSharedManagement(void *, void *, Application &self) {
   }
   share_file_run(self.shareFile);
 }
+
+void Application::onTransModelClear(void *, void *, Application &self) {
+  GtkTreeIter iter;
+  int taskId;
+
+  auto model = self.transModel;
+
+  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
+  do {
+    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
+    // TODO: clear finished task
+    // if (!data) {
+    //   if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
+    //   break;
+    // }
+  } while (gtk_tree_model_iter_next(model, &iter));
+  g_action_group_activate_action(G_ACTION_GROUP(self.app), "trans_model.changed", nullptr);
+}
+
 }
