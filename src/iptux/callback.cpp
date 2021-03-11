@@ -18,7 +18,6 @@
 #include <gdk/gdk.h>
 
 #include "iptux-core/Const.h"
-#include "iptux/global.h"
 #include "iptux/MainWindow.h"
 #include "iptux/StatusIcon.h"
 #include "iptux/UiHelper.h"
