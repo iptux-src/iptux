@@ -26,13 +26,6 @@ namespace iptux {
 
 class StatusIcon;
 
-enum class ActiveWindowType {
-  MAIN,
-  PEER,
-  GROUP,
-  OTHERS
-};
-
 /**
  * @note 鉴于本类成员函数所访问的(CoreThread)类成员链表都具有只增不减的特性，
  * 所以无须加锁访问，若有例外，请于注释中说明，否则应当bug处理.\n
@@ -54,8 +47,6 @@ class MainWindow {
   void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
   void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
-  void setActiveWindow(ActiveWindowType t, void* activeWindow);
-  void clearActiveWindow(void* activeWindow);
 
   void OpenTransWindow();
   //void UpdateItemToTransTree(GData **para);
@@ -69,6 +60,7 @@ class MainWindow {
   void SetStatusIcon(StatusIcon *statusIcon) { this->statusIcon = statusIcon; }
 
   void processEvent(std::shared_ptr<const Event> event);
+  Application* getApp() { return app; }
 
  private:
   Application* app;
@@ -87,8 +79,6 @@ class MainWindow {
   guint timerid;         // UI更新定时器ID
   WindowConfig windowConfig;
 
-  ActiveWindowType activeWindowType;
-  void* activeWindow;
   GtkBuilder* builder;
 
  private:
@@ -168,11 +158,8 @@ class MainWindow {
   static void onRefresh (void *, void *, MainWindow& self);
   static void onDetect (void *, void *, MainWindow& self);
   static void onFind (void *, void *, MainWindow& self);
-  static void onClearChatHistory (void *, void *, MainWindow& self);
-  static void onInsertPicture (void *, void *, MainWindow& self);
   static void onSortType (GSimpleAction *action, GVariant* value, MainWindow& self);
   static void onSortBy (GSimpleAction *action, GVariant* value, MainWindow& self);
-  static void onActive(MainWindow& self);
   static gboolean onTransWindowDelete(MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
 };

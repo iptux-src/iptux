@@ -399,7 +399,7 @@ GSList *DialogBase::PickEnclosure(FileAttr fileattr) {
     CHECK(false);
   }
   dialog = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(window), action,
+      title, GTK_WINDOW(getWindow()), action,
       _("_Open"), GTK_RESPONSE_ACCEPT,
       _("_Cancel"), GTK_RESPONSE_CANCEL,
       NULL);

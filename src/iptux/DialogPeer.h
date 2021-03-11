@@ -13,19 +13,19 @@
 #ifndef IPTUX_DIALOGPEER_H
 #define IPTUX_DIALOGPEER_H
 
-#include "iptux/DialogBase.h"
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
-#include "iptux/MainWindow.h"
+#include "iptux/DialogBase.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
 class DialogPeer : public DialogBase {
  public:
-  DialogPeer(MainWindow* mainWindow, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
+  DialogPeer(Application* app, GroupInfo *grp);
   virtual ~DialogPeer();
 
-  static void PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf, std::shared_ptr<UiProgramData> progdt);
+  static void PeerDialogEntry(Application* app, GroupInfo *grpinf);
 
   void UpdatePalData(PalInfo *pal) override;
   void InsertPalData(PalInfo *pal) override;
@@ -34,9 +34,10 @@ class DialogPeer : public DialogBase {
   GSList *GetSelPal() override;
   static void ShowDialogPeer(DialogPeer *dlgpr);
   void insertPicture();
+  GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
-  MainWindow* mainWindow;
+  Application* app;
 
  private:
   void ReadUILayout();
@@ -71,9 +72,15 @@ class DialogPeer : public DialogBase {
   static void ShowInfoEnclosure(DialogPeer *dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
   static gint RcvTreePopup(DialogPeer *self, GdkEvent *event);
-  static void onActive(DialogPeer& self);
+  static void onClearChatHistory (void *, void *, DialogPeer& self) {
+    self.ClearHistoryTextView();
+  }
+  static void onInsertPicture (void *, void *, DialogPeer& self) {
+    self.insertPicture();
+  }
 
  protected:
+  GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   int64_t torcvsize;  //总计待接收大小(包括已接收)
   int64_t rcvdsize;   //总计已接收大小

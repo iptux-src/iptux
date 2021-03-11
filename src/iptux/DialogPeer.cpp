@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include <glog/logging.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 
@@ -41,10 +42,10 @@ namespace iptux {
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, shared_ptr<UiProgramData> progdt)
-    : DialogBase(grp, progdt),
-      mainWindow(mainWindow),
-      config(mainWindow->getConfig()),
+DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
+    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
+      app(app),
+      config(app->getConfig()),
       torcvsize(0),
       rcvdsize(0),
       timerrcv(0) {
@@ -55,7 +56,6 @@ DialogPeer::DialogPeer(MainWindow* mainWindow, GroupInfo *grp, shared_ptr<UiProg
  * 类析构函数.
  */
 DialogPeer::~DialogPeer() {
-  mainWindow->clearActiveWindow(this);
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0) g_source_remove(timerrcv);
   /*---------------------------------------------------------------*/
@@ -66,12 +66,11 @@ DialogPeer::~DialogPeer() {
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                                 shared_ptr<UiProgramData> progdt) {
+void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
   DialogPeer *dlgpr;
   GtkWidget *window, *widget;
 
-  dlgpr = new DialogPeer(mainWindow, grpinf, progdt);
+  dlgpr = new DialogPeer(app, grpinf);
   window = GTK_WIDGET(dlgpr->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
@@ -192,8 +191,8 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   PalInfo *palinfor;
   char ipstr[INET_ADDRSTRLEN];
 
-  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  palinfor = (PalInfo *)grpinf->member->data;
+  window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
+  palinfor = (PalInfo *)(CHECK_NOTNULL(grpinf->member))->data;
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
   snprintf(buf, MAX_BUFLEN, _("Talk with %s(%s) IP:%s"), palinfor->name,
            palinfor->host, ipstr);
@@ -208,11 +207,18 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   grpinf->dialog = GTK_WIDGET(window);
   g_object_set_data(G_OBJECT(window), "dialog", this);
 
-  MainWindowSignalSetup(window);
+  MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
-  g_signal_connect_swapped(GTK_WIDGET(window), "notify::is-active", G_CALLBACK(onActive), this);
-  return window;
+
+  GActionEntry win_entries[] = {
+      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+      { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
+  };
+  g_action_map_add_action_entries (G_ACTION_MAP (window),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   this);
+  return GTK_WINDOW(window);
 }
 
 /**
@@ -957,14 +963,15 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
     return FALSE;
   }
   dlgpr->rcvdsize = 0;
-  gtk_tree_model_get_iter_first(model, &iter);
-  do {  //遍历待接收model
-    gtk_tree_model_get(model, &iter, 5, &file, -1);
-    if (file->finishedsize == file->filesize) {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
-    }
-    dlgpr->rcvdsize += file->finishedsize;
-  } while (gtk_tree_model_iter_next(model, &iter));
+  if(gtk_tree_model_get_iter_first(model, &iter)) {
+    do {  //遍历待接收model
+      gtk_tree_model_get(model, &iter, 5, &file, -1);
+      if (file->finishedsize == file->filesize) {
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
+      }
+      dlgpr->rcvdsize += file->finishedsize;
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
   //设置进度条,如果接收完成重新载入待接收和已接收列表
   if (dlgpr->torcvsize == 0) {
     progress = 0;
@@ -1135,13 +1142,6 @@ gint DialogPeer::RcvTreePopup(DialogPeer* self, GdkEvent *event) {
     }
   }
   return FALSE;
-}
-
-void DialogPeer::onActive(DialogPeer& self) {
-  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
-    return;
-  }
-  self.mainWindow->setActiveWindow(ActiveWindowType::PEER, &self);
 }
 
 }  // namespace iptux
