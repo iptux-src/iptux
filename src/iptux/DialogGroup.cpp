@@ -35,7 +35,6 @@ namespace iptux {
 DialogGroup::DialogGroup(Application* app, GroupInfo *grp)
     : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
       app(app),
-      mainWindow(app->getMainWindow()),
       config(app->getConfig()) {
   InitSublayerSpecify();
 }

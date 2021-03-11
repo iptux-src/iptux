@@ -12,11 +12,11 @@
 #ifndef IPTUX_DIALOGGROUP_H
 #define IPTUX_DIALOGGROUP_H
 
-#include "iptux/DialogBase.h"
 #include "iptux-core/IptuxConfig.h"
-#include "iptux/UiProgramData.h"
 #include "iptux-core/Models.h"
-#include "iptux/MainWindow.h"
+#include "iptux/DialogBase.h"
+#include "iptux/UiProgramData.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
@@ -35,7 +35,6 @@ class DialogGroup : public DialogBase {
 
  private:
   Application* app;
-  MainWindow* mainWindow;
   GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;

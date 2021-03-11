@@ -45,8 +45,7 @@ namespace iptux {
 DialogPeer::DialogPeer(Application* app, GroupInfo *grp, shared_ptr<UiProgramData> progdt)
     : DialogBase(grp, progdt),
       app(app),
-      mainWindow(app->getMainWindow()),
-      config(mainWindow->getConfig()),
+      config(app->getConfig()),
       torcvsize(0),
       rcvdsize(0),
       timerrcv(0) {

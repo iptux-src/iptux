@@ -13,10 +13,10 @@
 #ifndef IPTUX_DIALOGPEER_H
 #define IPTUX_DIALOGPEER_H
 
-#include "iptux/DialogBase.h"
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
-#include "iptux/MainWindow.h"
+#include "iptux/DialogBase.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
@@ -38,7 +38,6 @@ class DialogPeer : public DialogBase {
 
  private:
   Application* app;
-  MainWindow* mainWindow;
 
  private:
   void ReadUILayout();
