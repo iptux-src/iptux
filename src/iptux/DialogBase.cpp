@@ -535,7 +535,6 @@ gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
 void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
                                   gint, gint, GtkSelectionData *data,
                                   guint, guint time) {
-  GtkWidget *widget;
   GSList *list;
 
   if (!ValidateDragData(data, context, time)) {
@@ -546,10 +545,6 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
-  widget =
-      GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "enclosure-frame-widget"));
-  gtk_widget_show(widget);
-
   gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
