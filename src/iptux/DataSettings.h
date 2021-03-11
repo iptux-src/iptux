@@ -23,7 +23,10 @@ class DataSettings {
   DataSettings();
   ~DataSettings();
 
-  static void ResetDataEntry(GtkWidget *parent);
+  static void ResetDataEntry(GtkWidget *parent) {
+    ResetDataEntry(parent, true);
+  }
+  static void ResetDataEntry(GtkWidget *parent, bool run);
 
  private:
   void InitSublayer();
