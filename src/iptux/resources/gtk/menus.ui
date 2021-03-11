@@ -68,6 +68,9 @@
                     <attribute name='icon'>view-refresh-symbolic</attribute>
                 </item>
             </section>
+        </submenu>
+        <submenu>
+            <attribute name='label' translatable='yes'>_Chat</attribute>
             <section>
                 <item>
                     <attribute name='label' translatable='yes'>Insert Picture</attribute>
@@ -75,9 +78,29 @@
                     <attribute name='icon'>insert-image-symbolic</attribute>
                 </item>
                 <item>
+                    <attribute name="label" translatable="yes">Attach File</attribute>
+                    <attribute name="action">win.attach_file</attribute>
+                </item>
+                <item>
+                    <attribute name="label" translatable="yes">Attach Folder</attribute>
+                    <attribute name="action">win.attach_folder</attribute>
+                </item>
+            </section>
+            <section>
+                <item>
+                    <attribute name="label" translatable="yes">Request Shared Resources</attribute>
+                    <attribute name="action">win.request_shared_resources</attribute>
+                </item>
+                <item>
                     <attribute name='label' translatable='yes'>Clear Chat History</attribute>
                     <attribute name='action'>win.clear_chat_history</attribute>
                     <attribute name='icon'>edit-clear-all-symbolic</attribute>
+                </item>
+            </section>
+            <section>
+                <item>
+                    <attribute name="label" translatable="yes">Close Chat</attribute>
+                    <attribute name="action">win.close</attribute>
                 </item>
             </section>
         </submenu>

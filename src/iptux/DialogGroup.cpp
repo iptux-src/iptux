@@ -214,6 +214,11 @@ GtkWindow *DialogGroup::CreateMainWindow() {
 
   GActionEntry win_entries[] = {
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+      { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
+      { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
+      { "close", G_ACTION_CALLBACK(onClose)},
+      { "sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
+      { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
   };
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -229,9 +234,6 @@ GtkWidget *DialogGroup::CreateAllArea() {
   GtkWidget *box;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-  /* 加入菜单条 */
-  gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
 
   /* 加入主区域 */
   mainPaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
@@ -259,20 +261,6 @@ GtkWidget *DialogGroup::CreateAllArea() {
                   TRUE);
 
   return box;
-}
-
-/**
- * 创建菜单条.
- * @return 菜单条
- */
-GtkWidget *DialogGroup::CreateMenuBar() {
-  GtkWidget *menubar;
-
-  menubar = gtk_menu_bar_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateToolMenu());
-
-  return menubar;
 }
 
 /**
@@ -395,65 +383,6 @@ GtkWidget *DialogGroup::CreateMemberTree(GtkTreeModel *model) {
 }
 
 /**
- * 创建工具菜单.
- * @return 菜单
- */
-GtkWidget *DialogGroup::CreateToolMenu() {
-  GtkWidget *menushell;
-  GtkWidget *menu, *submenu, *menuitem;
-  GtkTreeModel *model;
-
-  model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "member-model"));
-  menushell = gtk_menu_item_new_with_mnemonic(_("_Tools"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  /* 群组成员排序 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Sort"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  submenu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-  /*/* 按昵称排序 */
-  NO_OPERATION_C
-  menuitem = gtk_radio_menu_item_new_with_label(NULL, _("By Nickname"));
-  g_object_set_data(G_OBJECT(menuitem), "compare-func",
-                    (gpointer)MemberTreeCompareByNameFunc);
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetMemberTreeSortFunc),
-                   model);
-  /*/* 按IP地址排序 */
-  menuitem = gtk_radio_menu_item_new_with_label_from_widget(
-      GTK_RADIO_MENU_ITEM(menuitem), _("By IP"));
-  g_object_set_data(G_OBJECT(menuitem), "compare-func",
-                    (gpointer)MemberTreeCompareByIPFunc);
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetMemberTreeSortFunc),
-                   model);
-  /*/* 分割符 */
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  /*/* 升序 */
-  NO_OPERATION_C
-  menuitem = gtk_radio_menu_item_new_with_label(NULL, _("Ascending"));
-  g_object_set_data(G_OBJECT(menuitem), "sort-type",
-                    GINT_TO_POINTER(GTK_SORT_ASCENDING));
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetMemberTreeSortType),
-                   model);
-  /*/* 降序 */
-  menuitem = gtk_radio_menu_item_new_with_label_from_widget(
-      GTK_RADIO_MENU_ITEM(menuitem), _("Descending"));
-  g_object_set_data(G_OBJECT(menuitem), "sort-type",
-                    GINT_TO_POINTER(GTK_SORT_DESCENDING));
-  gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-  g_signal_connect(menuitem, "toggled", G_CALLBACK(SetMemberTreeSortType),
-                   model);
-
-  return menushell;
-}
-
-/**
  * 向选中的好友广播附件消息.
  * @param list 文件链表
  */
@@ -573,22 +502,6 @@ gint DialogGroup::MemberTreeCompareByNameFunc(GtkTreeModel *model,
   result = strcmp(apal->name, bpal->name);
 
   return result;
-}
-
-/**
- * 群组成员树(member-tree)按IP排序的比较函数.
- * @param model member-model
- * @param a A GtkTreeIter in model
- * @param b Another GtkTreeIter in model
- * @return 比较值
- */
-gint DialogGroup::MemberTreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                            GtkTreeIter *b) {
-  PalInfo *apal, *bpal;
-
-  gtk_tree_model_get(model, a, 3, &apal, -1);
-  gtk_tree_model_get(model, b, 3, &bpal, -1);
-  return ipv4Compare(apal->ipv4, bpal->ipv4);
 }
 
 /**
@@ -738,5 +651,46 @@ void DialogGroup::onUIChanged(DialogGroup &self) {
   self.config->SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
   self.config->Save();
 }
+
+void DialogGroup::onSortBy (GSimpleAction *action, GVariant* value, DialogGroup& self) {
+  string sortBy = g_variant_get_string(value, nullptr);
+
+  PalTreeModelSortKey key;
+
+  if(sortBy == "nickname") {
+    key = PalTreeModelSortKey::NICKNAME;
+  } else if(sortBy == "ip") {
+    key = PalTreeModelSortKey::IP;
+  } else {
+    LOG_WARN("unknown sort by: %s", sortBy.c_str());
+    return;
+  }
+
+
+  auto model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "member-model"));
+  palTreeModelSetSortKey(model, key);
+  g_simple_action_set_state(action, value);
+}
+
+void DialogGroup::onSortType (GSimpleAction *action, GVariant* value, DialogGroup& self) {
+  string sortType = g_variant_get_string(value, nullptr);
+
+  GtkSortType type;
+
+  if(sortType == "ascending") {
+    type = GTK_SORT_ASCENDING;
+  } else if(sortType == "descending") {
+    type = GTK_SORT_DESCENDING;
+  } else {
+    LOG_WARN("unknown sorttype: %s", sortType.c_str());
+    return;
+  }
+
+  auto model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "member-model"));
+  gtk_tree_sortable_set_sort_column_id(
+      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  g_simple_action_set_state(action, value);
+}
+
 
 }  // namespace iptux
