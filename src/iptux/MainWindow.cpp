@@ -1875,7 +1875,10 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
     auto para = g_cthrd->GetTransTaskStat(taskId);
-    CHECK_NOTNULL(para.get());
+    if(!para.get()) {
+      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
+      return;
+    }
     g_mwin->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {
