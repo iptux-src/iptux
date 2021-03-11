@@ -79,6 +79,7 @@ class DialogPeer : public DialogBase {
   static void onInsertPicture (void *, void *, DialogPeer& self) {
     self.insertPicture();
   }
+
  protected:
   GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
