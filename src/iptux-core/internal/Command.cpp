@@ -210,7 +210,7 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char *msg) {
   count = 0;
   do {
     commandSendTo(sock, buf, size, 0, pal->ipv4);
-    g_usleep(1000000);
+    g_usleep(coreThread.getProgramData()->getSendMessageRetryInUs());
     count++;
   } while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
   if (pal->rpacketn == packetno) {
