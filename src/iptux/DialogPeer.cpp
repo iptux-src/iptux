@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include <glog/logging.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 
@@ -194,7 +195,7 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   char ipstr[INET_ADDRSTRLEN];
 
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
-  palinfor = (PalInfo *)grpinf->member->data;
+  palinfor = (PalInfo *)(CHECK_NOTNULL(grpinf->member))->data;
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
   snprintf(buf, MAX_BUFLEN, _("Talk with %s(%s) IP:%s"), palinfor->name,
            palinfor->host, ipstr);

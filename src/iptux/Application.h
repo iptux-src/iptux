@@ -24,6 +24,7 @@ class Application {
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
   std::shared_ptr<UiProgramData> getProgramData() { return data; }
+  std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
 
 private:
   std::shared_ptr<IptuxConfig> config;

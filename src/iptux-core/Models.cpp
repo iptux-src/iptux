@@ -27,7 +27,7 @@ PalInfo::PalInfo()
       version(NULL),
       user(NULL),
       host(NULL),
-      name(NULL),
+      name(g_strdup("")),
       group(NULL),
       photo(NULL),
       sign(NULL),

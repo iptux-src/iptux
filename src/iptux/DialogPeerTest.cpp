@@ -13,8 +13,9 @@ TEST(DialogPeer, Constructor) {
   app.startup();
   app.activate();
 
-  GroupInfo groupInfo;
+  PPalInfo pal = make_shared<PalInfo>();
+  app.getCoreThread()->AttachPalToList(pal);
 
-  DialogPeer* dialog = PeerDialogEntry(&app, &GroupInfo, app->getProgramData());
-  delete dialog;
+  GroupInfo* grpinf = app.getCoreThread()->GetPalRegularItem(pal.get());
+  DialogPeer::PeerDialogEntry(&app, grpinf, app.getProgramData());
 }
