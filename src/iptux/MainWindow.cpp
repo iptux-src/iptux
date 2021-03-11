@@ -98,7 +98,6 @@ void MainWindow::CreateWindow() {
       { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
       { "detect", G_ACTION_CALLBACK(onDetect)},
       { "find", G_ACTION_CALLBACK(onFind)},
-      { "about", G_ACTION_CALLBACK(onAbout)},
   };
 
   add_accelerator(app->getApp(), "win.refresh", "F5");
@@ -1510,14 +1509,6 @@ void MainWindow::onFind(void*, void*, MainWindow&self) {
   widget = GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-entry-widget"));
   gtk_widget_grab_focus(widget);
   PallistEntryChanged(widget, &self.widset);
-}
-
-void MainWindow::onAbout(void*, void*, MainWindow&self) {
-  auto aboutDialog = GTK_ABOUT_DIALOG(
-    CHECK_NOTNULL(gtk_builder_get_object(self.builder, "about_dialog"))
-  );
-  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(aboutDialog, GTK_WINDOW(self.window))));
-  gtk_widget_hide(GTK_WIDGET(aboutDialog));
 }
 
 /**

@@ -84,6 +84,7 @@ test_sources = files([
     'ApplicationTest.cpp',
     'DialogGroupTest.cpp',
     'DialogPeerTest.cpp',
+    'HelpDialogTest.cpp',
     'LogSystemTest.cpp',
     'TestMain.cpp',
     'TransWindowTest.cpp',
