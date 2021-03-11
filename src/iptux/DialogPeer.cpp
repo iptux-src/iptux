@@ -236,9 +236,6 @@ GtkWidget *DialogPeer::CreateAllArea() {
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-  /* 加入菜单条 */
-  gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
-
   /* 加入主区域 */
   hpaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
   g_datalist_set_data(&widset, "main-paned", hpaned);
@@ -278,19 +275,6 @@ GtkWidget *DialogPeer::CreateAllArea() {
 }
 
 /**
- * 创建菜单条.
- * @return 菜单条
- */
-GtkWidget *DialogPeer::CreateMenuBar() {
-  GtkWidget *menubar;
-
-  menubar = gtk_menu_bar_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
-
-  return menubar;
-}
-
-/**
  * 创建好友信息区域.
  * @return 主窗体
  */
@@ -321,55 +305,6 @@ GtkWidget *DialogPeer::CreateInfoArea() {
   g_datalist_set_data(&widset, "info-textview-widget", widget);
 
   return frame;
-}
-
-/**
- * 创建文件菜单.
- * @return 菜单
- */
-
-GtkWidget *DialogPeer::CreateFileMenu() {
-  GtkWidget *menushell, *window;
-  GtkWidget *menu, *menuitem;
-
-  window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  menushell = gtk_menu_item_new_with_mnemonic(_("_File"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_menu_item_new_with_label(_("Attach File"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_S,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_D,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AskSharedFiles),
-                           grpinf);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_R,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Close"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(gtk_widget_destroy),
-                           window);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_W,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  g_datalist_set_data(&widset, "file-menu", menu);
-  return menushell;
 }
 
 /**

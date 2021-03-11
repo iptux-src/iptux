@@ -49,10 +49,8 @@ class DialogGroup : public DialogBase {
   GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
-  GtkWidget *CreateMenuBar();
   GtkWidget *CreateMemberArea();
   GtkWidget *CreateInputArea();
-  GtkWidget *CreateToolMenu();
 
   GtkTreeModel *CreateMemberModel();
   void FillMemberModel(GtkTreeModel *model);

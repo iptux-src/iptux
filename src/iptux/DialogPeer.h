@@ -46,7 +46,6 @@ class DialogPeer : public DialogBase {
   GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
-  GtkWidget *CreateMenuBar();
   GtkWidget *CreateInfoArea();
   GtkWidget *CreateFileArea();
   GtkWidget *CreateFileReceiveArea();
@@ -56,7 +55,6 @@ class DialogPeer : public DialogBase {
   GtkTreeModel *CreateFileToReceiveModel();
   GtkWidget *CreateFileReceivedTree(GtkTreeModel *model);
   GtkTreeModel *CreateFileReceivedModel();
-  GtkWidget *CreateFileMenu() override;
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
 
