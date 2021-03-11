@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: brew install
-      run: brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration
+      run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration
     - name: meson
       run: meson builddir
     - name: build
