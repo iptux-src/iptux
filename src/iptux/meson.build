@@ -82,6 +82,8 @@ gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
     'ApplicationTest.cpp',
+    'DialogGroupTest.cpp',
+    'DialogPeerTest.cpp',
     'LogSystemTest.cpp',
     'TestMain.cpp',
     'TransWindowTest.cpp',

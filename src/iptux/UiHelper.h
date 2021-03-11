@@ -8,6 +8,11 @@
 
 namespace iptux {
 
+typedef void (* GActionCallback) (GSimpleAction *action,
+                                  GVariant      *parameter,
+                                  gpointer       user_data) ;
+#define	G_ACTION_CALLBACK(f)			 ((GActionCallback) (f))
+
 bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
                       guint time);
 
