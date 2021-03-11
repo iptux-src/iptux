@@ -83,10 +83,12 @@ thread_dep = dependency('threads')
 test_sources = files([
     'ApplicationTest.cpp',
     'DataSettingsTest.cpp',
+    'DetectPalTest.cpp',
     'DialogGroupTest.cpp',
     'DialogPeerTest.cpp',
     'HelpDialogTest.cpp',
     'LogSystemTest.cpp',
+    'TestHelper.cpp',
     'TestMain.cpp',
     'TransWindowTest.cpp',
     'UiCoreThreadTest.cpp',
