@@ -57,7 +57,6 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp, shared_ptr<UiProgramDat
  * 类析构函数.
  */
 DialogPeer::~DialogPeer() {
-  mainWindow->clearActiveWindow(this);
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0) g_source_remove(timerrcv);
   /*---------------------------------------------------------------*/
@@ -213,7 +212,6 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
-  g_signal_connect_swapped(GTK_WIDGET(window), "notify::is-active", G_CALLBACK(onActive), this);
 
   GActionEntry win_entries[] = {
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
@@ -1146,13 +1144,6 @@ gint DialogPeer::RcvTreePopup(DialogPeer* self, GdkEvent *event) {
     }
   }
   return FALSE;
-}
-
-void DialogPeer::onActive(DialogPeer& self) {
-  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
-    return;
-  }
-  self.mainWindow->setActiveWindow(ActiveWindowType::PEER, &self);
 }
 
 }  // namespace iptux

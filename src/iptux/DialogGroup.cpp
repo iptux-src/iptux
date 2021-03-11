@@ -44,7 +44,6 @@ DialogGroup::DialogGroup(Application* app, GroupInfo *grp)
  * 类析构函数.
  */
 DialogGroup::~DialogGroup() {
-  mainWindow->clearActiveWindow(this);
   SaveUILayout();
 }
 
@@ -213,7 +212,6 @@ GtkWindow *DialogGroup::CreateMainWindow() {
   grpinf->dialog = GTK_WIDGET(window);
 
   MainWindowSignalSetup(GTK_WINDOW(window));
-  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
 
   GActionEntry win_entries[] = {
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
@@ -740,13 +738,6 @@ void DialogGroup::onUIChanged(DialogGroup &self) {
   self.config->SetInt("group_memberenclosure_paned_divide", gtk_paned_get_position(GTK_PANED(self.memberEnclosurePaned)));
   self.config->SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
   self.config->Save();
-}
-
-void DialogGroup::onActive(DialogGroup& self) {
-  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
-    return;
-  }
-  self.mainWindow->setActiveWindow(ActiveWindowType::GROUP, &self);
 }
 
 }  // namespace iptux

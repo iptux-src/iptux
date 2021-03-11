@@ -57,8 +57,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       accel(NULL),
       timerid(0),
       windowConfig(250, 510, "main_window") {
-  activeWindowType = ActiveWindowType ::OTHERS;
-  activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
@@ -101,8 +99,6 @@ void MainWindow::CreateWindow() {
       { "detect", G_ACTION_CALLBACK(onDetect)},
       { "find", G_ACTION_CALLBACK(onFind)},
       { "about", G_ACTION_CALLBACK(onAbout)},
-      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
   };
 
   add_accelerator(app->getApp(), "win.refresh", "F5");
@@ -550,7 +546,6 @@ GtkWidget *MainWindow::CreateMainWindow() {
                            this);
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
-  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
   return window;
 }
 
@@ -1721,48 +1716,6 @@ void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
     GroupInfo *groupInfo) {
   DialogGroup::GroupDialogEntry(g_mwin->app, groupInfo);
-}
-
-void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {
-  switch(self.activeWindowType) {
-    case ActiveWindowType::PEER:
-      ((DialogPeer*)self.activeWindow)->ClearHistoryTextView();
-      break;
-    case ActiveWindowType::GROUP:
-      ((DialogGroup*)self.activeWindow)->ClearHistoryTextView();
-      break;
-    default:
-      LOG_WARN("ClearChatHistory should be disabled for %d", self.activeWindowType);
-  }
-}
-
-void MainWindow::onInsertPicture(void *, void *, MainWindow &self) {
-  switch(self.activeWindowType) {
-    case ActiveWindowType::PEER:
-      ((DialogPeer*)self.activeWindow)->insertPicture();
-      break;
-    default:
-      LOG_WARN("InsertPicture should be disabled for %d", self.activeWindowType);
-  }
-}
-
-void MainWindow::onActive(MainWindow& self) {
-  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
-    return;
-  }
-  //self.setActiveWindow(ActiveWindowType::MAIN, &self);
-}
-
-void MainWindow::setActiveWindow(ActiveWindowType t, void* activeWindow) {
-  this->activeWindowType = t;
-  this->activeWindow = activeWindow;
-}
-
-void MainWindow::clearActiveWindow(void* activeWindow) {
-  if(this->activeWindow == activeWindow) {
-    this->activeWindowType = ActiveWindowType ::OTHERS;
-    this->activeWindow = nullptr;
-  }
 }
 
 void MainWindow::InitThemeSublayerData() {

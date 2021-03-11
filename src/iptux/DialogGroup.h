@@ -81,7 +81,6 @@ class DialogGroup : public DialogBase {
                                       GtkTreeViewColumn *column,
                                       DialogGroup *self);
   static void SendMessage(DialogGroup *dlggrp);
-  static void onActive(DialogGroup& self);
   static void onClearChatHistory (void *, void *, DialogGroup& self) {
     self.ClearHistoryTextView();
   }
