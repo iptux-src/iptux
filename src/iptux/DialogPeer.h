@@ -84,6 +84,9 @@ class DialogPeer : public DialogBase {
   static void onAttachFolder(void*, void*, DialogPeer& self) {
     DialogBase::AttachFolder(&self);
   }
+  static void onRequestSharedResources(void*, void*, DialogPeer& self) {
+    AskSharedFiles(self.grpinf);
+  }
 
  protected:
   GtkApplicationWindow* window;

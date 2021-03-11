@@ -93,6 +93,12 @@
                     <attribute name="action">win.attach_folder</attribute>
                 </item>
             </section>
+            <section>
+                <item>
+                    <attribute name="label" translatable="yes">Request Shared Resources</attribute>
+                    <attribute name="action">win.request_shared_resources</attribute>
+                </item>
+            </section>
         </submenu>
         <submenu>
             <attribute name='label' translatable='yes'>_Help</attribute>
