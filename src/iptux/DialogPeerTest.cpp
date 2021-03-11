@@ -17,5 +17,5 @@ TEST(DialogPeer, Constructor) {
   app.getCoreThread()->AttachPalToList(pal);
 
   GroupInfo* grpinf = app.getCoreThread()->GetPalRegularItem(pal.get());
-  DialogPeer::PeerDialogEntry(&app, grpinf, app.getProgramData());
+  DialogPeer::PeerDialogEntry(&app, grpinf);
 }

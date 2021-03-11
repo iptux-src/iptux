@@ -1341,7 +1341,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
   /* 根据需求建立对应的对话框 */
   switch (grpinf->type) {
     case GROUP_BELONG_TYPE_REGULAR:
-      DialogPeer::PeerDialogEntry(self->app, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(self->app, grpinf);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
@@ -1477,7 +1477,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
   if (!(grpinf->dialog)) {
     switch (grpinf->type) {
       case GROUP_BELONG_TYPE_REGULAR:
-        DialogPeer::PeerDialogEntry(self->app, grpinf, self->progdt);
+        DialogPeer::PeerDialogEntry(self->app, grpinf);
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
@@ -1615,7 +1615,7 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
   gtk_tree_model_get(model, &iter, 6, &pal, -1);
   if ((grpinf = g_cthrd->GetPalRegularItem(pal))) {
     if (!(grpinf->dialog))
-      DialogPeer::PeerDialogEntry(self->app, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(self->app, grpinf);
     else
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
   }
@@ -1662,7 +1662,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
 
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
   if (!(grpinf->dialog))
-    DialogPeer::PeerDialogEntry(self->app, grpinf, self->progdt);
+    DialogPeer::PeerDialogEntry(self->app, grpinf);
   else
     gtk_window_present(GTK_WINDOW(grpinf->dialog));
   /* 获取会话对象，并将数据添加到会话对象 */
@@ -1710,7 +1710,7 @@ gboolean MainWindow::onDeleteEvent(MainWindow *self) {
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
     GroupInfo *groupInfo) {
-  DialogPeer::PeerDialogEntry(g_mwin->app, groupInfo, g_cthrd->getUiProgramData());
+  DialogPeer::PeerDialogEntry(g_mwin->app, groupInfo);
 }
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
@@ -1814,7 +1814,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
         coreThread.PushItemToMsgline(grpinf);
         if(coreThread.getProgramData()->IsAutoOpenCharDialog()) {
           if (!(grpinf->dialog)) {
-            DialogPeer::PeerDialogEntry(g_mwin->app, grpinf, coreThread.getUiProgramData());
+            DialogPeer::PeerDialogEntry(g_mwin->app, grpinf);
           } else {
             gtk_window_present(GTK_WINDOW(grpinf->dialog));
           }

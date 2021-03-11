@@ -42,8 +42,8 @@ namespace iptux {
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(Application* app, GroupInfo *grp, shared_ptr<UiProgramData> progdt)
-    : DialogBase(grp, progdt),
+DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
+    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
       app(app),
       config(app->getConfig()),
       torcvsize(0),
@@ -66,12 +66,11 @@ DialogPeer::~DialogPeer() {
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf,
-                                 shared_ptr<UiProgramData> progdt) {
+void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
   DialogPeer *dlgpr;
   GtkWidget *window, *widget;
 
-  dlgpr = new DialogPeer(app, grpinf, progdt);
+  dlgpr = new DialogPeer(app, grpinf);
   window = GTK_WIDGET(dlgpr->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);

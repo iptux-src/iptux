@@ -666,7 +666,7 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
     if ((grpinf->dialog))
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     else
-      DialogPeer::PeerDialogEntry(g_mwin->getApp(), grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(g_mwin->getApp(), grpinf);
   }
 }
 
