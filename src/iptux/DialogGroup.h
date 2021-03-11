@@ -83,6 +83,15 @@ class DialogGroup : public DialogBase {
   static void onClearChatHistory (void *, void *, DialogGroup& self) {
     self.ClearHistoryTextView();
   }
+  static void onAttachFile(void*, void*, DialogGroup& self) {
+    DialogBase::AttachRegular(&self);
+  }
+  static void onAttachFolder(void*, void*, DialogGroup& self) {
+    DialogBase::AttachFolder(&self);
+  }
+  static void onClose(void*, void*, DialogGroup& self) {
+    gtk_widget_destroy(GTK_WIDGET(self.window));
+  }
 };
 
 }  // namespace iptux

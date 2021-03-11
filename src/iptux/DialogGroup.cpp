@@ -214,6 +214,9 @@ GtkWindow *DialogGroup::CreateMainWindow() {
 
   GActionEntry win_entries[] = {
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+      { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
+      { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
+      { "close", G_ACTION_CALLBACK(onClose)},
   };
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
