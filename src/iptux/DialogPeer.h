@@ -87,6 +87,9 @@ class DialogPeer : public DialogBase {
   static void onRequestSharedResources(void*, void*, DialogPeer& self) {
     AskSharedFiles(self.grpinf);
   }
+  static void onClose(void*, void*, DialogPeer& self) {
+    gtk_widget_destroy(GTK_WIDGET(self.window));
+  }
 
  protected:
   GtkApplicationWindow* window;
