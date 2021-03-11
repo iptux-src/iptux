@@ -93,6 +93,7 @@ void ProgramData::WriteProgData() {
   config->SetBool("msgsnd_support", FLAG_ISSET(sndfgs, 1));
   config->SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
   config->SetString("access_shared_limit", passwd);
+  config->SetInt("send_message_retry_in_us", send_message_retry_in_us);
   WriteNetSegment();
 
   vector<string> sharedFileList;
@@ -161,6 +162,10 @@ void ProgramData::ReadProgData() {
   FLAG_SET(sndfgs, 0, config->GetBool("sound_support", true));
 
   passwd = config->GetString("access_shared_limit");
+  send_message_retry_in_us = config->GetInt("send_message_retry_in_us", 1000000);
+  if(send_message_retry_in_us <= 0) {
+    send_message_retry_in_us = 1000000;
+  }
 
   ReadNetSegment();
 

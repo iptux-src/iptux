@@ -19,6 +19,7 @@ namespace iptux {
 shared_ptr<IptuxConfig> newTestIptuxConfig() {
   auto res = IptuxConfig::newFromString("{}");
   res->SetBool("debug_dont_broadcast", true);
+  res->SetInt("send_message_retry_in_us", 1000*10);
   return res;
 }
 

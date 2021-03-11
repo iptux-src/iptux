@@ -63,6 +63,7 @@ class ProgramData {
 
   const std::string& GetPasswd() const {return passwd;}
   void SetPasswd(const std::string& val) {passwd = val;}
+  int getSendMessageRetryInUs() const {return send_message_retry_in_us; }
 
   /**
    * @brief Set the Using Blacklist object
@@ -91,6 +92,7 @@ class ProgramData {
   GRegex *urlregex;              // URL正则表达式
 
   struct timeval timestamp;  //程序数据时间戳
+  int send_message_retry_in_us; // sleep time(in microsecond) when send message failed
 
  private:
   std::vector<NetSegment> netseg;  //需要通知登录的IP段
