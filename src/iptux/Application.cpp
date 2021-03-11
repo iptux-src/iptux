@@ -3,6 +3,7 @@
 
 #include <sys/stat.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
@@ -14,6 +15,7 @@
 #include "iptux/StatusIcon.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
+#include "iptux/HelpDialog.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/Darwin.h"
@@ -98,6 +100,7 @@ void Application::onStartup(Application& self) {
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
       { "trans_model.changed" },
       { "trans_model.clear", G_ACTION_CALLBACK(onTransModelClear)},
+      { "about", G_ACTION_CALLBACK(onAbout)},
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),
@@ -176,6 +179,17 @@ void Application::onTransModelClear(void *, void *, Application &self) {
     // }
   } while (gtk_tree_model_iter_next(model, &iter));
   g_action_group_activate_action(G_ACTION_GROUP(self.app), "trans_model.changed", nullptr);
+}
+
+void Application::onAbout(void*, void*, Application&self) {
+  auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
+  gtk_builder_connect_signals(builder, nullptr);
+  auto aboutDialog = GTK_ABOUT_DIALOG(
+    CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog"))
+  );
+  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(aboutDialog, GTK_WINDOW(self.window->getWindow()))));
+  gtk_widget_hide(GTK_WIDGET(aboutDialog));
+  g_object_unref(builder);
 }
 
 }
