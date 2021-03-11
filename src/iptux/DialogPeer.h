@@ -35,6 +35,7 @@ class DialogPeer : public DialogBase {
   static void ShowDialogPeer(DialogPeer *dlgpr);
   void insertPicture();
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
+
  private:
   Application* app;
   MainWindow* mainWindow;

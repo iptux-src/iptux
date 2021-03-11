@@ -34,6 +34,7 @@ class DialogGroup : public DialogBase {
   virtual void ClearAllPalData();
   virtual GSList *GetSelPal();
   GtkWindow* getWindow() override { return window; }
+
  private:
   MainWindow* mainWindow;
   GtkWindow* window;
