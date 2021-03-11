@@ -82,6 +82,9 @@ class DialogGroup : public DialogBase {
                                       DialogGroup *self);
   static void SendMessage(DialogGroup *dlggrp);
   static void onActive(DialogGroup& self);
+  static void onClearChatHistory (void *, void *, DialogGroup& self) {
+    self.ClearHistoryTextView();
+  }
 };
 
 }  // namespace iptux

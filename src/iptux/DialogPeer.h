@@ -74,7 +74,12 @@ class DialogPeer : public DialogBase {
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
   static gint RcvTreePopup(DialogPeer *self, GdkEvent *event);
   static void onActive(DialogPeer& self);
-
+  static void onClearChatHistory (void *, void *, DialogPeer& self) {
+    self.ClearHistoryTextView();
+  }
+  static void onInsertPicture (void *, void *, DialogPeer& self) {
+    self.insertPicture();
+  }
  protected:
   GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;

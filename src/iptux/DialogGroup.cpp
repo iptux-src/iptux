@@ -215,6 +215,12 @@ GtkWindow *DialogGroup::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
 
+  GActionEntry win_entries[] = {
+      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+  };
+  g_action_map_add_action_entries (G_ACTION_MAP (window),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   this);
   return GTK_WINDOW(window);
 }
 

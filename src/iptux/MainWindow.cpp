@@ -77,11 +77,6 @@ GtkWidget* MainWindow::getWindow() {
   return window;
 }
 
-typedef void (* GActionCallback) (GSimpleAction *action,
-                                  GVariant      *parameter,
-                                  gpointer       user_data) ;
-#define	G_ACTION_CALLBACK(f)			 ((GActionCallback) (f))
-
 /**
  * 创建程序主窗口入口.
  */
