@@ -182,14 +182,7 @@ void Application::onTransModelClear(void *, void *, Application &self) {
 }
 
 void Application::onAbout(void*, void*, Application&self) {
-  auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
-  gtk_builder_connect_signals(builder, nullptr);
-  auto aboutDialog = GTK_ABOUT_DIALOG(
-    CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog"))
-  );
-  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(aboutDialog, GTK_WINDOW(self.window->getWindow()))));
-  gtk_widget_hide(GTK_WIDGET(aboutDialog));
-  g_object_unref(builder);
+  HelpDialog::AboutEntry(GTK_WINDOW(self.window->getWindow()));
 }
 
 }
