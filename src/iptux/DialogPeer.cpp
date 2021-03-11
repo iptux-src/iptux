@@ -958,14 +958,15 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
     return FALSE;
   }
   dlgpr->rcvdsize = 0;
-  gtk_tree_model_get_iter_first(model, &iter);
-  do {  //遍历待接收model
-    gtk_tree_model_get(model, &iter, 5, &file, -1);
-    if (file->finishedsize == file->filesize) {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
-    }
-    dlgpr->rcvdsize += file->finishedsize;
-  } while (gtk_tree_model_iter_next(model, &iter));
+  if(gtk_tree_model_get_iter_first(model, &iter)) {
+    do {  //遍历待接收model
+      gtk_tree_model_get(model, &iter, 5, &file, -1);
+      if (file->finishedsize == file->filesize) {
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
+      }
+      dlgpr->rcvdsize += file->finishedsize;
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
   //设置进度条,如果接收完成重新载入待接收和已接收列表
   if (dlgpr->torcvsize == 0) {
     progress = 0;
