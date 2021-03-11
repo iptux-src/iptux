@@ -14,7 +14,7 @@
 #include "HelpDialog.h"
 
 #include <glib/gi18n.h>
-
+#include <glog/logging.h>
 
 #include "iptux/UiHelper.h"
 
@@ -34,9 +34,21 @@ HelpDialog::~HelpDialog() {}
 /**
  * 关于对话框入口.
  */
-GtkWidget* HelpDialog::AboutEntry(GtkAboutDialog* dialog, GtkWindow* parent) {
+void HelpDialog::AboutEntry(GtkWindow* parent, bool run) {
+  auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
+  gtk_builder_connect_signals(builder, nullptr);
+  auto aboutDialog = GTK_ABOUT_DIALOG(
+    CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog"))
+  );
+
   HelpDialog hlp;
-  return hlp.CreateAboutDialog(dialog, parent);
+  auto dialog = hlp.CreateAboutDialog(aboutDialog, parent);
+
+  if(run) {
+    gtk_dialog_run(GTK_DIALOG(dialog));
+  }
+  gtk_widget_hide(GTK_WIDGET(aboutDialog));
+  g_object_unref(builder);
 }
 
 /**

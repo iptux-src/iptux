@@ -151,23 +151,34 @@ TEST(CoreThread, FullCase) {
   auto pal1InThread2 = thread2->GetPal("127.0.0.1");
 
   // send message
-  thread1->SendMessage(pal2InThread1, "hello world");
-  while(thread2Events.size() != 1) {
+  while(thread2Events.size() < 1) {
+    thread1->SendMessage(pal2InThread1, "hello world");
     this_thread::sleep_for(10ms);
   }
-  auto event = thread2Events[0];
-  EXPECT_EQ(event->getType(), EventType::NEW_MESSAGE);
+  int i = 0;
+  auto event = thread2Events[i];
+  while(true) {
+    ASSERT_GT(int(thread2Events.size()), i);
+    event = thread2Events[i];
+    if(event->getType() == EventType::NEW_PAL_ONLINE) {
+      i++;
+    } else {
+      ASSERT_EQ(event->getType(), EventType::NEW_MESSAGE);
+      break;
+    }
+  }
   auto event2 = (NewMessageEvent*)(event.get());
-  EXPECT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
+  ASSERT_EQ(event2->getMsgPara().dtlist[0].ToString(), "ChipData(MessageContentType::STRING, hello world)");
+  thread2Events.clear();
 
   // send my icon
   ifstream ifs(testDataPath("iptux.png"));
-  thread1->SendMyIcon(pal2InThread1, ifs);
-  while(thread2Events.size() != 2) {
+  while(thread2Events.size() < 1) {
+    thread1->SendMyIcon(pal2InThread1, ifs);
     this_thread::sleep_for(10ms);
   }
   {
-    auto event = thread2Events[1];
+    auto event = thread2Events[0];
     EXPECT_EQ(event->getType(), EventType::ICON_UPDATE);
     auto event2 = (IconUpdateEvent*)(event.get());
     EXPECT_EQ(event2->GetPalKey().ToString(), "127.0.0.1:2425");

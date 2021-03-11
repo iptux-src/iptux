@@ -14,8 +14,14 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
     - uses: actions/checkout@v2
+    - name: Configure Homebrew cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/Library/Caches/Homebrew
+        key: ${{ runner.os }}-v1
     - name: brew install
-      run: brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration
+      run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration
     - name: meson
       run: meson builddir
     - name: build

@@ -13,6 +13,7 @@
 #include "DialogGroup.h"
 
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
@@ -31,11 +32,10 @@ namespace iptux {
  * 类构造函数.
  * @param grp 群组信息
  */
-DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
-                         shared_ptr<UiProgramData> progdt)
-    : DialogBase(grp, progdt),
-      mainWindow(mainWindow),
-      config(mainWindow->getConfig()) {
+DialogGroup::DialogGroup(Application* app, GroupInfo *grp)
+    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
+      app(app),
+      config(app->getConfig()) {
   InitSublayerSpecify();
 }
 
@@ -43,7 +43,6 @@ DialogGroup::DialogGroup(MainWindow* mainWindow, GroupInfo *grp,
  * 类析构函数.
  */
 DialogGroup::~DialogGroup() {
-  mainWindow->clearActiveWindow(this);
   SaveUILayout();
 }
 
@@ -51,12 +50,11 @@ DialogGroup::~DialogGroup() {
  * 群组对话框入口.
  * @param grpinf 群组信息
  */
-void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                                   shared_ptr<UiProgramData> progdt) {
+DialogGroup* DialogGroup::GroupDialogEntry(Application* app, GroupInfo *grpinf) {
   DialogGroup *dlggrp;
   GtkWidget *window, *widget;
 
-  dlggrp = new DialogGroup(mainWindow, grpinf, progdt);
+  dlggrp = new DialogGroup(app, grpinf);
   window = GTK_WIDGET(dlggrp->CreateMainWindow());
   gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
   gtk_widget_show_all(window);
@@ -72,8 +70,7 @@ void DialogGroup::GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
-
-  /* delete dlggrp;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
+  return dlggrp;
 }
 
 /**
@@ -201,7 +198,7 @@ void DialogGroup::SaveUILayout() {
  */
 GtkWindow *DialogGroup::CreateMainWindow() {
   char buf[MAX_BUFLEN];
-  window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+  window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
   snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name.c_str());
   gtk_window_set_title(GTK_WINDOW(window), buf);
   gtk_window_set_default_size(GTK_WINDOW(window),
@@ -213,10 +210,15 @@ GtkWindow *DialogGroup::CreateMainWindow() {
   widget_enable_dnd_uri(GTK_WIDGET(window));
   grpinf->dialog = GTK_WIDGET(window);
 
-  MainWindowSignalSetup(window);
-  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
+  MainWindowSignalSetup(GTK_WINDOW(window));
 
-  return window;
+  GActionEntry win_entries[] = {
+      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+  };
+  g_action_map_add_action_entries (G_ACTION_MAP (window),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   this);
+  return GTK_WINDOW(window);
 }
 
 /**
@@ -664,7 +666,7 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
     if ((grpinf->dialog))
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     else
-      DialogPeer::PeerDialogEntry(g_mwin, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(g_mwin->getApp(), grpinf);
   }
 }
 
@@ -735,13 +737,6 @@ void DialogGroup::onUIChanged(DialogGroup &self) {
   self.config->SetInt("group_memberenclosure_paned_divide", gtk_paned_get_position(GTK_PANED(self.memberEnclosurePaned)));
   self.config->SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
   self.config->Save();
-}
-
-void DialogGroup::onActive(DialogGroup& self) {
-  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
-    return;
-  }
-  self.mainWindow->setActiveWindow(ActiveWindowType::GROUP, &self);
 }
 
 }  // namespace iptux

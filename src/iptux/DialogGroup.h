@@ -12,30 +12,30 @@
 #ifndef IPTUX_DIALOGGROUP_H
 #define IPTUX_DIALOGGROUP_H
 
-#include "iptux/DialogBase.h"
 #include "iptux-core/IptuxConfig.h"
-#include "iptux/UiProgramData.h"
 #include "iptux-core/Models.h"
-#include "iptux/MainWindow.h"
+#include "iptux/DialogBase.h"
+#include "iptux/UiProgramData.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
+  DialogGroup(Application* app, GroupInfo *grp);
   virtual ~DialogGroup();
 
-  static void GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                               std::shared_ptr<UiProgramData> progdt);
-
+  static DialogGroup* GroupDialogEntry(Application* app, GroupInfo *grpinf);
   virtual void UpdatePalData(PalInfo *pal);
   virtual void InsertPalData(PalInfo *pal);
   virtual void DelPalData(PalInfo *pal);
   virtual void ClearAllPalData();
   virtual GSList *GetSelPal();
+  GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
-  MainWindow* mainWindow;
+  Application* app;
+  GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;
   GtkWidget* memberEnclosurePaned;
@@ -80,7 +80,9 @@ class DialogGroup : public DialogBase {
                                       GtkTreeViewColumn *column,
                                       DialogGroup *self);
   static void SendMessage(DialogGroup *dlggrp);
-  static void onActive(DialogGroup& self);
+  static void onClearChatHistory (void *, void *, DialogGroup& self) {
+    self.ClearHistoryTextView();
+  }
 };
 
 }  // namespace iptux

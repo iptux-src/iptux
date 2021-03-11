@@ -45,7 +45,7 @@ DataSettings::~DataSettings() { ClearSublayer(); }
  * 程序数据设置入口.
  * @param parent 父窗口指针
  */
-void DataSettings::ResetDataEntry(GtkWidget *parent) {
+void DataSettings::ResetDataEntry(GtkWidget *parent, bool run) {
   DataSettings dset;
   GtkWidget *dialog;
   GtkWidget *note, *label;
@@ -81,6 +81,10 @@ void DataSettings::ResetDataEntry(GtkWidget *parent) {
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
+  if(!run) {
+    gtk_widget_destroy(dialog);
+    return;
+  }
 mark:
   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:

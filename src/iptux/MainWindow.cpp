@@ -57,8 +57,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       accel(NULL),
       timerid(0),
       windowConfig(250, 510, "main_window") {
-  activeWindowType = ActiveWindowType ::OTHERS;
-  activeWindow = nullptr;
   transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
@@ -76,11 +74,6 @@ MainWindow::~MainWindow() {
 GtkWidget* MainWindow::getWindow() {
   return window;
 }
-
-typedef void (* GActionCallback) (GSimpleAction *action,
-                                  GVariant      *parameter,
-                                  gpointer       user_data) ;
-#define	G_ACTION_CALLBACK(f)			 ((GActionCallback) (f))
 
 /**
  * 创建程序主窗口入口.
@@ -105,9 +98,6 @@ void MainWindow::CreateWindow() {
       { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
       { "detect", G_ACTION_CALLBACK(onDetect)},
       { "find", G_ACTION_CALLBACK(onFind)},
-      { "about", G_ACTION_CALLBACK(onAbout)},
-      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
   };
 
   add_accelerator(app->getApp(), "win.refresh", "F5");
@@ -555,7 +545,6 @@ GtkWidget *MainWindow::CreateMainWindow() {
                            this);
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
-  g_signal_connect_swapped(window, "notify::is-active", G_CALLBACK(onActive), this);
   return window;
 }
 
@@ -1181,7 +1170,7 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
 }
 
 void MainWindow::onDetect(void*, void*, MainWindow& self) {
-  DetectPal pal(self.builder, GTK_WINDOW(self.window));
+  DetectPal pal(self.app, self.builder, GTK_WINDOW(self.window));
   pal.run();
 }
 
@@ -1351,12 +1340,12 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
   /* 根据需求建立对应的对话框 */
   switch (grpinf->type) {
     case GROUP_BELONG_TYPE_REGULAR:
-      DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(self->app, grpinf);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
     case GROUP_BELONG_TYPE_BROADCAST:
-      DialogGroup::GroupDialogEntry(self, grpinf, self->progdt);
+      DialogGroup::GroupDialogEntry(self->app, grpinf);
     default:
       break;
   }
@@ -1487,12 +1476,12 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
   if (!(grpinf->dialog)) {
     switch (grpinf->type) {
       case GROUP_BELONG_TYPE_REGULAR:
-        DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
+        DialogPeer::PeerDialogEntry(self->app, grpinf);
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
       case GROUP_BELONG_TYPE_BROADCAST:
-        DialogGroup::GroupDialogEntry(self, grpinf, self->progdt);
+        DialogGroup::GroupDialogEntry(self->app, grpinf);
       default:
         break;
     }
@@ -1520,14 +1509,6 @@ void MainWindow::onFind(void*, void*, MainWindow&self) {
   widget = GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-entry-widget"));
   gtk_widget_grab_focus(widget);
   PallistEntryChanged(widget, &self.widset);
-}
-
-void MainWindow::onAbout(void*, void*, MainWindow&self) {
-  auto aboutDialog = GTK_ABOUT_DIALOG(
-    CHECK_NOTNULL(gtk_builder_get_object(self.builder, "about_dialog"))
-  );
-  gtk_dialog_run(GTK_DIALOG(HelpDialog::AboutEntry(aboutDialog, GTK_WINDOW(self.window))));
-  gtk_widget_hide(GTK_WIDGET(aboutDialog));
 }
 
 /**
@@ -1625,7 +1606,7 @@ void MainWindow::PallistItemActivated(GtkWidget *treeview, GtkTreePath *path,
   gtk_tree_model_get(model, &iter, 6, &pal, -1);
   if ((grpinf = g_cthrd->GetPalRegularItem(pal))) {
     if (!(grpinf->dialog))
-      DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
+      DialogPeer::PeerDialogEntry(self->app, grpinf);
     else
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
   }
@@ -1672,7 +1653,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget *treeview,
 
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
   if (!(grpinf->dialog))
-    DialogPeer::PeerDialogEntry(self, grpinf, self->progdt);
+    DialogPeer::PeerDialogEntry(self->app, grpinf);
   else
     gtk_window_present(GTK_WINDOW(grpinf->dialog));
   /* 获取会话对象，并将数据添加到会话对象 */
@@ -1720,54 +1701,12 @@ gboolean MainWindow::onDeleteEvent(MainWindow *self) {
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
     GroupInfo *groupInfo) {
-  DialogPeer::PeerDialogEntry(g_mwin, groupInfo, g_cthrd->getUiProgramData());
+  DialogPeer::PeerDialogEntry(g_mwin->app, groupInfo);
 }
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
     GroupInfo *groupInfo) {
-  DialogGroup::GroupDialogEntry(g_mwin, groupInfo, g_cthrd->getUiProgramData());
-}
-
-void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {
-  switch(self.activeWindowType) {
-    case ActiveWindowType::PEER:
-      ((DialogPeer*)self.activeWindow)->ClearHistoryTextView();
-      break;
-    case ActiveWindowType::GROUP:
-      ((DialogGroup*)self.activeWindow)->ClearHistoryTextView();
-      break;
-    default:
-      LOG_WARN("ClearChatHistory should be disabled for %d", self.activeWindowType);
-  }
-}
-
-void MainWindow::onInsertPicture(void *, void *, MainWindow &self) {
-  switch(self.activeWindowType) {
-    case ActiveWindowType::PEER:
-      ((DialogPeer*)self.activeWindow)->insertPicture();
-      break;
-    default:
-      LOG_WARN("InsertPicture should be disabled for %d", self.activeWindowType);
-  }
-}
-
-void MainWindow::onActive(MainWindow& self) {
-  if(!gtk_window_is_active(GTK_WINDOW(self.window))) {
-    return;
-  }
-  //self.setActiveWindow(ActiveWindowType::MAIN, &self);
-}
-
-void MainWindow::setActiveWindow(ActiveWindowType t, void* activeWindow) {
-  this->activeWindowType = t;
-  this->activeWindow = activeWindow;
-}
-
-void MainWindow::clearActiveWindow(void* activeWindow) {
-  if(this->activeWindow == activeWindow) {
-    this->activeWindowType = ActiveWindowType ::OTHERS;
-    this->activeWindow = nullptr;
-  }
+  DialogGroup::GroupDialogEntry(g_mwin->app, groupInfo);
 }
 
 void MainWindow::InitThemeSublayerData() {
@@ -1866,7 +1805,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
         coreThread.PushItemToMsgline(grpinf);
         if(coreThread.getProgramData()->IsAutoOpenCharDialog()) {
           if (!(grpinf->dialog)) {
-            DialogPeer::PeerDialogEntry(g_mwin, grpinf, coreThread.getUiProgramData());
+            DialogPeer::PeerDialogEntry(g_mwin->app, grpinf);
           } else {
             gtk_window_present(GTK_WINDOW(grpinf->dialog));
           }

@@ -22,6 +22,9 @@ class Application {
   GtkApplication* getApp() {return app;}
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
   TransModel* getTransModel() { return transModel; }
+  MainWindow* getMainWindow() { return window; }
+  std::shared_ptr<UiProgramData> getProgramData() { return data; }
+  std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
 
 private:
   std::shared_ptr<IptuxConfig> config;
@@ -40,12 +43,13 @@ public:
   void activate();
 
 private:
-  static void onStartup (Application& self);
+  static void onAbout (void *, void *, Application& self);
   static void onActivate (Application& self);
-  static void onQuit (void *, void *, Application& self);
   static void onPreferences (void *, void *, Application& self);
-  static void onToolsTransmission (void *, void *, Application& self);
+  static void onQuit (void *, void *, Application& self);
+  static void onStartup (Application& self);
   static void onToolsSharedManagement (void *, void *, Application& self);
+  static void onToolsTransmission (void *, void *, Application& self);
   static void onTransModelClear (void *, void *, Application& self);
 };
 
