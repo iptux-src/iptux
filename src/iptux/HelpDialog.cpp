@@ -34,7 +34,7 @@ HelpDialog::~HelpDialog() {}
 /**
  * 关于对话框入口.
  */
-GtkWidget* HelpDialog::AboutEntry(GtkWindow* parent) {
+void HelpDialog::AboutEntry(GtkWindow* parent, bool run) {
   auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
   auto aboutDialog = GTK_ABOUT_DIALOG(
@@ -44,7 +44,9 @@ GtkWidget* HelpDialog::AboutEntry(GtkWindow* parent) {
   HelpDialog hlp;
   auto dialog = hlp.CreateAboutDialog(aboutDialog, parent);
 
-  gtk_dialog_run(GTK_DIALOG(dialog));
+  if(run) {
+    gtk_dialog_run(GTK_DIALOG(dialog));
+  }
   gtk_widget_hide(GTK_WIDGET(aboutDialog));
   g_object_unref(builder);
 }
