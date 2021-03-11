@@ -217,6 +217,8 @@ GtkWindow *DialogGroup::CreateMainWindow() {
       { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
       { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
       { "close", G_ACTION_CALLBACK(onClose)},
+      { "sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
+      { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
   };
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -741,5 +743,46 @@ void DialogGroup::onUIChanged(DialogGroup &self) {
   self.config->SetInt("group_historyinput_paned_divide", gtk_paned_get_position(GTK_PANED(self.historyInputPaned)));
   self.config->Save();
 }
+
+void DialogGroup::onSortBy (GSimpleAction *action, GVariant* value, DialogGroup& self) {
+  string sortBy = g_variant_get_string(value, nullptr);
+
+  PalTreeModelSortKey key;
+
+  if(sortBy == "nickname") {
+    key = PalTreeModelSortKey::NICKNAME;
+  } else if(sortBy == "ip") {
+    key = PalTreeModelSortKey::IP;
+  } else {
+    LOG_WARN("unknown sort by: %s", sortBy.c_str());
+    return;
+  }
+
+
+  auto model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "member-model"));
+  palTreeModelSetSortKey(model, key);
+  g_simple_action_set_state(action, value);
+}
+
+void DialogGroup::onSortType (GSimpleAction *action, GVariant* value, DialogGroup& self) {
+  string sortType = g_variant_get_string(value, nullptr);
+
+  GtkSortType type;
+
+  if(sortType == "ascending") {
+    type = GTK_SORT_ASCENDING;
+  } else if(sortType == "descending") {
+    type = GTK_SORT_DESCENDING;
+  } else {
+    LOG_WARN("unknown sorttype: %s", sortType.c_str());
+    return;
+  }
+
+  auto model = GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "member-model"));
+  gtk_tree_sortable_set_sort_column_id(
+      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  g_simple_action_set_state(action, value);
+}
+
 
 }  // namespace iptux

@@ -92,6 +92,8 @@ class DialogGroup : public DialogBase {
   static void onClose(void*, void*, DialogGroup& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
+  static void onSortType (GSimpleAction *action, GVariant* value, DialogGroup& self);
+  static void onSortBy (GSimpleAction *action, GVariant* value, DialogGroup& self);
 };
 
 }  // namespace iptux
