@@ -1356,7 +1356,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
     case GROUP_BELONG_TYPE_BROADCAST:
-      DialogGroup::GroupDialogEntry(self, grpinf, self->progdt);
+      DialogGroup::GroupDialogEntry(self->app, grpinf);
     default:
       break;
   }
@@ -1492,7 +1492,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
       case GROUP_BELONG_TYPE_SEGMENT:
       case GROUP_BELONG_TYPE_GROUP:
       case GROUP_BELONG_TYPE_BROADCAST:
-        DialogGroup::GroupDialogEntry(self, grpinf, self->progdt);
+        DialogGroup::GroupDialogEntry(self->app, grpinf);
       default:
         break;
     }
@@ -1725,7 +1725,7 @@ void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
 
 void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
     GroupInfo *groupInfo) {
-  DialogGroup::GroupDialogEntry(g_mwin, groupInfo, g_cthrd->getUiProgramData());
+  DialogGroup::GroupDialogEntry(g_mwin->app, groupInfo);
 }
 
 void MainWindow::onClearChatHistory(void *, void *, MainWindow &self) {

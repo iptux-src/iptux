@@ -23,6 +23,7 @@ class Application {
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
+  std::shared_ptr<UiProgramData> getProgramData() { return data; }
 
 private:
   std::shared_ptr<IptuxConfig> config;

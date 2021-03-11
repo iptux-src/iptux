@@ -22,22 +22,21 @@ namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(MainWindow* mainWindow, GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
+  DialogGroup(Application* app, GroupInfo *grp);
   virtual ~DialogGroup();
 
-  static void GroupDialogEntry(MainWindow* mainWindow, GroupInfo *grpinf,
-                               std::shared_ptr<UiProgramData> progdt);
-
+  static DialogGroup* GroupDialogEntry(Application* app, GroupInfo *grpinf);
   virtual void UpdatePalData(PalInfo *pal);
   virtual void InsertPalData(PalInfo *pal);
   virtual void DelPalData(PalInfo *pal);
   virtual void ClearAllPalData();
   virtual GSList *GetSelPal();
-  GtkWindow* getWindow() override { return window; }
+  GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
+  Application* app;
   MainWindow* mainWindow;
-  GtkWindow* window;
+  GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;
   GtkWidget* memberEnclosurePaned;
