@@ -81,6 +81,9 @@ class DialogPeer : public DialogBase {
   static void onAttachFile(void*, void*, DialogPeer& self) {
     DialogBase::AttachRegular(&self);
   }
+  static void onAttachFolder(void*, void*, DialogPeer& self) {
+    DialogBase::AttachFolder(&self);
+  }
 
  protected:
   GtkApplicationWindow* window;

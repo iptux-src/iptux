@@ -88,6 +88,10 @@
                     <attribute name="label" translatable="yes">Attach File</attribute>
                     <attribute name="action">win.attach_file</attribute>
                 </item>
+                <item>
+                    <attribute name="label" translatable="yes">Attach Folder</attribute>
+                    <attribute name="action">win.attach_folder</attribute>
+                </item>
             </section>
         </submenu>
         <submenu>

@@ -215,6 +215,7 @@ GtkWindow *DialogPeer::CreateMainWindow() {
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
       { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
       { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
+      { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
   };
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),

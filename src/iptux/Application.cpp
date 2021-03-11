@@ -117,6 +117,7 @@ void Application::onStartup(Application& self) {
   add_accelerator(self.app, "win.detect", "<Primary>D");
   add_accelerator(self.app, "win.find", "<Primary>F");
   add_accelerator(self.app, "win.attach_file", "<Ctrl>S");
+  add_accelerator(self.app, "win.attach_folder", "<Ctrl>D");
 
 #if SYSTEM_DARWIN
   install_darwin_icon();
