@@ -113,6 +113,11 @@ void Application::onStartup(Application& self) {
   gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
   g_object_unref (builder);
 
+  add_accelerator(self.app, "win.refresh", "F5");
+  add_accelerator(self.app, "win.detect", "<Primary>D");
+  add_accelerator(self.app, "win.find", "<Primary>F");
+  add_accelerator(self.app, "win.attach_file", "<Ctrl>S");
+
 #if SYSTEM_DARWIN
   install_darwin_icon();
 #endif

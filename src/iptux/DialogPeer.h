@@ -78,6 +78,9 @@ class DialogPeer : public DialogBase {
   static void onInsertPicture (void *, void *, DialogPeer& self) {
     self.insertPicture();
   }
+  static void onAttachFile(void*, void*, DialogPeer& self) {
+    DialogBase::AttachRegular(&self);
+  }
 
  protected:
   GtkApplicationWindow* window;

@@ -100,10 +100,6 @@ void MainWindow::CreateWindow() {
       { "find", G_ACTION_CALLBACK(onFind)},
   };
 
-  add_accelerator(app->getApp(), "win.refresh", "F5");
-  add_accelerator(app->getApp(), "win.detect", "<Primary>D");
-  add_accelerator(app->getApp(), "win.find", "<Primary>F");
-
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
                                    this);
