@@ -2,9 +2,11 @@
 
 ## Features
 
-* [#?] add a config option `bind_ip` to specify binding ip.
-* [#?] switch to GTK+3, and use `GtkApplication`.
-* [#?] show icon under macOS.
+* migrate to GTK+3, and use `GtkApplication`.
+* split non-UI part to libiptux-core, now you can write a bot for iptux, check `examples`.
+* add a config option `bind_ip` to specify binding ip.
+* add icon for macOS.
+* switch from `cmake` to `meson`.
 
 ## Bugs
 
