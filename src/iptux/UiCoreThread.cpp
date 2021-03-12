@@ -16,14 +16,15 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 #include "iptux/global.h"
 #include "iptux/LogSystem.h"
-#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 
@@ -741,7 +742,8 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
 void UiCoreThread::start() {
   CoreThread::start();
 /* 定时扫描处理程序内部任务 */
-  timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
+  CHECK_EQ(timerid, 0);
+  timerid = g_timeout_add(500, GSourceFunc(WatchCoreStatus), this);
 }
 
 /**
