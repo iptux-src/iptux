@@ -78,10 +78,15 @@ class MainWindow {
   GtkAccelGroup *accel;  //快捷键集组
   guint timerid;         // UI更新定时器ID
   WindowConfig windowConfig;
-
   GtkBuilder* builder;
+  GtkMenu* palPopupMenu;
+
+  GroupInfo* currentGroupInfo = 0;
 
  private:
+  void setActionSensitive(const std::string& actionName, bool sensitive);
+  void setCurrentGroupInfo(GroupInfo* groupInfo);
+
   void InitSublayer();
   void ClearSublayer();
 
@@ -106,7 +111,6 @@ class MainWindow {
                               GroupInfo *grpinf);
   void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                bool blinking);
-  static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void InitThemeSublayerData();
   void processEventInMainThread(std::shared_ptr<const Event> event);
@@ -118,7 +122,6 @@ class MainWindow {
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);
 
-  static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
   static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
                                       gboolean key, GtkTooltip *tooltip,
@@ -127,9 +130,6 @@ class MainWindow {
                                      GtkTreeViewColumn *column,
                                      MainWindow *self);
   static gboolean PaltreePopupMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void onPaltreePopupMenuSendMessageActivateRegular(
-      GroupInfo *groupInfo);
-  static void onPaltreePopupMenuSendMessageActivateGroup(GroupInfo *groupInfo);
   static gboolean PaltreeChangeStatus(GtkWidget *treeview,
                                       GdkEventButton *event);
   static void PaltreeDragDataReceived(GtkWidget *treeview,
@@ -158,6 +158,10 @@ class MainWindow {
   static void onRefresh (void *, void *, MainWindow& self);
   static void onDetect (void *, void *, MainWindow& self);
   static void onFind (void *, void *, MainWindow& self);
+  static void onPalSendMessage (void *, void *, MainWindow& self);
+  static void onPalRequestSharedResources (void *, void *, MainWindow& self);
+  static void onPalChangeInfo (void *, void *, MainWindow& self);
+  static void onDeletePal (void *, void *, MainWindow& self);
   static void onSortType (GSimpleAction *action, GVariant* value, MainWindow& self);
   static void onSortBy (GSimpleAction *action, GVariant* value, MainWindow& self);
   static gboolean onTransWindowDelete(MainWindow& self);
