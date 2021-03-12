@@ -22,9 +22,15 @@ class TransWindowPrivate {
  public:
   Application* app;
   GtkWidget* transTreeviewWidget;
+  vector<gulong> signals;
 
  public:
   static void destroy(TransWindowPrivate* self) {
+    for(gulong i: self->signals) {
+      g_signal_handler_disconnect(
+        g_action_map_lookup_action(G_ACTION_MAP(self->app->getApp()),"trans_model.changed"),
+        i);
+    }
     delete self;
   }
 };
@@ -62,12 +68,13 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
 
   g_signal_connect(window, "delete-event", G_CALLBACK(gtk_widget_hide), NULL);
   g_signal_connect(window, "configure-event", G_CALLBACK(TWinConfigureEvent), NULL);
-  g_signal_connect_swapped(
+  auto signalHandler = g_signal_connect_swapped(
       g_action_map_lookup_action(G_ACTION_MAP(app->getApp()), "trans_model.changed"),
       "activate",
       G_CALLBACK(UpdateTransUI),
       window
   );
+  priv->signals.push_back(signalHandler);
   return window;
 }
 
