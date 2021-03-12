@@ -184,17 +184,25 @@ void UiCoreThread::ClearAllPalFromList() {
 void UiCoreThread::DelPalFromList(PalKey palKey) {
   CoreThread::DelPalFromList(palKey);
 
-  PalInfo *pal;
+  PPalInfo pal;
   GroupInfo *grpinf;
 
   /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPalFromList(palKey))) return;
+  if (!(pal = GetPal(palKey))) return;
 
   /* 从群组中移除好友 */
-  if ((grpinf = GetPalRegularItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
-  if ((grpinf = GetPalSegmentItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
-  if ((grpinf = GetPalGroupItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
-  if ((grpinf = GetPalBroadcastItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
+  if ((grpinf = GetPalRegularItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
+  if ((grpinf = GetPalSegmentItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
+  if ((grpinf = GetPalGroupItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
+  if ((grpinf = GetPalBroadcastItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
 }
 
 /**
@@ -208,14 +216,16 @@ void UiCoreThread::DelPalFromList(PalKey palKey) {
 void UiCoreThread::UpdatePalToList(PalKey palKey) {
   CoreThread::UpdatePalToList(palKey);
 
-  PalInfo *pal;
+  PPalInfo ppal;
   GroupInfo *grpinf;
   SessionAbstract *session;
 
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
-  if (!(pal = GetPalFromList(palKey))) {
+  if (!(ppal = GetPal(palKey))) {
     return;
   }
+
+  auto pal = ppal.get();
 
   /* 更新好友所在的群组，以及它在UI上的信息 */
   /*/* 更新常规模式下的群组 */
@@ -743,7 +753,7 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
 void UiCoreThread::start() {
   CoreThread::start();
 /* 定时扫描处理程序内部任务 */
-  CHECK_EQ(timerid, 0);
+  CHECK_EQ(timerid, guint(0));
   timerid = g_timeout_add(500, GSourceFunc(WatchCoreStatus), this);
 }
 
