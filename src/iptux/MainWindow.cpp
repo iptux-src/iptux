@@ -469,7 +469,8 @@ void MainWindow::InitSublayer() {
   g_datalist_init(&mdlset);
 
   accel = gtk_accel_group_new();
-  timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
+  CHECK_EQ(timerid, 0);
+  timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
 
   model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,

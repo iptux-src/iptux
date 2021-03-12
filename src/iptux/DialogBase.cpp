@@ -397,7 +397,9 @@ bool DialogBase::SendEnclosureMsg() {
   } while (gtk_tree_model_iter_next(model, &iter));
 
   BroadcastEnclosureMsg(files);
-  timersend = gdk_threads_add_timeout(400, (GSourceFunc)UpdateFileSendUI, this);
+  if(!timersend) {
+    timersend = g_timeout_add(400, (GSourceFunc) UpdateFileSendUI, this);
+  }
   return true;
 }
 
