@@ -47,6 +47,7 @@ UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
+  timerid = 0;
   logSystem = new LogSystem(data);
   g_queue_init(&msgline);
   InitSublayer();
