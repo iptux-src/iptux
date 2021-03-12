@@ -16,6 +16,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
@@ -30,7 +31,7 @@ namespace iptux {
  * 类构造函数.
  * @param pl
  */
-RevisePal::RevisePal(PalInfo *pl) : widset(NULL), mdlset(NULL), pal(pl) {
+RevisePal::RevisePal(PalInfo *pl) : widset(NULL), mdlset(NULL), pal(CHECK_NOTNULL(pl)) {
   InitSublayer();
 }
 
