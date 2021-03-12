@@ -23,7 +23,10 @@ class RevisePal {
   RevisePal(PalInfo *pl);
   ~RevisePal();
 
-  static void ReviseEntry(PalInfo *pal);
+  static void ReviseEntryDo(PalInfo *pal, bool run);
+  static void ReviseEntry(PalInfo *pal) {
+    ReviseEntryDo(pal, true);
+  }
 
  private:
   void InitSublayer();
