@@ -44,7 +44,7 @@ RevisePal::~RevisePal() { ClearSublayer(); }
  * 修正好友数据入口.
  * @param pal class PalInfo
  */
-void RevisePal::ReviseEntry(PalInfo *pal) {
+void RevisePal::ReviseEntryDo(PalInfo *pal, bool run) {
   RevisePal rpal(pal);
   GtkWidget *dialog;
 
@@ -56,12 +56,14 @@ void RevisePal::ReviseEntry(PalInfo *pal) {
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_OK:
-      rpal.ApplyReviseData();
-      break;
-    default:
-      break;
+  if(run) {
+    switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+      case GTK_RESPONSE_OK:
+        rpal.ApplyReviseData();
+        break;
+      default:
+        break;
+    }
   }
   gtk_widget_destroy(dialog);
 }
@@ -202,8 +204,10 @@ void RevisePal::SetAllValue() {
   /* 预置头像 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
-  active = IconfileGetItemPos(model, pal->iconfile);
-  gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
+  if(pal->iconfile) {
+    active = IconfileGetItemPos(model, pal->iconfile);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
+  }
   /* 预置兼容性 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), pal->isCompatible());

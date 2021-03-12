@@ -18,3 +18,15 @@ TEST(RevisePal, Constructor) {
 
   RevisePal pal(&palInfo);
 }
+
+TEST(RevisePal, ReviseEntryDo) {
+  gtk_init(nullptr, nullptr);
+  auto config = newTestIptuxConfig();
+  Application app(config);
+  app.startup();
+  app.activate();
+
+  PalInfo palInfo;
+
+  RevisePal::ReviseEntryDo(&palInfo, false);
+}
