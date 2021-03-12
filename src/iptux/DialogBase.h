@@ -29,7 +29,7 @@ class DialogBase : public SessionAbstract {
   virtual ~DialogBase();
 
   void ClearHistoryTextView();
- 
+
  protected:
   void InitSublayerGeneral();
   void ClearSublayerGeneral();
@@ -42,7 +42,6 @@ class DialogBase : public SessionAbstract {
   /* UI general */
   GtkWidget *CreateInputArea();
   virtual GtkWidget *CreateHistoryArea();
-  virtual GtkWidget *CreateFileMenu();
   virtual GtkWidget *CreateFileSendArea();
   virtual GtkWidget *CreateFileSendTree(GtkTreeModel *model);
   virtual GtkWindow* getWindow() = 0;

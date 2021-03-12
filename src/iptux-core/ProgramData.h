@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <netinet/in.h>
+#include <glib.h>
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"

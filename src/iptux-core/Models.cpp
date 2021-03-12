@@ -170,9 +170,6 @@ NetSegment NetSegment::fromJsonValue(Json::Value &value) {
   return res;
 }
 
-SessionAbstract::SessionAbstract() {}
-SessionAbstract::~SessionAbstract() {}
-
 string ChipData::ToString() const {
   ostringstream oss;
   oss << "ChipData(";

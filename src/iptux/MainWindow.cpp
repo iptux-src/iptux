@@ -100,10 +100,6 @@ void MainWindow::CreateWindow() {
       { "find", G_ACTION_CALLBACK(onFind)},
   };
 
-  add_accelerator(app->getApp(), "win.refresh", "F5");
-  add_accelerator(app->getApp(), "win.detect", "<Primary>D");
-  add_accelerator(app->getApp(), "win.find", "<Primary>F");
-
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
                                    this);
@@ -138,17 +134,15 @@ void MainWindow::AlterWindowMode() {
 bool MainWindow::PaltreeContainItem(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GroupInfo *grpinf;
-  PalInfo *pal;
-  bool exist;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return false;
+  auto pal = app->getCoreThread()->GetPal(ipv4);
+  if(!pal) return false;
+
+  auto groupInfo = app->getCoreThread()->GetPalRegularItem(pal.get());
+  if(!groupInfo) return false;
+
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
-  exist = GroupGetPaltreeItem(model, &iter, grpinf);
-
-  return exist;
+  return GroupGetPaltreeItem(model, &iter, groupInfo);
 }
 
 /**
@@ -158,15 +152,16 @@ bool MainWindow::PaltreeContainItem(in_addr ipv4) {
 void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
-  GroupInfo *pgrpinf, *grpinf;
-  PalInfo *pal;
+  GroupInfo *pgrpinf;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return;
+  auto ppal = app->getCoreThread()->GetPal(ipv4);
+  if(!ppal) return;
+  auto pal = ppal.get();
+
+  auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
+  if(!grpinf) return;
 
   const char* font = progdt->font;
-
 
   /* 更新常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
@@ -210,12 +205,14 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
 void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
-  GroupInfo *pgrpinf, *grpinf;
-  PalInfo *pal;
+  GroupInfo *pgrpinf;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return;
+  auto ppal = app->getCoreThread()->GetPal(ipv4);
+  if(!ppal) return;
+  auto pal = ppal.get();
+
+  auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
+  if(!grpinf) return;
 
   const char* font = progdt->font;
 
@@ -263,12 +260,14 @@ void MainWindow::AttachItemToPaltree(in_addr ipv4) {
 void MainWindow::DelItemFromPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
-  GroupInfo *pgrpinf, *grpinf;
-  PalInfo *pal;
+  GroupInfo *pgrpinf;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return;
+  auto ppal = app->getCoreThread()->GetPal(ipv4);
+  if(!ppal) return;
+  auto pal = ppal.get();
+
+  auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
+  if(!grpinf) return;
 
   /* 从常规模式树移除 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
@@ -473,7 +472,8 @@ void MainWindow::InitSublayer() {
   g_datalist_init(&mdlset);
 
   accel = gtk_accel_group_new();
-  timerid = gdk_threads_add_timeout(1000, GSourceFunc(UpdateUI), this);
+  CHECK_EQ(timerid, 0);
+  timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
 
   model = palTreeModelNew();
   g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,
@@ -1170,7 +1170,7 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
 }
 
 void MainWindow::onDetect(void*, void*, MainWindow& self) {
-  DetectPal pal(self.builder, GTK_WINDOW(self.window));
+  DetectPal pal(self.app, self.builder, GTK_WINDOW(self.window));
   pal.run();
 }
 
@@ -1264,10 +1264,11 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
   }
 
   g_cthrd->Lock();
+  auto ppal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
   /* 从数据中心点移除 */
-  if ((pal = g_cthrd->GetPalFromList(inAddrFromUint32(grpinf->grpid)))) {
+  if (ppal) {
     g_cthrd->DelPalFromList(inAddrFromUint32(grpinf->grpid));
-    pal->setOnline(false);
+    ppal->setOnline(false);
   }
   /* 加入黑名单 */
   if (!g_cthrd->BlacklistContainItem(inAddrFromUint32(grpinf->grpid))) {
@@ -1875,7 +1876,10 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto event = CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
     auto para = g_cthrd->GetTransTaskStat(taskId);
-    CHECK_NOTNULL(para.get());
+    if(!para.get()) {
+      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
+      return;
+    }
     g_mwin->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {

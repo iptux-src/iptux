@@ -214,6 +214,10 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   GActionEntry win_entries[] = {
       { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
       { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
+      { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
+      { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
+      { "request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
+      { "close", G_ACTION_CALLBACK(onClose)},
   };
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),
@@ -231,9 +235,6 @@ GtkWidget *DialogPeer::CreateAllArea() {
   gint position;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-  /* 加入菜单条 */
-  gtk_box_pack_start(GTK_BOX(box), CreateMenuBar(), FALSE, FALSE, 0);
 
   /* 加入主区域 */
   hpaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
@@ -274,19 +275,6 @@ GtkWidget *DialogPeer::CreateAllArea() {
 }
 
 /**
- * 创建菜单条.
- * @return 菜单条
- */
-GtkWidget *DialogPeer::CreateMenuBar() {
-  GtkWidget *menubar;
-
-  menubar = gtk_menu_bar_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), CreateFileMenu());
-
-  return menubar;
-}
-
-/**
  * 创建好友信息区域.
  * @return 主窗体
  */
@@ -317,55 +305,6 @@ GtkWidget *DialogPeer::CreateInfoArea() {
   g_datalist_set_data(&widset, "info-textview-widget", widget);
 
   return frame;
-}
-
-/**
- * 创建文件菜单.
- * @return 菜单
- */
-
-GtkWidget *DialogPeer::CreateFileMenu() {
-  GtkWidget *menushell, *window;
-  GtkWidget *menu, *menuitem;
-
-  window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  menushell = gtk_menu_item_new_with_mnemonic(_("_File"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_menu_item_new_with_label(_("Attach File"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_S,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_D,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AskSharedFiles),
-                           grpinf);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_R,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_separator_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Close"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(gtk_widget_destroy),
-                           window);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_W,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  g_datalist_set_data(&widset, "file-menu", menu);
-  return menushell;
 }
 
 /**
@@ -1064,7 +1003,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
     self->torcvsize += file->filesize;
   } while (gtk_tree_model_iter_next(model, &iter));
   self->rcvdsize = 0;
-  self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
+  if(!self->timerrcv) {
+    self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
+  }
 }
 /**
  * 接收文件数据.

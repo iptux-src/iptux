@@ -27,7 +27,6 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
 
-
 using namespace std;
 
 namespace iptux {
@@ -329,56 +328,6 @@ GtkWidget *DialogBase::CreateHistoryArea() {
 }
 
 /**
- * 创建文件菜单.
- * @return 菜单
- */
-GtkWidget *DialogBase::CreateFileMenu() {
-  GtkWidget *menushell, *window, *treeview;
-  GtkWidget *menu, *menuitem;
-
-  window = GTK_WIDGET(g_datalist_get_data(&widset, "window-widget"));
-  menushell = gtk_menu_item_new_with_mnemonic(_("_File"));
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menushell), menu);
-
-  menuitem = gtk_menu_item_new_with_label(_("Attach File"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachRegular),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_S,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_menu_item_new_with_label(_("Attach Folder"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AttachFolder),
-                           this);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_D,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  treeview =
-      GTK_WIDGET(g_datalist_get_data(&widset, "file-send-treeview-widget"));
-  menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(RemoveSelectedFromTree), treeview);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_R,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  menuitem = gtk_tearoff_menu_item_new();
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Close"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(gtk_widget_destroy),
-                           window);
-  gtk_widget_add_accelerator(menuitem, "activate", accel, GDK_KEY_W,
-                             GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-  g_datalist_set_data(&widset, "file-menu", menu);
-  return menushell;
-}
-
-/**
  * 选择附件.
  * @param fileattr 文件类型
  * @return 文件链表
@@ -447,7 +396,9 @@ bool DialogBase::SendEnclosureMsg() {
   } while (gtk_tree_model_iter_next(model, &iter));
 
   BroadcastEnclosureMsg(files);
-  timersend = gdk_threads_add_timeout(400, (GSourceFunc)UpdateFileSendUI, this);
+  if(!timersend) {
+    timersend = g_timeout_add(400, (GSourceFunc) UpdateFileSendUI, this);
+  }
   return true;
 }
 
@@ -535,7 +486,6 @@ gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
 void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
                                   gint, gint, GtkSelectionData *data,
                                   guint, guint time) {
-  GtkWidget *widget;
   GSList *list;
 
   if (!ValidateDragData(data, context, time)) {
@@ -546,10 +496,6 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
-  widget =
-      GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "enclosure-frame-widget"));
-  gtk_widget_show(widget);
-
   gtk_drag_finish(context, TRUE, FALSE, time);
 }
 

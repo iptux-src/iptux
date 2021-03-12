@@ -26,11 +26,11 @@ class DialogGroup : public DialogBase {
   virtual ~DialogGroup();
 
   static DialogGroup* GroupDialogEntry(Application* app, GroupInfo *grpinf);
-  virtual void UpdatePalData(PalInfo *pal);
-  virtual void InsertPalData(PalInfo *pal);
-  virtual void DelPalData(PalInfo *pal);
-  virtual void ClearAllPalData();
-  virtual GSList *GetSelPal();
+  void UpdatePalData(PalInfo *pal) override;
+  void InsertPalData(PalInfo *pal) override;
+  void DelPalData(PalInfo *pal) override;
+  void ClearAllPalData() override;
+  GSList *GetSelPal() override;
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
@@ -42,23 +42,21 @@ class DialogGroup : public DialogBase {
   GtkWidget* historyInputPaned;
 
  private:
-  virtual void InitSublayerSpecify();
+  void InitSublayerSpecify();
   void ReadUILayout();
   void SaveUILayout();
 
   GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
-  GtkWidget *CreateMenuBar();
   GtkWidget *CreateMemberArea();
   GtkWidget *CreateInputArea();
-  GtkWidget *CreateToolMenu();
 
   GtkTreeModel *CreateMemberModel();
   void FillMemberModel(GtkTreeModel *model);
   GtkWidget *CreateMemberTree(GtkTreeModel *model);
 
-  bool SendTextMsg();
+  bool SendTextMsg() override;
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
   void BroadcastTextMsg(const gchar *msg);
 
@@ -83,6 +81,17 @@ class DialogGroup : public DialogBase {
   static void onClearChatHistory (void *, void *, DialogGroup& self) {
     self.ClearHistoryTextView();
   }
+  static void onAttachFile(void*, void*, DialogGroup& self) {
+    DialogBase::AttachRegular(&self);
+  }
+  static void onAttachFolder(void*, void*, DialogGroup& self) {
+    DialogBase::AttachFolder(&self);
+  }
+  static void onClose(void*, void*, DialogGroup& self) {
+    gtk_widget_destroy(GTK_WIDGET(self.window));
+  }
+  static void onSortType (GSimpleAction *action, GVariant* value, DialogGroup& self);
+  static void onSortBy (GSimpleAction *action, GVariant* value, DialogGroup& self);
 };
 
 }  // namespace iptux

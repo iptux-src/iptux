@@ -14,13 +14,16 @@
 
 #include <gtk/gtk.h>
 
+#include "iptux/Application.h"
+
 namespace iptux {
 
 class DetectPal {
  public:
-  DetectPal(GtkBuilder* builder, GtkWindow* parent);
+  DetectPal(Application* app, GtkBuilder* builder, GtkWindow* parent);
   void run();
  private:
+  Application* app;
   GtkDialog* detectPalDialog;
   GtkEntry* detectPalIpv4Entry;
 };

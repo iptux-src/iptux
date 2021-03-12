@@ -15,24 +15,16 @@
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 
-#include "iptux/global.h"
+#include "iptux-core/Exception.h"
 #include "iptux/UiHelper.h"
+
+using namespace std;
 
 namespace iptux {
 
-/**
- * 发送探测数据包.
- */
-static bool sendDetectPacket(const char* ipv4Text) {
-  in_addr ipv4;
-  if (inet_pton(AF_INET, ipv4Text, &ipv4) <= 0) {
-    return false;
-  }
-  g_cthrd->SendDetectPacket(ipv4);
-  return true;
-}
-
-DetectPal::DetectPal(GtkBuilder* builder, GtkWindow* window) {
+DetectPal::DetectPal(Application* app, GtkBuilder* builder, GtkWindow* window)
+  : app(app)
+{
   this->detectPalDialog = CHECK_NOTNULL(GTK_DIALOG(
       gtk_builder_get_object(builder, "detect_pal_dialog")));
   gtk_window_set_transient_for(GTK_WINDOW(this->detectPalDialog), window);
@@ -47,11 +39,16 @@ void DetectPal::run() {
     switch(gtk_dialog_run(detectPalDialog)) {
       case GTK_RESPONSE_ACCEPT:
         ipv4Text = gtk_entry_get_text(detectPalIpv4Entry);
-        if(sendDetectPacket(ipv4Text)) {
+        try {
+          app->getCoreThread()->SendDetectPacket(ipv4Text);
           pop_info(GTK_WIDGET(detectPalDialog), _("The notification has been sent to %s."), ipv4Text);
           gtk_entry_set_text(GTK_ENTRY(detectPalIpv4Entry), "");
-        } else {
-          pop_warning(GTK_WIDGET(detectPalDialog), _("\nIllegal IP(v4) address: %s!"), ipv4Text);
+        } catch(Exception& e) {
+          if(e.getErrorCode() == INVALID_IP_ADDRESS) {
+            pop_warning(GTK_WIDGET(detectPalDialog), _("\nIllegal IP(v4) address: %s!"), ipv4Text);
+          } else {
+            throw e;
+          }
         }
         break;
       default:

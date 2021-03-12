@@ -53,11 +53,14 @@ initAndConnnectThreadsFromConfig(PIptuxConfig c1, PIptuxConfig c2) {
     throw;
   }
   thread1->start();
-  thread1->SendDetectPacket(c2->GetString("bind_ip"));
   while(thread2->GetOnlineCount() != 1) {
+    thread1->SendDetectPacket(c2->GetString("bind_ip"));
     this_thread::sleep_for(10ms);
   }
-
+  while(thread1->GetOnlineCount() != 1) {
+    thread2->SendDetectPacket(c1->GetString("bind_ip"));
+    this_thread::sleep_for(10ms);
+  }
   return make_tuple(thread1, thread2);
 }
 

@@ -14,6 +14,8 @@
 
 #include <stdexcept>
 
+#include <glib.h>
+
 #include "iptux-core/Models.h"
 
 namespace iptux {

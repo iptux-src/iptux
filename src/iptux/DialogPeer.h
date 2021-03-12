@@ -46,7 +46,6 @@ class DialogPeer : public DialogBase {
   GtkWindow *CreateMainWindow();
   GtkWidget *CreateAllArea();
 
-  GtkWidget *CreateMenuBar();
   GtkWidget *CreateInfoArea();
   GtkWidget *CreateFileArea();
   GtkWidget *CreateFileReceiveArea();
@@ -56,7 +55,6 @@ class DialogPeer : public DialogBase {
   GtkTreeModel *CreateFileToReceiveModel();
   GtkWidget *CreateFileReceivedTree(GtkTreeModel *model);
   GtkTreeModel *CreateFileReceivedModel();
-  GtkWidget *CreateFileMenu() override;
   void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
 
@@ -77,6 +75,18 @@ class DialogPeer : public DialogBase {
   }
   static void onInsertPicture (void *, void *, DialogPeer& self) {
     self.insertPicture();
+  }
+  static void onAttachFile(void*, void*, DialogPeer& self) {
+    DialogBase::AttachRegular(&self);
+  }
+  static void onAttachFolder(void*, void*, DialogPeer& self) {
+    DialogBase::AttachFolder(&self);
+  }
+  static void onRequestSharedResources(void*, void*, DialogPeer& self) {
+    AskSharedFiles(self.grpinf);
+  }
+  static void onClose(void*, void*, DialogPeer& self) {
+    gtk_widget_destroy(GTK_WIDGET(self.window));
   }
 
  protected:
