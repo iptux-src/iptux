@@ -134,17 +134,15 @@ void MainWindow::AlterWindowMode() {
 bool MainWindow::PaltreeContainItem(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GroupInfo *grpinf;
-  PalInfo *pal;
-  bool exist;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return false;
+  auto pal = app->getCoreThread()->GetPal(ipv4);
+  if(!pal) return false;
+
+  auto groupInfo = app->getCoreThread()->GetPalRegularItem(pal.get());
+  if(!groupInfo) return false;
+
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
-  exist = GroupGetPaltreeItem(model, &iter, grpinf);
-
-  return exist;
+  return GroupGetPaltreeItem(model, &iter, groupInfo);
 }
 
 /**
@@ -154,15 +152,16 @@ bool MainWindow::PaltreeContainItem(in_addr ipv4) {
 void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
-  GroupInfo *pgrpinf, *grpinf;
-  PalInfo *pal;
+  GroupInfo *pgrpinf;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return;
+  auto ppal = app->getCoreThread()->GetPal(ipv4);
+  if(!ppal) return;
+  auto pal = ppal.get();
+
+  auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
+  if(!grpinf) return;
 
   const char* font = progdt->font;
-
 
   /* 更新常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
@@ -206,12 +205,14 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
 void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
-  GroupInfo *pgrpinf, *grpinf;
-  PalInfo *pal;
+  GroupInfo *pgrpinf;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return;
+  auto ppal = app->getCoreThread()->GetPal(ipv4);
+  if(!ppal) return;
+  auto pal = ppal.get();
+
+  auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
+  if(!grpinf) return;
 
   const char* font = progdt->font;
 
@@ -259,12 +260,14 @@ void MainWindow::AttachItemToPaltree(in_addr ipv4) {
 void MainWindow::DelItemFromPaltree(in_addr ipv4) {
   GtkTreeModel *model;
   GtkTreeIter parent, iter;
-  GroupInfo *pgrpinf, *grpinf;
-  PalInfo *pal;
+  GroupInfo *pgrpinf;
 
-  if (!(pal = g_cthrd->GetPalFromList(ipv4)) ||
-      !(grpinf = g_cthrd->GetPalRegularItem(pal)))
-    return;
+  auto ppal = app->getCoreThread()->GetPal(ipv4);
+  if(!ppal) return;
+  auto pal = ppal.get();
+
+  auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
+  if(!grpinf) return;
 
   /* 从常规模式树移除 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
@@ -1261,10 +1264,11 @@ void MainWindow::DeletePalItem(GroupInfo *grpinf) {
   }
 
   g_cthrd->Lock();
+  auto ppal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
   /* 从数据中心点移除 */
-  if ((pal = g_cthrd->GetPalFromList(inAddrFromUint32(grpinf->grpid)))) {
+  if (ppal) {
     g_cthrd->DelPalFromList(inAddrFromUint32(grpinf->grpid));
-    pal->setOnline(false);
+    ppal->setOnline(false);
   }
   /* 加入黑名单 */
   if (!g_cthrd->BlacklistContainItem(inAddrFromUint32(grpinf->grpid))) {

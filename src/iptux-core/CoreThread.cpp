@@ -341,20 +341,6 @@ void CoreThread::ClearAllPalFromList() {
   }
 }
 
-/**
- * 从好友链表中获取指定的好友信息数据.
- * @param ipv4 ipv4
- * @return 好友信息数据
- */
-const PalInfo* CoreThread::GetPalFromList(PalKey palKey) const {
-  for(auto palInfo: pImpl->pallist) {
-    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
-      return palInfo.get();
-    }
-  }
-  return nullptr;
-}
-
 shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
   for(auto palInfo: pImpl->pallist) {
     if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
@@ -366,15 +352,6 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
 
 shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
   return GetPal(PalKey(inAddrFromString(ipv4)));
-}
-
-PalInfo* CoreThread::GetPalFromList(PalKey palKey) {
-  for(auto palInfo: pImpl->pallist) {
-    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
-      return palInfo.get();
-    }
-  }
-  return nullptr;
 }
 
 /**
