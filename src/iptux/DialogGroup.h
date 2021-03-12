@@ -26,11 +26,11 @@ class DialogGroup : public DialogBase {
   virtual ~DialogGroup();
 
   static DialogGroup* GroupDialogEntry(Application* app, GroupInfo *grpinf);
-  virtual void UpdatePalData(PalInfo *pal);
-  virtual void InsertPalData(PalInfo *pal);
-  virtual void DelPalData(PalInfo *pal);
-  virtual void ClearAllPalData();
-  virtual GSList *GetSelPal();
+  void UpdatePalData(PalInfo *pal) override;
+  void InsertPalData(PalInfo *pal) override;
+  void DelPalData(PalInfo *pal) override;
+  void ClearAllPalData() override;
+  GSList *GetSelPal() override;
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
@@ -42,7 +42,7 @@ class DialogGroup : public DialogBase {
   GtkWidget* historyInputPaned;
 
  private:
-  virtual void InitSublayerSpecify();
+  void InitSublayerSpecify();
   void ReadUILayout();
   void SaveUILayout();
 
@@ -56,7 +56,7 @@ class DialogGroup : public DialogBase {
   void FillMemberModel(GtkTreeModel *model);
   GtkWidget *CreateMemberTree(GtkTreeModel *model);
 
-  bool SendTextMsg();
+  bool SendTextMsg() override;
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
   void BroadcastTextMsg(const gchar *msg);
 

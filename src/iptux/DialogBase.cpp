@@ -27,7 +27,6 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
 
-
 using namespace std;
 
 namespace iptux {
