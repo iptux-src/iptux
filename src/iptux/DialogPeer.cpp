@@ -43,7 +43,7 @@ namespace iptux {
  * @param grp 好友群组信息
  */
 DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
-    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
+    : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
       app(app),
       config(app->getConfig()),
       torcvsize(0),

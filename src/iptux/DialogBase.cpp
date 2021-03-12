@@ -21,19 +21,18 @@
 
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
-#include "iptux-utils/utils.h"
 #include "iptux/callback.h"
-#include "iptux/global.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/UiHelper.h"
-
+#include "iptux/MainWindow.h"
 
 using namespace std;
 
 namespace iptux {
 
-DialogBase::DialogBase(GroupInfo *grp, shared_ptr<UiProgramData> progdt)
-    : progdt(progdt),
+DialogBase::DialogBase(Application* app, GroupInfo *grp)
+    : app(app),
+      progdt(app->getProgramData()),
       widset(NULL),
       mdlset(NULL),
       dtset(NULL),
@@ -163,6 +162,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       GTK_WIDGET(g_datalist_get_data(&widset, "file-send-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   tlist = list;
+  auto g_cthrd = app->getCoreThread();
   while (tlist) {
     if (stat((const char *)tlist->data, &st) == -1 ||
         !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
@@ -418,7 +418,7 @@ void DialogBase::FeedbackMsg(const gchar *msg) {
   para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
-  g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
+  app->getCoreThread()->InsertMsgToGroupInfoItem(grpinf, &para);
 }
 
 /**
@@ -571,14 +571,14 @@ void DialogBase::RemoveSelectedFromTree(GtkWidget *widget) {
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogBase::EnclosureTreePopup(GtkWidget *treeview, GdkEvent *event) {
+gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent *event) {
   GtkWidget *menu, *menuitem;
   GdkEventButton *event_button;
 
   menu = gtk_menu_new();
   menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
   g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(RemoveSelectedEnclosure), treeview);
+                           G_CALLBACK(RemoveSelectedEnclosure), self);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
   if (event->type == GDK_BUTTON_PRESS) {
@@ -595,13 +595,14 @@ gint DialogBase::EnclosureTreePopup(GtkWidget *treeview, GdkEvent *event) {
  *从显示附件的TreeView删除选定行.
  * @param widget TreeView
  */
-void DialogBase::RemoveSelectedEnclosure(GtkWidget *widget) {
+void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
   GtkTreeModel *model;
   GtkTreeSelection *TreeSel;
   GtkTreeIter iter;
   FileInfo *file;
   DialogBase *dlg;
   GList *list;
+  auto widget = self->fileSendTree;
 
   dlg = (DialogBase *)(g_object_get_data(G_OBJECT(widget), "dialog"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
@@ -614,12 +615,12 @@ void DialogBase::RemoveSelectedEnclosure(GtkWidget *widget) {
                             (GtkTreePath *)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 4, &file, -1);
     dlg->totalsendsize -= file->filesize;
-    g_cthrd->DelPrivateFile(file->fileid);
+    self->app->getCoreThread()->DelPrivateFile(file->fileid);
     list = g_list_next(list);
   }
   g_list_free(list);
   //从列表中删除
-  RemoveSelectedFromTree(widget);
+  RemoveSelectedFromTree(GTK_WIDGET(widget));
   //重新计算待发送文件大小
   dlg->UpdateFileSendUI(dlg);
 }
@@ -680,6 +681,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
   GtkTreeViewColumn *column;
 
   view = gtk_tree_view_new_with_model(model);
+  this->fileSendTree = GTK_TREE_VIEW(view);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
@@ -792,6 +794,8 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
  * 打开文件传输窗口.
  * @param dlgpr 对话框类
  */
-void DialogBase::OpenTransDlg(DialogBase */*dlgpr*/) { g_mwin->OpenTransWindow(); }
+void DialogBase::OpenTransDlg(DialogBase* self) {
+  self->app->getMainWindow()->OpenTransWindow();
+}
 
 }  // namespace iptux

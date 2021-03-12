@@ -33,7 +33,7 @@ namespace iptux {
  * @param grp 群组信息
  */
 DialogGroup::DialogGroup(Application* app, GroupInfo *grp)
-    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
+    : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
       app(app),
       config(app->getConfig()) {
   InitSublayerSpecify();
