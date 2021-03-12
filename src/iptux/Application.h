@@ -23,6 +23,7 @@ class Application {
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
+  GtkBuilder* getMenuBuilder() { return menuBuilder; }
   std::shared_ptr<UiProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
 
@@ -33,6 +34,7 @@ private:
 
   GtkApplication* app;
   MainWindow* window;
+  GtkBuilder* menuBuilder;
   ShareFile* shareFile;
   TransModel* transModel;
   bool started {false};
