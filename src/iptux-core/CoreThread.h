@@ -59,8 +59,6 @@ class CoreThread {
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);
 
-  [[deprecated]]
-  virtual void AttachPalToList(PalInfo *pal);
   virtual void AttachPalToList(PPalInfo pal);
 
   void AddPrivateFile(PFileInfo file);

@@ -291,22 +291,6 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
  * @note 鉴于在线的好友必须被分配到它所属的群组，所以加入好友到好友链表的同时
  * 也应该分配好友到相应的群组
  */
-void UiCoreThread::AttachPalToList(PalInfo *pal) {
-  CoreThread::AttachPalToList(pal);
-  GroupInfo *grpinf;
-
-  /* 将好友加入到相应的群组 */
-  if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalBroadcastItem(pal)))
-    grpinf = AttachPalBroadcastItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-}
-
 void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
   CoreThread::AttachPalToList(pal2);
   GroupInfo *grpinf;

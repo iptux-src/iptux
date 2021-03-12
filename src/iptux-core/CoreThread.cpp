@@ -391,11 +391,6 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
  * @note 鉴于在线的好友必须被分配到它所属的群组，所以加入好友到好友链表的同时
  * 也应该分配好友到相应的群组
  */
-void CoreThread::AttachPalToList(PalInfo *pal) {
-  pImpl->pallist.push_back(shared_ptr<PalInfo>(pal));
-  pal->setOnline(true);
-}
-
 void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
   pImpl->pallist.push_back(pal);
   pal->setOnline(true);
