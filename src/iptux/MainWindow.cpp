@@ -953,84 +953,6 @@ void MainWindow::BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
 }
 
 /**
- * 为好友树(paltree)创建弹出菜单.
- * @param grpinf 好友群组信息
- * @return 菜单
- */
-GtkWidget *MainWindow::CreatePaltreePopupMenu(GroupInfo *grpinf) {
-  GtkWidget *menu, *menuitem;
-
-  menu = gtk_menu_new();
-
-  /* 发送消息菜单 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Send Message"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  switch (grpinf->type) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      g_signal_connect_swapped(
-          menuitem, "activate",
-          G_CALLBACK(onPaltreePopupMenuSendMessageActivateRegular), grpinf);
-      break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-    case GROUP_BELONG_TYPE_GROUP:
-    case GROUP_BELONG_TYPE_BROADCAST:
-      g_signal_connect_swapped(
-          menuitem, "activate",
-          G_CALLBACK(onPaltreePopupMenuSendMessageActivateGroup), grpinf);
-      break;
-    default:
-      gtk_widget_set_sensitive(menuitem, FALSE);
-      break;
-  }
-
-  /* 请求共享文件菜单 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Request Shared Resources"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  switch (grpinf->type) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(AskSharedFiles),
-                               grpinf);
-      break;
-    default:
-      gtk_widget_set_sensitive(menuitem, FALSE);
-      break;
-  }
-
-  /* 改变好友信息数据菜单 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Change Info."));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  switch (grpinf->type) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      g_signal_connect_swapped(menuitem, "activate",
-                               G_CALLBACK(RevisePal::ReviseEntry),
-                               grpinf->member->data);
-      break;
-    default:
-      gtk_widget_set_sensitive(menuitem, FALSE);
-      break;
-  }
-
-  /* 删除好友项菜单 */
-  NO_OPERATION_C
-  menuitem = gtk_menu_item_new_with_label(_("Delete Pal"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  switch (grpinf->type) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(DeletePalItem),
-                               grpinf);
-      break;
-    default:
-      gtk_widget_set_sensitive(menuitem, FALSE);
-      break;
-  }
-
-  return menu;
-}
-
-/**
  * @param pal class PalInfo
  * @return use g_free to free the return value
  */
@@ -1252,14 +1174,6 @@ void MainWindow::onSortType(GSimpleAction *action, GVariant *value, MainWindow &
   gtk_tree_sortable_set_sort_column_id(
       GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
   g_simple_action_set_state(action, value);
-}
-
-/**
- * 请求此好友的共享文件.
- * @param grpinf 好友群组信息
- */
-void MainWindow::AskSharedFiles(GroupInfo *grpinf) {
-  g_cthrd->SendAskShared(g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey()));
 }
 
 /**
@@ -1761,16 +1675,6 @@ void MainWindow::PanedDivideChanged(GtkWidget *paned, GParamSpec *,
 
 gboolean MainWindow::onDeleteEvent(MainWindow *self) {
   return self->statusIcon->AlterInterfaceMode();
-}
-
-void MainWindow::onPaltreePopupMenuSendMessageActivateRegular(
-    GroupInfo *groupInfo) {
-  DialogPeer::PeerDialogEntry(g_mwin->app, groupInfo);
-}
-
-void MainWindow::onPaltreePopupMenuSendMessageActivateGroup(
-    GroupInfo *groupInfo) {
-  DialogGroup::GroupDialogEntry(g_mwin->app, groupInfo);
 }
 
 void MainWindow::InitThemeSublayerData() {

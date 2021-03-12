@@ -111,7 +111,6 @@ class MainWindow {
                               GroupInfo *grpinf);
   void BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
                                bool blinking);
-  static GtkWidget *CreatePaltreePopupMenu(GroupInfo *grpinf);
   static void FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal);
   void InitThemeSublayerData();
   void processEventInMainThread(std::shared_ptr<const Event> event);
@@ -123,7 +122,6 @@ class MainWindow {
   static void GoPrevTreeModel(MainWindow *mwin);
   static void GoNextTreeModel(MainWindow *mwin);
 
-  static void AskSharedFiles(GroupInfo *grpinf);
   static void DeletePalItem(GroupInfo *grpinf);
   static gboolean PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
                                       gboolean key, GtkTooltip *tooltip,
@@ -132,9 +130,6 @@ class MainWindow {
                                      GtkTreeViewColumn *column,
                                      MainWindow *self);
   static gboolean PaltreePopupMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void onPaltreePopupMenuSendMessageActivateRegular(
-      GroupInfo *groupInfo);
-  static void onPaltreePopupMenuSendMessageActivateGroup(GroupInfo *groupInfo);
   static gboolean PaltreeChangeStatus(GtkWidget *treeview,
                                       GdkEventButton *event);
   static void PaltreeDragDataReceived(GtkWidget *treeview,
