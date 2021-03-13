@@ -50,8 +50,6 @@ class CoreThread {
 
   const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
-  [[deprecated]] const PalInfo *GetPalFromList(PalKey palKey) const;
-  [[deprecated]] PalInfo *GetPalFromList(PalKey palKey);
 
   CPPalInfo GetPal(PalKey palKey) const;
   PPalInfo GetPal(PalKey palKey);
@@ -61,8 +59,6 @@ class CoreThread {
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);
 
-  [[deprecated]]
-  virtual void AttachPalToList(PalInfo *pal);
   virtual void AttachPalToList(PPalInfo pal);
 
   void AddPrivateFile(PFileInfo file);

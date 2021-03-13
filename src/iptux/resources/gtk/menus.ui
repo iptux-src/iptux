@@ -118,4 +118,24 @@
         </section>
         </submenu>
     </menu>
+    <menu id="pal-popup">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Send Message</attribute>
+                <attribute name="action">win.pal.send_message</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Request Shared Resources</attribute>
+                <attribute name="action">win.pal.request_shared_resources</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Change Info</attribute>
+                <attribute name="action">win.pal.change_info</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Delete Pal</attribute>
+                <attribute name="action">win.pal.delete_pal</attribute>
+            </item>
+        </section>
+    </menu>
 </interface>

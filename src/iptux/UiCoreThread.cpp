@@ -16,14 +16,15 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
 #include "iptux/global.h"
 #include "iptux/LogSystem.h"
-#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 
@@ -46,6 +47,7 @@ UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
+  timerid = 0;
   logSystem = new LogSystem(data);
   g_queue_init(&msgline);
   InitSublayer();
@@ -182,17 +184,25 @@ void UiCoreThread::ClearAllPalFromList() {
 void UiCoreThread::DelPalFromList(PalKey palKey) {
   CoreThread::DelPalFromList(palKey);
 
-  PalInfo *pal;
+  PPalInfo pal;
   GroupInfo *grpinf;
 
   /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPalFromList(palKey))) return;
+  if (!(pal = GetPal(palKey))) return;
 
   /* 从群组中移除好友 */
-  if ((grpinf = GetPalRegularItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
-  if ((grpinf = GetPalSegmentItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
-  if ((grpinf = GetPalGroupItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
-  if ((grpinf = GetPalBroadcastItem(pal))) DelPalFromGroupInfoItem(grpinf, pal);
+  if ((grpinf = GetPalRegularItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
+  if ((grpinf = GetPalSegmentItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
+  if ((grpinf = GetPalGroupItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
+  if ((grpinf = GetPalBroadcastItem(pal.get()))) {
+    DelPalFromGroupInfoItem(grpinf, pal.get());
+  }
 }
 
 /**
@@ -206,14 +216,16 @@ void UiCoreThread::DelPalFromList(PalKey palKey) {
 void UiCoreThread::UpdatePalToList(PalKey palKey) {
   CoreThread::UpdatePalToList(palKey);
 
-  PalInfo *pal;
+  PPalInfo ppal;
   GroupInfo *grpinf;
   SessionAbstract *session;
 
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
-  if (!(pal = GetPalFromList(palKey))) {
+  if (!(ppal = GetPal(palKey))) {
     return;
   }
+
+  auto pal = ppal.get();
 
   /* 更新好友所在的群组，以及它在UI上的信息 */
   /*/* 更新常规模式下的群组 */
@@ -279,22 +291,6 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
  * @note 鉴于在线的好友必须被分配到它所属的群组，所以加入好友到好友链表的同时
  * 也应该分配好友到相应的群组
  */
-void UiCoreThread::AttachPalToList(PalInfo *pal) {
-  CoreThread::AttachPalToList(pal);
-  GroupInfo *grpinf;
-
-  /* 将好友加入到相应的群组 */
-  if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalBroadcastItem(pal)))
-    grpinf = AttachPalBroadcastItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-}
-
 void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
   CoreThread::AttachPalToList(pal2);
   GroupInfo *grpinf;
@@ -741,7 +737,8 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
 void UiCoreThread::start() {
   CoreThread::start();
 /* 定时扫描处理程序内部任务 */
-  timerid = gdk_threads_add_timeout(500, GSourceFunc(WatchCoreStatus), this);
+  CHECK_EQ(timerid, guint(0));
+  timerid = g_timeout_add(500, GSourceFunc(WatchCoreStatus), this);
 }
 
 /**

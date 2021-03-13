@@ -62,10 +62,12 @@ Application::Application(shared_ptr<IptuxConfig> config)
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
 
   transModel = transModelNew();
+  menuBuilder = nullptr;
 }
 
 Application::~Application() {
   g_object_unref(app);
+  g_object_unref(menuBuilder);
   transModelDelete(transModel);
   delete window;
 }
@@ -106,12 +108,11 @@ void Application::onStartup(Application& self) {
   g_action_map_add_action_entries (G_ACTION_MAP (self.app),
                                    app_entries, G_N_ELEMENTS (app_entries),
                                    &self);
-  auto builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
-  auto app_menu = G_MENU_MODEL (gtk_builder_get_object (builder, "appmenu"));
+  self.menuBuilder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
+  auto app_menu = G_MENU_MODEL (gtk_builder_get_object (self.menuBuilder, "appmenu"));
   gtk_application_set_app_menu (GTK_APPLICATION (self.app), app_menu);
-  auto menubar = G_MENU_MODEL (gtk_builder_get_object (builder, "menubar"));
+  auto menubar = G_MENU_MODEL (gtk_builder_get_object (self.menuBuilder, "menubar"));
   gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
-  g_object_unref (builder);
 
   add_accelerator(self.app, "win.refresh", "F5");
   add_accelerator(self.app, "win.detect", "<Primary>D");

@@ -3,6 +3,7 @@
         {
             "name": "Mac",
             "includePath": [
+                "${workspaceFolder}/src",
                 "${workspaceFolder}/builddir/src",
                 "${workspaceFolder}/src/googletest/include",
                 "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1",

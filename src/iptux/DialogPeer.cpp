@@ -1003,7 +1003,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
     self->torcvsize += file->filesize;
   } while (gtk_tree_model_iter_next(model, &iter));
   self->rcvdsize = 0;
-  self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
+  if(!self->timerrcv) {
+    self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
+  }
 }
 /**
  * 接收文件数据.
