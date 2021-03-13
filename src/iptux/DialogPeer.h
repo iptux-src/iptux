@@ -63,10 +63,8 @@ class DialogPeer : public DialogBase {
   MsgPara *PackageMsg(const std::vector<ChipData>& dtlist);
   //回调处理部分
  private:
-  static void AskSharedFiles(GroupInfo *grpinf);
   static void onAcceptButtonClicked(DialogPeer *self);
   static void onRefuseButtonClicked(DialogPeer *self);
-  static void ThreadRecvFile(FileInfo *file);
   static void ShowInfoEnclosure(DialogPeer *dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
   static gint RcvTreePopup(DialogPeer *self, GdkEvent *event);
@@ -82,9 +80,7 @@ class DialogPeer : public DialogBase {
   static void onAttachFolder(void*, void*, DialogPeer& self) {
     DialogBase::AttachFolder(&self);
   }
-  static void onRequestSharedResources(void*, void*, DialogPeer& self) {
-    AskSharedFiles(self.grpinf);
-  }
+  static void onRequestSharedResources(void*, void*, DialogPeer& self);
   static void onClose(void*, void*, DialogPeer& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }

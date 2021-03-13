@@ -86,7 +86,7 @@ void Application::activate() {
 
 void Application::onStartup(Application& self) {
   self.data = make_shared<UiProgramData>(self.config);
-  self.cthrd = make_shared<UiCoreThread>(self.data);
+  self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   g_cthrd = self.cthrd.get();
   self.window = new MainWindow(&self, *g_cthrd);
   g_mwin = self.window;

@@ -20,12 +20,13 @@
 #include "iptux/UiProgramData.h"
 #include "iptux-core/Models.h"
 #include "iptux/UiModels.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
 class DialogBase : public SessionAbstract {
  public:
-  DialogBase(GroupInfo *grp, std::shared_ptr<UiProgramData> progdt);
+  DialogBase(Application* app, GroupInfo *grp);
   virtual ~DialogBase();
 
   void ClearHistoryTextView();
@@ -71,13 +72,15 @@ class DialogBase : public SessionAbstract {
                                        GdkEventConfigure *event, GData **dtset);
   static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
                                  GData **dtset);
-  static gint EnclosureTreePopup(GtkWidget *widget, GdkEvent *event);
+  static gint EnclosureTreePopup(DialogBase* self, GdkEvent *event);
   static gboolean UpdateFileSendUI(DialogBase *dlggrp);
-  static void RemoveSelectedEnclosure(GtkWidget *widget);
+  static void RemoveSelectedEnclosure(DialogBase *self);
   static void OpenTransDlg(DialogBase *dlgpr);
 
  protected:
+  Application* app;
   std::shared_ptr<UiProgramData> progdt;
+  GtkTreeView* fileSendTree;
   GData *widset;            //窗体集
   GData *mdlset;            //数据model集
   GData *dtset;             //通用数据集

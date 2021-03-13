@@ -27,8 +27,8 @@
 #include "iptux-utils/utils.h"
 #include "iptux/callback.h"
 #include "iptux/dialog.h"
-#include "iptux/global.h"
 #include "iptux/HelpDialog.h"
+#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 
 #define ATOM_OBJECT 0xFFFC
@@ -43,7 +43,7 @@ namespace iptux {
  * @param grp 好友群组信息
  */
 DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
-    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
+    : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
       app(app),
       config(app->getConfig()),
       torcvsize(0),
@@ -80,10 +80,11 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
       GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "input-textview-widget"));
   gtk_widget_grab_focus(widget);
 
+  auto g_cthrd = app->getCoreThread();
   /* 从消息队列中移除 */
   g_cthrd->Lock();
   if (g_cthrd->MsglineContainItem(grpinf)) {
-    g_mwin->MakeItemBlinking(grpinf, FALSE);
+    app->getMainWindow()->MakeItemBlinking(grpinf, FALSE);
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
@@ -373,7 +374,7 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
 void DialogPeer::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
   vector<const PalInfo*> pals;
   pals.push_back((const PalInfo*)(grpinf->member->data));
-  g_cthrd->BcstFileInfoEntry(pals, files);
+  this->app->getCoreThread()->BcstFileInfoEntry(pals, files);
 }
 
 /**
@@ -446,7 +447,7 @@ bool DialogPeer::SendTextMsg() {
   gtk_text_buffer_delete(buffer, &start, &end);
   FeedbackMsg(dtlist);
   para = PackageMsg(dtlist);
-  g_cthrd->AsyncSendMsgPara(move(*para));
+  app->getCoreThread()->AsyncSendMsgPara(move(*para));
   return true;
 }
 
@@ -458,6 +459,7 @@ bool DialogPeer::SendTextMsg() {
 void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
   MsgPara para;
 
+  auto g_cthrd = app->getCoreThread();
   /* 构建消息封装包 */
   if (grpinf->member) {
     para.pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
@@ -480,6 +482,7 @@ void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
  */
 MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
   MsgPara *para;
+  auto g_cthrd = app->getCoreThread();
 
   para = new MsgPara;
   if (!(grpinf->member)) {
@@ -498,9 +501,10 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
  * 请求获取此好友的共享文件.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::AskSharedFiles(GroupInfo *grpinf) {
+void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
   PPalInfo pal;
-
+  auto g_cthrd = self.app->getCoreThread();
+  auto grpinf = self.grpinf;
   if (!(grpinf->member)) {
     pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
   } else {
@@ -799,7 +803,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
   mdlrcvd = (GtkTreeModel *)g_datalist_get_data(&(dlgpr->mdlset),
                                                 "file-received-model");
   gtk_list_store_clear(GTK_LIST_STORE(mdlrcvd));
-  ecslist = g_cthrd->GetPalEnclosure(palinfor);
+  ecslist = dlgpr->app->getCoreThread()->GetPalEnclosure(palinfor);
   if (ecslist) {
     //只要有该好友的接收文件信息(不分待接收和未接收)，就显示
     hpaned = GTK_WIDGET(g_datalist_get_data(&(dlgpr->widset), "main-paned"));
@@ -977,7 +981,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
   FileInfo *file;
   pthread_t pid;
 
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = self->app->getCoreThread()->getUiProgramData();
 
   const gchar *filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
   if(filepath == nullptr) {
@@ -997,8 +1001,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
     g_free(file->filepath);
     file->filepath = g_strdup_printf(
         "%s%s%s", filepath, *(filepath + 1) != '\0' ? "/" : "", filename);
-    pthread_create(&pid, NULL, ThreadFunc(ThreadRecvFile), file);
-    pthread_detach(pid);
+    self->app->getCoreThread()->RecvFileAsync(file);
     g_free(filename);
     self->torcvsize += file->filesize;
   } while (gtk_tree_model_iter_next(model, &iter));
@@ -1007,15 +1010,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
     self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
   }
 }
-/**
- * 接收文件数据.
- * @param file 文件信息
- */
-void DialogPeer::ThreadRecvFile(FileInfo *file) {
-  g_cthrd->RecvFile(file);
-  // RecvFileData rfdt(file);
-  // rfdt.RecvFileDataEntry();
-}
+
 /**
  * 获取待发送成员列表.
  * @return plist 获取待发送成员列表
@@ -1050,7 +1045,7 @@ void DialogPeer::onRefuseButtonClicked(DialogPeer *self) {
     gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter,
                             (GtkTreePath *)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 5, &file, -1);
-    g_cthrd->PopItemFromEnclosureList(file);
+    self->app->getCoreThread()->PopItemFromEnclosureList(file);
     list = g_list_next(list);
   }
   g_list_free(list);

@@ -16,12 +16,12 @@
 #include <glog/logging.h>
 
 #include "iptux-core/Const.h"
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 #include "iptux/callback.h"
 #include "iptux/DialogPeer.h"
-#include "iptux/global.h"
 #include "iptux/HelpDialog.h"
+#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 
 using namespace std;
@@ -33,7 +33,7 @@ namespace iptux {
  * @param grp 群组信息
  */
 DialogGroup::DialogGroup(Application* app, GroupInfo *grp)
-    : DialogBase(CHECK_NOTNULL(grp), CHECK_NOTNULL(app)->getProgramData()),
+    : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
       app(app),
       config(app->getConfig()) {
   InitSublayerSpecify();
@@ -64,9 +64,10 @@ DialogGroup* DialogGroup::GroupDialogEntry(Application* app, GroupInfo *grpinf) 
       GTK_WIDGET(g_datalist_get_data(&dlggrp->widset, "input-textview-widget"));
   gtk_widget_grab_focus(widget);
   /* 从消息队列中移除 */
+  auto g_cthrd = app->getCoreThread();
   g_cthrd->Lock();
   if (g_cthrd->MsglineContainItem(grpinf)) {
-    g_mwin->MakeItemBlinking(grpinf, FALSE);
+    app->getMainWindow()->MakeItemBlinking(grpinf, FALSE);
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
@@ -327,6 +328,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model) {
   char *file;
 
   theme = gtk_icon_theme_get_default();
+  auto g_cthrd = app->getCoreThread();
   g_cthrd->Lock();
   tlist = grpinf->member;
   while (tlist) {
@@ -409,7 +411,7 @@ void DialogGroup::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
       pals.push_back(pal);
     }
   } while (gtk_tree_model_iter_next(model, &iter));
-  g_cthrd->BcstFileInfoEntry(pals, files);
+  app->getCoreThread()->BcstFileInfoEntry(pals, files);
 }
 
 /**
@@ -449,9 +451,9 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
             opttype = IPTUX_REGULAROPT;
             break;
         }
-        g_cthrd->SendUnitMessage(pal->GetKey(), opttype, msg);
+        app->getCoreThread()->SendUnitMessage(pal->GetKey(), opttype, msg);
       } else {
-        g_cthrd->SendGroupMessage(pal->GetKey(), msg);
+        app->getCoreThread()->SendGroupMessage(pal->GetKey(), msg);
       }
     }
   } while (gtk_tree_model_iter_next(model, &iter));
@@ -575,11 +577,11 @@ void DialogGroup::MembertreeItemActivated(GtkWidget *treeview,
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, 3, &pal, -1);
-  if ((grpinf = g_cthrd->GetPalRegularItem(pal))) {
+  if ((grpinf = self->app->getCoreThread()->GetPalRegularItem(pal))) {
     if ((grpinf->dialog))
       gtk_window_present(GTK_WINDOW(grpinf->dialog));
     else
-      DialogPeer::PeerDialogEntry(g_mwin->getApp(), grpinf);
+      DialogPeer::PeerDialogEntry(self->app, grpinf);
   }
 }
 
@@ -605,7 +607,7 @@ bool DialogGroup::SendTextMsg() {
 
   msgpara.stype = MessageSourceType::SELF;
   msgpara.pal = NULL;
-  g_cthrd->CommunicateLog(&msgpara, "[STRING]%s", msg);
+  app->getCoreThread()->CommunicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);
 
   return true;

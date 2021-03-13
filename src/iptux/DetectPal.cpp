@@ -17,6 +17,7 @@
 
 #include "iptux-core/Exception.h"
 #include "iptux/UiHelper.h"
+#include "iptux/UiCoreThread.h"
 
 using namespace std;
 
