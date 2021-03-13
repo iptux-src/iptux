@@ -19,10 +19,11 @@
 
 #include <queue>
 
-#include "iptux/UiProgramData.h"
-#include "iptux-core/Models.h"
-#include "iptux/UiModels.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
+#include "iptux/Application.h"
+#include "iptux/UiModels.h"
+#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -38,7 +39,7 @@ class LogSystem;
  */
 class UiCoreThread: public CoreThread {
  public:
-  explicit UiCoreThread(std::shared_ptr<UiProgramData> data);
+  UiCoreThread(Application* app, std::shared_ptr<UiProgramData> data);
   ~UiCoreThread() override ;
 
   std::shared_ptr<UiProgramData> getUiProgramData();
@@ -77,9 +78,9 @@ class UiCoreThread: public CoreThread {
   void InitSublayer();
   void ClearSublayer() override ;
 
-  static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
-  static void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
+  void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
+  void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
+  void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
 
   GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
   GroupInfo *AttachPalRegularItem(PalInfo *pal);
@@ -90,6 +91,7 @@ class UiCoreThread: public CoreThread {
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
 
 private:
+  Application* app;
   std::shared_ptr<UiProgramData> programData;
   LogSystem* logSystem;
   guint timerid;          //定时器ID

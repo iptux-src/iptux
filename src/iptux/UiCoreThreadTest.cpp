@@ -11,7 +11,12 @@ TEST(UiCoreThread, Constructor) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<UiProgramData>(config);
   core->sign = "abc";
-  UiCoreThread* thread = new UiCoreThread(core);
+
+  Application app(config);
+  app.startup();
+  app.activate();
+
+  UiCoreThread* thread = new UiCoreThread(&app, core);
   thread->SystemLog("hello %s", "world");
   thread->start();
   thread->stop();

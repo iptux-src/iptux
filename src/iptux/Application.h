@@ -5,12 +5,13 @@
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux/UiProgramData.h"
-#include "iptux/UiCoreThread.h"
-#include "ShareFile.h"
+#include "iptux/ShareFile.h"
+#include "iptux/UiModels.h"
 
 namespace iptux {
 
 class MainWindow;
+class UiCoreThread;
 
 class Application {
  public:

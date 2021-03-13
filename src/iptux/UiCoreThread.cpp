@@ -21,10 +21,10 @@
 #include <glog/logging.h>
 
 #include "iptux-core/Const.h"
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
-#include "iptux/global.h"
+#include "iptux-utils/utils.h"
 #include "iptux/LogSystem.h"
+#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 
@@ -37,8 +37,9 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(shared_ptr<UiProgramData> data)
+UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
     : CoreThread(data),
+      app(app),
       programData(data),
       groupInfos(NULL),
       sgmlist(NULL),
@@ -462,7 +463,7 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
   GtkTextIter iter;
   gchar *header;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = getProgramData();
 
   /**
    * @note (para->pal)可能为null.
@@ -510,7 +511,7 @@ void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *stri
   gint startp, endp;
   gint urlendp;
 
-  auto g_progdt = g_cthrd->getProgramData();
+  auto g_progdt = getProgramData();
 
   urlendp = 0;
   matchinfo = NULL;
@@ -753,7 +754,7 @@ gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
   pthread_mutex_lock(&pcthrd->mutex);
   tlist = pcthrd->msgline.head;
   while (tlist) {
-    g_mwin->MakeItemBlinking((GroupInfo *)tlist->data, true);
+    pcthrd->app->getMainWindow()->MakeItemBlinking((GroupInfo *)tlist->data, true);
     tlist = g_list_next(tlist);
   }
   pthread_mutex_unlock(&pcthrd->mutex);
