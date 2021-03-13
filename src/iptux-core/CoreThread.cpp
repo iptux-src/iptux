@@ -649,6 +649,11 @@ void CoreThread::RecvFile(FileInfo* file) {
   rfdt->RecvFileDataEntry();
 }
 
+void CoreThread::RecvFileAsync(FileInfo* file) {
+  thread t(&CoreThread::RecvFile, this, file);
+  t.detach();
+}
+
 std::unique_ptr<TransFileModel>
 CoreThread::GetTransTaskStat(int taskId) {
   auto task = pImpl->transTasks.find(taskId);

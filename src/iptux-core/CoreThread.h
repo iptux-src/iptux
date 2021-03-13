@@ -126,6 +126,7 @@ class CoreThread {
   std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId);
   bool TerminateTransTask(int taskId);
   void RecvFile(FileInfo* file);
+  void RecvFileAsync(FileInfo* file);
 
 
  // these functions should be move to CoreThreadImpl
