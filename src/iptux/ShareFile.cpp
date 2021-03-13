@@ -449,17 +449,28 @@ void DeleteFiles(ShareFile* self) {
   GtkWidget *widget;
   GtkTreeSelection *selection;
   GtkTreeModel *model;
-  GtkTreeIter iter;
 
   widget = GTK_WIDGET(g_object_get_data(G_OBJECT(self), "file-treeview-widget"));
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
-  do {
-    if (gtk_tree_selection_iter_is_selected(selection, &iter)) {
+  auto rows = gtk_tree_selection_get_selected_rows(selection, &model);
+  auto it = rows;
+  vector<GtkTreeRowReference*> refs;
+  while (it) {
+    refs.push_back(gtk_tree_row_reference_new(model, (GtkTreePath*)(it->data)));
+    it = g_list_next(it);
+  }
+  g_list_free_full (rows, (GDestroyNotify) gtk_tree_path_free);
+
+  for(auto ref: refs) {
+    auto path = gtk_tree_row_reference_get_path(ref);
+    GtkTreeIter iter;
+    if(gtk_tree_model_get_iter(model, &iter, path)) {
       gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
     }
-  } while (gtk_tree_model_iter_next(model, &iter));
+    gtk_tree_path_free(path);
+    gtk_tree_row_reference_free(ref);
+  }
 }
 
 void SetPassword(ShareFile* self) {
