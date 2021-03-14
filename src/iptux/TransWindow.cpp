@@ -56,25 +56,13 @@ class TransWindowPrivate {
 static gboolean TWinConfigureEvent(GtkWindow *window);
 static GtkWidget * CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow *window);
-static void OpenThisFile(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
-static void OpenContainingFolder(GtkTreeModel *model);
-static void TerminateTransTask(GtkTreeModel *model);
-static void TerminateAllTransTask(GtkTreeModel *model);
-static void onOpenFile (void *, void *, TransWindowPrivate* self) {
-  OpenThisFile(self->model);
-}
-static void onOpenFolder (void *, void *, TransWindowPrivate* self) {
-  OpenContainingFolder(self->model);
-}
-static void onTerminateTask (void *, void *, TransWindowPrivate* self) {
-  TerminateTransTask(self->model);
-}
-static void onTerminateAllTasks (void *, void *, TransWindowPrivate* self) {
-  TerminateAllTransTask(self->model);
-}
+static void onOpenFile (void *, void *, TransWindowPrivate* self);
+static void onOpenFolder (void *, void *, TransWindowPrivate* self);
+static void onTerminateTask (void *, void *, TransWindowPrivate* self);
+static void onTerminateAllTasks (void *, void *, TransWindowPrivate* self);
 
 TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
@@ -329,10 +317,13 @@ GtkWidget* CreateTransTree(TransWindow *window) {
  * 打开接收文件所在文件夹.
  * @param model trans-model
  */
-static void OpenContainingFolder(GtkTreeModel *model) {
+void onOpenFolder (void *, void *, TransWindowPrivate* self) {
   GtkTreePath *path;
   GtkTreeIter iter;
   gchar *filename, *filepath, *name;
+
+  auto model = self->model;
+
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return;
@@ -359,11 +350,13 @@ static void OpenContainingFolder(GtkTreeModel *model) {
  * 终止单个传输任务.
  * @param model trans-model
  */
-static void TerminateTransTask(GtkTreeModel *model) {
+void onTerminateTask (void *, void *, TransWindowPrivate* self) {
   GtkTreePath *path;
   GtkTreeIter iter;
   gboolean finished;
   int taskId;
+
+  auto model = self->model;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
@@ -384,9 +377,11 @@ static void TerminateTransTask(GtkTreeModel *model) {
  * 终止所有传输任务.
  * @param model trans-model
  */
-static void TerminateAllTransTask(GtkTreeModel *model) {
+void onTerminateAllTasks (void *, void *, TransWindowPrivate* self) {
   GtkTreeIter iter;
   int taskId;
+
+  auto model = self->model;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
@@ -400,10 +395,12 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
  * 打开接收的文件.
  * @param model trans-model
  */
-void OpenThisFile(GtkTreeModel *model) {
+void onOpenFile (void *, void *, TransWindowPrivate* self) {
   GtkTreePath *path;
   GtkTreeIter iter;
   gchar *filename;
+
+  auto model = self->model;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
