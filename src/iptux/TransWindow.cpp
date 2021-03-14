@@ -63,6 +63,7 @@ static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
 static void OpenContainingFolder(GtkTreeModel *model);
 static void TerminateTransTask(GtkTreeModel *model);
+static void TerminateAllTransTask(GtkTreeModel *model);
 static void onOpenFile (void *, void *, TransWindowPrivate* self) {
   OpenThisFile(self->model);
 }
@@ -71,6 +72,9 @@ static void onOpenFolder (void *, void *, TransWindowPrivate* self) {
 }
 static void onTerminateTask (void *, void *, TransWindowPrivate* self) {
   TerminateTransTask(self->model);
+}
+static void onTerminateAllTasks (void *, void *, TransWindowPrivate* self) {
+  TerminateAllTransTask(self->model);
 }
 
 
@@ -111,7 +115,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
     { "trans.open_file", G_ACTION_CALLBACK(onOpenFile)},
     { "trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
     { "trans.terminate_task", G_ACTION_CALLBACK(onTerminateTask)},
-    // { "win.trans.terminate_all", G_ACTION_CALLBACK(onTerminateAll)},
+    { "trans.terminate_all", G_ACTION_CALLBACK(onTerminateAllTasks)},
     // { "win.trans.clear_tasklist", G_ACTION_CALLBACK(onClearTasklist)},
   };
 
