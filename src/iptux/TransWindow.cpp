@@ -56,7 +56,6 @@ class TransWindowPrivate {
 static gboolean TWinConfigureEvent(GtkWindow *window);
 static GtkWidget * CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow *window);
-static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
 static void OpenThisFile(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
@@ -404,55 +403,6 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
-/**
- * 为文件传输树(trans-tree)创建弹出菜单.
- * @param model trans-model
- * @return 菜单
- */
-GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
-  GtkWidget *menu, *menuitem;
-
-  GtkTreePath *path;
-  GtkTreeIter iter;
-  bool finished;
-
-  if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
-                                                 "selected-path"))))
-    return NULL;
-  gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, TransModelColumn ::FINISHED, &finished, -1);
-
-  menu = gtk_menu_new();
-
-  menuitem = gtk_menu_item_new_with_label(_("Open This File"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(OpenThisFile),
-                           model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
-
-  menuitem = gtk_menu_item_new_with_label(_("Open Containing Folder"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(OpenContainingFolder), model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
-
-  menuitem = gtk_menu_item_new_with_label(_("Terminate Task"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(TerminateTransTask),
-                           model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), !finished);
-
-  menuitem = gtk_menu_item_new_with_label(_("Terminate All"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(TerminateAllTransTask), model);
-
-  menuitem = gtk_menu_item_new_with_label(_("Clear Tasklist"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.trans_model.clear");
-
-  return menu;
-}
 
 /**
  * 打开接收的文件.
