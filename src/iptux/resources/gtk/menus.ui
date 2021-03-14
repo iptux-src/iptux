@@ -158,7 +158,7 @@
             </item>
             <item>
                 <attribute name="label" translatable="yes">Clear Tasklist</attribute>
-                <attribute name="action">win.trans.clear_tasklist</attribute>
+                <attribute name="action">app.trans_model.clear</attribute>
             </item>
         </section>
     </menu>

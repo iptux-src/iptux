@@ -77,7 +77,6 @@ static void onTerminateAllTasks (void *, void *, TransWindowPrivate* self) {
   TerminateAllTransTask(self->model);
 }
 
-
 TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
   GtkWindow *window;
@@ -116,7 +115,6 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
     { "trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
     { "trans.terminate_task", G_ACTION_CALLBACK(onTerminateTask)},
     { "trans.terminate_all", G_ACTION_CALLBACK(onTerminateAllTasks)},
-    // { "win.trans.clear_tasklist", G_ACTION_CALLBACK(onClearTasklist)},
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (window),
