@@ -45,8 +45,12 @@ static void OpenThisFile(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
+static void OpenContainingFolder(GtkTreeModel *model);
 static void onOpenFile (void *, void *, TransWindowPrivate* self) {
   OpenThisFile(self->model);
+}
+static void onOpenFolder (void *, void *, TransWindowPrivate* self) {
+  OpenContainingFolder(self->model);
 }
 
 
@@ -84,7 +88,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
 
   GActionEntry win_entries[] = {
     { "trans.open_file", G_ACTION_CALLBACK(onOpenFile)},
-    // { "win.trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
+    { "trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
     // { "win.trans.terminate_task", G_ACTION_CALLBACK(onTerminateTask)},
     // { "win.trans.terminate_all", G_ACTION_CALLBACK(onTerminateAll)},
     // { "win.trans.clear_tasklist", G_ACTION_CALLBACK(onClearTasklist)},
