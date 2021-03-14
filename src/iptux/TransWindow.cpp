@@ -220,14 +220,6 @@ static gboolean TransPopupMenu(
   bool finished;
   gtk_tree_model_get(model, &iter, TransModelColumn ::FINISHED, &finished, -1);
   priv->setCurrentTaskFinished(finished);
-
-  // /* 弹出菜单 */
-  // menu = CreateTransPopupMenu(model);
-  // if(menu == nullptr) {
-  //   return true;
-  // }
-  // gtk_menu_attach_to_widget(GTK_MENU(menu), treeview, nullptr);
-  // gtk_widget_show_all(menu);
   gtk_menu_popup_at_pointer(GTK_MENU(priv->popupMenu), NULL);
   return TRUE;
 }
