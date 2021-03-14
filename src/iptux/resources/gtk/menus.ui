@@ -138,4 +138,28 @@
             </item>
         </section>
     </menu>
+    <menu id="trans-popup">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Open This File</attribute>
+                <attribute name="action">win.trans.open_file</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Open Containing Folder</attribute>
+                <attribute name="action">win.trans.open_folder</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Terminate Task</attribute>
+                <attribute name="action">win.trans.terminate_task</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Terminate All</attribute>
+                <attribute name="action">win.trans.terminate_all</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Clear Tasklist</attribute>
+                <attribute name="action">win.trans.clear_tasklist</attribute>
+            </item>
+        </section>
+    </menu>
 </interface>

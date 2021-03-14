@@ -22,7 +22,9 @@ class TransWindowPrivate {
  public:
   Application* app;
   GtkWidget* transTreeviewWidget;
+  GtkMenu* popupMenu;
   vector<gulong> signals;
+  GtkTreeModel* model;
 
  public:
   static void destroy(TransWindowPrivate* self) {
@@ -43,6 +45,10 @@ static void OpenThisFile(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
+static void onOpenFile (void *, void *, TransWindowPrivate* self) {
+  OpenThisFile(self->model);
+}
+
 
 TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
@@ -75,6 +81,23 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
       window
   );
   priv->signals.push_back(signalHandler);
+
+  GActionEntry win_entries[] = {
+    { "trans.open_file", G_ACTION_CALLBACK(onOpenFile)},
+    // { "win.trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
+    // { "win.trans.terminate_task", G_ACTION_CALLBACK(onTerminateTask)},
+    // { "win.trans.terminate_all", G_ACTION_CALLBACK(onTerminateAll)},
+    // { "win.trans.clear_tasklist", G_ACTION_CALLBACK(onClearTasklist)},
+  };
+
+  g_action_map_add_action_entries (G_ACTION_MAP (window),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   priv);
+
+  priv->popupMenu = GTK_MENU(gtk_menu_new_from_model(
+    G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "trans-popup"))
+  ));
+  gtk_menu_attach_to_widget(priv->popupMenu, GTK_WIDGET(window), nullptr);
   return window;
 }
 
@@ -123,6 +146,7 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
   widget = CreateTransTree(window);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   getPriv(window).transTreeviewWidget = widget;
+  getPriv(window).model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
 
   hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
@@ -141,8 +165,11 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
  * @param event event
  * @return Gtk+库所需
  */
-static gboolean TransPopupMenu(GtkWidget *treeview,
-                                    GdkEventButton *event) {
+static gboolean TransPopupMenu(
+  GtkWidget *treeview,
+  GdkEventButton *event,
+  TransWindowPrivate* priv)
+{
   GtkWidget *menu;
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -161,14 +188,14 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
   } else {
     g_object_set_data(G_OBJECT(model), "selected-path", NULL);
   }
-  /* 弹出菜单 */
-  menu = CreateTransPopupMenu(model);
-  if(menu == nullptr) {
-    return true;
-  }
-  gtk_menu_attach_to_widget(GTK_MENU(menu), treeview, nullptr);
-  gtk_widget_show_all(menu);
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
+  // /* 弹出菜单 */
+  // menu = CreateTransPopupMenu(model);
+  // if(menu == nullptr) {
+  //   return true;
+  // }
+  // gtk_menu_attach_to_widget(GTK_MENU(menu), treeview, nullptr);
+  // gtk_widget_show_all(menu);
+  gtk_menu_popup_at_pointer(GTK_MENU(priv->popupMenu), NULL);
   return TRUE;
 }
 
@@ -190,8 +217,7 @@ GtkWidget* CreateTransTree(TransWindow *window) {
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(view), TRUE);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-  g_signal_connect(view, "button-press-event", G_CALLBACK(TransPopupMenu),
-                   NULL);
+  g_signal_connect(view, "button-press-event", G_CALLBACK(TransPopupMenu), &getPriv(window));
 
   cell = gtk_cell_renderer_pixbuf_new();
   column = gtk_tree_view_column_new_with_attributes(_("State"), cell,
