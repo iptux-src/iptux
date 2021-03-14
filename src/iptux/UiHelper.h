@@ -21,9 +21,8 @@ void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height);
 
 void widget_enable_dnd_uri(GtkWidget *widget);
 GSList *selection_data_get_path(GtkSelectionData *data);
-void pop_info(GtkWidget *parent, const gchar *format, ...);
-void pop_warning(GtkWidget *parent, const gchar *format, ...);
-void pop_error(const gchar *format, ...);
+void pop_info(GtkWidget *parent, const gchar *format, ...) G_GNUC_PRINTF (2, 3);
+void pop_warning(GtkWidget *parent, const gchar *format, ...) G_GNUC_PRINTF (2, 3);
 void iptux_open_url(const char *url);
 std::string ipv4_get_lan_name(in_addr ipv4);
 

@@ -177,28 +177,6 @@ void pop_warning(GtkWidget *parent, const gchar *format, ...) {
 }
 
 /**
- * 严重错误，程序将有可能自行强制退出.
- * @param format as in printf()
- * @param ...
- */
-void pop_error(const gchar *format, ...) {
-  GtkWidget *dialog;
-  gchar *msg;
-  va_list ap;
-
-  va_start(ap, format);
-  msg = g_strdup_vprintf(format, ap);
-  va_end(ap);
-  dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO,
-                                  GTK_BUTTONS_OK, NULL);
-  gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
-  g_free(msg);
-  gtk_window_set_title(GTK_WINDOW(dialog), _("Error"));
-  gtk_dialog_run(GTK_DIALOG(dialog));
-  gtk_widget_destroy(dialog);
-}
-
-/**
  * 获取局域网网段名称.
  * @param ipv4 ipv4
  * @return name
