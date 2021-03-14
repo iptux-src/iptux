@@ -26,5 +26,7 @@ void pop_warning(GtkWidget *parent, const gchar *format, ...) G_GNUC_PRINTF (2, 
 void iptux_open_url(const char *url);
 std::string ipv4_get_lan_name(in_addr ipv4);
 
+void g_action_map_enable_actions(GActionMap* map, const char* action_name, ...) G_GNUC_NULL_TERMINATED;
+void g_action_map_disable_actions(GActionMap* map, const char* action_name, ...) G_GNUC_NULL_TERMINATED;
 }
 #endif //IPTUX_UIHELPER_H

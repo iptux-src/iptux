@@ -196,4 +196,39 @@ string ipv4_get_lan_name(in_addr ipv4) {
   return "";
 }
 
+void g_action_map_set_action_sensitive(GActionMap* map, const char* action_name, bool sensitive) {
+  GAction* action = g_action_map_lookup_action(G_ACTION_MAP(map), action_name);
+  if(!action) {
+    return;
+  }
+  if(!G_IS_SIMPLE_ACTION(action)) {
+    return;
+  }
+  g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sensitive);
+}
+
+void g_action_map_set_actions(GActionMap* map, bool sensitive, const char* action_name, va_list args) {
+  g_action_map_set_action_sensitive(map, action_name, sensitive);
+  const char* action_name2 = va_arg (args, const char*);
+  while (action_name2) {
+    g_action_map_set_action_sensitive(map, action_name2, sensitive);
+    action_name2 = va_arg (args, const char*);
+  }
+}
+
+void g_action_map_enable_actions(GActionMap* map, const char* action_name, ...) {
+  va_list args;
+  va_start (args, action_name);
+  g_action_map_set_actions(map, true, action_name, args);
+  va_end (args);
+}
+
+
+void g_action_map_disable_actions(GActionMap* map, const char* action_name, ...) {
+  va_list args;
+  va_start (args, action_name);
+  g_action_map_set_actions(map, false, action_name, args);
+  va_end (args);
+}
+
 }
