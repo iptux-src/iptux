@@ -206,4 +206,17 @@ string PalKey::ToString() const {
   return stringFormat("%s:%d", inAddrToString(ipv4).c_str(), port);
 }
 
+bool FileInfo::operator==(const FileInfo& rhs) const {
+  const FileInfo& lhs = *this;
+  return lhs.fileid == rhs.fileid
+    && lhs.packetn == rhs.packetn
+    && lhs.fileattr == rhs.fileattr
+    && lhs.filesize == rhs.filesize
+    && lhs.finishedsize == rhs.finishedsize
+    && lhs.filectime == rhs.filectime
+    && lhs.filemtime == rhs.filemtime
+    && lhs.filenum == rhs.filenum;
+}
+
+
 }  // namespace iptux

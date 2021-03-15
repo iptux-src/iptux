@@ -73,11 +73,12 @@ libiptux_core_test_helper = static_library('iptux-test-helper',
 gtest_inc = include_directories('../googletest/include')
 core_test_sources = files([
     'CoreThreadTest.cpp',
+    'internal/CommandModeTest.cpp',
+    'internal/CommandTest.cpp',
     'internal/UdpDataTest.cpp',
+    'IptuxConfigTest.cpp',
     'ModelsTest.cpp',
     'ProgramDataTest.cpp',
-    'IptuxConfigTest.cpp',
-    'internal/CommandModeTest.cpp',
     'TestMain.cpp',
 ])
 libiptux_core_test = executable('libiptux_core_test',

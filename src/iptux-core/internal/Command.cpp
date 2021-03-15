@@ -597,4 +597,60 @@ void Command::CreateIconExtra(istream& iss) {
   size+=iss.gcount();
 }
 
+namespace {
+
+FileInfo decodeFileInfo(char **extra) {
+  FileInfo file;
+
+  auto s = *extra;
+
+  file.fileid = iptux_get_dec_number(*extra, ':', 0);
+  file.fileattr = FileAttr(iptux_get_hex_number(*extra, ':', 4));
+  file.filesize = iptux_get_hex64_number(*extra, ':', 2);
+  file.filepath = ipmsg_get_filename(*extra, ':', 1);
+  file.filectime = iptux_get_hex_number(*extra, ':', 3);
+  file.finishedsize = 0;
+
+  if(!FileAttrIsValid(file.fileattr)) {
+    throw Exception(INVALID_FILE_ATTR, stringFormat("decode failed: %s", s));
+  }
+
+  //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
+  *extra = strchr(*extra, '\a');
+  if (*extra)  //跳过'\a'字符
+    (*extra)++;
+  if (*extra && (**extra == ':'))  //跳过可能存在的':'字符
+    (*extra)++;
+
+  return file;
+}
+}
+
+vector<FileInfo> Command::decodeFileInfos(const string& s) {
+  vector<FileInfo> res;
+  auto extra2 = g_strdup(s.c_str());
+  auto extra3 = extra2;
+
+  while (extra3 && *extra3) {
+    try {
+      res.push_back(decodeFileInfo(&extra3));
+    } catch (Exception& e) {
+      LOG_WARN("%s", e.what());
+      break;
+    }
+  }
+  g_free(extra2);
+  return res;
+}
+
+string Command::encodeFileInfo(const FileInfo& fileInfo) {
+  auto name = ipmsg_get_filename_pal(fileInfo.filepath); //获取面向好友的文件名
+  auto res = stringFormat(
+           "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a:",
+           fileInfo.fileid, name, fileInfo.filesize, fileInfo.filectime,
+           fileInfo.fileattr);
+  g_free(name);
+  return res;
+}
+
 }  // namespace iptux
