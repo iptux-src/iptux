@@ -55,6 +55,7 @@ class GroupInfo {
   std::string name;             ///< 群组名称 *
   GtkTextBuffer *buffer;  ///< 消息缓冲区 *
   GtkWidget *dialog;  ///< 对话框(若存在则必须与对话框类关联)
+
 private:
   std::vector<PPalInfo> members;
   GroupBelongType type;   ///< 群组类型
