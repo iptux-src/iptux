@@ -55,8 +55,8 @@ jobs:
       run: sudo ninja -C builddir install
     - name: test
       run: |
-        xvfb-run ./builddir/src/iptux/libiptux_test
-        xvfb-run ninja -v -C builddir test
+        xvfb-run -a ./builddir/src/iptux/libiptux_test
+        xvfb-run -a ninja -v -C builddir test
 
   codecov:
     runs-on: ubuntu-20.04
@@ -71,7 +71,9 @@ jobs:
     - name: install
       run: sudo ninja -C builddir install
     - name: test
-      run: xvfb-run ninja -v -C builddir test
+      run: |
+        xvfb-run -a ./builddir/src/iptux/libiptux_test
+        xvfb-run -a ninja -v -C builddir test
     - name: lcov
       run: |
         lcov --directory . --capture --output-file coverage.info; # capture coverage info
