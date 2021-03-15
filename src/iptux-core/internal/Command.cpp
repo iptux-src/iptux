@@ -602,6 +602,8 @@ namespace {
 FileInfo decodeFileInfo(char **extra) {
   FileInfo file;
 
+  auto s = *extra;
+
   file.fileid = iptux_get_dec_number(*extra, ':', 0);
   file.fileattr = FileAttr(iptux_get_hex_number(*extra, ':', 4));
   file.filesize = iptux_get_hex64_number(*extra, ':', 2);
@@ -610,7 +612,7 @@ FileInfo decodeFileInfo(char **extra) {
   file.finishedsize = 0;
 
   if(!FileAttrIsValid(file.fileattr)) {
-    throw Exception(INVALID_FILE_ATTR);
+    throw Exception(INVALID_FILE_ATTR, stringFormat("decode failed: %s", s));
   }
 
   //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
@@ -630,7 +632,12 @@ vector<FileInfo> Command::decodeFileInfos(const string& s) {
   auto extra3 = extra2;
 
   while (extra3 && *extra3) {
-    res.push_back(decodeFileInfo(&extra3));
+    try {
+      res.push_back(decodeFileInfo(&extra3));
+    } catch (Exception& e) {
+      LOG_WARN("%s", e.what());
+      break;
+    }
   }
   g_free(extra2);
   return res;

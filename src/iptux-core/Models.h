@@ -138,6 +138,8 @@ class FileInfo {
   FileInfo(const FileInfo& fileInfo);
   FileInfo& operator=(const FileInfo& fileInfo);
 
+  bool operator==(const FileInfo& rhs) const;
+
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号
   FileAttr fileattr;     ///< 文件属性
