@@ -13,7 +13,10 @@ TEST(DialogGroup, Constructor) {
   app.startup();
   app.activate();
 
-  GroupInfo groupInfo;
+  auto pal = make_shared<PalInfo>();
+  pal->iconfile = g_strdup("pig");
+
+  GroupInfo groupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>({pal}));
 
   DialogGroup* dialog = DialogGroup::GroupDialogEntry(&app, &groupInfo);
   delete dialog;
