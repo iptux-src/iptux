@@ -187,19 +187,21 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   /* 更新分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = g_cthrd->GetPalGroupItem(pal);
-  GroupGetPrevPaltreeItem(model, &iter, grpinf);
-  gtk_tree_model_iter_parent(model, &parent, &iter);
-  if (gtk_tree_model_iter_n_children(model, &parent) == 1)
-    gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
-  else
-    gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-  if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
-    gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
+  if(pgrpinf) {
+    GroupGetPrevPaltreeItem(model, &iter, grpinf);
+    gtk_tree_model_iter_parent(model, &parent, &iter);
+    if (gtk_tree_model_iter_n_children(model, &parent) == 1)
+      gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
+    else
+      gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
+    if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
+      gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
+      palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+    }
+    gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
+    palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
     palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
   }
-  gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
-  palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
   /* 更新广播模式树 */
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
@@ -244,13 +246,15 @@ void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   /* 添加到分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = g_cthrd->GetPalGroupItem(pal);
-  if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
-    gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+  if(pgrpinf) {
+    if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
+      gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
+      palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+    }
+    gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
+    palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
+    groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
   }
-  gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
-  groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
   /* 添加到广播模式树 */
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
@@ -288,7 +292,7 @@ void MainWindow::DelItemFromPaltree(in_addr ipv4) {
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
   pgrpinf = g_cthrd->GetPalSegmentItem(pal);
   GroupGetPaltreeItem(model, &parent, pgrpinf);
-  if (g_slist_length(pgrpinf->member) != 1) {
+  if (pgrpinf->getMembers().size() != 1) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
@@ -298,20 +302,22 @@ void MainWindow::DelItemFromPaltree(in_addr ipv4) {
   /* 从分组模式树移除 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = g_cthrd->GetPalGroupItem(pal);
-  GroupGetPaltreeItem(model, &parent, pgrpinf);
-  if (g_slist_length(pgrpinf->member) != 1) {
-    iter = parent;
-    GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-    gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt->font);
-  } else
-    gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
+  if(pgrpinf) {
+    GroupGetPaltreeItem(model, &parent, pgrpinf);
+    if (pgrpinf->getMembers().size() != 1) {
+      iter = parent;
+      GroupGetPaltreeItemWithParent(model, &iter, grpinf);
+      gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
+      groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt->font);
+    } else
+      gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
+  }
   /* 从广播模式树移除 */
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
   pgrpinf = g_cthrd->GetPalBroadcastItem(pal);
   GroupGetPaltreeItem(model, &parent, pgrpinf);
-  if (g_slist_length(pgrpinf->member) != 1) {
+  if (pgrpinf->getMembers().size()!= 1) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
@@ -349,37 +355,37 @@ void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
   GroupInfo *pgrpinf;
 
   /* 成员为空表明此项已经不存在model中，也就没必要再处理它了 */
-  if (!grpinf->member) return;
+  if (grpinf->getMembers().empty()) return;
 
   /* 闪烁项 */
-  switch (grpinf->type) {
+  switch (grpinf->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
       /* 闪烁常规模式树 */
       model =
           GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
       GroupGetPaltreeItem(model, &iter, grpinf);
       BlinkGroupItemToPaltree(model, &iter, blinking);
-      /* 闪烁网段模式树 */
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
-      pgrpinf = g_cthrd->GetPalSegmentItem((PalInfo *)grpinf->member->data);
-      GroupGetPaltreeItem(model, &iter, pgrpinf);
-      GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
-      /* 闪烁分组模式树 */
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
-      pgrpinf = g_cthrd->GetPalGroupItem((PalInfo *)grpinf->member->data);
-      GroupGetPaltreeItem(model, &iter, pgrpinf);
-      GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
-      /* 闪烁广播模式树 */
-      model = GTK_TREE_MODEL(
-          g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
-      pgrpinf = g_cthrd->GetPalBroadcastItem((PalInfo *)grpinf->member->data);
-      GroupGetPaltreeItem(model, &iter, pgrpinf);
-      GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
+      // /* 闪烁网段模式树 */
+      // model =
+      //     GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
+      // pgrpinf = g_cthrd->GetPalSegmentItem(grpinf->getMembers()[0].get());
+      // GroupGetPaltreeItem(model, &iter, pgrpinf);
+      // GroupGetPaltreeItemWithParent(model, &iter, grpinf);
+      // BlinkGroupItemToPaltree(model, &iter, blinking);
+      // /* 闪烁分组模式树 */
+      // model =
+      //     GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
+      // pgrpinf = g_cthrd->GetPalGroupItem(grpinf->getMembers()[0].get());
+      // GroupGetPaltreeItem(model, &iter, pgrpinf);
+      // GroupGetPaltreeItemWithParent(model, &iter, grpinf);
+      // BlinkGroupItemToPaltree(model, &iter, blinking);
+      // /* 闪烁广播模式树 */
+      // model = GTK_TREE_MODEL(
+      //     g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
+      // pgrpinf = g_cthrd->GetPalBroadcastItem(grpinf->getMembers()[0].get());
+      // GroupGetPaltreeItem(model, &iter, pgrpinf);
+      // GroupGetPaltreeItemWithParent(model, &iter, grpinf);
+      // BlinkGroupItemToPaltree(model, &iter, blinking);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
       /* 闪烁网段模式树 */
@@ -1231,9 +1237,9 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget *treeview, gint x, gint y,
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_path_free(path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-  if (grpinf->type != GROUP_BELONG_TYPE_REGULAR) return FALSE;
+  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) return FALSE;
 
-  char* tooltipMarkup = palInfo2HintMarkup((PalInfo *)grpinf->member->data);
+  char* tooltipMarkup = palInfo2HintMarkup(grpinf->getMembers()[0].get());
   gtk_tooltip_set_markup(tooltip, tooltipMarkup);
   g_free(tooltipMarkup);
 
@@ -1264,7 +1270,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
   }
 
   /* 根据需求建立对应的对话框 */
-  switch (grpinf->type) {
+  switch (grpinf->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
       DialogPeer::PeerDialogEntry(self->app, grpinf);
       break;
@@ -1337,7 +1343,7 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget *treeview,
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
     gtk_tree_path_free(path);
     return FALSE;
   }
@@ -1400,7 +1406,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget *treeview,
 
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
   if (!(grpinf->dialog)) {
-    switch (grpinf->type) {
+    switch (grpinf->getType()) {
       case GROUP_BELONG_TYPE_REGULAR:
         DialogPeer::PeerDialogEntry(self->app, grpinf);
         break;
@@ -1439,7 +1445,7 @@ void MainWindow::onFind(void*, void*, MainWindow&self) {
 
 void MainWindow::onDeletePal(void*, void*, MainWindow&self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
-  switch(groupInfo->type) {
+  switch(groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
       self.DeletePalItem(groupInfo);
       break;
@@ -1451,9 +1457,9 @@ void MainWindow::onDeletePal(void*, void*, MainWindow&self) {
 
 void MainWindow::onPalChangeInfo(void*, void*, MainWindow&self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
-  switch(groupInfo->type) {
+  switch(groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      RevisePal::ReviseEntry((PalInfo*)(groupInfo->member->data));
+      RevisePal::ReviseEntry(groupInfo->getMembers()[0].get());
       break;
     default:
       CHECK(false);
@@ -1463,7 +1469,7 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow&self) {
 
 void MainWindow::onPalSendMessage(void*, void*, MainWindow&self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
-  switch(groupInfo->type) {
+  switch(groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
       DialogPeer::PeerDialogEntry(self.app, groupInfo);
       break;
@@ -1479,9 +1485,9 @@ void MainWindow::onPalSendMessage(void*, void*, MainWindow&self) {
 }
 void MainWindow::onPalRequestSharedResources(void*, void*, MainWindow&self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
-  switch(groupInfo->type) {
+  switch(groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      g_cthrd->SendAskShared(g_cthrd->GetPal(((PalInfo *)groupInfo->member->data)->GetKey()));
+      g_cthrd->SendAskShared(groupInfo->getMembers()[0]);
       break;
     default:
       CHECK(false);
@@ -1872,7 +1878,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
 
 void MainWindow::setCurrentGroupInfo(GroupInfo* groupInfo) {
   this->currentGroupInfo = CHECK_NOTNULL(groupInfo);
-  switch(currentGroupInfo->type) {
+  switch(currentGroupInfo->getType()) {
   case GROUP_BELONG_TYPE_REGULAR:
     setActionSensitive("pal.send_message", true);
     setActionSensitive("pal.request_shared_resources", true);

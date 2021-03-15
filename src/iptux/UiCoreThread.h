@@ -83,12 +83,12 @@ class UiCoreThread: public CoreThread {
   void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
 
   GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalRegularItem(PalInfo *pal);
-  GroupInfo *AttachPalSegmentItem(PalInfo *pal);
-  GroupInfo *AttachPalGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
+  GroupInfo *AttachPalRegularItem(PPalInfo pal);
+  GroupInfo *AttachPalSegmentItem(PPalInfo pal);
+  GroupInfo *AttachPalGroupItem(PPalInfo pal);
+  GroupInfo *AttachPalBroadcastItem(PPalInfo pal);
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal);
 
 private:
   Application* app;

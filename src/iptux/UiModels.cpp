@@ -94,8 +94,8 @@ gint paltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
   GroupInfo *agrpinf, *bgrpinf;
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
-  if (agrpinf->type == GROUP_BELONG_TYPE_REGULAR &&
-      bgrpinf->type == GROUP_BELONG_TYPE_REGULAR)
+  if (agrpinf->getType() == GROUP_BELONG_TYPE_REGULAR &&
+      bgrpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
   {
     if(agrpinf->grpid < bgrpinf->grpid) {
       return -1;
@@ -183,8 +183,8 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
 
   /* 创建图标 */
   theme = gtk_icon_theme_get_default();
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
-    pal = static_cast<PalInfo *>(grpinf->member->data);
+  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
+    pal = grpinf->getMembers()[0].get();
     auto file = iptux_erase_filename_suffix(pal->iconfile);
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                        GtkIconLookupFlags(0), &error);
@@ -204,23 +204,23 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   }
 
   /* 创建主信息 */
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
     char ipstr[INET_ADDRSTRLEN];
-    pal = static_cast<PalInfo *>(grpinf->member->data);
+    pal = grpinf->getMembers()[0].get();
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     info = g_strdup_printf("%s\n%s", pal->name, ipstr);
   } else
     info = g_strdup(grpinf->name.c_str());
 
   /* 创建扩展信息 */
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR)
+  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
     extra = NULL;
   else
-    extra = g_strdup_printf("(%u)", g_slist_length(grpinf->member));
+    extra = g_strdup_printf("(%d)", (int)(grpinf->getMembers().size()));
 
   /* 创建字体风格 */
   attrs = pango_attr_list_new();
-  if (grpinf->type == GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
     auto dspt = pango_font_description_from_string(font);
     attr = pango_attr_font_desc_new(dspt);
     pango_attr_list_insert(attrs, attr);
@@ -253,16 +253,72 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   pango_attr_list_unref(attrs);
 }
 
-GroupInfo::GroupInfo()
-    : grpid(0),
-      type(GROUP_BELONG_TYPE_REGULAR),
-      member(NULL),
-      buffer(NULL),
-      dialog(NULL) {}
+// GroupInfo::GroupInfo()
+//     : grpid(0),
+//       type(GROUP_BELONG_TYPE_REGULAR),
+//       member(NULL),
+//       buffer(NULL),
+//       dialog(NULL) {}
 GroupInfo::~GroupInfo() {
-  g_slist_free(member);
   g_object_unref(buffer);
 }
 
+bool GroupInfo::hasPal(PalInfo* pal) const {
+  for(auto i: members) {
+    if(i.get() == pal) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool GroupInfo::hasPal(PPalInfo pal) const {
+  return hasPal(pal.get());
+}
+
+GroupInfo::GroupInfo(PPalInfo pal)
+    : grpid(0),
+      buffer(NULL),
+      dialog(NULL),
+      type(GROUP_BELONG_TYPE_REGULAR)
+{
+  members.push_back(pal);
+}
+
+GroupInfo::GroupInfo(iptux::GroupBelongType t, const vector<PPalInfo>& pals)
+    : grpid(0),
+      buffer(NULL),
+      dialog(NULL),
+      members(pals),
+      type(t)
+{
+}
+
+bool GroupInfo::addPal(PPalInfo pal) {
+  if(type == GROUP_BELONG_TYPE_REGULAR) {
+    LOG_WARN("should not call addPal on GROUP_BELONG_TYPE_REGULAR");
+    return false;
+  }
+  if(hasPal(pal)) {
+    return false;
+  }
+  members.push_back(pal);
+  return true;
+}
+
+bool GroupInfo::delPal(PalInfo* pal) {
+  if(type == GROUP_BELONG_TYPE_REGULAR) {
+    LOG_WARN("should not call delPal on GROUP_BELONG_TYPE_REGULAR");
+    return false;
+  }
+
+  for(auto it = members.begin(); it != members.end(); ++it) {
+    if(it->get() == pal) {
+      members.erase(it);
+      return true;
+    }
+  }
+  return false;
+}
 
 }

@@ -31,15 +31,34 @@ class SessionAbstract {
  */
 class GroupInfo {
  public:
-  GroupInfo();
+  explicit GroupInfo(PPalInfo pal);
+  GroupInfo(GroupBelongType type, const std::vector<PPalInfo>& pals);
   ~GroupInfo();
 
+  const std::vector<PPalInfo>& getMembers() const { return members; }
+  GroupBelongType getType() const { return type; }
+
+  /** return true if successful added, noop for regular group */
+  bool addPal(PPalInfo pal);
+
+  /** return true if successful deleted, noop for regular group */
+  bool delPal(PalInfo* pal);
+
+  /** return true if successful deleted, noop for regulat group */
+  bool delPal(PPalInfo pal);
+
+  bool hasPal(PalInfo* pal) const;
+  bool hasPal(PPalInfo pal) const;
+
+ public:
   GQuark grpid;           ///< 唯一标识
-  GroupBelongType type;   ///< 群组类型
   std::string name;             ///< 群组名称 *
-  GSList *member;         ///< 群组成员(数据不为本链表拥有)
   GtkTextBuffer *buffer;  ///< 消息缓冲区 *
   GtkWidget *dialog;  ///< 对话框(若存在则必须与对话框类关联)
+
+private:
+  std::vector<PPalInfo> members;
+  GroupBelongType type;   ///< 群组类型
 };
 
 enum class TransModelColumn {

@@ -414,7 +414,7 @@ void DialogBase::FeedbackMsg(const gchar *msg) {
   /* 构建消息封装包 */
   para.pal = NULL;
   para.stype = MessageSourceType::SELF;
-  para.btype = grpinf->type;
+  para.btype = grpinf->getType();
   chip.type = MESSAGE_CONTENT_TYPE_STRING;
   chip.data = msg;
   para.dtlist.push_back(std::move(chip));
@@ -602,11 +602,10 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
   GtkTreeSelection *TreeSel;
   GtkTreeIter iter;
   FileInfo *file;
-  DialogBase *dlg;
   GList *list;
   auto widget = self->fileSendTree;
+  auto dlg = self;
 
-  dlg = (DialogBase *)(g_object_get_data(G_OBJECT(widget), "dialog"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
@@ -694,7 +693,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-  if (grpinf->type != GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) {
     cell = gtk_cell_renderer_text_new();
     column = gtk_tree_view_column_new_with_attributes(_("PeelName"), cell,
                                                       "text", 5, NULL);
@@ -721,7 +720,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(EnclosureTreePopup), view);
+                           G_CALLBACK(EnclosureTreePopup), this);
   return view;
 }
 

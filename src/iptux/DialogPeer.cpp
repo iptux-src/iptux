@@ -193,7 +193,7 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   char ipstr[INET_ADDRSTRLEN];
 
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
-  palinfor = (PalInfo *)(CHECK_NOTNULL(grpinf->member))->data;
+  palinfor = grpinf->getMembers()[0].get();
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
   snprintf(buf, MAX_BUFLEN, _("Talk with %s(%s) IP:%s"), palinfor->name,
            palinfor->host, ipstr);
@@ -295,9 +295,7 @@ GtkWidget *DialogPeer::CreateInfoArea() {
   gtk_container_add(GTK_CONTAINER(frame), sw);
 
   buffer = gtk_text_buffer_new(progdt->table);
-  if (grpinf->member) {
-    FillPalInfoToBuffer(buffer, (PalInfo *)grpinf->member->data);
-  }
+  FillPalInfoToBuffer(buffer, grpinf->getMembers()[0].get());
   widget = gtk_text_view_new_with_buffer(buffer);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
@@ -373,7 +371,7 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
  */
 void DialogPeer::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
   vector<const PalInfo*> pals;
-  pals.push_back((const PalInfo*)(grpinf->member->data));
+  pals.push_back(grpinf->getMembers()[0].get());
   this->app->getCoreThread()->BcstFileInfoEntry(pals, files);
 }
 
@@ -460,15 +458,9 @@ void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
   MsgPara para;
 
   auto g_cthrd = app->getCoreThread();
-  /* 构建消息封装包 */
-  if (grpinf->member) {
-    para.pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
-  } else {
-    para.pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
-  }
-
+  para.pal = grpinf->getMembers()[0];
   para.stype = MessageSourceType::SELF;
-  para.btype = grpinf->type;
+  para.btype = grpinf->getType();
   para.dtlist = dtlist;
 
   /* 交给某人处理吧 */
@@ -485,13 +477,9 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
   auto g_cthrd = app->getCoreThread();
 
   para = new MsgPara;
-  if (!(grpinf->member)) {
-    para->pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
-  } else {
-    para->pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
-  }
+  para->pal = grpinf->getMembers()[0];
   para->stype = MessageSourceType::SELF;
-  para->btype = grpinf->type;
+  para->btype = grpinf->getType();
   para->dtlist = dtlist;
 
   return para;
@@ -502,15 +490,8 @@ MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
-  PPalInfo pal;
   auto g_cthrd = self.app->getCoreThread();
-  auto grpinf = self.grpinf;
-  if (!(grpinf->member)) {
-    pal = g_cthrd->GetPal(inAddrFromUint32(grpinf->grpid));
-  } else {
-    pal = g_cthrd->GetPal(((PalInfo *)grpinf->member->data)->GetKey());
-  }
-  g_cthrd->SendAskShared(pal);
+  g_cthrd->SendAskShared(self.grpinf->getMembers()[0]);
 }
 
 void DialogPeer::insertPicture() {
@@ -797,7 +778,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
   receiving = 0;
 
   //设置界面显示
-  palinfor = (PalInfo *)(dlgpr->grpinf->member->data);
+  palinfor = dlgpr->grpinf->getMembers()[0].get();
   mdltorcv = (GtkTreeModel *)g_datalist_get_data(&(dlgpr->mdlset),
                                                  "file-to-receive-model");
   gtk_list_store_clear(GTK_LIST_STORE(mdltorcv));
@@ -1020,11 +1001,12 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
 GSList *DialogPeer::GetSelPal() {
   PalInfo *pal;
   GSList *plist;
-  pal = (PalInfo *)(grpinf->member->data);
+  pal = grpinf->getMembers()[0].get();
   plist = NULL;
   plist = g_slist_append(plist, pal);
   return plist;
 }
+
 /**
  *从接收文件的TreeView删除选定行（待接收和已接收都用此函数）.
  * @param widget TreeView

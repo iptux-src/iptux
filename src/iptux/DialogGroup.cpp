@@ -51,6 +51,8 @@ DialogGroup::~DialogGroup() {
  * @param grpinf 群组信息
  */
 DialogGroup* DialogGroup::GroupDialogEntry(Application* app, GroupInfo *grpinf) {
+  CHECK_NOTNULL(grpinf);
+  CHECK_NE(grpinf->getType(), GROUP_BELONG_TYPE_REGULAR);
   DialogGroup *dlggrp;
   GtkWidget *window, *widget;
 
@@ -323,16 +325,14 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model) {
   GtkIconTheme *theme;
   GdkPixbuf *pixbuf;
   GtkTreeIter iter;
-  GSList *tlist;
   PalInfo *pal;
   char *file;
 
   theme = gtk_icon_theme_get_default();
   auto g_cthrd = app->getCoreThread();
   g_cthrd->Lock();
-  tlist = grpinf->member;
-  while (tlist) {
-    pal = (PalInfo *)tlist->data;
+  for(auto ppal: grpinf->getMembers()) {
+    pal = ppal.get();
     file = iptux_erase_filename_suffix(pal->iconfile);
     pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                       GtkIconLookupFlags(0), NULL);
@@ -341,7 +341,6 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model) {
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, TRUE, 1, pixbuf, 2,
                        pal->name, 3, pal, -1);
     if (pixbuf) g_object_unref(pixbuf);
-    tlist = g_slist_next(tlist);
   }
   g_cthrd->Unlock();
 }
@@ -436,7 +435,7 @@ void DialogGroup::BroadcastTextMsg(const gchar *msg) {
     gtk_tree_model_get(model, &iter, 0, &active, 3, &pal, -1);
     if (active) {
       if (pal->isCompatible()) {
-        switch (grpinf->type) {
+        switch (grpinf->getType()) {
           case GROUP_BELONG_TYPE_BROADCAST:
             opttype = IPTUX_BROADCASTOPT;
             break;

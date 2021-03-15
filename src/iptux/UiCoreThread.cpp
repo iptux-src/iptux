@@ -126,8 +126,6 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = groupInfos;
   while (tlist) {
     grpinf = (GroupInfo *)tlist->data;
-    g_slist_free(grpinf->member);
-    grpinf->member = NULL;
     if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -139,8 +137,6 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = sgmlist;
   while (tlist) {
     grpinf = (GroupInfo *)tlist->data;
-    g_slist_free(grpinf->member);
-    grpinf->member = NULL;
     if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -152,8 +148,6 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = grplist;
   while (tlist) {
     grpinf = (GroupInfo *)tlist->data;
-    g_slist_free(grpinf->member);
-    grpinf->member = NULL;
     if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -165,8 +159,6 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = brdlist;
   while (tlist) {
     grpinf = (GroupInfo *)tlist->data;
-    g_slist_free(grpinf->member);
-    grpinf->member = NULL;
     if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -231,49 +223,49 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   /* 更新好友所在的群组，以及它在UI上的信息 */
   /*/* 更新常规模式下的群组 */
   if ((grpinf = GetPalRegularItem(pal))) {
-    if (!g_slist_find(grpinf->member, pal)) {
-      AttachPalToGroupInfoItem(grpinf, pal);
+    if (!grpinf->hasPal(pal)) {
+      AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
       session->UpdatePalData(pal);
     }
   } else {
-    if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
-    AttachPalToGroupInfoItem(grpinf, pal);
+    if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(ppal);
+    AttachPalToGroupInfoItem(grpinf, ppal);
   }
   /*/* 更新网段模式下的群组 */
   if ((grpinf = GetPalSegmentItem(pal))) {
-    if (!g_slist_find(grpinf->member, pal)) {
-      AttachPalToGroupInfoItem(grpinf, pal);
+    if (!grpinf->hasPal(pal)) {
+      AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
       session->UpdatePalData(pal);
     }
   } else {
-    if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal);
-    AttachPalToGroupInfoItem(grpinf, pal);
+    if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(ppal);
+    AttachPalToGroupInfoItem(grpinf, ppal);
   }
   /*/* 更新分组模式下的群组 */
   if ((grpinf = GetPalPrevGroupItem(pal))) {
     if (!pal->group || strcmp(grpinf->name.c_str(), pal->group) != 0) {
       DelPalFromGroupInfoItem(grpinf, pal);
-      if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
-      AttachPalToGroupInfoItem(grpinf, pal);
+      if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(ppal);
+      AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
       session->UpdatePalData(pal);
     }
   } else {
-    if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
-    AttachPalToGroupInfoItem(grpinf, pal);
+    if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(ppal);
+    AttachPalToGroupInfoItem(grpinf, ppal);
   }
   /*/* 更新广播模式下的群组 */
   if ((grpinf = GetPalBroadcastItem(pal))) {
-    if (!g_slist_find(grpinf->member, pal)) {
-      AttachPalToGroupInfoItem(grpinf, pal);
+    if (!grpinf->hasPal(pal)) {
+      AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
       session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                      "session-class");
@@ -281,8 +273,8 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
     }
   } else {
     if (!(grpinf = GetPalBroadcastItem(pal)))
-      grpinf = AttachPalBroadcastItem(pal);
-    AttachPalToGroupInfoItem(grpinf, pal);
+      grpinf = AttachPalBroadcastItem(ppal);
+    AttachPalToGroupInfoItem(grpinf, ppal);
   }
 }
 
@@ -299,15 +291,15 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
   auto pal = pal2.get();
 
   /* 将好友加入到相应的群组 */
-  if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
-  if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
+  if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal2);
+  AttachPalToGroupInfoItem(grpinf, pal2);
+  if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal2);
+  AttachPalToGroupInfoItem(grpinf, pal2);
+  if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal2);
+  AttachPalToGroupInfoItem(grpinf, pal2);
   if (!(grpinf = GetPalBroadcastItem(pal)))
-    grpinf = AttachPalBroadcastItem(pal);
-  AttachPalToGroupInfoItem(grpinf, pal);
+    grpinf = AttachPalBroadcastItem(pal2);
+  AttachPalToGroupInfoItem(grpinf, pal2);
 }
 
 /**
@@ -569,7 +561,7 @@ GroupInfo *UiCoreThread::GetPalPrevGroupItem(PalInfo *pal) {
 
   tlist = grplist;
   while (tlist) {
-    if (g_slist_find(((GroupInfo *)tlist->data)->member, pal)) break;
+    if (((GroupInfo *)tlist->data)->hasPal(pal)) break;
     tlist = g_slist_next(tlist);
   }
 
@@ -581,14 +573,12 @@ GroupInfo *UiCoreThread::GetPalPrevGroupItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
+GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   GroupInfo *grpinf;
 
-  grpinf = new GroupInfo;
+  grpinf = new GroupInfo(pal);
   grpinf->grpid = inAddrToUint32(pal->ipv4);
-  grpinf->type = GROUP_BELONG_TYPE_REGULAR;
   grpinf->name = g_strdup(pal->name);
-  grpinf->member = NULL;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   groupInfos = g_slist_append(groupInfos, grpinf);
@@ -600,7 +590,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
+GroupInfo *UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
   GroupInfo *grpinf;
 
   /* 获取局域网网段名称 */
@@ -609,11 +599,9 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
     name = _("Others");
   }
 
-  grpinf = new GroupInfo;
+  grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>());
   grpinf->grpid = g_quark_from_static_string(name.c_str());
-  grpinf->type = GROUP_BELONG_TYPE_SEGMENT;
   grpinf->name = name;
-  grpinf->member = NULL;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   sgmlist = g_slist_append(sgmlist, grpinf);
@@ -626,7 +614,7 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
+GroupInfo *UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   GroupInfo *grpinf;
   char *name;
 
@@ -634,11 +622,8 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
   NO_OPERATION_C
   name = g_strdup(pal->group ? pal->group : _("Others"));
 
-  grpinf = new GroupInfo;
-  grpinf->grpid = g_quark_from_static_string(name);
-  grpinf->type = GROUP_BELONG_TYPE_GROUP;
+  grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>());
   grpinf->name = name;
-  grpinf->member = NULL;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   grplist = g_slist_append(grplist, grpinf);
@@ -651,17 +636,15 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalBroadcastItem(PalInfo *) {
+GroupInfo *UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
   GroupInfo *grpinf;
   char *name;
 
   name = g_strdup(_("Broadcast"));
 
-  grpinf = new GroupInfo;
+  grpinf = new GroupInfo(GROUP_BELONG_TYPE_BROADCAST, vector<PPalInfo>());
   grpinf->grpid = g_quark_from_static_string(name);
-  grpinf->type = GROUP_BELONG_TYPE_BROADCAST;
   grpinf->name = name;
-  grpinf->member = NULL;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   brdlist = g_slist_append(brdlist, grpinf);
@@ -678,13 +661,11 @@ void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
   GSList *tlist;
   SessionAbstract *session;
 
-  if ((tlist = g_slist_find(grpinf->member, pal))) {
-    grpinf->member = g_slist_delete_link(grpinf->member, tlist);
-    if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
-      session->DelPalData(pal);
-    }
+  grpinf->delPal(pal);
+  if (grpinf->dialog) {
+    session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
+    session->DelPalData(pal);
   }
 }
 
@@ -693,14 +674,13 @@ void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
  * @param grpinf class GroupInfo
  * @param pal class PalInfo
  */
-void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
+void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal) {
   SessionAbstract *session;
-
-  grpinf->member = g_slist_append(grpinf->member, pal);
+  grpinf->addPal(pal);
   if (grpinf->dialog) {
     session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                    "session-class");
-    session->InsertPalData(pal);
+    session->InsertPalData(pal.get());
   }
 }
 
