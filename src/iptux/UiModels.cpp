@@ -311,12 +311,14 @@ bool GroupInfo::delPal(PalInfo* pal) {
     LOG_WARN("should not call delPal on GROUP_BELONG_TYPE_REGULAR");
     return false;
   }
-  if(hasPal(pal)) {
-    return false;
-  }
 
-  remove_if(members.begin(), members.end(), [&](PPalInfo p) {return p.get() == pal; } );
-  return true;
+  for(auto it = members.begin(); it != members.end(); ++it) {
+    if(it->get() == pal) {
+      members.erase(it);
+      return true;
+    }
+  }
+  return false;
 }
 
 }
