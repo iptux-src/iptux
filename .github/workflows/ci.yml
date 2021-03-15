@@ -54,7 +54,9 @@ jobs:
     - name: install
       run: sudo ninja -C builddir install
     - name: test
-      run: xvfb-run ninja -v -C builddir test
+      run: |
+        xvfb-run ninja -v -C builddir test
+        xvfb-run ./builddir/src/iptux/libiptux_test
 
   codecov:
     runs-on: ubuntu-20.04
