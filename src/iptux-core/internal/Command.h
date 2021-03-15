@@ -62,7 +62,7 @@ class Command {
   void SendMySign(int sock, CPPalInfo pal);
   void SendSublayer(int sock, CPPalInfo pal, uint32_t opttype, const char *path);
 
-  static std::string encodeFileInfos();
+  static std::string encodeFileInfo(const FileInfo& fileInfo);
   static std::vector<FileInfo> decodeFileInfos(const std::string& s);
 
  private:

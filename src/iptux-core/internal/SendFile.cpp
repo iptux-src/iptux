@@ -52,7 +52,7 @@ void SendFile::SendSharedInfoEntry(CoreThread* coreThread, PPalInfo pal) {
  * @param flist 文件信息链表
  * @note 文件路径链表中的数据将被本函数处理掉
  */
-void SendFile::BcstFileInfoEntry(CoreThread* coreThread, const vector<const PalInfo*>& pals, 
+void SendFile::BcstFileInfoEntry(CoreThread* coreThread, const vector<const PalInfo*>& pals,
     const std::vector<FileInfo*>& files)
   {
     SendFile(coreThread).BcstFileInfo(pals, 0, files);
@@ -153,32 +153,30 @@ void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals, uint32_t op
   char buf[MAX_UDPLEN];
   size_t len;
   char *ptr, *name;
-  
-  /* 初始化 */
-  len = 0;
-  ptr = buf;
-  buf[0] = '\0';
+
 
   for(auto pal: pals) {
+    /* 初始化 */
+    len = 0;
+    ptr = buf;
+    buf[0] = '\0';
+    vector<string> buffer;
     for(auto file: files) {
-      if (file->fileown->GetKey() == pal->GetKey()) {
-        if (access(file->filepath, F_OK) == -1) {
-          continue;
-        }
-        name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
-        file->filesize = afs.ftwsize(file->filepath);  //不得不计算文件长度了
-        file->packetn = cmd.Packetn();
-        snprintf(ptr, MAX_UDPLEN - len,
-                 "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a:",
-                 file->fileid, name, file->filesize, file->filectime,
-                 file->fileattr);
-        g_free(name);
-        len += strlen(ptr);
-        ptr = buf + len;
-      }
+      if (!(file->fileown->GetKey() == pal->GetKey())) continue;
+      if (access(file->filepath, F_OK) == -1) continue;
+      file->filesize = afs.ftwsize(file->filepath);  //不得不计算文件长度了
+      file->packetn = cmd.Packetn();
+
+      buffer.push_back(Command::encodeFileInfo(*file));
     }
-    cmd.SendFileInfo(coreThread->getUdpSock(), pal->GetKey(), opttype,
-                     buf);
+
+    string res;
+    for(auto b: buffer) {
+      if(res.length() + b.length() > MAX_UDPLEN) break;
+      res += b;
+    }
+
+    cmd.SendFileInfo(coreThread->getUdpSock(), pal->GetKey(), opttype, res.c_str());
   }
 }
 

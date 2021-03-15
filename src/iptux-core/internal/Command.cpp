@@ -636,4 +636,14 @@ vector<FileInfo> Command::decodeFileInfos(const string& s) {
   return res;
 }
 
+string Command::encodeFileInfo(const FileInfo& fileInfo) {
+  auto name = ipmsg_get_filename_pal(fileInfo.filepath); //获取面向好友的文件名
+  auto res = stringFormat(
+           "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a:",
+           fileInfo.fileid, name, fileInfo.filesize, fileInfo.filectime,
+           fileInfo.fileattr);
+  g_free(name);
+  return res;
+}
+
 }  // namespace iptux
