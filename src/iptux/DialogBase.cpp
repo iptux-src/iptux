@@ -602,11 +602,10 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
   GtkTreeSelection *TreeSel;
   GtkTreeIter iter;
   FileInfo *file;
-  DialogBase *dlg;
   GList *list;
   auto widget = self->fileSendTree;
+  auto dlg = self;
 
-  dlg = (DialogBase *)(g_object_get_data(G_OBJECT(widget), "dialog"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
@@ -721,7 +720,7 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(EnclosureTreePopup), view);
+                           G_CALLBACK(EnclosureTreePopup), this);
   return view;
 }
 
