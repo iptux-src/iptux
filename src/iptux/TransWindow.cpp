@@ -22,7 +22,10 @@ class TransWindowPrivate {
  public:
   Application* app;
   GtkWidget* transTreeviewWidget;
+  GtkMenu* popupMenu;
   vector<gulong> signals;
+  GtkTreeModel* model;
+  GtkApplicationWindow* window;
 
  public:
   static void destroy(TransWindowPrivate* self) {
@@ -33,16 +36,33 @@ class TransWindowPrivate {
     }
     delete self;
   }
+
+  void setCurrentTaskFinished(bool finished) {
+    currentTaskFinished = finished;
+    if(finished) {
+      g_action_map_enable_actions(G_ACTION_MAP(window), "trans.open_file", nullptr);
+      g_action_map_disable_actions(G_ACTION_MAP(window), "trans.terminate_task", nullptr);
+    } else {
+      g_action_map_disable_actions(G_ACTION_MAP(window), "trans.open_file", nullptr);
+      g_action_map_enable_actions(G_ACTION_MAP(window), "trans.terminate_task", nullptr);
+    }
+  }
+
+  private:
+    bool currentTaskFinished = false;
+
 };
 
 static gboolean TWinConfigureEvent(GtkWindow *window);
 static GtkWidget * CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow *window);
-static GtkWidget *CreateTransPopupMenu(GtkTreeModel *model);
-static void OpenThisFile(GtkTreeModel *model);
 static gboolean UpdateTransUI(GtkWindow *window);
 static TransWindowPrivate& getPriv(TransWindow* window);
 static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow *pWindow);
+static void onOpenFile (void *, void *, TransWindowPrivate* self);
+static void onOpenFolder (void *, void *, TransWindowPrivate* self);
+static void onTerminateTask (void *, void *, TransWindowPrivate* self);
+static void onTerminateAllTasks (void *, void *, TransWindowPrivate* self);
 
 TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   g_assert(app != nullptr);
@@ -51,6 +71,7 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
   window = GTK_WINDOW(gtk_application_window_new(app->getApp()));
   TransWindowPrivate* priv = new TransWindowPrivate;
   priv->app = app;
+  priv->window = GTK_APPLICATION_WINDOW(window);
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv, GDestroyNotify(TransWindowPrivate::destroy));
   if(parent) {
     gtk_window_set_transient_for(window, parent);
@@ -75,6 +96,22 @@ TransWindow *trans_window_new(Application* app, GtkWindow *parent) {
       window
   );
   priv->signals.push_back(signalHandler);
+
+  GActionEntry win_entries[] = {
+    { "trans.open_file", G_ACTION_CALLBACK(onOpenFile)},
+    { "trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
+    { "trans.terminate_task", G_ACTION_CALLBACK(onTerminateTask)},
+    { "trans.terminate_all", G_ACTION_CALLBACK(onTerminateAllTasks)},
+  };
+
+  g_action_map_add_action_entries (G_ACTION_MAP (window),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   priv);
+
+  priv->popupMenu = GTK_MENU(gtk_menu_new_from_model(
+    G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "trans-popup"))
+  ));
+  gtk_menu_attach_to_widget(priv->popupMenu, GTK_WIDGET(window), nullptr);
   return window;
 }
 
@@ -123,6 +160,7 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
   widget = CreateTransTree(window);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   getPriv(window).transTreeviewWidget = widget;
+  getPriv(window).model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
 
   hbb = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbb), GTK_BUTTONBOX_END);
@@ -141,9 +179,11 @@ GtkWidget * CreateTransArea(GtkWindow* window) {
  * @param event event
  * @return Gtk+库所需
  */
-static gboolean TransPopupMenu(GtkWidget *treeview,
-                                    GdkEventButton *event) {
-  GtkWidget *menu;
+static gboolean TransPopupMenu(
+  GtkWidget *treeview,
+  GdkEventButton *event,
+  TransWindowPrivate* priv)
+{
   GtkTreeModel *model;
   GtkTreePath *path;
 
@@ -160,15 +200,15 @@ static gboolean TransPopupMenu(GtkWidget *treeview,
                            GDestroyNotify(gtk_tree_path_free));
   } else {
     g_object_set_data(G_OBJECT(model), "selected-path", NULL);
+    return TRUE;
   }
-  /* 弹出菜单 */
-  menu = CreateTransPopupMenu(model);
-  if(menu == nullptr) {
-    return true;
-  }
-  gtk_menu_attach_to_widget(GTK_MENU(menu), treeview, nullptr);
-  gtk_widget_show_all(menu);
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
+
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(model, &iter, path);
+  bool finished;
+  gtk_tree_model_get(model, &iter, TransModelColumn ::FINISHED, &finished, -1);
+  priv->setCurrentTaskFinished(finished);
+  gtk_menu_popup_at_pointer(GTK_MENU(priv->popupMenu), NULL);
   return TRUE;
 }
 
@@ -190,8 +230,7 @@ GtkWidget* CreateTransTree(TransWindow *window) {
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(view), TRUE);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-  g_signal_connect(view, "button-press-event", G_CALLBACK(TransPopupMenu),
-                   NULL);
+  g_signal_connect(view, "button-press-event", G_CALLBACK(TransPopupMenu), &getPriv(window));
 
   cell = gtk_cell_renderer_pixbuf_new();
   column = gtk_tree_view_column_new_with_attributes(_("State"), cell,
@@ -278,10 +317,13 @@ GtkWidget* CreateTransTree(TransWindow *window) {
  * 打开接收文件所在文件夹.
  * @param model trans-model
  */
-static void OpenContainingFolder(GtkTreeModel *model) {
+void onOpenFolder (void *, void *, TransWindowPrivate* self) {
   GtkTreePath *path;
   GtkTreeIter iter;
   gchar *filename, *filepath, *name;
+
+  auto model = self->model;
+
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
     return;
@@ -308,11 +350,13 @@ static void OpenContainingFolder(GtkTreeModel *model) {
  * 终止单个传输任务.
  * @param model trans-model
  */
-static void TerminateTransTask(GtkTreeModel *model) {
+void onTerminateTask (void *, void *, TransWindowPrivate* self) {
   GtkTreePath *path;
   GtkTreeIter iter;
   gboolean finished;
   int taskId;
+
+  auto model = self->model;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
@@ -333,9 +377,11 @@ static void TerminateTransTask(GtkTreeModel *model) {
  * 终止所有传输任务.
  * @param model trans-model
  */
-static void TerminateAllTransTask(GtkTreeModel *model) {
+void onTerminateAllTasks (void *, void *, TransWindowPrivate* self) {
   GtkTreeIter iter;
   int taskId;
+
+  auto model = self->model;
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
   do {
@@ -344,64 +390,17 @@ static void TerminateAllTransTask(GtkTreeModel *model) {
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
-/**
- * 为文件传输树(trans-tree)创建弹出菜单.
- * @param model trans-model
- * @return 菜单
- */
-GtkWidget *CreateTransPopupMenu(GtkTreeModel *model) {
-  GtkWidget *menu, *menuitem;
-
-  GtkTreePath *path;
-  GtkTreeIter iter;
-  bool finished;
-
-  if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
-                                                 "selected-path"))))
-    return NULL;
-  gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, TransModelColumn ::FINISHED, &finished, -1);
-
-  menu = gtk_menu_new();
-
-  menuitem = gtk_menu_item_new_with_label(_("Open This File"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(OpenThisFile),
-                           model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
-
-  menuitem = gtk_menu_item_new_with_label(_("Open Containing Folder"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(OpenContainingFolder), model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), finished);
-
-  menuitem = gtk_menu_item_new_with_label(_("Terminate Task"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(TerminateTransTask),
-                           model);
-  gtk_widget_set_sensitive(GTK_WIDGET(menuitem), !finished);
-
-  menuitem = gtk_menu_item_new_with_label(_("Terminate All"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(TerminateAllTransTask), model);
-
-  menuitem = gtk_menu_item_new_with_label(_("Clear Tasklist"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.trans_model.clear");
-
-  return menu;
-}
 
 /**
  * 打开接收的文件.
  * @param model trans-model
  */
-void OpenThisFile(GtkTreeModel *model) {
+void onOpenFile (void *, void *, TransWindowPrivate* self) {
   GtkTreePath *path;
   GtkTreeIter iter;
   gchar *filename;
+
+  auto model = self->model;
 
   if (!(path = (GtkTreePath *)(g_object_get_data(G_OBJECT(model),
                                                  "selected-path"))))
