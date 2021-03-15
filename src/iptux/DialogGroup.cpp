@@ -325,7 +325,6 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model) {
   GtkIconTheme *theme;
   GdkPixbuf *pixbuf;
   GtkTreeIter iter;
-  GSList *tlist;
   PalInfo *pal;
   char *file;
 
@@ -342,7 +341,6 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model) {
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, TRUE, 1, pixbuf, 2,
                        pal->name, 3, pal, -1);
     if (pixbuf) g_object_unref(pixbuf);
-    tlist = g_slist_next(tlist);
   }
   g_cthrd->Unlock();
 }
