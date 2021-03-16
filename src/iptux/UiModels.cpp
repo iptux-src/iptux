@@ -333,7 +333,6 @@ gulong GroupInfo::connect(GActionCallback c, gpointer data) {
 void GroupInfo::activate(const string& signal) {
   auto var = g_variant_new_string(signal.c_str());
   g_action_activate(G_ACTION(action), var);
-  g_variant_unref(var);
 }
 
 }
