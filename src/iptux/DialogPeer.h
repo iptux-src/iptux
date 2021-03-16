@@ -93,6 +93,7 @@ class DialogPeer : public DialogBase {
   int64_t rcvdsize;   //总计已接收大小
   guint timerrcv;     //接收文件界面更新计时器ID
   GtkWidget* fileToReceiveTreeviewWidget = nullptr;
+  gulong sigId = 0;
 };
 
 }  // namespace iptux

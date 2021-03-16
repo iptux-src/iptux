@@ -50,7 +50,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       rcvdsize(0),
       timerrcv(0) {
   ReadUILayout();
-  grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
+  sigId = grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
 }
 
 /**
@@ -59,6 +59,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
 DialogPeer::~DialogPeer() {
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0) g_source_remove(timerrcv);
+  grpinf->disconnect(sigId);
   /*---------------------------------------------------------------*/
   WriteUILayout();
 }

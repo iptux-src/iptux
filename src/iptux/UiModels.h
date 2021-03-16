@@ -56,6 +56,7 @@ class GroupInfo {
   bool hasPal(PPalInfo pal) const;
 
   gulong connect(GActionCallback c, gpointer data);
+  void disconnect(gulong sigId);
   void activate(const std::string& signal);
 
  public:

@@ -335,4 +335,8 @@ void GroupInfo::activate(const string& signal) {
   g_action_activate(G_ACTION(action), var);
 }
 
+void GroupInfo::disconnect(gulong sigId) {
+  g_signal_handler_disconnect(this->action, sigId);
+}
+
 }
