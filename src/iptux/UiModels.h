@@ -8,6 +8,11 @@
 
 namespace iptux {
 
+typedef void (* GActionCallback) (GSimpleAction *action,
+                   GVariant      *parameter,
+                   gpointer       user_data) ;
+#define	G_ACTION_CALLBACK(f)			   ((GActionCallback) (f))
+
 /**
  * 会话抽象类.
  * 提供好友会话类必需的公共接口.
@@ -50,6 +55,10 @@ class GroupInfo {
   bool hasPal(PalInfo* pal) const;
   bool hasPal(PPalInfo pal) const;
 
+  gulong connect(GActionCallback c, gpointer data);
+  void disconnect(gulong sigId);
+  void activate(const std::string& signal);
+
  public:
   GQuark grpid;           ///< 唯一标识
   std::string name;             ///< 群组名称 *
@@ -59,6 +68,7 @@ class GroupInfo {
 private:
   std::vector<PPalInfo> members;
   GroupBelongType type;   ///< 群组类型
+  GSimpleAction* action;
 };
 
 enum class TransModelColumn {

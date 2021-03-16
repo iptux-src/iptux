@@ -67,7 +67,8 @@ class DialogPeer : public DialogBase {
   static void onRefuseButtonClicked(DialogPeer *self);
   static void ShowInfoEnclosure(DialogPeer *dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
-  static gint RcvTreePopup(DialogPeer *self, GdkEvent *event);
+  static gint RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer *self);
+  static void onNewFileReceived(void* , void*, DialogPeer& self);
   static void onClearChatHistory (void *, void *, DialogPeer& self) {
     self.ClearHistoryTextView();
   }
@@ -91,6 +92,8 @@ class DialogPeer : public DialogBase {
   int64_t torcvsize;  //总计待接收大小(包括已接收)
   int64_t rcvdsize;   //总计已接收大小
   guint timerrcv;     //接收文件界面更新计时器ID
+  GtkWidget* fileToReceiveTreeviewWidget = nullptr;
+  gulong sigId = 0;
 };
 
 }  // namespace iptux

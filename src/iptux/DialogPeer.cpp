@@ -50,6 +50,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       rcvdsize(0),
       timerrcv(0) {
   ReadUILayout();
+  sigId = grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
 }
 
 /**
@@ -58,6 +59,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
 DialogPeer::~DialogPeer() {
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0) g_source_remove(timerrcv);
+  grpinf->disconnect(sigId);
   /*---------------------------------------------------------------*/
   WriteUILayout();
 }
@@ -610,7 +612,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea() {
   g_datalist_set_data_full(&mdlset, "file-to-receive-model", model,
                            GDestroyNotify(g_object_unref));
   treeview = CreateFileToReceiveTree(model);
-  g_datalist_set_data(&widset, "file-to-receive-treeview-widget", treeview);
+  this->fileToReceiveTreeviewWidget = treeview;
   g_object_set_data(G_OBJECT(treeview), "dialog", this);
   gtk_container_add(GTK_CONTAINER(sw), treeview);
   gtk_box_pack_end(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
@@ -685,7 +687,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-  g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
+  g_signal_connect(GTK_WIDGET(view), "button_press_event",
                            G_CALLBACK(RcvTreePopup), this);
 
   return view;
@@ -741,8 +743,8 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-  g_signal_connect_swapped(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(RcvTreePopup), view);
+  g_signal_connect(GTK_WIDGET(view), "button_press_event",
+                           G_CALLBACK(RcvTreePopup), this);
   return view;
 }
 
@@ -971,8 +973,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
   }
   self->progdt->path = filepath;
   /* 考察数据集中是否存在项 */
-  widget = GTK_WIDGET(
-      g_datalist_get_data(&(self->widset), "file-to-receive-treeview-widget"));
+  widget = self->fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   if (!model) return;
   if (!gtk_tree_model_get_iter_first(model, &iter)) return;
@@ -1018,7 +1019,7 @@ void DialogPeer::onRefuseButtonClicked(DialogPeer *self) {
   FileInfo *file;
   GList *list;
 
-  GtkWidget* widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "file-to-receive-treeview-widget"));
+  GtkWidget* widget = self->fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
@@ -1042,7 +1043,7 @@ void DialogPeer::onRefuseButtonClicked(DialogPeer *self) {
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogPeer::RcvTreePopup(DialogPeer* self, GdkEvent *event) {
+gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer* self) {
   GtkWidget *menu, *menuitem;
   GdkEventButton *event_button;
 
@@ -1061,6 +1062,10 @@ gint DialogPeer::RcvTreePopup(DialogPeer* self, GdkEvent *event) {
     }
   }
   return FALSE;
+}
+
+void DialogPeer::onNewFileReceived(void*, void*, iptux::DialogPeer& self) {
+  self.ShowInfoEnclosure(&self);
 }
 
 }  // namespace iptux

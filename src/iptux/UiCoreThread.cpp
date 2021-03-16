@@ -705,6 +705,10 @@ GSList *UiCoreThread::GetPalEnclosure(PalInfo *pal) {
  */
 void UiCoreThread::PushItemToEnclosureList(FileInfo *file) {
   ecsList = g_slist_append(ecsList, file);
+  auto groupInfo = this->GetPalRegularItem(file->fileown.get());
+  if(groupInfo) {
+    groupInfo->activate("NEW_FILE_RECEIVED");
+  }
 }
 /**
  * 从接收文件列表删除项(非UI线程安全).
