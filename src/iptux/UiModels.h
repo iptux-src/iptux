@@ -57,6 +57,7 @@ class GroupInfo {
 
   gulong connect(GActionCallback c, gpointer data);
   void activate(const std::string& signal);
+
  public:
   GQuark grpid;           ///< 唯一标识
   std::string name;             ///< 群组名称 *
