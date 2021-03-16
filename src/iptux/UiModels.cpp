@@ -10,6 +10,8 @@
 
 using namespace std;
 
+
+
 namespace iptux {
 
 /**
@@ -260,6 +262,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
 //       buffer(NULL),
 //       dialog(NULL) {}
 GroupInfo::~GroupInfo() {
+  g_object_unref(action);
   g_object_unref(buffer);
 }
 
@@ -282,6 +285,7 @@ GroupInfo::GroupInfo(PPalInfo pal)
       dialog(NULL),
       type(GROUP_BELONG_TYPE_REGULAR)
 {
+  action = g_simple_action_new("default", G_VARIANT_TYPE_STRING);
   members.push_back(pal);
 }
 
@@ -292,6 +296,7 @@ GroupInfo::GroupInfo(iptux::GroupBelongType t, const vector<PPalInfo>& pals)
       members(pals),
       type(t)
 {
+  action = g_simple_action_new("default", G_VARIANT_TYPE_STRING);
 }
 
 bool GroupInfo::addPal(PPalInfo pal) {
@@ -319,6 +324,16 @@ bool GroupInfo::delPal(PalInfo* pal) {
     }
   }
   return false;
+}
+
+gulong GroupInfo::connect(GActionCallback c, gpointer data) {
+  return g_signal_connect(this->action, "activate", GCallback(c), data);
+}
+
+void GroupInfo::activate(const string& signal) {
+  auto var = g_variant_new_string(signal.c_str());
+  g_action_activate(G_ACTION(action), var);
+  g_variant_unref(var);
 }
 
 }

@@ -50,6 +50,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       rcvdsize(0),
       timerrcv(0) {
   ReadUILayout();
+  grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
 }
 
 /**
@@ -1061,6 +1062,10 @@ gint DialogPeer::RcvTreePopup(DialogPeer* self, GdkEvent *event) {
     }
   }
   return FALSE;
+}
+
+void DialogPeer::onNewFileReceived(void*, void*, iptux::DialogPeer& self) {
+  self.ShowInfoEnclosure(&self);
 }
 
 }  // namespace iptux
