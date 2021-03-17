@@ -292,7 +292,6 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
 
   /* 将好友加入到相应的群组 */
   if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal2);
-  AttachPalToGroupInfoItem(grpinf, pal2);
   if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal2);
   AttachPalToGroupInfoItem(grpinf, pal2);
   if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal2);
