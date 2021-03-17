@@ -1469,6 +1469,10 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow&self) {
 
 void MainWindow::onPalSendMessage(void*, void*, MainWindow&self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
+  if(groupInfo->dialog) {
+    gtk_window_present(GTK_WINDOW(groupInfo->dialog));
+    return;
+  }
   switch(groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
       DialogPeer::PeerDialogEntry(self.app, groupInfo);
