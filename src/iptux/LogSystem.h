@@ -27,6 +27,9 @@ class LogSystem {
   void CommunicateLog(MsgPara *msgpara, const char *fmt, va_list args);
   void SystemLog(const char *fmt, va_list args);
 
+  std::string getChatLogPath() const;
+  std::string getSystemLogPath() const;
+
  private:
   std::shared_ptr<const ProgramData> programData;
   int fdc, fds;

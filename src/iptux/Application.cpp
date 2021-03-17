@@ -16,6 +16,8 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/HelpDialog.h"
+#include "iptux/UiCoreThread.h"
+#include "iptux/LogSystem.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/Darwin.h"
@@ -100,6 +102,8 @@ void Application::onStartup(Application& self) {
       { "help.report_bug", G_ACTION_CALLBACK(onReportBug), NULL, NULL, NULL, {0,0,0}},
       { "tools.transmission", G_ACTION_CALLBACK(onToolsTransmission), NULL, NULL, NULL, {0,0,0}},
       { "tools.shared_management", G_ACTION_CALLBACK(onToolsSharedManagement), NULL, NULL, NULL, {0,0,0}},
+      { "tools.open_chat_log", G_ACTION_CALLBACK(onOpenChatLog), NULL, NULL, NULL, {0,0,0}},
+      { "tools.open_system_log", G_ACTION_CALLBACK(onOpenSystemLog), NULL, NULL, NULL, {0,0,0}},
       { "trans_model.changed" },
       { "trans_model.clear", G_ACTION_CALLBACK(onTransModelClear)},
       { "about", G_ACTION_CALLBACK(onAbout)},
@@ -170,6 +174,16 @@ void Application::onToolsSharedManagement(void *, void *, Application &self) {
     self.shareFile = share_file_new(GTK_WINDOW(self.window->getWindow()));
   }
   share_file_run(self.shareFile);
+}
+
+void Application::onOpenChatLog(void *, void *, Application &self) {
+  auto path = self.getCoreThread()->getLogSystem()->getChatLogPath();
+  iptux_open_url(path.c_str());
+}
+
+void Application::onOpenSystemLog(void *, void *, Application &self) {
+  auto path = self.getCoreThread()->getLogSystem()->getSystemLogPath();
+  iptux_open_url(path.c_str());
 }
 
 void Application::onTransModelClear(void *, void *, Application &self) {
