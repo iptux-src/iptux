@@ -69,11 +69,14 @@ DialogPeer::~DialogPeer() {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
+  if(grpinf->dialog) return;
+
   DialogPeer *dlgpr;
   GtkWidget *window, *widget;
 
   dlgpr = new DialogPeer(app, grpinf);
   window = GTK_WIDGET(dlgpr->CreateMainWindow());
+  grpinf->dialog = window;
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -90,8 +93,6 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
-
-  /* delete dlgpr;//请不要这样做，此类将会在窗口被摧毁后自动释放 */
 }
 
 /**
