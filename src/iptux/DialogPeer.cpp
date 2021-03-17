@@ -93,7 +93,6 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
-
 }
 
 /**
