@@ -39,14 +39,8 @@ LogSystem::~LogSystem() {
 }
 
 void LogSystem::InitSublayer() {
-  const gchar *env;
-  char path[MAX_PATHLEN];
-
-  env = g_get_user_config_dir();
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/communicate.log", env);
-  fdc = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/system.log", env);
-  fds = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+  fdc = open(getChatLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
+  fds = open(getSystemLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 }
 
 void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
@@ -96,5 +90,16 @@ void LogSystem::SystemLog(const char *fmt, va_list ap) {
   write(fds, log, strlen(log));
   g_free(log);
 }
+
+string LogSystem::getChatLogPath() const {
+  auto env = g_get_user_config_dir();
+  return stringFormat("%s" LOG_PATH "/communicate.log", env);
+}
+
+string LogSystem::getSystemLogPath() const {
+  auto env = g_get_user_config_dir();
+  return stringFormat("%s" LOG_PATH "/system.log", env);
+}
+
 
 }  // namespace iptux
