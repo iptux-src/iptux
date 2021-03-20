@@ -427,26 +427,9 @@ void onOpenFile (void *, void *, TransWindowPrivate* self) {
  * @return GLib库所需
  */
 gboolean UpdateTransUI(GtkWindow *window) {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-
   GtkWidget* treeview = getPriv(window).transTreeviewWidget;
-
-  /* 考察是否需要更新UI */
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return TRUE;
-
-  /* 更新UI */
-  int taskId;
-  do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
-    auto transFileModel = g_cthrd->GetTransTaskStat(taskId);
-    transModelFillFromTransFileModel(model, &iter, *transFileModel);
-  } while (gtk_tree_model_iter_next(model, &iter));
-
   /* 重新调整UI */
   gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));
-
   return TRUE;
 }
 

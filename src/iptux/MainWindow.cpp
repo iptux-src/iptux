@@ -428,29 +428,8 @@ void MainWindow::OpenTransWindow() {
 
 void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
   GtkTreeModel *model;
-  GtkTreeIter iter;
-  gpointer data;
-
-  /* 查询项所在位置，若不存在则自动加入 */
-  data = NULL;
   model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
-  bool found = false;
-  if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {
-      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
-      if (gpointer(&para) == data) {
-        found = true;
-        break;
-      }
-    } while (gtk_tree_model_iter_next(model, &iter));
-  }
-  if (!found) {
-    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, TransModelColumn::PARA, &para, -1);
-  }
-
-  /* 重设数据 */
-  transModelFillFromTransFileModel(model, &iter, para);
+  transModelUpdateFromTransFileModel(model, para);
   g_action_group_activate_action(
       G_ACTION_GROUP(app->getApp()),
       "trans_model.changed",
