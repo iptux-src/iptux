@@ -251,3 +251,8 @@ TEST(CoreThread, PrivateFiles) {
   auto file4 = thread->GetPrivateFileByPacketN(123, 456);
   EXPECT_STREQ(file4->filepath, file3->filepath);
 }
+
+TEST(CoreThread, clearFinishedTransTasks) {
+  auto thread = newCoreThreadOnIp("127.0.0.1");
+  thread->clearFinishedTransTasks();
+}
