@@ -655,12 +655,30 @@ void CoreThread::RecvFileAsync(FileInfo* file) {
 }
 
 std::unique_ptr<TransFileModel>
-CoreThread::GetTransTaskStat(int taskId) {
+CoreThread::GetTransTaskStat(int taskId) const {
   auto task = pImpl->transTasks.find(taskId);
   if(task == pImpl->transTasks.end()) {
     return {};
   }
   return make_unique<TransFileModel>(task->second->getTransFileModel());
+}
+
+void CoreThread::clearFinishedTransTasks() {
+  Lock();
+  bool changed = false;
+  for(auto it = pImpl->transTasks.begin(); it != pImpl->transTasks.end(); ) {
+    if(it->second->getTransFileModel().isFinished()) {
+      it = pImpl->transTasks.erase(it);
+      changed = true;
+    } else {
+      it++;
+    }
+  }
+  Unlock();
+
+  if(changed) {
+    emitEvent(make_shared<TransTasksChangedEvent>());
+  }
 }
 
 bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey, const std::string& password) {

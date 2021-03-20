@@ -123,8 +123,11 @@ class CoreThread {
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
 
-  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId);
+  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId) const;
+  std::vector<std::unique_ptr<TransFileModel> > listTransTasks() const;
   bool TerminateTransTask(int taskId);
+  void clearFinishedTransTasks();
+
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
 

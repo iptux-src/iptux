@@ -187,21 +187,7 @@ void Application::onOpenSystemLog(void *, void *, Application &self) {
 }
 
 void Application::onTransModelClear(void *, void *, Application &self) {
-  GtkTreeIter iter;
-  int taskId;
-
-  auto model = self.transModel;
-
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
-  do {
-    gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
-    // TODO: clear finished task
-    // if (!data) {
-    //   if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
-    //   break;
-    // }
-  } while (gtk_tree_model_iter_next(model, &iter));
-  g_action_group_activate_action(G_ACTION_GROUP(self.app), "trans_model.changed", nullptr);
+  self.getCoreThread()->clearFinishedTransTasks();
 }
 
 void Application::onAbout(void*, void*, Application&self) {
