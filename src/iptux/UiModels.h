@@ -83,6 +83,7 @@ typedef GtkTreeModel TransModel;
 TransModel* transModelNew();
 void transModelDelete(TransModel*);
 void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel&);
+void transModelLoadFromTransFileModels(TransModel* model, const std::vector<std::unique_ptr<TransFileModel>>& fileModels);
 
 enum class PalTreeModelSortKey {
   NICKNAME,

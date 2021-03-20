@@ -1877,6 +1877,11 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     return;
   }
 
+  if(type == EventType::TRANS_TASKS_CHANGED) {
+    app->refreshTransTasks();
+    return;
+  }
+
   LOG_WARN("unknown event type: %d", int(type));
 }
 

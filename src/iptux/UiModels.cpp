@@ -63,6 +63,16 @@ void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, cons
       -1);
 }
 
+void transModelLoadFromTransFileModels(TransModel* model, const vector<unique_ptr<TransFileModel>>& fileModels) {
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+  for(auto& it: fileModels) {
+    GtkTreeIter iter;
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    transModelFillFromTransFileModel(model, &iter, *(it.get()));
+  }
+}
+
+
 
 
 /**

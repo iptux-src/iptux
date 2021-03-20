@@ -27,6 +27,7 @@ class Application {
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
   std::shared_ptr<UiProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
+  void refreshTransTasks();
 
 private:
   std::shared_ptr<IptuxConfig> config;

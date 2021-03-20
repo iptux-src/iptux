@@ -318,9 +318,9 @@ bool CoreThread::IsBlocked(in_addr ipv4) const {
   return programData->IsUsingBlacklist() and BlacklistContainItem(ipv4);
 }
 
-void CoreThread::Lock() { pthread_mutex_lock(&mutex); }
+void CoreThread::Lock() const { pthread_mutex_lock(&mutex); }
 
-void CoreThread::Unlock() { pthread_mutex_unlock(&mutex); }
+void CoreThread::Unlock() const { pthread_mutex_unlock(&mutex); }
 
 /**
  * 获取好友链表.
@@ -698,6 +698,16 @@ void CoreThread::SendGroupMessage(const PalKey& palKey, const std::string& messa
 
 void CoreThread::BcstFileInfoEntry(const vector<const PalInfo*>& pals, const vector<FileInfo*>& files) {
   SendFile::BcstFileInfoEntry(this, pals, files);
+}
+
+vector<unique_ptr<TransFileModel>> CoreThread::listTransTasks() const {
+  vector<unique_ptr<TransFileModel>> res;
+  Lock();
+  for(auto it = pImpl->transTasks.begin(); it != pImpl->transTasks.end(); it++) {
+    res.push_back(make_unique<TransFileModel>(it->second->getTransFileModel()));
+  }
+  Unlock();
+  return res;
 }
 
 }

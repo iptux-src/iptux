@@ -194,4 +194,9 @@ void Application::onAbout(void*, void*, Application&self) {
   HelpDialog::AboutEntry(GTK_WINDOW(self.window->getWindow()));
 }
 
+void Application::refreshTransTasks() {
+  auto transModels = getCoreThread()->listTransTasks();
+  transModelLoadFromTransFileModels(transModel, transModels);
+}
+
 }
