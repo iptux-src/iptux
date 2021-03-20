@@ -17,6 +17,7 @@ enum class EventType {
   SEND_FILE_FINISHED,
   RECV_FILE_STARTED,
   RECV_FILE_FINISHED,
+  TRANS_TASKS_CHANGED,
 };
 
 class Event {
@@ -125,6 +126,13 @@ class RecvFileFinishedEvent: public AbstractTaskIdEvent {
   explicit RecvFileFinishedEvent(int taskId):
     AbstractTaskIdEvent(EventType::RECV_FILE_FINISHED, taskId) {}
 };
+
+class TransTasksChangedEvent: public Event {
+ public:
+  explicit TransTasksChangedEvent():
+    Event(EventType::TRANS_TASKS_CHANGED) {}
+};
+
 }
 
 #endif //IPTUX_EVENT_H

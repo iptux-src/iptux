@@ -42,7 +42,7 @@ void transModelDelete(TransModel* model) {
   g_object_unref(model);
 }
 
-void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel& para) {
+static void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel& para) {
   gtk_list_store_set(
       GTK_LIST_STORE(model), iter,
       TransModelColumn::STATUS, para.getStatus().c_str(),
@@ -62,6 +62,38 @@ void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, cons
       TransModelColumn::FINISHED, para.isFinished(),
       -1);
 }
+
+void transModelUpdateFromTransFileModel(TransModel* model, const TransFileModel& transFileModel) {
+  GtkTreeIter iter;
+  bool found = false;
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      int taskId = 0;
+      gtk_tree_model_get(model, &iter, TransModelColumn::TASK_ID, &taskId, -1);
+      if(taskId == transFileModel.getTaskId()) {
+        found = true;
+        break;
+      }
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+  if (!found) {
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+  }
+
+  /* 重设数据 */
+  transModelFillFromTransFileModel(model, &iter, transFileModel);
+}
+
+
+void transModelLoadFromTransFileModels(TransModel* model, const vector<unique_ptr<TransFileModel>>& fileModels) {
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+  for(auto& it: fileModels) {
+    GtkTreeIter iter;
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    transModelFillFromTransFileModel(model, &iter, *(it.get()));
+  }
+}
+
 
 
 

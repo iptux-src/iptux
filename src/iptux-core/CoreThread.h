@@ -45,8 +45,8 @@ class CoreThread {
    */
   bool IsBlocked(in_addr ipv4) const;
 
-  void Lock();
-  void Unlock();
+  void Lock() const;
+  void Unlock() const;
 
   const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
@@ -123,8 +123,11 @@ class CoreThread {
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
 
-  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId);
+  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId) const;
+  std::vector<std::unique_ptr<TransFileModel> > listTransTasks() const;
   bool TerminateTransTask(int taskId);
+  void clearFinishedTransTasks();
+
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
 
@@ -141,7 +144,7 @@ class CoreThread {
   std::shared_ptr<IptuxConfig> config;
   int tcpSock;
   int udpSock;
-  pthread_mutex_t mutex;  //锁
+  mutable pthread_mutex_t mutex;  //锁
 
  private:
   std::atomic_bool started;
