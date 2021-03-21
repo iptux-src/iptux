@@ -1,0 +1,27 @@
+name: iptux # you probably want to 'snapcraft register <name>'
+version: '0.8.0-git' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Intranet communication tool for Linux # 79 char long summary
+description: |
+  iptux is an “IP Messenger” client for Linux.
+  .
+  It can:
+    - auto-detect other clients on the intranet.
+    - send message to other clients.
+    - send file to other clients.
+  .
+  It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ)
+  from China, and with the original “IP Messenger” clients from Japan
+  as listed on http://ipmsg.org/ including g2ipmsg and xipmsg in Debian.
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  iptux:
+    command: usr/bin/iptux
+
+parts:
+  iptux:
+    source-type: git
+    source: https://github.com/iptux-src/iptux.git
+    plugin: meson
+    meson-parameters: ["--prefix=/usr"]
