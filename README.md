@@ -94,8 +94,8 @@ brew install gst-plugins-good
 # endif
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
-mkdir build && cd build && cmake .. && make
-sudo make install
+meson builddir
+ninja -C builddir install
 iptux
 ```
 
