@@ -118,6 +118,7 @@ void Application::onStartup(Application& self) {
   auto menubar = G_MENU_MODEL (gtk_builder_get_object (self.menuBuilder, "menubar"));
   gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
 
+  add_accelerator(self.app, "app.quit", "<Primary>Q");
   add_accelerator(self.app, "win.refresh", "F5");
   add_accelerator(self.app, "win.detect", "<Primary>D");
   add_accelerator(self.app, "win.find", "<Primary>F");
