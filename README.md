@@ -31,8 +31,16 @@
 
 ### Linux (Debian and Ubuntu)
 
+stable version:
+
 ```
 sudo apt-get install iptux
+```
+
+head version:
+
+```
+sudo snap install --edge iptux --devmode
 ```
 
 ### Mac OS X
