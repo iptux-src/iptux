@@ -26,5 +26,11 @@ parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
+    build-packages: [libgoogle-glog-dev, libjsoncpp-dev]
     plugin: meson
     meson-parameters: ["--prefix=/usr"]
+    stage-packages:
+      - libgflags2.2
+      - libgoogle-glog0v5
+      - libjsoncpp1
+      - libunwind8
