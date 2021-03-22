@@ -17,6 +17,12 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 base: core18
 
+slots:
+  iptux:
+    interface: dbus
+    bus: session
+    name: io.github.iptux-src.iptux
+
 apps:
   iptux:
     command: usr/bin/iptux
@@ -28,7 +34,9 @@ parts:
     source: https://github.com/iptux-src/iptux.git
     build-packages: [libgoogle-glog-dev, libjsoncpp-dev]
     plugin: meson
-    meson-parameters: ["--prefix=/usr"]
+    meson-parameters: ["--prefix=/snap/iptux/current/usr"]
+    organize:
+      snap/iptux/current/usr: usr
     stage-packages:
       - libgflags2.2
       - libgoogle-glog0v5
