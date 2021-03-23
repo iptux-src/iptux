@@ -125,8 +125,10 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/10.2.0/include",
+                "C:/msys64/mingw64/x86_64-w64-mingw32/include",
                 "C:/msys64/mingw64/include/c++/10.2.0",
+                "C:/msys64/mingw64/include/c++/10.2.0/tr1",
+                "C:/msys64/mingw64/include/c++/10.2.0/x86_64-w64-mingw32",
                 "C:/msys64/mingw64/include",
                 "C:/msys64/mingw64/include/atk-1.0",
                 "C:/msys64/mingw64/include/cairo",
