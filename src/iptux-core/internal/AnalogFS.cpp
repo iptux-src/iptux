@@ -16,7 +16,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <glib/stdio.h>
+#include <glib/gstdio.h>
 
 #include "iptux-utils/utils.h"
 #include "iptux-core/internal/ipmsg.h"
