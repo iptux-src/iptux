@@ -120,6 +120,40 @@
             "cppStandard": "c++14",
             "intelliSenseMode": "clang-x64",
             "compileCommands": "${workspaceFolder}/builddir/compile_commands.json"
+        },
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/10.2.0/include",
+                "C:/msys64/mingw64/include/c++/10.2.0",
+                "C:/msys64/mingw64/include",
+                "C:/msys64/mingw64/include/atk-1.0",
+                "C:/msys64/mingw64/include/cairo",
+                "C:/msys64/mingw64/include/freetype2",
+                "C:/msys64/mingw64/include/fribidi",
+                "C:/msys64/mingw64/include/gdk-pixbuf-2.0",
+                "C:/msys64/mingw64/include/glib-2.0",
+                "C:/msys64/mingw64/include/gtk-3.0",
+                "C:/msys64/mingw64/include/harfbuzz",
+                "C:/msys64/mingw64/include/harfbuzz",
+                "C:/msys64/mingw64/include/libpng16",
+                "C:/msys64/mingw64/include/libpng16",
+                "C:/msys64/mingw64/include/lzo",
+                "C:/msys64/mingw64/include/pango-1.0",
+                "C:/msys64/mingw64/include/pango-1.0",
+                "C:/msys64/mingw64/include/pixman-1",
+                "C:/msys64/mingw64/lib/glib-2.0/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\msys64\\usr\\bin\\g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4
