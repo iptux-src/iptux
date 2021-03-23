@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <glog/logging.h>
 
 #include "iptux-core/Exception.h"
@@ -42,30 +43,30 @@ void init_iptux_environment() {
   char path[MAX_PATHLEN];
 
   env = g_get_user_cache_dir();
-  if (access(env, F_OK) != 0) mkdir(env, 0777);
+  if (access(env, F_OK) != 0) g_mkdir(env, 0777);
   snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" PIC_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
 
   env = g_get_user_config_dir();
-  if (access(env, F_OK) != 0) mkdir(env, 0777);
+  if (access(env, F_OK) != 0) g_mkdir(env, 0777);
   snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) mkdir(path, 0777);
+  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
 }
 
 }
