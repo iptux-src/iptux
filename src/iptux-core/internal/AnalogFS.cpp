@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <glib/stdio.h>
 
 #include "iptux-utils/utils.h"
 #include "iptux-core/internal/ipmsg.h"
@@ -131,7 +132,7 @@ int AnalogFS::mkdir(const char *dir, mode_t mode) {
   strcpy(tpath, path);
   mergepath(tpath, dir);
   if (::access(tpath, F_OK) == 0) return 0;
-  if ((result = ::mkdir(tpath, mode)) != 0) {
+  if ((result = g_mkdir(tpath, mode)) != 0) {
     pwarning(_("Mkdir() directory \"%s\" failed, %s"), tpath, strerror(errno));
   }
   return result;
