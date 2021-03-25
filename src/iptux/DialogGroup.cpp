@@ -216,12 +216,13 @@ GtkWindow *DialogGroup::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
 
   GActionEntry win_entries[] = {
-      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
-      { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
-      { "close", G_ACTION_CALLBACK(onClose)},
-      { "sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
-      { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
+    { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+    { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
+    { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
+    { "close", G_ACTION_CALLBACK(onClose)},
+    { "sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
+    { "sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
+    { "send_message", G_ACTION_CALLBACK(onSendMessage)},
   };
   g_action_map_add_action_entries (G_ACTION_MAP (window),
                                    win_entries, G_N_ELEMENTS (win_entries),

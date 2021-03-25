@@ -126,6 +126,7 @@ void Application::onStartup(Application& self) {
   add_accelerator(self.app, "win.attach_folder", "<Ctrl>D");
   add_accelerator(self.app, "win.request_shared_resources", "<Ctrl>R");
   add_accelerator(self.app, "win.close", "<Primary>W");
+  add_accelerator(self.app, "win.send_message", "<Primary>Return");
 
 #if SYSTEM_DARWIN
   install_darwin_icon();

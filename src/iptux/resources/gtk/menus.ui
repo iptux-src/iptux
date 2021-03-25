@@ -91,6 +91,10 @@
             </section>
             <section>
                 <item>
+                    <attribute name="label" translatable="yes">Send Message</attribute>
+                    <attribute name="action">win.send_message</attribute>
+                </item>
+                <item>
                     <attribute name="label" translatable="yes">Close Chat</attribute>
                     <attribute name="action">win.close</attribute>
                 </item>
