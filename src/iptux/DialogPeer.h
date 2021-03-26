@@ -82,6 +82,9 @@ class DialogPeer : public DialogBase {
     DialogBase::AttachFolder(&self);
   }
   static void onRequestSharedResources(void*, void*, DialogPeer& self);
+  static void onSendMessage(void*, void*, DialogPeer& self) {
+    DialogBase::SendMessage(&self);
+  }
   static void onClose(void*, void*, DialogPeer& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }

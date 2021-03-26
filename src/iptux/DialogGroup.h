@@ -92,6 +92,9 @@ class DialogGroup : public DialogBase {
   }
   static void onSortType (GSimpleAction *action, GVariant* value, DialogGroup& self);
   static void onSortBy (GSimpleAction *action, GVariant* value, DialogGroup& self);
+  static void onSendMessage(void*, void*, DialogGroup& self) {
+    DialogBase::SendMessage(&self);
+  }
 };
 
 }  // namespace iptux
