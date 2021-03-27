@@ -212,6 +212,8 @@ TEST(CoreThread, FullCase) {
   }
 
   Log::setLogLevel(oldLogLevel);
+  thread1->stop();
+  thread2->stop();
 }
 
 TEST(CoreThread, FullCase_ShareWithPassword) {
@@ -227,6 +229,8 @@ TEST(CoreThread, FullCase_ShareWithPassword) {
   auto thread2 = get<1>(threads);
   thread1->SendAskShared(thread1->GetPal("127.0.0.4"));
   Log::setLogLevel(oldLogLevel);
+  thread1->stop();
+  thread2->stop();
 }
 
 TEST(CoreThread, PrivateFiles) {

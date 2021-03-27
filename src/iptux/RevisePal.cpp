@@ -194,7 +194,7 @@ void RevisePal::SetAllValue() {
 
   /* 预置昵称 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
-  gtk_entry_set_text(GTK_ENTRY(widget), pal->name);
+  gtk_entry_set_text(GTK_ENTRY(widget), pal->getName().c_str());
   /* 预置群组 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "group-entry-widget"));
   if (pal->group) gtk_entry_set_text(GTK_ENTRY(widget), pal->group);
@@ -229,8 +229,7 @@ void RevisePal::ApplyReviseData() {
   /* 获取昵称 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
   if (*(consttext = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
-    g_free(pal->name);
-    pal->name = g_strdup(consttext);
+    pal->setName(consttext);
   }
 
   /* 获取群组 */

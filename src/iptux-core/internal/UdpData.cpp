@@ -54,24 +54,37 @@ UdpData::~UdpData() { g_free(encode); }
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(CoreThread& coreThread,
+unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
                            in_addr ipv4,
                            int port,
                            const char buf[],
-                           size_t size) {
+                           size_t size)
+{
+  return UdpDataEntry(coreThread, ipv4, port, buf, size, true);
+}
+
+unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
+                           in_addr ipv4,
+                           int port,
+                           const char buf[],
+                           size_t size,
+                           bool run) {
   if(Log::IsDebugEnabled()) {
     LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", inAddrToString(ipv4).c_str(), port, size,
       stringDumpAsCString(string(buf, size)).c_str());
   } else {
     LOG_INFO("received udp message from %s:%d, size %zu", inAddrToString(ipv4).c_str(), port, size);
   }
-  UdpData udata(coreThread);
+  auto udata = make_unique<UdpData>(coreThread);
 
-  udata.ipv4 = ipv4;
-  udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
-  memcpy(udata.buf, buf, size);
-  if (size != MAX_UDPLEN) udata.buf[size] = '\0';
-  udata.DispatchUdpData();
+  udata->ipv4 = ipv4;
+  udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
+  memcpy(udata->buf, buf, size);
+  if (size != MAX_UDPLEN) udata->buf[size] = '\0';
+  if(run) {
+    udata->DispatchUdpData();
+  }
+  return udata;
 }
 
 /**
@@ -148,7 +161,7 @@ void UdpData::SomeoneLost() {
     pal->user = g_strdup("???");
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
-  pal->name = g_strdup(_("mysterious"));
+  pal->setName(_("mysterious"));
   pal->group = g_strdup(_("mysterious"));
   pal->photo = NULL;
   pal->sign = NULL;
@@ -493,8 +506,12 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
     pal->user = g_strdup("???");
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
-  if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
-    pal->name = g_strdup(_("mysterious"));
+  auto name = ipmsg_get_attach(buf, ':', 5);
+  if(!name) {
+    pal->setName(_("mysterious"));
+  } else {
+    pal->setName(name);
+  }
   pal->group = GetPalGroup();
   pal->photo = NULL;
   pal->sign = NULL;
@@ -531,9 +548,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
   if (!pal->isChanged()) {
-    g_free(pal->name);
-    if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
-      pal->name = g_strdup(_("mysterious"));
+    auto name = ipmsg_get_attach(buf, ':', 5);
+    if(!name) {
+      pal->setName(_("mysterious"));
+    } else {
+      pal->setName(name);
+    }
     g_free(pal->group);
     pal->group = GetPalGroup();
     g_free(pal->iconfile);

@@ -26,11 +26,23 @@ class UdpData {
   explicit UdpData(CoreThread& coreThread);
   ~UdpData();
 
-  static void UdpDataEntry(CoreThread& coreThread,
+  static std::unique_ptr<UdpData> UdpDataEntry(CoreThread& coreThread,
                            in_addr ipv4,
                            int port,
                            const char buf[],
                            size_t size);
+  static std::unique_ptr<UdpData> UdpDataEntry(CoreThread& coreThread,
+                           in_addr ipv4,
+                           int port,
+                           const char buf[],
+                           size_t size,
+                           bool run /** if run is false, don't do DispatchUdpData */
+                           );
+
+ // for test
+ public:
+  std::shared_ptr<PalInfo> CreatePalInfo();
+
 
  private:
   void DispatchUdpData();
@@ -47,7 +59,6 @@ class UdpData {
   void SomeoneSendSign();
   void SomeoneBcstmsg();
 
-  std::shared_ptr<PalInfo> CreatePalInfo();
   void UpdatePalInfo(PalInfo *pal);
 
   void InsertMessage(PPalInfo pal, GroupBelongType btype, const char *msg);

@@ -200,9 +200,9 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
   palinfor = grpinf->getMembers()[0].get();
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
-  snprintf(buf, MAX_BUFLEN, _("Talk with %s(%s) IP:%s"), palinfor->name,
+  auto title = stringFormat(_("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
            palinfor->host, ipstr);
-  gtk_window_set_title(GTK_WINDOW(window), buf);
+  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
   width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
   height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
@@ -327,9 +327,9 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   if (pal->group && *pal->group != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s@%s\n"), pal->name, pal->group);
+    snprintf(buf, MAX_BUFLEN, _("Nickname: %s@%s\n"), pal->getName().c_str(), pal->group);
   else
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s\n"), pal->name);
+    snprintf(buf, MAX_BUFLEN, _("Nickname: %s\n"), pal->getName().c_str());
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->user);
@@ -828,7 +828,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       gtk_list_store_append(GTK_LIST_STORE(mdltmp), &iter);
       gtk_list_store_set(GTK_LIST_STORE(mdltmp), &iter,
                          0, iconname,
-                         1, file->fileown->name,
+                         1, file->fileown->getName().c_str(),
                          2, file->filepath,
                          3, filesize,
                          5, file,

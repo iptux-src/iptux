@@ -78,7 +78,7 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
   ptr = g_strdup_printf(_("Your pal (%s)[%s]\n"
                           "is requesting to get your shared resources,\n"
                           "Do you agree?"),
-                        pal->name, ipstr);
+                        pal->getName().c_str(), ipstr);
   label = gtk_label_new(ptr);
   g_free(ptr);
   gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
@@ -126,7 +126,7 @@ char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal) {
   image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-  text = g_strdup_printf(_("(%s)[%s]Password:"), pal->name, ipstr);
+  text = g_strdup_printf(_("(%s)[%s]Password:"), pal->getName().c_str(), ipstr);
   frame = gtk_frame_new(text);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
   gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 0);

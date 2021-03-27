@@ -784,6 +784,13 @@ in_addr inAddrFromUint32(uint32_t value) {
   return res;
 }
 
+string utf8MakeValid(const string& str) {
+  auto res1 = g_utf8_make_valid(str.c_str(), str.size());
+  string res(res1);
+  g_free(res1);
+  return res;
+}
+
 namespace utils {
   int64_t fileOrDirectorySize(const string& fileOrDirName) {
   // 由于系统中存在使用此方法读取文件的大小的调用，因此需要判断文件dir_name是文件还是目录

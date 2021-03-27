@@ -200,7 +200,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
                          2, numeric_to_size(filesize),
                          3, tlist->data,
                          4, file,
-                         5, file->fileown->name,
+                         5, file->fileown->getName().c_str(),
                          -1);
       pallist = g_slist_next(pallist);
     }

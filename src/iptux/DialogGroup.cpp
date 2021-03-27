@@ -109,7 +109,7 @@ void DialogGroup::UpdatePalData(PalInfo *pal) {
   pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                     GtkIconLookupFlags(0), NULL);
   g_free(file);
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, pixbuf, 2, pal->name, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, pixbuf, 2, pal->getName().c_str(), -1);
   if (pixbuf) g_object_unref(pixbuf);
 }
 
@@ -133,8 +133,12 @@ void DialogGroup::InsertPalData(PalInfo *pal) {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "member-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, FALSE, 1, pixbuf, 2,
-                     pal->name, 3, pal, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+    0, FALSE,
+    1, pixbuf,
+    2, pal->getName().c_str(),
+    3, pal,
+    -1);
   if (pixbuf) g_object_unref(pixbuf);
 }
 
@@ -338,7 +342,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel *model) {
     g_free(file);
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, TRUE, 1, pixbuf, 2,
-                       pal->name, 3, pal, -1);
+                       pal->getName().c_str(), 3, pal, -1);
     if (pixbuf) g_object_unref(pixbuf);
   }
   g_cthrd->Unlock();
@@ -499,7 +503,7 @@ gint DialogGroup::MemberTreeCompareByNameFunc(GtkTreeModel *model,
 
   gtk_tree_model_get(model, a, 3, &apal, -1);
   gtk_tree_model_get(model, b, 3, &bpal, -1);
-  result = strcmp(apal->name, bpal->name);
+  result = strcmp(apal->getName().c_str(), bpal->getName().c_str());
 
   return result;
 }

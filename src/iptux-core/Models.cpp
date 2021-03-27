@@ -27,7 +27,6 @@ PalInfo::PalInfo()
       version(NULL),
       user(NULL),
       host(NULL),
-      name(g_strdup("")),
       group(NULL),
       photo(NULL),
       sign(NULL),
@@ -43,7 +42,6 @@ PalInfo::~PalInfo() {
   g_free(version);
   g_free(user);
   g_free(host);
-  g_free(name);
   g_free(group);
   g_free(photo);
   g_free(sign);
@@ -86,6 +84,33 @@ void PalInfo::setChanged(bool value) {
     FLAG_CLR(this->flags, 2);
   }
 }
+
+PalInfo& PalInfo::setName(const std::string& name) {
+  this->name = utf8MakeValid(name);
+  return *this;
+}
+
+string PalInfo::toString() const {
+  return stringFormat(
+    "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
+    inAddrToString(ipv4).c_str(),
+    name.c_str(),
+    segdes,
+    version,
+    user,
+    host,
+    group ? group : "(NULL)",
+    photo ? photo : "(NULL)",
+    sign ? sign : "(NULL)",
+    iconfile,
+    encode,
+    int(packetn),
+    int(rpacketn),
+    int(flags)
+  );
+}
+
+
 
 FileInfo::FileInfo()
     : fileid(0),

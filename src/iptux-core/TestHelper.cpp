@@ -31,6 +31,11 @@ shared_ptr<IptuxConfig> newTestIptuxConfigWithFile() {
   return res;
 }
 
+std::shared_ptr<CoreThread> newCoreThread() {
+  auto config = newTestIptuxConfig();
+  return make_shared<CoreThread>(make_shared<ProgramData>(config));
+}
+
 std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
   auto config = newTestIptuxConfig();
   config->SetString("bind_ip", ip);
