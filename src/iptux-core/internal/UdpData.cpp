@@ -157,8 +157,12 @@ void UdpData::SomeoneLost() {
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
-  if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
-    pal->user = g_strdup("???");
+  auto user = iptux_get_section_string(buf, ':', 2);
+  if(!user) {
+    pal->setUser("???");
+  } else {
+    pal->setUser(user);
+  }
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
   pal->setName(_("mysterious"));
@@ -502,8 +506,12 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
-  if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
-    pal->user = g_strdup("???");
+  auto user = iptux_get_section_string(buf, ':', 2);
+  if(!user) {
+    pal->setUser("???");
+  } else {
+    pal->setUser(user);
+  }
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
   auto name = ipmsg_get_attach(buf, ':', 5);
@@ -541,9 +549,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
   g_free(pal->version);
   if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
     pal->version = g_strdup("?");
-  g_free(pal->user);
-  if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
-    pal->user = g_strdup("???");
+  auto user = iptux_get_section_string(buf, ':', 2);
+  if(!user) {
+    pal->setUser("???");
+  } else {
+    pal->setUser(user);
+  }
   g_free(pal->host);
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");

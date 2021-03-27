@@ -881,7 +881,7 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
   } else {
     nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->getName().c_str());
   }
-  gchar *user = g_markup_printf_escaped(_("User: %s"), pal->user);
+  gchar *user = g_markup_printf_escaped(_("User: %s"), pal->getUser().c_str());
   gchar *host = g_markup_printf_escaped(_("Host: %s"), pal->host);
   gchar *address;
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
@@ -1467,16 +1467,22 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
     /* Search friends case ignore is better. */
     if (*text == '\0' || strcasestr(pal->getName().c_str(), text) ||
         (pal->group && strcasestr(pal->group, text)) ||
-        strcasestr(ipstr, text) || strcasestr(pal->user, text) ||
+        strcasestr(ipstr, text) || strcasestr(pal->getUser().c_str(), text) ||
         strcasestr(pal->host, text)) {
       file = iptux_erase_filename_suffix(pal->iconfile);
       pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                         GtkIconLookupFlags(0), NULL);
       g_free(file);
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, pal->getName().c_str(),
-                         2, pal->group, 3, ipstr, 4, pal->user, 5, pal->host, 6,
-                         pal.get(), -1);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+                         0, pixbuf,
+                         1, pal->getName().c_str(),
+                         2, pal->group,
+                         3, ipstr,
+                         4, pal->getUser().c_str(),
+                         5, pal->host,
+                         6, pal.get(),
+                         -1);
       if (pixbuf) g_object_unref(pixbuf);
     }
   }

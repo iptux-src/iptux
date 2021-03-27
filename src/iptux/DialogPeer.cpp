@@ -332,7 +332,7 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
     snprintf(buf, MAX_BUFLEN, _("Nickname: %s\n"), pal->getName().c_str());
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
-  snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->user);
+  snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->getUser().c_str());
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   snprintf(buf, MAX_BUFLEN, _("Host: %s\n"), pal->host);
