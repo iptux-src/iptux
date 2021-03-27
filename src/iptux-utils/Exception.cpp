@@ -1,5 +1,5 @@
 #include "config.h"
-#include "Exception.h"
+#include "iptux-core/Exception.h"
 
 #include <string>
 

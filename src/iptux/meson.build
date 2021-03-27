@@ -61,7 +61,7 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 # )
 
 sources += [iptux_resource_cpp, iptux_resource_h]
-inc = include_directories('..')
+inc = include_directories('..', '../api')
 
 dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep, gflags_dep]
 

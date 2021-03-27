@@ -32,7 +32,7 @@
 
 
 #include "iptux-utils/output.h"
-#include "iptux-utils/Exception.h"
+#include "iptux-core/Exception.h"
 
 using namespace std;
 
