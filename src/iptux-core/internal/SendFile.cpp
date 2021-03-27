@@ -152,7 +152,7 @@ void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals, uint32_t op
   Command cmd(*coreThread);
   char buf[MAX_UDPLEN];
   size_t len;
-  char *ptr, *name;
+  char *ptr;
 
 
   for(auto pal: pals) {

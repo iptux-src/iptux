@@ -6,6 +6,7 @@
 
 #include <glog/logging.h>
 #include <iptux-core/CoreThread.h>
+#include <iptux-core/Exception.h>
 
 using namespace std;
 using namespace iptux;

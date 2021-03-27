@@ -1,5 +1,5 @@
 #include "config.h"
-#include "CoreThread.h"
+#include "iptux-core/CoreThread.h"
 
 #include <thread>
 #include <functional>
