@@ -18,6 +18,7 @@
 #define IPTUX_UICORETHREAD_H
 
 #include <queue>
+#include <sigc++/signal.h>
 
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Models.h"
@@ -75,6 +76,9 @@ class UiCoreThread: public CoreThread {
   void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
 
   LogSystem* getLogSystem() { return logSystem; }
+
+ public:
+  sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
 
  private:
   void InitSublayer();

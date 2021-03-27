@@ -166,6 +166,7 @@ class MainWindow {
   static void onSortBy (GSimpleAction *action, GVariant* value, MainWindow& self);
   static gboolean onTransWindowDelete(MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
+  void onGroupInfoUpdated(GroupInfo* groupInfo);
 };
 
 }  // namespace iptux

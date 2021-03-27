@@ -21,7 +21,7 @@ jobs:
           ~/Library/Caches/Homebrew
         key: ${{ runner.os }}-v1
     - name: brew install
-      run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration
+      run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2
     - name: meson
       run: meson builddir
     - name: build
@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: apt install
-      run: sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb
+      run: sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
     - name: meson
       run: meson builddir
       env:
@@ -63,7 +63,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: apt install
-      run: sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb
+      run: sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
     - name: meson
       run: meson -D b_coverage=true builddir
     - name: build

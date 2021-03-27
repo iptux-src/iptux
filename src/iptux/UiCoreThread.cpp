@@ -401,6 +401,7 @@ bool UiCoreThread::MsglineContainItem(GroupInfo *grpinf) {
 void UiCoreThread::PushItemToMsgline(GroupInfo *grpinf) {
   g_queue_push_tail(&msgline, grpinf);
   grpinf->addMsgCount(1);
+  signalGroupInfoUpdated.emit(grpinf);
 }
 
 /**
