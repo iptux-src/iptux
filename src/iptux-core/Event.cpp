@@ -1,5 +1,5 @@
 #include "config.h"
-#include "Event.h"
+#include "iptux-core/Event.h"
 
 using namespace std;
 

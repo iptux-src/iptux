@@ -1,8 +1,8 @@
-#ifndef IPTUX_UTILS_EXCEPTION_H
-#define IPTUX_UTILS_EXCEPTION_H
+#ifndef IPTUX_CORE_EXCEPTION_H
+#define IPTUX_CORE_EXCEPTION_H
 
-#include <stdexcept>
 #include <string>
+#include <stdexcept>
 
 namespace iptux {
 
@@ -27,8 +27,6 @@ class ErrorCode {
   }
 };
 
-extern const ErrorCode INVALID_IP_ADDRESS;
-
 class Exception : public std::runtime_error {
  public:
   explicit Exception(const ErrorCode& ec);
@@ -40,6 +38,14 @@ class Exception : public std::runtime_error {
  private:
   const ErrorCode& ec;
 };
+
+extern const ErrorCode INVALID_IP_ADDRESS;
+extern const ErrorCode CREATE_TCP_SOCKET_FAILED;
+extern const ErrorCode INVALID_FILE_ATTR;
+extern const ErrorCode PAL_KEY_NOT_EXIST;
+extern const ErrorCode SOCKET_CREATE_FAILED;
+extern const ErrorCode TCP_BIND_FAILED;
+extern const ErrorCode UDP_BIND_FAILED;
 
 }
 

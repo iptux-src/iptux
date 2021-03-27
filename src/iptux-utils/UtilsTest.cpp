@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "iptux-utils/utils.h"
-#include "iptux-utils/Exception.h"
+#include "iptux-core/Exception.h"
 #include "iptux-utils/TestHelper.h"
 
 using namespace iptux;
