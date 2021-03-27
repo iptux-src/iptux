@@ -86,6 +86,8 @@ class PalInfo {
   PalInfo& setName(const std::string& name);
   const std::string& getName() const {return name;}
 
+  std::string toString() const;
+
   in_addr ipv4;  ///< 好友IP
   char *segdes;    ///< 所在网段描述
   char *version;   ///< 版本串 *

@@ -90,6 +90,27 @@ PalInfo& PalInfo::setName(const std::string& name) {
   return *this;
 }
 
+string PalInfo::toString() const {
+  return stringFormat(
+    "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
+    inAddrToString(ipv4).c_str(),
+    name.c_str(),
+    segdes,
+    version,
+    user,
+    host,
+    group,
+    photo,
+    sign,
+    iconfile,
+    encode,
+    int(packetn),
+    int(rpacketn),
+    int(flags)
+  );
+}
+
+
 
 FileInfo::FileInfo()
     : fileid(0),
