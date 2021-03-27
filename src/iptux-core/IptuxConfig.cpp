@@ -1,5 +1,5 @@
 #include "config.h"
-#include "IptuxConfig.h"
+#include "iptux-core/IptuxConfig.h"
 
 #include <cstring>
 #include <fstream>

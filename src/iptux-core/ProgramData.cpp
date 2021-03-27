@@ -1,5 +1,5 @@
 #include "config.h"
-#include "ProgramData.h"
+#include "iptux-core/ProgramData.h"
 
 #include <unistd.h>
 #include <sys/stat.h>

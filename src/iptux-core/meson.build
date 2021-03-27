@@ -3,17 +3,6 @@ jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 glog_dep = dependency('libglog')
 gflags_dep = dependency('gflags')
 
-header_files = files([
-    'CoreThread.h',
-    'Event.h',
-    'Exception.h',
-    'IptuxConfig.h',
-    'Models.h',
-    'ProgramData.h',
-    'TransFileModel.h',
-])
-install_headers(header_files, subdir: 'iptux-core')
-
 core_sources = files([
     'CoreThread.cpp',
     'Event.cpp',
@@ -38,7 +27,7 @@ core_sources += files([
     'internal/UdpData.cpp',
 ])
 
-inc = include_directories('..')
+inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
 libiptux_core = shared_library('iptux-core',

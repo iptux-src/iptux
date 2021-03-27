@@ -1,5 +1,5 @@
 #include "config.h"
-#include "TransFileModel.h"
+#include "iptux-core/TransFileModel.h"
 #include "iptux-utils/utils.h"
 
 #include <glib.h>

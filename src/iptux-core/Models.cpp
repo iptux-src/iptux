@@ -10,7 +10,7 @@
 //
 //
 #include "config.h"
-#include "Models.h"
+#include "iptux-core/Models.h"
 
 #include <sstream>
 
