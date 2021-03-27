@@ -69,7 +69,6 @@ DialogGroup* DialogGroup::GroupDialogEntry(Application* app, GroupInfo *grpinf) 
   auto g_cthrd = app->getCoreThread();
   g_cthrd->Lock();
   if (g_cthrd->MsglineContainItem(grpinf)) {
-    app->getMainWindow()->MakeItemBlinking(grpinf, FALSE);
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();

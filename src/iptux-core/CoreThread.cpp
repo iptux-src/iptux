@@ -395,6 +395,7 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
 void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
   pImpl->pallist.push_back(pal);
   pal->setOnline(true);
+  emitNewPalOnline(pal);
 }
 
 void CoreThread::registerCallback(const EventCallback &callback) {

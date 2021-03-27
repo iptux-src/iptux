@@ -92,7 +92,6 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
   /* 从消息队列中移除 */
   g_cthrd->Lock();
   if (g_cthrd->MsglineContainItem(grpinf)) {
-    app->getMainWindow()->MakeItemBlinking(grpinf, FALSE);
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();

@@ -46,7 +46,6 @@ class MainWindow {
   void AttachItemToPaltree(in_addr ipv4);
   void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
-  void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
 
   void OpenTransWindow();
   //void UpdateItemToTransTree(GData **para);
