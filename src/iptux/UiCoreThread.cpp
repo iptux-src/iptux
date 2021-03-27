@@ -401,7 +401,6 @@ bool UiCoreThread::MsglineContainItem(GroupInfo *grpinf) {
 void UiCoreThread::PushItemToMsgline(GroupInfo *grpinf) {
   g_queue_push_tail(&msgline, grpinf);
   grpinf->addMsgCount(1);
-  signalGroupInfoUpdated.emit(grpinf);
 }
 
 /**
@@ -585,6 +584,9 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   grpinf->name = g_strdup(pal->name);
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
+  grpinf->signalUnreadMsgCountUpdated.connect(
+    sigc::mem_fun(this, &UiCoreThread::onGroupInfoMsgCountUpdate)
+  );
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
 }
@@ -766,5 +768,10 @@ void UiCoreThread::SystemLog(const char *fmt, ...) const {
   logSystem->SystemLog(fmt, args);
   va_end(args);
 }
+
+void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount) {
+  signalGroupInfoUpdated.emit(grpinf);
+}
+
 
 }  // namespace iptux

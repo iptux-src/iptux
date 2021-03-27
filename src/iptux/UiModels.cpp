@@ -384,12 +384,15 @@ void GroupInfo::disconnect(gulong sigId) {
 }
 
 void GroupInfo::addMsgCount(int i) {
+  int oldCount = getUnreadMsgCount();
   allMsgCount += i;
-  activate("unreadMsgCountChanged");
+  signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
 }
 
 void GroupInfo::readAllMsg() {
+  int oldCount = getUnreadMsgCount();
   readMsgCount = allMsgCount;
+  signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
 }
 
 int GroupInfo::getUnreadMsgCount() const {

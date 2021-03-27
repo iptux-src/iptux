@@ -2,6 +2,7 @@
 #define IPTUX_UIMODELS_H
 
 #include <gtk/gtk.h>
+#include <sigc++/signal.h>
 
 #include "iptux-core/Models.h"
 #include "iptux-core/TransFileModel.h"
@@ -62,6 +63,9 @@ class GroupInfo {
   void addMsgCount(int i);
   void readAllMsg();
   int getUnreadMsgCount() const;
+
+ public:
+  sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
 
  public:
   GQuark grpid;           ///< 唯一标识
