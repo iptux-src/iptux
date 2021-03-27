@@ -54,11 +54,11 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
 
   if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
-                        pal->getName().c_str(), pal->user, pal->host);
+                        pal->getName().c_str(), pal->getUser().c_str(), pal->host);
   else if (msgpara->stype == MessageSourceType::SELF) {
     if (msgpara->pal)
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
-                          pal->getName().c_str(), pal->user, pal->host);
+                          pal->getName().c_str(), pal->getUser().c_str(), pal->host);
     else
       ptr = getformattime(TRUE, _("Send-Broadcast"));
   } else
