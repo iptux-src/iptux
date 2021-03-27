@@ -463,6 +463,8 @@ void DialogBase::DialogDestory(DialogBase *dialog) { delete dialog; }
 gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
   if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
     gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
+  DialogBase* self = (DialogBase*)g_object_get_data(G_OBJECT(window), "session-class");
+  self->grpinf->readAllMsg();
   return FALSE;
 }
 

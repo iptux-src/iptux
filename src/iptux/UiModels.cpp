@@ -388,6 +388,10 @@ void GroupInfo::addMsgCount(int i) {
   activate("unreadMsgCountChanged");
 }
 
+void GroupInfo::readAllMsg() {
+  readMsgCount = allMsgCount;
+}
+
 int GroupInfo::getUnreadMsgCount() const {
   g_assert(allMsgCount >= readMsgCount);
   return allMsgCount - readMsgCount;
