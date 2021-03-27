@@ -383,10 +383,14 @@ void GroupInfo::disconnect(gulong sigId) {
   g_signal_handler_disconnect(this->action, sigId);
 }
 
-int GroupInfo::getUnreadMsgCount() const {
-  g_assert(allMsgCount >= readMsgCount);
-  return 1;
+void GroupInfo::addMsgCount(int i) {
+  allMsgCount += i;
+  activate("unreadMsgCountChanged");
 }
 
+int GroupInfo::getUnreadMsgCount() const {
+  g_assert(allMsgCount >= readMsgCount);
+  return allMsgCount - readMsgCount;
+}
 
 }
