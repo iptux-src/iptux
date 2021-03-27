@@ -96,6 +96,7 @@ class UiCoreThread: public CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal);
   void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
+
 private:
   Application* app;
   std::shared_ptr<UiProgramData> programData;
