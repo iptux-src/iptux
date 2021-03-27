@@ -13,6 +13,7 @@ namespace iptux {
   std::shared_ptr<IptuxConfig> newTestIptuxConfigWithFile();
   std::string testDataPath(const std::string& fname);
 
+  std::shared_ptr<CoreThread> newCoreThread();
   std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip);
 
   using PIptuxConfig = std::shared_ptr<IptuxConfig>;

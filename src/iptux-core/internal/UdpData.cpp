@@ -54,24 +54,37 @@ UdpData::~UdpData() { g_free(encode); }
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(CoreThread& coreThread,
+unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
                            in_addr ipv4,
                            int port,
                            const char buf[],
-                           size_t size) {
+                           size_t size)
+{
+  return UdpDataEntry(coreThread, ipv4, port, buf, size, true);
+}
+
+unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
+                           in_addr ipv4,
+                           int port,
+                           const char buf[],
+                           size_t size,
+                           bool run) {
   if(Log::IsDebugEnabled()) {
     LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", inAddrToString(ipv4).c_str(), port, size,
       stringDumpAsCString(string(buf, size)).c_str());
   } else {
     LOG_INFO("received udp message from %s:%d, size %zu", inAddrToString(ipv4).c_str(), port, size);
   }
-  UdpData udata(coreThread);
+  auto udata = make_unique<UdpData>(coreThread);
 
-  udata.ipv4 = ipv4;
-  udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
-  memcpy(udata.buf, buf, size);
-  if (size != MAX_UDPLEN) udata.buf[size] = '\0';
-  udata.DispatchUdpData();
+  udata->ipv4 = ipv4;
+  udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
+  memcpy(udata->buf, buf, size);
+  if (size != MAX_UDPLEN) udata->buf[size] = '\0';
+  if(run) {
+    udata->DispatchUdpData();
+  }
+  return udata;
 }
 
 /**

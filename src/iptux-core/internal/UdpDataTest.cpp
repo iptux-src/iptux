@@ -23,3 +23,11 @@ TEST(UdpData, SomeoneEntry) {
   UdpData::UdpDataEntry(*thread, inAddrFromString("127.0.0.1"), 1234, data, strlen(data));
   delete thread;
 }
+
+TEST(UdpData, CreatePalInfo) {
+  auto core = newCoreThread();
+  const char* data = "1_iptux 0.8.0-b1:6:lidaobing:LIs-MacBook-Pro.local:259:中\xe4\xb8\x00\x00icon-tux.png\x00utf-8\x00";
+  auto udp = UdpData::UdpDataEntry(*core.get(), inAddrFromString("127.0.0.1"), 1234, data, strlen(data), false);
+  auto pal = udp->CreatePalInfo();
+  ASSERT_EQ(pal->getName(), "中��");
+}
