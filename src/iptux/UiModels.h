@@ -59,6 +59,10 @@ class GroupInfo {
   void disconnect(gulong sigId);
   void activate(const std::string& signal);
 
+  void addMsgCount(int i);
+  void readAllMsg();
+  int getUnreadMsgCount() const;
+
  public:
   GQuark grpid;           ///< 唯一标识
   std::string name;             ///< 群组名称 *
@@ -69,6 +73,8 @@ private:
   std::vector<PPalInfo> members;
   GroupBelongType type;   ///< 群组类型
   GSimpleAction* action;
+  int allMsgCount = 0; /* all received message count */
+  int readMsgCount = 0; /* already read message count */
 };
 
 enum class TransModelColumn {

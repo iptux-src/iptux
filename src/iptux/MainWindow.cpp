@@ -745,7 +745,7 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model) {
   g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "text", PalTreeModelColumn ::INFO,
+                                      "markup", PalTreeModelColumn ::INFO,
                                       "attributes", PalTreeModelColumn ::STYLE,
                                       "foreground-rgba", PalTreeModelColumn ::COLOR,
                                       NULL);

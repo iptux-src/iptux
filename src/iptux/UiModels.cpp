@@ -2,11 +2,13 @@
 #include "UiModels.h"
 
 #include <cstring>
+#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-core/Models.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux/UiHelper.h"
 
 using namespace std;
 
@@ -211,7 +213,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   GdkPixbuf *cpixbuf, *opixbuf= nullptr;
   PangoAttrList *attrs;
   PangoAttribute *attr;
-  gchar *info, *extra;
+  gchar *extra;
   PalInfo *pal;
   GError* error = nullptr;
 
@@ -237,14 +239,25 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
                                        GtkIconLookupFlags(0), NULL);
   }
 
+  string info;
   /* 创建主信息 */
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
     char ipstr[INET_ADDRSTRLEN];
     pal = grpinf->getMembers()[0].get();
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-    info = g_strdup_printf("%s\n%s", pal->name, ipstr);
+    int unreadMsgCount = grpinf->getUnreadMsgCount();
+    if(unreadMsgCount > 0) {
+      info = stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
+        markupEscapeText(pal->name).c_str(),
+        unreadMsgCount,
+        markupEscapeText(ipstr).c_str());
+    } else {
+      info = stringFormat("%s\n%s",
+        markupEscapeText(pal->name).c_str(),
+        markupEscapeText(ipstr).c_str());
+    }
   } else
-    info = g_strdup(grpinf->name.c_str());
+    info = markupEscapeText(grpinf->name);
 
   /* 创建扩展信息 */
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
@@ -272,7 +285,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   gtk_tree_store_set(GTK_TREE_STORE(model), iter,
                      PalTreeModelColumn ::CLOSED_EXPANDER, cpixbuf,
                      PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
-                     PalTreeModelColumn ::INFO, info,
+                     PalTreeModelColumn ::INFO, info.c_str(),
                      PalTreeModelColumn ::EXTRAS, extra,
                      PalTreeModelColumn ::STYLE, attrs,
                      PalTreeModelColumn ::COLOR, &color,
@@ -282,7 +295,6 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   /* 释放资源 */
   if (cpixbuf) g_object_unref(cpixbuf);
   if (opixbuf) g_object_unref(opixbuf);
-  g_free(info);
   g_free(extra);
   pango_attr_list_unref(attrs);
 }
@@ -370,5 +382,11 @@ void GroupInfo::activate(const string& signal) {
 void GroupInfo::disconnect(gulong sigId) {
   g_signal_handler_disconnect(this->action, sigId);
 }
+
+int GroupInfo::getUnreadMsgCount() const {
+  g_assert(allMsgCount >= readMsgCount);
+  return 1;
+}
+
 
 }

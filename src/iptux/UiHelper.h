@@ -38,5 +38,13 @@ void g_action_map_disable_actions(GActionMap* map, const char* action_name, ...)
  */
 std::string utf8MakeValid(const std::string& str);
 
+/**
+ * @brief wrapper for g_makeup_escape_text
+ *
+ * @param str
+ * @return std::string
+ */
+std::string markupEscapeText(const std::string& str);
+
 }
 #endif //IPTUX_UIHELPER_H
