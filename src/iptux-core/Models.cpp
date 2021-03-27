@@ -85,6 +85,12 @@ void PalInfo::setChanged(bool value) {
   }
 }
 
+PalInfo& PalInfo::setName(const std::string& name) {
+  this->name = utf8MakeValid(name);
+  return *this;
+}
+
+
 FileInfo::FileInfo()
     : fileid(0),
       packetn(0),

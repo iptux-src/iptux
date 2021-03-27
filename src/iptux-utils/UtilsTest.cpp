@@ -98,3 +98,13 @@ TEST(Utils, ipv4Compare) {
   EXPECT_GT(ipv4Compare(inAddrFromString("1.2.3.5"), inAddrFromString("1.2.3.4")), 0);
   EXPECT_GT(ipv4Compare(inAddrFromString("1.2.4.0"), inAddrFromString("1.2.3.4")), 0);
 }
+
+TEST(Utils, utf8MakeValid) {
+  ASSERT_EQ(utf8MakeValid(""), "");
+  ASSERT_EQ(utf8MakeValid("中文"), "中文");
+  ASSERT_EQ(utf8MakeValid("\xe4\xb8\xad\xe6\x96\x87"), "中文");
+  ASSERT_EQ(utf8MakeValid("\xe4\xb8\xe6\x96\x87"), "��文");
+  ASSERT_EQ(utf8MakeValid("\xe4\xb8\xad\xe6\x96"), "中��");
+  ASSERT_EQ(utf8MakeValid("\xe4\xe6\x96\x87"), "�文");
+  ASSERT_EQ(utf8MakeValid("\xe4\xb8\xad\xe6"), "中�");
+}

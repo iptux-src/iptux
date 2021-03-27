@@ -83,10 +83,7 @@ class PalInfo {
     return ipv4;
   }
 
-  PalInfo& setName(const std::string& name) {
-    this->name = name;
-    return *this;
-  }
+  PalInfo& setName(const std::string& name);
   const std::string& getName() const {return name;}
 
   in_addr ipv4;  ///< 好友IP

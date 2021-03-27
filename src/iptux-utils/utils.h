@@ -118,6 +118,14 @@ ssize_t read_ipmsg_filedata(int fd, void *buf, size_t count, size_t offset);
 ssize_t read_ipmsg_dirfiles(int fd, void *buf, size_t count, size_t offset);
 ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset);
 
+/**
+ * @brief wrapper for g_utf8_make_valid
+ *
+ * @param str
+ * @return std::string
+ */
+std::string utf8MakeValid(const std::string& str);
+
 namespace utils {
 
 /**
@@ -129,6 +137,7 @@ namespace utils {
  * @return int64_t
  */
 int64_t fileOrDirectorySize(const std::string& fileOrDirName);
+
 
 }
 
