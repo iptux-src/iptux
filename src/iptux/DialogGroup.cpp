@@ -208,7 +208,6 @@ GtkWindow *DialogGroup::CreateMainWindow() {
                               config->GetInt("group_window_width", 500),
                               config->GetInt("group_window_height", 350));
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_add_accel_group(GTK_WINDOW(window), accel);
   g_datalist_set_data(&widset, "window-widget", window);
   widget_enable_dnd_uri(GTK_WIDGET(window));
   grpinf->dialog = GTK_WIDGET(window);

@@ -36,7 +36,6 @@ DialogBase::DialogBase(Application* app, GroupInfo *grp)
       widset(NULL),
       mdlset(NULL),
       dtset(NULL),
-      accel(NULL),
       grpinf(grp),
       totalsendsize(0),
       timersend(0) {
@@ -55,7 +54,6 @@ void DialogBase::InitSublayerGeneral() {
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
   g_datalist_init(&dtset);
-  accel = gtk_accel_group_new();
 }
 
 /**
@@ -69,7 +67,6 @@ void DialogBase::ClearSublayerGeneral() {
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
   g_datalist_clear(&dtset);
-  g_object_unref(accel);
 }
 
 /**

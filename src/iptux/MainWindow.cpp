@@ -1908,7 +1908,4 @@ void MainWindow::onGroupInfoUpdated(GroupInfo* groupInfo) {
   }
 }
 
-
-
-
 }  // namespace iptux
