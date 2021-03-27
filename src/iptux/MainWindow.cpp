@@ -1901,7 +1901,11 @@ void MainWindow::setActionSensitive(const std::string& actionName, bool sensitiv
 }
 
 void MainWindow::onGroupInfoUpdated(GroupInfo* groupInfo) {
-  LOG_INFO("not implemented");
+  auto model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
+  GtkTreeIter iter;
+  if(GroupGetPaltreeItem(model, &iter, groupInfo)) {
+    palTreeModelFillFromGroupInfo(model, &iter, groupInfo, progdt->font);
+  }
 }
 
 
