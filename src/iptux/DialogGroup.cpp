@@ -69,7 +69,6 @@ DialogGroup* DialogGroup::GroupDialogEntry(Application* app, GroupInfo *grpinf) 
   auto g_cthrd = app->getCoreThread();
   g_cthrd->Lock();
   if (g_cthrd->MsglineContainItem(grpinf)) {
-    app->getMainWindow()->MakeItemBlinking(grpinf, FALSE);
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
@@ -208,7 +207,6 @@ GtkWindow *DialogGroup::CreateMainWindow() {
                               config->GetInt("group_window_width", 500),
                               config->GetInt("group_window_height", 350));
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_add_accel_group(GTK_WINDOW(window), accel);
   g_datalist_set_data(&widset, "window-widget", window);
   widget_enable_dnd_uri(GTK_WIDGET(window));
   grpinf->dialog = GTK_WIDGET(window);

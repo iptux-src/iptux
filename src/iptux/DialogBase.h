@@ -84,7 +84,6 @@ class DialogBase : public SessionAbstract {
   GData *widset;            //窗体集
   GData *mdlset;            //数据model集
   GData *dtset;             //通用数据集
-  GtkAccelGroup *accel;     //快捷键组
   GroupInfo *grpinf;        //群组信息
   int64_t totalsendsize;    //总计待发送大小(包括已发送)
   struct timeval lasktime;  //上一次更新UI的时间

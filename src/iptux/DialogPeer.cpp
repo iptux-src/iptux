@@ -51,6 +51,9 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       timerrcv(0) {
   ReadUILayout();
   sigId = grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
+  app->getCoreThread()->signalGroupInfoUpdated.connect(
+    sigc::mem_fun(this, &DialogPeer::onGroupInfoUpdated)
+  );
 }
 
 /**
@@ -89,7 +92,6 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
   /* 从消息队列中移除 */
   g_cthrd->Lock();
   if (g_cthrd->MsglineContainItem(grpinf)) {
-    app->getMainWindow()->MakeItemBlinking(grpinf, FALSE);
     g_cthrd->PopItemFromMsgline(grpinf);
   }
   g_cthrd->Unlock();
@@ -205,7 +207,6 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_add_accel_group(GTK_WINDOW(window), accel);
   widget_enable_dnd_uri(GTK_WIDGET(window));
   g_datalist_set_data(&widset, "window-widget", window);
   grpinf->dialog = GTK_WIDGET(window);
@@ -1069,5 +1070,13 @@ gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer* self) {
 void DialogPeer::onNewFileReceived(void*, void*, iptux::DialogPeer& self) {
   self.ShowInfoEnclosure(&self);
 }
+
+void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
+  if(groupInfo != this->grpinf) return;
+  if(gtk_window_is_active(GTK_WINDOW(this->window))) {
+    ClearNotify(GTK_WIDGET(this->window), nullptr);
+  }
+}
+
 
 }  // namespace iptux

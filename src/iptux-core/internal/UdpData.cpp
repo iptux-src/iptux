@@ -341,6 +341,8 @@ void UdpData::SomeoneRecvmsg() {
   if ((pal = coreThread.GetPal(ipv4))) {
     packetno = iptux_get_dec_number(buf, ':', 5);
     if (packetno == pal->rpacketn) pal->rpacketn = 0;  //标记此包编号已经被回复
+  } else {
+    LOG_WARN("message from unknown pal: %s", inAddrToString(ipv4).c_str());
   }
 }
 

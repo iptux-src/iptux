@@ -46,8 +46,11 @@ TEST(CoreThread, GetPalList) {
   CoreThread* thread = new CoreThread(core);
   EXPECT_EQ(int(thread->GetPalList().size()), 0);
   PPalInfo pal = make_shared<PalInfo>();
+  int eventCount = thread->getEventCount();
   thread->AttachPalToList(pal);
   EXPECT_EQ(int(thread->GetPalList().size()), 1);
+  EXPECT_EQ(thread->getEventCount(), eventCount+1);
+  EXPECT_EQ(thread->getLastEvent()->getType(), EventType::NEW_PAL_ONLINE);
   delete thread;
 }
 

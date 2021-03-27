@@ -18,6 +18,7 @@
 #define IPTUX_UICORETHREAD_H
 
 #include <queue>
+#include <sigc++/signal.h>
 
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Models.h"
@@ -76,6 +77,9 @@ class UiCoreThread: public CoreThread {
 
   LogSystem* getLogSystem() { return logSystem; }
 
+ public:
+  sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
+
  private:
   void InitSublayer();
   void ClearSublayer() override ;
@@ -91,12 +95,12 @@ class UiCoreThread: public CoreThread {
   GroupInfo *AttachPalBroadcastItem(PPalInfo pal);
   static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
   static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal);
+  void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
 
 private:
   Application* app;
   std::shared_ptr<UiProgramData> programData;
   LogSystem* logSystem;
-  guint timerid;          //定时器ID
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
@@ -105,10 +109,6 @@ private:
   uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
   GSList *ecsList;          //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
-
-  //回调处理部分函数
- private:
-  static gboolean WatchCoreStatus(UiCoreThread *self);
 
     //内联成员函数
  public:

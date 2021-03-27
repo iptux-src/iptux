@@ -48,7 +48,6 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
-  timerid = 0;
   logSystem = new LogSystem(data);
   g_queue_init(&msgline);
   InitSublayer();
@@ -400,6 +399,7 @@ bool UiCoreThread::MsglineContainItem(GroupInfo *grpinf) {
  */
 void UiCoreThread::PushItemToMsgline(GroupInfo *grpinf) {
   g_queue_push_tail(&msgline, grpinf);
+  grpinf->addMsgCount(1);
 }
 
 /**
@@ -441,8 +441,6 @@ void UiCoreThread::ClearSublayer() {
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo *)tlist->data;
   g_slist_free(ecsList);
-  if (timerid > 0) g_source_remove(timerid);
-  pthread_mutex_destroy(&mutex);
 }
 
 /**
@@ -583,6 +581,9 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   grpinf->name = g_strdup(pal->name);
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
+  grpinf->signalUnreadMsgCountUpdated.connect(
+    sigc::mem_fun(this, &UiCoreThread::onGroupInfoMsgCountUpdate)
+  );
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
 }
@@ -722,29 +723,6 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
 
 void UiCoreThread::start() {
   CoreThread::start();
-/* 定时扫描处理程序内部任务 */
-  CHECK_EQ(timerid, guint(0));
-  timerid = g_timeout_add(500, GSourceFunc(WatchCoreStatus), this);
-}
-
-/**
- * 扫描处理程序内部任务(非UI线程安全).
- * @param pcthrd 核心类
- * @return GLib库所需
- */
-gboolean UiCoreThread::WatchCoreStatus(UiCoreThread *pcthrd) {
-  GList *tlist;
-
-  /* 让等待队列中的群组信息项闪烁 */
-  pthread_mutex_lock(&pcthrd->mutex);
-  tlist = pcthrd->msgline.head;
-  while (tlist) {
-    pcthrd->app->getMainWindow()->MakeItemBlinking((GroupInfo *)tlist->data, true);
-    tlist = g_list_next(tlist);
-  }
-  pthread_mutex_unlock(&pcthrd->mutex);
-
-  return TRUE;
 }
 
 shared_ptr<UiProgramData> UiCoreThread::getUiProgramData() {
@@ -764,5 +742,10 @@ void UiCoreThread::SystemLog(const char *fmt, ...) const {
   logSystem->SystemLog(fmt, args);
   va_end(args);
 }
+
+void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount) {
+  signalGroupInfoUpdated.emit(grpinf);
+}
+
 
 }  // namespace iptux

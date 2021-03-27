@@ -46,7 +46,6 @@ class MainWindow {
   void AttachItemToPaltree(in_addr ipv4);
   void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
-  void MakeItemBlinking(GroupInfo *grpinf, bool blinking);
 
   void OpenTransWindow();
   //void UpdateItemToTransTree(GData **para);
@@ -166,6 +165,7 @@ class MainWindow {
   static void onSortBy (GSimpleAction *action, GVariant* value, MainWindow& self);
   static gboolean onTransWindowDelete(MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
+  void onGroupInfoUpdated(GroupInfo* groupInfo);
 };
 
 }  // namespace iptux

@@ -41,6 +41,7 @@
                 "/opt/homebrew/opt/glib/lib/glib-2.0/include",
                 "/opt/homebrew/opt/gtk+3/include/gtk-3.0",
                 "/opt/homebrew/opt/harfbuzz/include/harfbuzz",
+                "/opt/homebrew/opt/libsigc++@2/include/sigc++-2.0",
                 "/opt/homebrew/opt/pango/include/pango-1.0"
             ],
             "defines": [],

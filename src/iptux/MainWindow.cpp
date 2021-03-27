@@ -64,6 +64,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
   g_cthrd->registerCallback([&](shared_ptr<const Event> event) { this->processEvent(event); });
+  g_cthrd->signalGroupInfoUpdated.connect(sigc::mem_fun(this, &MainWindow::onGroupInfoUpdated));
 }
 
 /**
@@ -344,76 +345,6 @@ void MainWindow::ClearAllItemFromPaltree() {
 }
 
 /**
- * 让指定的项在好友树(paltree)中闪烁.
- * @param grpinf class GroupInfo
- * @param blinking 是否继续闪烁
- * @note 如果我猜得没错，调用此函数的环境一定已经对(grpinf)加锁了
- */
-void MainWindow::MakeItemBlinking(GroupInfo *grpinf, bool blinking) {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  GroupInfo *pgrpinf;
-
-  /* 成员为空表明此项已经不存在model中，也就没必要再处理它了 */
-  if (grpinf->getMembers().empty()) return;
-
-  /* 闪烁项 */
-  switch (grpinf->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
-      /* 闪烁常规模式树 */
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
-      GroupGetPaltreeItem(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
-      // /* 闪烁网段模式树 */
-      // model =
-      //     GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
-      // pgrpinf = g_cthrd->GetPalSegmentItem(grpinf->getMembers()[0].get());
-      // GroupGetPaltreeItem(model, &iter, pgrpinf);
-      // GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-      // BlinkGroupItemToPaltree(model, &iter, blinking);
-      // /* 闪烁分组模式树 */
-      // model =
-      //     GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
-      // pgrpinf = g_cthrd->GetPalGroupItem(grpinf->getMembers()[0].get());
-      // GroupGetPaltreeItem(model, &iter, pgrpinf);
-      // GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-      // BlinkGroupItemToPaltree(model, &iter, blinking);
-      // /* 闪烁广播模式树 */
-      // model = GTK_TREE_MODEL(
-      //     g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
-      // pgrpinf = g_cthrd->GetPalBroadcastItem(grpinf->getMembers()[0].get());
-      // GroupGetPaltreeItem(model, &iter, pgrpinf);
-      // GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-      // BlinkGroupItemToPaltree(model, &iter, blinking);
-      break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-      /* 闪烁网段模式树 */
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
-      GroupGetPaltreeItem(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
-      break;
-    case GROUP_BELONG_TYPE_GROUP:
-      /* 闪烁分组模式树 */
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
-      GroupGetPaltreeItem(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
-      break;
-    case GROUP_BELONG_TYPE_BROADCAST:
-      /* 闪烁广播模式树 */
-      model = GTK_TREE_MODEL(
-          g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
-      GroupGetPaltreeItem(model, &iter, grpinf);
-      BlinkGroupItemToPaltree(model, &iter, blinking);
-      break;
-    default:
-      break;
-  }
-}
-
-/**
  * 打开文件传输窗口.
  */
 void MainWindow::OpenTransWindow() {
@@ -468,7 +399,7 @@ void MainWindow::InitSublayer() {
   g_datalist_init(&mdlset);
 
   accel = gtk_accel_group_new();
-  CHECK_EQ(timerid, 0);
+  CHECK_EQ(int(timerid), 0);
   timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
 
   model = palTreeModelNew();
@@ -745,7 +676,7 @@ GtkWidget *MainWindow::CreatePaltreeTree(GtkTreeModel *model) {
   g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), cell,
-                                      "text", PalTreeModelColumn ::INFO,
+                                      "markup", PalTreeModelColumn ::INFO,
                                       "attributes", PalTreeModelColumn ::STYLE,
                                       "foreground-rgba", PalTreeModelColumn ::COLOR,
                                       NULL);
@@ -1899,6 +1830,12 @@ void MainWindow::setActionSensitive(const std::string& actionName, bool sensitiv
   );
 }
 
-
+void MainWindow::onGroupInfoUpdated(GroupInfo* groupInfo) {
+  auto model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
+  GtkTreeIter iter;
+  if(GroupGetPaltreeItem(model, &iter, groupInfo)) {
+    palTreeModelFillFromGroupInfo(model, &iter, groupInfo, progdt->font);
+  }
+}
 
 }  // namespace iptux

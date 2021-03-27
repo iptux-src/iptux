@@ -78,6 +78,8 @@ struct CoreThread::Impl {
 
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
   int lastTransTaskId { 0 };
+  int eventCount { 0 };
+  shared_ptr<const Event> lastEvent { nullptr };
   map<int, shared_ptr<TransAbstract>> transTasks;
   deque<shared_ptr<const Event>> waitingEvents;
   std::mutex waitingEventsMutex;
@@ -395,6 +397,7 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
 void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
   pImpl->pallist.push_back(pal);
   pal->setOnline(true);
+  emitNewPalOnline(pal);
 }
 
 void CoreThread::registerCallback(const EventCallback &callback) {
@@ -420,6 +423,8 @@ void CoreThread::emitNewPalOnline(const PalKey& palKey) {
 void CoreThread::emitEvent(shared_ptr<const Event> event) {
   lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
   pImpl->waitingEvents.push_back(event);
+  this->pImpl->eventCount++;
+  this->pImpl->lastEvent = event;
 }
 
 /**
@@ -709,6 +714,14 @@ vector<unique_ptr<TransFileModel>> CoreThread::listTransTasks() const {
   }
   Unlock();
   return res;
+}
+
+int CoreThread::getEventCount() const {
+  return this->pImpl->eventCount;
+}
+
+shared_ptr<const Event> CoreThread::getLastEvent() const {
+  return this->pImpl->lastEvent;
 }
 
 }

@@ -88,6 +88,7 @@ class DialogPeer : public DialogBase {
   static void onClose(void*, void*, DialogPeer& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
+  void onGroupInfoUpdated(GroupInfo* groupInfo);
 
  protected:
   GtkApplicationWindow* window;

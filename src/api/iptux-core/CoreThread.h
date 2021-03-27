@@ -75,7 +75,23 @@ class CoreThread {
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);
   void EmitIconUpdate(const PalKey& palKey);
+
   void emitEvent(std::shared_ptr<const Event> event);
+
+  /**
+   * @brief return event count since started
+   *
+   * @return int
+   */
+  int getEventCount() const;
+
+  /**
+   * @brief Get the Last Event object
+   *
+   * @return std::shared_ptr<const Event>
+   */
+  std::shared_ptr<const Event> getLastEvent() const;
+
 
   const std::string& GetAccessPublicLimit() const;
   void SetAccessPublicLimit(const std::string& val);
