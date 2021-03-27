@@ -460,7 +460,7 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
   switch (para->stype) {
   case MessageSourceType::PAL:
       header = getformattime(FALSE, "%s",
-                             para->pal ? para->pal->name : _("unknown"));
+                             para->pal ? para->pal->getName().c_str() : _("unknown"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "pal-color", NULL);
@@ -578,7 +578,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
 
   grpinf = new GroupInfo(pal);
   grpinf->grpid = inAddrToUint32(pal->ipv4);
-  grpinf->name = g_strdup(pal->name);
+  grpinf->name = pal->getName();
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   grpinf->signalUnreadMsgCountUpdated.connect(

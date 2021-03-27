@@ -112,7 +112,7 @@ void RecvFileData::CreateUIPara() {
   struct in_addr addr = file->fileown->ipv4;
   para.setStatus("tip-recv")
       .setTask(_("receive"))
-      .setPeer(file->fileown->name)
+      .setPeer(file->fileown->getName())
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
@@ -169,10 +169,10 @@ void RecvFileData::RecvRegularFile() {
   if (finishsize < file->filesize) {
     terminate = true;
     LOG_ERROR(_("Failed to receive the file \"%s\" from %s! expect length %d, received %d"),
-                       file->filepath, file->fileown->name, file->filesize, finishsize);
+                       file->filepath, file->fileown->getName().c_str(), file->filesize, finishsize);
   } else {
     LOG_INFO(_("Receive the file \"%s\" from %s successfully!"),
-                       file->filepath, file->fileown->name);
+                       file->filepath, file->fileown->getName().c_str());
   }
   /* 关闭文件传输套接口 */
   close(sock);
@@ -305,10 +305,10 @@ end:
   if (!result) {
     terminate = true;
     LOG_ERROR(_("Failed to receive the directory \"%s\" from %s!"),
-                       file->filepath, file->fileown->name);
+                       file->filepath, file->fileown->getName().c_str());
   } else {
     LOG_INFO(_("Receive the directory \"%s\" from %s successfully!"),
-                       file->filepath, file->fileown->name);
+                       file->filepath, file->fileown->getName().c_str());
   }
   /* 关闭文件传输套接口 */
   close(sock);

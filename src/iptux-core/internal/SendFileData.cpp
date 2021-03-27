@@ -97,7 +97,7 @@ void SendFileData::CreateUIPara() {
 
   para.setStatus("tip-send")
       .setTask(_("send"))
-      .setPeer(file->fileown->name)
+      .setPeer(file->fileown->getName())
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
@@ -131,12 +131,12 @@ void SendFileData::SendRegularFile() {
   if (finishsize < file->filesize) {
     terminate = true;
     LOG_INFO(_("Failed to send the file \"%s\" to %s!"),
-                       file->filepath, file->fileown->name);
+                       file->filepath, file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
     //                    file->filepath, file->fileown->name);
   } else {
     LOG_INFO(_("Send the file \"%s\" to %s successfully!"),
-                       file->filepath, file->fileown->name);
+                       file->filepath, file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
     //                    file->filepath, file->fileown->name);
   }
@@ -255,12 +255,12 @@ end:
     g_queue_foreach(&dirstack, GFunc(closedir), NULL);
     g_queue_clear(&dirstack);
     LOG_INFO(_("Failed to send the directory \"%s\" to %s!"),
-            file->filepath, file->fileown->name);
+            file->filepath, file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
     //                    file->filepath, file->fileown->name);
   } else {
     LOG_INFO(_("Send the directory \"%s\" to %s successfully!"),
-            file->filepath, file->fileown->name);
+            file->filepath, file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
     //                    file->filepath, file->fileown->name);
   }

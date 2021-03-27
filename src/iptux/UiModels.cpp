@@ -248,12 +248,12 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
     int unreadMsgCount = grpinf->getUnreadMsgCount();
     if(unreadMsgCount > 0) {
       info = stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
-        markupEscapeText(pal->name).c_str(),
+        markupEscapeText(pal->getName()).c_str(),
         unreadMsgCount,
         markupEscapeText(ipstr).c_str());
     } else {
       info = stringFormat("%s\n%s",
-        markupEscapeText(pal->name).c_str(),
+        markupEscapeText(pal->getName()).c_str(),
         markupEscapeText(ipstr).c_str());
     }
   } else

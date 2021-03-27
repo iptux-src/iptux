@@ -148,7 +148,7 @@ void UdpData::SomeoneLost() {
     pal->user = g_strdup("???");
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
-  pal->name = g_strdup(_("mysterious"));
+  pal->setName(_("mysterious"));
   pal->group = g_strdup(_("mysterious"));
   pal->photo = NULL;
   pal->sign = NULL;
@@ -493,8 +493,12 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
     pal->user = g_strdup("???");
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
-  if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
-    pal->name = g_strdup(_("mysterious"));
+  auto name = ipmsg_get_attach(buf, ':', 5);
+  if(!name) {
+    pal->setName(_("mysterious"));
+  } else {
+    pal->setName(name);
+  }
   pal->group = GetPalGroup();
   pal->photo = NULL;
   pal->sign = NULL;
@@ -531,9 +535,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
   if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
     pal->host = g_strdup("???");
   if (!pal->isChanged()) {
-    g_free(pal->name);
-    if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
-      pal->name = g_strdup(_("mysterious"));
+    auto name = ipmsg_get_attach(buf, ':', 5);
+    if(!name) {
+      pal->setName(_("mysterious"));
+    } else {
+      pal->setName(name);
+    }
     g_free(pal->group);
     pal->group = GetPalGroup();
     g_free(pal->iconfile);

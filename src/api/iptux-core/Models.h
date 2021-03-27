@@ -83,12 +83,17 @@ class PalInfo {
     return ipv4;
   }
 
+  PalInfo& setName(const std::string& name) {
+    this->name = name;
+    return *this;
+  }
+  const std::string& getName() const {return name;}
+
   in_addr ipv4;  ///< 好友IP
   char *segdes;    ///< 所在网段描述
   char *version;   ///< 版本串 *
   char *user;      ///< 好友用户 *
   char *host;      ///< 好友主机 *
-  char *name;      ///< 昵称 *
   char *group;     ///< 所在群组
   char *photo;     ///< 形象照片
   char *sign;      ///< 个性签名
@@ -108,6 +113,7 @@ class PalInfo {
   void setInBlacklistl(bool value);
 
  private:
+  std::string name;
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 

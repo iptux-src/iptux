@@ -877,9 +877,9 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
   gchar *version = g_markup_printf_escaped(_("Version: %s"), pal->version);
   gchar *nickname;
   if (pal->group && *pal->group != '\0') {
-    nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->name, pal->group);
+    nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->getName().c_str(), pal->group);
   } else {
-    nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->name);
+    nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->getName().c_str());
   }
   gchar *user = g_markup_printf_escaped(_("User: %s"), pal->user);
   gchar *host = g_markup_printf_escaped(_("Host: %s"), pal->host);
@@ -1465,7 +1465,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   for(auto pal: g_cthrd->GetPalList()) {
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     /* Search friends case ignore is better. */
-    if (*text == '\0' || strcasestr(pal->name, text) ||
+    if (*text == '\0' || strcasestr(pal->getName().c_str(), text) ||
         (pal->group && strcasestr(pal->group, text)) ||
         strcasestr(ipstr, text) || strcasestr(pal->user, text) ||
         strcasestr(pal->host, text)) {
@@ -1474,7 +1474,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
                                         GtkIconLookupFlags(0), NULL);
       g_free(file);
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, pal->name,
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1, pal->getName().c_str(),
                          2, pal->group, 3, ipstr, 4, pal->user, 5, pal->host, 6,
                          pal.get(), -1);
       if (pixbuf) g_object_unref(pixbuf);

@@ -27,7 +27,6 @@ PalInfo::PalInfo()
       version(NULL),
       user(NULL),
       host(NULL),
-      name(g_strdup("")),
       group(NULL),
       photo(NULL),
       sign(NULL),
@@ -43,7 +42,6 @@ PalInfo::~PalInfo() {
   g_free(version);
   g_free(user);
   g_free(host);
-  g_free(name);
   g_free(group);
   g_free(photo);
   g_free(sign);
