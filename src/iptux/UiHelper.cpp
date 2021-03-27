@@ -231,4 +231,12 @@ void g_action_map_disable_actions(GActionMap* map, const char* action_name, ...)
   va_end (args);
 }
 
+std::string utf8MakeValid(const std::string& str) {
+  auto res1 = g_utf8_make_valid(str.c_str(), str.size());
+  string res(res1);
+  g_free(res1);
+  return res;
+}
+
+
 }
