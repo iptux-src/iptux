@@ -492,7 +492,7 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
  * @param buffer text-buffer
  * @param string 字符串
  */
-void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string) {
+void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *s) {
   static uint32_t count = 0;
   GtkTextIter iter;
   GtkTextTag *tag;
@@ -503,6 +503,9 @@ void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *stri
   gint urlendp;
 
   auto g_progdt = getProgramData();
+
+  auto s2 = utf8MakeValid(s);
+  auto string = s2.c_str();
 
   urlendp = 0;
   matchinfo = NULL;
@@ -657,7 +660,6 @@ GroupInfo *UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
  * @param pal class PalInfo
  */
 void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
-  GSList *tlist;
   SessionAbstract *session;
 
   grpinf->delPal(pal);

@@ -28,5 +28,15 @@ std::string ipv4_get_lan_name(in_addr ipv4);
 
 void g_action_map_enable_actions(GActionMap* map, const char* action_name, ...) G_GNUC_NULL_TERMINATED;
 void g_action_map_disable_actions(GActionMap* map, const char* action_name, ...) G_GNUC_NULL_TERMINATED;
+
+
+/**
+ * @brief wrapper for g_utf8_make_valid
+ *
+ * @param str
+ * @return std::string
+ */
+std::string utf8MakeValid(const std::string& str);
+
 }
 #endif //IPTUX_UIHELPER_H
