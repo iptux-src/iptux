@@ -391,8 +391,10 @@ void GroupInfo::addMsgCount(int i) {
 
 void GroupInfo::readAllMsg() {
   int oldCount = getUnreadMsgCount();
-  readMsgCount = allMsgCount;
-  signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
+  if(oldCount != 0) {
+    readMsgCount = allMsgCount;
+    signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
+  }
 }
 
 int GroupInfo::getUnreadMsgCount() const {

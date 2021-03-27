@@ -51,6 +51,9 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       timerrcv(0) {
   ReadUILayout();
   sigId = grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
+  app->getCoreThread()->signalGroupInfoUpdated.connect(
+    sigc::mem_fun(this, &DialogPeer::onGroupInfoUpdated)
+  );
 }
 
 /**
@@ -1068,5 +1071,13 @@ gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer* self) {
 void DialogPeer::onNewFileReceived(void*, void*, iptux::DialogPeer& self) {
   self.ShowInfoEnclosure(&self);
 }
+
+void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
+  if(groupInfo != this->grpinf) return;
+  if(gtk_window_is_active(GTK_WINDOW(this->window))) {
+    ClearNotify(GTK_WIDGET(this->window), nullptr);
+  }
+}
+
 
 }  // namespace iptux
