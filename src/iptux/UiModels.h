@@ -61,7 +61,6 @@ class GroupInfo {
   bool hasPal(PPalInfo pal) const;
 
   void addMsgPara(const MsgPara& msg);
-  void addMsgCount(int i);
   void readAllMsg();
   int getUnreadMsgCount() const;
   void newFileReceived();
@@ -83,6 +82,9 @@ class GroupInfo {
   LogSystem* logSystem;
   int allMsgCount = 0;  /* all received message count */
   int readMsgCount = 0; /* already read message count */
+
+ private:
+  void addMsgCount(int i);
 };
 
 enum class TransModelColumn {

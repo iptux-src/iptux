@@ -524,6 +524,7 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
         break;
     }
   }
+  addMsgCount(1);
 }
 
 }  // namespace iptux
