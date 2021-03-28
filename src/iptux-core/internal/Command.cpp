@@ -487,11 +487,9 @@ void Command::SendSublayer(int sock,
 void Command::FeedbackError(CPPalInfo pal,
                             GroupBelongType btype,
                             const char* error) {
-  MsgPara para;
+  MsgPara para(coreThread.GetPal(pal->GetKey()));
   ChipData chip;
 
-  /* 构建消息封装包 */
-  para.pal = coreThread.GetPal(pal->GetKey());
   para.stype = MessageSourceType::ERROR;
   para.btype = btype;
   chip.type = MESSAGE_CONTENT_TYPE_STRING;

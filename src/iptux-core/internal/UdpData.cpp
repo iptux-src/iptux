@@ -592,10 +592,9 @@ void UdpData::UpdatePalInfo(PalInfo* pal) {
 void UdpData::InsertMessage(PPalInfo pal,
                             GroupBelongType btype,
                             const char* msg) {
-  MsgPara para;
+  MsgPara para(coreThread.GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
-  para.pal = coreThread.GetPal(pal->GetKey());
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
   ChipData chip;

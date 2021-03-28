@@ -454,10 +454,9 @@ bool DialogPeer::SendTextMsg() {
  * @note 请不要修改链表(dtlist)中的数据
  */
 void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
-  MsgPara para;
+  MsgPara para(grpinf->getMembers()[0]);
 
   auto g_cthrd = app->getCoreThread();
-  para.pal = grpinf->getMembers()[0];
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
   para.dtlist = dtlist;
@@ -475,8 +474,7 @@ MsgPara* DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
   MsgPara* para;
   auto g_cthrd = app->getCoreThread();
 
-  para = new MsgPara;
-  para->pal = grpinf->getMembers()[0];
+  para = new MsgPara(grpinf->getMembers()[0]);
   para->stype = MessageSourceType::SELF;
   para->btype = grpinf->getType();
   para->dtlist = dtlist;

@@ -607,7 +607,6 @@ bool DialogGroup::SendTextMsg() {
   GtkWidget* textview;
   GtkTextBuffer* buffer;
   GtkTextIter start, end;
-  MsgPara msgpara;
   gchar* msg;
 
   /* 考察缓冲区内是否存在数据 */
@@ -624,8 +623,8 @@ bool DialogGroup::SendTextMsg() {
   FeedbackMsg(msg);
   BroadcastTextMsg(msg);
 
+  MsgPara msgpara(this->app->getMe());
   msgpara.stype = MessageSourceType::SELF;
-  msgpara.pal = NULL;
   app->getCoreThread()->CommunicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);
 

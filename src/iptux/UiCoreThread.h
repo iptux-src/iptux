@@ -52,10 +52,10 @@ class UiCoreThread : public CoreThread {
   void UpdatePalToList(PalKey palKey) override;
 
   void AttachPalToList(std::shared_ptr<PalInfo> pal) override;
-  GroupInfo* GetPalRegularItem(PalInfo* pal);
-  GroupInfo* GetPalSegmentItem(PalInfo* pal);
-  GroupInfo* GetPalGroupItem(PalInfo* pal);
-  GroupInfo* GetPalBroadcastItem(PalInfo* pal);
+  GroupInfo* GetPalRegularItem(const PalInfo* pal);
+  GroupInfo* GetPalSegmentItem(const PalInfo* pal);
+  GroupInfo* GetPalGroupItem(const PalInfo* pal);
+  GroupInfo* GetPalBroadcastItem(const PalInfo* pal);
 
   guint GetMsglineItems();
   GroupInfo* GetMsglineHeadItem();

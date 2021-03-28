@@ -84,6 +84,7 @@ void init_iptux_environment() {
 }  // namespace
 
 struct CoreThread::Impl {
+  PPalInfo me;
   GSList* blacklist{nullptr};  //黑名单链表
   bool debugDontBroadcast{false};
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
@@ -137,6 +138,15 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
+  pImpl->me = make_shared<PalInfo>();
+  pImpl->me->ipv4 = inAddrFromString("127.0.0.1");
+  (*pImpl->me)
+      .setUser(g_get_user_name())
+      .setHost(g_get_host_name())
+      .setName(programData->nickname)
+      .setGroup(programData->mygroup)
+      .setEncode("utf-8")
+      .setCompatible(true);
 }
 
 CoreThread::~CoreThread() {
@@ -477,13 +487,13 @@ void CoreThread::AddBlockIp(in_addr ipv4) {
       g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
-bool CoreThread::SendMessage(PPalInfo palInfo, const string& message) {
+bool CoreThread::SendMessage(CPPalInfo palInfo, const string& message) {
   Command cmd(*this);
   cmd.SendMessage(getUdpSock(), palInfo, message.c_str());
   return true;
 }
 
-bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
+bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
   auto ptr = chipData.data.c_str();
   switch (chipData.type) {
     case MessageContentType::STRING:
@@ -511,7 +521,7 @@ bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
 
 bool CoreThread::SendMsgPara(const MsgPara& para) {
   for (int i = 0; i < int(para.dtlist.size()); ++i) {
-    if (!SendMessage(para.pal, para.dtlist[i])) {
+    if (!SendMessage(para.getPal(), para.dtlist[i])) {
       LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
       return false;
     }
@@ -739,6 +749,10 @@ int CoreThread::getEventCount() const {
 
 shared_ptr<const Event> CoreThread::getLastEvent() const {
   return this->pImpl->lastEvent;
+}
+
+PPalInfo CoreThread::getMe() {
+  return this->pImpl->me;
 }
 
 }  // namespace iptux

@@ -294,7 +294,7 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalRegularItem(PalInfo* pal) {
+GroupInfo* UiCoreThread::GetPalRegularItem(const PalInfo* pal) {
   GSList* tlist;
 
   tlist = groupInfos;
@@ -312,7 +312,7 @@ GroupInfo* UiCoreThread::GetPalRegularItem(PalInfo* pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalSegmentItem(PalInfo* pal) {
+GroupInfo* UiCoreThread::GetPalSegmentItem(const PalInfo* pal) {
   GSList* tlist;
   GQuark grpid;
 
@@ -335,7 +335,7 @@ GroupInfo* UiCoreThread::GetPalSegmentItem(PalInfo* pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalGroupItem(PalInfo* pal) {
+GroupInfo* UiCoreThread::GetPalGroupItem(const PalInfo* pal) {
   GSList* tlist;
   GQuark grpid;
 
@@ -359,7 +359,7 @@ GroupInfo* UiCoreThread::GetPalGroupItem(PalInfo* pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalBroadcastItem(PalInfo*) {
+GroupInfo* UiCoreThread::GetPalBroadcastItem(const PalInfo*) {
   return (GroupInfo*)(brdlist ? brdlist->data : NULL);
 }
 
@@ -453,8 +453,7 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para) {
    */
   switch (para->stype) {
     case MessageSourceType::PAL:
-      header = getformattime(
-          FALSE, "%s", para->pal ? para->pal->getName().c_str() : _("unknown"));
+      header = getformattime(FALSE, "%s", para->getPal()->getName().c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "pal-color", NULL);

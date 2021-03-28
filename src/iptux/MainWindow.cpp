@@ -1719,7 +1719,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     /* 获取群组信息 */
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
-        grpinf = coreThread.GetPalRegularItem(para.pal.get());
+        grpinf = coreThread.GetPalRegularItem(para.getPal().get());
         coreThread.PushItemToMsgline(grpinf);
         if (coreThread.getProgramData()->IsAutoOpenCharDialog()) {
           if (!(grpinf->dialog)) {
@@ -1733,13 +1733,13 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
         }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
-        grpinf = coreThread.GetPalSegmentItem(para.pal.get());
+        grpinf = coreThread.GetPalSegmentItem(para.getPal().get());
         break;
       case GROUP_BELONG_TYPE_GROUP:
-        grpinf = coreThread.GetPalGroupItem(para.pal.get());
+        grpinf = coreThread.GetPalGroupItem(para.getPal().get());
         break;
       case GROUP_BELONG_TYPE_BROADCAST:
-        grpinf = coreThread.GetPalBroadcastItem(para.pal.get());
+        grpinf = coreThread.GetPalBroadcastItem(para.getPal().get());
         break;
       default:
         grpinf = nullptr;

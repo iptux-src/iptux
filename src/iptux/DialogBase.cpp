@@ -395,13 +395,11 @@ bool DialogBase::SendEnclosureMsg() {
  * @param msg 消息
  */
 void DialogBase::FeedbackMsg(const gchar* msg) {
-  MsgPara para;
-  ChipData chip;
-
-  /* 构建消息封装包 */
-  para.pal = NULL;
+  MsgPara para(this->app->getMe());
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
+
+  ChipData chip;
   chip.type = MESSAGE_CONTENT_TYPE_STRING;
   chip.data = msg;
   para.dtlist.push_back(std::move(chip));

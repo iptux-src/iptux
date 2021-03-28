@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/IptuxConfig.h"
+#include "iptux-core/Models.h"
 #include "iptux/EventAdaptor.h"
 #include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
@@ -29,6 +30,7 @@ class Application {
   std::shared_ptr<UiProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   void refreshTransTasks();
+  PPalInfo getMe();
 
  private:
   std::shared_ptr<IptuxConfig> config;

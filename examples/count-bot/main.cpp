@@ -21,12 +21,12 @@ void processNewMessageEvent(shared_ptr<CoreThread> ct,
                             const NewMessageEvent* event) {
   auto para = event->getMsgPara();
   LOG(INFO) << "New Message Event: " << endl;
-  LOG(INFO) << "  From: " << para.pal->GetKey().ToString() << endl;
+  LOG(INFO) << "  From: " << para.getPal()->GetKey().ToString() << endl;
   for (auto& chip : para.dtlist) {
     LOG(INFO) << "  Message: " << chip.ToString() << endl;
     ostringstream oss;
     oss << "your message has " << chip.data.size() << " bytes.";
-    ct->SendMessage(para.pal, oss.str());
+    ct->SendMessage(para.getPal(), oss.str());
   }
 }
 

@@ -239,7 +239,11 @@ void Application::refreshTransTasks() {
 
 void Application::onEvent(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
-  LOG_WARN("unknown event type: %d", int(type));
+  // LOG_WARN("unknown event type: %d", int(type));
+}
+
+PPalInfo Application::getMe() {
+  return this->getCoreThread()->getMe();
 }
 
 }  // namespace iptux

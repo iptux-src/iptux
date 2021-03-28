@@ -116,10 +116,10 @@ class PalInfo {
   bool isChanged() const;
   bool isInBlacklist() const;
 
-  void setCompatible(bool value);
-  void setOnline(bool value);
-  void setChanged(bool value);
-  void setInBlacklistl(bool value);
+  PalInfo& setCompatible(bool value);
+  PalInfo& setOnline(bool value);
+  PalInfo& setChanged(bool value);
+  PalInfo& setInBlacklistl(bool value);
 
  private:
   std::string user;
@@ -194,13 +194,16 @@ class ChipData {
  */
 class MsgPara {
  public:
-  MsgPara();
+  explicit MsgPara(CPPalInfo pal);
   ~MsgPara();
 
-  PPalInfo pal;                  ///< 好友数据信息(来自好友*)
+  CPPalInfo getPal() const { return pal; }
+
   MessageSourceType stype;       ///< 来源类型
   GroupBelongType btype;         ///< 所属类型
   std::vector<ChipData> dtlist;  ///< 数据链表 *
+ private:
+  CPPalInfo pal;  ///< 好友数据信息(来自好友*)
 };
 
 /**

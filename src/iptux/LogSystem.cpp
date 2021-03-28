@@ -48,14 +48,14 @@ void LogSystem::CommunicateLog(MsgPara* msgpara, const char* fmt, va_list ap) {
     return;
   }
 
-  auto pal = msgpara->pal;
+  auto pal = msgpara->getPal();
 
   if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
                         pal->getName().c_str(), pal->getUser().c_str(),
                         pal->getHost().c_str());
   else if (msgpara->stype == MessageSourceType::SELF) {
-    if (msgpara->pal)
+    if (msgpara->getPal())
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
                           pal->getName().c_str(), pal->getUser().c_str(),
                           pal->getHost().c_str());
