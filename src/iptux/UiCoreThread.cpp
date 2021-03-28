@@ -37,9 +37,8 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
+UiCoreThread::UiCoreThread(Application* , shared_ptr<UiProgramData> data)
     : CoreThread(data),
-      app(app),
       programData(data),
       groupInfos(NULL),
       sgmlist(NULL),
@@ -58,24 +57,6 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
  */
 UiCoreThread::~UiCoreThread() {
   delete logSystem;
-}
-
-/**
- * 插入消息(UI线程安全).
- * @param para 消息参数封装包
- * @note 消息数据必须使用utf8编码
- * @note (para->pal)不可为null
- * @note
- * 请不要关心函数内部实现，你只需要按照要求封装消息数据，然后扔给本函数处理就可以了，
- * 它会想办法将消息按照你所期望的格式插入到你所期望的TextBuffer，否则请发送Bug报告
- */
-void UiCoreThread::InsertMessage(const MsgPara& para) {
-  MsgPara para2 = para;
-  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
-}
-
-void UiCoreThread::InsertMessage(MsgPara&& para) {
-  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
 }
 
 /**
@@ -720,10 +701,6 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
   delete file;
 }
 
-void UiCoreThread::start() {
-  CoreThread::start();
-}
-
 shared_ptr<UiProgramData> UiCoreThread::getUiProgramData() {
   return programData;
 }
@@ -742,7 +719,7 @@ void UiCoreThread::SystemLog(const char *fmt, ...) const {
   va_end(args);
 }
 
-void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount) {
+void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int  , int  ) {
   signalGroupInfoUpdated.emit(grpinf);
 }
 
