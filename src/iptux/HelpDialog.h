@@ -23,19 +23,17 @@ class HelpDialog {
 
   static void AboutEntry(GtkWindow* parent, bool run);
 
-  static void AboutEntry(GtkWindow* parent) {
-    return AboutEntry(parent, true);
-  }
+  static void AboutEntry(GtkWindow* parent) { return AboutEntry(parent, true); }
 
  private:
-  GtkWidget *CreateAboutDialog(GtkAboutDialog* dlg, GtkWindow* parent);
-  void RunHelpDialog(GtkWidget **dialog);
+  GtkWidget* CreateAboutDialog(GtkAboutDialog* dlg, GtkWindow* parent);
+  void RunHelpDialog(GtkWidget** dialog);
 
-  static GtkWidget *about;
-  static GtkWidget *more;
+  static GtkWidget* about;
+  static GtkWidget* more;
   //回调处理部分
  private:
-  static void DialogDestroy(GtkWidget **dialog);
+  static void DialogDestroy(GtkWidget** dialog);
 };
 
 }  // namespace iptux

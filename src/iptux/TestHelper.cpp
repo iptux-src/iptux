@@ -10,4 +10,4 @@ GtkBuilder* newTestGtkBuilder() {
   return builder;
 }
 
-}
+}  // namespace iptux

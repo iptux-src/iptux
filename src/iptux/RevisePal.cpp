@@ -14,16 +14,16 @@
 
 #include <cinttypes>
 #include <dirent.h>
-#include <unistd.h>
 #include <glib/gi18n.h>
 #include <glog/logging.h>
+#include <unistd.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
-#include "iptux/callback.h"
-#include "iptux/global.h"
 #include "iptux/MainWindow.h"
 #include "iptux/UiCoreThread.h"
+#include "iptux/callback.h"
+#include "iptux/global.h"
 
 namespace iptux {
 
@@ -31,22 +31,25 @@ namespace iptux {
  * 类构造函数.
  * @param pl
  */
-RevisePal::RevisePal(PalInfo *pl) : widset(NULL), mdlset(NULL), pal(CHECK_NOTNULL(pl)) {
+RevisePal::RevisePal(PalInfo* pl)
+    : widset(NULL), mdlset(NULL), pal(CHECK_NOTNULL(pl)) {
   InitSublayer();
 }
 
 /**
  * 类析构函数.
  */
-RevisePal::~RevisePal() { ClearSublayer(); }
+RevisePal::~RevisePal() {
+  ClearSublayer();
+}
 
 /**
  * 修正好友数据入口.
  * @param pal class PalInfo
  */
-void RevisePal::ReviseEntryDo(PalInfo *pal, bool run) {
+void RevisePal::ReviseEntryDo(PalInfo* pal, bool run) {
   RevisePal rpal(pal);
-  GtkWidget *dialog;
+  GtkWidget* dialog;
 
   /* 创建对话框 */
   dialog = rpal.CreateMainDialog();
@@ -56,7 +59,7 @@ void RevisePal::ReviseEntryDo(PalInfo *pal, bool run) {
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
-  if(run) {
+  if (run) {
     switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
       case GTK_RESPONSE_OK:
         rpal.ApplyReviseData();
@@ -72,7 +75,7 @@ void RevisePal::ReviseEntryDo(PalInfo *pal, bool run) {
  * 初始化底层数据.
  */
 void RevisePal::InitSublayer() {
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
@@ -95,15 +98,13 @@ void RevisePal::ClearSublayer() {
  * 创建主对话框窗体.
  * @return 对话框
  */
-GtkWidget *RevisePal::CreateMainDialog() {
-  GtkWidget *dialog;
+GtkWidget* RevisePal::CreateMainDialog() {
+  GtkWidget* dialog;
 
   dialog = gtk_dialog_new_with_buttons(
       _("Change Pal's Information"), GTK_WINDOW(g_mwin->getWindow()),
-      GTK_DIALOG_MODAL,
-      _("_OK"), GTK_RESPONSE_OK,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+      GTK_DIALOG_MODAL, _("_OK"), GTK_RESPONSE_OK, _("_Cancel"),
+      GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -117,10 +118,10 @@ GtkWidget *RevisePal::CreateMainDialog() {
  * 创建所有区域窗体.
  * @return 主窗体
  */
-GtkWidget *RevisePal::CreateAllArea() {
+GtkWidget* RevisePal::CreateAllArea() {
   GtkWidget *box, *hbox;
   GtkWidget *label, *button, *widget;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
@@ -188,8 +189,8 @@ GtkWidget *RevisePal::CreateAllArea() {
  * 给界面预设数据.
  */
 void RevisePal::SetAllValue() {
-  GtkWidget *widget;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GtkTreeModel* model;
   gint active;
 
   /* 预置昵称 */
@@ -204,7 +205,7 @@ void RevisePal::SetAllValue() {
   /* 预置头像 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
-  if(pal->iconfile) {
+  if (pal->iconfile) {
     active = IconfileGetItemPos(model, pal->iconfile);
     gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
   }
@@ -217,13 +218,13 @@ void RevisePal::SetAllValue() {
  * 应用修正后的数据.
  */
 void RevisePal::ApplyReviseData() {
-  GtkWidget *widget;
-  GdkPixbuf *pixbuf;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GdkPixbuf* pixbuf;
+  GtkTreeModel* model;
   GtkTreeIter iter;
   char path[MAX_PATHLEN];
   gchar *text, *file;
-  const gchar *consttext;
+  const gchar* consttext;
   gint active;
 
   /* 获取昵称 */
@@ -294,8 +295,8 @@ void RevisePal::ApplyReviseData() {
  * 头像;文件名(带后缀) \n
  * @return icon-model
  */
-GtkTreeModel *RevisePal::CreateIconModel() {
-  GtkListStore *model;
+GtkTreeModel* RevisePal::CreateIconModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
 
@@ -306,13 +307,13 @@ GtkTreeModel *RevisePal::CreateIconModel() {
  * 为头像树(icon-tree)填充底层数据.
  * @param model icon-model
  */
-void RevisePal::FillIconModel(GtkTreeModel *model) {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
+void RevisePal::FillIconModel(GtkTreeModel* model) {
+  GtkIconTheme* theme;
+  GdkPixbuf* pixbuf;
   GtkTreeIter iter;
-  struct dirent *dirt;
-  DIR *dir;
-  char *file;
+  struct dirent* dirt;
+  DIR* dir;
+  char* file;
 
   theme = gtk_icon_theme_get_default();
   if ((dir = opendir(__PIXMAPS_PATH "/icon"))) {
@@ -338,9 +339,9 @@ void RevisePal::FillIconModel(GtkTreeModel *model) {
  * @param model icon-model
  * @return 头像树
  */
-GtkWidget *RevisePal::CreateIconTree(GtkTreeModel *model) {
-  GtkWidget *combo;
-  GtkCellRenderer *cell;
+GtkWidget* RevisePal::CreateIconTree(GtkTreeModel* model) {
+  GtkWidget* combo;
+  GtkCellRenderer* cell;
 
   combo = gtk_combo_box_new_with_model(model);
   gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(combo), 5);
@@ -358,12 +359,12 @@ GtkWidget *RevisePal::CreateIconTree(GtkTreeModel *model) {
  * @param pathname 文件路径
  * @return 位置
  */
-gint RevisePal::IconfileGetItemPos(GtkTreeModel *model, const char *pathname) {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
+gint RevisePal::IconfileGetItemPos(GtkTreeModel* model, const char* pathname) {
+  GtkIconTheme* theme;
+  GdkPixbuf* pixbuf;
   GtkTreeIter iter;
-  const char *ptr;
-  gchar *file;
+  const char* ptr;
+  gchar* file;
   gint result, pos;
 
   /* 让ptr指向文件名 */
@@ -376,7 +377,8 @@ gint RevisePal::IconfileGetItemPos(GtkTreeModel *model, const char *pathname) {
       gtk_tree_model_get(model, &iter, 1, &file, -1);
       result = strcmp(ptr, file);
       g_free(file);
-      if (result == 0) return pos;
+      if (result == 0)
+        return pos;
       pos++;
     } while (gtk_tree_model_iter_next(model, &iter));
   }
@@ -405,10 +407,10 @@ gint RevisePal::IconfileGetItemPos(GtkTreeModel *model, const char *pathname) {
  * @param button button
  * @param widset widget set
  */
-void RevisePal::AddNewIcon(GtkWidget *button, GData **widset) {
+void RevisePal::AddNewIcon(GtkWidget* button, GData** widset) {
   GtkWidget *parent, *combo;
-  GtkTreeModel *model;
-  gchar *filename;
+  GtkTreeModel* model;
+  gchar* filename;
   gint active;
 
   parent = GTK_WIDGET(g_datalist_get_data(widset, "dialog-widget"));

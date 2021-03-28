@@ -14,10 +14,10 @@
 
 #include <string>
 
-#include "iptux-core/IptuxConfig.h"
-#include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/IptuxConfig.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/internal/ipmsg.h"
 
 namespace iptux {
 
@@ -27,22 +27,22 @@ class UdpData {
   ~UdpData();
 
   static std::unique_ptr<UdpData> UdpDataEntry(CoreThread& coreThread,
-                           in_addr ipv4,
-                           int port,
-                           const char buf[],
-                           size_t size);
-  static std::unique_ptr<UdpData> UdpDataEntry(CoreThread& coreThread,
-                           in_addr ipv4,
-                           int port,
-                           const char buf[],
-                           size_t size,
-                           bool run /** if run is false, don't do DispatchUdpData */
-                           );
+                                               in_addr ipv4,
+                                               int port,
+                                               const char buf[],
+                                               size_t size);
+  static std::unique_ptr<UdpData> UdpDataEntry(
+      CoreThread& coreThread,
+      in_addr ipv4,
+      int port,
+      const char buf[],
+      size_t size,
+      bool run /** if run is false, don't do DispatchUdpData */
+  );
 
- // for test
+  // for test
  public:
   std::shared_ptr<PalInfo> CreatePalInfo();
-
 
  private:
   void DispatchUdpData();
@@ -59,24 +59,24 @@ class UdpData {
   void SomeoneSendSign();
   void SomeoneBcstmsg();
 
-  void UpdatePalInfo(PalInfo *pal);
+  void UpdatePalInfo(PalInfo* pal);
 
-  void InsertMessage(PPalInfo pal, GroupBelongType btype, const char *msg);
-  void ConvertEncode(const std::string &enc);
-  void ConvertEncode(const char *enc);
+  void InsertMessage(PPalInfo pal, GroupBelongType btype, const char* msg);
+  void ConvertEncode(const std::string& enc);
+  void ConvertEncode(const char* enc);
   std::string GetPalGroup();
-  char *GetPalIcon();
-  char *GetPalEncode();
-  char *RecvPalIcon();
+  char* GetPalIcon();
+  char* GetPalEncode();
+  char* RecvPalIcon();
   PPalInfo AssertPalOnline();
   void RecvPalFile();
 
  private:
   CoreThread& coreThread;
-  in_addr ipv4;        //数据来自
+  in_addr ipv4;          //数据来自
   size_t size;           //缓冲区数据有效长度
   char buf[MAX_UDPLEN];  //数据缓冲区
-  char *encode;          //原数据编码(NULL意味着utf8)
+  char* encode;          //原数据编码(NULL意味着utf8)
 
  private:
   static void ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal);

@@ -13,9 +13,9 @@
 #include "UiCoreThread.h"
 
 #include <cinttypes>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <glib/gi18n.h>
 #include <glog/logging.h>
@@ -37,7 +37,7 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(Application* , shared_ptr<UiProgramData> data)
+UiCoreThread::UiCoreThread(Application*, shared_ptr<UiProgramData> data)
     : CoreThread(data),
       programData(data),
       groupInfos(NULL),
@@ -64,11 +64,11 @@ UiCoreThread::~UiCoreThread() {
  * @param grpinf 群组信息
  * @param para 消息参数
  */
-void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
+void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para) {
   GtkTextIter iter;
-  const gchar *data;
+  const gchar* data;
 
-  for(size_t i = 0; i < para->dtlist.size(); ++i) {
+  for (size_t i = 0; i < para->dtlist.size(); ++i) {
     ChipData* chipData = &para->dtlist[i];
     data = chipData->data.c_str();
     switch (chipData->type) {
@@ -98,17 +98,17 @@ void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para) {
 void UiCoreThread::ClearAllPalFromList() {
   CoreThread::ClearAllPalFromList();
 
-  SessionAbstract *session;
-  GroupInfo *grpinf;
-  GSList *tlist;
+  SessionAbstract* session;
+  GroupInfo* grpinf;
+  GSList* tlist;
 
   /* 清空常规模式下所有群组的成员 */
   tlist = groupInfos;
   while (tlist) {
-    grpinf = (GroupInfo *)tlist->data;
+    grpinf = (GroupInfo*)tlist->data;
     if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -116,10 +116,10 @@ void UiCoreThread::ClearAllPalFromList() {
   /* 清空网段模式下所有群组的成员 */
   tlist = sgmlist;
   while (tlist) {
-    grpinf = (GroupInfo *)tlist->data;
+    grpinf = (GroupInfo*)tlist->data;
     if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -127,10 +127,10 @@ void UiCoreThread::ClearAllPalFromList() {
   /* 清空分组模式下所有群组的成员 */
   tlist = grplist;
   while (tlist) {
-    grpinf = (GroupInfo *)tlist->data;
+    grpinf = (GroupInfo*)tlist->data;
     if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -138,10 +138,10 @@ void UiCoreThread::ClearAllPalFromList() {
   /* 清空广播模式下所有群组的成员 */
   tlist = brdlist;
   while (tlist) {
-    grpinf = (GroupInfo *)tlist->data;
+    grpinf = (GroupInfo*)tlist->data;
     if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -158,10 +158,11 @@ void UiCoreThread::DelPalFromList(PalKey palKey) {
   CoreThread::DelPalFromList(palKey);
 
   PPalInfo pal;
-  GroupInfo *grpinf;
+  GroupInfo* grpinf;
 
   /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPal(palKey))) return;
+  if (!(pal = GetPal(palKey)))
+    return;
 
   /* 从群组中移除好友 */
   if ((grpinf = GetPalRegularItem(pal.get()))) {
@@ -190,8 +191,8 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   CoreThread::UpdatePalToList(palKey);
 
   PPalInfo ppal;
-  GroupInfo *grpinf;
-  SessionAbstract *session;
+  GroupInfo* grpinf;
+  SessionAbstract* session;
 
   /* 如果好友链表中不存在此好友，则视为程序设计出错 */
   if (!(ppal = GetPal(palKey))) {
@@ -206,12 +207,13 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
     if (!grpinf->hasPal(pal)) {
       AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->UpdatePalData(pal);
     }
   } else {
-    if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(ppal);
+    if (!(grpinf = GetPalRegularItem(pal)))
+      grpinf = AttachPalRegularItem(ppal);
     AttachPalToGroupInfoItem(grpinf, ppal);
   }
   /*/* 更新网段模式下的群组 */
@@ -219,27 +221,30 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
     if (!grpinf->hasPal(pal)) {
       AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->UpdatePalData(pal);
     }
   } else {
-    if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(ppal);
+    if (!(grpinf = GetPalSegmentItem(pal)))
+      grpinf = AttachPalSegmentItem(ppal);
     AttachPalToGroupInfoItem(grpinf, ppal);
   }
   /*/* 更新分组模式下的群组 */
   if ((grpinf = GetPalPrevGroupItem(pal))) {
     if (strcmp(grpinf->name.c_str(), pal->getGroup().c_str()) != 0) {
       DelPalFromGroupInfoItem(grpinf, pal);
-      if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(ppal);
+      if (!(grpinf = GetPalGroupItem(pal)))
+        grpinf = AttachPalGroupItem(ppal);
       AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->UpdatePalData(pal);
     }
   } else {
-    if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(ppal);
+    if (!(grpinf = GetPalGroupItem(pal)))
+      grpinf = AttachPalGroupItem(ppal);
     AttachPalToGroupInfoItem(grpinf, ppal);
   }
   /*/* 更新广播模式下的群组 */
@@ -247,8 +252,8 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
     if (!grpinf->hasPal(pal)) {
       AttachPalToGroupInfoItem(grpinf, ppal);
     } else if (grpinf->dialog) {
-      session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                     "session-class");
+      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                    "session-class");
       session->UpdatePalData(pal);
     }
   } else {
@@ -266,15 +271,18 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
  */
 void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
   CoreThread::AttachPalToList(pal2);
-  GroupInfo *grpinf;
+  GroupInfo* grpinf;
 
   auto pal = pal2.get();
 
   /* 将好友加入到相应的群组 */
-  if (!(grpinf = GetPalRegularItem(pal))) grpinf = AttachPalRegularItem(pal2);
-  if (!(grpinf = GetPalSegmentItem(pal))) grpinf = AttachPalSegmentItem(pal2);
+  if (!(grpinf = GetPalRegularItem(pal)))
+    grpinf = AttachPalRegularItem(pal2);
+  if (!(grpinf = GetPalSegmentItem(pal)))
+    grpinf = AttachPalSegmentItem(pal2);
   AttachPalToGroupInfoItem(grpinf, pal2);
-  if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(pal2);
+  if (!(grpinf = GetPalGroupItem(pal)))
+    grpinf = AttachPalGroupItem(pal2);
   AttachPalToGroupInfoItem(grpinf, pal2);
   if (!(grpinf = GetPalBroadcastItem(pal)))
     grpinf = AttachPalBroadcastItem(pal2);
@@ -286,16 +294,17 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo *UiCoreThread::GetPalRegularItem(PalInfo *pal) {
-  GSList *tlist;
+GroupInfo* UiCoreThread::GetPalRegularItem(PalInfo* pal) {
+  GSList* tlist;
 
   tlist = groupInfos;
   while (tlist) {
-    if (((GroupInfo *)tlist->data)->grpid == inAddrToUint32(pal->ipv4)) break;
+    if (((GroupInfo*)tlist->data)->grpid == inAddrToUint32(pal->ipv4))
+      break;
     tlist = g_slist_next(tlist);
   }
 
-  return (GroupInfo *)(tlist ? tlist->data : NULL);
+  return (GroupInfo*)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -303,8 +312,8 @@ GroupInfo *UiCoreThread::GetPalRegularItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo *UiCoreThread::GetPalSegmentItem(PalInfo *pal) {
-  GSList *tlist;
+GroupInfo* UiCoreThread::GetPalSegmentItem(PalInfo* pal) {
+  GSList* tlist;
   GQuark grpid;
 
   /* 获取局域网网段ID */
@@ -313,11 +322,12 @@ GroupInfo *UiCoreThread::GetPalSegmentItem(PalInfo *pal) {
 
   tlist = sgmlist;
   while (tlist) {
-    if (((GroupInfo *)tlist->data)->grpid == grpid) break;
+    if (((GroupInfo*)tlist->data)->grpid == grpid)
+      break;
     tlist = g_slist_next(tlist);
   }
 
-  return (GroupInfo *)(tlist ? tlist->data : NULL);
+  return (GroupInfo*)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -325,8 +335,8 @@ GroupInfo *UiCoreThread::GetPalSegmentItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo *UiCoreThread::GetPalGroupItem(PalInfo *pal) {
-  GSList *tlist;
+GroupInfo* UiCoreThread::GetPalGroupItem(PalInfo* pal) {
+  GSList* tlist;
   GQuark grpid;
 
   /* 获取组ID */
@@ -336,11 +346,12 @@ GroupInfo *UiCoreThread::GetPalGroupItem(PalInfo *pal) {
 
   tlist = grplist;
   while (tlist) {
-    if (((GroupInfo *)tlist->data)->grpid == grpid) break;
+    if (((GroupInfo*)tlist->data)->grpid == grpid)
+      break;
     tlist = g_slist_next(tlist);
   }
 
-  return (GroupInfo *)(tlist ? tlist->data : NULL);
+  return (GroupInfo*)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -348,22 +359,24 @@ GroupInfo *UiCoreThread::GetPalGroupItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo *UiCoreThread::GetPalBroadcastItem(PalInfo *) {
-  return (GroupInfo *)(brdlist ? brdlist->data : NULL);
+GroupInfo* UiCoreThread::GetPalBroadcastItem(PalInfo*) {
+  return (GroupInfo*)(brdlist ? brdlist->data : NULL);
 }
 
 /**
  * 获取消息队列项总数.
  * @return 项数
  */
-guint UiCoreThread::GetMsglineItems() { return g_queue_get_length(&msgline); }
+guint UiCoreThread::GetMsglineItems() {
+  return g_queue_get_length(&msgline);
+}
 
 /**
  * 查看消息队列首项.
  * @return 项
  */
-GroupInfo *UiCoreThread::GetMsglineHeadItem() {
-  return (GroupInfo *)g_queue_peek_head(&msgline);
+GroupInfo* UiCoreThread::GetMsglineHeadItem() {
+  return (GroupInfo*)g_queue_peek_head(&msgline);
 }
 
 /**
@@ -371,7 +384,7 @@ GroupInfo *UiCoreThread::GetMsglineHeadItem() {
  * @param grpinf 项
  * @return 是否包含
  */
-bool UiCoreThread::MsglineContainItem(GroupInfo *grpinf) {
+bool UiCoreThread::MsglineContainItem(GroupInfo* grpinf) {
   return g_queue_find(&msgline, grpinf);
 }
 
@@ -379,7 +392,7 @@ bool UiCoreThread::MsglineContainItem(GroupInfo *grpinf) {
  * 压入项进消息队列.
  * @param grpinf 项
  */
-void UiCoreThread::PushItemToMsgline(GroupInfo *grpinf) {
+void UiCoreThread::PushItemToMsgline(GroupInfo* grpinf) {
   g_queue_push_tail(&msgline, grpinf);
   grpinf->addMsgCount(1);
 }
@@ -388,40 +401,39 @@ void UiCoreThread::PushItemToMsgline(GroupInfo *grpinf) {
  * 弹出项从消息队列.
  * @param grpinf 项
  */
-void UiCoreThread::PopItemFromMsgline(GroupInfo *grpinf) {
+void UiCoreThread::PopItemFromMsgline(GroupInfo* grpinf) {
   g_queue_remove(&msgline, grpinf);
 }
 
 /**
  * 初始化底层数据.
  */
-void UiCoreThread::InitSublayer() {
-}
+void UiCoreThread::InitSublayer() {}
 
 /**
  * 清空底层数据.
  */
 void UiCoreThread::ClearSublayer() {
-  GSList *tlist;
+  GSList* tlist;
 
   CoreThread::ClearSublayer();
 
   for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *) tlist->data;
+    delete (GroupInfo*)tlist->data;
   g_slist_free(groupInfos);
   for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *) tlist->data;
+    delete (GroupInfo*)tlist->data;
   g_slist_free(sgmlist);
   for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *) tlist->data;
+    delete (GroupInfo*)tlist->data;
   g_slist_free(grplist);
   for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo *) tlist->data;
+    delete (GroupInfo*)tlist->data;
   g_slist_free(brdlist);
   g_queue_clear(&msgline);
 
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
-    delete (FileInfo *)tlist->data;
+    delete (FileInfo*)tlist->data;
   g_slist_free(ecsList);
 }
 
@@ -430,9 +442,9 @@ void UiCoreThread::ClearSublayer() {
  * @param buffer text-buffer
  * @param para 消息参数
  */
-void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
+void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para) {
   GtkTextIter iter;
-  gchar *header;
+  gchar* header;
 
   auto g_progdt = getProgramData();
 
@@ -440,22 +452,22 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
    * @note (para->pal)可能为null.
    */
   switch (para->stype) {
-  case MessageSourceType::PAL:
-      header = getformattime(FALSE, "%s",
-                             para->pal ? para->pal->getName().c_str() : _("unknown"));
+    case MessageSourceType::PAL:
+      header = getformattime(
+          FALSE, "%s", para->pal ? para->pal->getName().c_str() : _("unknown"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "pal-color", NULL);
       g_free(header);
       break;
-  case MessageSourceType::SELF:
+    case MessageSourceType::SELF:
       header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "me-color", NULL);
       g_free(header);
       break;
-  case MessageSourceType::ERROR:
+    case MessageSourceType::ERROR:
       header = getformattime(FALSE, "%s", _("<ERROR>"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
@@ -472,12 +484,12 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para) {
  * @param buffer text-buffer
  * @param string 字符串
  */
-void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *s) {
+void UiCoreThread::InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* s) {
   static uint32_t count = 0;
   GtkTextIter iter;
-  GtkTextTag *tag;
-  GMatchInfo *matchinfo;
-  gchar *substring;
+  GtkTextTag* tag;
+  GMatchInfo* matchinfo;
+  gchar* substring;
   char name[9];  // 8 +1  =9
   gint startp, endp;
   gint urlendp;
@@ -514,9 +526,10 @@ void UiCoreThread::InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *s) {
  * @param buffer text-buffer
  * @param path 图片路径
  */
-void UiCoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path) {
+void UiCoreThread::InsertPixbufToBuffer(GtkTextBuffer* buffer,
+                                        const gchar* path) {
   GtkTextIter start, end;
-  GdkPixbuf *pixbuf;
+  GdkPixbuf* pixbuf;
 
   if ((pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
     gtk_text_buffer_get_start_iter(buffer, &start);
@@ -538,16 +551,17 @@ void UiCoreThread::InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo *UiCoreThread::GetPalPrevGroupItem(PalInfo *pal) {
-  GSList *tlist;
+GroupInfo* UiCoreThread::GetPalPrevGroupItem(PalInfo* pal) {
+  GSList* tlist;
 
   tlist = grplist;
   while (tlist) {
-    if (((GroupInfo *)tlist->data)->hasPal(pal)) break;
+    if (((GroupInfo*)tlist->data)->hasPal(pal))
+      break;
     tlist = g_slist_next(tlist);
   }
 
-  return (GroupInfo *)(tlist ? tlist->data : NULL);
+  return (GroupInfo*)(tlist ? tlist->data : NULL);
 }
 
 /**
@@ -555,8 +569,8 @@ GroupInfo *UiCoreThread::GetPalPrevGroupItem(PalInfo *pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
-  GroupInfo *grpinf;
+GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
+  GroupInfo* grpinf;
 
   grpinf = new GroupInfo(pal);
   grpinf->grpid = inAddrToUint32(pal->ipv4);
@@ -564,8 +578,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   grpinf->signalUnreadMsgCountUpdated.connect(
-    sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate)
-  );
+      sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate));
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
 }
@@ -575,12 +588,12 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
-  GroupInfo *grpinf;
+GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
+  GroupInfo* grpinf;
 
   /* 获取局域网网段名称 */
   auto name = ipv4_get_lan_name(pal->ipv4);
-  if(name.empty()) {
+  if (name.empty()) {
     name = _("Others");
   }
 
@@ -599,10 +612,10 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
-  GroupInfo *grpinf;
+GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
+  GroupInfo* grpinf;
   auto name = pal->getGroup();
-  if(name.empty()) {
+  if (name.empty()) {
     name = _("Others");
   }
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>());
@@ -619,9 +632,9 @@ GroupInfo *UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
  * @param pal class PalInfo
  * @return 新加入的群组
  */
-GroupInfo *UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
-  GroupInfo *grpinf;
-  char *name;
+GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
+  GroupInfo* grpinf;
+  char* name;
 
   name = g_strdup(_("Broadcast"));
 
@@ -640,13 +653,13 @@ GroupInfo *UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
  * @param grpinf class GroupInfo
  * @param pal class PalInfo
  */
-void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
-  SessionAbstract *session;
+void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal) {
+  SessionAbstract* session;
 
   grpinf->delPal(pal);
   if (grpinf->dialog) {
-    session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                  "session-class");
     session->DelPalData(pal);
   }
 }
@@ -656,12 +669,12 @@ void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal) {
  * @param grpinf class GroupInfo
  * @param pal class PalInfo
  */
-void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal) {
-  SessionAbstract *session;
+void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo* grpinf, PPalInfo pal) {
+  SessionAbstract* session;
   grpinf->addPal(pal);
   if (grpinf->dialog) {
-    session = (SessionAbstract *)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                   "session-class");
+    session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+                                                  "session-class");
     session->InsertPalData(pal.get());
   }
 }
@@ -671,11 +684,11 @@ void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal) {
  * @param pal class PalInfo
  * @return palecslist 该好友发过来待接收的文件列表
  */
-GSList *UiCoreThread::GetPalEnclosure(PalInfo *pal) {
+GSList* UiCoreThread::GetPalEnclosure(PalInfo* pal) {
   GSList *tlist, *palecslist;
   palecslist = NULL;
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist)) {
-    if (((FileInfo *)tlist->data)->fileown->GetKey() == pal->GetKey()) {
+    if (((FileInfo*)tlist->data)->fileown->GetKey() == pal->GetKey()) {
       palecslist = g_slist_append(palecslist, tlist->data);
     }
   }
@@ -685,10 +698,10 @@ GSList *UiCoreThread::GetPalEnclosure(PalInfo *pal) {
  * 压入项进接收文件列表(非UI线程安全).
  * @param file 文件类指针
  */
-void UiCoreThread::PushItemToEnclosureList(FileInfo *file) {
+void UiCoreThread::PushItemToEnclosureList(FileInfo* file) {
   ecsList = g_slist_append(ecsList, file);
   auto groupInfo = this->GetPalRegularItem(file->fileown.get());
-  if(groupInfo) {
+  if (groupInfo) {
     groupInfo->newFileReceived();
   }
 }
@@ -696,7 +709,7 @@ void UiCoreThread::PushItemToEnclosureList(FileInfo *file) {
  * 从接收文件列表删除项(非UI线程安全).
  * @param file 文件类指针
  */
-void UiCoreThread::PopItemFromEnclosureList(FileInfo *file) {
+void UiCoreThread::PopItemFromEnclosureList(FileInfo* file) {
   ecsList = g_slist_remove(ecsList, file);
   delete file;
 }
@@ -705,23 +718,24 @@ shared_ptr<UiProgramData> UiCoreThread::getUiProgramData() {
   return programData;
 }
 
-void UiCoreThread::CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const {
+void UiCoreThread::CommunicateLog(MsgPara* msgpara,
+                                  const char* fmt,
+                                  ...) const {
   va_list args;
-  va_start (args, fmt);
+  va_start(args, fmt);
   logSystem->CommunicateLog(msgpara, fmt, args);
   va_end(args);
 }
 
-void UiCoreThread::SystemLog(const char *fmt, ...) const {
+void UiCoreThread::SystemLog(const char* fmt, ...) const {
   va_list args;
-  va_start (args, fmt);
+  va_start(args, fmt);
   logSystem->SystemLog(fmt, args);
   va_end(args);
 }
 
-void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int  , int  ) {
+void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int, int) {
   signalGroupInfoUpdated.emit(grpinf);
 }
-
 
 }  // namespace iptux

@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "iptux/DataSettings.h"
-#include "iptux/Application.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/Application.h"
+#include "iptux/DataSettings.h"
 
 using namespace std;
 using namespace iptux;

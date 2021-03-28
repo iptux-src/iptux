@@ -13,8 +13,8 @@
 #include "LogSystem.h"
 
 #include <fcntl.h>
-#include <unistd.h>
 #include <glib/gi18n.h>
+#include <unistd.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
@@ -27,9 +27,7 @@ using namespace std;
 namespace iptux {
 
 LogSystem::LogSystem(shared_ptr<const ProgramData> programData)
-    : programData(programData),
-      fdc(-1),
-      fds(-1) {
+    : programData(programData), fdc(-1), fds(-1) {
   InitSublayer();
 }
 
@@ -43,7 +41,7 @@ void LogSystem::InitSublayer() {
   fds = open(getSystemLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 }
 
-void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
+void LogSystem::CommunicateLog(MsgPara* msgpara, const char* fmt, va_list ap) {
   gchar *log, *msg, *ptr;
 
   if (!programData->IsSaveChatHistory()) {
@@ -54,11 +52,13 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
 
   if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
-                        pal->getName().c_str(), pal->getUser().c_str(), pal->getHost().c_str());
+                        pal->getName().c_str(), pal->getUser().c_str(),
+                        pal->getHost().c_str());
   else if (msgpara->stype == MessageSourceType::SELF) {
     if (msgpara->pal)
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
-                          pal->getName().c_str(), pal->getUser().c_str(), pal->getHost().c_str());
+                          pal->getName().c_str(), pal->getUser().c_str(),
+                          pal->getHost().c_str());
     else
       ptr = getformattime(TRUE, _("Send-Broadcast"));
   } else
@@ -73,7 +73,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
   g_free(msg);
 }
 
-void LogSystem::SystemLog(const char *fmt, va_list ap) {
+void LogSystem::SystemLog(const char* fmt, va_list ap) {
   gchar *log, *msg, *ptr;
 
   if (!programData->IsSaveChatHistory()) {
@@ -100,6 +100,5 @@ string LogSystem::getSystemLogPath() const {
   auto env = g_get_user_config_dir();
   return stringFormat("%s" LOG_PATH "/system.log", env);
 }
-
 
 }  // namespace iptux

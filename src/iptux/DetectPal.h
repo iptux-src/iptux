@@ -22,6 +22,7 @@ class DetectPal {
  public:
   DetectPal(Application* app, GtkBuilder* builder, GtkWindow* parent);
   void run();
+
  private:
   Application* app;
   GtkDialog* detectPalDialog;

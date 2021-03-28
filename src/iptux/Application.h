@@ -4,9 +4,9 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/IptuxConfig.h"
-#include "iptux/UiProgramData.h"
 #include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
+#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -20,7 +20,7 @@ class Application {
 
   int run(int argc, char** argv);
 
-  GtkApplication* getApp() {return app;}
+  GtkApplication* getApp() { return app; }
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
@@ -29,7 +29,7 @@ class Application {
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   void refreshTransTasks();
 
-private:
+ private:
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<UiProgramData> data;
   std::shared_ptr<UiCoreThread> cthrd;
@@ -39,26 +39,26 @@ private:
   GtkBuilder* menuBuilder;
   ShareFile* shareFile;
   TransModel* transModel;
-  bool started {false};
+  bool started{false};
 
-public:
+ public:
   // for test
   void startup();
   void activate();
 
-private:
-  static void onAbout (void *, void *, Application& self);
-  static void onActivate (Application& self);
-  static void onPreferences (void *, void *, Application& self);
-  static void onQuit (void *, void *, Application& self);
-  static void onStartup (Application& self);
-  static void onToolsSharedManagement (void *, void *, Application& self);
-  static void onToolsTransmission (void *, void *, Application& self);
-  static void onOpenChatLog (void *, void *, Application& self);
-  static void onOpenSystemLog (void *, void *, Application& self);
-  static void onTransModelClear (void *, void *, Application& self);
+ private:
+  static void onAbout(void*, void*, Application& self);
+  static void onActivate(Application& self);
+  static void onPreferences(void*, void*, Application& self);
+  static void onQuit(void*, void*, Application& self);
+  static void onStartup(Application& self);
+  static void onToolsSharedManagement(void*, void*, Application& self);
+  static void onToolsTransmission(void*, void*, Application& self);
+  static void onOpenChatLog(void*, void*, Application& self);
+  static void onOpenSystemLog(void*, void*, Application& self);
+  static void onTransModelClear(void*, void*, Application& self);
 };
 
-}
+}  // namespace iptux
 
 #endif

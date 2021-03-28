@@ -1,31 +1,31 @@
 #include "config.h"
 #include "iptux-core/CoreThread.h"
 
-#include <thread>
-#include <functional>
-#include <fstream>
-#include <memory>
-#include <future>
 #include <deque>
+#include <fstream>
+#include <functional>
+#include <future>
+#include <memory>
 #include <mutex>
+#include <thread>
 
-#include <poll.h>
-#include <sys/stat.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <glog/logging.h>
+#include <poll.h>
+#include <sys/stat.h>
 
 #include "iptux-core/Exception.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
-#include "iptux-core/internal/support.h"
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpData.h"
 #include "iptux-core/internal/ipmsg.h"
-#include "iptux-utils/utils.h"
+#include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -33,53 +33,65 @@ using namespace std::placeholders;
 namespace iptux {
 
 namespace {
-  /**
+/**
  * 初始化程序iptux的运行环境.
  * cache iptux {pic, photo, icon} \n
  * config iptux {log, photo, icon} \n
  */
 void init_iptux_environment() {
-  const char *env;
+  const char* env;
   char path[MAX_PATHLEN];
 
   env = g_get_user_cache_dir();
-  if (access(env, F_OK) != 0) g_mkdir(env, 0777);
+  if (access(env, F_OK) != 0)
+    g_mkdir(env, 0777);
   snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" PIC_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
 
   env = g_get_user_config_dir();
-  if (access(env, F_OK) != 0) g_mkdir(env, 0777);
+  if (access(env, F_OK) != 0)
+    g_mkdir(env, 0777);
   snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
-  if (access(path, F_OK) != 0) g_mkdir(path, 0777);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0777);
 }
 
-}
+}  // namespace
 
 struct CoreThread::Impl {
-  GSList *blacklist {nullptr};                              //黑名单链表
-  bool debugDontBroadcast {false} ;
+  GSList* blacklist{nullptr};  //黑名单链表
+  bool debugDontBroadcast{false};
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
 
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
-  int lastTransTaskId { 0 };
-  int eventCount { 0 };
-  shared_ptr<const Event> lastEvent { nullptr };
+  int lastTransTaskId{0};
+  int eventCount{0};
+  shared_ptr<const Event> lastEvent{nullptr};
   map<int, shared_ptr<TransAbstract>> transTasks;
   deque<shared_ptr<const Event>> waitingEvents;
   std::mutex waitingEventsMutex;
@@ -91,8 +103,8 @@ struct CoreThread::Impl {
 };
 
 void CoreThread::processEvents() {
-  while(true) {
-    if(!started) {
+  while (true) {
+    if (!started) {
       return;
     }
 
@@ -100,16 +112,16 @@ void CoreThread::processEvents() {
 
     {
       lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
-      if(!pImpl->waitingEvents.empty()) {
+      if (!pImpl->waitingEvents.empty()) {
         event = pImpl->waitingEvents.front();
         pImpl->waitingEvents.pop_front();
       }
     }
 
-    if(!event) {
+    if (!event) {
       this_thread::sleep_for(10ms);
     } else {
-      for(auto& callback: callbacks) {
+      for (auto& callback : callbacks) {
         callback(event);
       }
     }
@@ -122,16 +134,15 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       tcpSock(-1),
       udpSock(-1),
       started(false),
-      pImpl(std::make_unique<Impl>())
-{
+      pImpl(std::make_unique<Impl>()) {
   pthread_mutex_init(&mutex, NULL);
-  if(config->GetBool("debug_dont_broadcast")) {
+  if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
 }
 
 CoreThread::~CoreThread() {
-  if(started) {
+  if (started) {
     stop();
   }
   g_slist_free(pImpl->blacklist);
@@ -141,25 +152,19 @@ CoreThread::~CoreThread() {
  * 程序核心入口，主要任务服务将在此开启.
  */
 void CoreThread::start() {
-  if(started) {
+  if (started) {
     throw "CoreThread already started, can't start twice";
   }
   started = true;
   init_iptux_environment();
   bind_iptux_port();
 
-  pImpl->udpFuture = async([](CoreThread* ct){
-    RecvUdpData(ct);
-  }, this);
-  pImpl->tcpFuture = async([](CoreThread* ct){
-    RecvTcpData(ct);
-  }, this);
-  pImpl->processEventsFuture = async([](CoreThread* ct){
-    ct->processEvents();
-  }, this);
-  pImpl->notifyToAllFuture = async([](CoreThread* ct){
-    SendNotifyToAll(ct);
-  }, this);
+  pImpl->udpFuture = async([](CoreThread* ct) { RecvUdpData(ct); }, this);
+  pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
+  pImpl->processEventsFuture =
+      async([](CoreThread* ct) { ct->processEvents(); }, this);
+  pImpl->notifyToAllFuture =
+      async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
 }
 
 void CoreThread::bind_iptux_port() {
@@ -172,8 +177,8 @@ void CoreThread::bind_iptux_port() {
   socket_enable_broadcast(udpSock);
   if ((tcpSock == -1) || (udpSock == -1)) {
     int ec = errno;
-    const char* errmsg = g_strdup_printf(_("Fatal Error!! Failed to create new socket!\n%s"),
-                                         strerror(ec));
+    const char* errmsg = g_strdup_printf(
+        _("Fatal Error!! Failed to create new socket!\n%s"), strerror(ec));
     LOG_WARN("%s", errmsg);
     throw Exception(SOCKET_CREATE_FAILED, errmsg);
   }
@@ -184,24 +189,26 @@ void CoreThread::bind_iptux_port() {
 
   auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
   addr.sin_addr = inAddrFromString(bind_ip);
-  if (::bind(tcpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+  if (::bind(tcpSock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    auto errmsg = stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
-                                         bind_ip.c_str(), port, strerror(ec));
+    auto errmsg =
+        stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
+                     bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
     throw Exception(TCP_BIND_FAILED, errmsg);
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
 
-  if(::bind(udpSock, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+  if (::bind(udpSock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
     close(udpSock);
-    auto errmsg = stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
-                                         bind_ip.c_str(), port, strerror(ec));
+    auto errmsg =
+        stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
+                     bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
     throw Exception(UDP_BIND_FAILED, errmsg);
   } else {
@@ -213,7 +220,7 @@ void CoreThread::bind_iptux_port() {
  * 监听UDP服务端口.
  * @param pcthrd 核心类
  */
-void CoreThread::RecvUdpData(CoreThread *self) {
+void CoreThread::RecvUdpData(CoreThread* self) {
   struct sockaddr_in addr;
   socklen_t len;
   char buf[MAX_UDPLEN];
@@ -222,19 +229,20 @@ void CoreThread::RecvUdpData(CoreThread *self) {
   while (self->started) {
     struct pollfd pfd = {self->udpSock, POLLIN, 0};
     int ret = poll(&pfd, 1, 10);
-    if(ret == -1) {
+    if (ret == -1) {
       LOG_ERROR("poll udp socket failed: %s", strerror(errno));
       return;
     }
-    if(ret == 0) {
+    if (ret == 0) {
       continue;
     }
     CHECK(ret == 1);
     len = sizeof(addr);
     if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
-                         (struct sockaddr *)&addr, &len)) == -1)
+                         (struct sockaddr*)&addr, &len)) == -1)
       continue;
-    if (size != MAX_UDPLEN) buf[size] = '\0';
+    if (size != MAX_UDPLEN)
+      buf[size] = '\0';
     auto port = ntohs(addr.sin_port);
     UdpData::UdpDataEntry(*self, addr.sin_addr, port, buf, size);
   }
@@ -244,29 +252,32 @@ void CoreThread::RecvUdpData(CoreThread *self) {
  * 监听TCP服务端口.
  * @param pcthrd 核心类
  */
-void CoreThread::RecvTcpData(CoreThread *pcthrd) {
+void CoreThread::RecvTcpData(CoreThread* pcthrd) {
   int subsock;
 
   listen(pcthrd->tcpSock, 5);
   while (pcthrd->started) {
     struct pollfd pfd = {pcthrd->tcpSock, POLLIN, 0};
     int ret = poll(&pfd, 1, 10);
-    if(ret == -1) {
+    if (ret == -1) {
       LOG_ERROR("poll udp socket failed: %s", strerror(errno));
       return;
     }
-    if(ret == 0) {
+    if (ret == 0) {
       continue;
     }
     CHECK(ret == 1);
-    if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1) continue;
-    thread([](CoreThread* coreThread, int subsock){TcpData::TcpDataEntry(coreThread, subsock);}, pcthrd, subsock)
-      .detach();
+    if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1)
+      continue;
+    thread([](CoreThread* coreThread,
+              int subsock) { TcpData::TcpDataEntry(coreThread, subsock); },
+           pcthrd, subsock)
+        .detach();
   }
 }
 
 void CoreThread::stop() {
-  if(!started) {
+  if (!started) {
     throw "CoreThread not started, or already stopped";
   }
   started = false;
@@ -281,7 +292,7 @@ void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
    */
-  for(auto palInfo: pImpl->pallist) {
+  for (auto palInfo : pImpl->pallist) {
     SendBroadcastExit(palInfo);
   }
   shutdown(tcpSock, SHUT_RDWR);
@@ -300,9 +311,9 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
  * 向局域网内所有计算机发送上线信息.
  * @param pcthrd 核心类
  */
-void CoreThread::SendNotifyToAll(CoreThread *pcthrd) {
+void CoreThread::SendNotifyToAll(CoreThread* pcthrd) {
   Command cmd(*pcthrd);
-  if(!pcthrd->pImpl->debugDontBroadcast) {
+  if (!pcthrd->pImpl->debugDontBroadcast) {
     cmd.BroadCast(pcthrd->udpSock);
   }
   cmd.DialUp(pcthrd->udpSock);
@@ -321,17 +332,21 @@ bool CoreThread::IsBlocked(in_addr ipv4) const {
   return programData->IsUsingBlacklist() and BlacklistContainItem(ipv4);
 }
 
-void CoreThread::Lock() const { pthread_mutex_lock(&mutex); }
+void CoreThread::Lock() const {
+  pthread_mutex_lock(&mutex);
+}
 
-void CoreThread::Unlock() const { pthread_mutex_unlock(&mutex); }
+void CoreThread::Unlock() const {
+  pthread_mutex_unlock(&mutex);
+}
 
 /**
  * 获取好友链表.
  * @return 好友链表
  */
-const vector<shared_ptr<PalInfo>>&
-CoreThread::GetPalList() { return pImpl->pallist; }
-
+const vector<shared_ptr<PalInfo>>& CoreThread::GetPalList() {
+  return pImpl->pallist;
+}
 
 /**
  * 从好友链表中移除所有好友数据(非UI线程安全).
@@ -339,14 +354,14 @@ CoreThread::GetPalList() { return pImpl->pallist; }
  */
 void CoreThread::ClearAllPalFromList() {
   /* 清除所有好友的在线标志 */
-  for(auto palInfo: pImpl->pallist) {
+  for (auto palInfo : pImpl->pallist) {
     palInfo->setOnline(false);
   }
 }
 
 shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
-  for(auto palInfo: pImpl->pallist) {
-    if(ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
+  for (auto palInfo : pImpl->pallist) {
+    if (ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
       return palInfo;
     }
   }
@@ -367,7 +382,8 @@ void CoreThread::DelPalFromList(PalKey palKey) {
   PPalInfo pal;
 
   /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPal(palKey))) return;
+  if (!(pal = GetPal(palKey)))
+    return;
   pal->setOnline(false);
 }
 
@@ -400,7 +416,7 @@ void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
   emitNewPalOnline(pal);
 }
 
-void CoreThread::registerCallback(const EventCallback &callback) {
+void CoreThread::registerCallback(const EventCallback& callback) {
   Lock();
   callbacks.push_back(callback);
   Unlock();
@@ -412,11 +428,12 @@ void CoreThread::emitNewPalOnline(PPalInfo palInfo) {
 
 void CoreThread::emitNewPalOnline(const PalKey& palKey) {
   auto palInfo = GetPal(palKey);
-  if(palInfo) {
+  if (palInfo) {
     NewPalOnlineEvent event(palInfo);
     emitEvent(make_shared<NewPalOnlineEvent>(palInfo));
   } else {
-    LOG_ERROR("emitNewPalOnline meet a unknown key: %s", palKey.ToString().c_str());
+    LOG_ERROR("emitNewPalOnline meet a unknown key: %s",
+              palKey.ToString().c_str());
   }
 }
 
@@ -434,7 +451,7 @@ void CoreThread::emitEvent(shared_ptr<const Event> event) {
 void CoreThread::sendFeatureData(PPalInfo pal) {
   Command cmd(*this);
   char path[MAX_PATHLEN];
-  const gchar *env;
+  const gchar* env;
   int sock;
 
   if (!programData->sign.empty()) {
@@ -442,7 +459,7 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
   }
   env = g_get_user_config_dir();
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
-      programData->myicon.c_str());
+           programData->myicon.c_str());
   if (access(path, F_OK) == 0) {
     ifstream ifs(path);
     cmd.SendMyIcon(udpSock, pal, ifs);
@@ -460,11 +477,12 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
 }
 
 void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
-    Command(*this).SendMyIcon(udpSock, pal, iss);
+  Command(*this).SendMyIcon(udpSock, pal, iss);
 }
 
 void CoreThread::AddBlockIp(in_addr ipv4) {
-  pImpl->blacklist = g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
+  pImpl->blacklist =
+      g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
 bool CoreThread::SendMessage(PPalInfo palInfo, const string& message) {
@@ -483,13 +501,14 @@ bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
       /* 图片类型 */
       int sock;
       if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-        LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"), strerror(errno));
+        LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
+                  strerror(errno));
         return false;
       }
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  //关闭网络套接口
       /*/* 删除此图片 */
-      if(chipData.GetDeleteFileAfterSent()) {
+      if (chipData.GetDeleteFileAfterSent()) {
         unlink(ptr);  //此文件已无用处
       }
       return true;
@@ -499,8 +518,8 @@ bool CoreThread::SendMessage(PPalInfo pal, const ChipData& chipData) {
 }
 
 bool CoreThread::SendMsgPara(const MsgPara& para) {
-  for(int i = 0; i < int(para.dtlist.size()); ++i) {
-    if(!SendMessage(para.pal, para.dtlist[i])) {
+  for (int i = 0; i < int(para.dtlist.size()); ++i) {
+    if (!SendMessage(para.pal, para.dtlist[i])) {
       LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
       return false;
     }
@@ -535,7 +554,7 @@ void CoreThread::UpdateMyInfo() {
   Command cmd(*this);
 
   Lock();
-  for(auto pal: pImpl->pallist) {
+  for (auto pal : pImpl->pallist) {
     if (pal->isOnline()) {
       cmd.SendAbsence(udpSock, pal);
     }
@@ -556,11 +575,10 @@ void CoreThread::SendBroadcastExit(PPalInfo pal) {
   cmd.SendExit(udpSock, pal);
 }
 
-int
-CoreThread::GetOnlineCount() const {
+int CoreThread::GetOnlineCount() const {
   int res = 0;
-  for(auto pal: pImpl->pallist) {
-    if(pal->isOnline()) {
+  for (auto pal : pImpl->pallist) {
+    if (pal->isOnline()) {
       res++;
     }
   }
@@ -576,7 +594,7 @@ void CoreThread::SendDetectPacket(in_addr ipv4) {
 }
 
 void CoreThread::emitSomeoneExit(const PalKey& palKey) {
-  if(!GetPal(palKey)) {
+  if (!GetPal(palKey)) {
     return;
   }
   DelPalFromList(palKey.GetIpv4());
@@ -612,21 +630,22 @@ bool CoreThread::DelPrivateFile(uint32_t id) {
 }
 
 PFileInfo CoreThread::GetPrivateFileById(uint32_t id) {
-  if(id < MAX_SHAREDFILE) {
+  if (id < MAX_SHAREDFILE) {
     FileInfo* f = programData->GetShareFileInfo(id);
     return make_shared<FileInfo>(*f);
   }
 
   auto res = pImpl->privateFiles.find(id);
-  if(res == pImpl->privateFiles.end()) {
+  if (res == pImpl->privateFiles.end()) {
     return PFileInfo();
   }
   return res->second;
 }
 
-PFileInfo CoreThread::GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime) {
-  for(auto& i: pImpl->privateFiles) {
-    if(i.second->packetn == packageNum && i.second->filenum == filectime) {
+PFileInfo CoreThread::GetPrivateFileByPacketN(uint32_t packageNum,
+                                              uint32_t filectime) {
+  for (auto& i : pImpl->privateFiles) {
+    if (i.second->packetn == packageNum && i.second->filenum == filectime) {
       return i.second;
     }
   }
@@ -642,7 +661,7 @@ void CoreThread::RegisterTransTask(std::shared_ptr<TransAbstract> task) {
 
 bool CoreThread::TerminateTransTask(int taskId) {
   auto task = pImpl->transTasks.find(taskId);
-  if(task == pImpl->transTasks.end()) {
+  if (task == pImpl->transTasks.end()) {
     return false;
   }
   task->second->TerminateTrans();
@@ -660,10 +679,9 @@ void CoreThread::RecvFileAsync(FileInfo* file) {
   t.detach();
 }
 
-std::unique_ptr<TransFileModel>
-CoreThread::GetTransTaskStat(int taskId) const {
+std::unique_ptr<TransFileModel> CoreThread::GetTransTaskStat(int taskId) const {
   auto task = pImpl->transTasks.find(taskId);
-  if(task == pImpl->transTasks.end()) {
+  if (task == pImpl->transTasks.end()) {
     return {};
   }
   return make_unique<TransFileModel>(task->second->getTransFileModel());
@@ -672,8 +690,8 @@ CoreThread::GetTransTaskStat(int taskId) const {
 void CoreThread::clearFinishedTransTasks() {
   Lock();
   bool changed = false;
-  for(auto it = pImpl->transTasks.begin(); it != pImpl->transTasks.end(); ) {
-    if(it->second->getTransFileModel().isFinished()) {
+  for (auto it = pImpl->transTasks.begin(); it != pImpl->transTasks.end();) {
+    if (it->second->getTransFileModel().isFinished()) {
       it = pImpl->transTasks.erase(it);
       changed = true;
     } else {
@@ -682,34 +700,41 @@ void CoreThread::clearFinishedTransTasks() {
   }
   Unlock();
 
-  if(changed) {
+  if (changed) {
     emitEvent(make_shared<TransTasksChangedEvent>());
   }
 }
 
-bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey, const std::string& password) {
-  auto epasswd = g_base64_encode((const guchar*)(password.c_str()), password.size());
+bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey,
+                                           const std::string& password) {
+  auto epasswd =
+      g_base64_encode((const guchar*)(password.c_str()), password.size());
   Command(*this).SendAskShared(udpSock, palKey, IPTUX_PASSWDOPT, epasswd);
   g_free(epasswd);
   return true;
 }
 
-void CoreThread::SendUnitMessage(const PalKey& palKey, uint32_t opttype, const string& message) {
+void CoreThread::SendUnitMessage(const PalKey& palKey,
+                                 uint32_t opttype,
+                                 const string& message) {
   Command(*this).SendUnitMsg(udpSock, GetPal(palKey), opttype, message.c_str());
 }
 
-void CoreThread::SendGroupMessage(const PalKey& palKey, const std::string& message) {
+void CoreThread::SendGroupMessage(const PalKey& palKey,
+                                  const std::string& message) {
   Command(*this).SendGroupMsg(udpSock, GetPal(palKey), message.c_str());
 }
 
-void CoreThread::BcstFileInfoEntry(const vector<const PalInfo*>& pals, const vector<FileInfo*>& files) {
+void CoreThread::BcstFileInfoEntry(const vector<const PalInfo*>& pals,
+                                   const vector<FileInfo*>& files) {
   SendFile::BcstFileInfoEntry(this, pals, files);
 }
 
 vector<unique_ptr<TransFileModel>> CoreThread::listTransTasks() const {
   vector<unique_ptr<TransFileModel>> res;
   Lock();
-  for(auto it = pImpl->transTasks.begin(); it != pImpl->transTasks.end(); it++) {
+  for (auto it = pImpl->transTasks.begin(); it != pImpl->transTasks.end();
+       it++) {
     res.push_back(make_unique<TransFileModel>(it->second->getTransFileModel()));
   }
   Unlock();
@@ -724,4 +749,4 @@ shared_ptr<const Event> CoreThread::getLastEvent() const {
   return this->pImpl->lastEvent;
 }
 
-}
+}  // namespace iptux

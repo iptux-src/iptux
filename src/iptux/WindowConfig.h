@@ -1,8 +1,8 @@
 #ifndef IPTUX_WINDOW_CONFIG_H
 #define IPTUX_WINDOW_CONFIG_H
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include "iptux-core/IptuxConfig.h"
 
@@ -11,11 +11,7 @@ namespace iptux {
 class WindowConfig {
  public:
   WindowConfig(int defaultWidth, int defaultHeight, const std::string& prefix)
-  : width(defaultWidth),
-    height(defaultHeight),
-    prefix(prefix)
-  {
-  }
+      : width(defaultWidth), height(defaultHeight), prefix(prefix) {}
 
   virtual ~WindowConfig() {}
 

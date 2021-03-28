@@ -15,8 +15,8 @@
 
 #include <cerrno>
 #include <cinttypes>
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 #include <sstream>
 
 #include <arpa/inet.h>
@@ -30,16 +30,15 @@
 #include <sys/vfs.h>
 #endif
 
-
-#include "iptux-utils/output.h"
 #include "iptux-core/Exception.h"
+#include "iptux-utils/output.h"
 
 using namespace std;
 
 namespace iptux {
 
-  static const int MAX_PATHLEN = 1024;
-  static const int MAX_BUFLEN = 1024;
+static const int MAX_PATHLEN = 1024;
+static const int MAX_BUFLEN = 1024;
 
 /**
  * 检查串(string)是否为有效的utf8串，若不是则根据字符集(codeset)来进行转码.
@@ -51,8 +50,9 @@ namespace iptux {
  * 若(string)为utf8编码，或(codeset)中不存在(string)的正确编码，函数将返回NULL
  * @see iptux_string_validate_copy()
  */
-char *iptux_string_validate(const char *s, const string &codeset,
-                            char **encode) {
+char* iptux_string_validate(const char* s,
+                            const string& codeset,
+                            char** encode) {
   const char *pptr, *ptr;
   char *tstring, *cset;
   gsize rbytes, wbytes;
@@ -63,11 +63,14 @@ char *iptux_string_validate(const char *s, const string &codeset,
     cset = NULL;
     ptr = codeset.c_str();
     do {
-      if (*(pptr = ptr + strspn(ptr, ",;\x20\t")) == '\0') break;
-      if (!(ptr = strpbrk(pptr, ",;\x20\t"))) ptr = pptr + strlen(pptr);
+      if (*(pptr = ptr + strspn(ptr, ",;\x20\t")) == '\0')
+        break;
+      if (!(ptr = strpbrk(pptr, ",;\x20\t")))
+        ptr = pptr + strlen(pptr);
       g_free(cset);
       cset = g_strndup(pptr, ptr - pptr);
-      if (strcasecmp(cset, "utf-8") == 0) continue;
+      if (strcasecmp(cset, "utf-8") == 0)
+        continue;
     } while (
         !(tstring = g_convert(s, -1, "utf-8", cset, &rbytes, &wbytes, NULL)));
     *encode = cset;
@@ -84,15 +87,17 @@ char *iptux_string_validate(const char *s, const string &codeset,
  * @return 新串
  * @note 若函数执行出错，将返回NULL
  */
-char *convert_encode(const char *string, const char *tocode,
-                     const char *fromcode) {
+char* convert_encode(const char* string,
+                     const char* tocode,
+                     const char* fromcode) {
   gsize rbytes, wbytes;
-  char *tstring;
+  char* tstring;
   GError* err = nullptr;
 
   tstring = g_convert(string, -1, tocode, fromcode, &rbytes, &wbytes, &err);
   if (err != nullptr) {
-    LOG_INFO("g_convert failed: %s-%d-%s", g_quark_to_string(err->domain), err->code, err->message);
+    LOG_INFO("g_convert failed: %s-%d-%s", g_quark_to_string(err->domain),
+             err->code, err->message);
     g_clear_error(&err);
     return nullptr;
   }
@@ -104,20 +109,22 @@ char *convert_encode(const char *string, const char *tocode,
  * @param path 文件路径
  * @return 新文件路径 *
  */
-char *assert_filename_inexist(const char *path) {
-  const char *ptr;
+char* assert_filename_inexist(const char* path) {
+  const char* ptr;
   uint16_t count;
 
-  if (access(path, F_OK) != 0) return g_strdup(path);
+  if (access(path, F_OK) != 0)
+    return g_strdup(path);
 
   ptr = strrchr(path, '/');
   ptr = ptr ? ptr + 1 : path;
   count = 1;
   string res;
   while (count) {
-    res = stringFormat("%.*s%" PRIu16 "_%s", (int)(ptr - path), path,
-             count, ptr);
-    if (access(res.c_str(), F_OK) != 0) break;
+    res =
+        stringFormat("%.*s%" PRIu16 "_%s", (int)(ptr - path), path, count, ptr);
+    if (access(res.c_str(), F_OK) != 0)
+      break;
     count++;
   }
 
@@ -131,7 +138,7 @@ char *assert_filename_inexist(const char *path) {
  * @param ... as in printf()
  * @return 时间串
  */
-char *getformattime(gboolean date, const char *format, ...) {
+char* getformattime(gboolean date, const char* format, ...) {
   char buf[MAX_BUFLEN], *msg, *ptr;
   time_t tt;
   va_list ap;
@@ -169,8 +176,8 @@ gboolean giter_compare_foreach(gunichar src, gunichar dst) {
  * @param numeric 需要转换的数值
  * @return 描述串
  */
-char *numeric_to_size(int64_t numeric) {
-  gchar *ptr;
+char* numeric_to_size(int64_t numeric) {
+  gchar* ptr;
 
   if (numeric >= ((int64_t)1 << 40))
     ptr = g_strdup_printf("%.1fTiB", (double)numeric / ((int64_t)1 << 40));
@@ -191,8 +198,8 @@ char *numeric_to_size(int64_t numeric) {
  * @param numeric 需要转换的数值
  * @return 描述串
  */
-char *numeric_to_rate(uint32_t numeric) {
-  gchar *ptr;
+char* numeric_to_rate(uint32_t numeric) {
+  gchar* ptr;
 
   if (numeric >= (1 << 30))
     ptr = g_strdup_printf("%.1fG/s", (float)numeric / (1 << 30));
@@ -211,9 +218,9 @@ char *numeric_to_rate(uint32_t numeric) {
  * @param numeric 需要转换的数值
  * @return 描述串
  */
-char *numeric_to_time(uint32_t numeric) {
+char* numeric_to_time(uint32_t numeric) {
   uint32_t hour, minute;
-  gchar *ptr;
+  gchar* ptr;
 
   hour = numeric / 3600;
   numeric %= 3600;
@@ -231,8 +238,8 @@ char *numeric_to_time(uint32_t numeric) {
  * @param times 跳跃次数
  * @return 指针位置
  */
-const char *iptux_skip_string(const char *string, size_t size, uint8_t times) {
-  const char *ptr;
+const char* iptux_skip_string(const char* string, size_t size, uint8_t times) {
+  const char* ptr;
   uint8_t count;
 
   ptr = string;
@@ -256,14 +263,15 @@ const char *iptux_skip_string(const char *string, size_t size, uint8_t times) {
  * @param times 跳跃次数
  * @return 指针位置
  */
-const char *iptux_skip_section(const char *string, char ch, uint8_t times) {
-  const char *ptr;
+const char* iptux_skip_section(const char* string, char ch, uint8_t times) {
+  const char* ptr;
   uint8_t count;
 
   ptr = string;
   count = 0;
   while (count < times) {
-    if (!(ptr = strchr(ptr, ch))) break;
+    if (!(ptr = strchr(ptr, ch)))
+      break;
     ptr++;  //跳过当前分割字符
     count++;
   }
@@ -278,12 +286,14 @@ const char *iptux_skip_section(const char *string, char ch, uint8_t times) {
  * @param times 跳跃次数
  * @return 数值
  */
-int64_t iptux_get_hex64_number(const char *msg, char ch, uint8_t times) {
-  const char *ptr;
+int64_t iptux_get_hex64_number(const char* msg, char ch, uint8_t times) {
+  const char* ptr;
   int64_t number;
 
-  if (!(ptr = iptux_skip_section(msg, ch, times))) return 0;
-  if (sscanf(ptr, "%" SCNx64, &number) == 1) return number;
+  if (!(ptr = iptux_skip_section(msg, ch, times)))
+    return 0;
+  if (sscanf(ptr, "%" SCNx64, &number) == 1)
+    return number;
   return 0;
 }
 
@@ -294,12 +304,14 @@ int64_t iptux_get_hex64_number(const char *msg, char ch, uint8_t times) {
  * @param times 跳跃次数
  * @return 数值
  */
-uint32_t iptux_get_hex_number(const char *msg, char ch, uint8_t times) {
-  const char *ptr;
+uint32_t iptux_get_hex_number(const char* msg, char ch, uint8_t times) {
+  const char* ptr;
   uint32_t number;
 
-  if (!(ptr = iptux_skip_section(msg, ch, times))) return 0;
-  if (sscanf(ptr, "%" SCNx32, &number) == 1) return number;
+  if (!(ptr = iptux_skip_section(msg, ch, times)))
+    return 0;
+  if (sscanf(ptr, "%" SCNx32, &number) == 1)
+    return number;
   return 0;
 }
 
@@ -310,12 +322,14 @@ uint32_t iptux_get_hex_number(const char *msg, char ch, uint8_t times) {
  * @param times 跳跃次数
  * @return 数值
  */
-uint32_t iptux_get_dec_number(const char *msg, char ch, uint8_t times) {
-  const char *ptr;
+uint32_t iptux_get_dec_number(const char* msg, char ch, uint8_t times) {
+  const char* ptr;
   uint32_t number;
 
-  if (!(ptr = iptux_skip_section(msg, ch, times))) return 0;
-  if (sscanf(ptr, "%" SCNu32, &number) == 1) return number;
+  if (!(ptr = iptux_skip_section(msg, ch, times)))
+    return 0;
+  if (sscanf(ptr, "%" SCNu32, &number) == 1)
+    return number;
   return 0;
 }
 
@@ -326,14 +340,16 @@ uint32_t iptux_get_dec_number(const char *msg, char ch, uint8_t times) {
  * @param times 跳跃次数
  * @return 新串
  */
-char *iptux_get_section_string(const char *msg, char ch, uint8_t times) {
+char* iptux_get_section_string(const char* msg, char ch, uint8_t times) {
   const char *pptr, *ptr;
-  char *string;
+  char* string;
   size_t len;
 
-  if (!(pptr = iptux_skip_section(msg, ch, times))) return NULL;
+  if (!(pptr = iptux_skip_section(msg, ch, times)))
+    return NULL;
   ptr = strchr(pptr, ch);
-  if ((len = ptr ? ptr - pptr : strlen(pptr)) == 0) return NULL;
+  if ((len = ptr ? ptr - pptr : strlen(pptr)) == 0)
+    return NULL;
   string = g_strndup(pptr, len);
 
   return string;
@@ -348,9 +364,9 @@ char *iptux_get_section_string(const char *msg, char ch, uint8_t times) {
  * @note 文件名特殊格式请参考IPMsg协议
  * @note (msg)串会被修改
  */
-char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
+char* ipmsg_get_filename(const char* msg, char ch, uint8_t times) {
   char filename[256];  //文件最大长度为255
-  const char *ptr;
+  const char* ptr;
 
   if ((ptr = iptux_skip_section(msg, ch, times))) {
     size_t len = 0;
@@ -360,7 +376,7 @@ char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
         len++;
       }
       if (*ptr == ':') {  //抹除分割符
-        memcpy((void *)ptr, "xx", 2);
+        memcpy((void*)ptr, "xx", 2);
         ptr++;
       }
       ptr++;
@@ -382,10 +398,11 @@ char *ipmsg_get_filename(const char *msg, char ch, uint8_t times) {
  * @param times 跳跃次数
  * @return 新串
  */
-char *ipmsg_get_attach(const char *msg, char ch, uint8_t times) {
-  const char *ptr;
+char* ipmsg_get_attach(const char* msg, char ch, uint8_t times) {
+  const char* ptr;
 
-  if (!(ptr = iptux_skip_section(msg, ch, times))) return NULL;
+  if (!(ptr = iptux_skip_section(msg, ch, times)))
+    return NULL;
   return g_strdup(ptr);
 }
 
@@ -395,9 +412,9 @@ char *ipmsg_get_attach(const char *msg, char ch, uint8_t times) {
  * @return 文件名 *
  * @note 文件名特殊格式请参考IPMsg协议
  */
-char *ipmsg_get_filename_pal(const char *pathname) {
+char* ipmsg_get_filename_pal(const char* pathname) {
   char filename[512];  //文件最大长度为255
-  const char *ptr;
+  const char* ptr;
   size_t len;
 
   ptr = strrchr(pathname, '/');
@@ -426,17 +443,19 @@ char *ipmsg_get_filename_pal(const char *pathname) {
  * @return 文件名 *
  * @note 路径可能为NULL
  */
-char *ipmsg_get_filename_me(const char *pathname, char **path) {
-  const char *ptr;
-  char *file;
+char* ipmsg_get_filename_me(const char* pathname, char** path) {
+  const char* ptr;
+  char* file;
 
   ptr = strrchr(pathname, '/');
   if (ptr && ptr != pathname) {
     file = g_strdup(ptr + 1);
-    if (path) *path = g_strndup(pathname, ptr - pathname);
+    if (path)
+      *path = g_strndup(pathname, ptr - pathname);
   } else {
     file = g_strdup(pathname);
-    if (path) *path = NULL;
+    if (path)
+      *path = NULL;
   }
 
   return file;
@@ -447,9 +466,9 @@ char *ipmsg_get_filename_me(const char *pathname, char **path) {
  * @param filename 文件名
  * @return 文件 *
  */
-char *iptux_erase_filename_suffix(const char *filename) {
-  const char *ptr;
-  char *file;
+char* iptux_erase_filename_suffix(const char* filename) {
+  const char* ptr;
+  char* file;
 
   ptr = strrchr(filename, '.');
   if (ptr && ptr != filename)
@@ -465,7 +484,7 @@ char *iptux_erase_filename_suffix(const char *filename) {
  * @param name  文件名
  * @return 带路径的文件名 *
  */
-char *ipmsg_get_pathname_full(const char *path, const char *name) {
+char* ipmsg_get_pathname_full(const char* path, const char* name) {
   char filename[MAX_PATHLEN];
   strcpy(filename, path);
   strcat(filename, "/");
@@ -473,9 +492,11 @@ char *ipmsg_get_pathname_full(const char *path, const char *name) {
   return g_strdup(filename);
 }
 
-void FLAG_SET(uint8_t &num, int bit) { ((num) |= (1 << (bit))); }
+void FLAG_SET(uint8_t& num, int bit) {
+  ((num) |= (1 << (bit)));
+}
 
-void FLAG_SET(uint8_t &num, int bit, bool value) {
+void FLAG_SET(uint8_t& num, int bit, bool value) {
   if (value) {
     ((num) |= (1 << (bit)));
   } else {
@@ -486,51 +507,49 @@ void FLAG_SET(uint8_t &num, int bit, bool value) {
 std::string inAddrToString(in_addr inAddr) {
   ostringstream oss;
   auto ipv4 = inAddr.s_addr;
-  oss << int(ipv4 & 0xff) << "."
-      << int((ipv4 & 0xff00) >> 8) << "."
-      << int((ipv4 & 0xff0000) >> 16) << "."
-      << int((ipv4 & 0xff000000) >> 24);
+  oss << int(ipv4 & 0xff) << "." << int((ipv4 & 0xff00) >> 8) << "."
+      << int((ipv4 & 0xff0000) >> 16) << "." << int((ipv4 & 0xff000000) >> 24);
   return oss.str();
 }
 
 in_addr inAddrFromString(const std::string& s) {
   in_addr res;
-  if(inet_pton(AF_INET, s.c_str(), &res.s_addr) == 1) {
+  if (inet_pton(AF_INET, s.c_str(), &res.s_addr) == 1) {
     return res;
   }
   throw Exception(INVALID_IP_ADDRESS);
 }
 
 std::string stringDump(const std::string& str) {
-  if(str.empty()) {
+  if (str.empty()) {
     return "";
   }
 
   ostringstream oss;
-  for(int i = 0; i < int(str.size()); i+= 16) {
+  for (int i = 0; i < int(str.size()); i += 16) {
     oss << stringFormat("%08x  ", i);
-    for(int j = 0; j < 8; ++j) {
-      if(i+j < int(str.size())) {
-        oss << stringFormat("%02x ", uint8_t(str[i+j]));
+    for (int j = 0; j < 8; ++j) {
+      if (i + j < int(str.size())) {
+        oss << stringFormat("%02x ", uint8_t(str[i + j]));
       } else {
         oss << "   ";
       }
     }
     oss << ' ';
-    for(int j = 8; j < 16; ++j) {
-      if(i+j < int(str.size())) {
-        oss << stringFormat("%02x ", uint8_t(str[i+j]));
+    for (int j = 8; j < 16; ++j) {
+      if (i + j < int(str.size())) {
+        oss << stringFormat("%02x ", uint8_t(str[i + j]));
       } else {
         oss << "   ";
       }
     }
     oss << " |";
-    for(int j = 0; j < 16; ++j) {
-      if(i+j >= int(str.size())) {
+    for (int j = 0; j < 16; ++j) {
+      if (i + j >= int(str.size())) {
         break;
       }
-      char c = str[i+j];
-      if(c >= ' ' && c <= '\x7e') {
+      char c = str[i + j];
+      if (c >= ' ' && c <= '\x7e') {
         oss << c;
       } else {
         oss << '.';
@@ -538,23 +557,22 @@ std::string stringDump(const std::string& str) {
     }
     oss << "|\n";
   }
-  oss << stringFormat("%08lx\n", str.size());;
+  oss << stringFormat("%08lx\n", str.size());
+  ;
   return oss.str();
 }
 
-
 std::string stringDumpAsCString(const std::string& str) {
   static const char* tables[32] = {
-    "\\x00", "\\x01", "\\x02", "\\x03", "\\x04", "\\x05", "\\x06", "\\x07",
-    "\\x08", "\\t",   "\\n",   "\\x0b", "\\x0c", "\\r",   "\\x0e", "\\x0f",
-    "\\x10", "\\x11", "\\x12", "\\x13", "\\x14", "\\x15", "\\x16", "\\x17",
-    "\\x18", "\\x19", "\\x1a", "\\x1b", "\\x1c", "\\x1d", "\\x1e", "\\x1f"
-  };
+      "\\x00", "\\x01", "\\x02", "\\x03", "\\x04", "\\x05", "\\x06", "\\x07",
+      "\\x08", "\\t",   "\\n",   "\\x0b", "\\x0c", "\\r",   "\\x0e", "\\x0f",
+      "\\x10", "\\x11", "\\x12", "\\x13", "\\x14", "\\x15", "\\x16", "\\x17",
+      "\\x18", "\\x19", "\\x1a", "\\x1b", "\\x1c", "\\x1d", "\\x1e", "\\x1f"};
 
   ostringstream oss;
   oss << '"';
-  for(int i = 0; i < int(str.size()); ++i) {
-    if(uint8_t(str[i]) < 0x20) {
+  for (int i = 0; i < int(str.size()); ++i) {
+    if (uint8_t(str[i]) < 0x20) {
       oss << tables[int(str[i])];
     } else if (str[i] == '"') {
       oss << "\\\"";
@@ -572,7 +590,7 @@ std::string stringDumpAsCString(const std::string& str) {
 
 void Helper::prepareDir(const std::string& fname) {
   auto path = g_path_get_dirname(fname.c_str());
-  if(g_mkdir_with_parents(path, 0755) != 0) {
+  if (g_mkdir_with_parents(path, 0755) != 0) {
     LOG_ERROR("g_mkdir_with_parents failed: %s, %s", path, strerror(errno));
   }
   g_free(path);
@@ -585,15 +603,16 @@ void Helper::prepareDir(const std::string& fname) {
  * @param count 缓冲区有效数据长度
  * @return 成功写出的数据长度
  */
-ssize_t xwrite(int fd, const void *buf, size_t count) {
+ssize_t xwrite(int fd, const void* buf, size_t count) {
   size_t offset;
   ssize_t size;
 
   size = -1;
   offset = 0;
   while ((offset != count) && (size != 0)) {
-    if ((size = write(fd, (char *)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR) continue;
+    if ((size = write(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
       return -1;
     }
     offset += size;
@@ -609,15 +628,16 @@ ssize_t xwrite(int fd, const void *buf, size_t count) {
  * @param count 缓冲区长度
  * @return 成功读取的数据长度
  */
-ssize_t xread(int fd, void *buf, size_t count) {
+ssize_t xread(int fd, void* buf, size_t count) {
   size_t offset;
   ssize_t size;
 
   size = -1;
   offset = 0;
   while ((offset != count) && (size != 0)) {
-    if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR) continue;
+    if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
       return -1;
     }
     offset += size;
@@ -634,7 +654,7 @@ ssize_t xread(int fd, void *buf, size_t count) {
  * @param count 缓冲区长度
  * @return 成功读取的消息长度，-1表示读取消息出错
  */
-ssize_t read_ipmsg_prefix(int fd, void *buf, size_t count) {
+ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
   uint number;
   size_t offset;
   ssize_t size;
@@ -643,16 +663,19 @@ ssize_t read_ipmsg_prefix(int fd, void *buf, size_t count) {
   offset = 0;
   number = 0;
   while ((offset != count) && (size != 0)) {
-    if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR) continue;
+    if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
       return -1;
     }
     offset += size;
-    const char *endptr = (const char *)buf + offset;
-    for (const char *curptr = endptr - size; curptr < endptr; ++curptr) {
-      if (*curptr == ':') ++number;
+    const char* endptr = (const char*)buf + offset;
+    for (const char* curptr = endptr - size; curptr < endptr; ++curptr) {
+      if (*curptr == ':')
+        ++number;
     }
-    if (number >= 5) break;
+    if (number >= 5)
+      break;
   }
 
   return offset;
@@ -667,22 +690,25 @@ ssize_t read_ipmsg_prefix(int fd, void *buf, size_t count) {
  * @param offset 缓冲区无效数据偏移量
  * @return 成功读取的消息长度，-1表示读取消息出错
  */
-ssize_t read_ipmsg_filedata(int fd, void *buf, size_t count, size_t offset) {
-  const char *curptr;
+ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset) {
+  const char* curptr;
   uint number;
   ssize_t size;
 
   size = -1;
   number = 0;
-  curptr = (const char *)buf;
+  curptr = (const char*)buf;
   while ((offset != count) && (size != 0)) {
-    const char *endptr = (const char *)buf + offset;
+    const char* endptr = (const char*)buf + offset;
     for (; curptr < endptr; ++curptr) {
-      if (*curptr == ':') ++number;
+      if (*curptr == ':')
+        ++number;
     }
-    if (number > 2 || (number == 2 && *(curptr - 1) != ':')) break;
-    if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR) continue;
+    if (number > 2 || (number == 2 && *(curptr - 1) != ':'))
+      break;
+    if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
       return -1;
     }
     offset += size;
@@ -700,22 +726,25 @@ ssize_t read_ipmsg_filedata(int fd, void *buf, size_t count, size_t offset) {
  * @param offset 缓冲区无效数据偏移量
  * @return 成功读取的消息长度，-1表示读取消息出错
  */
-ssize_t read_ipmsg_dirfiles(int fd, void *buf, size_t count, size_t offset) {
-  const char *curptr;
+ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset) {
+  const char* curptr;
   uint number;
   ssize_t size;
 
   size = -1;
   number = 0;
-  curptr = (const char *)buf;
+  curptr = (const char*)buf;
   while ((offset != count) && (size != 0)) {
-    const char *endptr = (const char *)buf + offset;
+    const char* endptr = (const char*)buf + offset;
     for (; curptr < endptr; ++curptr) {
-      if (*curptr == ':') ++number;
+      if (*curptr == ':')
+        ++number;
     }
-    if (number > 1 || (number == 1 && *(curptr - 1) != ':')) break;
-    if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR) continue;
+    if (number > 1 || (number == 1 && *(curptr - 1) != ':'))
+      break;
+    if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
       return -1;
     }
     offset += size;
@@ -737,22 +766,24 @@ ssize_t read_ipmsg_dirfiles(int fd, void *buf, size_t count, size_t offset) {
  * @param offset 缓冲区无效数据偏移量
  * @return 成功读取的信息长度
  */
-ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset) {
+ssize_t read_ipmsg_fileinfo(int fd, void* buf, size_t count, size_t offset) {
   ssize_t size;
   uint32_t headsize;
 
   if (offset < count)  //注意不要写到缓冲区外了
-    ((char *)buf)[offset] = '\0';
-  while (!offset || !strchr((char *)buf, ':') ||
-         sscanf((char *)buf, "%" SCNx32, &headsize) != 1 || headsize > offset) {
+    ((char*)buf)[offset] = '\0';
+  while (!offset || !strchr((char*)buf, ':') ||
+         sscanf((char*)buf, "%" SCNx32, &headsize) != 1 || headsize > offset) {
   mark:
-    if ((size = read(fd, (char *)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR) goto mark;
+    if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        goto mark;
       return -1;
     } else if (size == 0)
       return -1;
-    if ((offset += size) == count) break;
-    ((char *)buf)[offset] = '\0';
+    if ((offset += size) == count)
+      break;
+    ((char*)buf)[offset] = '\0';
   }
 
   return offset;
@@ -761,10 +792,10 @@ ssize_t read_ipmsg_fileinfo(int fd, void *buf, size_t count, size_t offset) {
 int ipv4Compare(const in_addr& ip1, const in_addr& ip2) {
   uint32_t i1 = inAddrToUint32(ip1);
   uint32_t i2 = inAddrToUint32(ip2);
-  if(i1 < i2) {
+  if (i1 < i2) {
     return -1;
   }
-  if(i1 == i2) {
+  if (i1 == i2) {
     return 0;
   }
   return 1;
@@ -792,31 +823,33 @@ string utf8MakeValid(const string& str) {
 }
 
 namespace utils {
-  int64_t fileOrDirectorySize(const string& fileOrDirName) {
+int64_t fileOrDirectorySize(const string& fileOrDirName) {
   // 由于系统中存在使用此方法读取文件的大小的调用，因此需要判断文件dir_name是文件还是目录
   struct stat st;
   int result = stat(fileOrDirName.c_str(), &st);
   if (result != 0) {
     // Fail to determine file type, return 0 (判断文件类型失败，直接返回 0)
-    LOG_WARN(_("stat file \"%s\" failed: %s"), fileOrDirName.c_str(), strerror(errno));
+    LOG_WARN(_("stat file \"%s\" failed: %s"), fileOrDirName.c_str(),
+             strerror(errno));
     return 0;
   }
   if (S_ISREG(st.st_mode)) {
     return st.st_size;
   }
   if (!S_ISDIR(st.st_mode)) {
-    LOG_WARN(_("path %s is not file or directory: st_mode(%x)"), fileOrDirName.c_str(),
-             st.st_mode);
+    LOG_WARN(_("path %s is not file or directory: st_mode(%x)"),
+             fileOrDirName.c_str(), st.st_mode);
     return 0;
   }
   // 到了这里就一定是目录了
-  DIR *dir = opendir(fileOrDirName.c_str());
+  DIR* dir = opendir(fileOrDirName.c_str());
   if (dir == NULL) {
-    LOG_WARN(_("opendir on \"%s\" failed: %s"), fileOrDirName.c_str(), strerror(errno));
+    LOG_WARN(_("opendir on \"%s\" failed: %s"), fileOrDirName.c_str(),
+             strerror(errno));
     return 0;
   }
 
-  struct dirent *dirt;
+  struct dirent* dirt;
   int64_t sumsize = 0;
   while ((dirt = readdir(dir))) {
     if (strcmp(dirt->d_name, ".") == 0) {
@@ -841,7 +874,6 @@ namespace utils {
   return sumsize;
 }
 
-}
-
+}  // namespace utils
 
 }  // namespace iptux

@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "iptux/RevisePal.h"
-#include "iptux/Application.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/Application.h"
+#include "iptux/RevisePal.h"
 
 using namespace std;
 using namespace iptux;

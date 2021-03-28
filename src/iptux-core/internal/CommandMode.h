@@ -6,13 +6,14 @@
 namespace iptux {
 
 class CommandMode {
-public:
-  explicit CommandMode(int mode): mode(mode) {}
+ public:
+  explicit CommandMode(int mode) : mode(mode) {}
   std::string toString() const;
-private:
+
+ private:
   int mode;
 };
 
-}
+}  // namespace iptux
 
 #endif

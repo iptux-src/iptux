@@ -17,10 +17,10 @@
 
 #include <cstring>
 
-#include "iptux-utils/utils.h"
-#include "iptux-core/internal/TransAbstract.h"
-#include "iptux-core/internal/Command.h"
 #include "iptux-core/Exception.h"
+#include "iptux-core/internal/Command.h"
+#include "iptux-core/internal/TransAbstract.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -36,19 +36,18 @@ RecvFile::RecvFile() {}
  */
 RecvFile::~RecvFile() {}
 
-FileInfo * DivideFileinfo(char **extra);
+FileInfo* DivideFileinfo(char** extra);
 
 /**
  * 文件接受入口.
  * @param para 文件参数
  */
 void RecvFile::RecvEntry(CoreThread* coreThread,
-  PPalInfo pal,
-  const std::string extra,
-  int packetno)
-{
+                         PPalInfo pal,
+                         const std::string extra,
+                         int packetno) {
   auto fileInfos = Command::decodeFileInfos(extra);
-  for(auto fileInfo: fileInfos) {
+  for (auto fileInfo : fileInfos) {
     fileInfo.packetn = packetno;
     fileInfo.fileown = pal;
     coreThread->emitEvent(make_shared<NewShareFileFromFriendEvent>(fileInfo));

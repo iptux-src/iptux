@@ -12,20 +12,20 @@
 #include "config.h"
 #include "DataSettings.h"
 
-#include <unistd.h>
 #include <dirent.h>
+#include <unistd.h>
 
 #include <glib/gi18n.h>
 
 #include "iptux-core/Const.h"
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
-#include "iptux/callback.h"
-#include "iptux/global.h"
+#include "iptux-utils/utils.h"
 #include "iptux/SoundSystem.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
+#include "iptux/callback.h"
+#include "iptux/global.h"
 
 using namespace std;
 
@@ -34,20 +34,24 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-DataSettings::DataSettings() : widset(NULL), mdlset(NULL) { InitSublayer(); }
+DataSettings::DataSettings() : widset(NULL), mdlset(NULL) {
+  InitSublayer();
+}
 
 /**
  * 类析构函数.
  */
-DataSettings::~DataSettings() { ClearSublayer(); }
+DataSettings::~DataSettings() {
+  ClearSublayer();
+}
 
 /**
  * 程序数据设置入口.
  * @param parent 父窗口指针
  */
-void DataSettings::ResetDataEntry(GtkWidget *parent, bool run) {
+void DataSettings::ResetDataEntry(GtkWidget* parent, bool run) {
   DataSettings dset;
-  GtkWidget *dialog;
+  GtkWidget* dialog;
   GtkWidget *note, *label;
 
   auto g_progdt = g_cthrd->getUiProgramData();
@@ -81,7 +85,7 @@ void DataSettings::ResetDataEntry(GtkWidget *parent, bool run) {
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
-  if(!run) {
+  if (!run) {
     gtk_widget_destroy(dialog);
     return;
   }
@@ -117,7 +121,7 @@ mark:
  * 初始化底层数据.
  */
 void DataSettings::InitSublayer() {
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
@@ -151,15 +155,13 @@ void DataSettings::ClearSublayer() {
  * @param parent 父窗口指针
  * @return 对话框
  */
-GtkWidget *DataSettings::CreateMainDialog(GtkWidget *parent) {
-  GtkWidget *dialog;
+GtkWidget* DataSettings::CreateMainDialog(GtkWidget* parent) {
+  GtkWidget* dialog;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Preferences"), GTK_WINDOW(parent), GTK_DIALOG_MODAL,
-      _("_OK"), GTK_RESPONSE_OK,
-      _("_Apply"), GTK_RESPONSE_APPLY,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+      _("Preferences"), GTK_WINDOW(parent), GTK_DIALOG_MODAL, _("_OK"),
+      GTK_RESPONSE_OK, _("_Apply"), GTK_RESPONSE_APPLY, _("_Cancel"),
+      GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -173,11 +175,11 @@ GtkWidget *DataSettings::CreateMainDialog(GtkWidget *parent) {
  * 创建与个人相关的数据设置窗体.
  * @return 主窗体
  */
-GtkWidget *DataSettings::CreatePersonal() {
+GtkWidget* DataSettings::CreatePersonal() {
   GtkWidget *box, *hbox;
   GtkWidget *frame, *sw;
   GtkWidget *label, *button, *widget;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 昵称 */
@@ -261,10 +263,10 @@ GtkWidget *DataSettings::CreatePersonal() {
  * 创建与系统相关的数据设置窗体.
  * @return 主窗体
  */
-GtkWidget *DataSettings::CreateSystem() {
+GtkWidget* DataSettings::CreateSystem() {
   GtkWidget *box, *hbox;
   GtkWidget *label, *button, *widget;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 候选编码 */
@@ -359,12 +361,12 @@ GtkWidget *DataSettings::CreateSystem() {
  * 创建与声音相关的数据设置窗体.
  * @return 主窗体
  */
-GtkWidget *DataSettings::CreateSound() {
+GtkWidget* DataSettings::CreateSound() {
   GtkWidget *box, *hbox, *vbox;
   GtkWidget *frame, *sw, *chkbutton;
   GtkWidget *label, *button, *widget;
-  GtkTreeSelection *selection;
-  GtkTreeModel *model;
+  GtkTreeSelection* selection;
+  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 声音支持 */
@@ -429,12 +431,12 @@ GtkWidget *DataSettings::CreateSound() {
  * 创建与网络相关的数据设置窗体.
  * @return 主窗体
  */
-GtkWidget *DataSettings::CreateNetwork() {
+GtkWidget* DataSettings::CreateNetwork() {
   char buf[MAX_BUFLEN];
   GtkWidget *box, *hbox, *vbox;
   GtkWidget *frame, *sw;
   GtkWidget *label, *button, *widget;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   /* 接受输入 */
@@ -516,10 +518,10 @@ GtkWidget *DataSettings::CreateNetwork() {
  */
 void DataSettings::SetPersonalValue() {
   char path[MAX_PATHLEN];
-  GtkWidget *widget;
-  GtkTreeModel *model;
-  GtkTextBuffer *buffer;
-  GdkPixbuf *pixbuf;
+  GtkWidget* widget;
+  GtkTreeModel* model;
+  GtkTextBuffer* buffer;
+  GdkPixbuf* pixbuf;
   gint active;
 
   auto g_progdt = g_cthrd->getUiProgramData();
@@ -552,8 +554,8 @@ void DataSettings::SetPersonalValue() {
  * 为界面设置与系统相关的数据
  */
 void DataSettings::SetSystemValue() {
-  GtkWidget *widget;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GtkTreeModel* model;
   gint active;
 
   auto g_progdt = g_cthrd->getUiProgramData();
@@ -599,11 +601,11 @@ void DataSettings::SetSystemValue() {
  * 为界面设置与声音相关的数据
  */
 void DataSettings::SetSoundValue() {
-  GtkWidget *widget;
-  GtkTreeSelection *selection;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GtkTreeSelection* selection;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *filepath;
+  gchar* filepath;
 
   auto g_progdt = g_cthrd->getUiProgramData();
 
@@ -634,8 +636,8 @@ void DataSettings::SetNetworkValue() {}
  * 头像;文件名(带后缀) \n
  * @return icon-model
  */
-GtkTreeModel *DataSettings::CreateIconModel() {
-  GtkListStore *model;
+GtkTreeModel* DataSettings::CreateIconModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
 
@@ -648,8 +650,8 @@ GtkTreeModel *DataSettings::CreateIconModel() {
  * 是否被选中;用途注释;文件路径 \n
  * @return sound-model
  */
-GtkTreeModel *DataSettings::CreateSndModel() {
-  GtkListStore *model;
+GtkTreeModel* DataSettings::CreateSndModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
 
@@ -662,8 +664,8 @@ GtkTreeModel *DataSettings::CreateSndModel() {
  * 起始IP;终止IP;描述 \n
  * @return network-model
  */
-GtkTreeModel *DataSettings::CreateNetworkModel() {
-  GtkListStore *model;
+GtkTreeModel* DataSettings::CreateNetworkModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   gtk_tree_sortable_set_default_sort_func(
@@ -680,13 +682,13 @@ GtkTreeModel *DataSettings::CreateNetworkModel() {
  * 为头像树(icon-tree)填充底层数据.
  * @param model icon-model
  */
-void DataSettings::FillIconModel(GtkTreeModel *model) {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
+void DataSettings::FillIconModel(GtkTreeModel* model) {
+  GtkIconTheme* theme;
+  GdkPixbuf* pixbuf;
   GtkTreeIter iter;
-  struct dirent *dirt;
-  DIR *dir;
-  char *file;
+  struct dirent* dirt;
+  DIR* dir;
+  char* file;
 
   theme = gtk_icon_theme_get_default();
   if ((dir = opendir(__PIXMAPS_PATH "/icon"))) {
@@ -711,7 +713,7 @@ void DataSettings::FillIconModel(GtkTreeModel *model) {
  * 为声音树(sound-tree)填充底层数据.
  * @param model sound-model
  */
-void DataSettings::FillSndModel(GtkTreeModel *model) {
+void DataSettings::FillSndModel(GtkTreeModel* model) {
   GtkTreeIter iter;
 
   auto g_progdt = g_cthrd->getUiProgramData();
@@ -731,9 +733,9 @@ void DataSettings::FillSndModel(GtkTreeModel *model) {
  * @param model network-model
  * @note 与修改此链表的代码段是串行关系，无需加锁
  */
-void DataSettings::FillNetworkModel(GtkTreeModel *model) {
+void DataSettings::FillNetworkModel(GtkTreeModel* model) {
   auto g_progdt = g_cthrd->getUiProgramData();
-  for(const NetSegment& pns: g_progdt->getNetSegments()) {
+  for (const NetSegment& pns : g_progdt->getNetSegments()) {
     GtkTreeIter iter;
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns.startip.c_str(), 1,
@@ -746,9 +748,9 @@ void DataSettings::FillNetworkModel(GtkTreeModel *model) {
  * @param model icon-model
  * @return 头像树
  */
-GtkWidget *DataSettings::CreateIconTree(GtkTreeModel *model) {
-  GtkWidget *combo;
-  GtkCellRenderer *cell;
+GtkWidget* DataSettings::CreateIconTree(GtkTreeModel* model) {
+  GtkWidget* combo;
+  GtkCellRenderer* cell;
 
   combo = gtk_combo_box_new_with_model(model);
   gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(combo), 5);
@@ -765,12 +767,12 @@ GtkWidget *DataSettings::CreateIconTree(GtkTreeModel *model) {
  * @param model sound-model
  * @return 声音树
  */
-GtkWidget *DataSettings::CreateSndTree(GtkTreeModel *model) {
-  GtkWidget *view;
-  GtkCellRenderer *cell;
-  GtkTreeViewColumn *column;
-  GtkTreeSelection *selection;
-  GtkTreePath *path;
+GtkWidget* DataSettings::CreateSndTree(GtkTreeModel* model) {
+  GtkWidget* view;
+  GtkCellRenderer* cell;
+  GtkTreeViewColumn* column;
+  GtkTreeSelection* selection;
+  GtkTreePath* path;
 
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
@@ -804,11 +806,11 @@ GtkWidget *DataSettings::CreateSndTree(GtkTreeModel *model) {
  * @param model network-model
  * @return 网络树
  */
-GtkWidget *DataSettings::CreateNetworkTree(GtkTreeModel *model) {
-  GtkWidget *view;
-  GtkCellRenderer *cell;
-  GtkTreeViewColumn *column;
-  GtkTreeSelection *selection;
+GtkWidget* DataSettings::CreateNetworkTree(GtkTreeModel* model) {
+  GtkWidget* view;
+  GtkCellRenderer* cell;
+  GtkTreeViewColumn* column;
+  GtkTreeSelection* selection;
 
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
@@ -844,8 +846,8 @@ GtkWidget *DataSettings::CreateNetworkTree(GtkTreeModel *model) {
  * 创建文件归档选择器.
  * @return 选择器
  */
-GtkWidget *DataSettings::CreateArchiveChooser() {
-  GtkWidget *chooser;
+GtkWidget* DataSettings::CreateArchiveChooser() {
+  GtkWidget* chooser;
 
   chooser = gtk_file_chooser_button_new(_("Please select download folder"),
                                         GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
@@ -861,8 +863,8 @@ GtkWidget *DataSettings::CreateArchiveChooser() {
  * 创建字体选择器.
  * @return 选择器
  */
-GtkWidget *DataSettings::CreateFontChooser() {
-  GtkWidget *chooser;
+GtkWidget* DataSettings::CreateFontChooser() {
+  GtkWidget* chooser;
 
   chooser = gtk_font_button_new();
   gtk_font_button_set_show_style(GTK_FONT_BUTTON(chooser), TRUE);
@@ -878,8 +880,8 @@ GtkWidget *DataSettings::CreateFontChooser() {
  * 创建声音文件选择器.
  * @return 选择器
  */
-GtkWidget *DataSettings::CreateSndChooser() {
-  GtkWidget *chooser;
+GtkWidget* DataSettings::CreateSndChooser() {
+  GtkWidget* chooser;
 
   chooser = gtk_file_chooser_button_new(_("Please select a sound file"),
                                         GTK_FILE_CHOOSER_ACTION_OPEN);
@@ -893,14 +895,14 @@ GtkWidget *DataSettings::CreateSndChooser() {
  * 获取与个人相关的数据.
  */
 void DataSettings::ObtainPersonalValue() {
-  GtkWidget *widget;
-  GdkPixbuf *pixbuf;
-  GtkTextBuffer *buffer;
+  GtkWidget* widget;
+  GdkPixbuf* pixbuf;
+  GtkTextBuffer* buffer;
   GtkTextIter start, end;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   GtkTreeIter iter;
   char path[MAX_PATHLEN], *file;
-  const gchar *text;
+  const gchar* text;
   gint active;
 
   auto g_progdt = g_cthrd->getUiProgramData();
@@ -956,12 +958,12 @@ void DataSettings::ObtainPersonalValue() {
  * 获取与系统相关的数据.
  */
 void DataSettings::ObtainSystemValue() {
-  GtkWidget *widget;
-  GdkPixbuf *pixbuf;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GdkPixbuf* pixbuf;
+  GtkTreeModel* model;
   GtkTreeIter iter;
   char path[MAX_PATHLEN], *file;
-  gchar *text;
+  gchar* text;
   gint active;
 
   auto g_progdt = g_cthrd->getUiProgramData();
@@ -1038,11 +1040,11 @@ void DataSettings::ObtainSystemValue() {
  * 获取与声音相关的数据.
  */
 void DataSettings::ObtainSoundValue() {
-  GtkWidget *widget;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GtkTreeModel* model;
   GtkTreeIter iter;
   gboolean active;
-  gchar *path;
+  gchar* path;
 
   auto g_progdt = g_cthrd->getUiProgramData();
 
@@ -1085,8 +1087,8 @@ void DataSettings::ObtainSoundValue() {
  * 获取与网络相关的数据.
  */
 void DataSettings::ObtainNetworkValue() {
-  GtkWidget *widget;
-  GtkTreeModel *model;
+  GtkWidget* widget;
+  GtkTreeModel* model;
   GtkTreeIter iter;
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "network-treeview-widget"));
@@ -1097,15 +1099,15 @@ void DataSettings::ObtainNetworkValue() {
       char* startip = nullptr;
       char* endip = nullptr;
       char* description = nullptr;
-      gtk_tree_model_get(model, &iter,
-                         0, &startip,
-                         1, &endip,
-                         2, &description,
+      gtk_tree_model_get(model, &iter, 0, &startip, 1, &endip, 2, &description,
                          -1);
       NetSegment ns;
-      if(startip) ns.startip = startip;
-      if(endip) ns.endip = endip;
-      if(description) ns.description = description;
+      if (startip)
+        ns.startip = startip;
+      if (endip)
+        ns.endip = endip;
+      if (description)
+        ns.description = description;
       netSegments.push_back(move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
@@ -1120,11 +1122,11 @@ void DataSettings::ObtainNetworkValue() {
  * @param filename 文件名
  * @param list 网段数据链表
  */
-void DataSettings::WriteNetSegment(const char *filename, GSList *list) {
-  GtkWidget *parent;
-  GSList *tlist;
-  NetSegment *pns;
-  FILE *stream;
+void DataSettings::WriteNetSegment(const char* filename, GSList* list) {
+  GtkWidget* parent;
+  GSList* tlist;
+  NetSegment* pns;
+  FILE* stream;
 
   if (!(stream = fopen(filename, "w"))) {
     parent = GTK_WIDGET(g_datalist_get_data(&widset, "dialog-widget"));
@@ -1136,9 +1138,9 @@ void DataSettings::WriteNetSegment(const char *filename, GSList *list) {
   fprintf(stream, "#format (startIP - endIP //description)");
   tlist = list;
   while (tlist) {
-    pns = (NetSegment *)tlist->data;
-    fprintf(stream, "\n%s - %s //%s\n", pns->startip.c_str(), pns->endip.c_str(),
-            pns->description.c_str());
+    pns = (NetSegment*)tlist->data;
+    fprintf(stream, "\n%s - %s //%s\n", pns->startip.c_str(),
+            pns->endip.c_str(), pns->description.c_str());
     tlist = g_slist_next(tlist);
   }
   fclose(stream);
@@ -1149,12 +1151,12 @@ void DataSettings::WriteNetSegment(const char *filename, GSList *list) {
  * @param filename 文件名
  * @retval list 网段数据链表指针，数据由此返回
  */
-void DataSettings::ReadNetSegment(const char *filename, GSList **list) {
-  GtkWidget *parent;
+void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
+  GtkWidget* parent;
   char buf[3][MAX_BUFLEN], *lineptr;
   in_addr_t ipv4;
-  NetSegment *ns;
-  FILE *stream;
+  NetSegment* ns;
+  FILE* stream;
   size_t n;
 
   if (!(stream = fopen(filename, "r"))) {
@@ -1167,7 +1169,8 @@ void DataSettings::ReadNetSegment(const char *filename, GSList **list) {
   n = 0;
   lineptr = NULL;
   while (getline(&lineptr, &n, stream) != -1) {
-    if (*(lineptr + strspn(lineptr, "\t\x20")) == '#') continue;
+    if (*(lineptr + strspn(lineptr, "\t\x20")) == '#')
+      continue;
     switch (sscanf(lineptr, "%s - %s //%s", buf[0], buf[1], buf[2])) {
       case 3:
         if (inet_pton(AF_INET, buf[0], &ipv4) <= 0 ||
@@ -1201,7 +1204,7 @@ void DataSettings::ReadNetSegment(const char *filename, GSList **list) {
  * @param model model
  * @return 菜单
  */
-GtkWidget *DataSettings::CreatePopupMenu(GtkTreeModel *model) {
+GtkWidget* DataSettings::CreatePopupMenu(GtkTreeModel* model) {
   GtkWidget *menu, *menuitem;
 
   menu = gtk_menu_new();
@@ -1230,13 +1233,13 @@ GtkWidget *DataSettings::CreatePopupMenu(GtkTreeModel *model) {
  * @param pathname 文件路径
  * @return 位置
  */
-gint DataSettings::IconfileGetItemPos(GtkTreeModel *model,
-                                      const char *pathname) {
-  GtkIconTheme *theme;
-  GdkPixbuf *pixbuf;
+gint DataSettings::IconfileGetItemPos(GtkTreeModel* model,
+                                      const char* pathname) {
+  GtkIconTheme* theme;
+  GdkPixbuf* pixbuf;
   GtkTreeIter iter;
-  const char *ptr;
-  gchar *file;
+  const char* ptr;
+  gchar* file;
   gint result, pos;
 
   /* 让ptr指向文件名 */
@@ -1249,7 +1252,8 @@ gint DataSettings::IconfileGetItemPos(GtkTreeModel *model,
       gtk_tree_model_get(model, &iter, 1, &file, -1);
       result = strcmp(ptr, file);
       g_free(file);
-      if (result == 0) return pos;
+      if (result == 0)
+        return pos;
       pos++;
     } while (gtk_tree_model_iter_next(model, &iter));
   }
@@ -1279,10 +1283,10 @@ gint DataSettings::IconfileGetItemPos(GtkTreeModel *model,
  * @param event event
  * @return Gtk+库所需
  */
-gboolean DataSettings::PopupPickMenu(GtkWidget *treeview,
-                                     GdkEventButton *event) {
-  GtkWidget *menu;
-  GtkTreeModel *model;
+gboolean DataSettings::PopupPickMenu(GtkWidget* treeview,
+                                     GdkEventButton* event) {
+  GtkWidget* menu;
+  GtkTreeModel* model;
 
   if (event->button != GDK_BUTTON_SECONDARY) {
     return FALSE;
@@ -1300,10 +1304,10 @@ gboolean DataSettings::PopupPickMenu(GtkWidget *treeview,
  * @param button button
  * @param widset widget set
  */
-void DataSettings::AddNewIcon(GtkWidget *button, GData **widset) {
+void DataSettings::AddNewIcon(GtkWidget* button, GData** widset) {
   GtkWidget *parent, *combo;
-  GtkTreeModel *model;
-  gchar *filename;
+  GtkTreeModel* model;
+  gchar* filename;
   gint active;
 
   parent = GTK_WIDGET(g_datalist_get_data(widset, "dialog-widget"));
@@ -1322,11 +1326,11 @@ void DataSettings::AddNewIcon(GtkWidget *button, GData **widset) {
  * 选择个人形象照片.
  * @param widset widget set
  */
-void DataSettings::ChoosePhoto(GData **widset) {
+void DataSettings::ChoosePhoto(GData** widset) {
   GtkWidget *image, *parent;
-  GdkPixbuf *pixbuf;
+  GdkPixbuf* pixbuf;
   gchar path[MAX_PATHLEN];
-  gchar *filename;
+  gchar* filename;
 
   parent = GTK_WIDGET(g_datalist_get_data(widset, "dialog-widget"));
   if (!(filename = choose_file_with_preview(_("Please select a personal photo"),
@@ -1352,7 +1356,7 @@ void DataSettings::ChoosePhoto(GData **widset) {
  * @param chkbutton check-button
  * @param widget widget
  */
-void DataSettings::AdjustSensitive(GtkWidget *chkbutton, GtkWidget *widget) {
+void DataSettings::AdjustSensitive(GtkWidget* chkbutton, GtkWidget* widget) {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(chkbutton)))
     gtk_widget_set_sensitive(widget, TRUE);
   else
@@ -1363,7 +1367,7 @@ void DataSettings::AdjustSensitive(GtkWidget *chkbutton, GtkWidget *widget) {
  * 调整声音系统的音量.
  * @param hscale hscale
  */
-void DataSettings::AdjustVolume(GtkWidget *hscale) {
+void DataSettings::AdjustVolume(GtkWidget* hscale) {
   gdouble value;
 
   value = gtk_range_get_value(GTK_RANGE(hscale));
@@ -1375,12 +1379,12 @@ void DataSettings::AdjustVolume(GtkWidget *hscale) {
  * @param selection tree-selection
  * @param widset widget set
  */
-void DataSettings::SndtreeSelectItemChanged(GtkTreeSelection *selection,
-                                            GData **widset) {
-  GtkWidget *widget;
-  GtkTreeModel *model;
+void DataSettings::SndtreeSelectItemChanged(GtkTreeSelection* selection,
+                                            GData** widset) {
+  GtkWidget* widget;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *path;
+  gchar* path;
 
   gtk_tree_selection_get_selected(selection, &model, &iter);
   gtk_tree_model_get(model, &iter, 2, &path, -1);
@@ -1394,12 +1398,12 @@ void DataSettings::SndtreeSelectItemChanged(GtkTreeSelection *selection,
  * @param chooser file-chooser
  * @param widset widget set
  */
-void DataSettings::ChooserResetSndtree(GtkWidget *chooser, GData **widset) {
-  GtkWidget *treeview;
-  GtkTreeSelection *selection;
-  GtkTreeModel *model;
+void DataSettings::ChooserResetSndtree(GtkWidget* chooser, GData** widset) {
+  GtkWidget* treeview;
+  GtkTreeSelection* selection;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *path;
+  gchar* path;
 
   treeview = GTK_WIDGET(g_datalist_get_data(widset, "sound-treeview-widget"));
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
@@ -1413,9 +1417,9 @@ void DataSettings::ChooserResetSndtree(GtkWidget *chooser, GData **widset) {
  * 播放测试.
  * @param widset widget set
  */
-void DataSettings::PlayTesting(GData **widset) {
-  GtkWidget *widget;
-  gchar *path;
+void DataSettings::PlayTesting(GData** widset) {
+  GtkWidget* widget;
+  gchar* path;
 
   widget = GTK_WIDGET(g_datalist_get_data(widset, "sound-chooser-widget"));
   path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
@@ -1426,7 +1430,9 @@ void DataSettings::PlayTesting(GData **widset) {
 /**
  * 停止播放测试.
  */
-void DataSettings::StopTesting() { g_sndsys->Stop(); }
+void DataSettings::StopTesting() {
+  g_sndsys->Stop();
+}
 
 /**
  * 网络树(network-tree)排序比较函数.
@@ -1435,8 +1441,9 @@ void DataSettings::StopTesting() { g_sndsys->Stop(); }
  * @param b Another GtkTreeIter in model
  * @return 比较值
  */
-gint DataSettings::NetworkTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                          GtkTreeIter *b) {
+gint DataSettings::NetworkTreeCompareFunc(GtkTreeModel* model,
+                                          GtkTreeIter* a,
+                                          GtkTreeIter* b) {
   gchar *atext, *btext;
   gint result;
 
@@ -1453,9 +1460,9 @@ gint DataSettings::NetworkTreeCompareFunc(GtkTreeModel *model, GtkTreeIter *a,
  * 增加一个IP网段.
  * @param widset widget set
  */
-void DataSettings::ClickAddIpseg(GData **widset) {
+void DataSettings::ClickAddIpseg(GData** widset) {
   GtkWidget *startentry, *endentry, *treeview, *parent;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   GtkTreeIter iter;
   const gchar *starttext, *endtext;
   in_addr_t startip, endip;
@@ -1500,17 +1507,18 @@ void DataSettings::ClickAddIpseg(GData **widset) {
  * 删除一个IP网段.
  * @param widset widget set
  */
-void DataSettings::ClickDelIpseg(GData **widset) {
+void DataSettings::ClickDelIpseg(GData** widset) {
   GtkWidget *startentry, *endentry, *treeview;
-  GtkTreeSelection *selection;
-  GtkTreeModel *model;
+  GtkTreeSelection* selection;
+  GtkTreeModel* model;
   GtkTreeIter iter;
   gchar *starttext, *endtext;
 
   treeview = GTK_WIDGET(g_datalist_get_data(widset, "network-treeview-widget"));
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return;
 
   /* 删除所有被选中的项，并提取第一项数据 */
   starttext = endtext = NULL;
@@ -1519,13 +1527,15 @@ void DataSettings::ClickDelIpseg(GData **widset) {
     if (gtk_tree_selection_iter_is_selected(selection, &iter)) {
       if (!starttext)
         gtk_tree_model_get(model, &iter, 0, &starttext, 1, &endtext, -1);
-      if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter)) goto mark;
+      if (gtk_list_store_remove(GTK_LIST_STORE(model), &iter))
+        goto mark;
       break;
     }
   } while (gtk_tree_model_iter_next(model, &iter));
 
   /* 把第一项数据填入输入框 */
-  if (!starttext) return;
+  if (!starttext)
+    return;
   startentry = GTK_WIDGET(g_datalist_get_data(widset, "startip-entry-widget"));
   gtk_entry_set_text(GTK_ENTRY(startentry), starttext);
   g_free(starttext);
@@ -1541,8 +1551,10 @@ void DataSettings::ClickDelIpseg(GData **widset) {
  * @param newtext new-text
  * @param model model
  */
-void DataSettings::CellEditText(GtkCellRendererText *renderer, gchar *path,
-                                gchar *newtext, GtkTreeModel *model) {
+void DataSettings::CellEditText(GtkCellRendererText* renderer,
+                                gchar* path,
+                                gchar* newtext,
+                                GtkTreeModel* model) {
   GtkTreeIter iter;
   gint number;
 
@@ -1556,21 +1568,19 @@ void DataSettings::CellEditText(GtkCellRendererText *renderer, gchar *path,
  * 导入网段数据.
  * @param dset 数据设置类
  */
-void DataSettings::ImportNetSegment(DataSettings *dset) {
+void DataSettings::ImportNetSegment(DataSettings* dset) {
   GtkWidget *dialog, *parent;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *filename;
+  gchar* filename;
   GSList *list, *tlist;
-  NetSegment *pns;
+  NetSegment* pns;
 
   parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
   dialog = gtk_file_chooser_dialog_new(
       _("Please select a file to import data"), GTK_WINDOW(parent),
-      GTK_FILE_CHOOSER_ACTION_OPEN,
-      _("_Open"), GTK_RESPONSE_ACCEPT,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+      GTK_FILE_CHOOSER_ACTION_OPEN, _("_Open"), GTK_RESPONSE_ACCEPT,
+      _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
@@ -1586,14 +1596,15 @@ void DataSettings::ImportNetSegment(DataSettings *dset) {
       g_free(filename);
       tlist = list;
       while (tlist) {
-        pns = (NetSegment *)tlist->data;
+        pns = (NetSegment*)tlist->data;
         gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pns->startip.c_str(), 1,
-                           pns->endip.c_str(), 2, pns->description.c_str(), -1);
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
+                           pns->startip.c_str(), 1, pns->endip.c_str(), 2,
+                           pns->description.c_str(), -1);
         tlist = g_slist_next(tlist);
       }
       for (tlist = list; tlist; tlist = g_slist_next(tlist))
-        delete (NetSegment *)tlist->data;
+        delete (NetSegment*)tlist->data;
       g_slist_free(list);
     default:
       break;
@@ -1605,20 +1616,18 @@ void DataSettings::ImportNetSegment(DataSettings *dset) {
  * 导出网段数据.
  * @param dset 数据设置类
  */
-void DataSettings::ExportNetSegment(DataSettings *dset) {
+void DataSettings::ExportNetSegment(DataSettings* dset) {
   GtkWidget *dialog, *parent;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *filename;
+  gchar* filename;
   GSList *list, *tlist;
-  NetSegment *ns;
+  NetSegment* ns;
 
   parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
   dialog = gtk_file_chooser_dialog_new(
       _("Save data to file"), GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_SAVE,
-      _("_Save"), GTK_RESPONSE_ACCEPT,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+      _("_Save"), GTK_RESPONSE_ACCEPT, _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
@@ -1627,28 +1636,29 @@ void DataSettings::ExportNetSegment(DataSettings *dset) {
     case GTK_RESPONSE_ACCEPT:
       model =
           GTK_TREE_MODEL(g_datalist_get_data(&dset->mdlset, "network-model"));
-      if (!gtk_tree_model_get_iter_first(model, &iter)) break;
+      if (!gtk_tree_model_get_iter_first(model, &iter))
+        break;
       list = NULL;
       do {
         char* startip;
         char* endip;
         char* description;
-        gtk_tree_model_get(model, &iter,
-                           0, &startip,
-                           1, &endip,
-                           2, &description,
-                           -1);
+        gtk_tree_model_get(model, &iter, 0, &startip, 1, &endip, 2,
+                           &description, -1);
         ns = new NetSegment;
-        if(startip) ns->startip = startip;
-        if(endip) ns->endip = endip;
-        if(description) ns->description = description;
+        if (startip)
+          ns->startip = startip;
+        if (endip)
+          ns->endip = endip;
+        if (description)
+          ns->description = description;
         list = g_slist_append(list, ns);
       } while (gtk_tree_model_iter_next(model, &iter));
       filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       dset->WriteNetSegment(filename, list);
       g_free(filename);
       for (tlist = list; tlist; tlist = g_slist_next(tlist))
-        delete (NetSegment *)tlist->data;
+        delete (NetSegment*)tlist->data;
       g_slist_free(list);
     default:
       break;
@@ -1660,8 +1670,8 @@ void DataSettings::ExportNetSegment(DataSettings *dset) {
  * 清空网段数据.
  * @param mdlset model set
  */
-void DataSettings::ClearNetSegment(GData **mdlset) {
-  GtkTreeModel *model;
+void DataSettings::ClearNetSegment(GData** mdlset) {
+  GtkTreeModel* model;
 
   model = GTK_TREE_MODEL(g_datalist_get_data(mdlset, "network-model"));
   gtk_list_store_clear(GTK_LIST_STORE(model));

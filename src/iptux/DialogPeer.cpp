@@ -15,21 +15,21 @@
 
 #include <cinttypes>
 
-#include <unistd.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
-#include <glog/logging.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux/callback.h"
-#include "iptux/dialog.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
+#include "iptux/callback.h"
+#include "iptux/dialog.h"
 
 #define ATOM_OBJECT 0xFFFC
 #define OCCUPY_OBJECT 0x01
@@ -42,7 +42,7 @@ namespace iptux {
  * 类构造函数.
  * @param grp 好友群组信息
  */
-DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
+DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
     : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
       app(app),
       config(app->getConfig()),
@@ -51,11 +51,9 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       timerrcv(0) {
   ReadUILayout();
   grp->signalNewFileReceived.connect(
-    sigc::mem_fun(*this, &DialogPeer::onNewFileReceived)
-  );
+      sigc::mem_fun(*this, &DialogPeer::onNewFileReceived));
   app->getCoreThread()->signalGroupInfoUpdated.connect(
-    sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated)
-  );
+      sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated));
 }
 
 /**
@@ -63,7 +61,8 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
  */
 DialogPeer::~DialogPeer() {
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
-  if (timerrcv > 0) g_source_remove(timerrcv);
+  if (timerrcv > 0)
+    g_source_remove(timerrcv);
   // grpinf->disconnect(sigId);
   /*---------------------------------------------------------------*/
   WriteUILayout();
@@ -73,10 +72,11 @@ DialogPeer::~DialogPeer() {
  * 好友对话框入口.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
-  if(grpinf->dialog) return;
+void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
+  if (grpinf->dialog)
+    return;
 
-  DialogPeer *dlgpr;
+  DialogPeer* dlgpr;
   GtkWidget *window, *widget;
 
   dlgpr = new DialogPeer(app, grpinf);
@@ -103,9 +103,9 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo *grpinf) {
  * 更新好友信息.
  * @param pal 好友信息
  */
-void DialogPeer::UpdatePalData(PalInfo *pal) {
-  GtkWidget *textview;
-  GtkTextBuffer *buffer;
+void DialogPeer::UpdatePalData(PalInfo* pal) {
+  GtkWidget* textview;
+  GtkTextBuffer* buffer;
   GtkTextIter start, end;
 
   textview = GTK_WIDGET(g_datalist_get_data(&widset, "info-textview-widget"));
@@ -119,7 +119,7 @@ void DialogPeer::UpdatePalData(PalInfo *pal) {
  * 插入好友数据.
  * @param pal 好友信息
  */
-void DialogPeer::InsertPalData(PalInfo *) {
+void DialogPeer::InsertPalData(PalInfo*) {
   //此函数暂且无须实现
 }
 
@@ -127,7 +127,7 @@ void DialogPeer::InsertPalData(PalInfo *) {
  * 删除好友数据.
  * @param pal 好友信息
  */
-void DialogPeer::DelPalData(PalInfo *) {
+void DialogPeer::DelPalData(PalInfo*) {
   //此函数暂且无须实现
 }
 
@@ -142,8 +142,9 @@ void DialogPeer::ClearAllPalData() {
  * 读取对话框的UI布局数据.
  */
 void DialogPeer::ReadUILayout() {
-  g_datalist_set_data(&dtset, "window-width",
-                      GINT_TO_POINTER(config->GetInt("peer_window_width", 570)));
+  g_datalist_set_data(
+      &dtset, "window-width",
+      GINT_TO_POINTER(config->GetInt("peer_window_width", 570)));
   g_datalist_set_data(
       &dtset, "window-height",
       GINT_TO_POINTER(config->GetInt("peer_window_height", 420)));
@@ -169,23 +170,23 @@ void DialogPeer::ReadUILayout() {
  */
 void DialogPeer::WriteUILayout() {
   config->SetInt("peer_window_width",
-                GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
+                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width")));
   config->SetInt("peer_window_height",
-                GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
+                 GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height")));
   config->SetInt("peer_main_paned_divide", GPOINTER_TO_INT(g_datalist_get_data(
-                                              &dtset, "main-paned-divide")));
+                                               &dtset, "main-paned-divide")));
   config->SetInt("peer_historyinput_paned_divide",
-                GPOINTER_TO_INT(
-                    g_datalist_get_data(&dtset, "historyinput-paned-divide")));
+                 GPOINTER_TO_INT(
+                     g_datalist_get_data(&dtset, "historyinput-paned-divide")));
   config->SetInt("peer_infoenclosure_paned_divide",
-                GPOINTER_TO_INT(
-                    g_datalist_get_data(&dtset, "infoenclosure-paned-divide")));
+                 GPOINTER_TO_INT(g_datalist_get_data(
+                     &dtset, "infoenclosure-paned-divide")));
   config->SetInt(
       "peer_enclosure_paned_divide",
       GPOINTER_TO_INT(g_datalist_get_data(&dtset, "enclosure-paned-divide")));
   config->SetInt("peer_file_recieve_paned_divide",
-                GPOINTER_TO_INT(
-                    g_datalist_get_data(&dtset, "file-receive-paned-divide")));
+                 GPOINTER_TO_INT(
+                     g_datalist_get_data(&dtset, "file-receive-paned-divide")));
   config->Save();
 }
 
@@ -193,18 +194,17 @@ void DialogPeer::WriteUILayout() {
  * 创建主窗口.
  * @return 窗口
  */
-GtkWindow *DialogPeer::CreateMainWindow() {
+GtkWindow* DialogPeer::CreateMainWindow() {
   gint width, height;
-  PalInfo *palinfor;
+  PalInfo* palinfor;
   char ipstr[INET_ADDRSTRLEN];
 
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
   palinfor = grpinf->getMembers()[0].get();
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
-  auto title = stringFormat(_("Talk with %s(%s) IP:%s"),
-    palinfor->getName().c_str(),
-    palinfor->getHost().c_str(),
-    ipstr);
+  auto title =
+      stringFormat(_("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
+                   palinfor->getHost().c_str(), ipstr);
   gtk_window_set_title(GTK_WINDOW(window), title.c_str());
   width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
   height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
@@ -220,17 +220,16 @@ GtkWindow *DialogPeer::CreateMainWindow() {
                            G_CALLBACK(ShowDialogPeer), this);
 
   GActionEntry win_entries[] = {
-      { "clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      { "insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
-      { "attach_file", G_ACTION_CALLBACK(onAttachFile)},
-      { "attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
-      { "request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
-      { "close", G_ACTION_CALLBACK(onClose)},
-      { "send_message", G_ACTION_CALLBACK(onSendMessage)},
+      {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+      {"insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
+      {"attach_file", G_ACTION_CALLBACK(onAttachFile)},
+      {"attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
+      {"request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
+      {"close", G_ACTION_CALLBACK(onClose)},
+      {"send_message", G_ACTION_CALLBACK(onSendMessage)},
   };
-  g_action_map_add_action_entries (G_ACTION_MAP (window),
-                                   win_entries, G_N_ELEMENTS (win_entries),
-                                   this);
+  g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
+                                  G_N_ELEMENTS(win_entries), this);
   return GTK_WINDOW(window);
 }
 
@@ -238,8 +237,8 @@ GtkWindow *DialogPeer::CreateMainWindow() {
  * 创建所有区域.
  * @return 主窗体
  */
-GtkWidget *DialogPeer::CreateAllArea() {
-  GtkWidget *box;
+GtkWidget* DialogPeer::CreateAllArea() {
+  GtkWidget* box;
   GtkWidget *hpaned, *vpaned;
   gint position;
 
@@ -287,10 +286,10 @@ GtkWidget *DialogPeer::CreateAllArea() {
  * 创建好友信息区域.
  * @return 主窗体
  */
-GtkWidget *DialogPeer::CreateInfoArea() {
+GtkWidget* DialogPeer::CreateInfoArea() {
   GtkWidget *frame, *sw;
-  GtkWidget *widget;
-  GtkTextBuffer *buffer;
+  GtkWidget* widget;
+  GtkTextBuffer* buffer;
 
   frame = gtk_frame_new(_("Info."));
   g_datalist_set_data(&widset, "info-frame", frame);
@@ -319,15 +318,16 @@ GtkWidget *DialogPeer::CreateInfoArea() {
  * @param buffer text-buffer
  * @param pal class PalInfo
  */
-void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
+void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal) {
   char ipstr[INET_ADDRSTRLEN];
-  GdkPixbuf *pixbuf;
+  GdkPixbuf* pixbuf;
   GtkTextIter iter;
   string buf;
 
   buf += stringFormat(_("Version: %s\n"), pal->getVersion().c_str());
   if (!pal->getGroup().empty())
-    buf += stringFormat(_("Nickname: %s@%s\n"), pal->getName().c_str(), pal->getGroup().c_str());
+    buf += stringFormat(_("Nickname: %s@%s\n"), pal->getName().c_str(),
+                        pal->getGroup().c_str());
   else
     buf += stringFormat(_("Nickname: %s\n"), pal->getName().c_str());
 
@@ -379,14 +379,14 @@ void DialogPeer::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
  */
 bool DialogPeer::SendTextMsg() {
   static uint32_t count = 0;
-  GtkWidget *textview;
-  GtkTextBuffer *buffer;
+  GtkWidget* textview;
+  GtkTextBuffer* buffer;
   GtkTextIter start, end, piter, iter;
-  GdkPixbuf *pixbuf;
+  GdkPixbuf* pixbuf;
   char buf[MAX_UDPLEN];
   gchar *chipmsg, *ptr;
   size_t len;
-  MsgPara *para;
+  MsgPara* para;
   std::vector<ChipData> dtlist;
 
   /* 考察缓冲区内是否存在数据 */
@@ -394,7 +394,8 @@ bool DialogPeer::SendTextMsg() {
   gtk_widget_grab_focus(textview);  //为下一次任务做准备
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
   gtk_text_buffer_get_bounds(buffer, &start, &end);
-  if (gtk_text_iter_equal(&start, &end)) return false;
+  if (gtk_text_iter_equal(&start, &end))
+    return false;
 
   /* 一些初始化工作 */
   buf[0] = '\0';  //缓冲区数据为空
@@ -436,7 +437,7 @@ bool DialogPeer::SendTextMsg() {
   ChipData chip;
   chip.type = MESSAGE_CONTENT_TYPE_STRING;
   chip.data = g_strdup(buf);
-  //TODO: 保证字符串先被发送？
+  // TODO: 保证字符串先被发送？
   dtlist.push_back(std::move(chip));
 
   /* 清空缓冲区并发送数据 */
@@ -470,8 +471,8 @@ void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
  * @param dtlist 数据链表
  * @return 消息封装包
  */
-MsgPara *DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
-  MsgPara *para;
+MsgPara* DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
+  MsgPara* para;
   auto g_cthrd = app->getCoreThread();
 
   para = new MsgPara;
@@ -493,16 +494,17 @@ void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
 }
 
 void DialogPeer::insertPicture() {
-  GtkWidget *widget;
-  GtkTextBuffer *buffer;
+  GtkWidget* widget;
+  GtkTextBuffer* buffer;
   GtkTextIter iter;
-  GdkPixbuf *pixbuf;
-  gchar *filename;
+  GdkPixbuf* pixbuf;
+  gchar* filename;
   gint position;
   GError* error = nullptr;
 
   if (!(filename = choose_file_with_preview(
-            _("Please select a picture to insert the buffer"), GTK_WIDGET(window))))
+            _("Please select a picture to insert the buffer"),
+            GTK_WIDGET(window))))
     return;
 
   if (!(pixbuf = gdk_pixbuf_new_from_file(filename, &error))) {
@@ -514,8 +516,7 @@ void DialogPeer::insertPicture() {
   }
   g_free(filename);
 
-  widget =
-      GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
   g_object_get(buffer, "cursor-position", &position, NULL);
   gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
@@ -527,7 +528,7 @@ void DialogPeer::insertPicture() {
  * 创建文件接收和发送区域.
  * @return 主窗体
  */
-GtkWidget *DialogPeer::CreateFileArea() {
+GtkWidget* DialogPeer::CreateFileArea() {
   GtkWidget *frame, *vpaned;
   gint position;
 
@@ -552,8 +553,8 @@ GtkWidget *DialogPeer::CreateFileArea() {
  * 创建文件接收区域.
  * @return 主窗体
  */
-GtkWidget *DialogPeer::CreateFileReceiveArea() {
-  GtkWidget *vpaned;
+GtkWidget* DialogPeer::CreateFileReceiveArea() {
+  GtkWidget* vpaned;
   gint position;
   vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_datalist_set_data(&widset, "file-receive-paned-widget", vpaned);
@@ -572,9 +573,9 @@ GtkWidget *DialogPeer::CreateFileReceiveArea() {
  * 创建待接收文件区域.
  * @return 主窗体
  */
-GtkWidget *DialogPeer::CreateFileToReceiveArea() {
+GtkWidget* DialogPeer::CreateFileToReceiveArea() {
   GtkWidget *frame, *hbox, *vbox, *button, *pbar, *sw, *treeview;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
 
   frame = gtk_frame_new(_("File to be receive."));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
@@ -595,7 +596,8 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea() {
   g_datalist_set_data(&widset, "file-receive-refuse-button", button);
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg), (DialogBase*)this);
+  g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg),
+                           (DialogBase*)this);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -620,9 +622,9 @@ GtkWidget *DialogPeer::CreateFileToReceiveArea() {
  * 创建已接收文件区域.
  * @return 主窗体
  */
-GtkWidget *DialogPeer::CreateFileReceivedArea() {
+GtkWidget* DialogPeer::CreateFileReceivedArea() {
   GtkWidget *frame, *sw, *treeview;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   frame = gtk_frame_new(_("File received."));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -647,11 +649,11 @@ GtkWidget *DialogPeer::CreateFileReceivedArea() {
  * @param model FileToReceive-model
  * @return 待接收文件树
  */
-GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
-  GtkWidget *view;
-  GtkTreeSelection *selection;
-  GtkCellRenderer *cell;
-  GtkTreeViewColumn *column;
+GtkWidget* DialogPeer::CreateFileToReceiveTree(GtkTreeModel* model) {
+  GtkWidget* view;
+  GtkTreeSelection* selection;
+  GtkCellRenderer* cell;
+  GtkTreeViewColumn* column;
 
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
@@ -684,7 +686,7 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   g_signal_connect(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(RcvTreePopup), this);
+                   G_CALLBACK(RcvTreePopup), this);
 
   return view;
 }
@@ -692,8 +694,8 @@ GtkWidget *DialogPeer::CreateFileToReceiveTree(GtkTreeModel *model) {
  * 创建待接收文件树底层数据结构.
  * @return FileToReceive-model
  */
-GtkTreeModel *DialogPeer::CreateFileToReceiveModel() {
-  GtkListStore *model;
+GtkTreeModel* DialogPeer::CreateFileToReceiveModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -705,11 +707,11 @@ GtkTreeModel *DialogPeer::CreateFileToReceiveModel() {
  * @param model FileReceived-model
  * @return 已接收文件树
  */
-GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
-  GtkWidget *view;
-  GtkTreeSelection *selection;
-  GtkCellRenderer *cell;
-  GtkTreeViewColumn *column;
+GtkWidget* DialogPeer::CreateFileReceivedTree(GtkTreeModel* model) {
+  GtkWidget* view;
+  GtkTreeSelection* selection;
+  GtkCellRenderer* cell;
+  GtkTreeViewColumn* column;
 
   view = gtk_tree_view_new_with_model(model);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
@@ -717,7 +719,8 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
 
   cell = gtk_cell_renderer_pixbuf_new();
-  column = gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
+  column =
+      gtk_tree_view_column_new_with_attributes("", cell, "icon-name", 0, NULL);
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
@@ -740,7 +743,7 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
   g_signal_connect(GTK_WIDGET(view), "button_press_event",
-                           G_CALLBACK(RcvTreePopup), this);
+                   G_CALLBACK(RcvTreePopup), this);
   return view;
 }
 
@@ -748,8 +751,8 @@ GtkWidget *DialogPeer::CreateFileReceivedTree(GtkTreeModel *model) {
  * 创建已接收文件树底层数据结构.
  * @return FileReceived-model
  */
-GtkTreeModel *DialogPeer::CreateFileReceivedModel() {
-  GtkListStore *model;
+GtkTreeModel* DialogPeer::CreateFileReceivedModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -760,14 +763,14 @@ GtkTreeModel *DialogPeer::CreateFileReceivedModel() {
  * 显示信息/文件接收UI(是否显示信息或文件接收).
  *
  */
-void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
-  PalInfo *palinfor;
+void DialogPeer::ShowInfoEnclosure(DialogPeer* dlgpr) {
+  PalInfo* palinfor;
   GtkTreeModel *mdltorcv, *mdlrcvd, *mdltmp;
-  GSList *ecslist;
+  GSList* ecslist;
   GtkWidget *widget, *hpaned, *pbar;
   float progress = 0.0;
-  const char *iconname;
-  FileInfo *file;
+  const char* iconname;
+  FileInfo* file;
   gchar *filesize, *path;
   char progresstip[MAX_BUFLEN];
   GtkTreeIter iter;
@@ -777,11 +780,11 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
 
   //设置界面显示
   palinfor = dlgpr->grpinf->getMembers()[0].get();
-  mdltorcv = (GtkTreeModel *)g_datalist_get_data(&(dlgpr->mdlset),
-                                                 "file-to-receive-model");
+  mdltorcv = (GtkTreeModel*)g_datalist_get_data(&(dlgpr->mdlset),
+                                                "file-to-receive-model");
   gtk_list_store_clear(GTK_LIST_STORE(mdltorcv));
-  mdlrcvd = (GtkTreeModel *)g_datalist_get_data(&(dlgpr->mdlset),
-                                                "file-received-model");
+  mdlrcvd = (GtkTreeModel*)g_datalist_get_data(&(dlgpr->mdlset),
+                                               "file-received-model");
   gtk_list_store_clear(GTK_LIST_STORE(mdlrcvd));
   ecslist = dlgpr->app->getCoreThread()->GetPalEnclosure(palinfor);
   if (ecslist) {
@@ -798,7 +801,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
     //将从中心节点取到的数据向附件接收列表填充
     dlgpr->torcvsize = 0;
     while (ecslist) {
-      file = (FileInfo *)ecslist->data;
+      file = (FileInfo*)ecslist->data;
       filesize = numeric_to_size(file->filesize);
       switch (file->fileattr) {
         case FileAttr::REGULAR:
@@ -813,19 +816,16 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       }
       if (file->finishedsize < file->filesize) {
         file->filepath = ipmsg_get_filename_me(file->filepath, &path);
-        if (file->finishedsize > 0) receiving += 1;
+        if (file->finishedsize > 0)
+          receiving += 1;
         mdltmp = mdltorcv;
         dlgpr->torcvsize += file->filesize;
       } else
         mdltmp = mdlrcvd;
       gtk_list_store_append(GTK_LIST_STORE(mdltmp), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(mdltmp), &iter,
-                         0, iconname,
-                         1, file->fileown->getName().c_str(),
-                         2, file->filepath,
-                         3, filesize,
-                         5, file,
-                         -1);
+      gtk_list_store_set(GTK_LIST_STORE(mdltmp), &iter, 0, iconname, 1,
+                         file->fileown->getName().c_str(), 2, file->filepath, 3,
+                         filesize, 5, file, -1);
       g_free(filesize);
       ecslist = g_slist_next(ecslist);
     }
@@ -846,7 +846,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
       }
     }
     if (progress == 1.0) {
-      if(dlgpr->timerrcv > 0) {
+      if (dlgpr->timerrcv > 0) {
         g_source_remove(dlgpr->timerrcv);
         dlgpr->timerrcv = 0;
       }
@@ -862,31 +862,32 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer *dlgpr) {
     gtk_widget_hide(widget);
   }
 
-  if (receiving > 0) dlgpr->onAcceptButtonClicked(dlgpr);
+  if (receiving > 0)
+    dlgpr->onAcceptButtonClicked(dlgpr);
 }
 /**
  * 显示窗口事件响应函数.
  *@param dlgpr 对话框类
  *
  */
-bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
-  GtkTreeModel *model;
+bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer* dlgpr) {
+  GtkTreeModel* model;
   GtkWidget *pbar, *button;
   float progress = 0.0;
-  FileInfo *file;
+  FileInfo* file;
   GtkTreeIter iter;
   char progresstip[MAX_BUFLEN];
 
   //处理待接收文件界面显示
-  model = (GtkTreeModel *)g_datalist_get_data(&(dlgpr->mdlset),
-                                              "file-to-receive-model");
+  model = (GtkTreeModel*)g_datalist_get_data(&(dlgpr->mdlset),
+                                             "file-to-receive-model");
   if (!model) {
     g_source_remove(dlgpr->timerrcv);
     dlgpr->timerrcv = 0;
     return FALSE;
   }
   dlgpr->rcvdsize = 0;
-  if(gtk_tree_model_get_iter_first(model, &iter)) {
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {  //遍历待接收model
       gtk_tree_model_get(model, &iter, 5, &file, -1);
       if (file->finishedsize == file->filesize) {
@@ -944,7 +945,7 @@ bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer *dlgpr) {
  *@param dlgpr 对话框类
  *
  */
-void DialogPeer::ShowDialogPeer(DialogPeer *dlgpr) {
+void DialogPeer::ShowDialogPeer(DialogPeer* dlgpr) {
   //这个事件有可能需要触发其它功能，暂没有直接用ShowInfoEnclosure来执行
   ShowInfoEnclosure(dlgpr);
 }
@@ -953,25 +954,28 @@ void DialogPeer::ShowDialogPeer(DialogPeer *dlgpr) {
  *@param dlgpr 对话框类
  *
  */
-void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
-  GtkWidget *widget;
-  GtkTreeModel *model;
+void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
+  GtkWidget* widget;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *filename;
-  FileInfo *file;
+  gchar* filename;
+  FileInfo* file;
 
   auto g_progdt = self->app->getCoreThread()->getUiProgramData();
 
-  const gchar *filepath = pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
-  if(filepath == nullptr) {
+  const gchar* filepath =
+      pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
+  if (filepath == nullptr) {
     return;
   }
   self->progdt->path = filepath;
   /* 考察数据集中是否存在项 */
   widget = self->fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  if (!model) return;
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
+  if (!model)
+    return;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return;
   self->torcvsize = 0;
   /* 将选中的项投入文件数据接收类 */
   do {
@@ -984,8 +988,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
     self->torcvsize += file->filesize;
   } while (gtk_tree_model_iter_next(model, &iter));
   self->rcvdsize = 0;
-  if(!self->timerrcv) {
-    self->timerrcv = g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
+  if (!self->timerrcv) {
+    self->timerrcv =
+        g_timeout_add(300, GSourceFunc(UpdataEnclosureRcvUI), self);
   }
 }
 
@@ -994,9 +999,9 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
  * @return plist 获取待发送成员列表
  * 调用该函数后须free plist
  */
-GSList *DialogPeer::GetSelPal() {
-  PalInfo *pal;
-  GSList *plist;
+GSList* DialogPeer::GetSelPal() {
+  PalInfo* pal;
+  GSList* plist;
   pal = grpinf->getMembers()[0].get();
   plist = NULL;
   plist = g_slist_append(plist, pal);
@@ -1007,22 +1012,23 @@ GSList *DialogPeer::GetSelPal() {
  *从接收文件的TreeView删除选定行（待接收和已接收都用此函数）.
  * @param widget TreeView
  */
-void DialogPeer::onRefuseButtonClicked(DialogPeer *self) {
-  GtkTreeModel *model;
-  GtkTreeSelection *TreeSel;
+void DialogPeer::onRefuseButtonClicked(DialogPeer* self) {
+  GtkTreeModel* model;
+  GtkTreeSelection* TreeSel;
   GtkTreeIter iter;
-  FileInfo *file;
-  GList *list;
+  FileInfo* file;
+  GList* list;
 
   GtkWidget* widget = self->fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   list = gtk_tree_selection_get_selected_rows(TreeSel, NULL);
-  if (!list) return;
+  if (!list)
+    return;
   while (list) {
     gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter,
-                            (GtkTreePath *)g_list_nth(list, 0)->data);
+                            (GtkTreePath*)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 5, &file, -1);
     self->app->getCoreThread()->PopItemFromEnclosureList(file);
     list = g_list_next(list);
@@ -1038,18 +1044,18 @@ void DialogPeer::onRefuseButtonClicked(DialogPeer *self) {
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer* self) {
+gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self) {
   GtkWidget *menu, *menuitem;
-  GdkEventButton *event_button;
+  GdkEventButton* event_button;
 
   menu = gtk_menu_new();
   menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(onRefuseButtonClicked),
-                           self);
+  g_signal_connect_swapped(menuitem, "activate",
+                           G_CALLBACK(onRefuseButtonClicked), self);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
   if (event->type == GDK_BUTTON_PRESS) {
-    event_button = (GdkEventButton *)event;
+    event_button = (GdkEventButton*)event;
     if (event_button->button == GDK_BUTTON_SECONDARY) {
       gtk_widget_show(menuitem);
       gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
@@ -1064,11 +1070,11 @@ void DialogPeer::onNewFileReceived(GroupInfo*) {
 }
 
 void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
-  if(groupInfo != this->grpinf) return;
-  if(gtk_window_is_active(GTK_WINDOW(this->window))) {
+  if (groupInfo != this->grpinf)
+    return;
+  if (gtk_window_is_active(GTK_WINDOW(this->window))) {
     ClearNotify(GTK_WIDGET(this->window), nullptr);
   }
 }
-
 
 }  // namespace iptux

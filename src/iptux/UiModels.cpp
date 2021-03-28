@@ -12,14 +12,13 @@
 
 using namespace std;
 
-
-
 namespace iptux {
 
 /**
  * 文件传输树(trans-tree)底层数据结构.
  * 14,0 status,1 task,2 peer,3 ip,4 filename,5 filelength,6 finishlength,7
- * progress, 8 pro-text,9 cost,10 remain,11 rate,12,pathname,13 data,14 para, 15 finished
+ * progress, 8 pro-text,9 cost,10 remain,11 rate,12,pathname,13 data,14 para, 15
+ * finished
  *
  * 任务状态;任务类型;任务对端;文件名(如果当前是文件夹，该项指正在传输的文件夹内单个文件,
  * 整个文件夹传输完成后,该项指向当前是文件夹);文件长度;完成长度;完成进度;
@@ -28,15 +27,13 @@ namespace iptux {
  * @return trans-model
  */
 TransModel* transModelNew() {
-  GtkListStore *model;
+  GtkListStore* model;
 
-  model = gtk_list_store_new(int(TransModelColumn::N_COLUMNS),
-                             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-                             G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_POINTER,
-                             G_TYPE_BOOLEAN);
+  model = gtk_list_store_new(
+      int(TransModelColumn::N_COLUMNS), G_TYPE_STRING, G_TYPE_STRING,
+      G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+      G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+      G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_BOOLEAN);
   return GTK_TREE_MODEL(model);
 }
 
@@ -44,35 +41,35 @@ void transModelDelete(TransModel* model) {
   g_object_unref(model);
 }
 
-static void transModelFillFromTransFileModel(TransModel* model, GtkTreeIter* iter, const TransFileModel& para) {
+static void transModelFillFromTransFileModel(TransModel* model,
+                                             GtkTreeIter* iter,
+                                             const TransFileModel& para) {
   gtk_list_store_set(
-      GTK_LIST_STORE(model), iter,
-      TransModelColumn::STATUS, para.getStatus().c_str(),
-      TransModelColumn::TASK, para.getTask().c_str(),
-      TransModelColumn::PEER, para.getPeer().c_str(),
-      TransModelColumn::IP, para.getIp().c_str(),
-      TransModelColumn::FILENAME, para.getFilename().c_str(),
-      TransModelColumn::FILE_LENGTH_TEXT, para.getFileLengthText().c_str(),
-      TransModelColumn::FINISHED_LENGTH_TEXT, para.getFinishedLengthText().c_str(),
-      TransModelColumn::PROGRESS, int(para.getProgress()),
-      TransModelColumn::PROGRESS_TEXT, g_strdup(para.getProgressText().c_str()),
-      TransModelColumn::COST, para.getCost().c_str(),
-      TransModelColumn::REMAIN, para.getRemain().c_str(),
-      TransModelColumn::RATE, para.getRate().c_str(),
+      GTK_LIST_STORE(model), iter, TransModelColumn::STATUS,
+      para.getStatus().c_str(), TransModelColumn::TASK, para.getTask().c_str(),
+      TransModelColumn::PEER, para.getPeer().c_str(), TransModelColumn::IP,
+      para.getIp().c_str(), TransModelColumn::FILENAME,
+      para.getFilename().c_str(), TransModelColumn::FILE_LENGTH_TEXT,
+      para.getFileLengthText().c_str(), TransModelColumn::FINISHED_LENGTH_TEXT,
+      para.getFinishedLengthText().c_str(), TransModelColumn::PROGRESS,
+      int(para.getProgress()), TransModelColumn::PROGRESS_TEXT,
+      g_strdup(para.getProgressText().c_str()), TransModelColumn::COST,
+      para.getCost().c_str(), TransModelColumn::REMAIN,
+      para.getRemain().c_str(), TransModelColumn::RATE, para.getRate().c_str(),
       TransModelColumn::FILE_PATH, para.getFilePath().c_str(),
-      TransModelColumn::TASK_ID, para.getTaskId(),
-      TransModelColumn::FINISHED, para.isFinished(),
-      -1);
+      TransModelColumn::TASK_ID, para.getTaskId(), TransModelColumn::FINISHED,
+      para.isFinished(), -1);
 }
 
-void transModelUpdateFromTransFileModel(TransModel* model, const TransFileModel& transFileModel) {
+void transModelUpdateFromTransFileModel(TransModel* model,
+                                        const TransFileModel& transFileModel) {
   GtkTreeIter iter;
   bool found = false;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
       int taskId = 0;
       gtk_tree_model_get(model, &iter, TransModelColumn::TASK_ID, &taskId, -1);
-      if(taskId == transFileModel.getTaskId()) {
+      if (taskId == transFileModel.getTaskId()) {
         found = true;
         break;
       }
@@ -86,18 +83,16 @@ void transModelUpdateFromTransFileModel(TransModel* model, const TransFileModel&
   transModelFillFromTransFileModel(model, &iter, transFileModel);
 }
 
-
-void transModelLoadFromTransFileModels(TransModel* model, const vector<unique_ptr<TransFileModel>>& fileModels) {
+void transModelLoadFromTransFileModels(
+    TransModel* model,
+    const vector<unique_ptr<TransFileModel>>& fileModels) {
   gtk_list_store_clear(GTK_LIST_STORE(model));
-  for(auto& it: fileModels) {
+  for (auto& it : fileModels) {
     GtkTreeIter iter;
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
     transModelFillFromTransFileModel(model, &iter, *(it.get()));
   }
 }
-
-
-
 
 /**
  * 好友树(paltree)按昵称排序的比较函数.
@@ -106,8 +101,9 @@ void transModelLoadFromTransFileModels(TransModel* model, const vector<unique_pt
  * @param b Another GtkTreeIter in model
  * @return 比较值
  */
-gint paltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
-                              GtkTreeIter *b) {
+gint paltreeCompareByNameFunc(GtkTreeModel* model,
+                              GtkTreeIter* a,
+                              GtkTreeIter* b) {
   GroupInfo *agrpinf, *bgrpinf;
   gint result;
 
@@ -125,18 +121,18 @@ gint paltreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
  * @param b Another GtkTreeIter in model
  * @return 比较值
  */
-gint paltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                        GtkTreeIter *b) {
+gint paltreeCompareByIPFunc(GtkTreeModel* model,
+                            GtkTreeIter* a,
+                            GtkTreeIter* b) {
   GroupInfo *agrpinf, *bgrpinf;
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
   if (agrpinf->getType() == GROUP_BELONG_TYPE_REGULAR &&
-      bgrpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
-  {
-    if(agrpinf->grpid < bgrpinf->grpid) {
+      bgrpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
+    if (agrpinf->grpid < bgrpinf->grpid) {
       return -1;
     }
-    if(agrpinf->grpid == bgrpinf->grpid) {
+    if (agrpinf->grpid == bgrpinf->grpid) {
       return 0;
     }
     return 1;
@@ -145,21 +141,19 @@ gint paltreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
   return 0;
 }
 
-
-
 /**
  * 好友树(paltree)底层数据结构.
  * 7,0 closed-expander,1 open-expander,2 info.,3 extras,4 style,5 color,6 data
  * \n 关闭的展开器;打开的展开器;群组信息;扩展信息;字体风格;字体颜色;群组数据 \n
  * @return paltree-model
  */
-PalTreeModel * palTreeModelNew() {
-  GtkTreeStore *model;
+PalTreeModel* palTreeModelNew() {
+  GtkTreeStore* model;
 
-  model = gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS),
-                             GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF, G_TYPE_STRING,
-                             G_TYPE_STRING, PANGO_TYPE_ATTR_LIST,
-                             GDK_TYPE_RGBA, G_TYPE_POINTER);
+  model =
+      gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS), GDK_TYPE_PIXBUF,
+                         GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
+                         PANGO_TYPE_ATTR_LIST, GDK_TYPE_RGBA, G_TYPE_POINTER);
   palTreeModelSetSortKey(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
   gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
                                        GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
@@ -168,15 +162,17 @@ PalTreeModel * palTreeModelNew() {
   return GTK_TREE_MODEL(model);
 }
 
-void palTreeModelSetSortKey(PalTreeModel *model, PalTreeModelSortKey key) {
-  switch(key) {
+void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key) {
+  switch (key) {
     case PalTreeModelSortKey::NICKNAME:
-      gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), GtkTreeIterCompareFunc(paltreeCompareByNameFunc), NULL,
-                                              NULL);
+      gtk_tree_sortable_set_default_sort_func(
+          GTK_TREE_SORTABLE(model),
+          GtkTreeIterCompareFunc(paltreeCompareByNameFunc), NULL, NULL);
       break;
     case PalTreeModelSortKey::IP:
-      gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), GtkTreeIterCompareFunc(paltreeCompareByIPFunc), NULL,
-                                              NULL);
+      gtk_tree_sortable_set_default_sort_func(
+          GTK_TREE_SORTABLE(model),
+          GtkTreeIterCompareFunc(paltreeCompareByIPFunc), NULL, NULL);
       break;
     default:
       LOG_WARN("unknown PalTreeModelSortKey: %d", key);
@@ -189,15 +185,14 @@ void palTreeModelSetSortKey(PalTreeModel *model, PalTreeModelSortKey key) {
  * @param iter iter
  * @param grpinf class GroupInfo
  */
-void groupInfo2PalTreeModel(GroupInfo *grpinf,
-                            PalTreeModel *model,
-                            GtkTreeIter *iter,
+void groupInfo2PalTreeModel(GroupInfo* grpinf,
+                            PalTreeModel* model,
+                            GtkTreeIter* iter,
                             const char* font) {
   palTreeModelFillFromGroupInfo(model, iter, grpinf, font);
 }
 
 static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
-
 
 /**
  * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
@@ -205,16 +200,16 @@ static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
  * @param iter iter
  * @param grpinf class GroupInfo
  */
-void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
-                                   GtkTreeIter *iter,
-                                   const GroupInfo *grpinf,
+void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
+                                   GtkTreeIter* iter,
+                                   const GroupInfo* grpinf,
                                    const char* font) {
-  GtkIconTheme *theme;
-  GdkPixbuf *cpixbuf, *opixbuf= nullptr;
-  PangoAttrList *attrs;
-  PangoAttribute *attr;
-  gchar *extra;
-  PalInfo *pal;
+  GtkIconTheme* theme;
+  GdkPixbuf *cpixbuf, *opixbuf = nullptr;
+  PangoAttrList* attrs;
+  PangoAttribute* attr;
+  gchar* extra;
+  PalInfo* pal;
   GError* error = nullptr;
 
   /* 创建图标 */
@@ -224,8 +219,9 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
     auto file = iptux_erase_filename_suffix(pal->iconfile);
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                        GtkIconLookupFlags(0), &error);
-    if(cpixbuf == nullptr) {
-      LOG_WARN("gtk_icon_theme_load_icon failed: [%d] %s", error->code, error->message);
+    if (cpixbuf == nullptr) {
+      LOG_WARN("gtk_icon_theme_load_icon failed: [%d] %s", error->code,
+               error->message);
       g_error_free(error);
       error = nullptr;
     } else {
@@ -246,15 +242,13 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
     pal = grpinf->getMembers()[0].get();
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     int unreadMsgCount = grpinf->getUnreadMsgCount();
-    if(unreadMsgCount > 0) {
+    if (unreadMsgCount > 0) {
       info = stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
-        markupEscapeText(pal->getName()).c_str(),
-        unreadMsgCount,
-        markupEscapeText(ipstr).c_str());
+                          markupEscapeText(pal->getName()).c_str(),
+                          unreadMsgCount, markupEscapeText(ipstr).c_str());
     } else {
-      info = stringFormat("%s\n%s",
-        markupEscapeText(pal->getName()).c_str(),
-        markupEscapeText(ipstr).c_str());
+      info = stringFormat("%s\n%s", markupEscapeText(pal->getName()).c_str(),
+                          markupEscapeText(ipstr).c_str());
     }
   } else
     info = markupEscapeText(grpinf->name);
@@ -282,19 +276,18 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel *model,
   }
 
   /* 设置相应的数据 */
-  gtk_tree_store_set(GTK_TREE_STORE(model), iter,
-                     PalTreeModelColumn ::CLOSED_EXPANDER, cpixbuf,
-                     PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
-                     PalTreeModelColumn ::INFO, info.c_str(),
-                     PalTreeModelColumn ::EXTRAS, extra,
-                     PalTreeModelColumn ::STYLE, attrs,
-                     PalTreeModelColumn ::COLOR, &color,
-                     PalTreeModelColumn ::DATA, grpinf,
-                     -1);
+  gtk_tree_store_set(
+      GTK_TREE_STORE(model), iter, PalTreeModelColumn ::CLOSED_EXPANDER,
+      cpixbuf, PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
+      PalTreeModelColumn ::INFO, info.c_str(), PalTreeModelColumn ::EXTRAS,
+      extra, PalTreeModelColumn ::STYLE, attrs, PalTreeModelColumn ::COLOR,
+      &color, PalTreeModelColumn ::DATA, grpinf, -1);
 
   /* 释放资源 */
-  if (cpixbuf) g_object_unref(cpixbuf);
-  if (opixbuf) g_object_unref(opixbuf);
+  if (cpixbuf)
+    g_object_unref(cpixbuf);
+  if (opixbuf)
+    g_object_unref(opixbuf);
   g_free(extra);
   pango_attr_list_unref(attrs);
 }
@@ -310,8 +303,8 @@ GroupInfo::~GroupInfo() {
 }
 
 bool GroupInfo::hasPal(PalInfo* pal) const {
-  for(auto i: members) {
-    if(i.get() == pal) {
+  for (auto i : members) {
+    if (i.get() == pal) {
       return true;
     }
   }
@@ -323,29 +316,19 @@ bool GroupInfo::hasPal(PPalInfo pal) const {
 }
 
 GroupInfo::GroupInfo(PPalInfo pal)
-    : grpid(0),
-      buffer(NULL),
-      dialog(NULL),
-      type(GROUP_BELONG_TYPE_REGULAR)
-{
+    : grpid(0), buffer(NULL), dialog(NULL), type(GROUP_BELONG_TYPE_REGULAR) {
   members.push_back(pal);
 }
 
 GroupInfo::GroupInfo(iptux::GroupBelongType t, const vector<PPalInfo>& pals)
-    : grpid(0),
-      buffer(NULL),
-      dialog(NULL),
-      members(pals),
-      type(t)
-{
-}
+    : grpid(0), buffer(NULL), dialog(NULL), members(pals), type(t) {}
 
 bool GroupInfo::addPal(PPalInfo pal) {
-  if(type == GROUP_BELONG_TYPE_REGULAR) {
+  if (type == GROUP_BELONG_TYPE_REGULAR) {
     LOG_WARN("should not call addPal on GROUP_BELONG_TYPE_REGULAR");
     return false;
   }
-  if(hasPal(pal)) {
+  if (hasPal(pal)) {
     return false;
   }
   members.push_back(pal);
@@ -353,13 +336,13 @@ bool GroupInfo::addPal(PPalInfo pal) {
 }
 
 bool GroupInfo::delPal(PalInfo* pal) {
-  if(type == GROUP_BELONG_TYPE_REGULAR) {
+  if (type == GROUP_BELONG_TYPE_REGULAR) {
     LOG_WARN("should not call delPal on GROUP_BELONG_TYPE_REGULAR");
     return false;
   }
 
-  for(auto it = members.begin(); it != members.end(); ++it) {
-    if(it->get() == pal) {
+  for (auto it = members.begin(); it != members.end(); ++it) {
+    if (it->get() == pal) {
       members.erase(it);
       return true;
     }
@@ -379,7 +362,7 @@ void GroupInfo::addMsgCount(int i) {
 
 void GroupInfo::readAllMsg() {
   int oldCount = getUnreadMsgCount();
-  if(oldCount != 0) {
+  if (oldCount != 0) {
     readMsgCount = allMsgCount;
     signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
   }
@@ -390,4 +373,4 @@ int GroupInfo::getUnreadMsgCount() const {
   return allMsgCount - readMsgCount;
 }
 
-}
+}  // namespace iptux

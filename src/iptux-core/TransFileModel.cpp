@@ -7,10 +7,7 @@
 namespace iptux {
 
 TransFileModel::TransFileModel()
-: fileLength(0),
-  finishedLength(0),
-  finished(false) {
-}
+    : fileLength(0), finishedLength(0), finished(false) {}
 
 TransFileModel& TransFileModel::setStatus(const std::string& value) {
   status = value;
@@ -149,5 +146,4 @@ int TransFileModel::getTaskId() const {
   return taskId;
 }
 
-
-}
+}  // namespace iptux

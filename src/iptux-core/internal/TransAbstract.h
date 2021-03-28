@@ -13,14 +13,16 @@ class TransAbstract {
   TransAbstract();
   virtual ~TransAbstract();
 
-  virtual const TransFileModel& getTransFileModel() const = 0;  ///< 获取更新UI的数据
-  virtual void TerminateTrans() = 0;       ///< 终止过程处理
+  virtual const TransFileModel& getTransFileModel()
+      const = 0;                      ///< 获取更新UI的数据
+  virtual void TerminateTrans() = 0;  ///< 终止过程处理
   int GetTaskId();
   void SetTaskId(int taskId);
+
  private:
   int taskId;
 };
 
-}
+}  // namespace iptux
 
-#endif //IPTUX_TRANSABSTRACT_H
+#endif  // IPTUX_TRANSABSTRACT_H
