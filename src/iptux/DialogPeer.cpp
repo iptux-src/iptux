@@ -91,12 +91,6 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
   gtk_widget_grab_focus(widget);
 
   auto g_cthrd = app->getCoreThread();
-  /* 从消息队列中移除 */
-  g_cthrd->Lock();
-  if (g_cthrd->MsglineContainItem(grpinf)) {
-    g_cthrd->PopItemFromMsgline(grpinf);
-  }
-  g_cthrd->Unlock();
 }
 
 /**

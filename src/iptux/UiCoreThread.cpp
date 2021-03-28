@@ -46,7 +46,6 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
   logSystem = app->getLogSystem();
-  g_queue_init(&msgline);
   InitSublayer();
 }
 
@@ -337,47 +336,6 @@ GroupInfo* UiCoreThread::GetPalBroadcastItem(const PalInfo*) {
 }
 
 /**
- * 获取消息队列项总数.
- * @return 项数
- */
-guint UiCoreThread::GetMsglineItems() {
-  return g_queue_get_length(&msgline);
-}
-
-/**
- * 查看消息队列首项.
- * @return 项
- */
-GroupInfo* UiCoreThread::GetMsglineHeadItem() {
-  return (GroupInfo*)g_queue_peek_head(&msgline);
-}
-
-/**
- * 消息队列是否已经包含此项.
- * @param grpinf 项
- * @return 是否包含
- */
-bool UiCoreThread::MsglineContainItem(GroupInfo* grpinf) {
-  return g_queue_find(&msgline, grpinf);
-}
-
-/**
- * 压入项进消息队列.
- * @param grpinf 项
- */
-void UiCoreThread::PushItemToMsgline(GroupInfo* grpinf) {
-  g_queue_push_tail(&msgline, grpinf);
-}
-
-/**
- * 弹出项从消息队列.
- * @param grpinf 项
- */
-void UiCoreThread::PopItemFromMsgline(GroupInfo* grpinf) {
-  g_queue_remove(&msgline, grpinf);
-}
-
-/**
  * 初始化底层数据.
  */
 void UiCoreThread::InitSublayer() {}
@@ -402,7 +360,6 @@ void UiCoreThread::ClearSublayer() {
   for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo*)tlist->data;
   g_slist_free(brdlist);
-  g_queue_clear(&msgline);
 
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo*)tlist->data;

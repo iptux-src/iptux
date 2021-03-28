@@ -163,12 +163,6 @@ GtkWidget* StatusIcon::CreatePopupMenu() {
 void StatusIcon::StatusIconActivate(StatusIcon* self) {
   GroupInfo* grpinf;
 
-  g_cthrd->Lock();
-  if (g_cthrd->GetMsglineItems())
-    grpinf = g_cthrd->GetMsglineHeadItem();
-  else
-    grpinf = NULL;
-  g_cthrd->Unlock();
   if (grpinf) {
     switch (grpinf->getType()) {
       case GROUP_BELONG_TYPE_REGULAR:
@@ -219,13 +213,7 @@ gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon* statusicon,
   guint len;
 
   /* 获取消息串 */
-  g_cthrd->Lock();
-  if ((len = g_cthrd->GetMsglineItems())) {
-    msgstr = g_strdup_printf(_("To be read: %u messages"), len);
-  } else {
-    msgstr = g_strdup(_("iptux"));
-  }
-  g_cthrd->Unlock();
+  msgstr = g_strdup(_("iptux"));
   /* 设置信息提示串 */
   gtk_tooltip_set_text(tooltip, msgstr);
   g_free(msgstr);

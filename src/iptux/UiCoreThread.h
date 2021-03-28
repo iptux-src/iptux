@@ -57,12 +57,6 @@ class UiCoreThread : public CoreThread {
   GroupInfo* GetPalGroupItem(const PalInfo* pal);
   GroupInfo* GetPalBroadcastItem(const PalInfo* pal);
 
-  guint GetMsglineItems();
-  GroupInfo* GetMsglineHeadItem();
-  bool MsglineContainItem(GroupInfo* grpinf);
-  void PushItemToMsgline(GroupInfo* grpinf);
-  void PopItemFromMsgline(GroupInfo* grpinf);
-
   GSList* GetPalEnclosure(PalInfo* pal);
   void PushItemToEnclosureList(FileInfo* file);
   void PopItemFromEnclosureList(FileInfo* file);
@@ -95,7 +89,6 @@ class UiCoreThread : public CoreThread {
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
-  GQueue msgline;                                    //消息队列
 
   uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
   GSList* ecsList;    //文件链表(好友发过来)

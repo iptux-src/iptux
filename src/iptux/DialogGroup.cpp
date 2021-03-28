@@ -66,13 +66,6 @@ DialogGroup* DialogGroup::GroupDialogEntry(Application* app,
   widget =
       GTK_WIDGET(g_datalist_get_data(&dlggrp->widset, "input-textview-widget"));
   gtk_widget_grab_focus(widget);
-  /* 从消息队列中移除 */
-  auto g_cthrd = app->getCoreThread();
-  g_cthrd->Lock();
-  if (g_cthrd->MsglineContainItem(grpinf)) {
-    g_cthrd->PopItemFromMsgline(grpinf);
-  }
-  g_cthrd->Unlock();
   return dlggrp;
 }
 
