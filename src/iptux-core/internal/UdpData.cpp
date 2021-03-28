@@ -160,13 +160,13 @@ void UdpData::SomeoneLost() {
   auto host = iptux_get_section_string(buf, ':', 3);
   (*pal).setVersion(version ? version : "?")
     .setUser(user ? user : "???")
-    .setHost(host ? host : "???");
+    .setHost(host ? host : "???")
+    .setEncode(encode ? encode : "utf-8");
   pal->setName(_("mysterious"));
   pal->group = g_strdup(_("mysterious"));
   pal->photo = NULL;
   pal->sign = NULL;
   pal->iconfile = g_strdup(g_progdt->palicon);
-  pal->encode = g_strdup(encode ? encode : "utf-8");
   pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
@@ -248,7 +248,7 @@ void UdpData::SomeoneAnsEntry() {
   if (pal->isCompatible()) {
     thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
     t1.detach();
-  } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
+  } else if (strcasecmp(g_progdt->encode.c_str(), pal->getEncode().c_str()) != 0) {
     cmd.SendAnsentry(coreThread.getUdpSock(), pal);
   }
 }
@@ -267,7 +267,7 @@ void UdpData::SomeoneAbsence() {
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
-      string s(pal->encode);
+      string s(pal->getEncode());
       ConvertEncode(s);
     } else {
       ConvertEncode(g_progdt->encode);
@@ -300,16 +300,15 @@ void UdpData::SomeoneSendmsg() {
   auto pal = coreThread.GetPal(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
-      ConvertEncode(pal->encode);
+      ConvertEncode(pal->getEncode());
     } else {
       ConvertEncode(g_progdt->encode);
     }
   }
   /* 确保好友在线，并对编码作出适当调整 */
   pal = AssertPalOnline();
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
 
   /* 回复好友并检查此消息是否过时 */
@@ -417,12 +416,11 @@ void UdpData::SomeoneSendSign() {
 
   /* 若好友不兼容iptux协议，则需转码 */
   if (!pal->isCompatible()) {
-    ConvertEncode(pal->encode);
+    ConvertEncode(pal->getEncode());
   }
   /* 对编码作适当调整 */
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
   /* 更新 */
   if ((sign = ipmsg_get_attach(buf, ':', 5))) {
@@ -448,16 +446,15 @@ void UdpData::SomeoneBcstmsg() {
   auto pal = coreThread.GetPal(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
-      ConvertEncode(pal->encode);
+      ConvertEncode(pal->getEncode());
     } else {
       ConvertEncode(g_progdt->encode);
     }
   }
   /* 确保好友在线，并对编码作出适当调整 */
   pal = AssertPalOnline();
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
 
   /* 检查此消息是否过时 */
@@ -517,10 +514,12 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
     pal->iconfile = g_strdup(programData->palicon);
-  if ((pal->encode = GetPalEncode())) {
+  auto localEncode = GetPalEncode();
+  if(localEncode) {
+    pal->setEncode(localEncode);
     pal->setCompatible(true);
   } else {
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+    pal->setEncode(encode ? encode : "utf-8");
   }
   pal->setOnline(true);
   pal->packetn = 0;
@@ -557,11 +556,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
     if (!(pal->iconfile = GetPalIcon()))
       pal->iconfile = g_strdup(g_progdt->palicon);
     pal->setCompatible(false);
-    g_free(pal->encode);
-    if ((pal->encode = GetPalEncode())) {
+    auto localEncode = GetPalEncode();
+    if(localEncode) {
+      pal->setEncode(localEncode);
       pal->setCompatible(true);
     } else {
-      pal->encode = g_strdup(encode ? encode : "utf-8");
+      pal->setEncode(encode ? encode : "utf-8");
     }
   }
   pal->setOnline(true);

@@ -177,14 +177,18 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
 
   /* 更新常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
-  GroupGetPaltreeItem(model, &iter, grpinf);
-  groupInfo2PalTreeModel(grpinf, model, &iter, font);
+  if(GroupGetPaltreeItem(model, &iter, grpinf)) {
+    groupInfo2PalTreeModel(grpinf, model, &iter, font);
+  } else {
+    LOG_WARN("GroupGetPaltreeItem return false");
+  }
   /* 更新网段模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
   pgrpinf = g_cthrd->GetPalSegmentItem(pal);
-  GroupGetPaltreeItem(model, &iter, pgrpinf);
-  GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-  groupInfo2PalTreeModel(grpinf, model, &iter, font);
+  if(GroupGetPaltreeItem(model, &iter, pgrpinf)
+    && GroupGetPaltreeItemWithParent(model, &iter, grpinf)) {
+      groupInfo2PalTreeModel(grpinf, model, &iter, font);
+    }
   /* 更新分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = g_cthrd->GetPalGroupItem(pal);
@@ -896,7 +900,7 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
   } else {
     compatibility = g_markup_escape_text(_("Compatibility: GNU/Linux"), -1);
   }
-  gchar *coding = g_markup_printf_escaped(_("System coding: %s"), pal->encode);
+  gchar *coding = g_markup_printf_escaped(_("System coding: %s"), pal->getEncode().c_str());
   gchar *signature1 = nullptr;
   gchar *signature2 = nullptr;
   if (pal->sign && *pal->sign != '\0') {

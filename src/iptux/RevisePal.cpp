@@ -200,7 +200,7 @@ void RevisePal::SetAllValue() {
   if (pal->group) gtk_entry_set_text(GTK_ENTRY(widget), pal->group);
   /* 预置编码 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "encode-entry-widget"));
-  gtk_entry_set_text(GTK_ENTRY(widget), pal->encode);
+  gtk_entry_set_text(GTK_ENTRY(widget), pal->getEncode().c_str());
   /* 预置头像 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
@@ -245,8 +245,7 @@ void RevisePal::ApplyReviseData() {
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
   g_strstrip(text);
   if (*text != '\0') {
-    g_free(pal->encode);
-    pal->encode = text;
+    pal->setEncode(text);
   } else
     g_free(text);
 

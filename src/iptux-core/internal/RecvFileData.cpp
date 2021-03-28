@@ -231,8 +231,8 @@ void RecvFileData::RecvDirFiles() {
 
     /* 转码(如果好友不兼容iptux协议) */
     if (!file->fileown->isCompatible() &&
-        strcasecmp(file->fileown->encode, "utf-8") != 0 &&
-        (dirname = convert_encode(filename, "utf-8", file->fileown->encode)))
+        strcasecmp(file->fileown->getEncode().c_str(), "utf-8") != 0 &&
+        (dirname = convert_encode(filename, "utf-8", file->fileown->getEncode().c_str())))
       g_free(filename);
     else
       dirname = filename;

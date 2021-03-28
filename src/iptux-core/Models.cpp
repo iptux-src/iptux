@@ -28,19 +28,17 @@ PalInfo::PalInfo()
       photo(NULL),
       sign(NULL),
       iconfile(NULL),
-      encode(NULL),
       packetn(0),
       rpacketn(0),
       flags(0) {
-       encode = g_strdup("");
       }
+
 PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(group);
   g_free(photo);
   g_free(sign);
   g_free(iconfile);
-  g_free(encode);
 }
 
 bool PalInfo::isCompatible() const {
@@ -99,6 +97,11 @@ PalInfo& PalInfo::setVersion(const std::string& version) {
   return *this;
 }
 
+PalInfo& PalInfo::setEncode(const std::string& encode) {
+  this->encode = utf8MakeValid(encode);
+  return *this;
+}
+
 string PalInfo::toString() const {
   return stringFormat(
     "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
@@ -112,7 +115,7 @@ string PalInfo::toString() const {
     photo ? photo : "(NULL)",
     sign ? sign : "(NULL)",
     iconfile,
-    encode,
+    encode.c_str(),
     int(packetn),
     int(rpacketn),
     int(flags)

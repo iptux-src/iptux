@@ -95,6 +95,9 @@ class PalInfo {
   PalInfo& setVersion(const std::string& version);
   const std::string& getVersion() const {return version;}
 
+  PalInfo& setEncode(const std::string& encode);
+  const std::string& getEncode() const {return encode;}
+
   std::string toString() const;
 
   in_addr ipv4;  ///< 好友IP
@@ -103,7 +106,6 @@ class PalInfo {
   char *photo;     ///< 形象照片
   char *sign;      ///< 个性签名
   char *iconfile;  ///< 好友头像 *
-  char *encode;    ///< 好友编码 *
   uint32_t packetn;   ///< 已接受最大的包编号
   uint32_t rpacketn;  ///< 需要接受检查的包编号
 
@@ -122,6 +124,7 @@ class PalInfo {
   std::string name;
   std::string host;
   std::string version;   ///< 版本串 *
+  std::string encode;    ///< 好友编码 *
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 

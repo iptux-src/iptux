@@ -319,44 +319,34 @@ GtkWidget *DialogPeer::CreateInfoArea() {
  * @param pal class PalInfo
  */
 void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
-  char buf[MAX_BUFLEN], ipstr[INET_ADDRSTRLEN];
+  char ipstr[INET_ADDRSTRLEN];
   GdkPixbuf *pixbuf;
   GtkTextIter iter;
+  string buf;
 
-  gtk_text_buffer_get_end_iter(buffer, &iter);
-
-  snprintf(buf, MAX_BUFLEN, _("Version: %s\n"), pal->getVersion().c_str());
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
+  buf += stringFormat(_("Version: %s\n"), pal->getVersion().c_str());
   if (pal->group && *pal->group != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s@%s\n"), pal->getName().c_str(), pal->group);
+    buf += stringFormat(_("Nickname: %s@%s\n"), pal->getName().c_str(), pal->group);
   else
-    snprintf(buf, MAX_BUFLEN, _("Nickname: %s\n"), pal->getName().c_str());
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
+    buf += stringFormat(_("Nickname: %s\n"), pal->getName().c_str());
 
-  snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->getUser().c_str());
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
-  snprintf(buf, MAX_BUFLEN, _("Host: %s\n"), pal->getHost().c_str());
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
+  buf += stringFormat(_("User: %s\n"), pal->getUser().c_str());
+  buf += stringFormat(_("Host: %s\n"), pal->getHost().c_str());
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
   if (pal->segdes && *pal->segdes != '\0')
-    snprintf(buf, MAX_BUFLEN, _("Address: %s(%s)\n"), pal->segdes, ipstr);
+    buf += stringFormat(_("Address: %s(%s)\n"), pal->segdes, ipstr);
   else
-    snprintf(buf, MAX_BUFLEN, _("Address: %s\n"), ipstr);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
+    buf += stringFormat(_("Address: %s\n"), ipstr);
 
   if (!pal->isCompatible()) {
-    snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: Microsoft\n"));
+    buf += _("Compatibility: Microsoft\n");
   } else {
-    snprintf(buf, MAX_BUFLEN, "%s", _("Compatibility: GNU/Linux\n"));
+    buf += _("Compatibility: GNU/Linux\n");
   }
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
+  buf += stringFormat(_("System coding: %s\n"), pal->getEncode().c_str());
+  gtk_text_buffer_set_text(buffer, buf.c_str(), -1);
 
-  snprintf(buf, MAX_BUFLEN, _("System coding: %s\n"), pal->encode);
-  gtk_text_buffer_insert(buffer, &iter, buf, -1);
-
+  gtk_text_buffer_get_end_iter(buffer, &iter);
   if (pal->sign && *pal->sign != '\0') {
     gtk_text_buffer_insert(buffer, &iter, _("Signature:\n"), -1);
     gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, pal->sign, -1,
