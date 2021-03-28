@@ -89,12 +89,14 @@ class PalInfo {
   PalInfo& setUser(const std::string& user);
   const std::string& getUser() const {return user;}
 
+  PalInfo& setHost(const std::string& host);
+  const std::string& getHost() const {return host;}
+
   std::string toString() const;
 
   in_addr ipv4;  ///< 好友IP
   char *segdes;    ///< 所在网段描述
   char *version;   ///< 版本串 *
-  char *host;      ///< 好友主机 *
   char *group;     ///< 所在群组
   char *photo;     ///< 形象照片
   char *sign;      ///< 个性签名
@@ -116,6 +118,7 @@ class PalInfo {
  private:
   std::string user;
   std::string name;
+  std::string host;
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 

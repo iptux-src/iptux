@@ -25,7 +25,6 @@ PalInfo::PalInfo()
     : ipv4({0}),
       segdes(NULL),
       version(NULL),
-      host(NULL),
       group(NULL),
       photo(NULL),
       sign(NULL),
@@ -39,7 +38,6 @@ PalInfo::PalInfo()
 PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(version);
-  g_free(host);
   g_free(group);
   g_free(photo);
   g_free(sign);
@@ -93,6 +91,11 @@ PalInfo& PalInfo::setUser(const std::string& user) {
   return *this;
 }
 
+PalInfo& PalInfo::setHost(const std::string& host) {
+  this->host = utf8MakeValid(host);
+  return *this;
+}
+
 string PalInfo::toString() const {
   return stringFormat(
     "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
@@ -101,7 +104,7 @@ string PalInfo::toString() const {
     segdes,
     version,
     user.c_str(),
-    host,
+    host.c_str(),
     group ? group : "(NULL)",
     photo ? photo : "(NULL)",
     sign ? sign : "(NULL)",

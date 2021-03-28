@@ -882,7 +882,7 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
     nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->getName().c_str());
   }
   gchar *user = g_markup_printf_escaped(_("User: %s"), pal->getUser().c_str());
-  gchar *host = g_markup_printf_escaped(_("Host: %s"), pal->host);
+  gchar *host = g_markup_printf_escaped(_("Host: %s"), pal->getHost().c_str());
   gchar *address;
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
   if (pal->segdes && *pal->segdes != '\0') {
@@ -1468,7 +1468,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
     if (*text == '\0' || strcasestr(pal->getName().c_str(), text) ||
         (pal->group && strcasestr(pal->group, text)) ||
         strcasestr(ipstr, text) || strcasestr(pal->getUser().c_str(), text) ||
-        strcasestr(pal->host, text)) {
+        strcasestr(pal->getHost().c_str(), text)) {
       file = iptux_erase_filename_suffix(pal->iconfile);
       pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                         GtkIconLookupFlags(0), NULL);
@@ -1480,7 +1480,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
                          2, pal->group,
                          3, ipstr,
                          4, pal->getUser().c_str(),
-                         5, pal->host,
+                         5, pal->getHost().c_str(),
                          6, pal.get(),
                          -1);
       if (pixbuf) g_object_unref(pixbuf);

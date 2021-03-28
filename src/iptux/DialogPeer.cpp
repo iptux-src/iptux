@@ -200,8 +200,10 @@ GtkWindow *DialogPeer::CreateMainWindow() {
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
   palinfor = grpinf->getMembers()[0].get();
   inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
-  auto title = stringFormat(_("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
-           palinfor->host, ipstr);
+  auto title = stringFormat(_("Talk with %s(%s) IP:%s"),
+    palinfor->getName().c_str(),
+    palinfor->getHost().c_str(),
+    ipstr);
   gtk_window_set_title(GTK_WINDOW(window), title.c_str());
   width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
   height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
@@ -335,7 +337,7 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
   snprintf(buf, MAX_BUFLEN, _("User: %s\n"), pal->getUser().c_str());
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
-  snprintf(buf, MAX_BUFLEN, _("Host: %s\n"), pal->host);
+  snprintf(buf, MAX_BUFLEN, _("Host: %s\n"), pal->getHost().c_str());
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
