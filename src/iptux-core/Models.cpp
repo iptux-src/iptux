@@ -13,6 +13,7 @@
 #include "iptux-core/Models.h"
 
 #include <sstream>
+#include <glib/gi18n.h>
 
 #include "iptux-utils/utils.h"
 #include "iptux-core/internal/ipmsg.h"
@@ -24,27 +25,19 @@ namespace iptux {
 PalInfo::PalInfo()
     : ipv4({0}),
       segdes(NULL),
-      version(NULL),
-      host(NULL),
-      group(NULL),
       photo(NULL),
       sign(NULL),
       iconfile(NULL),
-      encode(NULL),
       packetn(0),
       rpacketn(0),
       flags(0) {
-       encode = g_strdup("");
       }
+
 PalInfo::~PalInfo() {
   g_free(segdes);
-  g_free(version);
-  g_free(host);
-  g_free(group);
   g_free(photo);
   g_free(sign);
   g_free(iconfile);
-  g_free(encode);
 }
 
 bool PalInfo::isCompatible() const {
@@ -93,20 +86,40 @@ PalInfo& PalInfo::setUser(const std::string& user) {
   return *this;
 }
 
+PalInfo& PalInfo::setHost(const std::string& host) {
+  this->host = utf8MakeValid(host);
+  return *this;
+}
+
+PalInfo& PalInfo::setVersion(const std::string& version) {
+  this->version = utf8MakeValid(version);
+  return *this;
+}
+
+PalInfo& PalInfo::setEncode(const std::string& encode) {
+  this->encode = utf8MakeValid(encode);
+  return *this;
+}
+
+PalInfo& PalInfo::setGroup(const std::string& group) {
+  this->group = utf8MakeValid(group);
+  return *this;
+}
+
 string PalInfo::toString() const {
   return stringFormat(
     "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
     inAddrToString(ipv4).c_str(),
     name.c_str(),
     segdes,
-    version,
+    version.c_str(),
     user.c_str(),
-    host,
-    group ? group : "(NULL)",
+    host.c_str(),
+    group.c_str(),
     photo ? photo : "(NULL)",
     sign ? sign : "(NULL)",
     iconfile,
-    encode,
+    encode.c_str(),
     int(packetn),
     int(rpacketn),
     int(flags)

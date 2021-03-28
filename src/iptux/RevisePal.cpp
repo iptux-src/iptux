@@ -197,10 +197,10 @@ void RevisePal::SetAllValue() {
   gtk_entry_set_text(GTK_ENTRY(widget), pal->getName().c_str());
   /* 预置群组 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "group-entry-widget"));
-  if (pal->group) gtk_entry_set_text(GTK_ENTRY(widget), pal->group);
+  gtk_entry_set_text(GTK_ENTRY(widget), pal->getGroup().c_str());
   /* 预置编码 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "encode-entry-widget"));
-  gtk_entry_set_text(GTK_ENTRY(widget), pal->encode);
+  gtk_entry_set_text(GTK_ENTRY(widget), pal->getEncode().c_str());
   /* 预置头像 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
@@ -234,19 +234,17 @@ void RevisePal::ApplyReviseData() {
 
   /* 获取群组 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "group-entry-widget"));
-  g_free(pal->group);
   if (*(consttext = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0')
-    pal->group = g_strdup(consttext);
+    pal->setGroup(consttext);
   else
-    pal->group = NULL;
+    pal->setGroup("");
 
   /* 获取编码 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "encode-entry-widget"));
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
   g_strstrip(text);
   if (*text != '\0') {
-    g_free(pal->encode);
-    pal->encode = text;
+    pal->setEncode(text);
   } else
     g_free(text);
 

@@ -64,7 +64,7 @@ class UdpData {
   void InsertMessage(PPalInfo pal, GroupBelongType btype, const char *msg);
   void ConvertEncode(const std::string &enc);
   void ConvertEncode(const char *enc);
-  char *GetPalGroup();
+  std::string GetPalGroup();
   char *GetPalIcon();
   char *GetPalEncode();
   char *RecvPalIcon();

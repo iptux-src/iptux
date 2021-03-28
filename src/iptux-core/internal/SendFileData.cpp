@@ -189,9 +189,9 @@ void SendFileData::SendDirFiles() {
           .setRemain(_("Unknown"))
           .setRate("0B/s");
       /* 转码 */
-      if (strcasecmp(file->fileown->encode, "utf-8") != 0 &&
+      if (strcasecmp(file->fileown->getEncode().c_str(), "utf-8") != 0 &&
           (filename =
-               convert_encode(dirt->d_name, file->fileown->encode, "utf-8"))) {
+               convert_encode(dirt->d_name, file->fileown->getEncode().c_str(), "utf-8"))) {
         dirname = ipmsg_get_filename_pal(filename);
         g_free(filename);
       } else

@@ -155,22 +155,18 @@ void UdpData::SomeoneLost() {
   pal = new PalInfo;
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
+  auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
-  if(!user) {
-    pal->setUser("???");
-  } else {
-    pal->setUser(user);
-  }
-  if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
-    pal->host = g_strdup("???");
-  pal->setName(_("mysterious"));
-  pal->group = g_strdup(_("mysterious"));
+  auto host = iptux_get_section_string(buf, ':', 3);
+  (*pal).setVersion(version ? version : "?")
+    .setUser(user ? user : "???")
+    .setHost(host ? host : "???")
+    .setEncode(encode ? encode : "utf-8")
+    .setName(_("mysterious"))
+    .setGroup(_("mysterious"));
   pal->photo = NULL;
   pal->sign = NULL;
   pal->iconfile = g_strdup(g_progdt->palicon);
-  pal->encode = g_strdup(encode ? encode : "utf-8");
   pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
@@ -252,7 +248,7 @@ void UdpData::SomeoneAnsEntry() {
   if (pal->isCompatible()) {
     thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
     t1.detach();
-  } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
+  } else if (strcasecmp(g_progdt->encode.c_str(), pal->getEncode().c_str()) != 0) {
     cmd.SendAnsentry(coreThread.getUdpSock(), pal);
   }
 }
@@ -271,7 +267,7 @@ void UdpData::SomeoneAbsence() {
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
-      string s(pal->encode);
+      string s(pal->getEncode());
       ConvertEncode(s);
     } else {
       ConvertEncode(g_progdt->encode);
@@ -304,16 +300,15 @@ void UdpData::SomeoneSendmsg() {
   auto pal = coreThread.GetPal(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
-      ConvertEncode(pal->encode);
+      ConvertEncode(pal->getEncode());
     } else {
       ConvertEncode(g_progdt->encode);
     }
   }
   /* 确保好友在线，并对编码作出适当调整 */
   pal = AssertPalOnline();
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
 
   /* 回复好友并检查此消息是否过时 */
@@ -421,12 +416,11 @@ void UdpData::SomeoneSendSign() {
 
   /* 若好友不兼容iptux协议，则需转码 */
   if (!pal->isCompatible()) {
-    ConvertEncode(pal->encode);
+    ConvertEncode(pal->getEncode());
   }
   /* 对编码作适当调整 */
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
   /* 更新 */
   if ((sign = ipmsg_get_attach(buf, ':', 5))) {
@@ -452,16 +446,15 @@ void UdpData::SomeoneBcstmsg() {
   auto pal = coreThread.GetPal(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
-      ConvertEncode(pal->encode);
+      ConvertEncode(pal->getEncode());
     } else {
       ConvertEncode(g_progdt->encode);
     }
   }
   /* 确保好友在线，并对编码作出适当调整 */
   pal = AssertPalOnline();
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
 
   /* 检查此消息是否过时 */
@@ -504,31 +497,29 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto pal = make_shared<PalInfo>();
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
+  auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
-  if(!user) {
-    pal->setUser("???");
-  } else {
-    pal->setUser(user);
-  }
-  if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
-    pal->host = g_strdup("???");
+  auto host = iptux_get_section_string(buf, ':', 3);
+  (*pal).setVersion(version ? version : "?")
+    .setUser(user ? user : "???")
+    .setHost(host ? host : "???");
   auto name = ipmsg_get_attach(buf, ':', 5);
   if(!name) {
     pal->setName(_("mysterious"));
   } else {
     pal->setName(name);
   }
-  pal->group = GetPalGroup();
+  pal->setGroup(GetPalGroup());
   pal->photo = NULL;
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
     pal->iconfile = g_strdup(programData->palicon);
-  if ((pal->encode = GetPalEncode())) {
+  auto localEncode = GetPalEncode();
+  if(localEncode) {
+    pal->setEncode(localEncode);
     pal->setCompatible(true);
   } else {
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+    pal->setEncode(encode ? encode : "utf-8");
   }
   pal->setOnline(true);
   pal->packetn = 0;
@@ -546,18 +537,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
 
   g_free(pal->segdes);
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  g_free(pal->version);
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
+  auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
-  if(!user) {
-    pal->setUser("???");
-  } else {
-    pal->setUser(user);
-  }
-  g_free(pal->host);
-  if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
-    pal->host = g_strdup("???");
+  auto host = iptux_get_section_string(buf, ':', 3);
+  (*pal).setVersion(version ? version : "?")
+    .setUser(user ? user : "???")
+    .setHost(host ? host : "???");
   if (!pal->isChanged()) {
     auto name = ipmsg_get_attach(buf, ':', 5);
     if(!name) {
@@ -565,17 +550,17 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
     } else {
       pal->setName(name);
     }
-    g_free(pal->group);
-    pal->group = GetPalGroup();
+    pal->setGroup(GetPalGroup());
     g_free(pal->iconfile);
     if (!(pal->iconfile = GetPalIcon()))
       pal->iconfile = g_strdup(g_progdt->palicon);
     pal->setCompatible(false);
-    g_free(pal->encode);
-    if ((pal->encode = GetPalEncode())) {
+    auto localEncode = GetPalEncode();
+    if(localEncode) {
+      pal->setEncode(localEncode);
       pal->setCompatible(true);
     } else {
-      pal->encode = g_strdup(encode ? encode : "utf-8");
+      pal->setEncode(encode ? encode : "utf-8");
     }
   }
   pal->setOnline(true);
@@ -657,12 +642,12 @@ void UdpData::ConvertEncode(const string &enc) {
  * 获取好友群组名称.
  * @return 群组
  */
-char *UdpData::GetPalGroup() {
+string UdpData::GetPalGroup() {
   const char *ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 1)) && *ptr != '\0')
-    return g_strdup(ptr);
-  return NULL;
+    return ptr;
+  return "";
 }
 
 /**

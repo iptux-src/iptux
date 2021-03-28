@@ -248,7 +248,7 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   }
   /*/* 更新分组模式下的群组 */
   if ((grpinf = GetPalPrevGroupItem(pal))) {
-    if (!pal->group || strcmp(grpinf->name.c_str(), pal->group) != 0) {
+    if (strcmp(grpinf->name.c_str(), pal->getGroup().c_str()) != 0) {
       DelPalFromGroupInfoItem(grpinf, pal);
       if (!(grpinf = GetPalGroupItem(pal))) grpinf = AttachPalGroupItem(ppal);
       AttachPalToGroupInfoItem(grpinf, ppal);
@@ -350,7 +350,8 @@ GroupInfo *UiCoreThread::GetPalGroupItem(PalInfo *pal) {
 
   /* 获取组ID */
   NO_OPERATION_C
-  grpid = g_quark_from_string(pal->group ? pal->group : _("Others"));
+  auto group = pal->getGroup();
+  grpid = g_quark_from_string(group.empty() ? _("Others") : group.c_str());
 
   tlist = grplist;
   while (tlist) {
@@ -619,12 +620,10 @@ GroupInfo *UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
  */
 GroupInfo *UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   GroupInfo *grpinf;
-  char *name;
-
-  /* 备份组名称，用于计算ID号 */
-  NO_OPERATION_C
-  name = g_strdup(pal->group ? pal->group : _("Others"));
-
+  auto name = pal->getGroup();
+  if(name.empty()) {
+    name = _("Others");
+  }
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>());
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);

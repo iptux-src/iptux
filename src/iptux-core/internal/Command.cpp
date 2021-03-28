@@ -144,8 +144,8 @@ void Command::SendAnsentry(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
 
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_ANSENTRY, programData->nickname.c_str());
-  ConvertEncode(pal->encode);
-  CreateIptuxExtra(pal->encode);
+  ConvertEncode(pal->getEncode());
+  CreateIptuxExtra(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -156,7 +156,7 @@ void Command::SendAnsentry(int sock, CPPalInfo pal) {
  */
 void Command::SendExit(int sock, CPPalInfo pal) {
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_BR_EXIT, NULL);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -169,8 +169,8 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ABSENCE,
                 programData->nickname.c_str());
-  ConvertEncode(pal->encode);
-  CreateIptuxExtra(pal->encode);
+  ConvertEncode(pal->getEncode());
+  CreateIptuxExtra(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -205,7 +205,7 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char *msg) {
 
   pal2->rpacketn = packetno = packetn;  //此数据包需要检验回复
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_SENDMSG, msg);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
 
   count = 0;
   do {
@@ -230,7 +230,7 @@ void Command::SendReply(int sock, CPPalInfo pal, uint32_t packetno) {
 
   snprintf(packetstr, 11, "%" PRIu32, packetno);
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_RECVMSG, packetstr);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
 
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
@@ -248,7 +248,7 @@ void Command::SendReply(int sock, const PalKey& palKey, uint32_t packetno) {
  */
 void Command::SendGroupMsg(int sock, CPPalInfo pal, const char *msg) {
   CreateCommand(IPMSG_BROADCASTOPT | IPMSG_SENDMSG, msg);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -262,7 +262,7 @@ void Command::SendGroupMsg(int sock, CPPalInfo pal, const char *msg) {
 void Command::SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype,
                           const char *msg) {
   CreateCommand(opttype | IPTUX_SENDMSG, msg);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -286,11 +286,11 @@ bool Command::SendAskData(int sock, CPPalInfo pal, uint32_t packetno,
   // IPMSG和Feiq的命令字段都是只有IPMSG_GETFILEDATA,使用(IPMSG_FILEATTACHOPT |
   // IPMSG_GETFILEDATA）
   //会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
-  if (strstr(pal->version, iptuxstr))
+  if (strstr(pal->getVersion().c_str(), iptuxstr))
     CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
   else
     CreateCommand(IPMSG_GETFILEDATA, attrstr);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
@@ -335,7 +335,7 @@ bool Command::SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno,
   snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno,
            fileid);  //兼容LanQQ软件
   CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
@@ -360,7 +360,7 @@ bool Command::SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno,
 void Command::SendAskShared(int sock, CPPalInfo pal, uint32_t opttype,
                             const char *attach) {
   CreateCommand(opttype | IPTUX_ASKSHARED, attach);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -380,8 +380,8 @@ void Command::SendAskShared(int sock, const PalKey& palKey, uint32_t opttype,
 void Command::SendFileInfo(int sock, CPPalInfo pal, uint32_t opttype,
                            const char *extra) {
   CreateCommand(opttype | IPMSG_FILEATTACHOPT | IPMSG_SENDMSG, NULL);
-  ConvertEncode(pal->encode);
-  CreateIpmsgExtra(extra, pal->encode);
+  ConvertEncode(pal->getEncode());
+  CreateIpmsgExtra(extra, pal->getEncode().c_str());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 void Command::SendFileInfo(int sock, const PalKey& palKey, uint32_t opttype,
@@ -398,7 +398,7 @@ void Command::SendFileInfo(int sock, const PalKey& palKey, uint32_t opttype,
  */
 void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
   CreateCommand(IPTUX_SENDICON, NULL);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
   CreateIconExtra(iss);
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
@@ -411,7 +411,7 @@ void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
 void Command::SendMySign(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPTUX_SEND_SIGN, programData->sign.c_str());
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
   commandSendTo(sock, buf, size, 0, pal->ipv4);
 }
 
@@ -429,7 +429,7 @@ void Command::SendSublayer(int sock, CPPalInfo pal, uint32_t opttype,
   int fd;
 
   CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
-  ConvertEncode(pal->encode);
+  ConvertEncode(pal->getEncode());
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
