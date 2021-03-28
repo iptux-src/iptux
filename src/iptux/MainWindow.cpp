@@ -471,10 +471,10 @@ GtkWidget* MainWindow::CreateMainWindow() {
   window = gtk_application_window_new(app->getApp());
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
   if (config->GetString("bind_ip").empty()) {
-    gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
+    gtk_window_set_title(GTK_WINDOW(window), _("Iptux"));
   } else {
     gtk_window_set_title(GTK_WINDOW(window),
-                         stringFormat("%s - %s", _("iptux"),
+                         stringFormat("%s - %s", _("Iptux"),
                                       config->GetString("bind_ip").c_str())
                              .c_str());
   }
