@@ -17,6 +17,7 @@
 #include "iptux-core/Models.h"
 
 #include "iptux/Application.h"
+#include "iptux/EventAdaptor.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
@@ -58,7 +59,6 @@ class MainWindow : public sigc::trackable {
 
   void SetStatusIcon(StatusIcon* statusIcon) { this->statusIcon = statusIcon; }
 
-  void processEvent(std::shared_ptr<const Event> event);
   Application* getApp() { return app; }
 
  private:
@@ -66,6 +66,7 @@ class MainWindow : public sigc::trackable {
   UiCoreThread& coreThread;
   GtkWidget* window;
   GtkWidget* transWindow;
+  EventAdaptor* eventAdaptor;
 
   std::shared_ptr<UiProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
@@ -120,8 +121,6 @@ class MainWindow : public sigc::trackable {
   void processEventInMainThread(std::shared_ptr<const Event> event);
 
  private:
-  //回调处理部分
-  static gboolean processEventCallback(gpointer data);
   static gboolean UpdateUI(MainWindow* mwin);
   static void GoPrevTreeModel(MainWindow* mwin);
   static void GoNextTreeModel(MainWindow* mwin);
