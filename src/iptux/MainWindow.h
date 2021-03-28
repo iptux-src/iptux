@@ -31,7 +31,7 @@ class StatusIcon;
  * 所以无须加锁访问，若有例外，请于注释中说明，否则应当bug处理.\n
  * 若此特性不可被如此利用,请报告bug.
  */
-class MainWindow {
+class MainWindow : public sigc::trackable {
  public:
   MainWindow(Application* app, UiCoreThread& coreThread);
   ~MainWindow();

@@ -61,8 +61,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
-  g_cthrd->registerCallback(
-      [&](shared_ptr<const Event> event) { this->processEvent(event); });
+  g_cthrd->signalEvent.connect(sigc::mem_fun(*this, &MainWindow::processEvent));
   g_cthrd->signalGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
 }

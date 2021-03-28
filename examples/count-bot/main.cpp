@@ -44,7 +44,7 @@ int runBot(const string& bindIp) {
   auto progdt = make_shared<ProgramData>(config);
   auto thread = make_shared<CoreThread>(progdt);
   thread->start();
-  thread->registerCallback(
+  thread->signalEvent.connect(
       [=](shared_ptr<const Event> event) { processEvent(thread, event); });
   while (true) {
     sleep(10);

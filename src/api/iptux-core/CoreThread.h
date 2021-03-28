@@ -2,9 +2,10 @@
 #define IPTUX_CORETHREAD_H
 
 #include <atomic>
-#include <functional>
 #include <memory>
 #include <vector>
+
+#include <sigc++/signal.h>
 
 #include "iptux-core/Event.h"
 #include "iptux-core/ProgramData.h"
@@ -13,8 +14,6 @@
 namespace iptux {
 
 class TransAbstract;
-
-using EventCallback = std::function<void(std::shared_ptr<const Event>)>;
 
 class CoreThread {
  public:
@@ -69,7 +68,6 @@ class CoreThread {
   PFileInfo GetPrivateFileById(uint32_t id);
   PFileInfo GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime);
 
-  void registerCallback(const EventCallback& callback);
   void sendFeatureData(PPalInfo pal);
   void emitSomeoneExit(const PalKey& palKey);
   void emitNewPalOnline(PPalInfo palInfo);
@@ -149,6 +147,9 @@ class CoreThread {
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
 
+ public:
+  sigc::signal<void(std::shared_ptr<const Event>)> signalEvent;
+
   // these functions should be move to CoreThreadImpl
  public:
   void RegisterTransTask(std::shared_ptr<TransAbstract> task);
@@ -165,7 +166,6 @@ class CoreThread {
 
  private:
   std::atomic_bool started;
-  std::vector<EventCallback> callbacks;
 
  protected:
   virtual void ClearSublayer();

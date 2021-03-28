@@ -15,7 +15,7 @@ TEST(Command, encodFileInfo) {
   ASSERT_EQ(a, "0:bashrc:ffffffffffffffff:0:1:\a:");
 
   vector<FileInfo> fileInfos = Command::decodeFileInfos(a);
-  ASSERT_EQ(fileInfos.size(), 1);
+  ASSERT_EQ(int(fileInfos.size()), 1);
   ASSERT_EQ(fileInfos[0], fileInfo);
 
   fileInfos = Command::decodeFileInfos(a + a);

@@ -121,9 +121,7 @@ void CoreThread::processEvents() {
     if (!event) {
       this_thread::sleep_for(10ms);
     } else {
-      for (auto& callback : callbacks) {
-        callback(event);
-      }
+      signalEvent.emit(event);
     }
   }
 }
@@ -414,12 +412,6 @@ void CoreThread::AttachPalToList(shared_ptr<PalInfo> pal) {
   pImpl->pallist.push_back(pal);
   pal->setOnline(true);
   emitNewPalOnline(pal);
-}
-
-void CoreThread::registerCallback(const EventCallback& callback) {
-  Lock();
-  callbacks.push_back(callback);
-  Unlock();
 }
 
 void CoreThread::emitNewPalOnline(PPalInfo palInfo) {
