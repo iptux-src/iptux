@@ -24,7 +24,6 @@ namespace iptux {
 PalInfo::PalInfo()
     : ipv4({0}),
       segdes(NULL),
-      version(NULL),
       group(NULL),
       photo(NULL),
       sign(NULL),
@@ -37,7 +36,6 @@ PalInfo::PalInfo()
       }
 PalInfo::~PalInfo() {
   g_free(segdes);
-  g_free(version);
   g_free(group);
   g_free(photo);
   g_free(sign);
@@ -96,13 +94,18 @@ PalInfo& PalInfo::setHost(const std::string& host) {
   return *this;
 }
 
+PalInfo& PalInfo::setVersion(const std::string& version) {
+  this->version = utf8MakeValid(version);
+  return *this;
+}
+
 string PalInfo::toString() const {
   return stringFormat(
     "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
     inAddrToString(ipv4).c_str(),
     name.c_str(),
     segdes,
-    version,
+    version.c_str(),
     user.c_str(),
     host.c_str(),
     group ? group : "(NULL)",

@@ -325,7 +325,7 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
 
   gtk_text_buffer_get_end_iter(buffer, &iter);
 
-  snprintf(buf, MAX_BUFLEN, _("Version: %s\n"), pal->version);
+  snprintf(buf, MAX_BUFLEN, _("Version: %s\n"), pal->getVersion().c_str());
   gtk_text_buffer_insert(buffer, &iter, buf, -1);
 
   if (pal->group && *pal->group != '\0')

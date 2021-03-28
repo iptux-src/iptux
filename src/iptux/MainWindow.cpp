@@ -874,7 +874,7 @@ void MainWindow::BlinkGroupItemToPaltree(GtkTreeModel *model, GtkTreeIter *iter,
  */
 gchar* palInfo2HintMarkup(const PalInfo *pal) {
   char ipstr[INET_ADDRSTRLEN];
-  gchar *version = g_markup_printf_escaped(_("Version: %s"), pal->version);
+  gchar *version = g_markup_printf_escaped(_("Version: %s"), pal->getVersion().c_str());
   gchar *nickname;
   if (pal->group && *pal->group != '\0') {
     nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->getName().c_str(), pal->group);

@@ -286,7 +286,7 @@ bool Command::SendAskData(int sock, CPPalInfo pal, uint32_t packetno,
   // IPMSG和Feiq的命令字段都是只有IPMSG_GETFILEDATA,使用(IPMSG_FILEATTACHOPT |
   // IPMSG_GETFILEDATA）
   //会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
-  if (strstr(pal->version, iptuxstr))
+  if (strstr(pal->getVersion().c_str(), iptuxstr))
     CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
   else
     CreateCommand(IPMSG_GETFILEDATA, attrstr);

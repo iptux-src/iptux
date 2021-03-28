@@ -155,16 +155,12 @@ void UdpData::SomeoneLost() {
   pal = new PalInfo;
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
+  auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
-  if(!user) {
-    pal->setUser("???");
-  } else {
-    pal->setUser(user);
-  }
   auto host = iptux_get_section_string(buf, ':', 3);
-  pal->setHost(host ? host : "???");
+  (*pal).setVersion(version ? version : "?")
+    .setUser(user ? user : "???")
+    .setHost(host ? host : "???");
   pal->setName(_("mysterious"));
   pal->group = g_strdup(_("mysterious"));
   pal->photo = NULL;
@@ -504,16 +500,12 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto pal = make_shared<PalInfo>();
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
+  auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
-  if(!user) {
-    pal->setUser("???");
-  } else {
-    pal->setUser(user);
-  }
   auto host = iptux_get_section_string(buf, ':', 3);
-  pal->setHost(host ? host : "???");
+  (*pal).setVersion(version ? version : "?")
+    .setUser(user ? user : "???")
+    .setHost(host ? host : "???");
   auto name = ipmsg_get_attach(buf, ':', 5);
   if(!name) {
     pal->setName(_("mysterious"));
@@ -546,17 +538,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
 
   g_free(pal->segdes);
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  g_free(pal->version);
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
+  auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
-  if(!user) {
-    pal->setUser("???");
-  } else {
-    pal->setUser(user);
-  }
   auto host = iptux_get_section_string(buf, ':', 3);
-  pal->setHost(host ? host : "???");
+  (*pal).setVersion(version ? version : "?")
+    .setUser(user ? user : "???")
+    .setHost(host ? host : "???");
   if (!pal->isChanged()) {
     auto name = ipmsg_get_attach(buf, ':', 5);
     if(!name) {
