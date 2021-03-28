@@ -1,6 +1,7 @@
 #ifndef IPTUX_EVENT_ADAPTOR_H
 #define IPTUX_EVENT_ADAPTOR_H
 
+#include <functional>
 #include <glib.h>
 #include <sigc++/signal.h>
 
