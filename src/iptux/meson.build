@@ -12,6 +12,7 @@ sources = files([
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
+    'EventAdaptor.cpp',
     'HelpDialog.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',

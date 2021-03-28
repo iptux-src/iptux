@@ -148,7 +148,7 @@ TEST(CoreThread, FullCase) {
   EXPECT_TRUE(thread1->GetPal("127.0.0.2"));
 
   vector<shared_ptr<const Event>> thread2Events;
-  thread2->registerCallback([&](shared_ptr<const Event> event) {
+  thread2->signalEvent.connect([&](shared_ptr<const Event> event) {
     thread2Events.emplace_back(event);
   });
 

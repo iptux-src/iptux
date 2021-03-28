@@ -61,8 +61,10 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
-  g_cthrd->registerCallback(
-      [&](shared_ptr<const Event> event) { this->processEvent(event); });
+  eventAdaptor = new EventAdaptor(coreThread.signalEvent,
+                                  [&](shared_ptr<const Event> event) {
+                                    this->processEventInMainThread(event);
+                                  });
   g_cthrd->signalGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
 }
@@ -1676,34 +1678,9 @@ void MainWindow::InitThemeSublayerData() {
   g_object_unref(factory);
 }
 
-class EventData {
- public:
-  EventData(MainWindow* window, shared_ptr<const Event> event) {
-    this->window = window;
-    this->event = event;
-  }
-
-  MainWindow* window;
-  shared_ptr<const Event> event;
-};
-
-gboolean MainWindow::processEventCallback(gpointer data) {
-  EventData* callback = (EventData*)data;
-  callback->window->processEventInMainThread(callback->event);
-  delete callback;
-  return G_SOURCE_REMOVE;
-}
-
 gboolean MainWindow::onTransWindowDelete(MainWindow& self) {
   self.transWindow = nullptr;
   return FALSE;
-}
-
-// this function is run in corethread, so always use g_idle_add to update the ui
-void MainWindow::processEvent(shared_ptr<const Event> event) {
-  // deleted in `processEventCallback`
-  EventData* callback = new EventData(this, event);
-  gdk_threads_add_idle(processEventCallback, callback);
 }
 
 void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
