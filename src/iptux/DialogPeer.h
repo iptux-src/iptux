@@ -68,7 +68,7 @@ class DialogPeer : public DialogBase {
   static void ShowInfoEnclosure(DialogPeer *dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer *dlgpr);
   static gint RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer *self);
-  static void onNewFileReceived(void* , void*, DialogPeer& self);
+  void onNewFileReceived(GroupInfo*);
   static void onClearChatHistory (void *, void *, DialogPeer& self) {
     self.ClearHistoryTextView();
   }

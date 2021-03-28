@@ -56,16 +56,14 @@ class GroupInfo {
   bool hasPal(PalInfo* pal) const;
   bool hasPal(PPalInfo pal) const;
 
-  gulong connect(GActionCallback c, gpointer data);
-  void disconnect(gulong sigId);
-  void activate(const std::string& signal);
-
   void addMsgCount(int i);
   void readAllMsg();
   int getUnreadMsgCount() const;
+  void newFileReceived();
 
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
+  sigc::signal<void(GroupInfo*)> signalNewFileReceived;
 
  public:
   GQuark grpid;           ///< 唯一标识
@@ -76,7 +74,6 @@ class GroupInfo {
 private:
   std::vector<PPalInfo> members;
   GroupBelongType type;   ///< 群组类型
-  GSimpleAction* action;
   int allMsgCount = 0; /* all received message count */
   int readMsgCount = 0; /* already read message count */
 };

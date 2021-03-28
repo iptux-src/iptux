@@ -564,7 +564,7 @@ GroupInfo *UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
   grpinf->signalUnreadMsgCountUpdated.connect(
-    sigc::mem_fun(this, &UiCoreThread::onGroupInfoMsgCountUpdate)
+    sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate)
   );
   groupInfos = g_slist_append(groupInfos, grpinf);
   return grpinf;
@@ -689,7 +689,7 @@ void UiCoreThread::PushItemToEnclosureList(FileInfo *file) {
   ecsList = g_slist_append(ecsList, file);
   auto groupInfo = this->GetPalRegularItem(file->fileown.get());
   if(groupInfo) {
-    groupInfo->activate("NEW_FILE_RECEIVED");
+    groupInfo->newFileReceived();
   }
 }
 /**

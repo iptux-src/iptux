@@ -24,7 +24,7 @@
 
 namespace iptux {
 
-class DialogBase : public SessionAbstract {
+class DialogBase : public SessionAbstract, public sigc::trackable {
  public:
   DialogBase(Application* app, GroupInfo *grp);
   virtual ~DialogBase();

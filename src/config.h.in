@@ -25,4 +25,6 @@
 #  define O_LARGEFILE 0
 #endif
 
+#define SIGCXX_DISABLE_DEPRECATED
+
 #endif // IPTUX_CONFIG_H

@@ -50,9 +50,11 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
       rcvdsize(0),
       timerrcv(0) {
   ReadUILayout();
-  sigId = grp->connect(G_ACTION_CALLBACK(DialogPeer::onNewFileReceived), this);
+  grp->signalNewFileReceived.connect(
+    sigc::mem_fun(*this, &DialogPeer::onNewFileReceived)
+  );
   app->getCoreThread()->signalGroupInfoUpdated.connect(
-    sigc::mem_fun(this, &DialogPeer::onGroupInfoUpdated)
+    sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated)
   );
 }
 
@@ -62,7 +64,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo *grp)
 DialogPeer::~DialogPeer() {
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0) g_source_remove(timerrcv);
-  grpinf->disconnect(sigId);
+  // grpinf->disconnect(sigId);
   /*---------------------------------------------------------------*/
   WriteUILayout();
 }
@@ -957,7 +959,6 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer *self) {
   GtkTreeIter iter;
   gchar *filename;
   FileInfo *file;
-  pthread_t pid;
 
   auto g_progdt = self->app->getCoreThread()->getUiProgramData();
 
@@ -1058,8 +1059,8 @@ gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent *event, DialogPeer* self) {
   return FALSE;
 }
 
-void DialogPeer::onNewFileReceived(void*, void*, iptux::DialogPeer& self) {
-  self.ShowInfoEnclosure(&self);
+void DialogPeer::onNewFileReceived(GroupInfo*) {
+  this->ShowInfoEnclosure(this);
 }
 
 void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
