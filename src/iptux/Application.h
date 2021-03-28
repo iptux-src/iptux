@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/IptuxConfig.h"
+#include "iptux/EventAdaptor.h"
 #include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
@@ -39,6 +40,7 @@ class Application {
   GtkBuilder* menuBuilder;
   ShareFile* shareFile;
   TransModel* transModel;
+  EventAdaptor* eventAdaptor;
   bool started{false};
 
  public:
@@ -47,6 +49,7 @@ class Application {
   void activate();
 
  private:
+  void onEvent(std::shared_ptr<const Event> event);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
   static void onPreferences(void*, void*, Application& self);

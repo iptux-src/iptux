@@ -62,12 +62,16 @@ Application::Application(shared_ptr<IptuxConfig> config)
 
   transModel = transModelNew();
   menuBuilder = nullptr;
+  eventAdaptor = nullptr;
 }
 
 Application::~Application() {
   g_object_unref(app);
   g_object_unref(menuBuilder);
   transModelDelete(transModel);
+  if (eventAdaptor) {
+    delete eventAdaptor;
+  }
   delete window;
 }
 
@@ -89,6 +93,9 @@ void Application::onStartup(Application& self) {
   g_cthrd = self.cthrd.get();
   self.window = new MainWindow(&self, *g_cthrd);
   g_mwin = self.window;
+  self.eventAdaptor = new EventAdaptor(
+      self.cthrd->signalEvent,
+      [&](shared_ptr<const Event> event) { self.onEvent(event); });
 
   init_theme();
 
@@ -228,6 +235,11 @@ void Application::onAbout(void*, void*, Application& self) {
 void Application::refreshTransTasks() {
   auto transModels = getCoreThread()->listTransTasks();
   transModelLoadFromTransFileModels(transModel, transModels);
+}
+
+void Application::onEvent(shared_ptr<const Event> _event) {
+  EventType type = _event->getType();
+  LOG_WARN("unknown event type: %d", int(type));
 }
 
 }  // namespace iptux

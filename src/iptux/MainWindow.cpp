@@ -1685,7 +1685,7 @@ gboolean MainWindow::onTransWindowDelete(MainWindow& self) {
 
 void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
-  if (type == EventType ::NEW_PAL_ONLINE) {
+  if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());
     auto ipv4 = event->getPalInfo()->ipv4;
     if (PaltreeContainItem(ipv4)) {
