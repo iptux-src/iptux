@@ -30,12 +30,16 @@ TEST(UdpData, CreatePalInfo) {
     const char* data = "1_iptux 0.8.0-b1:6:lidaobing:LIs-MacBook-Pro.local:259:中\xe4\xb8\x00\x00icon-tux.png\x00utf-8\x00";
     auto udp = UdpData::UdpDataEntry(*core.get(), inAddrFromString("127.0.0.1"), 1234, data, strlen(data), false);
     auto pal = udp->CreatePalInfo();
-    ASSERT_EQ(pal->toString(), "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux 0.8.0-b1,user=lidaobing,host=LIs-MacBook-Pro.local,group=(NULL),photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-8,packetn=0,rpacketn=0,flags=2)");
+    ASSERT_EQ(pal->toString(),
+      "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux 0.8.0-b1,user=lidaobing,host=LIs-MacBook-Pro.local,"
+      "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-8,packetn=0,rpacketn=0,flags=2)");
   }
   {
     const char* data = "1_iptux 0.8.0-b1:6:中\xe4\xb8:LIs-MacBook-Pro.local:259:中\xe4\xb8\x00\x00icon-tux.png\x00utf-8\x00";
     auto udp = UdpData::UdpDataEntry(*core.get(), inAddrFromString("127.0.0.1"), 1234, data, strlen(data), false);
     auto pal = udp->CreatePalInfo();
-    ASSERT_EQ(pal->toString(), "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux 0.8.0-b1,user=中��,host=LIs-MacBook-Pro.local,group=(NULL),photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-8,packetn=0,rpacketn=0,flags=2)");
+    ASSERT_EQ(pal->toString(),
+      "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux 0.8.0-b1,user=中��,host=LIs-MacBook-Pro.local,"
+      "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-8,packetn=0,rpacketn=0,flags=2)");
   }
 }
