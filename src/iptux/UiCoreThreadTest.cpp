@@ -17,7 +17,6 @@ TEST(UiCoreThread, Constructor) {
   app.activate();
 
   UiCoreThread* thread = new UiCoreThread(&app, core);
-  thread->SystemLog("hello %s", "world");
   thread->start();
   thread->stop();
   delete thread;

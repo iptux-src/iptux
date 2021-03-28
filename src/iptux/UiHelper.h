@@ -17,6 +17,8 @@ bool ValidateDragData(GtkSelectionData* data,
                       GdkDragContext* context,
                       guint time);
 
+const GRegex* getUrlRegex();
+
 void add_accelerator(GtkApplication* app,
                      const char* action,
                      const char* accel);

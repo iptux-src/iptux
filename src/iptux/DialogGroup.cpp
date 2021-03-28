@@ -625,7 +625,7 @@ bool DialogGroup::SendTextMsg() {
 
   MsgPara msgpara(this->app->getMe());
   msgpara.stype = MessageSourceType::SELF;
-  app->getCoreThread()->CommunicateLog(&msgpara, "[STRING]%s", msg);
+  app->getLogSystem()->communicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);
 
   return true;

@@ -24,7 +24,6 @@ ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
       msgtip(NULL),
       volume(1.0),
       sndfgs(uint8_t(~0)),
-      urlregex(NULL),
       config(config),
       flags(0) {
   gettimeofday(&timestamp, NULL);
@@ -42,8 +41,6 @@ ProgramData::~ProgramData() {
   g_free(msgtip);
   g_free(transtip);
 
-  if (urlregex)
-    g_regex_unref(urlregex);
   pthread_mutex_destroy(&mutex);
 }
 
@@ -56,7 +53,6 @@ shared_ptr<IptuxConfig> ProgramData::getConfig() {
  */
 void ProgramData::InitSublayer() {
   ReadProgData();
-  CreateRegex();
 }
 
 /**
@@ -189,14 +185,6 @@ void ProgramData::ReadProgData() {
     fileInfo.filepath = strdup(sharedFileList[i].c_str());
     sharedFileInfos.emplace_back(fileInfo);
   }
-}
-
-/**
- * 创建识别URL的正则表达式.
- */
-void ProgramData::CreateRegex() {
-  urlregex =
-      g_regex_new(URL_REGEX, GRegexCompileFlags(0), GRegexMatchFlags(0), NULL);
 }
 
 /**

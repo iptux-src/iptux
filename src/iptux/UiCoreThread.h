@@ -67,10 +67,6 @@ class UiCoreThread : public CoreThread {
   void PushItemToEnclosureList(FileInfo* file);
   void PopItemFromEnclosureList(FileInfo* file);
 
-  void CommunicateLog(MsgPara* msgpara, const char* fmt, ...) const
-      G_GNUC_PRINTF(3, 4);
-  void SystemLog(const char* fmt, ...) const G_GNUC_PRINTF(2, 3);
-
   LogSystem* getLogSystem() { return logSystem; }
 
  public:

@@ -248,4 +248,13 @@ string markupEscapeText(const string& str) {
   return res;
 }
 
+const GRegex* getUrlRegex() {
+  static GRegex* res = nullptr;
+  if (!res) {
+    res = g_regex_new(URL_REGEX, GRegexCompileFlags(0), GRegexMatchFlags(0),
+                      NULL);
+  }
+  return res;
+}
+
 }  // namespace iptux

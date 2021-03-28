@@ -2,6 +2,7 @@
 #include "UiModels.h"
 
 #include <cstring>
+#include <glib/gi18n.h>
 #include <glog/logging.h>
 
 #include "iptux-core/Const.h"
@@ -315,13 +316,27 @@ bool GroupInfo::hasPal(PPalInfo pal) const {
   return hasPal(pal.get());
 }
 
-GroupInfo::GroupInfo(PPalInfo pal)
-    : grpid(0), buffer(NULL), dialog(NULL), type(GROUP_BELONG_TYPE_REGULAR) {
+GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
+    : grpid(0),
+      buffer(NULL),
+      dialog(NULL),
+      me(me),
+      type(GROUP_BELONG_TYPE_REGULAR),
+      logSystem(logSystem) {
   members.push_back(pal);
 }
 
-GroupInfo::GroupInfo(iptux::GroupBelongType t, const vector<PPalInfo>& pals)
-    : grpid(0), buffer(NULL), dialog(NULL), members(pals), type(t) {}
+GroupInfo::GroupInfo(iptux::GroupBelongType t,
+                     const vector<PPalInfo>& pals,
+                     CPPalInfo me,
+                     LogSystem* logSystem)
+    : grpid(0),
+      buffer(NULL),
+      dialog(NULL),
+      me(me),
+      members(pals),
+      type(t),
+      logSystem(logSystem) {}
 
 bool GroupInfo::addPal(PPalInfo pal) {
   if (type == GROUP_BELONG_TYPE_REGULAR) {
@@ -371,6 +386,144 @@ void GroupInfo::readAllMsg() {
 int GroupInfo::getUnreadMsgCount() const {
   g_assert(allMsgCount >= readMsgCount);
   return allMsgCount - readMsgCount;
+}
+
+/**
+ * 插入字符串到TextBuffer(非UI线程安全).
+ * @param buffer text-buffer
+ * @param string 字符串
+ */
+static void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* s) {
+  static uint32_t count = 0;
+  GtkTextIter iter;
+  GtkTextTag* tag;
+  GMatchInfo* matchinfo;
+  gchar* substring;
+  char name[9];  // 8 +1  =9
+  gint startp, endp;
+  gint urlendp;
+
+  auto s2 = utf8MakeValid(s);
+  auto string = s2.c_str();
+
+  urlendp = 0;
+  matchinfo = NULL;
+  gtk_text_buffer_get_end_iter(buffer, &iter);
+  g_regex_match_full(getUrlRegex(), string, -1, 0, GRegexMatchFlags(0),
+                     &matchinfo, NULL);
+  while (g_match_info_matches(matchinfo)) {
+    snprintf(name, 9, "%" PRIx32, count++);
+    tag = gtk_text_buffer_create_tag(buffer, name, NULL);
+    substring = g_match_info_fetch(matchinfo, 0);
+    g_object_set_data_full(G_OBJECT(tag), "url", substring,
+                           GDestroyNotify(g_free));
+    g_match_info_fetch_pos(matchinfo, 0, &startp, &endp);
+    gtk_text_buffer_insert(buffer, &iter, string + urlendp, startp - urlendp);
+    gtk_text_buffer_insert_with_tags_by_name(
+        buffer, &iter, string + startp, endp - startp, "url-link", name, NULL);
+    urlendp = endp;
+    g_match_info_next(matchinfo, NULL);
+  }
+  g_match_info_free(matchinfo);
+  gtk_text_buffer_insert(buffer, &iter, string + urlendp, -1);
+}
+
+/**
+ * 插入消息头到TextBuffer(非UI线程安全).
+ * @param buffer text-buffer
+ * @param para 消息参数
+ */
+static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
+                                 const MsgPara* para,
+                                 CPPalInfo me) {
+  GtkTextIter iter;
+  gchar* header;
+
+  /**
+   * @note (para->pal)可能为null.
+   */
+  switch (para->stype) {
+    case MessageSourceType::PAL:
+      header = getformattime(FALSE, "%s", para->getPal()->getName().c_str());
+      gtk_text_buffer_get_end_iter(buffer, &iter);
+      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
+                                               "pal-color", NULL);
+      g_free(header);
+      break;
+    case MessageSourceType::SELF:
+      header = getformattime(FALSE, "%s", me->getName().c_str());
+      gtk_text_buffer_get_end_iter(buffer, &iter);
+      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
+                                               "me-color", NULL);
+      g_free(header);
+      break;
+    case MessageSourceType::ERROR:
+      header = getformattime(FALSE, "%s", _("<ERROR>"));
+      gtk_text_buffer_get_end_iter(buffer, &iter);
+      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
+                                               "error-color", NULL);
+      g_free(header);
+      break;
+    default:
+      break;
+  }
+}
+
+#define OCCUPY_OBJECT 0x01
+
+/**
+ * 插入图片到TextBuffer(非UI线程安全).
+ * @param buffer text-buffer
+ * @param path 图片路径
+ */
+static void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path) {
+  GtkTextIter start, end;
+  GdkPixbuf* pixbuf;
+
+  if ((pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
+    gtk_text_buffer_get_start_iter(buffer, &start);
+    if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT ||
+        gtk_text_iter_forward_find_char(
+            &start, GtkTextCharPredicate(giter_compare_foreach),
+            GUINT_TO_POINTER(OCCUPY_OBJECT), NULL)) {
+      end = start;
+      gtk_text_iter_forward_char(&end);
+      gtk_text_buffer_delete(buffer, &start, &end);
+    }
+    gtk_text_buffer_insert_pixbuf(buffer, &start, pixbuf);
+    g_object_unref(pixbuf);
+  }
+}
+
+void GroupInfo::addMsgPara(const MsgPara& para) {
+  GtkTextIter iter;
+  const gchar* data;
+
+  for (size_t i = 0; i < para.dtlist.size(); ++i) {
+    const ChipData* chipData = &para.dtlist[i];
+    data = chipData->data.c_str();
+    switch (chipData->type) {
+      case MESSAGE_CONTENT_TYPE_STRING:
+        InsertHeaderToBuffer(buffer, &para, me);
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", -1);
+        InsertStringToBuffer(buffer, data);
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", -1);
+        if (logSystem) {
+          logSystem->communicateLog(&para, "[STRING]%s", data);
+        }
+        break;
+      case MESSAGE_CONTENT_TYPE_PICTURE:
+        InsertPixbufToBuffer(buffer, data);
+        if (logSystem) {
+          logSystem->communicateLog(&para, "[PICTURE]%s", data);
+        }
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 }  // namespace iptux

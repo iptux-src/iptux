@@ -92,8 +92,6 @@ class ProgramData {
   double volume;   //音量控制
   uint8_t sndfgs;  // 2 传输:1 消息:0 声音
 
-  GRegex* urlregex;  // URL正则表达式
-
   struct timeval timestamp;      //程序数据时间戳
   int send_message_retry_in_us;  // sleep time(in microsecond) when send message
                                  // failed
@@ -109,7 +107,6 @@ class ProgramData {
  private:
   void InitSublayer();
   void ReadProgData();
-  void CreateRegex();
 
   void WriteNetSegment();
   void ReadNetSegment();
