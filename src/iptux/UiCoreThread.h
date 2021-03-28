@@ -45,11 +45,6 @@ class UiCoreThread: public CoreThread {
 
   std::shared_ptr<UiProgramData> getUiProgramData();
 
-  void start() override;
-
-  void InsertMessage(const MsgPara& para);
-  void InsertMessage(MsgPara&& para);
-
   void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
 
   void ClearAllPalFromList() override ;
@@ -98,7 +93,6 @@ class UiCoreThread: public CoreThread {
   void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
 
 private:
-  Application* app;
   std::shared_ptr<UiProgramData> programData;
   LogSystem* logSystem;
   std::queue<MsgPara> messages;
