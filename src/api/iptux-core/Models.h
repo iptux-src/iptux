@@ -98,11 +98,13 @@ class PalInfo {
   PalInfo& setEncode(const std::string& encode);
   const std::string& getEncode() const {return encode;}
 
+  PalInfo& setGroup(const std::string& group);
+  const std::string& getGroup() const {return group;}
+
   std::string toString() const;
 
   in_addr ipv4;  ///< 好友IP
   char *segdes;    ///< 所在网段描述
-  char *group;     ///< 所在群组
   char *photo;     ///< 形象照片
   char *sign;      ///< 个性签名
   char *iconfile;  ///< 好友头像 *
@@ -125,6 +127,7 @@ class PalInfo {
   std::string host;
   std::string version;   ///< 版本串 *
   std::string encode;    ///< 好友编码 *
+  std::string group;     ///< 所在群组
   uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 

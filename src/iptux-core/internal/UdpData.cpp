@@ -161,9 +161,9 @@ void UdpData::SomeoneLost() {
   (*pal).setVersion(version ? version : "?")
     .setUser(user ? user : "???")
     .setHost(host ? host : "???")
-    .setEncode(encode ? encode : "utf-8");
-  pal->setName(_("mysterious"));
-  pal->group = g_strdup(_("mysterious"));
+    .setEncode(encode ? encode : "utf-8")
+    .setName(_("mysterious"))
+    .setGroup(_("mysterious"));
   pal->photo = NULL;
   pal->sign = NULL;
   pal->iconfile = g_strdup(g_progdt->palicon);
@@ -509,7 +509,7 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   } else {
     pal->setName(name);
   }
-  pal->group = GetPalGroup();
+  pal->setGroup(GetPalGroup());
   pal->photo = NULL;
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
@@ -550,8 +550,7 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
     } else {
       pal->setName(name);
     }
-    g_free(pal->group);
-    pal->group = GetPalGroup();
+    pal->setGroup(GetPalGroup());
     g_free(pal->iconfile);
     if (!(pal->iconfile = GetPalIcon()))
       pal->iconfile = g_strdup(g_progdt->palicon);
@@ -643,12 +642,12 @@ void UdpData::ConvertEncode(const string &enc) {
  * 获取好友群组名称.
  * @return 群组
  */
-char *UdpData::GetPalGroup() {
+string UdpData::GetPalGroup() {
   const char *ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 1)) && *ptr != '\0')
-    return g_strdup(ptr);
-  return NULL;
+    return ptr;
+  return "";
 }
 
 /**

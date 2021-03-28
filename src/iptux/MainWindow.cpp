@@ -880,8 +880,8 @@ gchar* palInfo2HintMarkup(const PalInfo *pal) {
   char ipstr[INET_ADDRSTRLEN];
   gchar *version = g_markup_printf_escaped(_("Version: %s"), pal->getVersion().c_str());
   gchar *nickname;
-  if (pal->group && *pal->group != '\0') {
-    nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->getName().c_str(), pal->group);
+  if (!pal->getGroup().empty()) {
+    nickname = g_markup_printf_escaped(_("Nickname: %s@%s"), pal->getName().c_str(), pal->getGroup().c_str());
   } else {
     nickname = g_markup_printf_escaped(_("Nickname: %s"), pal->getName().c_str());
   }
@@ -1469,10 +1469,12 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
   for(auto pal: g_cthrd->GetPalList()) {
     inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     /* Search friends case ignore is better. */
-    if (*text == '\0' || strcasestr(pal->getName().c_str(), text) ||
-        (pal->group && strcasestr(pal->group, text)) ||
-        strcasestr(ipstr, text) || strcasestr(pal->getUser().c_str(), text) ||
-        strcasestr(pal->getHost().c_str(), text)) {
+    if (*text == '\0'
+      || strcasestr(pal->getName().c_str(), text)
+      || strcasestr(pal->getGroup().c_str(), text)
+      || strcasestr(ipstr, text)
+      || strcasestr(pal->getUser().c_str(), text)
+      || strcasestr(pal->getHost().c_str(), text)) {
       file = iptux_erase_filename_suffix(pal->iconfile);
       pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                         GtkIconLookupFlags(0), NULL);
@@ -1481,7 +1483,7 @@ void MainWindow::PallistEntryChanged(GtkWidget *entry, GData **widset) {
       gtk_list_store_set(GTK_LIST_STORE(model), &iter,
                          0, pixbuf,
                          1, pal->getName().c_str(),
-                         2, pal->group,
+                         2, pal->getGroup().c_str(),
                          3, ipstr,
                          4, pal->getUser().c_str(),
                          5, pal->getHost().c_str(),

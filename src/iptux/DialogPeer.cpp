@@ -192,7 +192,6 @@ void DialogPeer::WriteUILayout() {
  * @return 窗口
  */
 GtkWindow *DialogPeer::CreateMainWindow() {
-  char buf[MAX_BUFLEN];
   gint width, height;
   PalInfo *palinfor;
   char ipstr[INET_ADDRSTRLEN];
@@ -325,8 +324,8 @@ void DialogPeer::FillPalInfoToBuffer(GtkTextBuffer *buffer, PalInfo *pal) {
   string buf;
 
   buf += stringFormat(_("Version: %s\n"), pal->getVersion().c_str());
-  if (pal->group && *pal->group != '\0')
-    buf += stringFormat(_("Nickname: %s@%s\n"), pal->getName().c_str(), pal->group);
+  if (!pal->getGroup().empty())
+    buf += stringFormat(_("Nickname: %s@%s\n"), pal->getName().c_str(), pal->getGroup().c_str());
   else
     buf += stringFormat(_("Nickname: %s\n"), pal->getName().c_str());
 
