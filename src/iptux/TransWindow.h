@@ -10,6 +10,6 @@ namespace iptux {
 typedef GtkWindow TransWindow;
 TransWindow* trans_window_new(Application* app, GtkWindow* parent);
 
-}
+}  // namespace iptux
 
-#endif //IPTUX_TRANSWINDOW_H
+#endif  // IPTUX_TRANSWINDOW_H

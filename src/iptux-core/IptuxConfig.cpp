@@ -13,8 +13,7 @@ using namespace std;
 
 namespace iptux {
 
-shared_ptr<IptuxConfig>
-IptuxConfig::newFromString(const string& str) {
+shared_ptr<IptuxConfig> IptuxConfig::newFromString(const string& str) {
   auto res = shared_ptr<IptuxConfig>(new IptuxConfig());
 
   istringstream iss(str);
@@ -34,8 +33,7 @@ IptuxConfig::newFromString(const string& str) {
   return res;
 }
 
-IptuxConfig::IptuxConfig() {
-}
+IptuxConfig::IptuxConfig() {}
 
 IptuxConfig::IptuxConfig(const string& fname) : fname(fname) {
   ifstream ifs(fname.c_str());
@@ -66,14 +64,17 @@ const std::string& IptuxConfig::getFileName() const {
   return fname;
 }
 
-
-int IptuxConfig::GetInt(const string& key) const { return GetInt(key, 0); }
+int IptuxConfig::GetInt(const string& key) const {
+  return GetInt(key, 0);
+}
 
 int IptuxConfig::GetInt(const string& key, int defaultValue) const {
   return root.get(key, defaultValue).asInt();
 }
 
-void IptuxConfig::SetInt(const string& key, int value) { root[key] = value; }
+void IptuxConfig::SetInt(const string& key, int value) {
+  root[key] = value;
+}
 
 bool IptuxConfig::GetBool(const string& key) const {
   return root.get(key, false).asBool();
@@ -81,7 +82,9 @@ bool IptuxConfig::GetBool(const string& key) const {
 bool IptuxConfig::GetBool(const string& key, bool defaultValue) const {
   return root.get(key, defaultValue).asBool();
 }
-void IptuxConfig::SetBool(const string& key, bool value) { root[key] = value; }
+void IptuxConfig::SetBool(const string& key, bool value) {
+  root[key] = value;
+}
 
 string IptuxConfig::GetString(const string& key) const {
   return GetString(key, "");

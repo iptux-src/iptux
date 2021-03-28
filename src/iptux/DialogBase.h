@@ -17,16 +17,16 @@
 
 #include <memory>
 
-#include "iptux/UiProgramData.h"
 #include "iptux-core/Models.h"
-#include "iptux/UiModels.h"
 #include "iptux/Application.h"
+#include "iptux/UiModels.h"
+#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
 class DialogBase : public SessionAbstract, public sigc::trackable {
  public:
-  DialogBase(Application* app, GroupInfo *grp);
+  DialogBase(Application* app, GroupInfo* grp);
   virtual ~DialogBase();
 
   void ClearHistoryTextView();
@@ -39,52 +39,58 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   virtual void OnNewMessageComing();
   void NotifyUser();
 
-  void AttachEnclosure(const GSList *list);
+  void AttachEnclosure(const GSList* list);
   /* UI general */
-  GtkWidget *CreateInputArea();
-  virtual GtkWidget *CreateHistoryArea();
-  virtual GtkWidget *CreateFileSendArea();
-  virtual GtkWidget *CreateFileSendTree(GtkTreeModel *model);
+  GtkWidget* CreateInputArea();
+  virtual GtkWidget* CreateHistoryArea();
+  virtual GtkWidget* CreateFileSendArea();
+  virtual GtkWidget* CreateFileSendTree(GtkTreeModel* model);
   virtual GtkWindow* getWindow() = 0;
-  virtual GSList *GetSelPal() { return NULL; };
+  virtual GSList* GetSelPal() { return NULL; };
 
-  void MainWindowSignalSetup(GtkWindow *window);
-  GtkTreeModel *CreateFileSendModel();
-  GSList *PickEnclosure(FileAttr fileattr);
+  void MainWindowSignalSetup(GtkWindow* window);
+  GtkTreeModel* CreateFileSendModel();
+  GSList* PickEnclosure(FileAttr fileattr);
 
   bool SendEnclosureMsg();
   virtual bool SendTextMsg() = 0;
   /* TODO: Group SendTextMsg need add Picture */
-  void FeedbackMsg(const gchar *msg);
+  void FeedbackMsg(const gchar* msg);
   virtual void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) = 0;
 
   // 回调部分
-  static void DialogDestory(DialogBase *);
-  static gboolean ClearNotify(GtkWidget *window, GdkEventConfigure *event);
-  static void DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
-                               gint x, gint y, GtkSelectionData *data,
-                               guint info, guint time);
-  static void AttachRegular(DialogBase *dlgpr);
-  static void AttachFolder(DialogBase *dlgpr);
-  static void RemoveSelectedFromTree(GtkWidget *widget);
-  static void SendMessage(DialogBase *dlggrp);
-  static gboolean WindowConfigureEvent(GtkWidget *window,
-                                       GdkEventConfigure *event, GData **dtset);
-  static void PanedDivideChanged(GtkWidget *paned, GParamSpec *pspec,
-                                 GData **dtset);
-  static gint EnclosureTreePopup(DialogBase* self, GdkEvent *event);
-  static gboolean UpdateFileSendUI(DialogBase *dlggrp);
-  static void RemoveSelectedEnclosure(DialogBase *self);
-  static void OpenTransDlg(DialogBase *dlgpr);
+  static void DialogDestory(DialogBase*);
+  static gboolean ClearNotify(GtkWidget* window, GdkEventConfigure* event);
+  static void DragDataReceived(DialogBase* dlgpr,
+                               GdkDragContext* context,
+                               gint x,
+                               gint y,
+                               GtkSelectionData* data,
+                               guint info,
+                               guint time);
+  static void AttachRegular(DialogBase* dlgpr);
+  static void AttachFolder(DialogBase* dlgpr);
+  static void RemoveSelectedFromTree(GtkWidget* widget);
+  static void SendMessage(DialogBase* dlggrp);
+  static gboolean WindowConfigureEvent(GtkWidget* window,
+                                       GdkEventConfigure* event,
+                                       GData** dtset);
+  static void PanedDivideChanged(GtkWidget* paned,
+                                 GParamSpec* pspec,
+                                 GData** dtset);
+  static gint EnclosureTreePopup(DialogBase* self, GdkEvent* event);
+  static gboolean UpdateFileSendUI(DialogBase* dlggrp);
+  static void RemoveSelectedEnclosure(DialogBase* self);
+  static void OpenTransDlg(DialogBase* dlgpr);
 
  protected:
   Application* app;
   std::shared_ptr<UiProgramData> progdt;
   GtkTreeView* fileSendTree;
-  GData *widset;            //窗体集
-  GData *mdlset;            //数据model集
-  GData *dtset;             //通用数据集
-  GroupInfo *grpinf;        //群组信息
+  GData* widset;            //窗体集
+  GData* mdlset;            //数据model集
+  GData* dtset;             //通用数据集
+  GroupInfo* grpinf;        //群组信息
   int64_t totalsendsize;    //总计待发送大小(包括已发送)
   struct timeval lasktime;  //上一次更新UI的时间
   guint timersend;          // 发送文件界面更新计时器ID

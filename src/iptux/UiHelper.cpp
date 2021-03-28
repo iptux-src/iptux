@@ -1,17 +1,17 @@
 #include "config.h"
 #include "UiHelper.h"
 
-#include <cstring>
 #include <cerrno>
+#include <cstring>
 
-#include <unistd.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include <glib/gi18n.h>
 
 #include "iptux-core/Models.h"
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -21,10 +21,11 @@ namespace iptux {
  * 打开URL.
  * @param url url
  */
-void iptux_open_url(const char *url) {
+void iptux_open_url(const char* url) {
   int fd;
 
-  if (fork() != 0) return;
+  if (fork() != 0)
+    return;
 
   /* 关闭由iptux打开的所有可能的文件描述符 */
   fd = 3;
@@ -45,7 +46,8 @@ void iptux_open_url(const char *url) {
   LOG_WARN(_("Can't find any available web browser!\n"));
 }
 
-bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
+bool ValidateDragData(GtkSelectionData* data,
+                      GdkDragContext* context,
                       guint time) {
   if (gtk_selection_data_get_length(data) <= 0 ||
       gtk_selection_data_get_format(data) != 8) {
@@ -55,11 +57,10 @@ bool ValidateDragData(GtkSelectionData *data, GdkDragContext *context,
   return true;
 }
 
-void add_accelerator(GtkApplication *app, const char *action, const char *accel) {
-  const char *accels[] = {
-      accel,
-      NULL
-  };
+void add_accelerator(GtkApplication* app,
+                     const char* action,
+                     const char* accel) {
+  const char* accels[] = {accel, NULL};
   gtk_application_set_accels_for_action(app, action, accels);
 }
 
@@ -70,7 +71,7 @@ void add_accelerator(GtkApplication *app, const char *action, const char *accel)
  * @param height height
  * @note 原pixbuf将被本函数释放
  */
-void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
+void pixbuf_shrink_scale_1(GdkPixbuf** pixbuf, int width, int height) {
   gdouble scale_x, scale_y, scale;
   gint _width, _height;
 
@@ -80,9 +81,9 @@ void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
   _height = gdk_pixbuf_get_height(*pixbuf);
   if (_width > width || _height > height) {
     scale = ((scale_x = (gdouble)width / _width) <
-        (scale_y = (gdouble)height / _height))
-            ? scale_x
-            : scale_y;
+             (scale_y = (gdouble)height / _height))
+                ? scale_x
+                : scale_y;
     _width = (gint)(_width * scale);
     _height = (gint)(_height * scale);
     auto tpixbuf = *pixbuf;
@@ -96,8 +97,8 @@ void pixbuf_shrink_scale_1(GdkPixbuf **pixbuf, int width, int height) {
  * 让窗体(widget)支持uri拖拽操作.
  * @param widget widget
  */
-void widget_enable_dnd_uri(GtkWidget *widget) {
-  static const GtkTargetEntry target = {(gchar *)"text/uri-list", 0, 0};
+void widget_enable_dnd_uri(GtkWidget* widget) {
+  static const GtkTargetEntry target = {(gchar*)"text/uri-list", 0, 0};
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, &target, 1, GDK_ACTION_MOVE);
 }
@@ -107,12 +108,13 @@ void widget_enable_dnd_uri(GtkWidget *widget) {
  * @param data selection data
  * @return 文件链表
  */
-GSList *selection_data_get_path(GtkSelectionData *data) {
-  const char *prl = "file://";
+GSList* selection_data_get_path(GtkSelectionData* data) {
+  const char* prl = "file://";
   gchar **uris, **ptr;
-  GSList *filelist;
+  GSList* filelist;
 
-  if (!(uris = gtk_selection_data_get_uris(data))) return NULL;
+  if (!(uris = gtk_selection_data_get_uris(data)))
+    return NULL;
 
   filelist = NULL;
   ptr = uris;
@@ -136,9 +138,9 @@ GSList *selection_data_get_path(GtkSelectionData *data) {
  * @param format as in printf()
  * @param ...
  */
-void pop_info(GtkWidget *parent, const gchar *format, ...) {
-  GtkWidget *dialog;
-  gchar *msg;
+void pop_info(GtkWidget* parent, const gchar* format, ...) {
+  GtkWidget* dialog;
+  gchar* msg;
   va_list ap;
 
   va_start(ap, format);
@@ -159,9 +161,9 @@ void pop_info(GtkWidget *parent, const gchar *format, ...) {
  * @param format as in printf()
  * @param ...
  */
-void pop_warning(GtkWidget *parent, const gchar *format, ...) {
-  GtkWidget *dialog;
-  gchar *msg;
+void pop_warning(GtkWidget* parent, const gchar* format, ...) {
+  GtkWidget* dialog;
+  gchar* msg;
   va_list ap;
 
   va_start(ap, format);
@@ -185,50 +187,58 @@ string ipv4_get_lan_name(in_addr ipv4) {
   /**
    * @note 局域网网段划分，每两个为一组，以NULL标识结束.
    */
-  static const char *localgroup[] = {
+  static const char* localgroup[] = {
       "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
       "192.168.0.0", "192.168.255.255", NULL};
-  for(int i = 0; i < 6; i+=2) {
-    if(NetSegment(localgroup[i], localgroup[i+1], "").ContainIP(ipv4)) {
-      return stringFormat("%s~%s", localgroup[i], localgroup[i+1]);
+  for (int i = 0; i < 6; i += 2) {
+    if (NetSegment(localgroup[i], localgroup[i + 1], "").ContainIP(ipv4)) {
+      return stringFormat("%s~%s", localgroup[i], localgroup[i + 1]);
     }
   }
   return "";
 }
 
-void g_action_map_set_action_sensitive(GActionMap* map, const char* action_name, bool sensitive) {
+void g_action_map_set_action_sensitive(GActionMap* map,
+                                       const char* action_name,
+                                       bool sensitive) {
   GAction* action = g_action_map_lookup_action(G_ACTION_MAP(map), action_name);
-  if(!action) {
+  if (!action) {
     return;
   }
-  if(!G_IS_SIMPLE_ACTION(action)) {
+  if (!G_IS_SIMPLE_ACTION(action)) {
     return;
   }
   g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sensitive);
 }
 
-void g_action_map_set_actions(GActionMap* map, bool sensitive, const char* action_name, va_list args) {
+void g_action_map_set_actions(GActionMap* map,
+                              bool sensitive,
+                              const char* action_name,
+                              va_list args) {
   g_action_map_set_action_sensitive(map, action_name, sensitive);
-  const char* action_name2 = va_arg (args, const char*);
+  const char* action_name2 = va_arg(args, const char*);
   while (action_name2) {
     g_action_map_set_action_sensitive(map, action_name2, sensitive);
-    action_name2 = va_arg (args, const char*);
+    action_name2 = va_arg(args, const char*);
   }
 }
 
-void g_action_map_enable_actions(GActionMap* map, const char* action_name, ...) {
+void g_action_map_enable_actions(GActionMap* map,
+                                 const char* action_name,
+                                 ...) {
   va_list args;
-  va_start (args, action_name);
+  va_start(args, action_name);
   g_action_map_set_actions(map, true, action_name, args);
-  va_end (args);
+  va_end(args);
 }
 
-
-void g_action_map_disable_actions(GActionMap* map, const char* action_name, ...) {
+void g_action_map_disable_actions(GActionMap* map,
+                                  const char* action_name,
+                                  ...) {
   va_list args;
-  va_start (args, action_name);
+  va_start(args, action_name);
   g_action_map_set_actions(map, false, action_name, args);
-  va_end (args);
+  va_end(args);
 }
 
 string markupEscapeText(const string& str) {
@@ -238,4 +248,4 @@ string markupEscapeText(const string& str) {
   return res;
 }
 
-}
+}  // namespace iptux

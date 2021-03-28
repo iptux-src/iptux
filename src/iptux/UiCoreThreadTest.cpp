@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "iptux/UiCoreThread.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/UiCoreThread.h"
 
 using namespace std;
 using namespace iptux;

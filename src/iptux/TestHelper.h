@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 
 namespace iptux {
-  GtkBuilder* newTestGtkBuilder();
+GtkBuilder* newTestGtkBuilder();
 }
 
 #endif

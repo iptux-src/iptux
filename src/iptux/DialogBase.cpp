@@ -14,23 +14,22 @@
 #include "config.h"
 #include "DialogBase.h"
 
-#include <sys/stat.h>
-#include <glog/logging.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
+#include <sys/stat.h>
 
-
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
-#include "iptux/callback.h"
+#include "iptux-utils/utils.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/UiHelper.h"
 #include "iptux/MainWindow.h"
+#include "iptux/UiHelper.h"
+#include "iptux/callback.h"
 
 using namespace std;
 
 namespace iptux {
 
-DialogBase::DialogBase(Application* app, GroupInfo *grp)
+DialogBase::DialogBase(Application* app, GroupInfo* grp)
     : app(app),
       progdt(app->getProgramData()),
       widset(NULL),
@@ -43,7 +42,8 @@ DialogBase::DialogBase(Application* app, GroupInfo *grp)
 }
 
 DialogBase::~DialogBase() {
-  if (timersend > 0) g_source_remove(timersend);
+  if (timersend > 0)
+    g_source_remove(timersend);
   ClearSublayerGeneral();
 }
 
@@ -73,9 +73,9 @@ void DialogBase::ClearSublayerGeneral() {
  * 清空聊天历史记录.
  */
 void DialogBase::ClearHistoryTextView() {
-  GtkWidget *widget;
-  GtkTextBuffer *buffer;
-  GtkTextTagTable *table;
+  GtkWidget* widget;
+  GtkTextBuffer* buffer;
+  GtkTextTagTable* table;
   GtkTextIter start, end;
   GSList *taglist, *tlist;
 
@@ -106,10 +106,10 @@ void DialogBase::ClearHistoryTextView() {
  * 滚动聊天历史记录区.
  */
 void DialogBase::ScrollHistoryTextview() {
-  GtkWidget *widget;
-  GtkTextBuffer *buffer;
+  GtkWidget* widget;
+  GtkTextBuffer* buffer;
   GtkTextIter end;
-  GtkTextMark *mark;
+  GtkTextMark* mark;
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-textview-widget"));
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
@@ -132,7 +132,7 @@ void DialogBase::OnNewMessageComing() {
  * 在窗口打开并且没有设置为最顶端的窗口时候，用窗口在任务栏的闪动来提示用户
  */
 void DialogBase::NotifyUser() {
-  GtkWindow *window;
+  GtkWindow* window;
   window = GTK_WINDOW(g_datalist_get_data(&widset, "window-widget"));
   if (!gtk_window_has_toplevel_focus(window))
     gtk_window_set_urgency_hint(window, TRUE);
@@ -142,16 +142,16 @@ void DialogBase::NotifyUser() {
  * 添加附件.
  * @param list 文件链表
  */
-void DialogBase::AttachEnclosure(const GSList *list) {
+void DialogBase::AttachEnclosure(const GSList* list) {
   GtkWidget *widget, *pbar;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  const char *iconname;
+  const char* iconname;
   struct stat st;
   const GSList *tlist, *pallist;
   int64_t filesize;
   char *filename, *filepath, *progresstip;
-  FileInfo *file;
+  FileInfo* file;
   uint32_t filenum = 0;
 
   /* 插入附件树 */
@@ -161,7 +161,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   tlist = list;
   auto g_cthrd = app->getCoreThread();
   while (tlist) {
-    if (stat((const char *)tlist->data, &st) == -1 ||
+    if (stat((const char*)tlist->data, &st) == -1 ||
         !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
       tlist = g_slist_next(tlist);
       continue;
@@ -174,8 +174,8 @@ void DialogBase::AttachEnclosure(const GSList *list) {
     } else {
       iconname = NULL;
     }
-    filesize = utils::fileOrDirectorySize((char *)tlist->data);
-    filename = ipmsg_get_filename_me((char *)tlist->data, &filepath);
+    filesize = utils::fileOrDirectorySize((char*)tlist->data);
+    filename = ipmsg_get_filename_me((char*)tlist->data, &filepath);
     pallist = GetSelPal();
     while (pallist) {
       file = new FileInfo;
@@ -184,24 +184,19 @@ void DialogBase::AttachEnclosure(const GSList *list) {
       file->fileattr =
           S_ISREG(st.st_mode) ? FileAttr::REGULAR : FileAttr::DIRECTORY;
       file->filesize = filesize;
-      file->filepath = g_strdup((char *)tlist->data);
+      file->filepath = g_strdup((char*)tlist->data);
       file->filectime = uint32_t(st.st_ctime);
       file->filenum = filenum;
-      file->fileown = g_cthrd->GetPal(((PalInfo *)(pallist->data))->GetKey());
+      file->fileown = g_cthrd->GetPal(((PalInfo*)(pallist->data))->GetKey());
       /* 加入文件信息到中心节点 */
       g_cthrd->Lock();
       g_cthrd->AddPrivateFile(PFileInfo(file));
       g_cthrd->Unlock();
       /* 添加数据 */
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-                         0, iconname,
-                         1, filename,
-                         2, numeric_to_size(filesize),
-                         3, tlist->data,
-                         4, file,
-                         5, file->fileown->getName().c_str(),
-                         -1);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, iconname, 1, filename,
+                         2, numeric_to_size(filesize), 3, tlist->data, 4, file,
+                         5, file->fileown->getName().c_str(), -1);
       pallist = g_slist_next(pallist);
     }
     filenum++;
@@ -210,7 +205,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
   }
   //计算待发送文件总计大小
   totalsendsize = 0;
-  if(gtk_tree_model_get_iter_first(model, &iter)) {
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {  //遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
       totalsendsize += file->filesize;
@@ -228,7 +223,7 @@ void DialogBase::AttachEnclosure(const GSList *list) {
 /*
  * 主窗口的信号连接
  */
-void DialogBase::MainWindowSignalSetup(GtkWindow *window) {
+void DialogBase::MainWindowSignalSetup(GtkWindow* window) {
   g_object_set_data(G_OBJECT(window), "session-class", this);
   g_signal_connect_swapped(window, "destroy", G_CALLBACK(DialogDestory), this);
   g_signal_connect_swapped(window, "drag-data-received",
@@ -242,7 +237,7 @@ void DialogBase::MainWindowSignalSetup(GtkWindow *window) {
  * 创建消息输入区域.
  * @return 主窗体
  */
-GtkWidget *DialogBase::CreateInputArea() {
+GtkWidget* DialogBase::CreateInputArea() {
   GtkWidget *frame, *box, *sw;
   GtkWidget *hbb, *button;
   GtkWidget *widget, *window;
@@ -287,9 +282,9 @@ GtkWidget *DialogBase::CreateInputArea() {
  * 创建聊天历史记录区域.
  * @return 主窗体.
  */
-GtkWidget *DialogBase::CreateHistoryArea() {
+GtkWidget* DialogBase::CreateHistoryArea() {
   GtkWidget *frame, *sw;
-  GtkWidget *widget;
+  GtkWidget* widget;
 
   frame = gtk_frame_new(_("Chat History"));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
@@ -326,26 +321,24 @@ GtkWidget *DialogBase::CreateHistoryArea() {
  * @param fileattr 文件类型
  * @return 文件链表
  */
-GSList *DialogBase::PickEnclosure(FileAttr fileattr) {
-  GtkWidget *dialog;
+GSList* DialogBase::PickEnclosure(FileAttr fileattr) {
+  GtkWidget* dialog;
   GtkFileChooserAction action;
-  const char *title;
-  GSList *list;
+  const char* title;
+  GSList* list;
 
   if (fileattr == FileAttr::REGULAR) {
     action = GTK_FILE_CHOOSER_ACTION_OPEN;
     title = _("Choose enclosure files");
-  } else if(fileattr == FileAttr::DIRECTORY) {
+  } else if (fileattr == FileAttr::DIRECTORY) {
     action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
     title = _("Choose enclosure folders");
   } else {
     CHECK(false);
   }
-  dialog = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(getWindow()), action,
-      _("_Open"), GTK_RESPONSE_ACCEPT,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+  dialog = gtk_file_chooser_dialog_new(title, GTK_WINDOW(getWindow()), action,
+                                       _("_Open"), GTK_RESPONSE_ACCEPT,
+                                       _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);
@@ -371,16 +364,17 @@ GSList *DialogBase::PickEnclosure(FileAttr fileattr) {
  * @return 是否发送数据
  */
 bool DialogBase::SendEnclosureMsg() {
-  GtkWidget *treeview;
-  GtkTreeModel *model;
+  GtkWidget* treeview;
+  GtkTreeModel* model;
   GtkTreeIter iter;
-  gchar *filepath;
-  FileInfo *file;
+  gchar* filepath;
+  FileInfo* file;
 
   treeview =
       GTK_WIDGET(g_datalist_get_data(&widset, "file-send-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return false;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return false;
 
   /* 获取文件并发送 */
   vector<FileInfo*> files;
@@ -390,8 +384,8 @@ bool DialogBase::SendEnclosureMsg() {
   } while (gtk_tree_model_iter_next(model, &iter));
 
   BroadcastEnclosureMsg(files);
-  if(!timersend) {
-    timersend = g_timeout_add(400, (GSourceFunc) UpdateFileSendUI, this);
+  if (!timersend) {
+    timersend = g_timeout_add(400, (GSourceFunc)UpdateFileSendUI, this);
   }
   return true;
 }
@@ -400,7 +394,7 @@ bool DialogBase::SendEnclosureMsg() {
  * 回馈消息.
  * @param msg 消息
  */
-void DialogBase::FeedbackMsg(const gchar *msg) {
+void DialogBase::FeedbackMsg(const gchar* msg) {
   MsgPara para;
   ChipData chip;
 
@@ -420,10 +414,11 @@ void DialogBase::FeedbackMsg(const gchar *msg) {
  * 添加常规文件附件.
  * @param dlgpr 对话框类
  */
-void DialogBase::AttachRegular(DialogBase *dlgpr) {
-  GSList *list;
+void DialogBase::AttachRegular(DialogBase* dlgpr) {
+  GSList* list;
 
-  if (!(list = dlgpr->PickEnclosure(FileAttr::REGULAR))) return;
+  if (!(list = dlgpr->PickEnclosure(FileAttr::REGULAR)))
+    return;
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -433,10 +428,11 @@ void DialogBase::AttachRegular(DialogBase *dlgpr) {
  * 添加目录文件附件.
  * @param dlgpr 对话框类
  */
-void DialogBase::AttachFolder(DialogBase *dlgpr) {
-  GSList *list;
+void DialogBase::AttachFolder(DialogBase* dlgpr) {
+  GSList* list;
 
-  if (!(list = dlgpr->PickEnclosure(FileAttr::DIRECTORY))) return;
+  if (!(list = dlgpr->PickEnclosure(FileAttr::DIRECTORY)))
+    return;
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -446,7 +442,7 @@ void DialogBase::AttachFolder(DialogBase *dlgpr) {
  * 发送消息.
  * @param dlgpr 对话框类
  */
-void DialogBase::SendMessage(DialogBase *dlgpr) {
+void DialogBase::SendMessage(DialogBase* dlgpr) {
   dlgpr->SendEnclosureMsg();
   dlgpr->SendTextMsg();
   dlgpr->ScrollHistoryTextview();
@@ -455,15 +451,18 @@ void DialogBase::SendMessage(DialogBase *dlgpr) {
  * 对话框被摧毁的回调函数
  * @param dialog
  */
-void DialogBase::DialogDestory(DialogBase *dialog) { delete dialog; }
+void DialogBase::DialogDestory(DialogBase* dialog) {
+  delete dialog;
+}
 
 /**
  * 清除提示,这个提示只是窗口闪动的提示
  */
-gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
+gboolean DialogBase::ClearNotify(GtkWidget* window, GdkEventConfigure*) {
   if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
     gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
-  DialogBase* self = (DialogBase*)g_object_get_data(G_OBJECT(window), "session-class");
+  DialogBase* self =
+      (DialogBase*)g_object_get_data(G_OBJECT(window), "session-class");
   self->grpinf->readAllMsg();
   return FALSE;
 }
@@ -479,10 +478,14 @@ gboolean DialogBase::ClearNotify(GtkWidget *window, GdkEventConfigure *) {
  * GtkTargetList
  * @param time the timestamp at which the data was received
  */
-void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
-                                  gint, gint, GtkSelectionData *data,
-                                  guint, guint time) {
-  GSList *list;
+void DialogBase::DragDataReceived(DialogBase* dlgpr,
+                                  GdkDragContext* context,
+                                  gint,
+                                  gint,
+                                  GtkSelectionData* data,
+                                  guint,
+                                  guint time) {
+  GSList* list;
 
   if (!ValidateDragData(data, context, time)) {
     return;
@@ -502,9 +505,9 @@ void DialogBase::DragDataReceived(DialogBase *dlgpr, GdkDragContext *context,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean DialogBase::WindowConfigureEvent(GtkWidget *,
-                                          GdkEventConfigure *event,
-                                          GData **dtset) {
+gboolean DialogBase::WindowConfigureEvent(GtkWidget*,
+                                          GdkEventConfigure* event,
+                                          GData** dtset) {
   g_datalist_set_data(dtset, "window-width", GINT_TO_POINTER(event->width));
   g_datalist_set_data(dtset, "window-height", GINT_TO_POINTER(event->height));
 
@@ -517,12 +520,13 @@ gboolean DialogBase::WindowConfigureEvent(GtkWidget *,
  * @param pspec he GParamSpec of the property which changed
  * @param dtset data set
  */
-void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec * /*pspec*/,
-                                    GData **dtset) {
-  const gchar *identify;
+void DialogBase::PanedDivideChanged(GtkWidget* paned,
+                                    GParamSpec* /*pspec*/,
+                                    GData** dtset) {
+  const gchar* identify;
   gint position;
 
-  identify = (const gchar *)g_object_get_data(G_OBJECT(paned), "position-name");
+  identify = (const gchar*)g_object_get_data(G_OBJECT(paned), "position-name");
   position = gtk_paned_get_position(GTK_PANED(paned));
   g_datalist_set_data(dtset, identify, GINT_TO_POINTER(position));
 }
@@ -531,22 +535,23 @@ void DialogBase::PanedDivideChanged(GtkWidget *paned, GParamSpec * /*pspec*/,
  *删除选定附件.
  * @param dlgpr 对话框类
  */
-void DialogBase::RemoveSelectedFromTree(GtkWidget *widget) {
-  GList *list;
-  GtkTreeSelection *TreeSel;
-  GtkTreePath *path;
-  GtkTreeModel *model;
-  gchar *str_data;
+void DialogBase::RemoveSelectedFromTree(GtkWidget* widget) {
+  GList* list;
+  GtkTreeSelection* TreeSel;
+  GtkTreePath* path;
+  GtkTreeModel* model;
+  gchar* str_data;
   gboolean valid = 0;
   GtkTreeIter iter;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   list = gtk_tree_selection_get_selected_rows(TreeSel, NULL);
-  if (!list) return;
+  if (!list)
+    return;
   while (list) {
     gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter,
-                            (GtkTreePath *)g_list_nth(list, 0)->data);
+                            (GtkTreePath*)g_list_nth(list, 0)->data);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 2, "delete", -1);
     list = g_list_next(list);
   }
@@ -568,9 +573,9 @@ void DialogBase::RemoveSelectedFromTree(GtkWidget *widget) {
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent *event) {
+gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent* event) {
   GtkWidget *menu, *menuitem;
-  GdkEventButton *event_button;
+  GdkEventButton* event_button;
 
   menu = gtk_menu_new();
   menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
@@ -579,7 +584,7 @@ gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent *event) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
   if (event->type == GDK_BUTTON_PRESS) {
-    event_button = (GdkEventButton *)event;
+    event_button = (GdkEventButton*)event;
     if (event_button->button == GDK_BUTTON_SECONDARY) {
       gtk_widget_show(menuitem);
       gtk_menu_popup_at_pointer(GTK_MENU(menu), nullptr);
@@ -593,11 +598,11 @@ gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent *event) {
  * @param widget TreeView
  */
 void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
-  GtkTreeModel *model;
-  GtkTreeSelection *TreeSel;
+  GtkTreeModel* model;
+  GtkTreeSelection* TreeSel;
   GtkTreeIter iter;
-  FileInfo *file;
-  GList *list;
+  FileInfo* file;
+  GList* list;
   auto widget = self->fileSendTree;
   auto dlg = self;
 
@@ -605,10 +610,11 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   list = gtk_tree_selection_get_selected_rows(TreeSel, NULL);
-  if (!list) return;
+  if (!list)
+    return;
   while (list) {
     gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter,
-                            (GtkTreePath *)g_list_nth(list, 0)->data);
+                            (GtkTreePath*)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 4, &file, -1);
     dlg->totalsendsize -= file->filesize;
     self->app->getCoreThread()->DelPrivateFile(file->fileid);
@@ -625,9 +631,9 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
  * 创建文件发送区域.
  * @return 主窗体
  */
-GtkWidget *DialogBase::CreateFileSendArea() {
+GtkWidget* DialogBase::CreateFileSendArea() {
   GtkWidget *frame, *hbox, *vbox, *button, *pbar, *sw, *treeview;
-  GtkTreeModel *model;
+  GtkTreeModel* model;
   frame = gtk_frame_new(_("File to send."));
   g_datalist_set_data(&widset, "file-send-frame-widget", frame);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
@@ -670,11 +676,11 @@ GtkWidget *DialogBase::CreateFileSendArea() {
  * @param model FileSend-model
  * @return 待发送文件树
  */
-GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
-  GtkWidget *view;
-  GtkTreeSelection *selection;
-  GtkCellRenderer *cell;
-  GtkTreeViewColumn *column;
+GtkWidget* DialogBase::CreateFileSendTree(GtkTreeModel* model) {
+  GtkWidget* view;
+  GtkTreeSelection* selection;
+  GtkCellRenderer* cell;
+  GtkTreeViewColumn* column;
 
   view = gtk_tree_view_new_with_model(model);
   this->fileSendTree = GTK_TREE_VIEW(view);
@@ -725,8 +731,8 @@ GtkWidget *DialogBase::CreateFileSendTree(GtkTreeModel *model) {
  * 0:图标 1:文件名 2:大小(string) 3:全文件名 4:文件信息(指针) 5:接收者
  * 没有专门加删除标记，用第2列作删除标记，(某行反正要删除，改就改了)
  */
-GtkTreeModel *DialogBase::CreateFileSendModel() {
-  GtkListStore *model;
+GtkTreeModel* DialogBase::CreateFileSendModel() {
+  GtkListStore* model;
 
   model = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                              G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING);
@@ -740,15 +746,15 @@ GtkTreeModel *DialogBase::CreateFileSendModel() {
  * 让传输聊天窗口从传输状态窗口去取数据，而没有让文件数据发送类把数据传送到聊天窗口，
  * 这是因为考虑数据要发到本窗口，会存在窗口未打开或群聊状态等不确定因素,处理过程太复杂
  */
-gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
-  GtkTreeModel *model;
+gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
+  GtkTreeModel* model;
   GtkTreeIter iter;
   string progresstip;
-  GtkTreeView *treeview;
-  GtkWidget *pbar;
+  GtkTreeView* treeview;
+  GtkWidget* pbar;
   float progress;
   int64_t sentsize;
-  FileInfo *file;
+  FileInfo* file;
 
   treeview = GTK_TREE_VIEW(
       g_datalist_get_data(&(dlggrp->widset), "file-send-treeview-widget"));
@@ -773,8 +779,8 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase *dlggrp) {
     progresstip = _("Sending Progress.");
   } else {
     progress = percent(sentsize, dlggrp->totalsendsize) / 100;
-    progresstip = stringFormat(_("%s of %s Sent."),
-             numeric_to_size(sentsize), numeric_to_size(dlggrp->totalsendsize));
+    progresstip = stringFormat(_("%s of %s Sent."), numeric_to_size(sentsize),
+                               numeric_to_size(dlggrp->totalsendsize));
   }
   if (progress == 1) {
     g_source_remove(dlggrp->timersend);

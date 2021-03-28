@@ -9,8 +9,8 @@
 using namespace std;
 
 namespace iptux {
-  string CommandMode::toString() const {
-    switch(mode) {
+string CommandMode::toString() const {
+  switch (mode) {
     case IPMSG_BR_ENTRY:
       return "BR_ENTRY";
     case IPMSG_BR_EXIT:
@@ -35,6 +35,6 @@ namespace iptux {
       return "GETFILEDATA";
     default:
       return stringFormat(_("unknown command mode: %d"), mode);
-    }
   }
 }
+}  // namespace iptux

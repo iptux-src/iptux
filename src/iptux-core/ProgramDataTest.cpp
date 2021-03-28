@@ -29,7 +29,6 @@ TEST(ProgramData, WriteAndRead) {
   core->WriteProgData();
   delete core;
 
-
   auto config2 = make_shared<IptuxConfig>(config->getFileName());
   ProgramData* core2 = new ProgramData(config2);
   ASSERT_EQ(int(core2->getNetSegments().size()), 1);
@@ -43,4 +42,3 @@ TEST(ProgramData, WriteAndRead) {
 
   g_unlink(config->getFileName().c_str());
 }
-

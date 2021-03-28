@@ -14,23 +14,23 @@
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
+#include "iptux/Application.h"
 #include "iptux/DialogBase.h"
 #include "iptux/UiProgramData.h"
-#include "iptux/Application.h"
 
 namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(Application* app, GroupInfo *grp);
+  DialogGroup(Application* app, GroupInfo* grp);
   virtual ~DialogGroup();
 
-  static DialogGroup* GroupDialogEntry(Application* app, GroupInfo *grpinf);
-  void UpdatePalData(PalInfo *pal) override;
-  void InsertPalData(PalInfo *pal) override;
-  void DelPalData(PalInfo *pal) override;
+  static DialogGroup* GroupDialogEntry(Application* app, GroupInfo* grpinf);
+  void UpdatePalData(PalInfo* pal) override;
+  void InsertPalData(PalInfo* pal) override;
+  void DelPalData(PalInfo* pal) override;
   void ClearAllPalData() override;
-  GSList *GetSelPal() override;
+  GSList* GetSelPal() override;
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
@@ -46,39 +46,46 @@ class DialogGroup : public DialogBase {
   void ReadUILayout();
   void SaveUILayout();
 
-  GtkWindow *CreateMainWindow();
-  GtkWidget *CreateAllArea();
+  GtkWindow* CreateMainWindow();
+  GtkWidget* CreateAllArea();
 
-  GtkWidget *CreateMemberArea();
-  GtkWidget *CreateInputArea();
+  GtkWidget* CreateMemberArea();
+  GtkWidget* CreateInputArea();
 
-  GtkTreeModel *CreateMemberModel();
-  void FillMemberModel(GtkTreeModel *model);
-  GtkWidget *CreateMemberTree(GtkTreeModel *model);
+  GtkTreeModel* CreateMemberModel();
+  void FillMemberModel(GtkTreeModel* model);
+  GtkWidget* CreateMemberTree(GtkTreeModel* model);
 
   bool SendTextMsg() override;
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
-  void BroadcastTextMsg(const gchar *msg);
+  void BroadcastTextMsg(const gchar* msg);
 
-  static GtkWidget *CreatePopupMenu(GtkTreeModel *model);
+  static GtkWidget* CreatePopupMenu(GtkTreeModel* model);
   //回调处理部分
  private:
   static void onUIChanged(DialogGroup& self);
-  static gint MemberTreeCompareByNameFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                          GtkTreeIter *b);
-  static gint MemberTreeCompareByIPFunc(GtkTreeModel *model, GtkTreeIter *a,
-                                        GtkTreeIter *b);
-  static void SetMemberTreeSortFunc(GtkWidget *menuitem, GtkTreeModel *model);
-  static void SetMemberTreeSortType(GtkWidget *menuitem, GtkTreeModel *model);
-  static void DragDataReceived(DialogGroup *dlggrp, GdkDragContext *context,
-                               gint x, gint y, GtkSelectionData *data,
-                               guint info, guint time);
-  static gboolean PopupPickMenu(GtkWidget *treeview, GdkEventButton *event);
-  static void MembertreeItemActivated(GtkWidget *treeview, GtkTreePath *path,
-                                      GtkTreeViewColumn *column,
-                                      DialogGroup *self);
-  static void SendMessage(DialogGroup *dlggrp);
-  static void onClearChatHistory (void *, void *, DialogGroup& self) {
+  static gint MemberTreeCompareByNameFunc(GtkTreeModel* model,
+                                          GtkTreeIter* a,
+                                          GtkTreeIter* b);
+  static gint MemberTreeCompareByIPFunc(GtkTreeModel* model,
+                                        GtkTreeIter* a,
+                                        GtkTreeIter* b);
+  static void SetMemberTreeSortFunc(GtkWidget* menuitem, GtkTreeModel* model);
+  static void SetMemberTreeSortType(GtkWidget* menuitem, GtkTreeModel* model);
+  static void DragDataReceived(DialogGroup* dlggrp,
+                               GdkDragContext* context,
+                               gint x,
+                               gint y,
+                               GtkSelectionData* data,
+                               guint info,
+                               guint time);
+  static gboolean PopupPickMenu(GtkWidget* treeview, GdkEventButton* event);
+  static void MembertreeItemActivated(GtkWidget* treeview,
+                                      GtkTreePath* path,
+                                      GtkTreeViewColumn* column,
+                                      DialogGroup* self);
+  static void SendMessage(DialogGroup* dlggrp);
+  static void onClearChatHistory(void*, void*, DialogGroup& self) {
     self.ClearHistoryTextView();
   }
   static void onAttachFile(void*, void*, DialogGroup& self) {
@@ -90,8 +97,12 @@ class DialogGroup : public DialogBase {
   static void onClose(void*, void*, DialogGroup& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
-  static void onSortType (GSimpleAction *action, GVariant* value, DialogGroup& self);
-  static void onSortBy (GSimpleAction *action, GVariant* value, DialogGroup& self);
+  static void onSortType(GSimpleAction* action,
+                         GVariant* value,
+                         DialogGroup& self);
+  static void onSortBy(GSimpleAction* action,
+                       GVariant* value,
+                       DialogGroup& self);
   static void onSendMessage(void*, void*, DialogGroup& self) {
     DialogBase::SendMessage(&self);
   }

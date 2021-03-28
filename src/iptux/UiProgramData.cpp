@@ -1,8 +1,8 @@
 #include "config.h"
 #include "UiProgramData.h"
 
-#include <unistd.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
@@ -21,7 +21,7 @@ void UiProgramData::InitSublayer() {
  * @note 给这些tag一个"global"标记，表示这些对象是全局共享的
  */
 void UiProgramData::CreateTagTable() {
-  GtkTextTag *tag;
+  GtkTextTag* tag;
 
   table = gtk_text_tag_table_new();
 
@@ -63,7 +63,7 @@ void UiProgramData::CreateTagTable() {
  */
 void UiProgramData::CheckIconTheme() {
   char pathbuf[MAX_PATHLEN];
-  GdkPixbuf *pixbuf;
+  GdkPixbuf* pixbuf;
 
   snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", myicon.c_str());
   if (access(pathbuf, F_OK) != 0) {
@@ -86,10 +86,8 @@ void UiProgramData::CheckIconTheme() {
   }
 }
 
-
 UiProgramData::UiProgramData(shared_ptr<IptuxConfig> config)
-    : ProgramData(config),
-      table(nullptr) {
+    : ProgramData(config), table(nullptr) {
   InitSublayer();
 }
 
@@ -103,4 +101,4 @@ bool UiProgramData::IsMsgSoundEnabled() const {
   return FLAG_ISSET(sndfgs, 1);
 }
 
-}
+}  // namespace iptux

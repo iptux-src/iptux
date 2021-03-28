@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
+#include "iptux-core/TestHelper.h"
 #include "iptux/DetectPal.h"
 #include "iptux/TestHelper.h"
-#include "iptux-core/TestHelper.h"
 
 using namespace std;
 using namespace iptux;

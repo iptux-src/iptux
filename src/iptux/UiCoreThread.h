@@ -38,37 +38,38 @@ class LogSystem;
  * 若此特性不可被如此利用，请报告bug. \n
  * @note 如果本程序编码中的某处没有遵循以上规则，请报告bug.
  */
-class UiCoreThread: public CoreThread {
+class UiCoreThread : public CoreThread {
  public:
   UiCoreThread(Application* app, std::shared_ptr<UiProgramData> data);
-  ~UiCoreThread() override ;
+  ~UiCoreThread() override;
 
   std::shared_ptr<UiProgramData> getUiProgramData();
 
-  void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
+  void InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para);
 
-  void ClearAllPalFromList() override ;
-  void DelPalFromList(PalKey palKey) override ;
-  void UpdatePalToList(PalKey palKey) override ;
+  void ClearAllPalFromList() override;
+  void DelPalFromList(PalKey palKey) override;
+  void UpdatePalToList(PalKey palKey) override;
 
-  void AttachPalToList(std::shared_ptr<PalInfo> pal) override ;
-  GroupInfo *GetPalRegularItem(PalInfo *pal);
-  GroupInfo *GetPalSegmentItem(PalInfo *pal);
-  GroupInfo *GetPalGroupItem(PalInfo *pal);
-  GroupInfo *GetPalBroadcastItem(PalInfo *pal);
+  void AttachPalToList(std::shared_ptr<PalInfo> pal) override;
+  GroupInfo* GetPalRegularItem(PalInfo* pal);
+  GroupInfo* GetPalSegmentItem(PalInfo* pal);
+  GroupInfo* GetPalGroupItem(PalInfo* pal);
+  GroupInfo* GetPalBroadcastItem(PalInfo* pal);
 
   guint GetMsglineItems();
-  GroupInfo *GetMsglineHeadItem();
-  bool MsglineContainItem(GroupInfo *grpinf);
-  void PushItemToMsgline(GroupInfo *grpinf);
-  void PopItemFromMsgline(GroupInfo *grpinf);
+  GroupInfo* GetMsglineHeadItem();
+  bool MsglineContainItem(GroupInfo* grpinf);
+  void PushItemToMsgline(GroupInfo* grpinf);
+  void PopItemFromMsgline(GroupInfo* grpinf);
 
-  GSList *GetPalEnclosure(PalInfo *pal);
-  void PushItemToEnclosureList(FileInfo *file);
-  void PopItemFromEnclosureList(FileInfo *file);
+  GSList* GetPalEnclosure(PalInfo* pal);
+  void PushItemToEnclosureList(FileInfo* file);
+  void PopItemFromEnclosureList(FileInfo* file);
 
-  void CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const G_GNUC_PRINTF(3, 4);
-  void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
+  void CommunicateLog(MsgPara* msgpara, const char* fmt, ...) const
+      G_GNUC_PRINTF(3, 4);
+  void SystemLog(const char* fmt, ...) const G_GNUC_PRINTF(2, 3);
 
   LogSystem* getLogSystem() { return logSystem; }
 
@@ -77,38 +78,38 @@ class UiCoreThread: public CoreThread {
 
  private:
   void InitSublayer();
-  void ClearSublayer() override ;
+  void ClearSublayer() override;
 
-  void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
-  void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
+  void InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para);
+  void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* string);
+  void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path);
 
-  GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalRegularItem(PPalInfo pal);
-  GroupInfo *AttachPalSegmentItem(PPalInfo pal);
-  GroupInfo *AttachPalGroupItem(PPalInfo pal);
-  GroupInfo *AttachPalBroadcastItem(PPalInfo pal);
-  static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PPalInfo pal);
+  GroupInfo* GetPalPrevGroupItem(PalInfo* pal);
+  GroupInfo* AttachPalRegularItem(PPalInfo pal);
+  GroupInfo* AttachPalSegmentItem(PPalInfo pal);
+  GroupInfo* AttachPalGroupItem(PPalInfo pal);
+  GroupInfo* AttachPalBroadcastItem(PPalInfo pal);
+  static void DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal);
+  static void AttachPalToGroupInfoItem(GroupInfo* grpinf, PPalInfo pal);
   void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
 
-private:
+ private:
   std::shared_ptr<UiProgramData> programData;
   LogSystem* logSystem;
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
-  GQueue msgline;                                 //消息队列
+  GQueue msgline;                                    //消息队列
 
-  uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
-  GSList *ecsList;          //文件链表(好友发过来)
+  uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
+  GSList* ecsList;    //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 
-    //内联成员函数
+  //内联成员函数
  public:
-  inline uint32_t &PbnQuote() { return pbn; }
+  inline uint32_t& PbnQuote() { return pbn; }
 
-  inline uint32_t &PrnQuote() { return prn; }
+  inline uint32_t& PrnQuote() { return prn; }
 };
 
 }  // namespace iptux

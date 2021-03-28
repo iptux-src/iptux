@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "iptux/DialogGroup.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/DialogGroup.h"
 
 using namespace std;
 using namespace iptux;

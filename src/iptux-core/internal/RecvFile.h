@@ -16,8 +16,8 @@
 
 #include <string>
 
-#include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
 
 namespace iptux {
 
@@ -27,11 +27,14 @@ class RecvFile {
   ~RecvFile();
 
  public:
-  static void RecvEntry(CoreThread* coreThread, PPalInfo pal, const std::string extra, int packeno);
+  static void RecvEntry(CoreThread* coreThread,
+                        PPalInfo pal,
+                        const std::string extra,
+                        int packeno);
 
  private:
-  void ParseFilePara(GData **para);
-  FileInfo *DivideFileinfo(char **extra);
+  void ParseFilePara(GData** para);
+  FileInfo* DivideFileinfo(char** extra);
 };
 
 }  // namespace iptux

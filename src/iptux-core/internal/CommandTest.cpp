@@ -18,7 +18,7 @@ TEST(Command, encodFileInfo) {
   ASSERT_EQ(fileInfos.size(), 1);
   ASSERT_EQ(fileInfos[0], fileInfo);
 
-  fileInfos = Command::decodeFileInfos(a+a);
+  fileInfos = Command::decodeFileInfos(a + a);
   ASSERT_EQ(fileInfos.size(), 2);
   ASSERT_EQ(fileInfos[0], fileInfo);
   ASSERT_EQ(fileInfos[1], fileInfo);
