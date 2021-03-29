@@ -14,6 +14,7 @@
 
 #include <fcntl.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 #include <unistd.h>
 
 #include "iptux-core/Const.h"
@@ -28,6 +29,7 @@ namespace iptux {
 
 LogSystem::LogSystem(shared_ptr<const ProgramData> programData)
     : programData(programData), fdc(-1), fds(-1) {
+  CHECK_NOTNULL(programData.get());
   InitSublayer();
 }
 
@@ -41,21 +43,37 @@ void LogSystem::InitSublayer() {
   fds = open(getSystemLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 }
 
-void LogSystem::CommunicateLog(MsgPara* msgpara, const char* fmt, va_list ap) {
+void LogSystem::communicateLog(const MsgPara* msgpara, const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  communicateLogv(msgpara, fmt, args);
+  va_end(args);
+}
+
+void LogSystem::systemLog(const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  systemLogv(fmt, args);
+  va_end(args);
+}
+
+void LogSystem::communicateLogv(const MsgPara* msgpara,
+                                const char* fmt,
+                                va_list ap) {
   gchar *log, *msg, *ptr;
 
   if (!programData->IsSaveChatHistory()) {
     return;
   }
 
-  auto pal = msgpara->pal;
+  auto pal = msgpara->getPal();
 
   if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
                         pal->getName().c_str(), pal->getUser().c_str(),
                         pal->getHost().c_str());
   else if (msgpara->stype == MessageSourceType::SELF) {
-    if (msgpara->pal)
+    if (msgpara->getPal())
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
                           pal->getName().c_str(), pal->getUser().c_str(),
                           pal->getHost().c_str());
@@ -73,7 +91,7 @@ void LogSystem::CommunicateLog(MsgPara* msgpara, const char* fmt, va_list ap) {
   g_free(msg);
 }
 
-void LogSystem::SystemLog(const char* fmt, va_list ap) {
+void LogSystem::systemLogv(const char* fmt, va_list ap) {
   gchar *log, *msg, *ptr;
 
   if (!programData->IsSaveChatHistory()) {

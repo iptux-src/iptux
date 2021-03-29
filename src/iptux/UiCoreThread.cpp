@@ -28,8 +28,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 
-#define OCCUPY_OBJECT 0x01
-
 using namespace std;
 
 namespace iptux {
@@ -37,7 +35,7 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(Application*, shared_ptr<UiProgramData> data)
+UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
     : CoreThread(data),
       programData(data),
       groupInfos(NULL),
@@ -47,17 +45,14 @@ UiCoreThread::UiCoreThread(Application*, shared_ptr<UiProgramData> data)
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
-  logSystem = new LogSystem(data);
-  g_queue_init(&msgline);
+  logSystem = app->getLogSystem();
   InitSublayer();
 }
 
 /**
  * 类析构函数.
  */
-UiCoreThread::~UiCoreThread() {
-  delete logSystem;
-}
+UiCoreThread::~UiCoreThread() {}
 
 /**
  * 插入消息到群组消息缓冲区(非UI线程安全).
@@ -65,30 +60,7 @@ UiCoreThread::~UiCoreThread() {
  * @param para 消息参数
  */
 void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para) {
-  GtkTextIter iter;
-  const gchar* data;
-
-  for (size_t i = 0; i < para->dtlist.size(); ++i) {
-    ChipData* chipData = &para->dtlist[i];
-    data = chipData->data.c_str();
-    switch (chipData->type) {
-      case MESSAGE_CONTENT_TYPE_STRING:
-        InsertHeaderToBuffer(grpinf->buffer, para);
-        gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
-        gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-        InsertStringToBuffer(grpinf->buffer, data);
-        gtk_text_buffer_get_end_iter(grpinf->buffer, &iter);
-        gtk_text_buffer_insert(grpinf->buffer, &iter, "\n", -1);
-        CommunicateLog(para, "[STRING]%s", data);
-        break;
-      case MESSAGE_CONTENT_TYPE_PICTURE:
-        InsertPixbufToBuffer(grpinf->buffer, data);
-        CommunicateLog(para, "[PICTURE]%s", data);
-        break;
-      default:
-        break;
-    }
-  }
+  grpinf->addMsgPara(*CHECK_NOTNULL(para));
 }
 
 /**
@@ -294,7 +266,7 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalRegularItem(PalInfo* pal) {
+GroupInfo* UiCoreThread::GetPalRegularItem(const PalInfo* pal) {
   GSList* tlist;
 
   tlist = groupInfos;
@@ -312,7 +284,7 @@ GroupInfo* UiCoreThread::GetPalRegularItem(PalInfo* pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalSegmentItem(PalInfo* pal) {
+GroupInfo* UiCoreThread::GetPalSegmentItem(const PalInfo* pal) {
   GSList* tlist;
   GQuark grpid;
 
@@ -335,7 +307,7 @@ GroupInfo* UiCoreThread::GetPalSegmentItem(PalInfo* pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalGroupItem(PalInfo* pal) {
+GroupInfo* UiCoreThread::GetPalGroupItem(const PalInfo* pal) {
   GSList* tlist;
   GQuark grpid;
 
@@ -359,50 +331,8 @@ GroupInfo* UiCoreThread::GetPalGroupItem(PalInfo* pal) {
  * @param pal class PalInfo
  * @return 群组信息
  */
-GroupInfo* UiCoreThread::GetPalBroadcastItem(PalInfo*) {
+GroupInfo* UiCoreThread::GetPalBroadcastItem(const PalInfo*) {
   return (GroupInfo*)(brdlist ? brdlist->data : NULL);
-}
-
-/**
- * 获取消息队列项总数.
- * @return 项数
- */
-guint UiCoreThread::GetMsglineItems() {
-  return g_queue_get_length(&msgline);
-}
-
-/**
- * 查看消息队列首项.
- * @return 项
- */
-GroupInfo* UiCoreThread::GetMsglineHeadItem() {
-  return (GroupInfo*)g_queue_peek_head(&msgline);
-}
-
-/**
- * 消息队列是否已经包含此项.
- * @param grpinf 项
- * @return 是否包含
- */
-bool UiCoreThread::MsglineContainItem(GroupInfo* grpinf) {
-  return g_queue_find(&msgline, grpinf);
-}
-
-/**
- * 压入项进消息队列.
- * @param grpinf 项
- */
-void UiCoreThread::PushItemToMsgline(GroupInfo* grpinf) {
-  g_queue_push_tail(&msgline, grpinf);
-  grpinf->addMsgCount(1);
-}
-
-/**
- * 弹出项从消息队列.
- * @param grpinf 项
- */
-void UiCoreThread::PopItemFromMsgline(GroupInfo* grpinf) {
-  g_queue_remove(&msgline, grpinf);
 }
 
 /**
@@ -430,7 +360,6 @@ void UiCoreThread::ClearSublayer() {
   for (tlist = brdlist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo*)tlist->data;
   g_slist_free(brdlist);
-  g_queue_clear(&msgline);
 
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo*)tlist->data;
@@ -453,8 +382,7 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para) {
    */
   switch (para->stype) {
     case MessageSourceType::PAL:
-      header = getformattime(
-          FALSE, "%s", para->pal ? para->pal->getName().c_str() : _("unknown"));
+      header = getformattime(FALSE, "%s", para->getPal()->getName().c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "pal-color", NULL);
@@ -476,73 +404,6 @@ void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para) {
       break;
     default:
       break;
-  }
-}
-
-/**
- * 插入字符串到TextBuffer(非UI线程安全).
- * @param buffer text-buffer
- * @param string 字符串
- */
-void UiCoreThread::InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* s) {
-  static uint32_t count = 0;
-  GtkTextIter iter;
-  GtkTextTag* tag;
-  GMatchInfo* matchinfo;
-  gchar* substring;
-  char name[9];  // 8 +1  =9
-  gint startp, endp;
-  gint urlendp;
-
-  auto g_progdt = getProgramData();
-
-  auto s2 = utf8MakeValid(s);
-  auto string = s2.c_str();
-
-  urlendp = 0;
-  matchinfo = NULL;
-  gtk_text_buffer_get_end_iter(buffer, &iter);
-  g_regex_match_full(g_progdt->urlregex, string, -1, 0, GRegexMatchFlags(0),
-                     &matchinfo, NULL);
-  while (g_match_info_matches(matchinfo)) {
-    snprintf(name, 9, "%" PRIx32, count++);
-    tag = gtk_text_buffer_create_tag(buffer, name, NULL);
-    substring = g_match_info_fetch(matchinfo, 0);
-    g_object_set_data_full(G_OBJECT(tag), "url", substring,
-                           GDestroyNotify(g_free));
-    g_match_info_fetch_pos(matchinfo, 0, &startp, &endp);
-    gtk_text_buffer_insert(buffer, &iter, string + urlendp, startp - urlendp);
-    gtk_text_buffer_insert_with_tags_by_name(
-        buffer, &iter, string + startp, endp - startp, "url-link", name, NULL);
-    urlendp = endp;
-    g_match_info_next(matchinfo, NULL);
-  }
-  g_match_info_free(matchinfo);
-  gtk_text_buffer_insert(buffer, &iter, string + urlendp, -1);
-}
-
-/**
- * 插入图片到TextBuffer(非UI线程安全).
- * @param buffer text-buffer
- * @param path 图片路径
- */
-void UiCoreThread::InsertPixbufToBuffer(GtkTextBuffer* buffer,
-                                        const gchar* path) {
-  GtkTextIter start, end;
-  GdkPixbuf* pixbuf;
-
-  if ((pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
-    gtk_text_buffer_get_start_iter(buffer, &start);
-    if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT ||
-        gtk_text_iter_forward_find_char(
-            &start, GtkTextCharPredicate(giter_compare_foreach),
-            GUINT_TO_POINTER(OCCUPY_OBJECT), NULL)) {
-      end = start;
-      gtk_text_iter_forward_char(&end);
-      gtk_text_buffer_delete(buffer, &start, &end);
-    }
-    gtk_text_buffer_insert_pixbuf(buffer, &start, pixbuf);
-    g_object_unref(pixbuf);
   }
 }
 
@@ -572,7 +433,7 @@ GroupInfo* UiCoreThread::GetPalPrevGroupItem(PalInfo* pal) {
 GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   GroupInfo* grpinf;
 
-  grpinf = new GroupInfo(pal);
+  grpinf = new GroupInfo(pal, getMe(), logSystem);
   grpinf->grpid = inAddrToUint32(pal->ipv4);
   grpinf->name = pal->getName();
   grpinf->buffer = gtk_text_buffer_new(programData->table);
@@ -597,7 +458,8 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
     name = _("Others");
   }
 
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>());
+  grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>(), getMe(),
+                         logSystem);
   grpinf->grpid = g_quark_from_static_string(name.c_str());
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
@@ -618,7 +480,8 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   if (name.empty()) {
     name = _("Others");
   }
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>());
+  grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>(), getMe(),
+                         logSystem);
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
   grpinf->dialog = NULL;
@@ -638,7 +501,8 @@ GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
 
   name = g_strdup(_("Broadcast"));
 
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_BROADCAST, vector<PPalInfo>());
+  grpinf = new GroupInfo(GROUP_BELONG_TYPE_BROADCAST, vector<PPalInfo>(),
+                         getMe(), logSystem);
   grpinf->grpid = g_quark_from_static_string(name);
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
@@ -716,22 +580,6 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo* file) {
 
 shared_ptr<UiProgramData> UiCoreThread::getUiProgramData() {
   return programData;
-}
-
-void UiCoreThread::CommunicateLog(MsgPara* msgpara,
-                                  const char* fmt,
-                                  ...) const {
-  va_list args;
-  va_start(args, fmt);
-  logSystem->CommunicateLog(msgpara, fmt, args);
-  va_end(args);
-}
-
-void UiCoreThread::SystemLog(const char* fmt, ...) const {
-  va_list args;
-  va_start(args, fmt);
-  logSystem->SystemLog(fmt, args);
-  va_end(args);
 }
 
 void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int, int) {

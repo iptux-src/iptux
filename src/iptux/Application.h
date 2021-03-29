@@ -4,6 +4,8 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/IptuxConfig.h"
+#include "iptux-core/Models.h"
+#include "iptux/EventAdaptor.h"
 #include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
@@ -25,9 +27,11 @@ class Application {
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
+  LogSystem* getLogSystem() { return logSystem; }
   std::shared_ptr<UiProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   void refreshTransTasks();
+  PPalInfo getMe();
 
  private:
   std::shared_ptr<IptuxConfig> config;
@@ -39,6 +43,8 @@ class Application {
   GtkBuilder* menuBuilder;
   ShareFile* shareFile;
   TransModel* transModel;
+  EventAdaptor* eventAdaptor;
+  LogSystem* logSystem;
   bool started{false};
 
  public:
@@ -47,6 +53,7 @@ class Application {
   void activate();
 
  private:
+  void onEvent(std::shared_ptr<const Event> event);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
   static void onPreferences(void*, void*, Application& self);

@@ -51,28 +51,31 @@ bool PalInfo::isChanged() const {
   return FLAG_ISSET(this->flags, 2);
 }
 
-void PalInfo::setCompatible(bool value) {
+PalInfo& PalInfo::setCompatible(bool value) {
   if (value) {
     FLAG_SET(this->flags, 0);
   } else {
     FLAG_CLR(this->flags, 0);
   }
+  return *this;
 }
 
-void PalInfo::setOnline(bool value) {
+PalInfo& PalInfo::setOnline(bool value) {
   if (value) {
     FLAG_SET(this->flags, 1);
   } else {
     FLAG_CLR(this->flags, 1);
   }
+  return *this;
 }
 
-void PalInfo::setChanged(bool value) {
+PalInfo& PalInfo::setChanged(bool value) {
   if (value) {
     FLAG_SET(this->flags, 2);
   } else {
     FLAG_CLR(this->flags, 2);
   }
+  return *this;
 }
 
 PalInfo& PalInfo::setName(const std::string& name) {
@@ -142,8 +145,8 @@ FileInfo::FileInfo(const FileInfo& f)
   filepath = g_strdup(f.filepath);
 }
 
-MsgPara::MsgPara()
-    : pal(NULL),
+MsgPara::MsgPara(CPPalInfo pal)
+    : pal(pal),
       stype(MessageSourceType::PAL),
       btype(GROUP_BELONG_TYPE_REGULAR) {}
 

@@ -471,10 +471,10 @@ GtkWidget* MainWindow::CreateMainWindow() {
   window = gtk_application_window_new(app->getApp());
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
   if (config->GetString("bind_ip").empty()) {
-    gtk_window_set_title(GTK_WINDOW(window), _("iptux"));
+    gtk_window_set_title(GTK_WINDOW(window), _("Iptux"));
   } else {
     gtk_window_set_title(GTK_WINDOW(window),
-                         stringFormat("%s - %s", _("iptux"),
+                         stringFormat("%s - %s", _("Iptux"),
                                       config->GetString("bind_ip").c_str())
                              .c_str());
   }
@@ -1685,7 +1685,7 @@ gboolean MainWindow::onTransWindowDelete(MainWindow& self) {
 
 void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
-  if (type == EventType ::NEW_PAL_ONLINE) {
+  if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());
     auto ipv4 = event->getPalInfo()->ipv4;
     if (PaltreeContainItem(ipv4)) {
@@ -1719,8 +1719,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     /* 获取群组信息 */
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
-        grpinf = coreThread.GetPalRegularItem(para.pal.get());
-        coreThread.PushItemToMsgline(grpinf);
+        grpinf = coreThread.GetPalRegularItem(para.getPal().get());
         if (coreThread.getProgramData()->IsAutoOpenCharDialog()) {
           if (!(grpinf->dialog)) {
             DialogPeer::PeerDialogEntry(g_mwin->app, grpinf);
@@ -1733,13 +1732,13 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
         }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
-        grpinf = coreThread.GetPalSegmentItem(para.pal.get());
+        grpinf = coreThread.GetPalSegmentItem(para.getPal().get());
         break;
       case GROUP_BELONG_TYPE_GROUP:
-        grpinf = coreThread.GetPalGroupItem(para.pal.get());
+        grpinf = coreThread.GetPalGroupItem(para.getPal().get());
         break;
       case GROUP_BELONG_TYPE_BROADCAST:
-        grpinf = coreThread.GetPalBroadcastItem(para.pal.get());
+        grpinf = coreThread.GetPalBroadcastItem(para.getPal().get());
         break;
       default:
         grpinf = nullptr;

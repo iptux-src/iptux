@@ -6,6 +6,7 @@
 
 #include "iptux-core/Models.h"
 #include "iptux-core/TransFileModel.h"
+#include "iptux/LogSystem.h"
 
 namespace iptux {
 
@@ -37,8 +38,11 @@ class SessionAbstract {
  */
 class GroupInfo {
  public:
-  explicit GroupInfo(PPalInfo pal);
-  GroupInfo(GroupBelongType type, const std::vector<PPalInfo>& pals);
+  GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem);
+  GroupInfo(GroupBelongType type,
+            const std::vector<PPalInfo>& pals,
+            CPPalInfo me,
+            LogSystem* logSystem);
   ~GroupInfo();
 
   const std::vector<PPalInfo>& getMembers() const { return members; }
@@ -56,7 +60,7 @@ class GroupInfo {
   bool hasPal(PalInfo* pal) const;
   bool hasPal(PPalInfo pal) const;
 
-  void addMsgCount(int i);
+  void addMsgPara(const MsgPara& msg);
   void readAllMsg();
   int getUnreadMsgCount() const;
   void newFileReceived();
@@ -72,10 +76,15 @@ class GroupInfo {
   GtkWidget* dialog;  ///< 对话框(若存在则必须与对话框类关联)
 
  private:
+  CPPalInfo me;
   std::vector<PPalInfo> members;
   GroupBelongType type;  ///< 群组类型
-  int allMsgCount = 0;   /* all received message count */
-  int readMsgCount = 0;  /* already read message count */
+  LogSystem* logSystem;
+  int allMsgCount = 0;  /* all received message count */
+  int readMsgCount = 0; /* already read message count */
+
+ private:
+  void addMsgCount(int i);
 };
 
 enum class TransModelColumn {

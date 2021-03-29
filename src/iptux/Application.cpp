@@ -37,11 +37,11 @@ void onReportBug() {
   iptux_open_url("https://github.com/iptux-src/iptux/issues/new");
 }
 
-void iptux_init() {
+void iptux_init(LogSystem* logSystem) {
   g_sndsys->InitSublayer();
 
   signal(SIGPIPE, SIG_IGN);
-  g_cthrd->SystemLog("%s", _("Loading the process successfully!"));
+  logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
 
 void init_theme() {
@@ -62,12 +62,20 @@ Application::Application(shared_ptr<IptuxConfig> config)
 
   transModel = transModelNew();
   menuBuilder = nullptr;
+  eventAdaptor = nullptr;
+  logSystem = nullptr;
 }
 
 Application::~Application() {
   g_object_unref(app);
   g_object_unref(menuBuilder);
   transModelDelete(transModel);
+  if (eventAdaptor) {
+    delete eventAdaptor;
+  }
+  if (logSystem) {
+    delete logSystem;
+  }
   delete window;
 }
 
@@ -85,10 +93,14 @@ void Application::activate() {
 
 void Application::onStartup(Application& self) {
   self.data = make_shared<UiProgramData>(self.config);
+  self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   g_cthrd = self.cthrd.get();
   self.window = new MainWindow(&self, *g_cthrd);
   g_mwin = self.window;
+  self.eventAdaptor = new EventAdaptor(
+      self.cthrd->signalEvent,
+      [&](shared_ptr<const Event> event) { self.onEvent(event); });
 
   init_theme();
 
@@ -179,7 +191,7 @@ void Application::onActivate(Application& self) {
     pop_warning(self.window->getWindow(), "%s", e.what());
     exit(1);
   }
-  iptux_init();
+  iptux_init(self.logSystem);
   sicon->CreateStatusIcon();
 }
 
@@ -228,6 +240,15 @@ void Application::onAbout(void*, void*, Application& self) {
 void Application::refreshTransTasks() {
   auto transModels = getCoreThread()->listTransTasks();
   transModelLoadFromTransFileModels(transModel, transModels);
+}
+
+void Application::onEvent(shared_ptr<const Event> _event) {
+  EventType type = _event->getType();
+  // LOG_WARN("unknown event type: %d", int(type));
+}
+
+PPalInfo Application::getMe() {
+  return this->getCoreThread()->getMe();
 }
 
 }  // namespace iptux

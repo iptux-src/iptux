@@ -23,6 +23,9 @@ class CoreThread {
   virtual void start();
   virtual void stop();
 
+  CPPalInfo getMe() const;
+  PPalInfo getMe();
+
   int getUdpSock() const;
 
   std::shared_ptr<ProgramData> getProgramData();
@@ -101,8 +104,8 @@ class CoreThread {
    * @return true if send success
    * @return false if send failed
    */
-  bool SendMessage(PPalInfo pal, const std::string& message);
-  bool SendMessage(PPalInfo pal, const ChipData& chipData);
+  bool SendMessage(CPPalInfo pal, const std::string& message);
+  bool SendMessage(CPPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
   void SendUnitMessage(const PalKey& palKey,

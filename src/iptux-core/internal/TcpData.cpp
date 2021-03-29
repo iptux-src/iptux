@@ -211,10 +211,9 @@ void TcpData::RecvPhotoPic(PalInfo* pal, const char* path) {
  * @param path file path
  */
 void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
-  MsgPara para;
+  MsgPara para(coreThread->GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
-  para.pal = coreThread->GetPal(pal->GetKey());
   para.stype = MessageSourceType::PAL;
   para.btype = GROUP_BELONG_TYPE_REGULAR;
   ChipData chip;
