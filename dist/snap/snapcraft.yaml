@@ -26,6 +26,7 @@ slots:
 apps:
   iptux:
     command: usr/bin/iptux
+    desktop: usr/share/applications/iptux.desktop
     extensions: [gnome-3-28]
     slots:
       - dbus-iptux
