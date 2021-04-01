@@ -77,7 +77,10 @@
     ${prefix}/lib/libiptux-core.0.dylib
   </binary>
   <binary>
-    ${prefix}/lib/libiptux-core.dylib
+    ${prefix}/lib/libjsoncpp.24.dylib
+  </binary>
+  <binary>
+    ${prefix}/lib/libglog.0.dylib
   </binary>
 
 <!-- No longer needed for pango >= 1.38
