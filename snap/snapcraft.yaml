@@ -48,5 +48,7 @@ parts:
       - libgflags2.2
       - libgoogle-glog0v5
       - libjsoncpp1
-      - libunwind8
       - libsigc++-2.0-0v5
+      - try:
+        - libunwind8 # not available in s390x
+
