@@ -12,8 +12,8 @@
 #include "config.h"
 #include "dialog.h"
 
-#include <glog/logging.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux/callback.h"
 
@@ -27,14 +27,14 @@ namespace iptux {
  * @return true|false
  */
 bool pop_request_quit(GtkWindow* parent) {
-  GtkWidget *dialog;
+  GtkWidget* dialog;
   gint result;
 
-  dialog = gtk_message_dialog_new(parent,
-                                  GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
-                                  GTK_BUTTONS_OK_CANCEL, "%s",
-                                  _("File transfer has not been completed.\n"
-                                    "Are you sure to cancel and quit?"));
+  dialog =
+      gtk_message_dialog_new(parent, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
+                             GTK_BUTTONS_OK_CANCEL, "%s",
+                             _("File transfer has not been completed.\n"
+                               "Are you sure to cancel and quit?"));
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
   gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm Exit"));
 
@@ -49,19 +49,15 @@ bool pop_request_quit(GtkWindow* parent) {
  * @param pal class PalInfo
  * @return true|false
  */
-bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
+bool pop_request_shared_file(GtkWindow* parent, PalInfo* pal) {
   GtkWidget *dialog, *box;
   GtkWidget *label, *image;
   char ipstr[INET_ADDRSTRLEN], *ptr;
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Request Shared Resources"),
-      parent,
-      GTK_DIALOG_MODAL,
-      _("Agree"), GTK_RESPONSE_ACCEPT,
-      _("Refuse"), GTK_RESPONSE_CANCEL,
-      NULL);
+      _("Request Shared Resources"), parent, GTK_DIALOG_MODAL, _("Agree"),
+      GTK_RESPONSE_ACCEPT, _("Refuse"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
@@ -69,7 +65,8 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      box, TRUE, TRUE, 0);
 
-  image = gtk_image_new_from_icon_name("dialog-question-symbolic", GTK_ICON_SIZE_DIALOG);
+  image = gtk_image_new_from_icon_name("dialog-question-symbolic",
+                                       GTK_ICON_SIZE_DIALOG);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
   image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
@@ -78,7 +75,7 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
   ptr = g_strdup_printf(_("Your pal (%s)[%s]\n"
                           "is requesting to get your shared resources,\n"
                           "Do you agree?"),
-                        pal->name, ipstr);
+                        pal->getName().c_str(), ipstr);
   label = gtk_label_new(ptr);
   g_free(ptr);
   gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
@@ -97,18 +94,15 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal) {
  * @param pal class PalInfo
  * @return password string
  */
-char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal) {
+char* pop_obtain_shared_passwd(GtkWindow* parent, PalInfo* pal) {
   GtkWidget *dialog, *frame, *box;
   GtkWidget *image, *passwd;
   char ipstr[INET_ADDRSTRLEN], *text;
   gint result;
 
-  dialog = gtk_dialog_new_with_buttons(
-      _("Access Password"),
-      parent,
-      GTK_DIALOG_MODAL,
-      _("_OK"), GTK_RESPONSE_OK,
-      NULL);
+  dialog = gtk_dialog_new_with_buttons(_("Access Password"), parent,
+                                       GTK_DIALOG_MODAL, _("_OK"),
+                                       GTK_RESPONSE_OK, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
@@ -121,12 +115,13 @@ char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal) {
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
 
-  image = gtk_image_new_from_icon_name("dialog-password-symbolic", GTK_ICON_SIZE_DIALOG);
+  image = gtk_image_new_from_icon_name("dialog-password-symbolic",
+                                       GTK_ICON_SIZE_DIALOG);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
   image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
   inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-  text = g_strdup_printf(_("(%s)[%s]Password:"), pal->name, ipstr);
+  text = g_strdup_printf(_("(%s)[%s]Password:"), pal->getName().c_str(), ipstr);
   frame = gtk_frame_new(text);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
   gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 0);
@@ -161,17 +156,15 @@ mark:
  * @param parent parent window
  * @return password string
  */
-char *pop_password_settings(GtkWidget *parent) {
+char* pop_password_settings(GtkWidget* parent) {
   CHECK_NOTNULL(parent);
   GtkWidget *dialog, *hbox, *passwd, *repeat;
   gchar *text1, *text2;
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Enter a New Password"), GTK_WINDOW(parent), GTK_DIALOG_MODAL,
-      _("_OK"), GTK_RESPONSE_OK,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+      _("Enter a New Password"), GTK_WINDOW(parent), GTK_DIALOG_MODAL, _("_OK"),
+      GTK_RESPONSE_OK, _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
@@ -224,16 +217,14 @@ mark:
   return NULL;
 }
 
-const char *pop_save_path(GtkWidget *parent, const char* defaultPath) {
-  const char *path = nullptr;
-  GtkWidget *dialog;
+const char* pop_save_path(GtkWidget* parent, const char* defaultPath) {
+  const char* path = nullptr;
+  GtkWidget* dialog;
 
   dialog = gtk_file_chooser_dialog_new(
       _("Please select a folder to save files."), GTK_WINDOW(parent),
-      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      _("_Save"), GTK_RESPONSE_ACCEPT,
-      NULL);
+      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, _("_Cancel"), GTK_RESPONSE_CANCEL,
+      _("_Save"), GTK_RESPONSE_ACCEPT, NULL);
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), defaultPath);
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));

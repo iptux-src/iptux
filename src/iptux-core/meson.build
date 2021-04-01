@@ -2,17 +2,7 @@ glib_dep = dependency('glib-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 glog_dep = dependency('libglog')
 gflags_dep = dependency('gflags')
-
-header_files = files([
-    'CoreThread.h',
-    'Event.h',
-    'Exception.h',
-    'IptuxConfig.h',
-    'Models.h',
-    'ProgramData.h',
-    'TransFileModel.h',
-])
-install_headers(header_files, subdir: 'iptux-core')
+sigc_dep = dependency('sigc++-2.0')
 
 core_sources = files([
     'CoreThread.cpp',
@@ -38,12 +28,12 @@ core_sources += files([
     'internal/UdpData.cpp',
 ])
 
-inc = include_directories('..')
+inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
 libiptux_core = shared_library('iptux-core',
     core_sources,
-    dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, thread_dep],
+    dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep, thread_dep],
     link_with: [libiptux_utils],
     include_directories: inc,
     install: true,
@@ -55,7 +45,7 @@ pkg.generate(
     description: 'Communicate and Share File in LAN',
     name: 'iptux-core',
     version: so_version,
-    requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35'],
+    requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35', 'sigc++-2.0'],
     requires_private: ['libglog', 'gflags'],
     libraries: [libiptux_core, glog_dep],
 )
@@ -65,7 +55,7 @@ core_test_helper_sources = files([
 ])
 libiptux_core_test_helper = static_library('iptux-test-helper',
     core_test_helper_sources,
-    dependencies: [glib_dep, jsoncpp_dep, glog_dep],
+    dependencies: [glib_dep, jsoncpp_dep, sigc_dep, glog_dep],
     link_with: [libiptux_core, libiptux_utils_test_helper],
     include_directories: inc
 )
@@ -73,16 +63,17 @@ libiptux_core_test_helper = static_library('iptux-test-helper',
 gtest_inc = include_directories('../googletest/include')
 core_test_sources = files([
     'CoreThreadTest.cpp',
+    'internal/CommandModeTest.cpp',
+    'internal/CommandTest.cpp',
     'internal/UdpDataTest.cpp',
+    'IptuxConfigTest.cpp',
     'ModelsTest.cpp',
     'ProgramDataTest.cpp',
-    'IptuxConfigTest.cpp',
-    'internal/CommandModeTest.cpp',
     'TestMain.cpp',
 ])
 libiptux_core_test = executable('libiptux_core_test',
     core_test_sources,
-    dependencies: [glib_dep, jsoncpp_dep, thread_dep],
+    dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep],
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )

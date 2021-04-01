@@ -4,9 +4,8 @@
 #include <string>
 
 namespace iptux {
-  std::string readTestData(const std::string& fname);
-  std::string testDataPath(const std::string& fname);
-}
+std::string readTestData(const std::string& fname);
+std::string testDataPath(const std::string& fname);
+}  // namespace iptux
 
-
-#endif //IPTUX_TESTHELPER_H
+#endif  // IPTUX_TESTHELPER_H

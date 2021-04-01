@@ -13,4 +13,4 @@ int TransAbstract::GetTaskId() {
   return taskId;
 }
 
-}
+}  // namespace iptux

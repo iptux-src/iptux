@@ -1,9 +1,9 @@
 #ifndef IPTUX_IPTUX_CONFIG_H
 #define IPTUX_IPTUX_CONFIG_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include <json/json.h>
 
@@ -17,8 +17,7 @@ class IptuxConfig {
    * @param str
    * @return std::shared_ptr<IptuxConfig>
    */
-  static std::shared_ptr<IptuxConfig>
-  newFromString(const std::string& str);
+  static std::shared_ptr<IptuxConfig> newFromString(const std::string& str);
 
   /**
    * @brief create a IptuxConfig from file
@@ -26,8 +25,7 @@ class IptuxConfig {
    * @param fname
    * @return std::shared_ptr<IptuxConfig>
    */
-  static std::shared_ptr<IptuxConfig>
-  newFromFile(const std::string& fname);
+  static std::shared_ptr<IptuxConfig> newFromFile(const std::string& fname);
 
  private:
   IptuxConfig();

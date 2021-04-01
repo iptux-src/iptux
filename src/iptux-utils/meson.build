@@ -7,7 +7,7 @@ sources = files([
     'Exception.cpp',
 ])
 
-inc = include_directories('..')
+inc = include_directories('..', '../api')
 
 libiptux_utils = static_library('iptux-utils',
     sources,

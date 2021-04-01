@@ -12,14 +12,14 @@
 #ifndef IPTUX_SENDFILEDATA_H
 #define IPTUX_SENDFILEDATA_H
 
-#include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/internal/TransAbstract.h"
+#include "iptux-core/internal/ipmsg.h"
 
 namespace iptux {
 
-class SendFileData: public TransAbstract {
+class SendFileData : public TransAbstract {
  public:
   SendFileData(CoreThread* coreThread, int sk, PFileInfo fl);
   ~SendFileData();
@@ -37,8 +37,8 @@ class SendFileData: public TransAbstract {
   void UpdateUIParaToOver();
 
   CoreThread* coreThread;
-  int sock;                           //数据套接口
-  PFileInfo file;                     //文件信息
+  int sock;        //数据套接口
+  PFileInfo file;  //文件信息
   TransFileModel para;
   bool terminate;                     //终止标志(也作处理结果标识)
   int64_t sumsize;                    //文件(目录)总大小

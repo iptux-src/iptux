@@ -15,14 +15,13 @@
 #include <memory>
 
 #include <fcntl.h>
-#include <utime.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/socket.h>
 #include <glog/logging.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <utime.h>
 
 #include <glib/gi18n.h>
-
 
 #include "iptux-core/Event.h"
 #include "iptux-core/Exception.h"
@@ -40,7 +39,7 @@ namespace iptux {
  * 类构造函数.
  * @param fl 文件信息数据
  */
-RecvFileData::RecvFileData(CoreThread* coreThread, FileInfo *fl)
+RecvFileData::RecvFileData(CoreThread* coreThread, FileInfo* fl)
     : coreThread(coreThread), file(fl), terminate(false), sumsize(0) {
   buf[0] = '\0';
   gettimeofday(&tasktime, NULL);
@@ -98,12 +97,16 @@ void RecvFileData::RecvFileDataEntry() {
  * 获取UI参考数据.
  * @return UI参考数据
  */
-const TransFileModel& RecvFileData::getTransFileModel() const { return para; }
+const TransFileModel& RecvFileData::getTransFileModel() const {
+  return para;
+}
 
 /**
  * 终止过程处理.
  */
-void RecvFileData::TerminateTrans() { terminate = true; }
+void RecvFileData::TerminateTrans() {
+  terminate = true;
+}
 
 /**
  * 创建UI参考数据.
@@ -112,7 +115,7 @@ void RecvFileData::CreateUIPara() {
   struct in_addr addr = file->fileown->ipv4;
   para.setStatus("tip-recv")
       .setTask(_("receive"))
-      .setPeer(file->fileown->name)
+      .setPeer(file->fileown->getName())
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
@@ -141,7 +144,8 @@ void RecvFileData::RecvRegularFile() {
     throw Exception(CREATE_TCP_SOCKET_FAILED);
   }
   /* 请求文件数据 */
-  if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn, file->fileid, 0)) {
+  if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn,
+                       file->fileid, 0)) {
     close(sock);
     terminate = true;  //标记处理过程失败
     return;
@@ -168,11 +172,13 @@ void RecvFileData::RecvRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    LOG_ERROR(_("Failed to receive the file \"%s\" from %s! expect length %d, received %d"),
-                       file->filepath, file->fileown->name, file->filesize, finishsize);
+    LOG_ERROR(_("Failed to receive the file \"%s\" from %s! expect length %d, "
+                "received %d"),
+              file->filepath, file->fileown->getName().c_str(), file->filesize,
+              finishsize);
   } else {
-    LOG_INFO(_("Receive the file \"%s\" from %s successfully!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Receive the file \"%s\" from %s successfully!"), file->filepath,
+             file->fileown->getName().c_str());
   }
   /* 关闭文件传输套接口 */
   close(sock);
@@ -200,7 +206,8 @@ void RecvFileData::RecvDirFiles() {
     throw Exception(CREATE_TCP_SOCKET_FAILED);
   }
   /* 请求目录文件 */
-  if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn, file->fileid)) {
+  if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn,
+                        file->fileid)) {
     close(sock);
     terminate = true;  //标记处理过程失败
     return;
@@ -216,7 +223,8 @@ void RecvFileData::RecvDirFiles() {
   len = 0;         //预设缓冲区有效数据量为0
   while (!terminate) {
     /* 读取足够的数据，并分析数据头 */
-    if ((size = read_ipmsg_fileinfo(sock, buf, MAX_SOCKLEN, len)) == -1) break;
+    if ((size = read_ipmsg_fileinfo(sock, buf, MAX_SOCKLEN, len)) == -1)
+      break;
     headsize = iptux_get_hex_number(buf, ':', 0);
     filename = ipmsg_get_filename(buf, ':', 1);
     filesize = iptux_get_hex64_number(buf, ':', 2);
@@ -231,8 +239,9 @@ void RecvFileData::RecvDirFiles() {
 
     /* 转码(如果好友不兼容iptux协议) */
     if (!file->fileown->isCompatible() &&
-        strcasecmp(file->fileown->encode, "utf-8") != 0 &&
-        (dirname = convert_encode(filename, "utf-8", file->fileown->encode)))
+        strcasecmp(file->fileown->getEncode().c_str(), "utf-8") != 0 &&
+        (dirname = convert_encode(filename, "utf-8",
+                                  file->fileown->getEncode().c_str())))
       g_free(filename);
     else
       dirname = filename;
@@ -249,7 +258,8 @@ void RecvFileData::RecvDirFiles() {
     switch (GET_MODE(fileattr)) {
       case IPMSG_FILE_RETPARENT:
         afs.chdir("..");
-        if (len) memmove(buf, buf + headsize, len);
+        if (len)
+          memmove(buf, buf + headsize, len);
         if (strlen(afs.cwd()) < strlen(file->filepath)) {
           //如果这时候还不成功结束就会陷入while开关第1句的死循环
           result = true;
@@ -259,7 +269,8 @@ void RecvFileData::RecvDirFiles() {
       case IPMSG_FILE_DIR:
         afs.mkdir(dirname, 0777);
         afs.chdir(dirname);
-        if (len) memmove(buf, buf + headsize, len);
+        if (len)
+          memmove(buf, buf + headsize, len);
         continue;
       case IPMSG_FILE_REGULAR:
         if ((fd = afs.open(dirname, O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE,
@@ -267,7 +278,8 @@ void RecvFileData::RecvDirFiles() {
           goto end;
         break;
       default:
-        if ((fd = open("/dev/null", O_WRONLY)) == -1) goto end;
+        if ((fd = open("/dev/null", O_WRONLY)) == -1)
+          goto end;
         break;
     }
 
@@ -279,7 +291,8 @@ void RecvFileData::RecvDirFiles() {
     }
     if (size == filesize) {  //文件数据读取已完成
       len -= size;
-      if (len) memmove(buf, buf + headsize + size, len);
+      if (len)
+        memmove(buf, buf + headsize + size, len);
       finishsize = size;
     } else {    //尚需继续读取文件数据
       len = 0;  //首先标记缓冲区已无有效数据
@@ -305,10 +318,10 @@ end:
   if (!result) {
     terminate = true;
     LOG_ERROR(_("Failed to receive the directory \"%s\" from %s!"),
-                       file->filepath, file->fileown->name);
+              file->filepath, file->fileown->getName().c_str());
   } else {
     LOG_INFO(_("Receive the directory \"%s\" from %s successfully!"),
-                       file->filepath, file->fileown->name);
+             file->filepath, file->fileown->getName().c_str());
   }
   /* 关闭文件传输套接口 */
   close(sock);
@@ -322,7 +335,9 @@ end:
  * @param offset 已读取数据量
  * @return 完成数据量
  */
-int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
+int64_t RecvFileData::RecvData(int sock,
+                               int fd,
+                               int64_t filesize,
                                int64_t offset) {
   int64_t tmpsize, finishsize;
   struct timeval val1, val2;
@@ -331,7 +346,8 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
   ssize_t size;
 
   /* 如果文件数据已经完全被接收，则直接返回 */
-  if (offset == filesize) return filesize;
+  if (offset == filesize)
+    return filesize;
 
   /* 接收数据 */
   tmpsize = finishsize = offset;  //初始化已读取数据量
@@ -340,8 +356,10 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
     /* 接收数据并写入磁盘 */
     size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
                                                : filesize - finishsize;
-    if ((size = xread(sock, buf, size)) == -1) return finishsize;
-    if (size > 0 && xwrite(fd, buf, size) == -1) return finishsize;
+    if ((size = xread(sock, buf, size)) == -1)
+      return finishsize;
+    if (size > 0 && xwrite(fd, buf, size) == -1)
+      return finishsize;
     finishsize += size;
     sumsize += size;
     file->finishedsize = sumsize;
@@ -353,7 +371,8 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
       para.setFinishedLength(finishsize)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
-          .setRemain(numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
+          .setRemain(
+              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
           .setRate(numeric_to_rate(rate));
       val1 = val2;           //更新时间参考点
       tmpsize = finishsize;  //更新下载量
@@ -368,7 +387,7 @@ int64_t RecvFileData::RecvData(int sock, int fd, int64_t filesize,
  */
 void RecvFileData::UpdateUIParaToOver() {
   struct timeval time;
-  const char *statusfile;
+  const char* statusfile;
 
   statusfile = terminate ? "tip-error" : "tip-finish";
   para.setStatus(statusfile);

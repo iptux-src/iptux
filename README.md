@@ -31,8 +31,16 @@
 
 ### Linux (Debian and Ubuntu)
 
+stable version:
+
 ```
 sudo apt-get install iptux
+```
+
+head version:
+
+```
+sudo snap install --edge iptux --devmode
 ```
 
 ### Mac OS X
@@ -94,8 +102,8 @@ brew install gst-plugins-good
 # endif
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
-mkdir build && cd build && cmake .. && make
-sudo make install
+meson builddir
+ninja -C builddir install
 iptux
 ```
 

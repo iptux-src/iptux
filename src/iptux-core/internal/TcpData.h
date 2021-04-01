@@ -12,9 +12,9 @@
 #ifndef IPTUX_TCPDATA_H
 #define IPTUX_TCPDATA_H
 
-#include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/internal/ipmsg.h"
 
 namespace iptux {
 
@@ -32,8 +32,8 @@ class TcpData {
   void RecvSublayer(uint32_t cmdopt);
 
   void RecvSublayerData(int fd, size_t len);
-  void RecvPhotoPic(PalInfo *pal, const char *path);
-  void RecvMsgPic(PalInfo *pal, const char *path);
+  void RecvPhotoPic(PalInfo* pal, const char* path);
+  void RecvMsgPic(PalInfo* pal, const char* path);
 
   CoreThread* coreThread;
   int sock;               //数据交流套接口

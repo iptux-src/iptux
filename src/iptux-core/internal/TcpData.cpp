@@ -14,14 +14,13 @@
 
 #include <cinttypes>
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
-
-#include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/CommandMode.h"
-#include "iptux-utils/utils.h"
+#include "iptux-core/internal/SendFile.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -35,7 +34,9 @@ TcpData::TcpData() : sock(-1), size(0) {}
 /**
  * 类析构函数.
  */
-TcpData::~TcpData() { close(sock); }
+TcpData::~TcpData() {
+  close(sock);
+}
 
 /**
  * TCP连接处理入口.
@@ -56,8 +57,9 @@ void TcpData::DispatchTcpData() {
   struct sockaddr_in addr;
   socklen_t socklen;
   socklen = sizeof(addr);
-  getpeername(sock, (struct sockaddr *)&addr, &socklen);
-  LOG_DEBUG("received tcp message from %s:%d", inAddrToString(addr.sin_addr).c_str(), int(addr.sin_port));
+  getpeername(sock, (struct sockaddr*)&addr, &socklen);
+  LOG_DEBUG("received tcp message from %s:%d",
+            inAddrToString(addr.sin_addr).c_str(), int(addr.sin_port));
 
   uint32_t commandno;
   ssize_t len;
@@ -70,10 +72,9 @@ void TcpData::DispatchTcpData() {
   /* 分派消息 */
   size = len;  //设置缓冲区数据的有效长度
   commandno = iptux_get_dec_number(buf, ':', 4);  //获取命令字
-  LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s", 
-    inAddrToString(addr.sin_addr).c_str(),
-    commandno, 
-    CommandMode(GET_MODE(commandno)).toString().c_str());
+  LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s",
+           inAddrToString(addr.sin_addr).c_str(), commandno,
+           CommandMode(GET_MODE(commandno)).toString().c_str());
   switch (GET_MODE(commandno)) {
     case IPMSG_GETFILEDATA:
       RequestData(FileAttr::REGULAR);
@@ -94,19 +95,17 @@ void TcpData::DispatchTcpData() {
  * @param fileattr 文件类型
  */
 void TcpData::RequestData(FileAttr fileattr) {
-  const char *attachptr;
-  char *attach;
+  const char* attachptr;
+  char* attach;
 
   attachptr = iptux_skip_section(buf, ':', 5);
   switch (fileattr) {
     case FileAttr::REGULAR:
-      read_ipmsg_filedata(sock, (void *)attachptr,
-                          buf + MAX_SOCKLEN - attachptr,
+      read_ipmsg_filedata(sock, (void*)attachptr, buf + MAX_SOCKLEN - attachptr,
                           buf + size - attachptr);
       break;
     case FileAttr::DIRECTORY:
-      read_ipmsg_dirfiles(sock, (void *)attachptr,
-                          buf + MAX_SOCKLEN - attachptr,
+      read_ipmsg_dirfiles(sock, (void*)attachptr, buf + MAX_SOCKLEN - attachptr,
                           buf + size - attachptr);
       break;
     default:
@@ -132,7 +131,7 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
 
   /* 检查好友是否存在 */
   len = sizeof(addr);
-  getpeername(sock, (struct sockaddr *)&addr, &len);
+  getpeername(sock, (struct sockaddr*)&addr, &len);
   if (!(pal = coreThread->GetPal(addr.sin_addr))) {
     return;
   }
@@ -145,17 +144,20 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
       break;
     case IPTUX_MSGPICOPT:
       snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++, time(NULL));
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++,
+               time(NULL));
       break;
     default:
       snprintf(path, MAX_PATHLEN,
                "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++, time(NULL));
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++,
+               time(NULL));
       break;
   }
 
   /* 终于可以接收数据了^_^ */
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) return;
+  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+    return;
   RecvSublayerData(fd, strlen(buf) + 1);
   close(fd);
 
@@ -180,10 +182,13 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
 void TcpData::RecvSublayerData(int fd, size_t len) {
   ssize_t ssize;
 
-  if (size != len) xwrite(fd, buf + len, size - len);
+  if (size != len)
+    xwrite(fd, buf + len, size - len);
   do {
-    if ((ssize = xread(sock, buf, MAX_SOCKLEN)) <= 0) break;
-    if ((ssize = xwrite(fd, buf, ssize)) <= 0) break;
+    if ((ssize = xread(sock, buf, MAX_SOCKLEN)) <= 0)
+      break;
+    if ((ssize = xwrite(fd, buf, ssize)) <= 0)
+      break;
   } while (1);
 }
 
@@ -192,7 +197,7 @@ void TcpData::RecvSublayerData(int fd, size_t len) {
  * @param pal class PalInfo
  * @param path file path
  */
-void TcpData::RecvPhotoPic(PalInfo *pal, const char *path) {
+void TcpData::RecvPhotoPic(PalInfo* pal, const char* path) {
   g_free(pal->photo);
   pal->photo = g_strdup(path);
   coreThread->Lock();
@@ -205,11 +210,10 @@ void TcpData::RecvPhotoPic(PalInfo *pal, const char *path) {
  * @param pal class PalInfo
  * @param path file path
  */
-void TcpData::RecvMsgPic(PalInfo *pal, const char *path) {
-  MsgPara para;
+void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
+  MsgPara para(coreThread->GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
-  para.pal = coreThread->GetPal(pal->GetKey());
   para.stype = MessageSourceType::PAL;
   para.btype = GROUP_BELONG_TYPE_REGULAR;
   ChipData chip;

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-03-03 19:20+0800\n"
+"POT-Creation-Date: 2021-03-17 20:36+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -18,8 +18,8 @@ msgstr ""
 "X-Generator: Lokalize 0.3\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: share/applications/iptux.desktop.in:3 src/iptux/StatusIcon.cpp:221
-#: src/iptux/MainWindow.cpp:545 src/iptux/MainWindow.cpp:547
+#: share/applications/iptux.desktop.in:3 src/iptux/MainWindow.cpp:551
+#: src/iptux/MainWindow.cpp:553 src/iptux/StatusIcon.cpp:219
 msgid "iptux"
 msgstr "信使(iptux)"
 
@@ -54,228 +54,166 @@ msgstr "搜尋"
 msgid "Please input an IP address (IPv4 only):"
 msgstr "請輸入IP位址(限IPv4格式)："
 
-#: src/iptux/resources/gtk/menus.ui:6 src/iptux/StatusIcon.cpp:118
-msgid "_Preferences"
-msgstr "偏好設定(_P)"
-
-#: src/iptux/resources/gtk/menus.ui:10 src/iptux/StatusIcon.cpp:146
-msgid "_Quit"
-msgstr "退出(_Q)"
-
-#: src/iptux/resources/gtk/menus.ui:17 src/iptux/DialogBase.cpp:339
-#: src/iptux/DialogPeer.cpp:326
-msgid "_File"
-msgstr "檔案(_F)"
-
-#: src/iptux/resources/gtk/menus.ui:19 src/iptux/StatusIcon.cpp:138
-msgid "_Detect"
-msgstr "搜尋(_D)"
-
-#: src/iptux/resources/gtk/menus.ui:23
-msgid "_Find"
-msgstr "尋找(_F)"
-
-#: src/iptux/resources/gtk/menus.ui:28 src/iptux/DialogGroup.cpp:405
-msgid "_Tools"
-msgstr "工具(_T)"
-
-#: src/iptux/resources/gtk/menus.ui:31 src/iptux/StatusIcon.cpp:110
-msgid "_Transmission"
-msgstr "傳輸管理器(_T)"
-
-#: src/iptux/resources/gtk/menus.ui:35 src/iptux/StatusIcon.cpp:126
-msgid "_Shared Management"
-msgstr "共享管理器(_S)"
-
-#: src/iptux/resources/gtk/menus.ui:39 src/iptux/DialogGroup.cpp:411
-msgid "Sort"
-msgstr "排序"
-
-#: src/iptux/resources/gtk/menus.ui:42 src/iptux/DialogGroup.cpp:417
-msgid "By Nickname"
-msgstr "依暱稱"
-
-#: src/iptux/resources/gtk/menus.ui:47 src/iptux/DialogGroup.cpp:425
-msgid "By IP"
-msgstr "依 IP"
-
-#: src/iptux/resources/gtk/menus.ui:54 src/iptux/DialogGroup.cpp:436
-msgid "Ascending"
-msgstr "升冪"
-
-#: src/iptux/resources/gtk/menus.ui:59 src/iptux/DialogGroup.cpp:444
-msgid "Descending"
-msgstr "降冪"
-
-#: src/iptux/resources/gtk/menus.ui:66
-msgid "_Refresh"
+#: src/iptux-core/CoreThread.cpp:172
+#, fuzzy, c-format
+msgid ""
+"Fatal Error!! Failed to create new socket!\n"
+"%s"
 msgstr ""
+"致命錯誤！！\n"
+"建立新的連接失敗！\n"
+"%s"
 
-#: src/iptux/resources/gtk/menus.ui:73
-msgid "Insert Picture"
-msgstr "插入圖片"
-
-#: src/iptux/resources/gtk/menus.ui:78
-#, fuzzy
-msgid "Clear Chat History"
-msgstr "聊天記錄"
-
-#: src/iptux/resources/gtk/menus.ui:85
-msgid "_Help"
-msgstr "幫助(_H)"
-
-#: src/iptux/resources/gtk/menus.ui:88
-msgid "_About"
+#: src/iptux-core/CoreThread.cpp:188
+#, fuzzy, c-format
+msgid ""
+"Fatal Error!! Failed to bind the TCP port(%s:%d)!\n"
+"%s"
 msgstr ""
+"致命錯誤！！\n"
+"連接TCP/UDP端口(2425)失敗！\n"
+"%s"
 
-#: src/iptux/resources/gtk/menus.ui:92
-msgid "Report Bug"
+#: src/iptux-core/CoreThread.cpp:200
+#, fuzzy, c-format
+msgid ""
+"Fatal Error!! Failed to bind the UDP port(%s:%d)!\n"
+"%s"
 msgstr ""
+"致命錯誤！！\n"
+"連接TCP/UDP端口(2425)失敗！\n"
+"%s"
 
-#: src/iptux/DialogBase.cpp:225
+#: src/iptux-core/CoreThread.cpp:447 src/iptux-core/CoreThread.cpp:480
+#: src/iptux-core/internal/RecvFileData.cpp:139
+#: src/iptux-core/internal/RecvFileData.cpp:198
 #, c-format
-msgid "%s To Send."
+msgid ""
+"Fatal Error!!\n"
+"Failed to create new socket!\n"
+"%s"
+msgstr ""
+"致命錯誤！！\n"
+"建立新的連接失敗！\n"
+"%s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:91
+#: src/iptux-core/internal/AnalogFS.cpp:96
+#, c-format
+msgid "Open() file \"%s\" failed, %s"
+msgstr "打開檔案\"%s\"失敗，%s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:115
+#, c-format
+msgid "Stat64() file \"%s\" failed, %s"
+msgstr "獲取檔案\"%s\"狀態失敗，%s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:135
+#, c-format
+msgid "Mkdir() directory \"%s\" failed, %s"
+msgstr "建立目錄\"%s\"失敗，%s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:161
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s"
+msgstr "打開目錄\"%s\"失敗，%s"
+
+#: src/iptux-core/internal/Command.cpp:218
+msgid "Your pal didn't receive the packet. He or she is offline maybe."
+msgstr "你的好友沒有收到傳送的資料，他可能已經下線。"
+
+#: src/iptux-core/internal/CommandMode.cpp:37
+#, c-format
+msgid "unknown command mode: %d"
 msgstr ""
 
-#: src/iptux/DialogBase.cpp:277 src/iptux/DialogBase.cpp:369
-#: src/iptux/DialogPeer.cpp:354
-msgid "Close"
-msgstr "關閉"
+#: src/iptux-core/internal/RecvFileData.cpp:114
+msgid "receive"
+msgstr "接收"
 
-#: src/iptux/DialogBase.cpp:281 src/iptux/DialogGroup.cpp:376
-msgid "Send"
+#: src/iptux-core/internal/RecvFileData.cpp:121
+#: src/iptux-core/internal/RecvFileData.cpp:244
+#: src/iptux-core/internal/SendFileData.cpp:106
+#: src/iptux-core/internal/SendFileData.cpp:189
+#, fuzzy
+msgid "Unknown"
+msgstr "未知"
+
+#: src/iptux-core/internal/RecvFileData.cpp:171
+#, fuzzy, c-format
+msgid ""
+"Failed to receive the file \"%s\" from %s! expect length %d, received %d"
+msgstr "接收檔案\"%s\"來自%s失敗！"
+
+#: src/iptux-core/internal/RecvFileData.cpp:174
+#, c-format
+msgid "Receive the file \"%s\" from %s successfully!"
+msgstr "接收檔案\"%s\"來自%s成功！"
+
+#: src/iptux-core/internal/RecvFileData.cpp:307
+#, c-format
+msgid "Failed to receive the directory \"%s\" from %s!"
+msgstr "接收目錄\"%s\"來自%s失敗！"
+
+#: src/iptux-core/internal/RecvFileData.cpp:310
+#, c-format
+msgid "Receive the directory \"%s\" from %s successfully!"
+msgstr "接收目錄\"%s\"來自%s成功！"
+
+#: src/iptux-core/internal/SendFileData.cpp:99
+msgid "send"
 msgstr "傳送"
 
-#: src/iptux/DialogBase.cpp:300
-msgid "Chat History"
-msgstr "聊天記錄"
-
-#: src/iptux/DialogBase.cpp:343 src/iptux/DialogPeer.cpp:330
-msgid "Attach File"
-msgstr "新增檔案"
-
-#: src/iptux/DialogBase.cpp:350 src/iptux/DialogPeer.cpp:337
-msgid "Attach Folder"
-msgstr "新增目錄"
-
-#: src/iptux/DialogBase.cpp:359 src/iptux/DialogBase.cpp:633
-#: src/iptux/DialogPeer.cpp:1124
-#, fuzzy
-msgid "Remove Selected"
-msgstr "反選"
-
-#: src/iptux/DialogBase.cpp:393
-msgid "Choose enclosure files"
-msgstr "選擇檔案附件"
-
-#: src/iptux/DialogBase.cpp:396
-msgid "Choose enclosure folders"
-msgstr "選擇目錄附件"
-
-#: src/iptux/DialogBase.cpp:402 src/iptux/callback.cpp:86
-#: src/iptux/DataSettings.cpp:1567 src/iptux/ShareFile.cpp:395
-msgid "_Open"
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:403 src/iptux/callback.cpp:87
-#: src/iptux/DataSettings.cpp:157 src/iptux/DataSettings.cpp:1568
-#: src/iptux/DataSettings.cpp:1616 src/iptux/dialog.cpp:173
-#: src/iptux/dialog.cpp:234 src/iptux/RevisePal.cpp:102
-#: src/iptux/ShareFile.cpp:396
-#, fuzzy
-msgid "_Cancel"
-msgstr "取消"
-
-#: src/iptux/DialogBase.cpp:689
-msgid "File to send."
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:694
-msgid "Sending progress."
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:697
-msgid "Dirs"
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:700
-#, fuzzy
-msgid "Files"
-msgstr "檔案"
-
-#: src/iptux/DialogBase.cpp:703 src/iptux/DialogPeer.cpp:668
-msgid "Detail"
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:750
-msgid "PeelName"
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:757 src/iptux/DialogPeer.cpp:802
-msgid "Name"
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:763 src/iptux/TransWindow.cpp:248
-#: src/iptux/DialogPeer.cpp:752 src/iptux/DialogPeer.cpp:808
-#: src/iptux/ShareFile.cpp:255
-msgid "Size"
-msgstr "大小"
-
-#: src/iptux/DialogBase.cpp:769
-msgid "Path"
-msgstr ""
-
-#: src/iptux/DialogBase.cpp:830
-#, fuzzy
-msgid "Sending Progress."
-msgstr "進度"
-
-#: src/iptux/DialogBase.cpp:833
+#: src/iptux-core/internal/SendFileData.cpp:133
 #, c-format
-msgid "%s of %s Sent."
-msgstr ""
+msgid "Failed to send the file \"%s\" to %s!"
+msgstr "傳送檔案\"%s\"到%s失敗！"
 
-#: src/iptux/DialogBase.cpp:840 src/iptux/DialogPeer.cpp:924
-#, fuzzy
-msgid "Mission Completed!"
-msgstr "已完成"
+#: src/iptux-core/internal/SendFileData.cpp:138
+#, c-format
+msgid "Send the file \"%s\" to %s successfully!"
+msgstr "傳送檔案\"%s\"到%s成功！"
 
-#: src/iptux/SoundSystem.cpp:172
+#: src/iptux-core/internal/SendFileData.cpp:257
+#, c-format
+msgid "Failed to send the directory \"%s\" to %s!"
+msgstr "傳送目錄\"%s\"到%s失敗！"
+
+#: src/iptux-core/internal/SendFileData.cpp:262
+#, c-format
+msgid "Send the directory \"%s\" to %s successfully!"
+msgstr "傳送目錄\"%s\"到%s失敗！"
+
+#: src/iptux-core/internal/UdpData.cpp:151
+#: src/iptux-core/internal/UdpData.cpp:152
+#: src/iptux-core/internal/UdpData.cpp:495
+#: src/iptux-core/internal/UdpData.cpp:534
+msgid "mysterious"
+msgstr "神秘訪客"
+
+#: src/iptux-utils/utils.cpp:794
 #, fuzzy, c-format
-msgid "Failed to play the prompt tone, [%s] %s, %s"
-msgstr "播放提示音失敗，%s\n"
+msgid "stat file \"%s\" failed: %s"
+msgstr "查看檔案\"%s\"狀態失敗，%s\n"
 
-#: src/iptux/StatusIcon.cpp:97
-msgid "_Hide"
-msgstr "隱藏(_H)"
-
-#: src/iptux/StatusIcon.cpp:99
-msgid "_Show"
-msgstr "顯示(_S)"
-
-#: src/iptux/StatusIcon.cpp:219
+#: src/iptux-utils/utils.cpp:801
 #, c-format
-msgid "To be read: %u messages"
-msgstr "未讀訊息: %u條"
+msgid "path %s is not file or directory: st_mode(%x)"
+msgstr ""
 
-#: src/iptux/LogSystem.cpp:62
+#: src/iptux-utils/utils.cpp:808
+#, fuzzy, c-format
+msgid "opendir on \"%s\" failed: %s"
+msgstr "打開目錄\"%s\"失敗，%s"
+
+#: src/iptux/Application.cpp:44
+msgid "Loading the process successfully!"
+msgstr "程序載入成功！"
+
+#: src/iptux/Darwin.cpp:16
 #, c-format
-msgid "Recevied-From: Nickname:%s User:%s Host:%s"
-msgstr "来自: 昵称:%s 用户:%s 主機:%s"
-
-#: src/iptux/LogSystem.cpp:66
-#, c-format
-msgid "Send-To: Nickname:%s User:%s Host:%s"
-msgstr "傳送: 暱稱:%s 用戶:%s 主機:%s"
-
-#: src/iptux/LogSystem.cpp:69
-msgid "Send-Broadcast"
-msgstr "傳送廣播"
-
-#: src/iptux/LogSystem.cpp:88
-#, c-format
-msgid "User:%s Host:%s"
-msgstr "用戶:%s 主機:%s"
+msgid "Couldn’t load icon: %s"
+msgstr ""
 
 #: src/iptux/DataSettings.cpp:63
 msgid "Personal"
@@ -293,212 +231,220 @@ msgstr "聲音"
 msgid "Network"
 msgstr "網路"
 
-#: src/iptux/DataSettings.cpp:154
+#: src/iptux/DataSettings.cpp:158
 msgid "Preferences"
 msgstr "偏好設定"
 
-#: src/iptux/DataSettings.cpp:155 src/iptux/dialog.cpp:110
-#: src/iptux/dialog.cpp:172 src/iptux/RevisePal.cpp:101
+#: src/iptux/DataSettings.cpp:159 src/iptux/RevisePal.cpp:104
+#: src/iptux/dialog.cpp:110 src/iptux/dialog.cpp:172
 #, fuzzy
 msgid "_OK"
 msgstr "確定"
 
-#: src/iptux/DataSettings.cpp:156
+#: src/iptux/DataSettings.cpp:160
 #, fuzzy
 msgid "_Apply"
 msgstr "套用"
 
-#: src/iptux/DataSettings.cpp:182
+#: src/iptux/DataSettings.cpp:161 src/iptux/DataSettings.cpp:1572
+#: src/iptux/DataSettings.cpp:1620 src/iptux/DialogBase.cpp:354
+#: src/iptux/RevisePal.cpp:105 src/iptux/ShareFile.cpp:396
+#: src/iptux/callback.cpp:86 src/iptux/dialog.cpp:173 src/iptux/dialog.cpp:234
+#, fuzzy
+msgid "_Cancel"
+msgstr "取消"
+
+#: src/iptux/DataSettings.cpp:186
 msgid "Your nickname:"
 msgstr "您的暱稱:"
 
-#: src/iptux/DataSettings.cpp:188
+#: src/iptux/DataSettings.cpp:192
 msgid "Please input your nickname!"
 msgstr "請輸入您的暱稱！"
 
-#: src/iptux/DataSettings.cpp:193
+#: src/iptux/DataSettings.cpp:197
 msgid "Your group name:"
 msgstr "您的群組名稱:"
 
-#: src/iptux/DataSettings.cpp:199
+#: src/iptux/DataSettings.cpp:203
 msgid "Please input your group name!"
 msgstr "請輸入您的群組名稱！"
 
-#: src/iptux/DataSettings.cpp:204
+#: src/iptux/DataSettings.cpp:208
 msgid "Your face picture:"
 msgstr "您的頭像:"
 
-#: src/iptux/DataSettings.cpp:217
+#: src/iptux/DataSettings.cpp:221
 msgid "Save files to: "
 msgstr "檔案存至:"
 
-#: src/iptux/DataSettings.cpp:227
+#: src/iptux/DataSettings.cpp:231
 msgid "Photo"
 msgstr "個人相片"
 
-#: src/iptux/DataSettings.cpp:239
+#: src/iptux/DataSettings.cpp:243
 msgid "Signature"
 msgstr "個人簽名"
 
-#: src/iptux/DataSettings.cpp:269
+#: src/iptux/DataSettings.cpp:273
 msgid "Candidate network coding:"
 msgstr "預設網路編碼:"
 
-#: src/iptux/DataSettings.cpp:275
+#: src/iptux/DataSettings.cpp:279
 msgid "Candidate network coding"
 msgstr "預設網路編碼"
 
-#: src/iptux/DataSettings.cpp:280
+#: src/iptux/DataSettings.cpp:284
 msgid "Preference network coding:"
 msgstr "偏好網路編碼:"
 
-#: src/iptux/DataSettings.cpp:286
+#: src/iptux/DataSettings.cpp:290
 msgid ""
 "Preference network coding (You should be aware of what you are doing if you "
 "want to modify it.)"
 msgstr "偏好網路編碼(如果你想要修改它，那麼你必須明白你正在做什麼。)"
 
-#: src/iptux/DataSettings.cpp:292
+#: src/iptux/DataSettings.cpp:296
 msgid "Pal's default face picture:"
 msgstr "預設好友頭像:"
 
-#: src/iptux/DataSettings.cpp:305
+#: src/iptux/DataSettings.cpp:309
 msgid "Panel font:"
 msgstr "面板字體："
 
-#: src/iptux/DataSettings.cpp:313
+#: src/iptux/DataSettings.cpp:317
 msgid "Automatically open the chat dialog"
 msgstr "自動打開聊天對話框"
 
-#: src/iptux/DataSettings.cpp:318
+#: src/iptux/DataSettings.cpp:322
 msgid "Automatically hide the panel after login"
 msgstr "程序啟動後隱藏面板"
 
-#: src/iptux/DataSettings.cpp:323
+#: src/iptux/DataSettings.cpp:327
 msgid "Automatically open the File Transmission Management"
 msgstr "自動打開檔案傳輸管理器"
 
-#: src/iptux/DataSettings.cpp:328
+#: src/iptux/DataSettings.cpp:332
 msgid "Use the 'Enter' key to send message"
 msgstr "使用Enter鍵傳送訊息"
 
-#: src/iptux/DataSettings.cpp:333
+#: src/iptux/DataSettings.cpp:337
 msgid "Automatically clean up the chat history"
 msgstr "自動清空聊天記錄"
 
-#: src/iptux/DataSettings.cpp:337
+#: src/iptux/DataSettings.cpp:341
 msgid "Save the chat history"
 msgstr "儲存聊天記錄"
 
-#: src/iptux/DataSettings.cpp:342
+#: src/iptux/DataSettings.cpp:346
 msgid "Use the Blacklist (NOT recommended)"
 msgstr "開啟黑名單處理方案(不推薦)"
 
-#: src/iptux/DataSettings.cpp:347
+#: src/iptux/DataSettings.cpp:351
 msgid "Filter the request of sharing files"
 msgstr "過濾共享檔案請求"
 
-#: src/iptux/DataSettings.cpp:368
+#: src/iptux/DataSettings.cpp:372
 msgid "Activate the sound support"
 msgstr "啟動聲音支援"
 
-#: src/iptux/DataSettings.cpp:375
+#: src/iptux/DataSettings.cpp:379
 msgid "Volume Control: "
 msgstr "音量控制:"
 
-#: src/iptux/DataSettings.cpp:384
+#: src/iptux/DataSettings.cpp:388
 msgid "Sound Event"
 msgstr "聲音事件"
 
-#: src/iptux/DataSettings.cpp:414
+#: src/iptux/DataSettings.cpp:418
 msgid "Test"
 msgstr "測試"
 
-#: src/iptux/DataSettings.cpp:417
+#: src/iptux/DataSettings.cpp:421
 msgid "Stop"
 msgstr "停止"
 
-#: src/iptux/DataSettings.cpp:439
+#: src/iptux/DataSettings.cpp:443
 msgid "From:"
 msgstr "起始:"
 
-#: src/iptux/DataSettings.cpp:445
+#: src/iptux/DataSettings.cpp:449
 msgid "Beginning of the IP(v4) section"
 msgstr "IP(v4)網路區段起始點"
 
-#: src/iptux/DataSettings.cpp:449
+#: src/iptux/DataSettings.cpp:453
 msgid "To:"
 msgstr "終止:"
 
-#: src/iptux/DataSettings.cpp:455
+#: src/iptux/DataSettings.cpp:459
 msgid "End of the IP(v4) section"
 msgstr "IP(v4)網路區段終止點"
 
-#: src/iptux/DataSettings.cpp:463
+#: src/iptux/DataSettings.cpp:467
 msgid "Add"
 msgstr "新增"
 
-#: src/iptux/DataSettings.cpp:468
+#: src/iptux/DataSettings.cpp:472
 msgid "Delete"
 msgstr "刪除"
 
-#: src/iptux/DataSettings.cpp:475
+#: src/iptux/DataSettings.cpp:479
 msgid "Added IP(v4) Section:"
 msgstr "已添加的IP(v4)網路區段:"
 
-#: src/iptux/DataSettings.cpp:494
+#: src/iptux/DataSettings.cpp:498
 msgid "Import"
 msgstr "匯入"
 
-#: src/iptux/DataSettings.cpp:498
+#: src/iptux/DataSettings.cpp:502
 msgid "Export"
 msgstr "匯出"
 
-#: src/iptux/DataSettings.cpp:502 src/iptux/TransWindow.cpp:145
+#: src/iptux/DataSettings.cpp:506 src/iptux/TransWindow.cpp:168
 msgid "Clear"
 msgstr "清空"
 
-#: src/iptux/DataSettings.cpp:717
+#: src/iptux/DataSettings.cpp:721
 msgid "Transfer finished"
 msgstr "傳輸完成"
 
-#: src/iptux/DataSettings.cpp:721
+#: src/iptux/DataSettings.cpp:725
 msgid "Message received"
 msgstr "收到訊息"
 
-#: src/iptux/DataSettings.cpp:775
+#: src/iptux/DataSettings.cpp:779
 msgid "Play"
 msgstr "播放"
 
-#: src/iptux/DataSettings.cpp:783
+#: src/iptux/DataSettings.cpp:787
 msgid "Event"
 msgstr "事件"
 
-#: src/iptux/DataSettings.cpp:816
+#: src/iptux/DataSettings.cpp:820
 msgid "From"
 msgstr "起始"
 
-#: src/iptux/DataSettings.cpp:823
+#: src/iptux/DataSettings.cpp:827
 msgid "To"
 msgstr "終止"
 
-#: src/iptux/DataSettings.cpp:830
+#: src/iptux/DataSettings.cpp:834
 msgid "Description"
 msgstr "描述"
 
-#: src/iptux/DataSettings.cpp:846
+#: src/iptux/DataSettings.cpp:850
 msgid "Please select download folder"
 msgstr "請選擇下載目錄"
 
-#: src/iptux/DataSettings.cpp:868
+#: src/iptux/DataSettings.cpp:872
 msgid "Select Font"
 msgstr "選擇字體"
 
-#: src/iptux/DataSettings.cpp:880
+#: src/iptux/DataSettings.cpp:884
 msgid "Please select a sound file"
 msgstr "請選擇一個聲音檔案"
 
-#: src/iptux/DataSettings.cpp:1127 src/iptux/DataSettings.cpp:1158
+#: src/iptux/DataSettings.cpp:1131 src/iptux/DataSettings.cpp:1162
 #, c-format
 msgid ""
 "Fopen() file \"%s\" failed!\n"
@@ -507,28 +453,28 @@ msgstr ""
 "打開檔案\"%s\"失敗！\n"
 "%s"
 
-#: src/iptux/DataSettings.cpp:1205 src/iptux/DialogGroup.cpp:539
+#: src/iptux/DataSettings.cpp:1209 src/iptux/DialogGroup.cpp:471
 msgid "Select All"
 msgstr "全選"
 
-#: src/iptux/DataSettings.cpp:1210 src/iptux/DialogGroup.cpp:544
+#: src/iptux/DataSettings.cpp:1214 src/iptux/DialogGroup.cpp:476
 msgid "Reverse Select"
 msgstr "反選"
 
-#: src/iptux/DataSettings.cpp:1215 src/iptux/DialogGroup.cpp:549
+#: src/iptux/DataSettings.cpp:1219 src/iptux/DialogGroup.cpp:481
 msgid "Clear Up"
 msgstr "清空"
 
-#: src/iptux/DataSettings.cpp:1306 src/iptux/RevisePal.cpp:413
+#: src/iptux/DataSettings.cpp:1310 src/iptux/RevisePal.cpp:418
 msgid "Please select a face picture"
 msgstr "請選擇一個頭像圖片"
 
-#: src/iptux/DataSettings.cpp:1328
+#: src/iptux/DataSettings.cpp:1332
 msgid "Please select a personal photo"
 msgstr "請選擇個人照片"
 
-#: src/iptux/DataSettings.cpp:1465 src/iptux/DataSettings.cpp:1472
-#: src/iptux/DetectPal.cpp:54
+#: src/iptux/DataSettings.cpp:1469 src/iptux/DataSettings.cpp:1476
+#: src/iptux/DetectPal.cpp:49
 #, c-format
 msgid ""
 "\n"
@@ -537,17 +483,577 @@ msgstr ""
 "\n"
 "非法的IP(v4)位址：%s！"
 
-#: src/iptux/DataSettings.cpp:1565
+#: src/iptux/DataSettings.cpp:1569
 msgid "Please select a file to import data"
 msgstr "請選擇匯入資料的檔案"
 
-#: src/iptux/DataSettings.cpp:1614
+#: src/iptux/DataSettings.cpp:1571 src/iptux/DialogBase.cpp:353
+#: src/iptux/ShareFile.cpp:395 src/iptux/callback.cpp:85
+msgid "_Open"
+msgstr ""
+
+#: src/iptux/DataSettings.cpp:1618
 msgid "Save data to file"
 msgstr "保存資料到檔案"
 
-#: src/iptux/DataSettings.cpp:1615 src/iptux/dialog.cpp:235
+#: src/iptux/DataSettings.cpp:1619 src/iptux/dialog.cpp:235
 msgid "_Save"
 msgstr ""
+
+#: src/iptux/DetectPal.cpp:45
+#, c-format
+msgid "The notification has been sent to %s."
+msgstr "訊息已經傳送到%s。"
+
+#: src/iptux/DialogBase.cpp:226
+#, c-format
+msgid "%s To Send."
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:278
+msgid "Close"
+msgstr "關閉"
+
+#: src/iptux/DialogBase.cpp:282 src/iptux/DialogGroup.cpp:367
+msgid "Send"
+msgstr "傳送"
+
+#: src/iptux/DialogBase.cpp:301
+msgid "Chat History"
+msgstr "聊天記錄"
+
+#: src/iptux/DialogBase.cpp:344
+msgid "Choose enclosure files"
+msgstr "選擇檔案附件"
+
+#: src/iptux/DialogBase.cpp:347
+msgid "Choose enclosure folders"
+msgstr "選擇目錄附件"
+
+#: src/iptux/DialogBase.cpp:581 src/iptux/DialogPeer.cpp:1052
+#, fuzzy
+msgid "Remove Selected"
+msgstr "反選"
+
+#: src/iptux/DialogBase.cpp:636
+msgid "File to send."
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:641
+msgid "Sending progress."
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:644
+msgid "Dirs"
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:647
+#, fuzzy
+msgid "Files"
+msgstr "檔案"
+
+#: src/iptux/DialogBase.cpp:650 src/iptux/DialogPeer.cpp:601
+msgid "Detail"
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:698
+msgid "PeelName"
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:705 src/iptux/DialogPeer.cpp:736
+msgid "Name"
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:711 src/iptux/DialogPeer.cpp:686
+#: src/iptux/DialogPeer.cpp:742 src/iptux/ShareFile.cpp:255
+#: src/iptux/TransWindow.cpp:271
+msgid "Size"
+msgstr "大小"
+
+#: src/iptux/DialogBase.cpp:717
+msgid "Path"
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:778
+#, fuzzy
+msgid "Sending Progress."
+msgstr "進度"
+
+#: src/iptux/DialogBase.cpp:781
+#, c-format
+msgid "%s of %s Sent."
+msgstr ""
+
+#: src/iptux/DialogBase.cpp:788 src/iptux/DialogPeer.cpp:858
+#, fuzzy
+msgid "Mission Completed!"
+msgstr "已完成"
+
+#: src/iptux/DialogGroup.cpp:205
+#, c-format
+msgid "Talk with the group %s"
+msgstr "與%s組對話"
+
+#: src/iptux/DialogGroup.cpp:278
+msgid "Member"
+msgstr "成員"
+
+#: src/iptux/DialogGroup.cpp:374
+msgid "Pals"
+msgstr "好友"
+
+#: src/iptux/DialogPeer.cpp:201
+#, fuzzy, c-format
+msgid "Talk with %s(%s) IP:%s"
+msgstr "與%s對話"
+
+#: src/iptux/DialogPeer.cpp:290
+msgid "Info."
+msgstr "資訊"
+
+#: src/iptux/DialogPeer.cpp:324
+#, c-format
+msgid "Version: %s\n"
+msgstr "版本: %s\n"
+
+#: src/iptux/DialogPeer.cpp:328
+#, c-format
+msgid "Nickname: %s@%s\n"
+msgstr "暱稱: %s@%s\n"
+
+#: src/iptux/DialogPeer.cpp:330
+#, c-format
+msgid "Nickname: %s\n"
+msgstr "暱稱: %s\n"
+
+#: src/iptux/DialogPeer.cpp:333
+#, c-format
+msgid "User: %s\n"
+msgstr "用戶: %s\n"
+
+#: src/iptux/DialogPeer.cpp:336
+#, c-format
+msgid "Host: %s\n"
+msgstr "主機: %s\n"
+
+#: src/iptux/DialogPeer.cpp:341
+#, c-format
+msgid "Address: %s(%s)\n"
+msgstr "位址: %s(%s)\n"
+
+#: src/iptux/DialogPeer.cpp:343
+#, c-format
+msgid "Address: %s\n"
+msgstr "位址: %s\n"
+
+#: src/iptux/DialogPeer.cpp:347
+msgid "Compatibility: Microsoft\n"
+msgstr "相容性: Microsoft\n"
+
+#: src/iptux/DialogPeer.cpp:349
+msgid "Compatibility: GNU/Linux\n"
+msgstr "相容性: GNU/Linux\n"
+
+#: src/iptux/DialogPeer.cpp:353
+#, c-format
+msgid "System coding: %s\n"
+msgstr "系統編碼: %s\n"
+
+#: src/iptux/DialogPeer.cpp:357
+msgid "Signature:\n"
+msgstr "個性簽名:\n"
+
+#: src/iptux/DialogPeer.cpp:364
+msgid ""
+"\n"
+"Photo:\n"
+msgstr ""
+"\n"
+"個人頭象:\n"
+
+#: src/iptux/DialogPeer.cpp:510
+msgid "Please select a picture to insert the buffer"
+msgstr "請選擇插入緩衝區的圖片"
+
+#: src/iptux/DialogPeer.cpp:539
+#, fuzzy
+msgid "Enclosure."
+msgstr "附件"
+
+#: src/iptux/DialogPeer.cpp:584
+msgid "File to be receive."
+msgstr ""
+
+#: src/iptux/DialogPeer.cpp:588
+msgid "Receiving progress."
+msgstr ""
+
+#: src/iptux/DialogPeer.cpp:591
+msgid "Accept"
+msgstr "接受"
+
+#: src/iptux/DialogPeer.cpp:596 src/iptux/dialog.cpp:63
+msgid "Refuse"
+msgstr "拒絕"
+
+#: src/iptux/DialogPeer.cpp:631
+#, fuzzy
+msgid "File received."
+msgstr "收到訊息"
+
+#: src/iptux/DialogPeer.cpp:673 src/iptux/DialogPeer.cpp:730
+msgid "Source"
+msgstr "來源"
+
+#: src/iptux/DialogPeer.cpp:680
+msgid "SaveAs"
+msgstr ""
+
+#: src/iptux/DialogPeer.cpp:841 src/iptux/DialogPeer.cpp:906
+msgid "Receiving Progress."
+msgstr ""
+
+#: src/iptux/DialogPeer.cpp:844 src/iptux/DialogPeer.cpp:909
+#, c-format
+msgid "%s to Receive."
+msgstr ""
+
+#: src/iptux/DialogPeer.cpp:848 src/iptux/DialogPeer.cpp:913
+#, c-format
+msgid "%s Of %s Received."
+msgstr ""
+
+#: src/iptux/HelpDialog.cpp:64
+msgid "TRANSLATOR NAME"
+msgstr ""
+
+#: src/iptux/HelpDialog.cpp:78
+msgid "Thanks to"
+msgstr ""
+
+#: src/iptux/LogSystem.cpp:56
+#, c-format
+msgid "Recevied-From: Nickname:%s User:%s Host:%s"
+msgstr "来自: 昵称:%s 用户:%s 主機:%s"
+
+#: src/iptux/LogSystem.cpp:60
+#, c-format
+msgid "Send-To: Nickname:%s User:%s Host:%s"
+msgstr "傳送: 暱稱:%s 用戶:%s 主機:%s"
+
+#: src/iptux/LogSystem.cpp:63
+msgid "Send-Broadcast"
+msgstr "傳送廣播"
+
+#: src/iptux/LogSystem.cpp:82
+#, c-format
+msgid "User:%s Host:%s"
+msgstr "用戶:%s 主機:%s"
+
+#: src/iptux/MainWindow.cpp:619
+msgid "Pals Online: 0"
+msgstr "線上好友: 0"
+
+#: src/iptux/MainWindow.cpp:703
+msgid "Search Pals"
+msgstr "搜尋好友"
+
+#: src/iptux/MainWindow.cpp:819
+msgid "Nickname"
+msgstr "暱稱"
+
+#: src/iptux/MainWindow.cpp:830
+msgid "Group"
+msgstr "群組名稱"
+
+#: src/iptux/MainWindow.cpp:836 src/iptux/TransWindow.cpp:257
+msgid "IPv4"
+msgstr "IPv4"
+
+#: src/iptux/MainWindow.cpp:842
+msgid "User"
+msgstr "用戶"
+
+#: src/iptux/MainWindow.cpp:848
+msgid "Host"
+msgstr "主機"
+
+#: src/iptux/MainWindow.cpp:967
+#, fuzzy, c-format
+msgid "Version: %s"
+msgstr "版本: %s\n"
+
+#: src/iptux/MainWindow.cpp:970
+#, fuzzy, c-format
+msgid "Nickname: %s@%s"
+msgstr "暱稱: %s@%s\n"
+
+#: src/iptux/MainWindow.cpp:972
+#, fuzzy, c-format
+msgid "Nickname: %s"
+msgstr "暱稱: %s\n"
+
+#: src/iptux/MainWindow.cpp:974
+#, fuzzy, c-format
+msgid "User: %s"
+msgstr "用戶: %s\n"
+
+#: src/iptux/MainWindow.cpp:975
+#, fuzzy, c-format
+msgid "Host: %s"
+msgstr "主機: %s\n"
+
+#: src/iptux/MainWindow.cpp:979
+#, fuzzy, c-format
+msgid "Address: %s(%s)"
+msgstr "位址: %s(%s)\n"
+
+#: src/iptux/MainWindow.cpp:981
+#, fuzzy, c-format
+msgid "Address: %s"
+msgstr "位址: %s\n"
+
+#: src/iptux/MainWindow.cpp:985
+#, fuzzy
+msgid "Compatibility: Microsoft"
+msgstr "相容性: Microsoft\n"
+
+#: src/iptux/MainWindow.cpp:987
+#, fuzzy
+msgid "Compatibility: GNU/Linux"
+msgstr "相容性: GNU/Linux\n"
+
+#: src/iptux/MainWindow.cpp:989
+#, fuzzy, c-format
+msgid "System coding: %s"
+msgstr "系統編碼: %s\n"
+
+#: src/iptux/MainWindow.cpp:993
+#, fuzzy
+msgid "Signature:"
+msgstr "個性簽名:\n"
+
+#: src/iptux/MainWindow.cpp:1033
+#, c-format
+msgid "Pals Online: %<PRIu32>"
+msgstr "線上好友: %<PRIu32>"
+
+#: src/iptux/RevisePal.cpp:102
+msgid "Change Pal's Information"
+msgstr "更改好友資訊"
+
+#: src/iptux/RevisePal.cpp:130
+msgid "Pal's nickname:"
+msgstr "好友暱稱:"
+
+#: src/iptux/RevisePal.cpp:136
+msgid "Please input pal's new nickname!"
+msgstr "請輸入好友的新暱稱！"
+
+#: src/iptux/RevisePal.cpp:142
+msgid "Pal's group name:"
+msgstr "好友群組名稱:"
+
+#: src/iptux/RevisePal.cpp:148
+msgid "Please input pal's new group name!"
+msgstr "請輸入好友的新群組名稱！"
+
+#: src/iptux/RevisePal.cpp:154
+msgid "System coding:"
+msgstr "系統編碼:"
+
+#: src/iptux/RevisePal.cpp:160
+msgid "Be SURE to know what you are doing!"
+msgstr "你最好明白你到底在做些什麼！"
+
+#: src/iptux/RevisePal.cpp:166
+msgid "Pal's face picture:"
+msgstr "好友頭像:"
+
+#: src/iptux/RevisePal.cpp:180
+msgid "Be compatible with iptux's protocol (DANGEROUS)"
+msgstr "相容 iptux 擴展協議(危險)"
+
+#: src/iptux/ShareFile.cpp:82
+msgid "Shared Files Management"
+msgstr "共享檔案管理器"
+
+#: src/iptux/ShareFile.cpp:83
+msgid "OK"
+msgstr "確定"
+
+#: src/iptux/ShareFile.cpp:83
+msgid "Apply"
+msgstr "套用"
+
+#: src/iptux/ShareFile.cpp:84
+msgid "Cancel"
+msgstr "取消"
+
+#: src/iptux/ShareFile.cpp:129
+msgid "Add Files"
+msgstr "新增檔案"
+
+#: src/iptux/ShareFile.cpp:132
+msgid "Add Folders"
+msgstr "新增目錄"
+
+#: src/iptux/ShareFile.cpp:135
+msgid "Delete Resources"
+msgstr "刪除資源"
+
+#: src/iptux/ShareFile.cpp:138
+msgid "Clear Password"
+msgstr "清除密碼"
+
+#: src/iptux/ShareFile.cpp:142
+msgid "Set Password"
+msgstr "設置密碼"
+
+#: src/iptux/ShareFile.cpp:200 src/iptux/ShareFile.cpp:344
+msgid "regular"
+msgstr "常規檔案"
+
+#: src/iptux/ShareFile.cpp:204 src/iptux/ShareFile.cpp:348
+msgid "directory"
+msgstr "目錄"
+
+#: src/iptux/ShareFile.cpp:208 src/iptux/ShareFile.cpp:352
+#: src/iptux/UiCoreThread.cpp:465
+msgid "unknown"
+msgstr "未知"
+
+#: src/iptux/ShareFile.cpp:245
+msgid "File"
+msgstr "檔案"
+
+#: src/iptux/ShareFile.cpp:261
+msgid "Type"
+msgstr "類型"
+
+#: src/iptux/ShareFile.cpp:387
+msgid "Choose the files to share"
+msgstr "選擇共享檔案"
+
+#: src/iptux/ShareFile.cpp:390
+msgid "Choose the folders to share"
+msgstr "選擇共享目錄"
+
+#: src/iptux/SoundSystem.cpp:172
+#, fuzzy, c-format
+msgid "Failed to play the prompt tone, [%s] %s, %s"
+msgstr "播放提示音失敗，%s\n"
+
+#: src/iptux/StatusIcon.cpp:97
+msgid "_Hide"
+msgstr "隱藏(_H)"
+
+#: src/iptux/StatusIcon.cpp:99
+msgid "_Show"
+msgstr "顯示(_S)"
+
+#: src/iptux/StatusIcon.cpp:110 src/iptux/resources/gtk/menus.ui:103
+msgid "_Transmission"
+msgstr "傳輸管理器(_T)"
+
+#: src/iptux/StatusIcon.cpp:118 src/iptux/resources/gtk/menus.ui:6
+msgid "_Preferences"
+msgstr "偏好設定(_P)"
+
+#: src/iptux/StatusIcon.cpp:126 src/iptux/resources/gtk/menus.ui:107
+msgid "_Shared Management"
+msgstr "共享管理器(_S)"
+
+#: src/iptux/StatusIcon.cpp:138 src/iptux/resources/gtk/menus.ui:19
+msgid "_Detect"
+msgstr "搜尋(_D)"
+
+#: src/iptux/StatusIcon.cpp:146 src/iptux/resources/gtk/menus.ui:10
+msgid "_Quit"
+msgstr "退出(_Q)"
+
+#: src/iptux/StatusIcon.cpp:217
+#, c-format
+msgid "To be read: %u messages"
+msgstr "未讀訊息: %u條"
+
+#: src/iptux/TransWindow.cpp:82
+msgid "Files Transmission Management"
+msgstr "檔案傳輸管理器"
+
+#: src/iptux/TransWindow.cpp:236
+msgid "State"
+msgstr "狀態"
+
+#: src/iptux/TransWindow.cpp:243
+msgid "Task"
+msgstr "任務"
+
+#: src/iptux/TransWindow.cpp:250
+msgid "Peer"
+msgstr "好友"
+
+#: src/iptux/TransWindow.cpp:264
+msgid "Filename"
+msgstr "檔案名"
+
+#: src/iptux/TransWindow.cpp:278
+msgid "Completed"
+msgstr "已完成"
+
+#: src/iptux/TransWindow.cpp:285
+msgid "Progress"
+msgstr "進度"
+
+#: src/iptux/TransWindow.cpp:293
+msgid "Cost"
+msgstr "花費時間"
+
+#: src/iptux/TransWindow.cpp:300
+msgid "Remaining"
+msgstr "剩餘時間"
+
+#: src/iptux/TransWindow.cpp:307
+msgid "Rate"
+msgstr "速率"
+
+#: src/iptux/TransWindow.cpp:337
+msgid "The path you want to open not exist!"
+msgstr ""
+
+#: src/iptux/TransWindow.cpp:414
+msgid "The file you want to open not exist!"
+msgstr ""
+
+#: src/iptux/TransWindow.cpp:415
+#, fuzzy
+msgid "iptux Error"
+msgstr "錯誤"
+
+#: src/iptux/UiCoreThread.cpp:332 src/iptux/UiCoreThread.cpp:354
+#: src/iptux/UiCoreThread.cpp:598 src/iptux/UiCoreThread.cpp:622
+msgid "Others"
+msgstr "其他"
+
+#: src/iptux/UiCoreThread.cpp:479
+msgid "<ERROR>"
+msgstr "<錯誤>"
+
+#: src/iptux/UiCoreThread.cpp:642
+msgid "Broadcast"
+msgstr "廣播"
+
+#: src/iptux/UiHelper.cpp:45
+msgid "Can't find any available web browser!\n"
+msgstr "未發現可用的瀏覽器！\n"
+
+#: src/iptux/UiHelper.cpp:151
+msgid "Information"
+msgstr "資訊"
+
+#: src/iptux/UiHelper.cpp:174
+msgid "Warning"
+msgstr "警告"
 
 #: src/iptux/dialog.cpp:36
 msgid ""
@@ -561,18 +1067,14 @@ msgstr ""
 msgid "Confirm Exit"
 msgstr "確認退出"
 
-#: src/iptux/dialog.cpp:59 src/iptux/MainWindow.cpp:990
-#: src/iptux/DialogPeer.cpp:344
+#: src/iptux/dialog.cpp:59 src/iptux/resources/gtk/menus.ui:83
+#: src/iptux/resources/gtk/menus.ui:141
 msgid "Request Shared Resources"
 msgstr "請求共享資源"
 
 #: src/iptux/dialog.cpp:62
 msgid "Agree"
 msgstr "允許"
-
-#: src/iptux/dialog.cpp:63 src/iptux/DialogPeer.cpp:663
-msgid "Refuse"
-msgstr "拒絕"
 
 #: src/iptux/dialog.cpp:78
 #, c-format
@@ -631,470 +1133,125 @@ msgstr ""
 msgid "Please select a folder to save files."
 msgstr "請選擇一個聲音檔案"
 
-#: src/iptux/UiHelper.cpp:45
-msgid "Can't find any available web browser!\n"
-msgstr "未發現可用的瀏覽器！\n"
+#: src/iptux/resources/gtk/menus.ui:17
+msgid "_File"
+msgstr "檔案(_F)"
 
-#: src/iptux/UiHelper.cpp:151
-msgid "Information"
-msgstr "資訊"
+#: src/iptux/resources/gtk/menus.ui:23
+msgid "_Find"
+msgstr "尋找(_F)"
 
-#: src/iptux/UiHelper.cpp:174
-msgid "Warning"
-msgstr "警告"
-
-#: src/iptux/UiHelper.cpp:196
-msgid "Error"
-msgstr "錯誤"
-
-#: src/iptux/TransWindow.cpp:55
-msgid "Files Transmission Management"
-msgstr "檔案傳輸管理器"
-
-#: src/iptux/TransWindow.cpp:213
-msgid "State"
-msgstr "狀態"
-
-#: src/iptux/TransWindow.cpp:220
-msgid "Task"
-msgstr "任務"
-
-#: src/iptux/TransWindow.cpp:227
-msgid "Peer"
-msgstr "好友"
-
-#: src/iptux/TransWindow.cpp:234 src/iptux/MainWindow.cpp:831
-msgid "IPv4"
-msgstr "IPv4"
-
-#: src/iptux/TransWindow.cpp:241
-msgid "Filename"
-msgstr "檔案名"
-
-#: src/iptux/TransWindow.cpp:255
-msgid "Completed"
-msgstr "已完成"
-
-#: src/iptux/TransWindow.cpp:262
-msgid "Progress"
-msgstr "進度"
-
-#: src/iptux/TransWindow.cpp:270
-msgid "Cost"
-msgstr "花費時間"
-
-#: src/iptux/TransWindow.cpp:277
-msgid "Remaining"
-msgstr "剩餘時間"
-
-#: src/iptux/TransWindow.cpp:284
-msgid "Rate"
-msgstr "速率"
-
-#: src/iptux/TransWindow.cpp:311
-msgid "The path you want to open not exist!"
+#: src/iptux/resources/gtk/menus.ui:28
+msgid "_View"
 msgstr ""
 
-#: src/iptux/TransWindow.cpp:403
-msgid "Open This File"
-msgstr "打開此文件"
+#: src/iptux/resources/gtk/menus.ui:31
+msgid "Sort"
+msgstr "排序"
 
-#: src/iptux/TransWindow.cpp:409
-msgid "Open Containing Folder"
-msgstr "打開所在的文件夾"
+#: src/iptux/resources/gtk/menus.ui:34
+msgid "By Nickname"
+msgstr "依暱稱"
 
-#: src/iptux/TransWindow.cpp:415
-msgid "Terminate Task"
-msgstr "終止任務"
+#: src/iptux/resources/gtk/menus.ui:39
+msgid "By IP"
+msgstr "依 IP"
 
-#: src/iptux/TransWindow.cpp:421
-msgid "Terminate All"
-msgstr "終止所有"
+#: src/iptux/resources/gtk/menus.ui:46
+msgid "Ascending"
+msgstr "升冪"
 
-#: src/iptux/TransWindow.cpp:426
-msgid "Clear Tasklist"
-msgstr "清理任務"
+#: src/iptux/resources/gtk/menus.ui:51
+msgid "Descending"
+msgstr "降冪"
 
-#: src/iptux/TransWindow.cpp:452
-msgid "The file you want to open not exist!"
+#: src/iptux/resources/gtk/menus.ui:58
+msgid "_Refresh"
 msgstr ""
 
-#: src/iptux/TransWindow.cpp:453
+#: src/iptux/resources/gtk/menus.ui:65
+msgid "_Chat"
+msgstr ""
+
+#: src/iptux/resources/gtk/menus.ui:68
+msgid "Insert Picture"
+msgstr "插入圖片"
+
+#: src/iptux/resources/gtk/menus.ui:73
+msgid "Attach File"
+msgstr "新增檔案"
+
+#: src/iptux/resources/gtk/menus.ui:77
+msgid "Attach Folder"
+msgstr "新增目錄"
+
+#: src/iptux/resources/gtk/menus.ui:87
 #, fuzzy
-msgid "iptux Error"
-msgstr "錯誤"
+msgid "Clear Chat History"
+msgstr "聊天記錄"
 
-#: src/iptux/RevisePal.cpp:99
-msgid "Change Pal's Information"
-msgstr "更改好友資訊"
+#: src/iptux/resources/gtk/menus.ui:94
+#, fuzzy
+msgid "Close Chat"
+msgstr "關閉"
 
-#: src/iptux/RevisePal.cpp:127
-msgid "Pal's nickname:"
-msgstr "好友暱稱:"
+#: src/iptux/resources/gtk/menus.ui:100
+msgid "_Window"
+msgstr ""
 
-#: src/iptux/RevisePal.cpp:133
-msgid "Please input pal's new nickname!"
-msgstr "請輸入好友的新暱稱！"
+#: src/iptux/resources/gtk/menus.ui:111
+msgid "_Chat Log"
+msgstr ""
 
-#: src/iptux/RevisePal.cpp:139
-msgid "Pal's group name:"
-msgstr "好友群組名稱:"
-
-#: src/iptux/RevisePal.cpp:145
-msgid "Please input pal's new group name!"
-msgstr "請輸入好友的新群組名稱！"
-
-#: src/iptux/RevisePal.cpp:151
-msgid "System coding:"
+#: src/iptux/resources/gtk/menus.ui:115
+#, fuzzy
+msgid "_System Log"
 msgstr "系統編碼:"
 
-#: src/iptux/RevisePal.cpp:157
-msgid "Be SURE to know what you are doing!"
-msgstr "你最好明白你到底在做些什麼！"
+#: src/iptux/resources/gtk/menus.ui:121
+msgid "_Help"
+msgstr "幫助(_H)"
 
-#: src/iptux/RevisePal.cpp:163
-msgid "Pal's face picture:"
-msgstr "好友頭像:"
+#: src/iptux/resources/gtk/menus.ui:124
+msgid "_About"
+msgstr ""
 
-#: src/iptux/RevisePal.cpp:177
-msgid "Be compatible with iptux's protocol (DANGEROUS)"
-msgstr "相容 iptux 擴展協議(危險)"
+#: src/iptux/resources/gtk/menus.ui:128
+msgid "Report Bug"
+msgstr ""
 
-#: src/iptux/MainWindow.cpp:614
-msgid "Pals Online: 0"
-msgstr "線上好友: 0"
-
-#: src/iptux/MainWindow.cpp:698
-msgid "Search Pals"
-msgstr "搜尋好友"
-
-#: src/iptux/MainWindow.cpp:814
-msgid "Nickname"
-msgstr "暱稱"
-
-#: src/iptux/MainWindow.cpp:825
-msgid "Group"
-msgstr "群組名稱"
-
-#: src/iptux/MainWindow.cpp:837
-msgid "User"
-msgstr "用戶"
-
-#: src/iptux/MainWindow.cpp:843
-msgid "Host"
-msgstr "主機"
-
-#: src/iptux/MainWindow.cpp:968
+#: src/iptux/resources/gtk/menus.ui:137
 msgid "Send Message"
 msgstr "傳送訊息"
 
-#: src/iptux/MainWindow.cpp:1004
-msgid "Change Info."
+#: src/iptux/resources/gtk/menus.ui:145
+#, fuzzy
+msgid "Change Info"
 msgstr "更改資訊"
 
-#: src/iptux/MainWindow.cpp:1019
+#: src/iptux/resources/gtk/menus.ui:149
 msgid "Delete Pal"
 msgstr "刪除好友"
 
-#: src/iptux/MainWindow.cpp:1040
-#, fuzzy, c-format
-msgid "Version: %s"
-msgstr "版本: %s\n"
-
-#: src/iptux/MainWindow.cpp:1043
-#, fuzzy, c-format
-msgid "Nickname: %s@%s"
-msgstr "暱稱: %s@%s\n"
-
-#: src/iptux/MainWindow.cpp:1045
-#, fuzzy, c-format
-msgid "Nickname: %s"
-msgstr "暱稱: %s\n"
-
-#: src/iptux/MainWindow.cpp:1047
-#, fuzzy, c-format
-msgid "User: %s"
-msgstr "用戶: %s\n"
-
-#: src/iptux/MainWindow.cpp:1048
-#, fuzzy, c-format
-msgid "Host: %s"
-msgstr "主機: %s\n"
-
-#: src/iptux/MainWindow.cpp:1052
-#, fuzzy, c-format
-msgid "Address: %s(%s)"
-msgstr "位址: %s(%s)\n"
-
-#: src/iptux/MainWindow.cpp:1054
-#, fuzzy, c-format
-msgid "Address: %s"
-msgstr "位址: %s\n"
-
-#: src/iptux/MainWindow.cpp:1058
-#, fuzzy
-msgid "Compatibility: Microsoft"
-msgstr "相容性: Microsoft\n"
-
-#: src/iptux/MainWindow.cpp:1060
-#, fuzzy
-msgid "Compatibility: GNU/Linux"
-msgstr "相容性: GNU/Linux\n"
-
-#: src/iptux/MainWindow.cpp:1062
-#, fuzzy, c-format
-msgid "System coding: %s"
-msgstr "系統編碼: %s\n"
-
-#: src/iptux/MainWindow.cpp:1066
-#, fuzzy
-msgid "Signature:"
-msgstr "個性簽名:\n"
-
-#: src/iptux/MainWindow.cpp:1106
-#, c-format
-msgid "Pals Online: %<PRIu32>"
-msgstr "線上好友: %<PRIu32>"
-
-#: src/iptux/DetectPal.cpp:51
-#, c-format
-msgid "The notification has been sent to %s."
-msgstr "訊息已經傳送到%s。"
-
-#: src/iptux/DialogPeer.cpp:198
-#, fuzzy, c-format
-msgid "Talk with %s(%s) IP:%s"
-msgstr "與%s對話"
-
-#: src/iptux/DialogPeer.cpp:292
-msgid "Info."
-msgstr "資訊"
-
-#: src/iptux/DialogPeer.cpp:377
-#, c-format
-msgid "Version: %s\n"
-msgstr "版本: %s\n"
-
-#: src/iptux/DialogPeer.cpp:381
-#, c-format
-msgid "Nickname: %s@%s\n"
-msgstr "暱稱: %s@%s\n"
-
-#: src/iptux/DialogPeer.cpp:383
-#, c-format
-msgid "Nickname: %s\n"
-msgstr "暱稱: %s\n"
-
-#: src/iptux/DialogPeer.cpp:386
-#, c-format
-msgid "User: %s\n"
-msgstr "用戶: %s\n"
-
-#: src/iptux/DialogPeer.cpp:389
-#, c-format
-msgid "Host: %s\n"
-msgstr "主機: %s\n"
-
-#: src/iptux/DialogPeer.cpp:394
-#, c-format
-msgid "Address: %s(%s)\n"
-msgstr "位址: %s(%s)\n"
-
-#: src/iptux/DialogPeer.cpp:396
-#, c-format
-msgid "Address: %s\n"
-msgstr "位址: %s\n"
-
-#: src/iptux/DialogPeer.cpp:400
-msgid "Compatibility: Microsoft\n"
-msgstr "相容性: Microsoft\n"
-
-#: src/iptux/DialogPeer.cpp:402
-msgid "Compatibility: GNU/Linux\n"
-msgstr "相容性: GNU/Linux\n"
-
-#: src/iptux/DialogPeer.cpp:406
-#, c-format
-msgid "System coding: %s\n"
-msgstr "系統編碼: %s\n"
-
-#: src/iptux/DialogPeer.cpp:410
-msgid "Signature:\n"
-msgstr "個性簽名:\n"
-
-#: src/iptux/DialogPeer.cpp:417
-msgid ""
-"\n"
-"Photo:\n"
-msgstr ""
-"\n"
-"個人頭象:\n"
-
-#: src/iptux/DialogPeer.cpp:577
-msgid "Please select a picture to insert the buffer"
-msgstr "請選擇插入緩衝區的圖片"
-
-#: src/iptux/DialogPeer.cpp:606
-#, fuzzy
-msgid "Enclosure."
-msgstr "附件"
-
-#: src/iptux/DialogPeer.cpp:651
-msgid "File to be receive."
-msgstr ""
-
-#: src/iptux/DialogPeer.cpp:655
-msgid "Receiving progress."
-msgstr ""
-
-#: src/iptux/DialogPeer.cpp:658
-msgid "Accept"
-msgstr "接受"
-
-#: src/iptux/DialogPeer.cpp:697
-#, fuzzy
-msgid "File received."
-msgstr "收到訊息"
-
-#: src/iptux/DialogPeer.cpp:739 src/iptux/DialogPeer.cpp:796
-msgid "Source"
-msgstr "來源"
-
-#: src/iptux/DialogPeer.cpp:746
-msgid "SaveAs"
-msgstr ""
-
-#: src/iptux/DialogPeer.cpp:907 src/iptux/DialogPeer.cpp:971
-msgid "Receiving Progress."
-msgstr ""
-
-#: src/iptux/DialogPeer.cpp:910 src/iptux/DialogPeer.cpp:974
-#, c-format
-msgid "%s to Receive."
-msgstr ""
-
-#: src/iptux/DialogPeer.cpp:914 src/iptux/DialogPeer.cpp:978
-#, c-format
-msgid "%s Of %s Received."
-msgstr ""
-
-#: src/iptux/ShareFile.cpp:82
-msgid "Shared Files Management"
-msgstr "共享檔案管理器"
-
-#: src/iptux/ShareFile.cpp:83
-msgid "OK"
-msgstr "確定"
-
-#: src/iptux/ShareFile.cpp:83
-msgid "Apply"
-msgstr "套用"
-
-#: src/iptux/ShareFile.cpp:84
-msgid "Cancel"
-msgstr "取消"
-
-#: src/iptux/ShareFile.cpp:129
-msgid "Add Files"
-msgstr "新增檔案"
-
-#: src/iptux/ShareFile.cpp:132
-msgid "Add Folders"
-msgstr "新增目錄"
-
-#: src/iptux/ShareFile.cpp:135
-msgid "Delete Resources"
-msgstr "刪除資源"
-
-#: src/iptux/ShareFile.cpp:138
-msgid "Clear Password"
-msgstr "清除密碼"
-
-#: src/iptux/ShareFile.cpp:142
-msgid "Set Password"
-msgstr "設置密碼"
-
-#: src/iptux/ShareFile.cpp:200 src/iptux/ShareFile.cpp:344
-msgid "regular"
-msgstr "常規檔案"
-
-#: src/iptux/ShareFile.cpp:204 src/iptux/ShareFile.cpp:348
-msgid "directory"
-msgstr "目錄"
-
-#: src/iptux/ShareFile.cpp:208 src/iptux/ShareFile.cpp:352
-#: src/iptux/UiCoreThread.cpp:477
-msgid "unknown"
-msgstr "未知"
-
-#: src/iptux/ShareFile.cpp:245
-msgid "File"
-msgstr "檔案"
-
-#: src/iptux/ShareFile.cpp:261
-msgid "Type"
-msgstr "類型"
-
-#: src/iptux/ShareFile.cpp:387
-msgid "Choose the files to share"
-msgstr "選擇共享檔案"
-
-#: src/iptux/ShareFile.cpp:390
-msgid "Choose the folders to share"
-msgstr "選擇共享目錄"
-
-#: src/iptux/UiCoreThread.cpp:344 src/iptux/UiCoreThread.cpp:366
-#: src/iptux/UiCoreThread.cpp:612 src/iptux/UiCoreThread.cpp:638
-msgid "Others"
-msgstr "其他"
-
-#: src/iptux/UiCoreThread.cpp:491
-msgid "<ERROR>"
-msgstr "<錯誤>"
-
-#: src/iptux/UiCoreThread.cpp:661
-msgid "Broadcast"
-msgstr "廣播"
-
-#: src/iptux/Application.cpp:36
-msgid "Loading the process successfully!"
-msgstr "程序載入成功！"
-
-#: src/iptux/HelpDialog.cpp:52
-msgid "TRANSLATOR NAME"
-msgstr ""
-
-#: src/iptux/HelpDialog.cpp:66
-msgid "Thanks to"
-msgstr ""
-
-#: src/iptux/DialogGroup.cpp:205
-#, c-format
-msgid "Talk with the group %s"
-msgstr "與%s組對話"
-
-#: src/iptux/DialogGroup.cpp:285
-msgid "Member"
-msgstr "成員"
-
-#: src/iptux/DialogGroup.cpp:383
-msgid "Pals"
-msgstr "好友"
-
-#: src/iptux-utils/utils.cpp:794
-#, fuzzy, c-format
-msgid "stat file \"%s\" failed: %s"
-msgstr "查看檔案\"%s\"狀態失敗，%s\n"
-
-#: src/iptux-utils/utils.cpp:801
-#, c-format
-msgid "path %s is not file or directory: st_mode(%x)"
-msgstr ""
-
-#: src/iptux-utils/utils.cpp:808
-#, fuzzy, c-format
-msgid "opendir on \"%s\" failed: %s"
-msgstr "打開目錄\"%s\"失敗，%s"
+#: src/iptux/resources/gtk/menus.ui:157
+msgid "Open This File"
+msgstr "打開此文件"
+
+#: src/iptux/resources/gtk/menus.ui:161
+msgid "Open Containing Folder"
+msgstr "打開所在的文件夾"
+
+#: src/iptux/resources/gtk/menus.ui:165
+msgid "Terminate Task"
+msgstr "終止任務"
+
+#: src/iptux/resources/gtk/menus.ui:169
+msgid "Terminate All"
+msgstr "終止所有"
+
+#: src/iptux/resources/gtk/menus.ui:173
+msgid "Clear Tasklist"
+msgstr "清理任務"
 
 #: src/main/iptux.cpp:151
 msgid "- A software for sharing in LAN"
@@ -1105,142 +1262,11 @@ msgstr ""
 msgid "option parsing failed: %s\n"
 msgstr "打開目錄\"%s\"失敗，%s"
 
-#: src/iptux-core/internal/CommandMode.cpp:37
-#, c-format
-msgid "unknown command mode: %d"
-msgstr ""
+#~ msgid "_Tools"
+#~ msgstr "工具(_T)"
 
-#: src/iptux-core/internal/Command.cpp:218
-msgid "Your pal didn't receive the packet. He or she is offline maybe."
-msgstr "你的好友沒有收到傳送的資料，他可能已經下線。"
-
-#: src/iptux-core/internal/SendFileData.cpp:99
-msgid "send"
-msgstr "傳送"
-
-#: src/iptux-core/internal/SendFileData.cpp:106
-#: src/iptux-core/internal/SendFileData.cpp:189
-#: src/iptux-core/internal/RecvFileData.cpp:121
-#: src/iptux-core/internal/RecvFileData.cpp:244
-#, fuzzy
-msgid "Unknown"
-msgstr "未知"
-
-#: src/iptux-core/internal/SendFileData.cpp:133
-#, c-format
-msgid "Failed to send the file \"%s\" to %s!"
-msgstr "傳送檔案\"%s\"到%s失敗！"
-
-#: src/iptux-core/internal/SendFileData.cpp:138
-#, c-format
-msgid "Send the file \"%s\" to %s successfully!"
-msgstr "傳送檔案\"%s\"到%s成功！"
-
-#: src/iptux-core/internal/SendFileData.cpp:257
-#, c-format
-msgid "Failed to send the directory \"%s\" to %s!"
-msgstr "傳送目錄\"%s\"到%s失敗！"
-
-#: src/iptux-core/internal/SendFileData.cpp:262
-#, c-format
-msgid "Send the directory \"%s\" to %s successfully!"
-msgstr "傳送目錄\"%s\"到%s失敗！"
-
-#: src/iptux-core/internal/AnalogFS.cpp:91
-#: src/iptux-core/internal/AnalogFS.cpp:96
-#, c-format
-msgid "Open() file \"%s\" failed, %s"
-msgstr "打開檔案\"%s\"失敗，%s"
-
-#: src/iptux-core/internal/AnalogFS.cpp:115
-#, c-format
-msgid "Stat64() file \"%s\" failed, %s"
-msgstr "獲取檔案\"%s\"狀態失敗，%s"
-
-#: src/iptux-core/internal/AnalogFS.cpp:135
-#, c-format
-msgid "Mkdir() directory \"%s\" failed, %s"
-msgstr "建立目錄\"%s\"失敗，%s"
-
-#: src/iptux-core/internal/AnalogFS.cpp:161
-#, c-format
-msgid "Opendir() directory \"%s\" failed, %s"
-msgstr "打開目錄\"%s\"失敗，%s"
-
-#: src/iptux-core/internal/RecvFileData.cpp:114
-msgid "receive"
-msgstr "接收"
-
-#: src/iptux-core/internal/RecvFileData.cpp:139
-#: src/iptux-core/internal/RecvFileData.cpp:198
-#: src/iptux-core/CoreThread.cpp:475 src/iptux-core/CoreThread.cpp:508
-#, c-format
-msgid ""
-"Fatal Error!!\n"
-"Failed to create new socket!\n"
-"%s"
-msgstr ""
-"致命錯誤！！\n"
-"建立新的連接失敗！\n"
-"%s"
-
-#: src/iptux-core/internal/RecvFileData.cpp:171
-#, fuzzy, c-format
-msgid ""
-"Failed to receive the file \"%s\" from %s! expect length %d, received %d"
-msgstr "接收檔案\"%s\"來自%s失敗！"
-
-#: src/iptux-core/internal/RecvFileData.cpp:174
-#, c-format
-msgid "Receive the file \"%s\" from %s successfully!"
-msgstr "接收檔案\"%s\"來自%s成功！"
-
-#: src/iptux-core/internal/RecvFileData.cpp:307
-#, c-format
-msgid "Failed to receive the directory \"%s\" from %s!"
-msgstr "接收目錄\"%s\"來自%s失敗！"
-
-#: src/iptux-core/internal/RecvFileData.cpp:310
-#, c-format
-msgid "Receive the directory \"%s\" from %s successfully!"
-msgstr "接收目錄\"%s\"來自%s成功！"
-
-#: src/iptux-core/internal/UdpData.cpp:151
-#: src/iptux-core/internal/UdpData.cpp:152
-#: src/iptux-core/internal/UdpData.cpp:495
-#: src/iptux-core/internal/UdpData.cpp:534
-msgid "mysterious"
-msgstr "神秘訪客"
-
-#: src/iptux-core/CoreThread.cpp:172
-#, fuzzy, c-format
-msgid ""
-"Fatal Error!! Failed to create new socket!\n"
-"%s"
-msgstr ""
-"致命錯誤！！\n"
-"建立新的連接失敗！\n"
-"%s"
-
-#: src/iptux-core/CoreThread.cpp:188
-#, fuzzy, c-format
-msgid ""
-"Fatal Error!! Failed to bind the TCP port(%s:%d)!\n"
-"%s"
-msgstr ""
-"致命錯誤！！\n"
-"連接TCP/UDP端口(2425)失敗！\n"
-"%s"
-
-#: src/iptux-core/CoreThread.cpp:200
-#, fuzzy, c-format
-msgid ""
-"Fatal Error!! Failed to bind the UDP port(%s:%d)!\n"
-"%s"
-msgstr ""
-"致命錯誤！！\n"
-"連接TCP/UDP端口(2425)失敗！\n"
-"%s"
+#~ msgid "Error"
+#~ msgstr "錯誤"
 
 #, fuzzy
 #~ msgid "iptux-icon"

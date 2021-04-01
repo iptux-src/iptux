@@ -24,8 +24,14 @@ class LogSystem {
   explicit LogSystem(std::shared_ptr<const ProgramData> programData);
   ~LogSystem();
 
-  void CommunicateLog(MsgPara *msgpara, const char *fmt, va_list args);
-  void SystemLog(const char *fmt, va_list args);
+  void communicateLog(const MsgPara* msgpara, const char* fmt, ...)
+      G_GNUC_PRINTF(3, 4);
+  void systemLog(const char* fmt, ...) G_GNUC_PRINTF(2, 3);
+  void communicateLogv(const MsgPara* msgpara, const char* fmt, va_list args);
+  void systemLogv(const char* fmt, va_list args);
+
+  std::string getChatLogPath() const;
+  std::string getSystemLogPath() const;
 
  private:
   std::shared_ptr<const ProgramData> programData;

@@ -17,9 +17,10 @@
 
 #include <cstring>
 
-#include "iptux-utils/utils.h"
-#include "iptux-core/internal/TransAbstract.h"
 #include "iptux-core/Exception.h"
+#include "iptux-core/internal/Command.h"
+#include "iptux-core/internal/TransAbstract.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -35,58 +36,22 @@ RecvFile::RecvFile() {}
  */
 RecvFile::~RecvFile() {}
 
-FileInfo * DivideFileinfo(char **extra);
+FileInfo* DivideFileinfo(char** extra);
 
 /**
  * 文件接受入口.
  * @param para 文件参数
  */
 void RecvFile::RecvEntry(CoreThread* coreThread,
-  PPalInfo pal,
-  const std::string extra,
-  int packetno)
-{
-  auto extra2 = g_strdup(extra.c_str());
-  auto extra3 = extra2;
-
-  while (extra3 && *extra3) {
-    auto file = iptux::DivideFileinfo(&extra3);
-    file->packetn = packetno;
-    file->fileown = pal;
-    coreThread->emitEvent(make_shared<NewShareFileFromFriendEvent>(*file));
-    delete file;
+                         PPalInfo pal,
+                         const std::string extra,
+                         int packetno) {
+  auto fileInfos = Command::decodeFileInfos(extra);
+  for (auto fileInfo : fileInfos) {
+    fileInfo.packetn = packetno;
+    fileInfo.fileown = pal;
+    coreThread->emitEvent(make_shared<NewShareFileFromFriendEvent>(fileInfo));
   }
-  g_free(extra2);
-}
-
-/**
- * 从文件信息串中分离出文件信息数据.
- * @param extra 文件信息串
- * @return 文件信息数据
- */
-FileInfo * DivideFileinfo(char **extra) {
-  FileInfo *file;
-
-  file = new FileInfo;
-  file->fileid = iptux_get_dec_number(*extra, ':', 0);
-  file->fileattr = FileAttr(iptux_get_hex_number(*extra, ':', 4));
-  file->filesize = iptux_get_hex64_number(*extra, ':', 2);
-  file->filepath = ipmsg_get_filename(*extra, ':', 1);
-  file->filectime = iptux_get_hex_number(*extra, ':', 3);
-  file->finishedsize = 0;
-
-  if(!FileAttrIsValid(file->fileattr)) {
-    throw Exception(INVALID_FILE_ATTR);
-  }
-
-  //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
-  *extra = strchr(*extra, '\a');
-  if (*extra)  //跳过'\a'字符
-    (*extra)++;
-  if (*extra && (**extra == ':'))  //跳过可能存在的':'字符
-    (*extra)++;
-
-  return file;
 }
 
 }  // namespace iptux

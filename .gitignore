@@ -122,3 +122,4 @@ coverage.info
 /vs
 .vscode/tasks.json
 .DS_Store
+meson-cmake-wrapper.log

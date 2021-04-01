@@ -12,12 +12,12 @@
 #ifndef IPTUX_COMMAND_H
 #define IPTUX_COMMAND_H
 
-#include <string>
 #include <istream>
+#include <string>
 
-#include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/Models.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
+#include "iptux-core/internal/ipmsg.h"
 
 namespace iptux {
 
@@ -38,37 +38,63 @@ class Command {
   void SendExit(int sock, CPPalInfo pal);
   void SendAbsence(int sock, CPPalInfo pal);
   void SendDetectPacket(int sock, in_addr ipv4);
-  void SendMessage(int sock, CPPalInfo pal, const char *msg);
+  void SendMessage(int sock, CPPalInfo pal, const char* msg);
   void SendReply(int sock, CPPalInfo pal, uint32_t packetno);
   void SendReply(int sock, const PalKey& pal, uint32_t packetno);
-  void SendGroupMsg(int sock, CPPalInfo pal, const char *msg);
-  void SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype, const char *msg);
+  void SendGroupMsg(int sock, CPPalInfo pal, const char* msg);
+  void SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype, const char* msg);
 
-  bool SendAskData(int sock, CPPalInfo pal, uint32_t packetno, uint32_t fileid,
+  bool SendAskData(int sock,
+                   CPPalInfo pal,
+                   uint32_t packetno,
+                   uint32_t fileid,
                    int64_t offset);
-  bool SendAskData(int sock, const PalKey& pal, uint32_t packetno, uint32_t fileid,
+  bool SendAskData(int sock,
+                   const PalKey& pal,
+                   uint32_t packetno,
+                   uint32_t fileid,
                    int64_t offset);
-  bool SendAskFiles(int sock, CPPalInfo pal, uint32_t packetno, uint32_t fileid);
-  bool SendAskFiles(int sock, const PalKey& pal, uint32_t packetno, uint32_t fileid);
-  void SendAskShared(int sock, CPPalInfo pal, uint32_t opttype,
-                     const char *attach);
-  void SendAskShared(int sock, const PalKey& pal, uint32_t opttype,
-                     const char *attach);
-  void SendFileInfo(int sock, CPPalInfo pal, uint32_t opttype,
-                    const char *extra);
-  void SendFileInfo(int sock, const PalKey& pal, uint32_t opttype,
-                    const char *extra);
+  bool SendAskFiles(int sock,
+                    CPPalInfo pal,
+                    uint32_t packetno,
+                    uint32_t fileid);
+  bool SendAskFiles(int sock,
+                    const PalKey& pal,
+                    uint32_t packetno,
+                    uint32_t fileid);
+  void SendAskShared(int sock,
+                     CPPalInfo pal,
+                     uint32_t opttype,
+                     const char* attach);
+  void SendAskShared(int sock,
+                     const PalKey& pal,
+                     uint32_t opttype,
+                     const char* attach);
+  void SendFileInfo(int sock,
+                    CPPalInfo pal,
+                    uint32_t opttype,
+                    const char* extra);
+  void SendFileInfo(int sock,
+                    const PalKey& pal,
+                    uint32_t opttype,
+                    const char* extra);
   void SendMyIcon(int sock, CPPalInfo pal, std::istream& iss);
   void SendMySign(int sock, CPPalInfo pal);
-  void SendSublayer(int sock, CPPalInfo pal, uint32_t opttype, const char *path);
+  void SendSublayer(int sock,
+                    CPPalInfo pal,
+                    uint32_t opttype,
+                    const char* path);
+
+  static std::string encodeFileInfo(const FileInfo& fileInfo);
+  static std::vector<FileInfo> decodeFileInfos(const std::string& s);
 
  private:
-  void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char *error);
+  void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
   void SendSublayerData(int sock, int fd);
-  void ConvertEncode(const std::string &encode);
-  void CreateCommand(uint32_t command, const char *attach);
-  void CreateIpmsgExtra(const char *extra, const char *encode);
-  void CreateIptuxExtra(const std::string &encode);
+  void ConvertEncode(const std::string& encode);
+  void CreateCommand(uint32_t command, const char* attach);
+  void CreateIpmsgExtra(const char* extra, const char* encode);
+  void CreateIptuxExtra(const std::string& encode);
   void CreateIconExtra(std::istream& iss);
 
  private:
@@ -78,7 +104,7 @@ class Command {
   static uint32_t packetn;  //包编号
 
  public:
-  inline uint32_t &Packetn() { return packetn; }
+  inline uint32_t& Packetn() { return packetn; }
 };
 
 }  // namespace iptux

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "iptux/TransWindow.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/TransWindow.h"
 
 using namespace std;
 using namespace iptux;

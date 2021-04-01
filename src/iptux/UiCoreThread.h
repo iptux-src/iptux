@@ -18,11 +18,13 @@
 #define IPTUX_UICORETHREAD_H
 
 #include <queue>
+#include <sigc++/signal.h>
 
-#include "iptux/UiProgramData.h"
-#include "iptux-core/Models.h"
-#include "iptux/UiModels.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
+#include "iptux/Application.h"
+#include "iptux/UiModels.h"
+#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -36,81 +38,67 @@ class LogSystem;
  * 若此特性不可被如此利用，请报告bug. \n
  * @note 如果本程序编码中的某处没有遵循以上规则，请报告bug.
  */
-class UiCoreThread: public CoreThread {
+class UiCoreThread : public CoreThread {
  public:
-  explicit UiCoreThread(std::shared_ptr<UiProgramData> data);
-  ~UiCoreThread() override ;
+  UiCoreThread(Application* app, std::shared_ptr<UiProgramData> data);
+  ~UiCoreThread() override;
 
   std::shared_ptr<UiProgramData> getUiProgramData();
 
-  void start() override;
+  void InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para);
 
-  void InsertMessage(const MsgPara& para);
-  void InsertMessage(MsgPara&& para);
+  void ClearAllPalFromList() override;
+  void DelPalFromList(PalKey palKey) override;
+  void UpdatePalToList(PalKey palKey) override;
 
-  void InsertMsgToGroupInfoItem(GroupInfo *grpinf, MsgPara *para);
+  void AttachPalToList(std::shared_ptr<PalInfo> pal) override;
+  GroupInfo* GetPalRegularItem(const PalInfo* pal);
+  GroupInfo* GetPalSegmentItem(const PalInfo* pal);
+  GroupInfo* GetPalGroupItem(const PalInfo* pal);
+  GroupInfo* GetPalBroadcastItem(const PalInfo* pal);
 
-  void ClearAllPalFromList() override ;
-  void DelPalFromList(PalKey palKey) override ;
-  void UpdatePalToList(PalKey palKey) override ;
-  void AttachPalToList(PalInfo *pal) override ;
-  void AttachPalToList(std::shared_ptr<PalInfo> pal) override ;
-  GroupInfo *GetPalRegularItem(PalInfo *pal);
-  GroupInfo *GetPalSegmentItem(PalInfo *pal);
-  GroupInfo *GetPalGroupItem(PalInfo *pal);
-  GroupInfo *GetPalBroadcastItem(PalInfo *pal);
+  GSList* GetPalEnclosure(PalInfo* pal);
+  void PushItemToEnclosureList(FileInfo* file);
+  void PopItemFromEnclosureList(FileInfo* file);
 
-  guint GetMsglineItems();
-  GroupInfo *GetMsglineHeadItem();
-  bool MsglineContainItem(GroupInfo *grpinf);
-  void PushItemToMsgline(GroupInfo *grpinf);
-  void PopItemFromMsgline(GroupInfo *grpinf);
+  LogSystem* getLogSystem() { return logSystem; }
 
-  GSList *GetPalEnclosure(PalInfo *pal);
-  void PushItemToEnclosureList(FileInfo *file);
-  void PopItemFromEnclosureList(FileInfo *file);
-
-  void CommunicateLog(MsgPara *msgpara, const char *fmt, ...) const G_GNUC_PRINTF(3, 4);
-  void SystemLog(const char *fmt, ...) const G_GNUC_PRINTF(2, 3);
+ public:
+  sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
 
  private:
   void InitSublayer();
-  void ClearSublayer() override ;
+  void ClearSublayer() override;
 
-  static void InsertHeaderToBuffer(GtkTextBuffer *buffer, MsgPara *para);
-  static void InsertStringToBuffer(GtkTextBuffer *buffer, const gchar *string);
-  static void InsertPixbufToBuffer(GtkTextBuffer *buffer, const gchar *path);
+  void InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para);
+  void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* string);
+  void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path);
 
-  GroupInfo *GetPalPrevGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalRegularItem(PalInfo *pal);
-  GroupInfo *AttachPalSegmentItem(PalInfo *pal);
-  GroupInfo *AttachPalGroupItem(PalInfo *pal);
-  GroupInfo *AttachPalBroadcastItem(PalInfo *pal);
-  static void DelPalFromGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
-  static void AttachPalToGroupInfoItem(GroupInfo *grpinf, PalInfo *pal);
+  GroupInfo* GetPalPrevGroupItem(PalInfo* pal);
+  GroupInfo* AttachPalRegularItem(PPalInfo pal);
+  GroupInfo* AttachPalSegmentItem(PPalInfo pal);
+  GroupInfo* AttachPalGroupItem(PPalInfo pal);
+  GroupInfo* AttachPalBroadcastItem(PPalInfo pal);
+  static void DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal);
+  static void AttachPalToGroupInfoItem(GroupInfo* grpinf, PPalInfo pal);
+  void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
 
-private:
+ private:
   std::shared_ptr<UiProgramData> programData;
   LogSystem* logSystem;
-  guint timerid;          //定时器ID
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
-  GQueue msgline;                                 //消息队列
 
-  uint32_t pbn, prn;        //当前已使用的文件编号(共享/私有)
-  GSList *ecsList;          //文件链表(好友发过来)
+  uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
+  GSList* ecsList;    //文件链表(好友发过来)
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 
-  //回调处理部分函数
- private:
-  static gboolean WatchCoreStatus(UiCoreThread *self);
-
-    //内联成员函数
+  //内联成员函数
  public:
-  inline uint32_t &PbnQuote() { return pbn; }
+  inline uint32_t& PbnQuote() { return pbn; }
 
-  inline uint32_t &PrnQuote() { return prn; }
+  inline uint32_t& PrnQuote() { return prn; }
 };
 
 }  // namespace iptux

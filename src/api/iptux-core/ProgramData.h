@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include <glib.h>
 #include <netinet/in.h>
 
 #include "iptux-core/IptuxConfig.h"
@@ -30,7 +31,7 @@ class ProgramData {
   virtual ~ProgramData();
 
   ProgramData(const ProgramData&) = delete;
-  ProgramData&operator=(const ProgramData&) = delete;
+  ProgramData& operator=(const ProgramData&) = delete;
 
   std::shared_ptr<IptuxConfig> getConfig();
 
@@ -40,7 +41,9 @@ class ProgramData {
   const std::vector<NetSegment>& getNetSegments() const;
   void setNetSegments(std::vector<NetSegment>&& netSegments);
 
-  const std::vector<FileInfo>& GetSharedFileInfos() const { return sharedFileInfos; }
+  const std::vector<FileInfo>& GetSharedFileInfos() const {
+    return sharedFileInfos;
+  }
   std::vector<FileInfo>& GetSharedFileInfos() { return sharedFileInfos; }
   void AddShareFileInfo(FileInfo fileInfo);
   void ClearShareFileInfos();
@@ -61,8 +64,9 @@ class ProgramData {
   bool IsFilterFileShareRequest() const;
   void SetFlag(int idx, bool flag);
 
-  const std::string& GetPasswd() const {return passwd;}
-  void SetPasswd(const std::string& val) {passwd = val;}
+  const std::string& GetPasswd() const { return passwd; }
+  void SetPasswd(const std::string& val) { passwd = val; }
+  int getSendMessageRetryInUs() const { return send_message_retry_in_us; }
 
   /**
    * @brief Set the Using Blacklist object
@@ -80,17 +84,17 @@ class ProgramData {
 
   std::string codeset;  //候选编码 *
   std::string encode;   //默认通信编码 *
-  char *palicon;        //默认头像 *
-  char *font;           //面板字体 *
+  char* palicon;        //默认头像 *
+  char* font;           //面板字体 *
 
-  char *transtip;  //传输完成提示声音 *
-  char *msgtip;    //消息到来提示声音 *
+  char* transtip;  //传输完成提示声音 *
+  char* msgtip;    //消息到来提示声音 *
   double volume;   //音量控制
   uint8_t sndfgs;  // 2 传输:1 消息:0 声音
 
-  GRegex *urlregex;              // URL正则表达式
-
-  struct timeval timestamp;  //程序数据时间戳
+  struct timeval timestamp;      //程序数据时间戳
+  int send_message_retry_in_us;  // sleep time(in microsecond) when send message
+                                 // failed
 
  private:
   std::vector<NetSegment> netseg;  //需要通知登录的IP段
@@ -103,11 +107,10 @@ class ProgramData {
  private:
   void InitSublayer();
   void ReadProgData();
-  void CreateRegex();
 
   void WriteNetSegment();
   void ReadNetSegment();
 };
 }  // namespace iptux
 
-#endif //IPTUX_PROGRAMDATACORE_H
+#endif  // IPTUX_PROGRAMDATACORE_H

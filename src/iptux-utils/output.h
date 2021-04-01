@@ -16,15 +16,15 @@
 
 namespace iptux {
 
-#define LOG_DEBUG(...)                                     \
+#define LOG_DEBUG(...) \
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_DEBUG, __VA_ARGS__)
 #define LOG_INFO(...) \
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_INFO, __VA_ARGS__)
-#define LOG_WARN(...)                                        \
+#define LOG_WARN(...) \
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_WARNING, __VA_ARGS__)
-#define LOG_CRIT(...)                                         \
+#define LOG_CRIT(...) \
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_CRITICAL, __VA_ARGS__)
-#define LOG_ERROR(...)                                     \
+#define LOG_ERROR(...) \
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_ERROR, __VA_ARGS__)
 
 /* 警告信息输出 */
@@ -54,8 +54,12 @@ class Log {
   static bool IsWarnEnabled();
 };
 
-void DoLog(const char *fname, int line, const char *func, GLogLevelFlags level,
-           const char *format, ...) G_GNUC_PRINTF(5, 6);
+void DoLog(const char* fname,
+           int line,
+           const char* func,
+           GLogLevelFlags level,
+           const char* format,
+           ...) G_GNUC_PRINTF(5, 6);
 }  // namespace iptux
 
 #endif

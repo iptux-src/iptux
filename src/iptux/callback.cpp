@@ -14,11 +14,10 @@
 
 #include <string.h>
 
-#include <glib/gi18n.h>
 #include <gdk/gdk.h>
+#include <glib/gi18n.h>
 
 #include "iptux-core/Const.h"
-#include "iptux/global.h"
 #include "iptux/MainWindow.h"
 #include "iptux/StatusIcon.h"
 #include "iptux/UiHelper.h"
@@ -38,9 +37,13 @@ namespace iptux {
  * @param text text string
  * @return Gtk+库所需
  */
-gboolean entry_query_tooltip(GtkWidget */* entry */, gint /* x */, gint /* y */, gboolean /* key */,
-                             GtkTooltip *tooltip, char *text) {
-  GtkWidget *label;
+gboolean entry_query_tooltip(GtkWidget* /* entry */,
+                             gint /* x */,
+                             gint /* y */,
+                             gboolean /* key */,
+                             GtkTooltip* tooltip,
+                             char* text) {
+  GtkWidget* label;
 
   label = gtk_label_new(text);
   gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
@@ -57,10 +60,11 @@ gboolean entry_query_tooltip(GtkWidget */* entry */, gint /* x */, gint /* y */,
  * @param length the length of the new text, in bytes, or -1 if new_text is
  * nul-terminated
  */
-void entry_insert_numeric(GtkWidget *entry, gchar *text, gint length) {
+void entry_insert_numeric(GtkWidget* entry, gchar* text, gint length) {
   gint count;
 
-  if (length == -1) length = strlen(text);
+  if (length == -1)
+    length = strlen(text);
   count = 0;
   while (count < length) {
     if (!isdigit(*(text + count)) && !(*(text + count) == '.')) {
@@ -77,15 +81,13 @@ void entry_insert_numeric(GtkWidget *entry, gchar *text, gint length) {
  * @param parent parent
  * @return 文件名
  */
-gchar *choose_file_with_preview(const gchar *title, GtkWidget *parent) {
+gchar* choose_file_with_preview(const gchar* title, GtkWidget* parent) {
   GtkWidget *chooser, *preview;
-  gchar *filename;
+  gchar* filename;
 
   chooser = gtk_file_chooser_dialog_new(
-      title, GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN,
-      _("_Open"), GTK_RESPONSE_ACCEPT,
-      _("_Cancel"), GTK_RESPONSE_CANCEL,
-      NULL);
+      title, GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN, _("_Open"),
+      GTK_RESPONSE_ACCEPT, _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(chooser), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), FALSE);
@@ -120,9 +122,9 @@ gchar *choose_file_with_preview(const gchar *title, GtkWidget *parent) {
  * @param chooser a file chooser
  * @param preview preview widget
  */
-void chooser_update_preview(GtkFileChooser *chooser, GtkWidget *preview) {
-  gchar *filename;
-  GdkPixbuf *pixbuf;
+void chooser_update_preview(GtkFileChooser* chooser, GtkWidget* preview) {
+  gchar* filename;
+  GdkPixbuf* pixbuf;
 
   if (!(filename = gtk_file_chooser_get_preview_filename(chooser))) {
     gtk_file_chooser_set_preview_widget_active(chooser, FALSE);
@@ -142,10 +144,11 @@ void chooser_update_preview(GtkFileChooser *chooser, GtkWidget *preview) {
   gtk_file_chooser_set_preview_widget_active(chooser, TRUE);
 }
 
-void model_select_all(GtkTreeModel *model) {
+void model_select_all(GtkTreeModel* model) {
   GtkTreeIter iter;
 
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return;
   do {
     if (gtk_tree_model_get_flags(model) & GTK_TREE_MODEL_LIST_ONLY)
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, TRUE, -1);
@@ -154,11 +157,12 @@ void model_select_all(GtkTreeModel *model) {
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
-void model_turn_all(GtkTreeModel *model) {
+void model_turn_all(GtkTreeModel* model) {
   GtkTreeIter iter;
   gboolean active;
 
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return;
   do {
     gtk_tree_model_get(model, &iter, 0, &active, -1);
     if (gtk_tree_model_get_flags(model) & GTK_TREE_MODEL_LIST_ONLY)
@@ -168,10 +172,11 @@ void model_turn_all(GtkTreeModel *model) {
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
-void model_clear_all(GtkTreeModel *model) {
+void model_clear_all(GtkTreeModel* model) {
   GtkTreeIter iter;
 
-  if (!gtk_tree_model_get_iter_first(model, &iter)) return;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return;
   do {
     if (gtk_tree_model_get_flags(model) & GTK_TREE_MODEL_LIST_ONLY)
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, FALSE, -1);
@@ -180,11 +185,12 @@ void model_clear_all(GtkTreeModel *model) {
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
-void model_turn_select(GtkTreeModel *model, gchar *path) {
+void model_turn_select(GtkTreeModel* model, gchar* path) {
   GtkTreeIter iter;
   gboolean active;
 
-  if (!gtk_tree_model_get_iter_from_string(model, &iter, path)) return;
+  if (!gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
   gtk_tree_model_get(model, &iter, 0, &active, -1);
   if (gtk_tree_model_get_flags(model) & GTK_TREE_MODEL_LIST_ONLY)
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, !active, -1);
@@ -192,15 +198,16 @@ void model_turn_select(GtkTreeModel *model, gchar *path) {
     gtk_tree_store_set(GTK_TREE_STORE(model), &iter, 0, !active, -1);
 }
 
-void textview_follow_if_link(GtkWidget* textview, GtkTextIter *iter) {
+void textview_follow_if_link(GtkWidget* textview, GtkTextIter* iter) {
   GSList *tags, *tmp;
 
   tmp = tags = gtk_text_iter_get_tags(iter);
   while (tmp) {
-    auto tag = (GtkTextTag *)tmp->data;
+    auto tag = (GtkTextTag*)tmp->data;
     gchar* url;
-    if ((url = (gchar *)g_object_get_data(G_OBJECT(tag), "url"))) {
-      if (!gtk_show_uri_on_window(GTK_WINDOW(gtk_widget_get_toplevel(textview)), url, GDK_CURRENT_TIME, NULL)) {
+    if ((url = (gchar*)g_object_get_data(G_OBJECT(tag), "url"))) {
+      if (!gtk_show_uri_on_window(GTK_WINDOW(gtk_widget_get_toplevel(textview)),
+                                  url, GDK_CURRENT_TIME, NULL)) {
         iptux_open_url(url);
       }
       break;
@@ -210,7 +217,7 @@ void textview_follow_if_link(GtkWidget* textview, GtkTextIter *iter) {
   g_slist_free(tags);
 }
 
-void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y) {
+void textview_set_cursor_if_appropriate(GtkTextView* textview, gint x, gint y) {
   GSList *tags, *tmp;
   GtkTextIter iter;
   gboolean hovering;
@@ -219,7 +226,7 @@ void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y) {
   gtk_text_view_get_iter_at_location(textview, &iter, x, y);
   tmp = tags = gtk_text_iter_get_tags(&iter);
   while (tmp) {
-    auto tag = (GtkTextTag *)tmp->data;
+    auto tag = (GtkTextTag*)tmp->data;
     if (g_object_get_data(G_OBJECT(tag), "url")) {
       hovering = TRUE;
       break;
@@ -232,17 +239,19 @@ void textview_set_cursor_if_appropriate(GtkTextView *textview, gint x, gint y) {
                                                     "hovering-over-link"))) {
     auto window = gtk_text_view_get_window(textview, GTK_TEXT_WINDOW_TEXT);
     if (hovering) {
-      gdk_window_set_cursor(window, gdk_cursor_new_for_display(gdk_display_get_default(), GDK_HAND2));
+      gdk_window_set_cursor(window, gdk_cursor_new_for_display(
+                                        gdk_display_get_default(), GDK_HAND2));
     } else {
-      gdk_window_set_cursor(window, gdk_cursor_new_for_display(gdk_display_get_default(), GDK_XTERM));
+      gdk_window_set_cursor(window, gdk_cursor_new_for_display(
+                                        gdk_display_get_default(), GDK_XTERM));
     }
     g_object_set_data(G_OBJECT(textview), "hovering-over-link",
                       GINT_TO_POINTER(hovering));
   }
 }
 
-gboolean textview_key_press_event(GtkWidget *textview, GdkEventKey *event) {
-  GtkTextBuffer *buffer;
+gboolean textview_key_press_event(GtkWidget* textview, GdkEventKey* event) {
+  GtkTextBuffer* buffer;
   GtkTextIter iter;
   gint position;
 
@@ -261,21 +270,24 @@ gboolean textview_key_press_event(GtkWidget *textview, GdkEventKey *event) {
   return FALSE;
 }
 
-void textview_event_after(GtkWidget *textview, GdkEvent *ev) {
-  GtkTextBuffer *buffer;
-  GdkEventButton *event;
+void textview_event_after(GtkWidget* textview, GdkEvent* ev) {
+  GtkTextBuffer* buffer;
+  GdkEventButton* event;
   GtkTextIter iter;
   gboolean selected;
   gint x, y;
 
-  if (ev->type != GDK_BUTTON_RELEASE) return;
-  event = (GdkEventButton *)ev;
-  if (event->button != 1) return;
+  if (ev->type != GDK_BUTTON_RELEASE)
+    return;
+  event = (GdkEventButton*)ev;
+  if (event->button != 1)
+    return;
 
   /* we shouldn't follow a link if the user has selected something */
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
   g_object_get(buffer, "has-selection", &selected, NULL);
-  if (selected) return;
+  if (selected)
+    return;
 
   gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
                                         GTK_TEXT_WINDOW_WIDGET, event->x,
@@ -284,8 +296,8 @@ void textview_event_after(GtkWidget *textview, GdkEvent *ev) {
   textview_follow_if_link(textview, &iter);
 }
 
-gboolean textview_motion_notify_event(GtkWidget *textview,
-                                      GdkEventMotion *event) {
+gboolean textview_motion_notify_event(GtkWidget* textview,
+                                      GdkEventMotion* event) {
   gint x, y;
 
   gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(textview),
@@ -296,8 +308,8 @@ gboolean textview_motion_notify_event(GtkWidget *textview,
   return FALSE;
 }
 
-gboolean textview_visibility_notify_event(GtkWidget *textview,
-                                          GdkEventVisibility *) {
+gboolean textview_visibility_notify_event(GtkWidget* textview,
+                                          GdkEventVisibility*) {
   gint wx, wy, bx, by;
 
   auto window = gtk_widget_get_window(textview);

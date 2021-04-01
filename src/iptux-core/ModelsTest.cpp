@@ -21,28 +21,22 @@ TEST(PalKey, CopyConstructor) {
 TEST(NetSegment, ContainIP) {
   NetSegment netSegment("1.2.3.4", "1.2.4.5", "");
 
-  vector<string> ips = {
-    "1.2.3.4",
-    "1.2.4.5",
-    "1.2.3.255",
-    "1.2.4.0",
-    "1.2.3.5",
-    "1.2.4.4"
-  };
+  vector<string> ips = {"1.2.3.4", "1.2.4.5", "1.2.3.255",
+                        "1.2.4.0", "1.2.3.5", "1.2.4.4"};
 
-  for (const string& ip: ips) {
+  for (const string& ip : ips) {
     in_addr ip1;
     ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1.s_addr), 1) << ip;
     ASSERT_TRUE(netSegment.ContainIP(ip1));
   }
 
   vector<string> ips2 = {
-    "1.2.3.3",
-    "1.2.4.6",
-    "0.0.0.0",
-    "100.100.100.100",
+      "1.2.3.3",
+      "1.2.4.6",
+      "0.0.0.0",
+      "100.100.100.100",
   };
-  for (const string& ip: ips2) {
+  for (const string& ip : ips2) {
     in_addr ip1;
     ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1), 1) << ip;
     ASSERT_FALSE(netSegment.ContainIP(ip1));
@@ -60,4 +54,3 @@ TEST(FileAttr, Convert) {
   EXPECT_EQ(FileAttr(3), FileAttr(3));
   EXPECT_EQ(FileAttr(-1), FileAttr(-1));
 }
-

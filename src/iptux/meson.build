@@ -3,6 +3,7 @@ jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
 glog_dep = dependency('libglog')
 gflags_dep = dependency('gflags')
+sigc_dep = dependency('sigc++-2.0')
 
 sources = files([
     'Application.cpp',
@@ -11,6 +12,7 @@ sources = files([
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
+    'EventAdaptor.cpp',
     'HelpDialog.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
@@ -61,9 +63,9 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 # )
 
 sources += [iptux_resource_cpp, iptux_resource_h]
-inc = include_directories('..')
+inc = include_directories('..', '../api')
 
-dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep, gflags_dep]
+dependencies = [gtk_dep, jsoncpp_dep, gstreamer_dep, glog_dep, gflags_dep, sigc_dep]
 
 if host_machine.system() == 'darwin'
     gtk_mac_integration_dep = dependency('gtk-mac-integration-gtk3')
@@ -82,17 +84,24 @@ gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
     'ApplicationTest.cpp',
+    'DataSettingsTest.cpp',
+    'DetectPalTest.cpp',
     'DialogGroupTest.cpp',
     'DialogPeerTest.cpp',
+    'HelpDialogTest.cpp',
     'LogSystemTest.cpp',
+    'RevisePalTest.cpp',
+    'ShareFileTest.cpp',
+    'TestHelper.cpp',
     'TestMain.cpp',
     'TransWindowTest.cpp',
     'UiCoreThreadTest.cpp',
+    'UiHelperTest.cpp',
     'UiProgramDataTest.cpp',
 ])
 libiptux_test = executable('libiptux_test',
     test_sources,
-    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep],
+    dependencies: [gtk_dep, jsoncpp_dep, gstreamer_dep, thread_dep, sigc_dep],
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )

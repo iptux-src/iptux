@@ -14,10 +14,10 @@
 
 #include <cstring>
 #include <fcntl.h>
+#include <glib/gstdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "iptux-utils/utils.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
@@ -26,8 +26,7 @@ using namespace std;
 
 namespace iptux {
 
-static int mergepath(char tpath[], const char *npath);
-
+static int mergepath(char tpath[], const char* npath);
 
 /**
  * 类构造函数.
@@ -48,19 +47,21 @@ AnalogFS::~AnalogFS() {}
  * @param dir 目录路径
  * @return 成功与否
  */
-int AnalogFS::chdir(const char *dir) {
+int AnalogFS::chdir(const char* dir) {
   size_t len;
-  char *ptr;
+  char* ptr;
 
-  if (strcmp(dir, ".") == 0) return 0;
+  if (strcmp(dir, ".") == 0)
+    return 0;
 
   if (*dir != '/') {
     if (strcmp(dir, "..") == 0) {
       ptr = strrchr(path, '/');
-      if (ptr != path) *ptr = '\0';
+      if (ptr != path)
+        *ptr = '\0';
     } else {
       len = strlen(path);
-      ptr = (char *)(*(path + 1) != '\0' ? "/" : "");
+      ptr = (char*)(*(path + 1) != '\0' ? "/" : "");
       snprintf(path + len, MAX_PATHLEN - len, "%s%s", ptr, dir);
     }
   } else
@@ -69,7 +70,9 @@ int AnalogFS::chdir(const char *dir) {
   return 0;
 }
 
-int AnalogFS::open(const char *fn, int flags) { return open(fn, flags, 0); }
+int AnalogFS::open(const char* fn, int flags) {
+  return open(fn, flags, 0);
+}
 
 /**
  * 打开文件.
@@ -78,9 +81,9 @@ int AnalogFS::open(const char *fn, int flags) { return open(fn, flags, 0); }
  * @param ... as in open()
  * @return 文件描述符
  */
-int AnalogFS::open(const char *fn, int flags, mode_t mode) {
+int AnalogFS::open(const char* fn, int flags, mode_t mode) {
   char tpath[MAX_PATHLEN];
-  char *tfn;
+  char* tfn;
   int fd;
 
   strcpy(tpath, path);
@@ -105,7 +108,7 @@ int AnalogFS::open(const char *fn, int flags, mode_t mode) {
  * @param st a stat64 struct
  * @return 成功与否
  */
-int AnalogFS::stat(const char *fn, struct ::stat *st) {
+int AnalogFS::stat(const char* fn, struct ::stat* st) {
   char tpath[MAX_PATHLEN];
   int result;
 
@@ -124,14 +127,15 @@ int AnalogFS::stat(const char *fn, struct ::stat *st) {
  * @param mode as in mkdir()
  * @return 成功与否
  */
-int AnalogFS::mkdir(const char *dir, mode_t mode) {
+int AnalogFS::mkdir(const char* dir, mode_t mode) {
   char tpath[MAX_PATHLEN];
   int result;
 
   strcpy(tpath, path);
   mergepath(tpath, dir);
-  if (::access(tpath, F_OK) == 0) return 0;
-  if ((result = ::mkdir(tpath, mode)) != 0) {
+  if (::access(tpath, F_OK) == 0)
+    return 0;
+  if ((result = g_mkdir(tpath, mode)) != 0) {
     pwarning(_("Mkdir() directory \"%s\" failed, %s"), tpath, strerror(errno));
   }
   return result;
@@ -142,7 +146,7 @@ int AnalogFS::mkdir(const char *dir, mode_t mode) {
  * @param dir_name 目录路径
  * @return 目录大小
  */
-int64_t AnalogFS::ftwsize(const char *dir_name) {
+int64_t AnalogFS::ftwsize(const char* dir_name) {
   return utils::fileOrDirectorySize(dir_name);
 }
 
@@ -151,9 +155,9 @@ int64_t AnalogFS::ftwsize(const char *dir_name) {
  * @param dir 目录路径
  * @return DIR
  */
-DIR *AnalogFS::opendir(const char *dir) {
+DIR* AnalogFS::opendir(const char* dir) {
   char tpath[MAX_PATHLEN];
-  DIR *dirs;
+  DIR* dirs;
 
   strcpy(tpath, path);
   mergepath(tpath, dir);
@@ -170,19 +174,21 @@ DIR *AnalogFS::opendir(const char *dir) {
  * @param npath 需要被合并的路径
  * @return 成功与否
  */
-int mergepath(char tpath[], const char *npath) {
+int mergepath(char tpath[], const char* npath) {
   size_t len;
-  char *ptr;
+  char* ptr;
 
-  if (strcmp(npath, ".") == 0) return 0;
+  if (strcmp(npath, ".") == 0)
+    return 0;
 
   if (*npath != '/') {
     if (strcmp(npath, "..") == 0) {
       ptr = strrchr(tpath, '/');
-      if (ptr != tpath) *ptr = '\0';
+      if (ptr != tpath)
+        *ptr = '\0';
     } else {
       len = strlen(tpath);
-      ptr = (char *)(*(tpath + 1) != '\0' ? "/" : "");
+      ptr = (char*)(*(tpath + 1) != '\0' ? "/" : "");
       snprintf(tpath + len, MAX_PATHLEN - len, "%s%s", ptr, npath);
     }
   } else

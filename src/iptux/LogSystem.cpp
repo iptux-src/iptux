@@ -13,8 +13,9 @@
 #include "LogSystem.h"
 
 #include <fcntl.h>
-#include <unistd.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
+#include <unistd.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
@@ -27,9 +28,8 @@ using namespace std;
 namespace iptux {
 
 LogSystem::LogSystem(shared_ptr<const ProgramData> programData)
-    : programData(programData),
-      fdc(-1),
-      fds(-1) {
+    : programData(programData), fdc(-1), fds(-1) {
+  CHECK_NOTNULL(programData.get());
   InitSublayer();
 }
 
@@ -39,32 +39,44 @@ LogSystem::~LogSystem() {
 }
 
 void LogSystem::InitSublayer() {
-  const gchar *env;
-  char path[MAX_PATHLEN];
-
-  env = g_get_user_config_dir();
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/communicate.log", env);
-  fdc = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
-  snprintf(path, MAX_PATHLEN, "%s" LOG_PATH "/system.log", env);
-  fds = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+  fdc = open(getChatLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
+  fds = open(getSystemLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 }
 
-void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
+void LogSystem::communicateLog(const MsgPara* msgpara, const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  communicateLogv(msgpara, fmt, args);
+  va_end(args);
+}
+
+void LogSystem::systemLog(const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  systemLogv(fmt, args);
+  va_end(args);
+}
+
+void LogSystem::communicateLogv(const MsgPara* msgpara,
+                                const char* fmt,
+                                va_list ap) {
   gchar *log, *msg, *ptr;
 
   if (!programData->IsSaveChatHistory()) {
     return;
   }
 
-  auto pal = msgpara->pal;
+  auto pal = msgpara->getPal();
 
   if (msgpara->stype == MessageSourceType::PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
-                        pal->name, pal->user, pal->host);
+                        pal->getName().c_str(), pal->getUser().c_str(),
+                        pal->getHost().c_str());
   else if (msgpara->stype == MessageSourceType::SELF) {
-    if (msgpara->pal)
+    if (msgpara->getPal())
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
-                          pal->name, pal->user, pal->host);
+                          pal->getName().c_str(), pal->getUser().c_str(),
+                          pal->getHost().c_str());
     else
       ptr = getformattime(TRUE, _("Send-Broadcast"));
   } else
@@ -79,7 +91,7 @@ void LogSystem::CommunicateLog(MsgPara *msgpara, const char *fmt, va_list ap) {
   g_free(msg);
 }
 
-void LogSystem::SystemLog(const char *fmt, va_list ap) {
+void LogSystem::systemLogv(const char* fmt, va_list ap) {
   gchar *log, *msg, *ptr;
 
   if (!programData->IsSaveChatHistory()) {
@@ -95,6 +107,16 @@ void LogSystem::SystemLog(const char *fmt, va_list ap) {
 
   write(fds, log, strlen(log));
   g_free(log);
+}
+
+string LogSystem::getChatLogPath() const {
+  auto env = g_get_user_config_dir();
+  return stringFormat("%s" LOG_PATH "/communicate.log", env);
+}
+
+string LogSystem::getSystemLogPath() const {
+  auto env = g_get_user_config_dir();
+  return stringFormat("%s" LOG_PATH "/system.log", env);
 }
 
 }  // namespace iptux

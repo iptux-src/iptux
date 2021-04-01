@@ -18,12 +18,12 @@
 
 namespace iptux {
 
-class UiProgramData: public ProgramData {
+class UiProgramData : public ProgramData {
  public:
   explicit UiProgramData(std::shared_ptr<IptuxConfig> config);
   ~UiProgramData() override;
 
-  GtkTextTagTable *table;        // tag table
+  GtkTextTagTable* table;  // tag table
 
   bool IsMsgSoundEnabled() const;
 

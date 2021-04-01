@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "iptux/UiCoreThread.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/UiCoreThread.h"
 
 using namespace std;
 using namespace iptux;
@@ -11,8 +11,12 @@ TEST(UiCoreThread, Constructor) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<UiProgramData>(config);
   core->sign = "abc";
-  UiCoreThread* thread = new UiCoreThread(core);
-  thread->SystemLog("hello %s", "world");
+
+  Application app(config);
+  app.startup();
+  app.activate();
+
+  UiCoreThread* thread = new UiCoreThread(&app, core);
   thread->start();
   thread->stop();
   delete thread;

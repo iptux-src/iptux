@@ -19,16 +19,16 @@
 namespace iptux {
 
 bool pop_request_quit(GtkWindow* parent);
-bool pop_request_shared_file(GtkWindow* parent, PalInfo *pal);
-char *pop_obtain_shared_passwd(GtkWindow* parent, PalInfo *pal);
-char *pop_password_settings(GtkWidget *parent);
+bool pop_request_shared_file(GtkWindow* parent, PalInfo* pal);
+char* pop_obtain_shared_passwd(GtkWindow* parent, PalInfo* pal);
+char* pop_password_settings(GtkWidget* parent);
 
 /**
  * 弹出接收文件存放位置的对话框.
  * @param parent parent window
  * @return path const char*, if user does not accept, return nullptr
  */
-const char *pop_save_path(GtkWidget *parent, const char* defaultPath);
+const char* pop_save_path(GtkWidget* parent, const char* defaultPath);
 
 }  // namespace iptux
 

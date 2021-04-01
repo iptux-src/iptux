@@ -1,20 +1,19 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
-#include <vector>
-#include <functional>
-#include <memory>
 #include <atomic>
+#include <memory>
+#include <vector>
 
-#include "iptux-core/ProgramData.h"
+#include <sigc++/signal.h>
+
 #include "iptux-core/Event.h"
+#include "iptux-core/ProgramData.h"
 #include "iptux-core/TransFileModel.h"
 
 namespace iptux {
 
 class TransAbstract;
-
-using EventCallback = std::function<void(std::shared_ptr<const Event>)>;
 
 class CoreThread {
  public:
@@ -23,6 +22,9 @@ class CoreThread {
 
   virtual void start();
   virtual void stop();
+
+  CPPalInfo getMe() const;
+  PPalInfo getMe();
 
   int getUdpSock() const;
 
@@ -45,13 +47,11 @@ class CoreThread {
    */
   bool IsBlocked(in_addr ipv4) const;
 
-  void Lock();
-  void Unlock();
+  void Lock() const;
+  void Unlock() const;
 
   const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
-  [[deprecated]] const PalInfo *GetPalFromList(PalKey palKey) const;
-  [[deprecated]] PalInfo *GetPalFromList(PalKey palKey);
 
   CPPalInfo GetPal(PalKey palKey) const;
   PPalInfo GetPal(PalKey palKey);
@@ -61,8 +61,6 @@ class CoreThread {
   virtual void DelPalFromList(PalKey palKey);
   virtual void UpdatePalToList(PalKey palKey);
 
-  [[deprecated]]
-  virtual void AttachPalToList(PalInfo *pal);
   virtual void AttachPalToList(PPalInfo pal);
 
   void AddPrivateFile(PFileInfo file);
@@ -73,13 +71,27 @@ class CoreThread {
   PFileInfo GetPrivateFileById(uint32_t id);
   PFileInfo GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime);
 
-  void registerCallback(const EventCallback &callback);
   void sendFeatureData(PPalInfo pal);
   void emitSomeoneExit(const PalKey& palKey);
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);
   void EmitIconUpdate(const PalKey& palKey);
+
   void emitEvent(std::shared_ptr<const Event> event);
+
+  /**
+   * @brief return event count since started
+   *
+   * @return int
+   */
+  int getEventCount() const;
+
+  /**
+   * @brief Get the Last Event object
+   *
+   * @return std::shared_ptr<const Event>
+   */
+  std::shared_ptr<const Event> getLastEvent() const;
 
   const std::string& GetAccessPublicLimit() const;
   void SetAccessPublicLimit(const std::string& val);
@@ -92,15 +104,18 @@ class CoreThread {
    * @return true if send success
    * @return false if send failed
    */
-  bool SendMessage(PPalInfo pal, const std::string& message);
-  bool SendMessage(PPalInfo pal, const ChipData& chipData);
+  bool SendMessage(CPPalInfo pal, const std::string& message);
+  bool SendMessage(CPPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
-  void SendUnitMessage(const PalKey& palKey, uint32_t opttype, const std::string& message);
+  void SendUnitMessage(const PalKey& palKey,
+                       uint32_t opttype,
+                       const std::string& message);
   void SendGroupMessage(const PalKey& palKey, const std::string& message);
 
   bool SendAskShared(PPalInfo pal);
-  bool SendAskSharedWithPassword(const PalKey& palKey, const std::string& password);
+  bool SendAskSharedWithPassword(const PalKey& palKey,
+                                 const std::string& password);
 
   void SendDetectPacket(const std::string& ipv4);
   void SendDetectPacket(in_addr ipv4);
@@ -108,8 +123,8 @@ class CoreThread {
   void SendMyIcon(PPalInfo pal, std::istream& iss);
   void SendSharedFiles(PPalInfo pal);
 
-  void BcstFileInfoEntry(const std::vector<const PalInfo* >& pals,
-    const std::vector<FileInfo*>& files);
+  void BcstFileInfoEntry(const std::vector<const PalInfo*>& pals,
+                         const std::vector<FileInfo*>& files);
 
   /**
    * 插入消息(UI线程安全).
@@ -127,28 +142,33 @@ class CoreThread {
   void SendBroadcastExit(PPalInfo pal);
   int GetOnlineCount() const;
 
-  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId);
+  std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId) const;
+  std::vector<std::unique_ptr<TransFileModel>> listTransTasks() const;
   bool TerminateTransTask(int taskId);
+  void clearFinishedTransTasks();
+
   void RecvFile(FileInfo* file);
+  void RecvFileAsync(FileInfo* file);
 
+ public:
+  sigc::signal<void(std::shared_ptr<const Event>)> signalEvent;
 
- // these functions should be move to CoreThreadImpl
+  // these functions should be move to CoreThreadImpl
  public:
   void RegisterTransTask(std::shared_ptr<TransAbstract> task);
 
  public:
-  static void SendNotifyToAll(CoreThread *pcthrd);
+  static void SendNotifyToAll(CoreThread* pcthrd);
 
  protected:
   std::shared_ptr<ProgramData> programData;
   std::shared_ptr<IptuxConfig> config;
   int tcpSock;
   int udpSock;
-  pthread_mutex_t mutex;  //锁
+  mutable pthread_mutex_t mutex;  //锁
 
  private:
   std::atomic_bool started;
-  std::vector<EventCallback> callbacks;
 
  protected:
   virtual void ClearSublayer();
@@ -158,12 +178,12 @@ class CoreThread {
   void processEvents();
 
  private:
-  static void RecvUdpData(CoreThread *pcthrd);
-  static void RecvTcpData(CoreThread *pcthrd);
+  static void RecvUdpData(CoreThread* pcthrd);
+  static void RecvTcpData(CoreThread* pcthrd);
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 };
 
-}
+}  // namespace iptux
 
-#endif //IPTUX_CORETHREAD_H
+#endif  // IPTUX_CORETHREAD_H

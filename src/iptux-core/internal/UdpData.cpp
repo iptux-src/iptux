@@ -14,21 +14,20 @@
 #include "UdpData.h"
 
 #include <cinttypes>
-#include <thread>
 #include <functional>
+#include <thread>
 
 #include <fcntl.h>
 #include <unistd.h>
 
 #include <glib/gi18n.h>
 
-
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/CommandMode.h"
 #include "iptux-core/internal/RecvFile.h"
 #include "iptux-core/internal/SendFile.h"
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 #define NULL_OBJECT 0x02
 
@@ -46,7 +45,9 @@ UdpData::UdpData(CoreThread& coreThread)
 /**
  * 类析构函数.
  */
-UdpData::~UdpData() { g_free(encode); }
+UdpData::~UdpData() {
+  g_free(encode);
+}
 
 /**
  * UDP数据解析入口.
@@ -54,24 +55,39 @@ UdpData::~UdpData() { g_free(encode); }
  * @param buf[] 数据缓冲区
  * @param size 数据有效长度
  */
-void UdpData::UdpDataEntry(CoreThread& coreThread,
-                           in_addr ipv4,
-                           int port,
-                           const char buf[],
-                           size_t size) {
-  if(Log::IsDebugEnabled()) {
-    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", inAddrToString(ipv4).c_str(), port, size,
-      stringDumpAsCString(string(buf, size)).c_str());
-  } else {
-    LOG_INFO("received udp message from %s:%d, size %zu", inAddrToString(ipv4).c_str(), port, size);
-  }
-  UdpData udata(coreThread);
+unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
+                                          in_addr ipv4,
+                                          int port,
+                                          const char buf[],
+                                          size_t size) {
+  return UdpDataEntry(coreThread, ipv4, port, buf, size, true);
+}
 
-  udata.ipv4 = ipv4;
-  udata.size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
-  memcpy(udata.buf, buf, size);
-  if (size != MAX_UDPLEN) udata.buf[size] = '\0';
-  udata.DispatchUdpData();
+unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
+                                          in_addr ipv4,
+                                          int port,
+                                          const char buf[],
+                                          size_t size,
+                                          bool run) {
+  if (Log::IsDebugEnabled()) {
+    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
+              inAddrToString(ipv4).c_str(), port, size,
+              stringDumpAsCString(string(buf, size)).c_str());
+  } else {
+    LOG_INFO("received udp message from %s:%d, size %zu",
+             inAddrToString(ipv4).c_str(), port, size);
+  }
+  auto udata = make_unique<UdpData>(coreThread);
+
+  udata->ipv4 = ipv4;
+  udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
+  memcpy(udata->buf, buf, size);
+  if (size != MAX_UDPLEN)
+    udata->buf[size] = '\0';
+  if (run) {
+    udata->DispatchUdpData();
+  }
+  return udata;
 }
 
 /**
@@ -82,7 +98,7 @@ void UdpData::DispatchUdpData() {
 
   /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
   /* 嘿嘿，那就不要怪偶心狠手辣了 */
-  if(coreThread.IsBlocked(ipv4)) {
+  if (coreThread.IsBlocked(ipv4)) {
     LOG_INFO("address is blocked: %s", inAddrToString(ipv4).c_str());
     return;
   }
@@ -90,7 +106,8 @@ void UdpData::DispatchUdpData() {
   /* 决定消息去向 */
   commandno = iptux_get_dec_number(buf, ':', 4);
   auto commandMode = GET_MODE(commandno);
-  LOG_INFO("command NO.: [0x%x] %s", commandno, CommandMode(commandMode).toString().c_str());
+  LOG_INFO("command NO.: [0x%x] %s", commandno,
+           CommandMode(commandMode).toString().c_str());
   switch (commandMode) {
     case IPMSG_BR_ENTRY:
       SomeoneEntry();
@@ -134,7 +151,7 @@ void UdpData::DispatchUdpData() {
  * 所以必须以默认数据构建好友信息数据并插入好友列表 \n
  */
 void UdpData::SomeoneLost() {
-  PalInfo *pal;
+  PalInfo* pal;
 
   auto g_progdt = coreThread.getProgramData();
 
@@ -142,18 +159,19 @@ void UdpData::SomeoneLost() {
   pal = new PalInfo;
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
-  if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
-    pal->user = g_strdup("???");
-  if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
-    pal->host = g_strdup("???");
-  pal->name = g_strdup(_("mysterious"));
-  pal->group = g_strdup(_("mysterious"));
+  auto version = iptux_get_section_string(buf, ':', 0);
+  auto user = iptux_get_section_string(buf, ':', 2);
+  auto host = iptux_get_section_string(buf, ':', 3);
+  (*pal)
+      .setVersion(version ? version : "?")
+      .setUser(user ? user : "???")
+      .setHost(host ? host : "???")
+      .setEncode(encode ? encode : "utf-8")
+      .setName(_("mysterious"))
+      .setGroup(_("mysterious"));
   pal->photo = NULL;
   pal->sign = NULL;
   pal->iconfile = g_strdup(g_progdt->palicon);
-  pal->encode = g_strdup(encode ? encode : "utf-8");
   pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
@@ -210,13 +228,14 @@ void UdpData::SomeoneExit() {
  */
 void UdpData::SomeoneAnsEntry() {
   Command cmd(coreThread);
-  const char *ptr;
+  const char* ptr;
 
   auto g_progdt = coreThread.getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
   ptr = iptux_skip_string(buf, size, 3);
-  if (!ptr || *ptr == '\0') ConvertEncode(g_progdt->encode);
+  if (!ptr || *ptr == '\0')
+    ConvertEncode(g_progdt->encode);
 
   /* 加入或更新好友列表 */
   coreThread.Lock();
@@ -235,7 +254,8 @@ void UdpData::SomeoneAnsEntry() {
   if (pal->isCompatible()) {
     thread t1(bind(&CoreThread::sendFeatureData, &coreThread, _1), pal);
     t1.detach();
-  } else if (strcasecmp(g_progdt->encode.c_str(), pal->encode) != 0) {
+  } else if (strcasecmp(g_progdt->encode.c_str(), pal->getEncode().c_str()) !=
+             0) {
     cmd.SendAnsentry(coreThread.getUdpSock(), pal);
   }
 }
@@ -245,7 +265,7 @@ void UdpData::SomeoneAnsEntry() {
  */
 void UdpData::SomeoneAbsence() {
   PPalInfo pal;
-  const char *ptr;
+  const char* ptr;
 
   auto g_progdt = coreThread.getProgramData();
 
@@ -254,7 +274,7 @@ void UdpData::SomeoneAbsence() {
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
-      string s(pal->encode);
+      string s(pal->getEncode());
       ConvertEncode(s);
     } else {
       ConvertEncode(g_progdt->encode);
@@ -279,7 +299,7 @@ void UdpData::SomeoneAbsence() {
 void UdpData::SomeoneSendmsg() {
   Command cmd(coreThread);
   uint32_t commandno, packetno;
-  char *text;
+  char* text;
 
   auto g_progdt = coreThread.getProgramData();
 
@@ -287,16 +307,15 @@ void UdpData::SomeoneSendmsg() {
   auto pal = coreThread.GetPal(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
-      ConvertEncode(pal->encode);
+      ConvertEncode(pal->getEncode());
     } else {
       ConvertEncode(g_progdt->encode);
     }
   }
   /* 确保好友在线，并对编码作出适当调整 */
   pal = AssertPalOnline();
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
 
   /* 回复好友并检查此消息是否过时 */
@@ -305,7 +324,8 @@ void UdpData::SomeoneSendmsg() {
   if (commandno & IPMSG_SENDCHECKOPT) {
     cmd.SendReply(coreThread.getUdpSock(), pal->GetKey(), packetno);
   }
-  if (packetno <= pal->packetn) return;
+  if (packetno <= pal->packetn)
+    return;
   pal->packetn = packetno;
 
   /* 插入消息&在消息队列中注册 */
@@ -326,8 +346,8 @@ void UdpData::SomeoneSendmsg() {
 
   // if (grpinf->dialog) {
   //   auto window = GTK_WIDGET(grpinf->dialog);
-  //   auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window), "dialog"));
-  //   dlgpr->ShowDialogPeer(dlgpr);
+  //   auto dlgpr = (DialogPeer *)(g_object_get_data(G_OBJECT(window),
+  //   "dialog")); dlgpr->ShowDialogPeer(dlgpr);
   // }
 }
 
@@ -340,7 +360,10 @@ void UdpData::SomeoneRecvmsg() {
 
   if ((pal = coreThread.GetPal(ipv4))) {
     packetno = iptux_get_dec_number(buf, ':', 5);
-    if (packetno == pal->rpacketn) pal->rpacketn = 0;  //标记此包编号已经被回复
+    if (packetno == pal->rpacketn)
+      pal->rpacketn = 0;  //标记此包编号已经被回复
+  } else {
+    LOG_WARN("message from unknown pal: %s", inAddrToString(ipv4).c_str());
   }
 }
 
@@ -350,23 +373,26 @@ void UdpData::SomeoneRecvmsg() {
 void UdpData::SomeoneAskShared() {
   Command cmd(coreThread);
   PPalInfo pal;
-  char *passwd;
+  char* passwd;
 
-  if (!(pal = coreThread.GetPal(ipv4))) return;
+  if (!(pal = coreThread.GetPal(ipv4)))
+    return;
 
   auto limit = coreThread.GetAccessPublicLimit();
   if (limit.empty()) {
-    thread([](CoreThread* coreThread, PPalInfo pal){
-      ThreadAskSharedFile(coreThread, pal);
-      }, &coreThread, pal).detach();
+    thread([](CoreThread* coreThread,
+              PPalInfo pal) { ThreadAskSharedFile(coreThread, pal); },
+           &coreThread, pal)
+        .detach();
   } else if (!(iptux_get_dec_number(buf, ':', 4) & IPTUX_PASSWDOPT)) {
     cmd.SendFileInfo(coreThread.getUdpSock(), pal->GetKey(),
                      IPTUX_SHAREDOPT | IPTUX_PASSWDOPT, "");
   } else if ((passwd = ipmsg_get_attach(buf, ':', 5))) {
     if (limit == passwd) {
-      thread([](CoreThread* coreThread, PPalInfo pal){
-        ThreadAskSharedFile(coreThread, pal);
-      }, &coreThread, pal).detach();
+      thread([](CoreThread* coreThread,
+                PPalInfo pal) { ThreadAskSharedFile(coreThread, pal); },
+             &coreThread, pal)
+          .detach();
     }
     g_free(passwd);
   }
@@ -377,7 +403,7 @@ void UdpData::SomeoneAskShared() {
  */
 void UdpData::SomeoneSendIcon() {
   PPalInfo pal;
-  char *iconfile;
+  char* iconfile;
 
   if (!(pal = coreThread.GetPal(ipv4)) || pal->isChanged()) {
     return;
@@ -396,18 +422,18 @@ void UdpData::SomeoneSendIcon() {
  */
 void UdpData::SomeoneSendSign() {
   PPalInfo pal;
-  char *sign;
+  char* sign;
 
-  if (!(pal = coreThread.GetPal(ipv4))) return;
+  if (!(pal = coreThread.GetPal(ipv4)))
+    return;
 
   /* 若好友不兼容iptux协议，则需转码 */
   if (!pal->isCompatible()) {
-    ConvertEncode(pal->encode);
+    ConvertEncode(pal->getEncode());
   }
   /* 对编码作适当调整 */
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
   /* 更新 */
   if ((sign = ipmsg_get_attach(buf, ':', 5))) {
@@ -425,7 +451,7 @@ void UdpData::SomeoneSendSign() {
  */
 void UdpData::SomeoneBcstmsg() {
   uint32_t commandno, packetno;
-  char *text;
+  char* text;
 
   auto g_progdt = coreThread.getProgramData();
 
@@ -433,16 +459,15 @@ void UdpData::SomeoneBcstmsg() {
   auto pal = coreThread.GetPal(ipv4);
   if (!pal || !pal->isCompatible()) {
     if (pal) {
-      ConvertEncode(pal->encode);
+      ConvertEncode(pal->getEncode());
     } else {
       ConvertEncode(g_progdt->encode);
     }
   }
   /* 确保好友在线，并对编码作出适当调整 */
   pal = AssertPalOnline();
-  if (strcasecmp(pal->encode, encode ? encode : "utf-8") != 0) {
-    g_free(pal->encode);
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+  if (strcasecmp(pal->getEncode().c_str(), encode ? encode : "utf-8") != 0) {
+    pal->setEncode(encode ? encode : "utf-8");
   }
 
   /* 检查此消息是否过时 */
@@ -485,23 +510,30 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto pal = make_shared<PalInfo>();
   pal->ipv4 = ipv4;
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
-  if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
-    pal->user = g_strdup("???");
-  if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
-    pal->host = g_strdup("???");
-  if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
-    pal->name = g_strdup(_("mysterious"));
-  pal->group = GetPalGroup();
+  auto version = iptux_get_section_string(buf, ':', 0);
+  auto user = iptux_get_section_string(buf, ':', 2);
+  auto host = iptux_get_section_string(buf, ':', 3);
+  (*pal)
+      .setVersion(version ? version : "?")
+      .setUser(user ? user : "???")
+      .setHost(host ? host : "???");
+  auto name = ipmsg_get_attach(buf, ':', 5);
+  if (!name) {
+    pal->setName(_("mysterious"));
+  } else {
+    pal->setName(name);
+  }
+  pal->setGroup(GetPalGroup());
   pal->photo = NULL;
   pal->sign = NULL;
   if (!(pal->iconfile = GetPalIcon()))
     pal->iconfile = g_strdup(programData->palicon);
-  if ((pal->encode = GetPalEncode())) {
+  auto localEncode = GetPalEncode();
+  if (localEncode) {
+    pal->setEncode(localEncode);
     pal->setCompatible(true);
   } else {
-    pal->encode = g_strdup(encode ? encode : "utf-8");
+    pal->setEncode(encode ? encode : "utf-8");
   }
   pal->setOnline(true);
   pal->packetn = 0;
@@ -514,35 +546,36 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
  * 更新好友信息数据.
  * @param pal 好友数据
  */
-void UdpData::UpdatePalInfo(PalInfo *pal) {
+void UdpData::UpdatePalInfo(PalInfo* pal) {
   auto g_progdt = coreThread.getProgramData();
 
   g_free(pal->segdes);
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  g_free(pal->version);
-  if (!(pal->version = iptux_get_section_string(buf, ':', 0)))
-    pal->version = g_strdup("?");
-  g_free(pal->user);
-  if (!(pal->user = iptux_get_section_string(buf, ':', 2)))
-    pal->user = g_strdup("???");
-  g_free(pal->host);
-  if (!(pal->host = iptux_get_section_string(buf, ':', 3)))
-    pal->host = g_strdup("???");
+  auto version = iptux_get_section_string(buf, ':', 0);
+  auto user = iptux_get_section_string(buf, ':', 2);
+  auto host = iptux_get_section_string(buf, ':', 3);
+  (*pal)
+      .setVersion(version ? version : "?")
+      .setUser(user ? user : "???")
+      .setHost(host ? host : "???");
   if (!pal->isChanged()) {
-    g_free(pal->name);
-    if (!(pal->name = ipmsg_get_attach(buf, ':', 5)))
-      pal->name = g_strdup(_("mysterious"));
-    g_free(pal->group);
-    pal->group = GetPalGroup();
+    auto name = ipmsg_get_attach(buf, ':', 5);
+    if (!name) {
+      pal->setName(_("mysterious"));
+    } else {
+      pal->setName(name);
+    }
+    pal->setGroup(GetPalGroup());
     g_free(pal->iconfile);
     if (!(pal->iconfile = GetPalIcon()))
       pal->iconfile = g_strdup(g_progdt->palicon);
     pal->setCompatible(false);
-    g_free(pal->encode);
-    if ((pal->encode = GetPalEncode())) {
+    auto localEncode = GetPalEncode();
+    if (localEncode) {
+      pal->setEncode(localEncode);
       pal->setCompatible(true);
     } else {
-      pal->encode = g_strdup(encode ? encode : "utf-8");
+      pal->setEncode(encode ? encode : "utf-8");
     }
   }
   pal->setOnline(true);
@@ -556,12 +589,12 @@ void UdpData::UpdatePalInfo(PalInfo *pal) {
  * @param btype 消息所属类型
  * @param msg 消息
  */
-void UdpData::InsertMessage(PPalInfo pal, GroupBelongType btype,
-                            const char *msg) {
-  MsgPara para;
+void UdpData::InsertMessage(PPalInfo pal,
+                            GroupBelongType btype,
+                            const char* msg) {
+  MsgPara para(coreThread.GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
-  para.pal = coreThread.GetPal(pal->GetKey());
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
   ChipData chip;
@@ -573,7 +606,7 @@ void UdpData::InsertMessage(PPalInfo pal, GroupBelongType btype,
   coreThread.InsertMessage(move(para));
 }
 
-void UdpData::ConvertEncode(const char *enc) {
+void UdpData::ConvertEncode(const char* enc) {
   string encode(enc);
   ConvertEncode(encode);
 }
@@ -582,8 +615,8 @@ void UdpData::ConvertEncode(const char *enc) {
  * 将缓冲区中的数据转换为utf8编码.
  * @param enc 原数据首选编码
  */
-void UdpData::ConvertEncode(const string &enc) {
-  char *ptr;
+void UdpData::ConvertEncode(const string& enc) {
+  char* ptr;
   size_t len;
 
   /* 将缓冲区内有效的'\0'字符转换为ASCII字符 */
@@ -603,18 +636,20 @@ void UdpData::ConvertEncode(const string &enc) {
       (ptr = convert_encode(buf, "utf-8", enc.c_str())))
     encode = g_strdup(enc.c_str());
   else
-    ptr = iptux_string_validate(buf, coreThread.getProgramData()->codeset, &encode);
+    ptr = iptux_string_validate(buf, coreThread.getProgramData()->codeset,
+                                &encode);
   if (ptr) {
     len = strlen(ptr);
     size = len < MAX_UDPLEN ? len : MAX_UDPLEN;
     memcpy(buf, ptr, size);
-    if (size < MAX_UDPLEN) buf[size] = '\0';
+    if (size < MAX_UDPLEN)
+      buf[size] = '\0';
     g_free(ptr);
   }
 
   /* 将缓冲区内的ASCII字符还原为'\0'字符 */
   ptr = buf;
-  while ((ptr = (char *)memchr(ptr, NULL_OBJECT, buf + size - ptr))) {
+  while ((ptr = (char*)memchr(ptr, NULL_OBJECT, buf + size - ptr))) {
     *ptr = '\0';
     ptr++;
   }
@@ -624,25 +659,26 @@ void UdpData::ConvertEncode(const string &enc) {
  * 获取好友群组名称.
  * @return 群组
  */
-char *UdpData::GetPalGroup() {
-  const char *ptr;
+string UdpData::GetPalGroup() {
+  const char* ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 1)) && *ptr != '\0')
-    return g_strdup(ptr);
-  return NULL;
+    return ptr;
+  return "";
 }
 
 /**
  * 获取好友头像图标.
  * @return 头像
  */
-char *UdpData::GetPalIcon() {
+char* UdpData::GetPalIcon() {
   char path[MAX_PATHLEN];
-  const char *ptr;
+  const char* ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 2)) && *ptr != '\0') {
     snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", ptr);
-    if (access(path, F_OK) == 0) return g_strdup(ptr);
+    if (access(path, F_OK) == 0)
+      return g_strdup(ptr);
   }
   return NULL;
 }
@@ -651,8 +687,8 @@ char *UdpData::GetPalIcon() {
  * 获取好友系统编码.
  * @return 编码
  */
-char *UdpData::GetPalEncode() {
-  const char *ptr;
+char* UdpData::GetPalEncode() {
+  const char* ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 3)) && *ptr != '\0')
     return g_strdup(ptr);
@@ -663,14 +699,15 @@ char *UdpData::GetPalEncode() {
  * 接收好友头像数据.
  * @return 头像文件名
  */
-char *UdpData::RecvPalIcon() {
+char* UdpData::RecvPalIcon() {
   char path[MAX_PATHLEN];
-  char *iconfile;
+  char* iconfile;
   size_t len;
   int fd;
 
   /* 若无头像数据则返回null */
-  if ((len = strlen(buf) + 1) >= size) return NULL;
+  if ((len = strlen(buf) + 1) >= size)
+    return NULL;
 
   /* 将头像数据刷入磁盘 */
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
@@ -715,16 +752,19 @@ PPalInfo UdpData::AssertPalOnline() {
  */
 void UdpData::RecvPalFile() {
   uint32_t packetno, commandno;
-  const char *ptr;
+  const char* ptr;
 
   packetno = iptux_get_dec_number(buf, ':', 1);
   commandno = iptux_get_dec_number(buf, ':', 4);
   ptr = iptux_skip_string(buf, size, 1);
   /* 只有当此为共享文件信息或文件信息不为空才需要接收 */
   if ((commandno & IPTUX_SHAREDOPT) || (ptr && *ptr != '\0')) {
-    thread([](CoreThread* coreThread, PPalInfo pal, string data, int packetno){
-      RecvFile::RecvEntry(coreThread, pal, data, packetno);
-    }, &coreThread, coreThread.GetPal(ipv4), ptr, packetno).detach();
+    thread(
+        [](CoreThread* coreThread, PPalInfo pal, string data, int packetno) {
+          RecvFile::RecvEntry(coreThread, pal, data, packetno);
+        },
+        &coreThread, coreThread.GetPal(ipv4), ptr, packetno)
+        .detach();
   }
 }
 

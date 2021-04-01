@@ -35,15 +35,19 @@ class StatusIcon {
   gboolean embedded;
 
  private:
-  std::shared_ptr<UiProgramData> getProgramData() { return mwin.GetProgramData(); }
+  std::shared_ptr<UiProgramData> getProgramData() {
+    return mwin.GetProgramData();
+  }
   static gboolean UpdateUI(StatusIcon* sicon);
   GtkWidget* CreatePopupMenu();
   //回调处理部分
  private:
   static void StatusIconActivate(StatusIcon* self);
   static void onPopupMenu(StatusIcon* self, guint button, guint time);
-  static gboolean StatusIconQueryTooltip(GtkStatusIcon* statusicon, gint x,
-                                         gint y, gboolean key,
+  static gboolean StatusIconQueryTooltip(GtkStatusIcon* statusicon,
+                                         gint x,
+                                         gint y,
+                                         gboolean key,
                                          GtkTooltip* tooltip);
   static gboolean onActivate(StatusIcon* self);
 };

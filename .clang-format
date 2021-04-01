@@ -1,0 +1,11 @@
+---
+Language:        Cpp
+BasedOnStyle:  Chromium
+IncludeCategories:
+  - Regex:           '^"config\.h"'
+    Priority:        -1
+  # The main header for a source file automatically gets category 0
+  - Regex:           '.*'
+    Priority:        1
+  - Regex:           '^<.*\.h>'
+    Priority:        2

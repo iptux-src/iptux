@@ -15,22 +15,22 @@
 #include <cinttypes>
 #include <memory>
 
-#include <fcntl.h>
-#include <unistd.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <unistd.h>
 
-#include <glog/logging.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux-core/internal/AnalogFS.h"
 
-#include "iptux-utils/utils.h"
 #include "iptux-core/Event.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -50,7 +50,7 @@ SendFileData::SendFileData(CoreThread* coreThread, int sk, PFileInfo fl)
 /**
  * 类析构函数.
  */
-SendFileData::~SendFileData() { }
+SendFileData::~SendFileData() {}
 
 /**
  * 发送文件数据入口.
@@ -87,7 +87,9 @@ const TransFileModel& SendFileData::getTransFileModel() const {
 /**
  * 终止过程处理.
  */
-void SendFileData::TerminateTrans() { terminate = true; }
+void SendFileData::TerminateTrans() {
+  terminate = true;
+}
 
 /**
  * 创建UI参考数据.
@@ -97,7 +99,7 @@ void SendFileData::CreateUIPara() {
 
   para.setStatus("tip-send")
       .setTask(_("send"))
-      .setPeer(file->fileown->name)
+      .setPeer(file->fileown->getName())
       .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
@@ -130,13 +132,13 @@ void SendFileData::SendRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    LOG_INFO(_("Failed to send the file \"%s\" to %s!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Failed to send the file \"%s\" to %s!"), file->filepath,
+             file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
     //                    file->filepath, file->fileown->name);
   } else {
-    LOG_INFO(_("Send the file \"%s\" to %s successfully!"),
-                       file->filepath, file->fileown->name);
+    LOG_INFO(_("Send the file \"%s\" to %s successfully!"), file->filepath,
+             file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Send the file \"%s\" to %s successfully!"),
     //                    file->filepath, file->fileown->name);
   }
@@ -150,7 +152,7 @@ void SendFileData::SendDirFiles() {
   GQueue dirstack = G_QUEUE_INIT;
   struct stat st;
   struct dirent *dirt, vdirt;
-  DIR *dir;
+  DIR* dir;
   gchar *dirname, *pathname, *filename;
   int64_t finishsize;
   uint32_t headsize;
@@ -170,7 +172,7 @@ void SendFileData::SendDirFiles() {
   goto start;
   while (!g_queue_is_empty(&dirstack)) {
     /* 取出最后一次压入堆栈的目录流 */
-    dir = (DIR *)g_queue_pop_head(&dirstack);
+    dir = (DIR*)g_queue_pop_head(&dirstack);
     /* 发送目录流中的下属数据 */
     while (dir && (dirt = readdir(dir))) {
       if (strcmp(dirt->d_name, ".") == 0 || strcmp(dirt->d_name, "..") == 0)
@@ -189,9 +191,9 @@ void SendFileData::SendDirFiles() {
           .setRemain(_("Unknown"))
           .setRate("0B/s");
       /* 转码 */
-      if (strcasecmp(file->fileown->encode, "utf-8") != 0 &&
-          (filename =
-               convert_encode(dirt->d_name, file->fileown->encode, "utf-8"))) {
+      if (strcasecmp(file->fileown->getEncode().c_str(), "utf-8") != 0 &&
+          (filename = convert_encode(
+               dirt->d_name, file->fileown->getEncode().c_str(), "utf-8"))) {
         dirname = ipmsg_get_filename_pal(filename);
         g_free(filename);
       } else
@@ -207,7 +209,8 @@ void SendFileData::SendDirFiles() {
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
-      if (xwrite(sock, buf, headsize) == -1) goto end;
+      if (xwrite(sock, buf, headsize) == -1)
+        goto end;
       /* 选择处理方案 */
       gettimeofday(&filetime, NULL);
       if (S_ISREG(st.st_mode)) {  //常规文件
@@ -215,13 +218,15 @@ void SendFileData::SendDirFiles() {
           goto end;
         finishsize = SendData(fd, st.st_size);
         close(fd);
-        if (finishsize < st.st_size) goto end;
+        if (finishsize < st.st_size)
+          goto end;
         //                                sumsize += finishsize;
       } else if (S_ISDIR(st.st_mode)) {  //目录文件
         if (dir)  //若当前目录流有效则须压入堆栈
           g_queue_push_head(&dirstack, dir);
         /* 打开下属目录 */
-        if (!(dir = afs.opendir(dirt->d_name))) goto end;
+        if (!(dir = afs.opendir(dirt->d_name)))
+          goto end;
         /* 本地端也须转至下属目录 */
         afs.chdir(dirt->d_name);
       }
@@ -239,7 +244,8 @@ void SendFileData::SendDirFiles() {
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
-      if (xwrite(sock, buf, headsize) == -1) goto end;
+      if (xwrite(sock, buf, headsize) == -1)
+        goto end;
       /* 本地端也须向上转一层 */
       afs.chdir("..");
     }
@@ -250,17 +256,18 @@ void SendFileData::SendDirFiles() {
 end:
   if (!result) {
     /* 若当前目录流有效，则必须关闭 */
-    if (dir) closedir(dir);
+    if (dir)
+      closedir(dir);
     /* 关闭堆栈中所有的目录流，并清空堆栈 */
     g_queue_foreach(&dirstack, GFunc(closedir), NULL);
     g_queue_clear(&dirstack);
-    LOG_INFO(_("Failed to send the directory \"%s\" to %s!"),
-            file->filepath, file->fileown->name);
+    LOG_INFO(_("Failed to send the directory \"%s\" to %s!"), file->filepath,
+             file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Failed to send the directory \"%s\" to %s!"),
     //                    file->filepath, file->fileown->name);
   } else {
-    LOG_INFO(_("Send the directory \"%s\" to %s successfully!"),
-            file->filepath, file->fileown->name);
+    LOG_INFO(_("Send the directory \"%s\" to %s successfully!"), file->filepath,
+             file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Send the directory \"%s\" to %s successfully!"),
     //                    file->filepath, file->fileown->name);
   }
@@ -280,7 +287,8 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
   ssize_t size;
 
   /* 如果文件长度为0，则无须再进一步处理 */
-  if (filesize == 0) return 0;
+  if (filesize == 0)
+    return 0;
 
   tmpsize = finishsize = 0;   //初始化已完成数据量
   gettimeofday(&val1, NULL);  //初始化起始时间
@@ -288,8 +296,10 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
     /* 读取文件数据并发送 */
     size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
                                                : filesize - finishsize;
-    if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1) return finishsize;
-    if (size > 0 && xwrite(sock, buf, size) == -1) return finishsize;
+    if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1)
+      return finishsize;
+    if (size > 0 && xwrite(sock, buf, size) == -1)
+      return finishsize;
     finishsize += size;
     sumsize += size;
     file->finishedsize = sumsize;
@@ -301,7 +311,8 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
       rate = (uint32_t)((finishsize - tmpsize) / difftime);
       para.setFinishedLength(finishsize)
           .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
-          .setRemain(numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
+          .setRemain(
+              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
           .setRate(numeric_to_rate(rate));
       val1 = val2;           //更新时间参考点
       tmpsize = finishsize;  //更新下载量
@@ -316,7 +327,7 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
  */
 void SendFileData::UpdateUIParaToOver() {
   struct timeval time;
-  const char *statusfile;
+  const char* statusfile;
 
   statusfile = terminate ? "tip-error" : "tip-finish";
   para.setStatus(statusfile);

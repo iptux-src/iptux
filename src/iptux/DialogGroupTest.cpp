@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "iptux/DialogGroup.h"
 #include "iptux-core/TestHelper.h"
+#include "iptux/DialogGroup.h"
 
 using namespace std;
 using namespace iptux;
@@ -13,7 +13,11 @@ TEST(DialogGroup, Constructor) {
   app.startup();
   app.activate();
 
-  GroupInfo groupInfo;
+  auto pal = make_shared<PalInfo>();
+  pal->iconfile = g_strdup("pig");
+
+  GroupInfo groupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>({pal}),
+                      app.getMe(), nullptr);
 
   DialogGroup* dialog = DialogGroup::GroupDialogEntry(&app, &groupInfo);
   delete dialog;

@@ -12,13 +12,11 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
-#include <string>
-#include <memory>
 #include <arpa/inet.h>
+#include <memory>
+#include <string>
 
-#include <glib.h>
 #include <json/json.h>
-
 
 namespace iptux {
 
@@ -39,8 +37,10 @@ enum class MessageContentType {
   PICTURE  ///< 图片
 };
 
-static const MessageContentType MESSAGE_CONTENT_TYPE_STRING = MessageContentType::STRING;
-static const MessageContentType MESSAGE_CONTENT_TYPE_PICTURE = MessageContentType::PICTURE;
+static const MessageContentType MESSAGE_CONTENT_TYPE_STRING =
+    MessageContentType::STRING;
+static const MessageContentType MESSAGE_CONTENT_TYPE_PICTURE =
+    MessageContentType::PICTURE;
 
 /**
  * 群组所属类型
@@ -59,9 +59,10 @@ class PalKey {
 
   bool operator==(const PalKey& rhs) const;
 
-  in_addr GetIpv4() const {return ipv4;}
-  int GetPort() const {return port;}
+  in_addr GetIpv4() const { return ipv4; }
+  int GetPort() const { return port; }
   std::string ToString() const;
+
  private:
   in_addr ipv4;
   int port;
@@ -80,21 +81,33 @@ class PalInfo {
   PalInfo();
   ~PalInfo();
 
-  PalKey GetKey() const {
-    return ipv4;
-  }
+  PalKey GetKey() const { return ipv4; }
 
-  in_addr ipv4;  ///< 好友IP
-  char *segdes;    ///< 所在网段描述
-  char *version;   ///< 版本串 *
-  char *user;      ///< 好友用户 *
-  char *host;      ///< 好友主机 *
-  char *name;      ///< 昵称 *
-  char *group;     ///< 所在群组
-  char *photo;     ///< 形象照片
-  char *sign;      ///< 个性签名
-  char *iconfile;  ///< 好友头像 *
-  char *encode;    ///< 好友编码 *
+  PalInfo& setName(const std::string& name);
+  const std::string& getName() const { return name; }
+
+  PalInfo& setUser(const std::string& user);
+  const std::string& getUser() const { return user; }
+
+  PalInfo& setHost(const std::string& host);
+  const std::string& getHost() const { return host; }
+
+  PalInfo& setVersion(const std::string& version);
+  const std::string& getVersion() const { return version; }
+
+  PalInfo& setEncode(const std::string& encode);
+  const std::string& getEncode() const { return encode; }
+
+  PalInfo& setGroup(const std::string& group);
+  const std::string& getGroup() const { return group; }
+
+  std::string toString() const;
+
+  in_addr ipv4;       ///< 好友IP
+  char* segdes;       ///< 所在网段描述
+  char* photo;        ///< 形象照片
+  char* sign;         ///< 个性签名
+  char* iconfile;     ///< 好友头像 *
   uint32_t packetn;   ///< 已接受最大的包编号
   uint32_t rpacketn;  ///< 需要接受检查的包编号
 
@@ -103,13 +116,19 @@ class PalInfo {
   bool isChanged() const;
   bool isInBlacklist() const;
 
-  void setCompatible(bool value);
-  void setOnline(bool value);
-  void setChanged(bool value);
-  void setInBlacklistl(bool value);
+  PalInfo& setCompatible(bool value);
+  PalInfo& setOnline(bool value);
+  PalInfo& setChanged(bool value);
+  PalInfo& setInBlacklistl(bool value);
 
  private:
-  uint8_t flags;   ///< 3 黑名单:2 更改:1 在线:0 兼容
+  std::string user;
+  std::string name;
+  std::string host;
+  std::string version;  ///< 版本串 *
+  std::string encode;   ///< 好友编码 *
+  std::string group;    ///< 所在群组
+  uint8_t flags;        ///< 3 黑名单:2 更改:1 在线:0 兼容
 };
 
 /// pointer to PalInfo
@@ -118,11 +137,7 @@ using PPalInfo = std::shared_ptr<PalInfo>;
 /// const pointer to PalInfo
 using CPPalInfo = std::shared_ptr<const PalInfo>;
 
-enum class FileAttr: std::uint32_t {
-  UNKNOWN,
-  REGULAR,
-  DIRECTORY
-};
+enum class FileAttr : std::uint32_t { UNKNOWN, REGULAR, DIRECTORY };
 
 constexpr bool FileAttrIsValid(FileAttr attr) {
   return attr == FileAttr::REGULAR || attr == FileAttr::DIRECTORY;
@@ -139,13 +154,15 @@ class FileInfo {
   FileInfo(const FileInfo& fileInfo);
   FileInfo& operator=(const FileInfo& fileInfo);
 
+  bool operator==(const FileInfo& rhs) const;
+
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号
   FileAttr fileattr;     ///< 文件属性
   int64_t filesize;      ///< 文件大小
   int64_t finishedsize;  ///< 已完成大小
   PPalInfo fileown;      ///< 文件拥有者(来自好友*)
-  char *filepath;        ///< 文件路径 *
+  char* filepath;        ///< 文件路径 *
   uint32_t filectime;    ///<  文件创建时间
   uint32_t filemtime;    ///<  文件最后修改时间
   uint32_t filenum;      ///<  包内编号
@@ -163,12 +180,13 @@ class ChipData {
   std::string ToString() const;
 
   MessageContentType type;  ///< 消息内容类型
-  std::string data;               ///< 数据串 *
+  std::string data;         ///< 数据串 *
 
   void SetDeleteFileAfterSent(bool val) { deleteFileAfterSent = val; }
   bool GetDeleteFileAfterSent() const { return deleteFileAfterSent; }
+
  private:
-  bool deleteFileAfterSent {true};
+  bool deleteFileAfterSent{true};
 };
 
 /**
@@ -176,13 +194,16 @@ class ChipData {
  */
 class MsgPara {
  public:
-  MsgPara();
+  explicit MsgPara(CPPalInfo pal);
   ~MsgPara();
 
-  PPalInfo pal;             ///< 好友数据信息(来自好友*)
-  MessageSourceType stype;  ///< 来源类型
-  GroupBelongType btype;    ///< 所属类型
-  std::vector<ChipData> dtlist;           ///< 数据链表 *
+  CPPalInfo getPal() const { return pal; }
+
+  MessageSourceType stype;       ///< 来源类型
+  GroupBelongType btype;         ///< 所属类型
+  std::vector<ChipData> dtlist;  ///< 数据链表 *
+ private:
+  CPPalInfo pal;  ///< 好友数据信息(来自好友*)
 };
 
 /**
@@ -207,27 +228,7 @@ class NetSegment {
   std::string description;  ///< 此IP段描述
 
   Json::Value ToJsonValue() const;
-  static NetSegment fromJsonValue(Json::Value &value);
-};
-
-/***************偶是可爱的分割线(抽象类)*****************/
-
-/**
- * 会话抽象类.
- * 提供好友会话类必需的公共接口.
- */
-class SessionAbstract {
- public:
-  SessionAbstract();
-  virtual ~SessionAbstract();
-
-  virtual void UpdatePalData(PalInfo *pal) = 0;  ///< 更新好友数据
-  virtual void InsertPalData(PalInfo *pal) = 0;  ///< 插入好友数据
-  virtual void DelPalData(PalInfo *pal) = 0;     ///< 删除好友数据
-  virtual void ClearAllPalData() = 0;            ///< 清除所有好友数据
-  //        virtual void ShowEnclosure() = 0;               ///< 显示附件
-  virtual void AttachEnclosure(const GSList *list) = 0;  ///< 添加附件
-  virtual void OnNewMessageComing() = 0;  ///< 窗口打开情况下有新消息
+  static NetSegment fromJsonValue(Json::Value& value);
 };
 
 }  // namespace iptux

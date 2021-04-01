@@ -23,14 +23,14 @@
 #include <glib.h>
 #include <libintl.h>
 
-#include <glog/logging.h>
 #include <glib/gi18n.h>
+#include <glog/logging.h>
 
 #include "iptux/Application.h"
 #include "iptux/SoundSystem.h"
 
-#include "iptux-utils/utils.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 using namespace iptux;
@@ -43,11 +43,11 @@ static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 
 string getConfigPath() {
   const char* res1;
-  if(bindIp== nullptr) {
+  if (bindIp == nullptr) {
     res1 = g_build_path("/", g_getenv("HOME"), ".iptux", "config.json", NULL);
   } else {
     res1 = g_build_path("/", g_getenv("HOME"), ".iptux",
-      stringFormat("config.%s.json", bindIp).c_str(), NULL);
+                        stringFormat("config.%s.json", bindIp).c_str(), NULL);
   }
   string res2(res1);
   g_free(gpointer(res1));
@@ -94,8 +94,10 @@ static const char* logLevelAsString(GLogLevelFlags logLevel) {
   }
 }
 
-static void logHandler(const gchar* log_domain, GLogLevelFlags log_level,
-                       const gchar* message, gpointer user_data)
+static void logHandler(const gchar* log_domain,
+                       GLogLevelFlags log_level,
+                       const gchar* message,
+                       gpointer user_data)
 
 {
   if (log_level > logLevel) {
@@ -136,8 +138,6 @@ static void dealLog(const IptuxConfig& config) {
   }
 }
 
-
-
 int main(int argc, char** argv) {
   google::InstallFailureSignalHandler();
   setlocale(LC_ALL, "");
@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
   string configPath = configFilename ? configFilename : getConfigPath();
   auto config = make_shared<IptuxConfig>(configPath);
   dealLog(*config);
-  if(bindIp) {
+  if (bindIp) {
     config->SetString("bind_ip", bindIp);
   }
   Application app(config);

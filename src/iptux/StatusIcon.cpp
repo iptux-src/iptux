@@ -14,15 +14,15 @@
 
 #include <glib/gi18n.h>
 
-#include "callback.h"
 #include "DataSettings.h"
 #include "DetectPal.h"
 #include "DialogGroup.h"
 #include "DialogPeer.h"
+#include "callback.h"
 #include "global.h"
 
-#include "iptux-utils/utils.h"
 #include "ShareFile.h"
+#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -31,22 +31,24 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-StatusIcon::StatusIcon(shared_ptr<IptuxConfig> config, MainWindow &mwin)
+StatusIcon::StatusIcon(shared_ptr<IptuxConfig> config, MainWindow& mwin)
     : config(config), mwin(mwin), statusicon(NULL), timerid(0) {}
 
 /**
  * 类析构函数.
  */
 StatusIcon::~StatusIcon() {
-  if (statusicon) g_object_unref(statusicon);
-  if (timerid > 0) g_source_remove(timerid);
+  if (statusicon)
+    g_object_unref(statusicon);
+  if (timerid > 0)
+    g_source_remove(timerid);
 }
 
 /**
  * 创建状态图标.
  */
 void StatusIcon::CreateStatusIcon() {
-  GdkScreen *screen;
+  GdkScreen* screen;
 
   if (g_cthrd->getUiProgramData()->IsAutoHidePanelAfterLogin()) {
     statusicon = gtk_status_icon_new_from_stock("iptux-logo-hide");
@@ -84,7 +86,7 @@ void StatusIcon::AlterStatusIconMode() {
  * 创建弹出菜单.
  * @return 菜单
  */
-GtkWidget *StatusIcon::CreatePopupMenu() {
+GtkWidget* StatusIcon::CreatePopupMenu() {
   GtkWidget *menu, *menuitem;
   GtkWidget *image, *window;
 
@@ -111,12 +113,14 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   image = gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.tools.transmission");
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem),
+                                 "app.tools.transmission");
 
   /* 首选项 */
   NO_OPERATION_C
   menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Preferences"));
-  image = gtk_image_new_from_icon_name("preferences-system-symbolic", GTK_ICON_SIZE_MENU);
+  image = gtk_image_new_from_icon_name("preferences-system-symbolic",
+                                       GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.preferences");
@@ -130,8 +134,8 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
 
   menuitem = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.tools.shared_management");
-
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem),
+                                 "app.tools.shared_management");
 
   /* 探测好友 */
   NO_OPERATION_C
@@ -144,7 +148,8 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
   /* 程序退出 */
   NO_OPERATION_C
   menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
-  image = gtk_image_new_from_icon_name("application-exit-symbolic", GTK_ICON_SIZE_MENU);
+  image = gtk_image_new_from_icon_name("application-exit-symbolic",
+                                       GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
   gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "app.quit");
@@ -155,17 +160,11 @@ GtkWidget *StatusIcon::CreatePopupMenu() {
 /**
  * 状态图标被激活的响应处理函数.
  */
-void StatusIcon::StatusIconActivate(StatusIcon *self) {
-  GroupInfo *grpinf;
+void StatusIcon::StatusIconActivate(StatusIcon* self) {
+  GroupInfo* grpinf;
 
-  g_cthrd->Lock();
-  if (g_cthrd->GetMsglineItems())
-    grpinf = g_cthrd->GetMsglineHeadItem();
-  else
-    grpinf = NULL;
-  g_cthrd->Unlock();
   if (grpinf) {
-    switch (grpinf->type) {
+    switch (grpinf->getType()) {
       case GROUP_BELONG_TYPE_REGULAR:
         DialogPeer::PeerDialogEntry(g_mwin->getApp(), grpinf);
         break;
@@ -188,8 +187,8 @@ void StatusIcon::StatusIconActivate(StatusIcon *self) {
  * @param button the button that was pressed
  * @param time the timestamp of the event that triggered the signal emission
  */
-void StatusIcon::onPopupMenu(StatusIcon *self, guint button, guint time) {
-  GtkWidget *menu;
+void StatusIcon::onPopupMenu(StatusIcon* self, guint button, guint time) {
+  GtkWidget* menu;
 
   menu = self->CreatePopupMenu();
   gtk_widget_show_all(menu);
@@ -205,20 +204,16 @@ void StatusIcon::onPopupMenu(StatusIcon *self, guint button, guint time) {
  * @param tooltip a GtkTooltip
  * @return Gtk+库所需
  */
-gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon *statusicon, gint x,
-                                            gint y, gboolean key,
-                                            GtkTooltip *tooltip) {
-  char *msgstr;
+gboolean StatusIcon::StatusIconQueryTooltip(GtkStatusIcon* statusicon,
+                                            gint x,
+                                            gint y,
+                                            gboolean key,
+                                            GtkTooltip* tooltip) {
+  char* msgstr;
   guint len;
 
   /* 获取消息串 */
-  g_cthrd->Lock();
-  if ((len = g_cthrd->GetMsglineItems())) {
-    msgstr = g_strdup_printf(_("To be read: %u messages"), len);
-  } else {
-    msgstr = g_strdup(_("iptux"));
-  }
-  g_cthrd->Unlock();
+  msgstr = g_strdup(_("iptux"));
   /* 设置信息提示串 */
   gtk_tooltip_set_text(tooltip, msgstr);
   g_free(msgstr);
@@ -239,7 +234,7 @@ gboolean StatusIcon::IsEmbedded() {
  * 改变UI的外观.
  * @return Gtk+库所需
  */
-gboolean StatusIcon::onActivate(StatusIcon *self) {
+gboolean StatusIcon::onActivate(StatusIcon* self) {
   return self->AlterInterfaceMode();
 }
 
