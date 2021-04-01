@@ -31,24 +31,34 @@ core_sources += files([
 inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
-libiptux_core = shared_library('iptux-core',
-    core_sources,
-    dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep, thread_dep],
-    link_with: [libiptux_utils],
-    include_directories: inc,
-    install: true,
-    version: so_version,
-)
 
-pkg = import('pkgconfig')
-pkg.generate(
-    description: 'Communicate and Share File in LAN',
-    name: 'iptux-core',
-    version: so_version,
-    requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35', 'sigc++-2.0'],
-    requires_private: ['libglog', 'gflags'],
-    libraries: [libiptux_core, glog_dep],
-)
+if get_option('static-link')
+    libiptux_core = static_library('iptux-core',
+        core_sources,
+        dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep, thread_dep],
+        link_with: [libiptux_utils],
+        include_directories: inc,
+    )
+else
+    libiptux_core = shared_library('iptux-core',
+        core_sources,
+        dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep, thread_dep],
+        link_with: [libiptux_utils],
+        include_directories: inc,
+        install: true,
+        version: so_version,
+    )
+    pkg = import('pkgconfig')
+    pkg.generate(
+        description: 'Communicate and Share File in LAN',
+        name: 'iptux-core',
+        version: so_version,
+        requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35', 'sigc++-2.0'],
+        requires_private: ['libglog', 'gflags'],
+        libraries: [libiptux_core, glog_dep],
+    )
+endif
+
 
 core_test_helper_sources = files([
     'TestHelper.cpp',
