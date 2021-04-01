@@ -26,6 +26,7 @@ slots:
 apps:
   iptux:
     command: usr/bin/iptux
+    desktop: usr/share/applications/iptux.desktop
     extensions: [gnome-3-28]
     slots:
       - dbus-iptux
@@ -35,9 +36,12 @@ parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
-    build-packages: [libgoogle-glog-dev, libjsoncpp-dev]
+    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev]
     plugin: meson
     meson-parameters: ["--prefix=/snap/iptux/current/usr"]
+    override-pull: |
+      snapcraftctl pull
+      sed -i.bak -e 's|Icon=iptux-icon|Icon=/usr/share/iptux/pixmaps/icon/iptux-icon.png|g' share/applications/iptux.desktop.in
     organize:
       snap/iptux/current/usr: usr
     stage-packages:
@@ -45,3 +49,4 @@ parts:
       - libgoogle-glog0v5
       - libjsoncpp1
       - libunwind8
+      - libsigc++-2.0-0v5
