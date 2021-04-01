@@ -13,7 +13,7 @@
          either define your own or just hardcode the path here.
     -->
     <!-- <prefix name="default">${env:JHBUILD_PREFIX}</prefix> -->
-    <prefix name="default">/opt/homebrew</prefix>
+    <prefix name="default">/usr/local</prefix>
 
     <!-- The project directory is the default location of the created
          app. If you leave out the path, the current directory is
@@ -72,15 +72,6 @@
 
   <binary>
     ${prefix}/lib/gio/modules/libgiognutls.so
-  </binary>
-  <binary>
-    ${prefix}/lib/libiptux-core.0.dylib
-  </binary>
-  <binary>
-    ${prefix}/lib/libjsoncpp.24.dylib
-  </binary>
-  <binary>
-    ${prefix}/lib/libglog.0.dylib
   </binary>
 
 <!-- No longer needed for pango >= 1.38
