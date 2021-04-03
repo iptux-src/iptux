@@ -13,6 +13,7 @@
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/ShareFile.h"
+#include "iptux/TransWindow.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
@@ -213,7 +214,7 @@ void Application::onPreferences(void*, void*, Application& self) {
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
-  self.window->OpenTransWindow();
+  self.openTransWindow();
 }
 
 void Application::onToolsSharedManagement(void*, void*, Application& self) {
@@ -286,6 +287,22 @@ void Application::onEvent(shared_ptr<const Event> _event) {
 
 PPalInfo Application::getMe() {
   return this->getCoreThread()->getMe();
+}
+
+void Application::openTransWindow() {
+  if (transWindow == nullptr) {
+    transWindow = trans_window_new(this, GTK_WINDOW(window));
+    gtk_widget_show_all(GTK_WIDGET(transWindow));
+    gtk_widget_hide(GTK_WIDGET(transWindow));
+    g_signal_connect_swapped(transWindow, "delete-event",
+                             G_CALLBACK(onTransWindowDelete), this);
+  }
+  gtk_window_present(GTK_WINDOW(transWindow));
+}
+
+gboolean Application::onTransWindowDelete(iptux::Application& self) {
+  self.transWindow = nullptr;
+  return FALSE;
 }
 
 }  // namespace iptux
