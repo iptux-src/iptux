@@ -20,7 +20,7 @@
 #include "iptux-utils/utils.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 
@@ -578,7 +578,7 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget* treeview,
  */
 void DialogGroup::MembertreeItemActivated(GtkWidget* treeview,
                                           GtkTreePath* path,
-                                          GtkTreeViewColumn* column,
+                                          GtkTreeViewColumn*,
                                           DialogGroup* self) {
   GtkTreeModel* model;
   GtkTreeIter iter;

@@ -26,7 +26,7 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 #include "iptux/dialog.h"
@@ -415,9 +415,7 @@ bool DialogPeer::SendTextMsg() {
                                 g_get_user_config_dir(), count++);
       gdk_pixbuf_save(pixbuf, chipmsg, "bmp", NULL, NULL);
       /* 新建一个碎片数据(图片)，并加入数据链表 */
-      ChipData chip;
-      chip.type = MESSAGE_CONTENT_TYPE_PICTURE;
-      chip.data = chipmsg;
+      ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
       dtlist.push_back(std::move(chip));
     }
   } while (gtk_text_iter_forward_find_char(
@@ -428,9 +426,7 @@ bool DialogPeer::SendTextMsg() {
   snprintf(ptr, MAX_UDPLEN - len, "%s", chipmsg);
   g_free(chipmsg);
   /* 新建一个碎片数据(字符串)，并加入数据链表 */
-  ChipData chip;
-  chip.type = MESSAGE_CONTENT_TYPE_STRING;
-  chip.data = g_strdup(buf);
+  ChipData chip(buf);
   // TODO: 保证字符串先被发送？
   dtlist.push_back(std::move(chip));
 
