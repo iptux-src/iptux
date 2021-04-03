@@ -263,6 +263,16 @@ void Application::onEvent(shared_ptr<const Event> _event) {
         G_APPLICATION(app), "iptux-new-message", title, summary,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
+  if (type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
+    const NewShareFileFromFriendEvent* event =
+        dynamic_cast<const NewShareFileFromFriendEvent*>(_event.get());
+    auto title = stringFormat(_("New File from %s"),
+                              event->GetFileInfo().fileown->getName().c_str());
+    auto summary = event->GetFileInfo().filepath;
+    notificationService->sendNotification(
+        G_APPLICATION(app), "iptux-new-file", title, summary,
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+  }
 }
 
 PPalInfo Application::getMe() {
