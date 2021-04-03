@@ -7,7 +7,6 @@
 namespace iptux {
 
 extern UiCoreThread* g_cthrd;
-extern MainWindow* g_mwin;
 
 }  // namespace iptux
 

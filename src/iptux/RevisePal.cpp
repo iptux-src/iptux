@@ -31,8 +31,11 @@ namespace iptux {
  * 类构造函数.
  * @param pl
  */
-RevisePal::RevisePal(PalInfo* pl)
-    : widset(NULL), mdlset(NULL), pal(CHECK_NOTNULL(pl)) {
+RevisePal::RevisePal(MainWindow* mainWin, PalInfo* pl)
+    : widset(NULL),
+      mdlset(NULL),
+      mainWin(CHECK_NOTNULL(mainWin)),
+      pal(CHECK_NOTNULL(pl)) {
   InitSublayer();
 }
 
@@ -47,8 +50,8 @@ RevisePal::~RevisePal() {
  * 修正好友数据入口.
  * @param pal class PalInfo
  */
-void RevisePal::ReviseEntryDo(PalInfo* pal, bool run) {
-  RevisePal rpal(pal);
+void RevisePal::ReviseEntryDo(MainWindow* mainWin, PalInfo* pal, bool run) {
+  RevisePal rpal(mainWin, pal);
   GtkWidget* dialog;
 
   /* 创建对话框 */
@@ -102,7 +105,7 @@ GtkWidget* RevisePal::CreateMainDialog() {
   GtkWidget* dialog;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Change Pal's Information"), GTK_WINDOW(g_mwin->getWindow()),
+      _("Change Pal's Information"), GTK_WINDOW(mainWin->getWindow()),
       GTK_DIALOG_MODAL, _("_OK"), GTK_RESPONSE_OK, _("_Cancel"),
       GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
@@ -286,7 +289,7 @@ void RevisePal::ApplyReviseData() {
   g_cthrd->Lock();
   g_cthrd->UpdatePalToList(pal->ipv4);
   g_cthrd->Unlock();
-  g_mwin->UpdateItemToPaltree(pal->ipv4);
+  mainWin->UpdateItemToPaltree(pal->ipv4);
 }
 
 /**

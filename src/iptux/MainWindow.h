@@ -122,7 +122,7 @@ class MainWindow : public sigc::trackable {
   static void GoPrevTreeModel(MainWindow* mwin);
   static void GoNextTreeModel(MainWindow* mwin);
 
-  static void DeletePalItem(GroupInfo* grpinf);
+  void DeletePalItem(GroupInfo* grpinf);
   static gboolean PaltreeQueryTooltip(GtkWidget* treeview,
                                       gint x,
                                       gint y,
@@ -133,7 +133,9 @@ class MainWindow : public sigc::trackable {
                                      GtkTreePath* path,
                                      GtkTreeViewColumn* column,
                                      MainWindow* self);
-  static gboolean PaltreePopupMenu(GtkWidget* treeview, GdkEventButton* event);
+  static gboolean PaltreePopupMenu(GtkWidget* treeview,
+                                   GdkEventButton* event,
+                                   MainWindow* self);
   static gboolean PaltreeChangeStatus(GtkWidget* treeview,
                                       GdkEventButton* event);
   static void PaltreeDragDataReceived(GtkWidget* treeview,

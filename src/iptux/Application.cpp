@@ -107,7 +107,6 @@ void Application::onStartup(Application& self) {
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   g_cthrd = self.cthrd.get();
   self.window = new MainWindow(&self, *g_cthrd);
-  g_mwin = self.window;
   self.eventAdaptor = new EventAdaptor(
       self.cthrd->signalEvent,
       [&](shared_ptr<const Event> event) { self.onEvent(event); });

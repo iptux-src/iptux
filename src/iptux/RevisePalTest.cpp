@@ -16,7 +16,7 @@ TEST(RevisePal, Constructor) {
 
   PalInfo palInfo;
 
-  RevisePal pal(&palInfo);
+  RevisePal pal(app.getMainWindow(), &palInfo);
 }
 
 TEST(RevisePal, ReviseEntryDo) {
@@ -28,5 +28,5 @@ TEST(RevisePal, ReviseEntryDo) {
 
   PalInfo palInfo;
 
-  RevisePal::ReviseEntryDo(&palInfo, false);
+  RevisePal::ReviseEntryDo(app.getMainWindow(), &palInfo, false);
 }
