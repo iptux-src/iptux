@@ -61,3 +61,16 @@ TEST(FileAttr, Convert) {
   EXPECT_EQ(FileAttr(3), FileAttr(3));
   EXPECT_EQ(FileAttr(-1), FileAttr(-1));
 }
+
+TEST(MsgPara, getSummary) {
+  PPalInfo pal = make_shared<PalInfo>();
+  MsgPara msg(pal);
+  EXPECT_EQ(msg.getSummary(), "Empty Message");
+  msg.dtlist.push_back(ChipData("foobar"));
+  EXPECT_EQ(msg.getSummary(), "foobar");
+  msg.dtlist.push_back(ChipData("foobar2"));
+  EXPECT_EQ(msg.getSummary(), "foobar");
+  msg.dtlist.clear();
+  msg.dtlist.push_back(ChipData(MessageContentType::PICTURE, "foobar"));
+  EXPECT_EQ(msg.getSummary(), "Received an image");
+}
