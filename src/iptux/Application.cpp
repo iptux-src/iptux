@@ -273,6 +273,20 @@ void Application::onEvent(shared_ptr<const Event> _event) {
         G_APPLICATION(app), "iptux-new-file", title, summary,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
+  if (type == EventType::RECV_FILE_FINISHED) {
+    auto event = dynamic_pointer_cast<const RecvFileFinishedEvent>(_event);
+    auto title = _("Receiveing File Finished");
+    auto taskStat = getCoreThread()->GetTransTaskStat(event->GetTaskId());
+    string summary;
+    if (!taskStat) {
+      summary = _("file info no longer exist");
+    } else {
+      summary = taskStat->getFilename();
+    }
+    notificationService->sendNotification(
+        G_APPLICATION(app), "iptux-recv-file-finished", title, summary,
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+  }
 }
 
 PPalInfo Application::getMe() {
