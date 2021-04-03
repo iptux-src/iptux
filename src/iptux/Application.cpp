@@ -62,18 +62,25 @@ Application::Application(shared_ptr<IptuxConfig> config)
     : config(config), data(nullptr), window(nullptr), shareFile(nullptr) {
   auto application_id =
       config->GetString("debug_application_id", "io.github.iptux-src.iptux");
-  app = gtk_application_new(application_id.c_str(), G_APPLICATION_FLAGS_NONE);
-  g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
-  g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
 
   transModel = transModelNew();
   menuBuilder = nullptr;
   eventAdaptor = nullptr;
   logSystem = nullptr;
+
+  app = gtk_application_new(application_id.c_str(), G_APPLICATION_FLAGS_NONE);
+  g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
+  g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
+
 #if SYSTEM_DARWIN
   notificationService = new TerminalNotifierNoticationService();
 #else
   notificationService = new GioNotificationService();
+  GError* error = nullptr;
+  if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
+    LOG_WARN("g_application_register failed: %s-%d-%s", g_quark_to_string(error->domain),
+      error->code, error->message);
+  }
 #endif
 }
 

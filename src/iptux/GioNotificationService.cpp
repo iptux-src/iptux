@@ -12,7 +12,9 @@ void GioNotificationService::sendNotification(GApplication* app,
   GNotification* notification = g_notification_new(title.c_str());
   g_notification_set_body(notification, body.c_str());
   g_notification_set_priority(notification, priority);
-  g_notification_set_icon(notification, icon);
+  if(icon) {
+    g_notification_set_icon(notification, icon);
+  }
   g_application_send_notification(app, id.c_str(), notification);
   g_object_unref(notification);
 }
