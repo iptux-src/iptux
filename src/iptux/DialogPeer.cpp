@@ -588,8 +588,8 @@ GtkWidget* DialogPeer::CreateFileToReceiveArea() {
   g_datalist_set_data(&widset, "file-receive-refuse-button", button);
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg),
-                           (DialogBase*)this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "app.tools.transmission");
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
