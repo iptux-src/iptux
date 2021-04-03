@@ -7,12 +7,16 @@ sigc_dep = dependency('sigc++-2.0')
 
 sources = files([
     'Application.cpp',
+    'callback.cpp',
     'DataSettings.cpp',
     'DetectPal.cpp',
+    'dialog.cpp',
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
     'EventAdaptor.cpp',
+    'GioNotificationService.cpp',
+    'global.cpp',
     'HelpDialog.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
@@ -26,9 +30,6 @@ sources = files([
     'UiModels.cpp',
     'UiProgramData.cpp',
     'WindowConfig.cpp',
-    'callback.cpp',
-    'dialog.cpp',
-    'global.cpp',
 ])
 
 glib_compile_resources = find_program('glib-compile-resources')
