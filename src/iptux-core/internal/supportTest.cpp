@@ -8,6 +8,6 @@ using namespace std;
 TEST(Support, get_sys_broadcast_addr) {
   int udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
   auto ips = get_sys_broadcast_addr(udpSock);
-  ASSERT_LE(int(ips.size()), 2);
+  ASSERT_GE(int(ips.size()), 2);
   shutdown(udpSock, SHUT_RDWR);
 }
