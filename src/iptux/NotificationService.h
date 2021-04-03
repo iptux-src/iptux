@@ -8,12 +8,17 @@
 namespace iptux {
 
 class NotificationService {
-  public:
-    virtual ~NotificationService() = default;
+ public:
+  virtual ~NotificationService() = default;
 
-    virtual void sendNotification(GApplication* app, std::string id, GNotification* notification) = 0;
+  virtual void sendNotification(GApplication* app,
+                                const std::string& id,
+                                const std::string& title,
+                                const std::string& body,
+                                GNotificationPriority priority,
+                                GIcon* icon) = 0;
 };
 
-}
+}  // namespace iptux
 
 #endif

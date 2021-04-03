@@ -13,12 +13,12 @@
 #include "iptux/LogSystem.h"
 #include "iptux/ShareFile.h"
 #include "iptux/StatusIcon.h"
+#include "iptux/TerminalNotifierNotificationService.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
-#include "iptux/GioNotificationService.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/Darwin.h"
@@ -65,7 +65,7 @@ Application::Application(shared_ptr<IptuxConfig> config)
   menuBuilder = nullptr;
   eventAdaptor = nullptr;
   logSystem = nullptr;
-  notificationService = new GioNotificationService();
+  notificationService = new TerminalNotifierNoticationService();
 }
 
 Application::~Application() {
@@ -247,11 +247,10 @@ void Application::refreshTransTasks() {
 
 void Application::onEvent(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
-  if(type == EventType::NEW_MESSAGE) {
-    GNotification* n = g_notification_new("Iptux new message");
-    // g_application_send_notification(G_APPLICATION(app), "iptux-new-message", n);
-    notificationService->sendNotification(G_APPLICATION(app), "iptux-new-message", n);
-    g_object_unref(n);
+  if (type == EventType::NEW_MESSAGE) {
+    notificationService->sendNotification(
+        G_APPLICATION(app), "iptux-new-message", "Iptx new message", "",
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   // LOG_WARN("unknown event type: %d", int(type));
 }

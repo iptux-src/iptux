@@ -24,6 +24,7 @@ sources = files([
     'ShareFile.cpp',
     'SoundSystem.cpp',
     'StatusIcon.cpp',
+    'TerminalNotifierNotificationService.cpp',
     'TransWindow.cpp',
     'UiCoreThread.cpp',
     'UiHelper.cpp',

@@ -1,13 +1,13 @@
-#ifndef IPTUX_GIO_NOTIFICATION_SERVICE
-#define IPTUX_GIO_NOTIFICATION_SERVICE
+#ifndef IPTUX_TERMINAL_NOTIFIER_NOTIFICATION_SERVICE
+#define IPTUX_TERMINAL_NOTIFIER_NOTIFICATION_SERVICE
 
 #include "iptux/NotificationService.h"
 
 namespace iptux {
 
-class GioNotificationService : public NotificationService {
+class TerminalNotifierNoticationService : public NotificationService {
  public:
-  ~GioNotificationService() override = default;
+  ~TerminalNotifierNoticationService() override = default;
 
   void sendNotification(GApplication* app,
                         const std::string& id,
