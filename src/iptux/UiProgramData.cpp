@@ -97,8 +97,4 @@ UiProgramData::~UiProgramData() {
   }
 }
 
-bool UiProgramData::IsMsgSoundEnabled() const {
-  return FLAG_ISSET(sndfgs, 1);
-}
-
 }  // namespace iptux

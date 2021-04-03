@@ -87,11 +87,6 @@ class ProgramData {
   char* palicon;        //默认头像 *
   char* font;           //面板字体 *
 
-  char* transtip;  //传输完成提示声音 *
-  char* msgtip;    //消息到来提示声音 *
-  double volume;   //音量控制
-  uint8_t sndfgs;  // 2 传输:1 消息:0 声音
-
   struct timeval timestamp;      //程序数据时间戳
   int send_message_retry_in_us;  // sleep time(in microsecond) when send message
                                  // failed

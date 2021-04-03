@@ -35,7 +35,6 @@ class DataSettings {
   GtkWidget* CreateMainDialog(GtkWidget* parent);
   GtkWidget* CreatePersonal();
   GtkWidget* CreateSystem();
-  GtkWidget* CreateSound();
   GtkWidget* CreateNetwork();
 
   void SetPersonalValue();
@@ -44,18 +43,14 @@ class DataSettings {
   static void SetNetworkValue();
 
   GtkTreeModel* CreateIconModel();
-  GtkTreeModel* CreateSndModel();
   GtkTreeModel* CreateNetworkModel();
   static void FillIconModel(GtkTreeModel* model);
-  static void FillSndModel(GtkTreeModel* model);
   static void FillNetworkModel(GtkTreeModel* model);
   GtkWidget* CreateIconTree(GtkTreeModel* model);
-  GtkWidget* CreateSndTree(GtkTreeModel* model);
   GtkWidget* CreateNetworkTree(GtkTreeModel* model);
 
   GtkWidget* CreateArchiveChooser();
   GtkWidget* CreateFontChooser();
-  GtkWidget* CreateSndChooser();
 
   GData* widset;  //窗体集
   GData* mdlset;  //数据model集
@@ -79,12 +74,6 @@ class DataSettings {
   static void ChoosePhoto(GData** widset);
 
   static void AdjustSensitive(GtkWidget* chkbutton, GtkWidget* widget);
-  static void AdjustVolume(GtkWidget* hscale);
-  static void SndtreeSelectItemChanged(GtkTreeSelection* selection,
-                                       GData** widset);
-  static void ChooserResetSndtree(GtkWidget* chooser, GData** widset);
-  static void PlayTesting(GData** widset);
-  static void StopTesting();
 
   static gint NetworkTreeCompareFunc(GtkTreeModel* model,
                                      GtkTreeIter* a,

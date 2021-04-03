@@ -81,9 +81,6 @@ brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/hom
 
 ```sh
 sudo apt-get install git libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ make meson libgoogle-glog-dev
-# if you need the sound support
-sudo apt-get install libgstreamer1.0-dev gstreamer1.0-plugins-good gstreamer1.0-alsa
-# endif
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 meson builddir && ninja -C builddir
@@ -95,11 +92,6 @@ iptux
 
 ```sh
 brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration
-# if you need the sound support
-brew install gstreamer
-brew install gst-plugins-base --with-libogg --with-libvorbis
-brew install gst-plugins-good
-# endif
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 meson builddir

@@ -44,8 +44,6 @@ void onReportBug() {
 }
 
 void iptux_init(LogSystem* logSystem) {
-  g_sndsys->InitSublayer();
-
   signal(SIGPIPE, SIG_IGN);
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
@@ -191,8 +189,6 @@ void Application::onActivate(Application& self) {
     return;
   }
   self.started = true;
-
-  g_sndsys = new SoundSystem();
 
   self.window->CreateWindow();
   try {

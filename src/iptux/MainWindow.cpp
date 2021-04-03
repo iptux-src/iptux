@@ -1720,9 +1720,6 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
             gtk_window_present(GTK_WINDOW(grpinf->dialog));
           }
         }
-        if (coreThread.getUiProgramData()->IsMsgSoundEnabled()) {
-          g_sndsys->Playing(coreThread.getProgramData()->msgtip);
-        }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
         grpinf = coreThread.GetPalSegmentItem(para.getPal().get());
@@ -1809,9 +1806,6 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto para = g_cthrd->GetTransTaskStat(taskId);
     g_mwin->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
-    if (para->isFinished() && FLAG_ISSET(g_progdt->sndfgs, 2)) {
-      g_sndsys->Playing(g_progdt->transtip);
-    }
     return;
   }
 
