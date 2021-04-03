@@ -7,6 +7,7 @@
 
 #include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 #include "iptux/DataSettings.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/IptuxResource.h"
@@ -250,12 +251,13 @@ void Application::onEvent(shared_ptr<const Event> _event) {
   if (type == EventType::NEW_MESSAGE) {
     const NewMessageEvent* event =
         dynamic_cast<const NewMessageEvent*>(_event.get());
+    auto title = stringFormat(_("New Message from %s"),
+                              event->getMsgPara().getPal()->getName().c_str());
     auto summary = event->getMsgPara().getSummary();
     notificationService->sendNotification(
-        G_APPLICATION(app), "iptux-new-message", "Iptx new message", summary,
+        G_APPLICATION(app), "iptux-new-message", title, summary,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
-  // LOG_WARN("unknown event type: %d", int(type));
 }
 
 PPalInfo Application::getMe() {
