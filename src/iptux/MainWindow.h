@@ -57,8 +57,6 @@ class MainWindow : public sigc::trackable {
 
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
 
-  void SetStatusIcon(StatusIcon* statusIcon) { this->statusIcon = statusIcon; }
-
   Application* getApp() { return app; }
 
  private:
@@ -70,7 +68,6 @@ class MainWindow : public sigc::trackable {
 
   std::shared_ptr<UiProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
-  StatusIcon* statusIcon;
 
   GData* widset;         //窗体集
   GData* mdlset;         //数据model集

@@ -13,7 +13,6 @@
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/ShareFile.h"
-#include "iptux/StatusIcon.h"
 #include "iptux/TerminalNotifierNotificationService.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
@@ -184,10 +183,8 @@ void Application::onActivate(Application& self) {
   }
   self.started = true;
 
-  StatusIcon* sicon = new StatusIcon(self.config, *self.window);
   g_sndsys = new SoundSystem();
 
-  self.window->SetStatusIcon(sicon);
   self.window->CreateWindow();
   try {
     g_cthrd->start();
@@ -196,7 +193,6 @@ void Application::onActivate(Application& self) {
     exit(1);
   }
   iptux_init(self.logSystem);
-  sicon->CreateStatusIcon();
 }
 
 void Application::onQuit(void*, void*, Application& self) {

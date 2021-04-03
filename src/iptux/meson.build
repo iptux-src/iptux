@@ -23,7 +23,6 @@ sources = files([
     'RevisePal.cpp',
     'ShareFile.cpp',
     'SoundSystem.cpp',
-    'StatusIcon.cpp',
     'TerminalNotifierNotificationService.cpp',
     'TransWindow.cpp',
     'UiCoreThread.cpp',

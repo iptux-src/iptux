@@ -27,7 +27,6 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
-#include "iptux/StatusIcon.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
@@ -1649,9 +1648,7 @@ void MainWindow::PanedDivideChanged(GtkWidget* paned,
   self->config->Save();
 }
 
-gboolean MainWindow::onDeleteEvent(MainWindow* self) {
-  return self->statusIcon->AlterInterfaceMode();
-}
+gboolean MainWindow::onDeleteEvent(MainWindow* self) {}
 
 void MainWindow::InitThemeSublayerData() {
   GtkIconTheme* theme;
