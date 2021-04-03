@@ -44,7 +44,14 @@ TEST(NetSegment, ContainIP) {
 }
 
 TEST(ChipData, ToString) {
-  EXPECT_EQ(ChipData().ToString(), "ChipData(MessageContentType::STRING, )");
+  EXPECT_EQ(ChipData("").ToString(), "ChipData(MessageContentType::STRING, )");
+}
+
+TEST(ChipData, getSummary) {
+  EXPECT_EQ(ChipData("").getSummary(), "");
+  EXPECT_EQ(ChipData("foobar").getSummary(), "foobar");
+  EXPECT_EQ(ChipData(MessageContentType::PICTURE, "foobar").getSummary(),
+            "Received an image");
 }
 
 TEST(FileAttr, Convert) {
