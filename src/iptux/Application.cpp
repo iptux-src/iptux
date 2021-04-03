@@ -13,12 +13,17 @@
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/ShareFile.h"
-#include "iptux/TerminalNotifierNotificationService.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
+
+#if SYSTEM_DARWIN
+#include "iptux/TerminalNotifierNotificationService.h"
+#else
+#include "iptux/GioNotificationService.h"
+#endif
 
 #if SYSTEM_DARWIN
 #include "iptux/Darwin.h"
@@ -65,7 +70,11 @@ Application::Application(shared_ptr<IptuxConfig> config)
   menuBuilder = nullptr;
   eventAdaptor = nullptr;
   logSystem = nullptr;
+#if SYSTEM_DARWIN
   notificationService = new TerminalNotifierNoticationService();
+#else
+  notificationService = new GioNotificationService();
+#endif
 }
 
 Application::~Application() {
