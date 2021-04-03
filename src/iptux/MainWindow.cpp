@@ -27,7 +27,6 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
-#include "iptux/StatusIcon.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
@@ -484,8 +483,6 @@ GtkWidget* MainWindow::CreateMainWindow() {
   gtk_window_set_default_icon_name("iptux");
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
-  g_signal_connect_swapped(window, "delete-event", G_CALLBACK(onDeleteEvent),
-                           this);
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
   return window;
@@ -1649,10 +1646,6 @@ void MainWindow::PanedDivideChanged(GtkWidget* paned,
   self->config->Save();
 }
 
-gboolean MainWindow::onDeleteEvent(MainWindow* self) {
-  return self->statusIcon->AlterInterfaceMode();
-}
-
 void MainWindow::InitThemeSublayerData() {
   GtkIconTheme* theme;
   GtkIconFactory* factory;
@@ -1726,9 +1719,6 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
           } else {
             gtk_window_present(GTK_WINDOW(grpinf->dialog));
           }
-        }
-        if (coreThread.getUiProgramData()->IsMsgSoundEnabled()) {
-          g_sndsys->Playing(coreThread.getProgramData()->msgtip);
         }
         break;
       case GROUP_BELONG_TYPE_SEGMENT:
@@ -1816,9 +1806,6 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto para = g_cthrd->GetTransTaskStat(taskId);
     g_mwin->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
-    if (para->isFinished() && FLAG_ISSET(g_progdt->sndfgs, 2)) {
-      g_sndsys->Playing(g_progdt->transtip);
-    }
     return;
   }
 

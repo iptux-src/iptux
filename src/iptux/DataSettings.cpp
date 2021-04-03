@@ -20,7 +20,6 @@
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux/SoundSystem.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
@@ -68,19 +67,12 @@ void DataSettings::ResetDataEntry(GtkWidget* parent, bool run) {
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
   label = gtk_label_new(_("System"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSystem(), label);
-#ifdef GST_FOUND
-  label = gtk_label_new(_("Sound"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSound(), label);
-#endif
   label = gtk_label_new(_("Network"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateNetwork(), label);
 
   /* 设置相关数据默认值 */
   dset.SetPersonalValue();
   dset.SetSystemValue();
-#ifdef GST_FOUND
-  dset.SetSoundValue();
-#endif
   dset.SetNetworkValue();
 
   /* 运行对话框 */
@@ -94,9 +86,6 @@ mark:
     case GTK_RESPONSE_OK:
       dset.ObtainPersonalValue();
       dset.ObtainSystemValue();
-#ifdef GST_FOUND
-      dset.ObtainSoundValue();
-#endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
       g_cthrd->UpdateMyInfo();
@@ -104,9 +93,6 @@ mark:
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
       dset.ObtainSystemValue();
-#ifdef GST_FOUND
-      dset.ObtainSoundValue();
-#endif
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
       g_cthrd->UpdateMyInfo();
@@ -130,12 +116,6 @@ void DataSettings::InitSublayer() {
   g_datalist_set_data_full(&mdlset, "icon-model", model,
                            GDestroyNotify(g_object_unref));
   FillIconModel(model);
-#ifdef GST_FOUND
-  model = CreateSndModel();
-  g_datalist_set_data_full(&mdlset, "sound-model", model,
-                           GDestroyNotify(g_object_unref));
-  FillSndModel(model);
-#endif
   model = CreateNetworkModel();
   g_datalist_set_data_full(&mdlset, "network-model", model,
                            GDestroyNotify(g_object_unref));
@@ -358,76 +338,6 @@ GtkWidget* DataSettings::CreateSystem() {
 }
 
 /**
- * 创建与声音相关的数据设置窗体.
- * @return 主窗体
- */
-GtkWidget* DataSettings::CreateSound() {
-  GtkWidget *box, *hbox, *vbox;
-  GtkWidget *frame, *sw, *chkbutton;
-  GtkWidget *label, *button, *widget;
-  GtkTreeSelection* selection;
-  GtkTreeModel* model;
-
-  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-  /* 声音支持 */
-  NO_OPERATION_C
-  chkbutton = gtk_check_button_new_with_label(_("Activate the sound support"));
-  gtk_box_pack_start(GTK_BOX(box), chkbutton, FALSE, FALSE, 3);
-  g_datalist_set_data(&widset, "sound-check-widget", chkbutton);
-  /* 音量调整 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), hbox);
-  label = gtk_label_new(_("Volume Control: "));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  widget = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0.0, 1.0, 0.01);
-  gtk_scale_set_draw_value(GTK_SCALE(widget), FALSE);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
-  g_signal_connect(widget, "value-changed", G_CALLBACK(AdjustVolume), NULL);
-  g_datalist_set_data(&widset, "volume-hscale-widget", widget);
-  /* 声音事件 */
-  NO_OPERATION_C
-  frame = gtk_frame_new(_("Sound Event"));
-  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
-  gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 3);
-  g_signal_connect(chkbutton, "toggled", G_CALLBACK(AdjustSensitive), frame);
-  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-  gtk_container_add(GTK_CONTAINER(frame), vbox);
-  /*/* 声音事件树 */
-  sw = gtk_scrolled_window_new(NULL, NULL);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
-                                 GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-                                      GTK_SHADOW_ETCHED_IN);
-  gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-  model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "sound-model"));
-  widget = CreateSndTree(model);
-  gtk_container_add(GTK_CONTAINER(sw), widget);
-  g_signal_connect(widget, "button-press-event", G_CALLBACK(PopupPickMenu),
-                   NULL);
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
-  g_signal_connect(selection, "changed", G_CALLBACK(SndtreeSelectItemChanged),
-                   &widset);
-  g_datalist_set_data(&widset, "sound-treeview-widget", widget);
-  /*/* 声音测试 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-  widget = CreateSndChooser();
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 5);
-  g_signal_connect(widget, "file-set", G_CALLBACK(ChooserResetSndtree),
-                   &widset);
-  g_datalist_set_data(&widset, "sound-chooser-widget", widget);
-  button = gtk_button_new_with_label(_("Test"));
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(PlayTesting), &widset);
-  button = gtk_button_new_with_label(_("Stop"));
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  g_signal_connect(button, "clicked", G_CALLBACK(StopTesting), NULL);
-
-  return box;
-}
-
-/**
  * 创建与网络相关的数据设置窗体.
  * @return 主窗体
  */
@@ -598,34 +508,6 @@ void DataSettings::SetSystemValue() {
 }
 
 /**
- * 为界面设置与声音相关的数据
- */
-void DataSettings::SetSoundValue() {
-  GtkWidget* widget;
-  GtkTreeSelection* selection;
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gchar* filepath;
-
-  auto g_progdt = g_cthrd->getUiProgramData();
-
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-check-widget"));
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                               FLAG_ISSET(g_progdt->sndfgs, 0));
-  gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(widget));
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "volume-hscale-widget"));
-  gtk_range_set_value(GTK_RANGE(widget), g_progdt->volume);
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-treeview-widget"));
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
-  if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
-    widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-chooser-widget"));
-    gtk_tree_model_get(model, &iter, 2, &filepath, -1);
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widget), filepath);
-    g_free(filepath);
-  }
-}
-
-/**
  * 为界面设置与网络相关的数据
  */
 void DataSettings::SetNetworkValue() {}
@@ -640,20 +522,6 @@ GtkTreeModel* DataSettings::CreateIconModel() {
   GtkListStore* model;
 
   model = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
-
-  return GTK_TREE_MODEL(model);
-}
-
-/**
- * 声音树(sound-tree)底层数据结构.
- * 3,0 toggled,1 comment,2 path \n
- * 是否被选中;用途注释;文件路径 \n
- * @return sound-model
- */
-GtkTreeModel* DataSettings::CreateSndModel() {
-  GtkListStore* model;
-
-  model = gtk_list_store_new(3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
 }
@@ -710,25 +578,6 @@ void DataSettings::FillIconModel(GtkTreeModel* model) {
 }
 
 /**
- * 为声音树(sound-tree)填充底层数据.
- * @param model sound-model
- */
-void DataSettings::FillSndModel(GtkTreeModel* model) {
-  GtkTreeIter iter;
-
-  auto g_progdt = g_cthrd->getUiProgramData();
-
-  gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
-                     FLAG_ISSET(g_progdt->sndfgs, 2), 1, _("Transfer finished"),
-                     2, g_progdt->transtip, -1);
-  gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
-                     FLAG_ISSET(g_progdt->sndfgs, 1), 1, _("Message received"),
-                     2, g_progdt->msgtip, -1);
-}
-
-/**
  * 为网络树(network-tree)填充底层数据.
  * @param model network-model
  * @note 与修改此链表的代码段是串行关系，无需加锁
@@ -760,45 +609,6 @@ GtkWidget* DataSettings::CreateIconTree(GtkTreeModel* model) {
                                  NULL);
 
   return combo;
-}
-
-/**
- * 创建声音树(sound-tree).
- * @param model sound-model
- * @return 声音树
- */
-GtkWidget* DataSettings::CreateSndTree(GtkTreeModel* model) {
-  GtkWidget* view;
-  GtkCellRenderer* cell;
-  GtkTreeViewColumn* column;
-  GtkTreeSelection* selection;
-  GtkTreePath* path;
-
-  view = gtk_tree_view_new_with_model(model);
-  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
-
-  cell = gtk_cell_renderer_toggle_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Play"), cell, "active",
-                                                    0, NULL);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-  g_signal_connect_swapped(cell, "toggled", G_CALLBACK(model_turn_select),
-                           model);
-
-  cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Event"), cell, "text", 1,
-                                                    NULL);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-
-  /* 函数ChooserResetView()要求必须选择一项 */
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-  gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
-  path = gtk_tree_path_new_from_string("0");
-  gtk_tree_selection_select_path(selection, path);
-  gtk_tree_path_free(path);
-
-  return view;
 }
 
 /**
@@ -872,21 +682,6 @@ GtkWidget* DataSettings::CreateFontChooser() {
   gtk_font_button_set_use_font(GTK_FONT_BUTTON(chooser), TRUE);
   gtk_font_button_set_use_size(GTK_FONT_BUTTON(chooser), TRUE);
   gtk_font_button_set_title(GTK_FONT_BUTTON(chooser), _("Select Font"));
-
-  return chooser;
-}
-
-/**
- * 创建声音文件选择器.
- * @return 选择器
- */
-GtkWidget* DataSettings::CreateSndChooser() {
-  GtkWidget* chooser;
-
-  chooser = gtk_file_chooser_button_new(_("Please select a sound file"),
-                                        GTK_FILE_CHOOSER_ACTION_OPEN);
-  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
-  gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(chooser), FALSE);
 
   return chooser;
 }
@@ -1034,53 +829,6 @@ void DataSettings::ObtainSystemValue() {
   g_progdt->SetFlag(1, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   g_progdt->SetFlag(0, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
-}
-
-/**
- * 获取与声音相关的数据.
- */
-void DataSettings::ObtainSoundValue() {
-  GtkWidget* widget;
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gboolean active;
-  gchar* path;
-
-  auto g_progdt = g_cthrd->getUiProgramData();
-
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-check-widget"));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))) {
-    FLAG_SET(g_progdt->sndfgs, 0);
-  } else {
-    FLAG_CLR(g_progdt->sndfgs, 0);
-  }
-
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "volume-hscale-widget"));
-  g_progdt->volume = gtk_range_get_value(GTK_RANGE(widget));
-
-  /**
-   * @see ::FillSndModel()，数据的获取应该与其保持一致.
-   */
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "sound-treeview-widget"));
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  /*/* 获取文件传输完成的声音信息 */
-  gtk_tree_model_get_iter_from_string(model, &iter, "0");
-  gtk_tree_model_get(model, &iter, 0, &active, 2, &path, -1);
-  if (active)
-    FLAG_SET(g_progdt->sndfgs, 2);
-  else
-    FLAG_CLR(g_progdt->sndfgs, 2);
-  g_free(g_progdt->transtip);
-  g_progdt->transtip = path;
-  /*/* 获取有消息到来的声音信息 */
-  gtk_tree_model_get_iter_from_string(model, &iter, "1");
-  gtk_tree_model_get(model, &iter, 0, &active, 2, &path, -1);
-  if (active)
-    FLAG_SET(g_progdt->sndfgs, 1);
-  else
-    FLAG_CLR(g_progdt->sndfgs, 1);
-  g_free(g_progdt->msgtip);
-  g_progdt->msgtip = path;
 }
 
 /**
@@ -1361,77 +1109,6 @@ void DataSettings::AdjustSensitive(GtkWidget* chkbutton, GtkWidget* widget) {
     gtk_widget_set_sensitive(widget, TRUE);
   else
     gtk_widget_set_sensitive(widget, FALSE);
-}
-
-/**
- * 调整声音系统的音量.
- * @param hscale hscale
- */
-void DataSettings::AdjustVolume(GtkWidget* hscale) {
-  gdouble value;
-
-  value = gtk_range_get_value(GTK_RANGE(hscale));
-  g_sndsys->AdjustVolume(value);
-}
-
-/**
- * 声音树(sound-tree)选中项变更的响应函数.
- * @param selection tree-selection
- * @param widset widget set
- */
-void DataSettings::SndtreeSelectItemChanged(GtkTreeSelection* selection,
-                                            GData** widset) {
-  GtkWidget* widget;
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gchar* path;
-
-  gtk_tree_selection_get_selected(selection, &model, &iter);
-  gtk_tree_model_get(model, &iter, 2, &path, -1);
-  widget = GTK_WIDGET(g_datalist_get_data(widset, "sound-chooser-widget"));
-  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widget), path);
-  g_free(path);
-}
-
-/**
- * 重设声音文件的响应函数.
- * @param chooser file-chooser
- * @param widset widget set
- */
-void DataSettings::ChooserResetSndtree(GtkWidget* chooser, GData** widset) {
-  GtkWidget* treeview;
-  GtkTreeSelection* selection;
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gchar* path;
-
-  treeview = GTK_WIDGET(g_datalist_get_data(widset, "sound-treeview-widget"));
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
-  path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
-  gtk_tree_selection_get_selected(selection, &model, &iter);
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 2, path, -1);
-  g_free(path);
-}
-
-/**
- * 播放测试.
- * @param widset widget set
- */
-void DataSettings::PlayTesting(GData** widset) {
-  GtkWidget* widget;
-  gchar* path;
-
-  widget = GTK_WIDGET(g_datalist_get_data(widset, "sound-chooser-widget"));
-  path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-  g_sndsys->Playing(path);
-  g_free(path);
-}
-
-/**
- * 停止播放测试.
- */
-void DataSettings::StopTesting() {
-  g_sndsys->Stop();
 }
 
 /**

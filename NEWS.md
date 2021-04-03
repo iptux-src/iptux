@@ -3,6 +3,8 @@
 ## Features
 
 * migrate to GTK+3, and use `GtkApplication`.
+* switch from `GtkStatusIcon` to `GNotification`.
+  * for macOS, we use `terminal-notifier`.
 * split non-UI part to libiptux-core, now you can write a bot for iptux, check `examples`.
 * add a config option `bind_ip` to specify binding ip.
 * add icon for macOS.

@@ -18,14 +18,7 @@ static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
  * 类构造函数.
  */
 ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
-    : palicon(NULL),
-      font(NULL),
-      transtip(NULL),
-      msgtip(NULL),
-      volume(1.0),
-      sndfgs(uint8_t(~0)),
-      config(config),
-      flags(0) {
+    : palicon(NULL), font(NULL), config(config), flags(0) {
   gettimeofday(&timestamp, NULL);
   pthread_mutex_init(&mutex, NULL);
   InitSublayer();
@@ -37,9 +30,6 @@ ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
 ProgramData::~ProgramData() {
   g_free(palicon);
   g_free(font);
-
-  g_free(msgtip);
-  g_free(transtip);
 
   pthread_mutex_destroy(&mutex);
 }
@@ -80,13 +70,6 @@ void ProgramData::WriteProgData() {
   config->SetBool("open_blacklist", FLAG_ISSET(flags, 1));
   config->SetBool("proof_shared", FLAG_ISSET(flags, 0));
 
-  config->SetString("trans_tip", transtip);
-  config->SetString("msg_tip", msgtip);
-  config->SetDouble("volume_degree", volume);
-
-  config->SetBool("transnd_support", FLAG_ISSET(sndfgs, 2));
-  config->SetBool("msgsnd_support", FLAG_ISSET(sndfgs, 1));
-  config->SetBool("sound_support", FLAG_ISSET(sndfgs, 0));
   config->SetString("access_shared_limit", passwd);
   config->SetInt("send_message_retry_in_us", send_message_retry_in_us);
   WriteNetSegment();
@@ -144,16 +127,6 @@ void ProgramData::ReadProgData() {
   FLAG_SET(flags, 2, config->GetBool("record_log", true));
   FLAG_SET(flags, 1, config->GetBool("open_blacklist"));
   FLAG_SET(flags, 0, config->GetBool("proof_shared"));
-
-  msgtip =
-      g_strdup(config->GetString("msg_tip", __SOUND_PATH "/msg.ogg").c_str());
-  transtip = g_strdup(
-      config->GetString("trans_tip", __SOUND_PATH "/trans.ogg").c_str());
-  volume = config->GetDouble("volume_degree");
-
-  FLAG_SET(sndfgs, 2, config->GetBool("transnd_support", true));
-  FLAG_SET(sndfgs, 1, config->GetBool("msgsnd_support", true));
-  FLAG_SET(sndfgs, 0, config->GetBool("sound_support", true));
 
   passwd = config->GetString("access_shared_limit");
   send_message_retry_in_us =

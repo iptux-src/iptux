@@ -7,17 +7,23 @@
 
 #include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 #include "iptux/DataSettings.h"
 #include "iptux/HelpDialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/ShareFile.h"
-#include "iptux/StatusIcon.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
 #include "iptux/global.h"
+
+#if SYSTEM_DARWIN
+#include "iptux/TerminalNotifierNotificationService.h"
+#else
+#include "iptux/GioNotificationService.h"
+#endif
 
 #if SYSTEM_DARWIN
 #include "iptux/Darwin.h"
@@ -38,8 +44,6 @@ void onReportBug() {
 }
 
 void iptux_init(LogSystem* logSystem) {
-  g_sndsys->InitSublayer();
-
   signal(SIGPIPE, SIG_IGN);
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
@@ -64,6 +68,11 @@ Application::Application(shared_ptr<IptuxConfig> config)
   menuBuilder = nullptr;
   eventAdaptor = nullptr;
   logSystem = nullptr;
+#if SYSTEM_DARWIN
+  notificationService = new TerminalNotifierNoticationService();
+#else
+  notificationService = new GioNotificationService();
+#endif
 }
 
 Application::~Application() {
@@ -77,6 +86,7 @@ Application::~Application() {
     delete logSystem;
   }
   delete window;
+  delete notificationService;
 }
 
 int Application::run(int argc, char** argv) {
@@ -180,10 +190,6 @@ void Application::onActivate(Application& self) {
   }
   self.started = true;
 
-  StatusIcon* sicon = new StatusIcon(self.config, *self.window);
-  g_sndsys = new SoundSystem();
-
-  self.window->SetStatusIcon(sicon);
   self.window->CreateWindow();
   try {
     g_cthrd->start();
@@ -192,7 +198,6 @@ void Application::onActivate(Application& self) {
     exit(1);
   }
   iptux_init(self.logSystem);
-  sicon->CreateStatusIcon();
 }
 
 void Application::onQuit(void*, void*, Application& self) {
@@ -244,7 +249,40 @@ void Application::refreshTransTasks() {
 
 void Application::onEvent(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
-  // LOG_WARN("unknown event type: %d", int(type));
+  if (type == EventType::NEW_MESSAGE) {
+    const NewMessageEvent* event =
+        dynamic_cast<const NewMessageEvent*>(_event.get());
+    auto title = stringFormat(_("New Message from %s"),
+                              event->getMsgPara().getPal()->getName().c_str());
+    auto summary = event->getMsgPara().getSummary();
+    notificationService->sendNotification(
+        G_APPLICATION(app), "iptux-new-message", title, summary,
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+  }
+  if (type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
+    const NewShareFileFromFriendEvent* event =
+        dynamic_cast<const NewShareFileFromFriendEvent*>(_event.get());
+    auto title = stringFormat(_("New File from %s"),
+                              event->GetFileInfo().fileown->getName().c_str());
+    auto summary = event->GetFileInfo().filepath;
+    notificationService->sendNotification(
+        G_APPLICATION(app), "iptux-new-file", title, summary,
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+  }
+  if (type == EventType::RECV_FILE_FINISHED) {
+    auto event = dynamic_pointer_cast<const RecvFileFinishedEvent>(_event);
+    auto title = _("Receiveing File Finished");
+    auto taskStat = getCoreThread()->GetTransTaskStat(event->GetTaskId());
+    string summary;
+    if (!taskStat) {
+      summary = _("file info no longer exist");
+    } else {
+      summary = taskStat->getFilename();
+    }
+    notificationService->sendNotification(
+        G_APPLICATION(app), "iptux-recv-file-finished", title, summary,
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+  }
 }
 
 PPalInfo Application::getMe() {

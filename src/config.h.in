@@ -18,13 +18,12 @@
 #define ICON_PATH "/iptux/icon"
 #define PHOTO_PATH "/iptux/photo"
 
-#mesondefine GST_FOUND
 #mesondefine SYSTEM_DARWIN
 
 #if defined(__APPLE__) || defined(__CYGWIN__)
-#  define O_LARGEFILE 0
+#define O_LARGEFILE 0
 #endif
 
 #define SIGCXX_DISABLE_DEPRECATED
 
-#endif // IPTUX_CONFIG_H
+#endif  // IPTUX_CONFIG_H

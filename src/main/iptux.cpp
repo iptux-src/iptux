@@ -27,7 +27,6 @@
 #include <glog/logging.h>
 
 #include "iptux/Application.h"
-#include "iptux/SoundSystem.h"
 
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"

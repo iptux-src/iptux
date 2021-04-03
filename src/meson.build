@@ -4,8 +4,6 @@ libgtest = static_library('gtest',
     include_directories: include_directories('googletest/include', 'googletest')
     )
 
-gstreamer_dep = dependency('gstreamer-1.0', version: '>=1.0', required:false)
-
 conf_data = configuration_data()
 conf_data.set_quoted('VERSION', meson.project_version())
 # the 1_ prefix is used for compatible with FeiQ
@@ -16,10 +14,6 @@ if get_option('dev')
     conf_data.set('SHARE_IPTUX_DIR', join_paths(meson.source_root(), 'share'))
 else
     conf_data.set('SHARE_IPTUX_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'iptux'))
-endif
-
-if gstreamer_dep.found()
-    conf_data.set('GST_FOUND', true)
 endif
 
 if host_machine.system() == 'darwin'
