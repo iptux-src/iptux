@@ -75,6 +75,7 @@ core_test_sources = files([
     'CoreThreadTest.cpp',
     'internal/CommandModeTest.cpp',
     'internal/CommandTest.cpp',
+    'internal/supportTest.cpp',
     'internal/UdpDataTest.cpp',
     'IptuxConfigTest.cpp',
     'ModelsTest.cpp',

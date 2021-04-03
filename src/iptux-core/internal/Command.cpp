@@ -101,23 +101,18 @@ Command::~Command() {}
  * @param sock udp socket
  */
 void Command::BroadCast(int sock) {
-  GSList *list, *tlist;
-
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
 
-  tlist = list = get_sys_broadcast_addr(sock);
-  while (tlist) {
-    in_addr ipv4;
-    ipv4.s_addr = GPOINTER_TO_UINT(tlist->data);
+  auto addrs = get_sys_broadcast_addr(sock);
+  for (auto& addr : addrs) {
+    in_addr ipv4 = inAddrFromString(addr);
     commandSendTo(sock, buf, size, 0, ipv4);
     g_usleep(9999);
-    tlist = g_slist_next(tlist);
   }
-  g_slist_free(list);
 }
 
 /**
