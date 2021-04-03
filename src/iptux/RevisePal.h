@@ -15,16 +15,19 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/Models.h"
+#include "iptux/MainWindow.h"
 
 namespace iptux {
 
 class RevisePal {
  public:
-  RevisePal(PalInfo* pl);
+  RevisePal(MainWindow* mainWin, PalInfo* pl);
   ~RevisePal();
 
-  static void ReviseEntryDo(PalInfo* pal, bool run);
-  static void ReviseEntry(PalInfo* pal) { ReviseEntryDo(pal, true); }
+  static void ReviseEntryDo(MainWindow* mainWin, PalInfo* pal, bool run);
+  static void ReviseEntry(MainWindow* mainWin, PalInfo* pal) {
+    ReviseEntryDo(mainWin, pal, true);
+  }
 
  private:
   void InitSublayer();
@@ -41,6 +44,7 @@ class RevisePal {
 
   GData* widset;
   GData* mdlset;
+  MainWindow* mainWin;
   PalInfo* pal;
 
  private:

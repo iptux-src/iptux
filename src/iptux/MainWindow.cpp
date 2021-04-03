@@ -709,7 +709,7 @@ GtkWidget* MainWindow::CreatePaltreeTree(GtkTreeModel* model) {
   g_signal_connect(view, "drag-data-received",
                    G_CALLBACK(PaltreeDragDataReceived), this);
   g_signal_connect(view, "button-press-event", G_CALLBACK(PaltreePopupMenu),
-                   NULL);
+                   this);
   g_signal_connect(view, "button-release-event",
                    G_CALLBACK(PaltreeChangeStatus), NULL);
 
@@ -1136,8 +1136,8 @@ void MainWindow::DeletePalItem(GroupInfo* grpinf) {
   PalInfo* pal;
 
   /* 从UI中移除 */
-  if (g_mwin->PaltreeContainItem(inAddrFromUint32(grpinf->grpid))) {
-    g_mwin->DelItemFromPaltree(inAddrFromUint32(grpinf->grpid));
+  if (this->PaltreeContainItem(inAddrFromUint32(grpinf->grpid))) {
+    this->DelItemFromPaltree(inAddrFromUint32(grpinf->grpid));
   }
 
   g_cthrd->Lock();
@@ -1242,7 +1242,8 @@ void MainWindow::onPaltreeItemActivated(GtkWidget* treeview,
  * @return Gtk+库所需
  */
 gboolean MainWindow::PaltreePopupMenu(GtkWidget* treeview,
-                                      GdkEventButton* event) {
+                                      GdkEventButton* event,
+                                      MainWindow* self) {
   GtkWidget* menu;
   GtkTreeModel* model;
   GtkTreePath* path;
@@ -1261,9 +1262,9 @@ gboolean MainWindow::PaltreePopupMenu(GtkWidget* treeview,
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_path_free(path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-  g_mwin->setCurrentGroupInfo(grpinf);
-  gtk_widget_show_all(GTK_WIDGET(g_mwin->palPopupMenu));
-  gtk_menu_popup_at_pointer(GTK_MENU(g_mwin->palPopupMenu), NULL);
+  self->setCurrentGroupInfo(grpinf);
+  gtk_widget_show_all(GTK_WIDGET(self->palPopupMenu));
+  gtk_menu_popup_at_pointer(GTK_MENU(self->palPopupMenu), NULL);
   return TRUE;
 }
 
@@ -1413,7 +1414,7 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      RevisePal::ReviseEntry(groupInfo->getMembers()[0].get());
+      RevisePal::ReviseEntry(&self, groupInfo->getMembers()[0].get());
       break;
     default:
       CHECK(false);
@@ -1715,7 +1716,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
         grpinf = coreThread.GetPalRegularItem(para.getPal().get());
         if (coreThread.getProgramData()->IsAutoOpenCharDialog()) {
           if (!(grpinf->dialog)) {
-            DialogPeer::PeerDialogEntry(g_mwin->app, grpinf);
+            DialogPeer::PeerDialogEntry(this->app, grpinf);
           } else {
             gtk_window_present(GTK_WINDOW(grpinf->dialog));
           }
@@ -1754,7 +1755,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto palKey = event->GetPalKey();
     auto pal = g_cthrd->GetPal(palKey);
     auto passwd =
-        pop_obtain_shared_passwd(GTK_WINDOW(g_mwin->getWindow()), pal.get());
+        pop_obtain_shared_passwd(GTK_WINDOW(this->getWindow()), pal.get());
     if (passwd && *passwd != '\0') {
       g_cthrd->SendAskSharedWithPassword(palKey, passwd);
     }
@@ -1765,7 +1766,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     auto event = (const PermissionRequiredEvent*)(_event.get());
     auto pal = g_cthrd->GetPal(event->GetPalKey());
     auto permit =
-        pop_request_shared_file(GTK_WINDOW(g_mwin->getWindow()), pal.get());
+        pop_request_shared_file(GTK_WINDOW(this->getWindow()), pal.get());
     if (permit) {
       g_cthrd->SendSharedFiles(pal);
     }
@@ -1790,10 +1791,10 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
       LOG_WARN("got task id %d, but no info in CoreThread", taskId);
       return;
     }
-    g_mwin->UpdateItemToTransTree(*para);
+    this->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {
-      g_mwin->OpenTransWindow();
+      this->OpenTransWindow();
     }
     return;
   }
@@ -1804,7 +1805,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
         CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
     auto para = g_cthrd->GetTransTaskStat(taskId);
-    g_mwin->UpdateItemToTransTree(*para);
+    this->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
     return;
   }
