@@ -5,9 +5,9 @@
 #include <memory>
 
 #include "iptux-core/IptuxConfig.h"
-#include "iptux-utils/utils.h"
-
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
 
@@ -359,7 +359,7 @@ void onTerminateTask(void*, void*, TransWindowPrivate* self) {
   if (finished) {
     return;
   }
-  self.app->getCoreThread()->TerminateTransTask(taskId);
+  self->app->getCoreThread()->TerminateTransTask(taskId);
 }
 
 /**
