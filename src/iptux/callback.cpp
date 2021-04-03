@@ -18,7 +18,6 @@
 #include <glib/gi18n.h>
 
 #include "iptux-core/Const.h"
-#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 

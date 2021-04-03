@@ -21,7 +21,7 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 
@@ -648,7 +648,8 @@ GtkWidget* DialogBase::CreateFileSendArea() {
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(AttachRegular), this);
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg), this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "app.tools.transmission");
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -790,12 +791,4 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), progresstip.c_str());
   return TRUE;
 }
-/**
- * 打开文件传输窗口.
- * @param dlgpr 对话框类
- */
-void DialogBase::OpenTransDlg(DialogBase* self) {
-  self->app->getMainWindow()->OpenTransWindow();
-}
-
 }  // namespace iptux

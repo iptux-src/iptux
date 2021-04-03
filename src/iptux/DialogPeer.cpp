@@ -26,7 +26,7 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 #include "iptux/dialog.h"
@@ -107,6 +107,15 @@ void DialogPeer::UpdatePalData(PalInfo* pal) {
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   gtk_text_buffer_delete(buffer, &start, &end);
   FillPalInfoToBuffer(buffer, pal);
+  refreshTitle();
+}
+
+void DialogPeer::refreshTitle() {
+  auto palinfor = grpinf->getMembers()[0].get();
+  auto title = stringFormat(
+      _("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
+      palinfor->getHost().c_str(), inAddrToString(palinfor->ipv4).c_str());
+  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
 }
 
 /**
@@ -190,16 +199,9 @@ void DialogPeer::WriteUILayout() {
  */
 GtkWindow* DialogPeer::CreateMainWindow() {
   gint width, height;
-  PalInfo* palinfor;
-  char ipstr[INET_ADDRSTRLEN];
 
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
-  palinfor = grpinf->getMembers()[0].get();
-  inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
-  auto title =
-      stringFormat(_("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
-                   palinfor->getHost().c_str(), ipstr);
-  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
+  refreshTitle();
   width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
   height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
@@ -415,9 +417,7 @@ bool DialogPeer::SendTextMsg() {
                                 g_get_user_config_dir(), count++);
       gdk_pixbuf_save(pixbuf, chipmsg, "bmp", NULL, NULL);
       /* 新建一个碎片数据(图片)，并加入数据链表 */
-      ChipData chip;
-      chip.type = MESSAGE_CONTENT_TYPE_PICTURE;
-      chip.data = chipmsg;
+      ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
       dtlist.push_back(std::move(chip));
     }
   } while (gtk_text_iter_forward_find_char(
@@ -428,9 +428,7 @@ bool DialogPeer::SendTextMsg() {
   snprintf(ptr, MAX_UDPLEN - len, "%s", chipmsg);
   g_free(chipmsg);
   /* 新建一个碎片数据(字符串)，并加入数据链表 */
-  ChipData chip;
-  chip.type = MESSAGE_CONTENT_TYPE_STRING;
-  chip.data = g_strdup(buf);
+  ChipData chip(buf);
   // TODO: 保证字符串先被发送？
   dtlist.push_back(std::move(chip));
 
@@ -588,8 +586,8 @@ GtkWidget* DialogPeer::CreateFileToReceiveArea() {
   g_datalist_set_data(&widset, "file-receive-refuse-button", button);
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg),
-                           (DialogBase*)this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "app.tools.transmission");
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);

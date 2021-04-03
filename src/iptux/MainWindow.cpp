@@ -27,7 +27,6 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
-#include "iptux/TransWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
 #include "iptux/callback.h"
@@ -353,20 +352,6 @@ void MainWindow::ClearAllItemFromPaltree() {
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
   gtk_tree_store_clear(GTK_TREE_STORE(model));
-}
-
-/**
- * 打开文件传输窗口.
- */
-void MainWindow::OpenTransWindow() {
-  if (transWindow == nullptr) {
-    transWindow = GTK_WIDGET(trans_window_new(app, GTK_WINDOW(window)));
-    gtk_widget_show_all(transWindow);
-    gtk_widget_hide(transWindow);
-    g_signal_connect_swapped(transWindow, "delete-event",
-                             G_CALLBACK(onTransWindowDelete), this);
-  }
-  gtk_window_present(GTK_WINDOW(transWindow));
 }
 
 void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
@@ -1414,7 +1399,8 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      RevisePal::ReviseEntry(&self, groupInfo->getMembers()[0].get());
+      RevisePal::ReviseEntry(self.app, GTK_WINDOW(self.window),
+                             groupInfo->getMembers()[0].get());
       break;
     default:
       CHECK(false);
@@ -1672,15 +1658,21 @@ void MainWindow::InitThemeSublayerData() {
   g_object_unref(factory);
 }
 
-gboolean MainWindow::onTransWindowDelete(MainWindow& self) {
-  self.transWindow = nullptr;
-  return FALSE;
-}
-
 void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());
+    auto ipv4 = event->getPalInfo()->ipv4;
+    if (PaltreeContainItem(ipv4)) {
+      UpdateItemToPaltree(ipv4);
+    } else {
+      AttachItemToPaltree(ipv4);
+    }
+    return;
+  }
+
+  if (type == EventType::PAL_UPDATE) {
+    auto event = dynamic_pointer_cast<const PalUpdateEvent>(_event);
     auto ipv4 = event->getPalInfo()->ipv4;
     if (PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
@@ -1794,7 +1786,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     this->UpdateItemToTransTree(*para);
     auto g_progdt = g_cthrd->getUiProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {
-      this->OpenTransWindow();
+      this->app->openTransWindow();
     }
     return;
   }

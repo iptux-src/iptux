@@ -81,7 +81,6 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   static gint EnclosureTreePopup(DialogBase* self, GdkEvent* event);
   static gboolean UpdateFileSendUI(DialogBase* dlggrp);
   static void RemoveSelectedEnclosure(DialogBase* self);
-  static void OpenTransDlg(DialogBase* dlgpr);
 
  protected:
   Application* app;
