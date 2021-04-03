@@ -25,8 +25,6 @@ class UiProgramData : public ProgramData {
 
   GtkTextTagTable* table;  // tag table
 
-  bool IsMsgSoundEnabled() const;
-
  private:
   void InitSublayer();
   void CreateTagTable();

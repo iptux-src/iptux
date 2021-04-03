@@ -9,6 +9,7 @@
 #include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
+#include "iptux/NotificationService.h"
 
 namespace iptux {
 
@@ -45,6 +46,7 @@ class Application {
   TransModel* transModel;
   EventAdaptor* eventAdaptor;
   LogSystem* logSystem;
+  NotificationService* notificationService;
   bool started{false};
 
  public:

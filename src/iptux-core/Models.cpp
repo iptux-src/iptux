@@ -146,13 +146,24 @@ FileInfo::FileInfo(const FileInfo& f)
 }
 
 MsgPara::MsgPara(CPPalInfo pal)
-    : pal(pal),
-      stype(MessageSourceType::PAL),
-      btype(GROUP_BELONG_TYPE_REGULAR) {}
+    : stype(MessageSourceType::PAL),
+      btype(GROUP_BELONG_TYPE_REGULAR),
+      pal(pal) {}
 
 MsgPara::~MsgPara() {}
 
-ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
+string MsgPara::getSummary() const {
+  if (this->dtlist.empty()) {
+    return _("Empty Message");
+  }
+  return this->dtlist[0].getSummary();
+}
+
+ChipData::ChipData() : type(MessageContentType::STRING), data("") {}
+ChipData::ChipData(const string& data)
+    : type(MessageContentType::STRING), data(data) {}
+ChipData::ChipData(MessageContentType type, const string& data)
+    : type(type), data(data) {}
 ChipData::~ChipData() {}
 
 NetSegment::NetSegment() {}
@@ -215,6 +226,18 @@ string ChipData::ToString() const {
   oss << data;
   oss << ")";
   return oss.str();
+}
+
+string ChipData::getSummary() const {
+  switch (type) {
+    case MessageContentType::STRING:
+      return data;
+    case MessageContentType::PICTURE:
+      return _("Received an image");
+    default:
+      g_assert_not_reached();
+  }
+  return "";
 }
 
 PalKey::PalKey(in_addr ipv4) : ipv4(ipv4), port(IPTUX_DEFAULT_PORT) {}

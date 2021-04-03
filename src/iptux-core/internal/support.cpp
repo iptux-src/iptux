@@ -23,6 +23,8 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 
+using namespace std;
+
 namespace iptux {
 
 /**
@@ -67,20 +69,21 @@ void socket_enable_reuse(int sock) {
  * @return 广播地址链表
  * @note 链表数据不是指针而是实际的IP
  */
-GSList* get_sys_broadcast_addr(int sock) {
+vector<string> get_sys_broadcast_addr(int sock) {
   const uint8_t amount = 5;  //支持5个IP地址
   uint8_t count, sum;
   struct ifconf ifc;
   struct ifreq* ifr;
   struct sockaddr_in* addr;
-  GSList* list;
+  vector<string> res;
 
-  list = g_slist_append(NULL, GUINT_TO_POINTER(inet_addr("255.255.255.255")));
+  res.push_back("255.255.255.255");
+
   ifc.ifc_len = amount * sizeof(struct ifreq);
   ifc.ifc_buf = (caddr_t)g_malloc(ifc.ifc_len);
   if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
     g_free(ifc.ifc_buf);
-    return list;
+    return res;
   }
 
   sum = ifc.ifc_len / sizeof(struct ifreq);
@@ -94,11 +97,13 @@ GSList* get_sys_broadcast_addr(int sock) {
         ioctl(sock, SIOCGIFBRDADDR, ifr) == -1)
       continue;
     addr = (struct sockaddr_in*)&ifr->ifr_broadaddr;
-    list = g_slist_append(list, GUINT_TO_POINTER(addr->sin_addr.s_addr));
+    res.push_back(inAddrToString(addr->sin_addr));
   }
   g_free(ifc.ifc_buf);
-
-  return list;
+  if (res.size() == 1) {
+    res.push_back("127.0.0.1");
+  }
+  return res;
 }
 
 /**

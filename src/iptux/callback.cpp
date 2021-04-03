@@ -19,7 +19,6 @@
 
 #include "iptux-core/Const.h"
 #include "iptux/MainWindow.h"
-#include "iptux/StatusIcon.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 

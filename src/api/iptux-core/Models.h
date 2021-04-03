@@ -161,7 +161,7 @@ class FileInfo {
   FileAttr fileattr;     ///< 文件属性
   int64_t filesize;      ///< 文件大小
   int64_t finishedsize;  ///< 已完成大小
-  PPalInfo fileown;      ///< 文件拥有者(来自好友*)
+  CPPalInfo fileown;     ///< 文件拥有者(来自好友*)
   char* filepath;        ///< 文件路径 *
   uint32_t filectime;    ///<  文件创建时间
   uint32_t filemtime;    ///<  文件最后修改时间
@@ -174,10 +174,13 @@ using PFileInfo = std::shared_ptr<FileInfo>;
  */
 class ChipData {
  public:
-  ChipData();
+  explicit ChipData(const std::string& data);
+  ChipData(MessageContentType type, const std::string& data);
+  [[deprecated]] ChipData();
   ~ChipData();
 
   std::string ToString() const;
+  std::string getSummary() const;
 
   MessageContentType type;  ///< 消息内容类型
   std::string data;         ///< 数据串 *
@@ -196,6 +199,8 @@ class MsgPara {
  public:
   explicit MsgPara(CPPalInfo pal);
   ~MsgPara();
+
+  std::string getSummary() const;
 
   CPPalInfo getPal() const { return pal; }
 
