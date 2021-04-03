@@ -483,8 +483,6 @@ GtkWidget* MainWindow::CreateMainWindow() {
   gtk_window_set_default_icon_name("iptux");
   gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
-  g_signal_connect_swapped(window, "delete-event", G_CALLBACK(onDeleteEvent),
-                           this);
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
   return window;
@@ -1647,8 +1645,6 @@ void MainWindow::PanedDivideChanged(GtkWidget* paned,
                        gtk_paned_get_position(GTK_PANED(paned)));
   self->config->Save();
 }
-
-gboolean MainWindow::onDeleteEvent(MainWindow* self) {}
 
 void MainWindow::InitThemeSublayerData() {
   GtkIconTheme* theme;

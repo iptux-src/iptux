@@ -169,7 +169,6 @@ class MainWindow : public sigc::trackable {
   static void PanedDivideChanged(GtkWidget* paned,
                                  GParamSpec* pspec,
                                  MainWindow* self);
-  static gboolean onDeleteEvent(MainWindow* self);
   static void onRefresh(void*, void*, MainWindow& self);
   static void onDetect(void*, void*, MainWindow& self);
   static void onFind(void*, void*, MainWindow& self);
