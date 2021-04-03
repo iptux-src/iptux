@@ -55,6 +55,7 @@ class DialogPeer : public DialogBase {
   GtkTreeModel* CreateFileToReceiveModel();
   GtkWidget* CreateFileReceivedTree(GtkTreeModel* model);
   GtkTreeModel* CreateFileReceivedModel();
+  void refreshTitle();
   void FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal);
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
 

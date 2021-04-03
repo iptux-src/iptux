@@ -107,6 +107,15 @@ void DialogPeer::UpdatePalData(PalInfo* pal) {
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   gtk_text_buffer_delete(buffer, &start, &end);
   FillPalInfoToBuffer(buffer, pal);
+  refreshTitle();
+}
+
+void DialogPeer::refreshTitle() {
+  auto palinfor = grpinf->getMembers()[0].get();
+  auto title = stringFormat(
+      _("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
+      palinfor->getHost().c_str(), inAddrToString(palinfor->ipv4).c_str());
+  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
 }
 
 /**
@@ -190,16 +199,9 @@ void DialogPeer::WriteUILayout() {
  */
 GtkWindow* DialogPeer::CreateMainWindow() {
   gint width, height;
-  PalInfo* palinfor;
-  char ipstr[INET_ADDRSTRLEN];
 
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
-  palinfor = grpinf->getMembers()[0].get();
-  inet_ntop(AF_INET, &palinfor->ipv4, ipstr, INET_ADDRSTRLEN);
-  auto title =
-      stringFormat(_("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
-                   palinfor->getHost().c_str(), ipstr);
-  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
+  refreshTitle();
   width = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-width"));
   height = GPOINTER_TO_INT(g_datalist_get_data(&dtset, "window-height"));
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
