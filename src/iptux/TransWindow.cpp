@@ -10,7 +10,6 @@
 #include "iptux-utils/output.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
-#include "iptux/global.h"
 
 #define IPTUX_PRIVATE "iptux-private"
 
@@ -360,7 +359,7 @@ void onTerminateTask(void*, void*, TransWindowPrivate* self) {
   if (finished) {
     return;
   }
-  g_cthrd->TerminateTransTask(taskId);
+  self.app->getCoreThread()->TerminateTransTask(taskId);
 }
 
 /**
@@ -377,7 +376,7 @@ void onTerminateAllTasks(void*, void*, TransWindowPrivate* self) {
     return;
   do {
     gtk_tree_model_get(model, &iter, TransModelColumn ::TASK_ID, &taskId, -1);
-    g_cthrd->TerminateTransTask(taskId);
+    self->app->getCoreThread()->TerminateTransTask(taskId);
   } while (gtk_tree_model_iter_next(model, &iter));
 }
 
