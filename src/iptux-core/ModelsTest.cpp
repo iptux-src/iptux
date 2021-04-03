@@ -44,7 +44,14 @@ TEST(NetSegment, ContainIP) {
 }
 
 TEST(ChipData, ToString) {
-  EXPECT_EQ(ChipData().ToString(), "ChipData(MessageContentType::STRING, )");
+  EXPECT_EQ(ChipData("").ToString(), "ChipData(MessageContentType::STRING, )");
+}
+
+TEST(ChipData, getSummary) {
+  EXPECT_EQ(ChipData("").getSummary(), "");
+  EXPECT_EQ(ChipData("foobar").getSummary(), "foobar");
+  EXPECT_EQ(ChipData(MessageContentType::PICTURE, "foobar").getSummary(),
+            "Received an image");
 }
 
 TEST(FileAttr, Convert) {
@@ -53,4 +60,17 @@ TEST(FileAttr, Convert) {
   EXPECT_EQ(FileAttr(2), FileAttr::DIRECTORY);
   EXPECT_EQ(FileAttr(3), FileAttr(3));
   EXPECT_EQ(FileAttr(-1), FileAttr(-1));
+}
+
+TEST(MsgPara, getSummary) {
+  PPalInfo pal = make_shared<PalInfo>();
+  MsgPara msg(pal);
+  EXPECT_EQ(msg.getSummary(), "Empty Message");
+  msg.dtlist.push_back(ChipData("foobar"));
+  EXPECT_EQ(msg.getSummary(), "foobar");
+  msg.dtlist.push_back(ChipData("foobar2"));
+  EXPECT_EQ(msg.getSummary(), "foobar");
+  msg.dtlist.clear();
+  msg.dtlist.push_back(ChipData(MessageContentType::PICTURE, "foobar"));
+  EXPECT_EQ(msg.getSummary(), "Received an image");
 }

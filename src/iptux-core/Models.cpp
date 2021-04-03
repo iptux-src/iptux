@@ -146,9 +146,9 @@ FileInfo::FileInfo(const FileInfo& f)
 }
 
 MsgPara::MsgPara(CPPalInfo pal)
-    : pal(pal),
-      stype(MessageSourceType::PAL),
-      btype(GROUP_BELONG_TYPE_REGULAR) {}
+    : stype(MessageSourceType::PAL),
+      btype(GROUP_BELONG_TYPE_REGULAR),
+      pal(pal) {}
 
 MsgPara::~MsgPara() {}
 
@@ -159,7 +159,11 @@ string MsgPara::getSummary() const {
   return this->dtlist[0].getSummary();
 }
 
-ChipData::ChipData() : type(MESSAGE_CONTENT_TYPE_STRING), data("") {}
+ChipData::ChipData() : type(MessageContentType::STRING), data("") {}
+ChipData::ChipData(const string& data)
+    : type(MessageContentType::STRING), data(data) {}
+ChipData::ChipData(MessageContentType type, const string& data)
+    : type(type), data(data) {}
 ChipData::~ChipData() {}
 
 NetSegment::NetSegment() {}
