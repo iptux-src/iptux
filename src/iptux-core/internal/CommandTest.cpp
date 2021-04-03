@@ -7,7 +7,7 @@
 using namespace iptux;
 using namespace std;
 
-TEST(Command, encodFileInfo) {
+TEST(Command, encodeFileInfo) {
   FileInfo fileInfo;
   fileInfo.filepath = g_strdup("/etc/bashrc");
   fileInfo.fileattr = FileAttr::REGULAR;
