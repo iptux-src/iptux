@@ -24,7 +24,6 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/LogSystem.h"
-#include "iptux/MainWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 

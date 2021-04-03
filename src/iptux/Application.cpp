@@ -12,6 +12,7 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
+#include "iptux/MainWindow.h"
 #include "iptux/ShareFile.h"
 #include "iptux/TransWindow.h"
 #include "iptux/UiCoreThread.h"

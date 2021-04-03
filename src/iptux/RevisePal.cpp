@@ -20,7 +20,6 @@
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
-#include "iptux/MainWindow.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/callback.h"
 #include "iptux/global.h"
