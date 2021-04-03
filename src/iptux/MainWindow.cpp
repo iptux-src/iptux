@@ -1399,7 +1399,8 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      RevisePal::ReviseEntry(&self, groupInfo->getMembers()[0].get());
+      RevisePal::ReviseEntry(self.app, GTK_WINDOW(self.window),
+                             groupInfo->getMembers()[0].get());
       break;
     default:
       CHECK(false);
@@ -1661,6 +1662,17 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());
+    auto ipv4 = event->getPalInfo()->ipv4;
+    if (PaltreeContainItem(ipv4)) {
+      UpdateItemToPaltree(ipv4);
+    } else {
+      AttachItemToPaltree(ipv4);
+    }
+    return;
+  }
+
+  if (type == EventType::PAL_UPDATE) {
+    auto event = dynamic_pointer_cast<const PalUpdateEvent>(_event);
     auto ipv4 = event->getPalInfo()->ipv4;
     if (PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);

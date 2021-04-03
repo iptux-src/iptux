@@ -31,10 +31,11 @@ namespace iptux {
  * 类构造函数.
  * @param pl
  */
-RevisePal::RevisePal(MainWindow* mainWin, PalInfo* pl)
+RevisePal::RevisePal(Application* app, GtkWindow* parent, PalInfo* pl)
     : widset(NULL),
       mdlset(NULL),
-      mainWin(CHECK_NOTNULL(mainWin)),
+      app(CHECK_NOTNULL(app)),
+      parent(parent),
       pal(CHECK_NOTNULL(pl)) {
   InitSublayer();
 }
@@ -50,8 +51,11 @@ RevisePal::~RevisePal() {
  * 修正好友数据入口.
  * @param pal class PalInfo
  */
-void RevisePal::ReviseEntryDo(MainWindow* mainWin, PalInfo* pal, bool run) {
-  RevisePal rpal(mainWin, pal);
+void RevisePal::ReviseEntryDo(Application* app,
+                              GtkWindow* parent,
+                              PalInfo* pal,
+                              bool run) {
+  RevisePal rpal(app, parent, pal);
   GtkWidget* dialog;
 
   /* 创建对话框 */
@@ -105,9 +109,8 @@ GtkWidget* RevisePal::CreateMainDialog() {
   GtkWidget* dialog;
 
   dialog = gtk_dialog_new_with_buttons(
-      _("Change Pal's Information"), GTK_WINDOW(mainWin->getWindow()),
-      GTK_DIALOG_MODAL, _("_OK"), GTK_RESPONSE_OK, _("_Cancel"),
-      GTK_RESPONSE_CANCEL, NULL);
+      _("Change Pal's Information"), parent, GTK_DIALOG_MODAL, _("_OK"),
+      GTK_RESPONSE_OK, _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -289,7 +292,7 @@ void RevisePal::ApplyReviseData() {
   g_cthrd->Lock();
   g_cthrd->UpdatePalToList(pal->ipv4);
   g_cthrd->Unlock();
-  mainWin->UpdateItemToPaltree(pal->ipv4);
+  // mainWin->UpdateItemToPaltree(pal->ipv4);
 }
 
 /**

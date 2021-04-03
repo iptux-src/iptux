@@ -15,18 +15,21 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/Models.h"
-#include "iptux/MainWindow.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
 class RevisePal {
  public:
-  RevisePal(MainWindow* mainWin, PalInfo* pl);
+  RevisePal(Application* app, GtkWindow* parent, PalInfo* pl);
   ~RevisePal();
 
-  static void ReviseEntryDo(MainWindow* mainWin, PalInfo* pal, bool run);
-  static void ReviseEntry(MainWindow* mainWin, PalInfo* pal) {
-    ReviseEntryDo(mainWin, pal, true);
+  static void ReviseEntryDo(Application* app,
+                            GtkWindow* parent,
+                            PalInfo* pal,
+                            bool run);
+  static void ReviseEntry(Application* app, GtkWindow* parent, PalInfo* pal) {
+    ReviseEntryDo(app, parent, pal, true);
   }
 
  private:
@@ -44,7 +47,8 @@ class RevisePal {
 
   GData* widset;
   GData* mdlset;
-  MainWindow* mainWin;
+  Application* app;
+  GtkWindow* parent;
   PalInfo* pal;
 
  private:

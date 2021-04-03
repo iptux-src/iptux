@@ -7,8 +7,9 @@ namespace iptux {
 
 enum class EventType {
   NEW_PAL_ONLINE,
-  NEW_MESSAGE,
+  PAL_UPDATE,
   PAL_OFFLINE,
+  NEW_MESSAGE,
   ICON_UPDATE,
   PASSWORD_REQUIRED,
   PERMISSION_REQUIRED,
@@ -33,11 +34,20 @@ class Event {
 
 class NewPalOnlineEvent : public Event {
  public:
-  explicit NewPalOnlineEvent(PPalInfo palInfo);
+  explicit NewPalOnlineEvent(CPPalInfo palInfo);
   CPPalInfo getPalInfo() const;
 
  private:
-  PPalInfo palInfo;
+  CPPalInfo palInfo;
+};
+
+class PalUpdateEvent : public Event {
+ public:
+  explicit PalUpdateEvent(CPPalInfo palInfo);
+  CPPalInfo getPalInfo() const;
+
+ private:
+  CPPalInfo palInfo;
 };
 
 class NewMessageEvent : public Event {
