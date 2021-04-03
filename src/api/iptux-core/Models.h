@@ -178,6 +178,7 @@ class ChipData {
   ~ChipData();
 
   std::string ToString() const;
+  std::string getSummary() const;
 
   MessageContentType type;  ///< 消息内容类型
   std::string data;         ///< 数据串 *
@@ -196,6 +197,8 @@ class MsgPara {
  public:
   explicit MsgPara(CPPalInfo pal);
   ~MsgPara();
+
+  std::string getSummary() const;
 
   CPPalInfo getPal() const { return pal; }
 

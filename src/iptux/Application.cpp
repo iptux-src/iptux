@@ -248,8 +248,11 @@ void Application::refreshTransTasks() {
 void Application::onEvent(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if (type == EventType::NEW_MESSAGE) {
+    const NewMessageEvent* event =
+        dynamic_cast<const NewMessageEvent*>(_event.get());
+    auto summary = event->getMsgPara().getSummary();
     notificationService->sendNotification(
-        G_APPLICATION(app), "iptux-new-message", "Iptx new message", "",
+        G_APPLICATION(app), "iptux-new-message", "Iptx new message", summary,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   // LOG_WARN("unknown event type: %d", int(type));
