@@ -76,11 +76,11 @@ Application::Application(shared_ptr<IptuxConfig> config)
   notificationService = new TerminalNotifierNoticationService();
 #else
   notificationService = new GioNotificationService();
-  GError* error = nullptr;
-  if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
-    LOG_WARN("g_application_register failed: %s-%d-%s", g_quark_to_string(error->domain),
-      error->code, error->message);
-  }
+  // GError* error = nullptr;
+  // if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
+  //   LOG_WARN("g_application_register failed: %s-%d-%s", g_quark_to_string(error->domain),
+  //     error->code, error->message);
+  // }
 #endif
 }
 
