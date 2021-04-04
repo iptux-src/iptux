@@ -17,19 +17,19 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 base: core18
 
-# slots:
-#   dbus-iptux:
-#     interface: dbus
-#     bus: session
-#     name: io.github.iptux-src.iptux
+slots:
+  dbus-iptux:
+    interface: dbus
+    bus: session
+    name: io.github.iptux-src.iptux
 
 apps:
   iptux:
     command: usr/bin/iptux
     desktop: usr/share/applications/io.github.iptux-src.iptux.desktop
     extensions: [gnome-3-28]
-    # slots:
-    #   - dbus-iptux
+    slots:
+      - dbus-iptux
     plugs: [home, network, gsettings]
 
 parts:
