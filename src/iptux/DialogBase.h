@@ -85,7 +85,13 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
  protected:
   Application* app;
   std::shared_ptr<UiProgramData> progdt;
-  GtkTreeView* fileSendTree;
+
+  GtkTreeView* fileSendTree = 0;
+  GtkTextView* inputTextviewWidget = 0;
+
+  GtkTextBuffer* inputBuffer = 0;
+  GtkListStore* fileSendModel = 0;
+
   GData* widset;            //窗体集
   GData* mdlset;            //数据model集
   GData* dtset;             //通用数据集

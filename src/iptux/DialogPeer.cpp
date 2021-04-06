@@ -80,17 +80,35 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
   GtkWidget *window, *widget;
 
   dlgpr = new DialogPeer(app, grpinf);
-  window = GTK_WIDGET(dlgpr->CreateMainWindow());
+  dlgpr->init();
+}
+
+void DialogPeer::init() {
+  auto dlgpr = this;
+  auto window = GTK_WIDGET(dlgpr->CreateMainWindow());
   grpinf->dialog = window;
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
+  gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
+  GActionEntry win_entries[] = {
+      {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
+      {"insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
+      {"attach_file", G_ACTION_CALLBACK(onAttachFile)},
+      {"attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
+      {"request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
+      {"close", G_ACTION_CALLBACK(onClose)},
+      {"send_message", G_ACTION_CALLBACK(onSendMessage)},
+  };
+  g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
+                                  G_N_ELEMENTS(win_entries), this);
 
-  /* 将焦点置于文本输入框 */
-  widget =
-      GTK_WIDGET(g_datalist_get_data(&dlgpr->widset, "input-textview-widget"));
-  gtk_widget_grab_focus(widget);
-
-  auto g_cthrd = app->getCoreThread();
+  g_signal_connect(G_OBJECT(inputBuffer), "changed",
+                   G_CALLBACK(onInputBufferChanged), this);
+  g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-deleted",
+                           G_CALLBACK(onSendFileModelChanged), this);
+  g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-inserted",
+                           G_CALLBACK(onSendFileModelChanged), this);
+  refreshSendAction();
 }
 
 /**
@@ -214,18 +232,6 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
-
-  GActionEntry win_entries[] = {
-      {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      {"insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
-      {"attach_file", G_ACTION_CALLBACK(onAttachFile)},
-      {"attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
-      {"request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
-      {"close", G_ACTION_CALLBACK(onClose)},
-      {"send_message", G_ACTION_CALLBACK(onSendMessage)},
-  };
-  g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
-                                  G_N_ELEMENTS(win_entries), this);
   return GTK_WINDOW(window);
 }
 
@@ -375,7 +381,6 @@ void DialogPeer::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
  */
 bool DialogPeer::SendTextMsg() {
   static uint32_t count = 0;
-  GtkWidget* textview;
   GtkTextBuffer* buffer;
   GtkTextIter start, end, piter, iter;
   GdkPixbuf* pixbuf;
@@ -385,10 +390,8 @@ bool DialogPeer::SendTextMsg() {
   MsgPara* para;
   std::vector<ChipData> dtlist;
 
-  /* 考察缓冲区内是否存在数据 */
-  textview = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
-  gtk_widget_grab_focus(textview);  //为下一次任务做准备
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+  gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));  //为下一次任务做准备
+  buffer = inputBuffer;
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   if (gtk_text_iter_equal(&start, &end))
     return false;
@@ -1064,6 +1067,24 @@ void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
     return;
   if (gtk_window_is_active(GTK_WINDOW(this->window))) {
     ClearNotify(GTK_WIDGET(this->window), nullptr);
+  }
+}
+
+void DialogPeer::refreshSendAction() {
+  bool can_send = false;
+  if (gtk_text_buffer_get_char_count(inputBuffer) > 0) {
+    can_send = true;
+  } else {
+    GtkTreeIter iter;
+    if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(fileSendModel), &iter)) {
+      can_send = true;
+    }
+  }
+
+  if (can_send) {
+    g_action_map_enable_actions(G_ACTION_MAP(window), "send_message", nullptr);
+  } else {
+    g_action_map_disable_actions(G_ACTION_MAP(window), "send_message", nullptr);
   }
 }
 

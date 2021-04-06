@@ -43,6 +43,8 @@ class DialogPeer : public DialogBase {
   void ReadUILayout();
   void WriteUILayout();
 
+  void init();
+
   GtkWindow* CreateMainWindow();
   GtkWidget* CreateAllArea();
 
@@ -62,6 +64,8 @@ class DialogPeer : public DialogBase {
   bool SendTextMsg() override;
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara* PackageMsg(const std::vector<ChipData>& dtlist);
+  void refreshSendAction();
+
   //回调处理部分
  private:
   static void onAcceptButtonClicked(DialogPeer* self);
@@ -90,6 +94,13 @@ class DialogPeer : public DialogBase {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
   void onGroupInfoUpdated(GroupInfo* groupInfo);
+  static void onInputBufferChanged(GtkTextBuffer* textBuffer,
+                                   DialogPeer& self) {
+    self.refreshSendAction();
+  }
+  static void onSendFileModelChanged(DialogPeer& self) {
+    self.refreshSendAction();
+  }
 
  protected:
   GtkApplicationWindow* window;

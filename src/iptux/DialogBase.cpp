@@ -254,7 +254,10 @@ GtkWidget* DialogBase::CreateInputArea() {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+
   widget = gtk_text_view_new();
+  inputTextviewWidget = GTK_TEXT_VIEW(widget);
+  inputBuffer = gtk_text_view_get_buffer(inputTextviewWidget);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
   gtk_drag_dest_add_uri_targets(widget);
   gtk_container_add(GTK_CONTAINER(sw), widget);
@@ -657,6 +660,7 @@ GtkWidget* DialogBase::CreateFileSendArea() {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   model = CreateFileSendModel();
+  fileSendModel = GTK_LIST_STORE(model);
   treeview = CreateFileSendTree(model);
   g_datalist_set_data_full(&mdlset, "enclosure-model", model,
                            GDestroyNotify(g_object_unref));
