@@ -382,6 +382,7 @@ bool DialogBase::SendEnclosureMsg() {
     gtk_tree_model_get(model, &iter, 3, &filepath, 4, &file, -1);
     files.push_back(file);
   } while (gtk_tree_model_iter_next(model, &iter));
+  gtk_list_store_clear(GTK_LIST_STORE(model));
 
   BroadcastEnclosureMsg(files);
   if (!timersend) {
@@ -399,9 +400,7 @@ void DialogBase::FeedbackMsg(const gchar* msg) {
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
 
-  ChipData chip;
-  chip.type = MESSAGE_CONTENT_TYPE_STRING;
-  chip.data = msg;
+  ChipData chip(msg);
   para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */

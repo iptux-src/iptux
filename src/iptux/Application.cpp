@@ -303,7 +303,7 @@ PPalInfo Application::getMe() {
 
 void Application::openTransWindow() {
   if (transWindow == nullptr) {
-    transWindow = trans_window_new(this, GTK_WINDOW(window));
+    transWindow = trans_window_new(this, GTK_WINDOW(window->getWindow()));
     gtk_widget_show_all(GTK_WIDGET(transWindow));
     gtk_widget_hide(GTK_WIDGET(transWindow));
     g_signal_connect_swapped(transWindow, "delete-event",
