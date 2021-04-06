@@ -567,6 +567,7 @@ void CoreThread::UpdateMyInfo() {
     }
   }
   Unlock();
+  emitEvent(make_shared<const ConfigChangedEvent>());
 }
 
 /**

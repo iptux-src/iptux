@@ -78,7 +78,8 @@ Application::Application(shared_ptr<IptuxConfig> config)
   notificationService = new GioNotificationService();
   // GError* error = nullptr;
   // if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
-  //   LOG_WARN("g_application_register failed: %s-%d-%s", g_quark_to_string(error->domain),
+  //   LOG_WARN("g_application_register failed: %s-%d-%s",
+  //   g_quark_to_string(error->domain),
   //     error->code, error->message);
   // }
 #endif
@@ -185,7 +186,7 @@ void Application::onStartup(Application& self) {
   add_accelerator(self.app, "win.attach_folder", "<Ctrl>D");
   add_accelerator(self.app, "win.request_shared_resources", "<Ctrl>R");
   add_accelerator(self.app, "win.close", "<Primary>W");
-  add_accelerator(self.app, "win.send_message", "<Primary>Return");
+  self.onConfigChanged();
 
 #if SYSTEM_DARWIN
   install_darwin_icon();
@@ -291,6 +292,9 @@ void Application::onEvent(shared_ptr<const Event> _event) {
         G_APPLICATION(app), "iptux-recv-file-finished", title, summary,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
+  if (type == EventType::CONFIG_CHANGED) {
+    this->onConfigChanged();
+  }
 }
 
 PPalInfo Application::getMe() {
@@ -311,6 +315,14 @@ void Application::openTransWindow() {
 gboolean Application::onTransWindowDelete(iptux::Application& self) {
   self.transWindow = nullptr;
   return FALSE;
+}
+
+void Application::onConfigChanged() {
+  if (getCoreThread()->getProgramData()->IsEnterSendMessage()) {
+    add_accelerator(app, "win.send_message", "Return");
+  } else {
+    add_accelerator(app, "win.send_message", "<Primary>Return");
+  }
 }
 
 }  // namespace iptux

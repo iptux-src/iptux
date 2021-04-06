@@ -1807,7 +1807,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     return;
   }
 
-  LOG_WARN("unknown event type: %d", int(type));
+  LOG_DEBUG("event type %d is ignored by `MainWindow`", int(type));
 }
 
 void MainWindow::setCurrentGroupInfo(GroupInfo* groupInfo) {

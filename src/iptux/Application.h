@@ -62,6 +62,7 @@ class Application {
 
  private:
   void onEvent(std::shared_ptr<const Event> event);
+  void onConfigChanged();
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
   static void onPreferences(void*, void*, Application& self);

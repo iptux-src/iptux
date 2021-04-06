@@ -19,6 +19,7 @@ enum class EventType {
   RECV_FILE_STARTED,
   RECV_FILE_FINISHED,
   TRANS_TASKS_CHANGED,
+  CONFIG_CHANGED,
 };
 
 class Event {
@@ -145,7 +146,12 @@ class RecvFileFinishedEvent : public AbstractTaskIdEvent {
 
 class TransTasksChangedEvent : public Event {
  public:
-  explicit TransTasksChangedEvent() : Event(EventType::TRANS_TASKS_CHANGED) {}
+  TransTasksChangedEvent() : Event(EventType::TRANS_TASKS_CHANGED) {}
+};
+
+class ConfigChangedEvent : public Event {
+ public:
+  ConfigChangedEvent() : Event(EventType::CONFIG_CHANGED) {}
 };
 
 }  // namespace iptux
