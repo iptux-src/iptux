@@ -47,12 +47,12 @@ class Application {
 
   TransModel* transModel;
 
-  MainWindow* window;
-  ShareFile* shareFile;
-  TransWindow* transWindow;
-  EventAdaptor* eventAdaptor;
-  LogSystem* logSystem;
-  NotificationService* notificationService;
+  MainWindow* window = 0;
+  ShareFile* shareFile = 0;
+  TransWindow* transWindow = 0;
+  EventAdaptor* eventAdaptor = 0;
+  LogSystem* logSystem = 0;
+  NotificationService* notificationService = 0;
   bool started{false};
 
  public:
