@@ -95,12 +95,15 @@ void SendFileData::TerminateTrans() {
  * 创建UI参考数据.
  */
 void SendFileData::CreateUIPara() {
-  struct in_addr addr = file->fileown->ipv4;
+  if (file->isPublic()) {
+    para.setIp("0.0.0.0").setPeer(_("public"));
+  } else {
+    struct in_addr addr = file->fileown->ipv4;
+    para.setIp(inet_ntoa(addr)).setPeer(file->fileown->getName());
+  }
 
   para.setStatus("tip-send")
       .setTask(_("send"))
-      .setPeer(file->fileown->getName())
-      .setIp(inet_ntoa(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
       .setFinishedLength(0)

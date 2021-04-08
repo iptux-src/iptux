@@ -627,7 +627,7 @@ void Command::CreateIconExtra(istream& iss) {
 namespace {
 
 FileInfo decodeFileInfo(char** extra) {
-  FileInfo file;
+  FileInfo file(false);
 
   auto s = *extra;
 

@@ -284,7 +284,7 @@ void ApplySharedData(ShareFile* self) {
     do {
       FileAttr fileattr;
       gtk_tree_model_get(model, &iter, 1, &filepath, 4, &fileattr, -1);
-      FileInfo file;
+      FileInfo file(true);
       file.fileid = g_cthrd->PbnQuote()++;
       file.fileattr = fileattr;
       file.filepath = filepath;

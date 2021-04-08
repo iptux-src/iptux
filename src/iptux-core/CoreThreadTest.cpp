@@ -234,7 +234,7 @@ TEST(CoreThread, FullCase_ShareWithPassword) {
 
 TEST(CoreThread, PrivateFiles) {
   auto thread = newCoreThreadOnIp("127.0.0.1");
-  auto file = make_shared<FileInfo>();
+  auto file = make_shared<FileInfo>(false);
   file->fileid = MAX_SHAREDFILE;
   file->filepath = g_strdup("hello");
   thread->AddPrivateFile(file);
@@ -247,7 +247,7 @@ TEST(CoreThread, PrivateFiles) {
 
   EXPECT_FALSE(thread->GetPrivateFileById(file->fileid));
 
-  auto file3 = make_shared<FileInfo>();
+  auto file3 = make_shared<FileInfo>(false);
   file3->fileid = MAX_SHAREDFILE + 1;
   file3->filepath = g_strdup("world");
   file3->packetn = 123;

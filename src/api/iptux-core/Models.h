@@ -148,13 +148,14 @@ constexpr bool FileAttrIsValid(FileAttr attr) {
  */
 class FileInfo {
  public:
-  FileInfo();
+  explicit FileInfo(bool isPublic);
   ~FileInfo();
 
   FileInfo(const FileInfo& fileInfo);
   FileInfo& operator=(const FileInfo& fileInfo);
 
   bool operator==(const FileInfo& rhs) const;
+  bool isPublic() const { return _isPublic; }
 
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号
@@ -166,6 +167,8 @@ class FileInfo {
   uint32_t filectime;    ///<  文件创建时间
   uint32_t filemtime;    ///<  文件最后修改时间
   uint32_t filenum;      ///<  包内编号
+ private:
+  bool _isPublic;
 };
 using PFileInfo = std::shared_ptr<FileInfo>;
 

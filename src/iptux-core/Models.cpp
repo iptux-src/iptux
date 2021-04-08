@@ -118,7 +118,7 @@ string PalInfo::toString() const {
       int(rpacketn), int(flags));
 }
 
-FileInfo::FileInfo()
+FileInfo::FileInfo(bool isPublic)
     : fileid(0),
       packetn(0),
       fileattr(FileAttr::UNKNOWN),
@@ -127,7 +127,8 @@ FileInfo::FileInfo()
       filepath(NULL),
       filectime(0),
       filemtime(0),
-      filenum(0) {}
+      filenum(0),
+      _isPublic(isPublic) {}
 FileInfo::~FileInfo() {
   g_free(filepath);
 }
@@ -141,7 +142,8 @@ FileInfo::FileInfo(const FileInfo& f)
       fileown(f.fileown),
       filectime(f.filectime),
       filemtime(f.filemtime),
-      filenum(f.filenum) {
+      filenum(f.filenum),
+      _isPublic(f._isPublic) {
   filepath = g_strdup(f.filepath);
 }
 

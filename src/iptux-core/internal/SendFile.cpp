@@ -79,7 +79,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
     fileid = iptux_get_dec_number(attach, ':', 1);
     file = coreThread->GetPrivateFileById(fileid);
   }
-  /* 兼容adroid版信鸽(IPMSG) */
+  /* 兼容android版信鸽(IPMSG) */
   if (!file) {
     fileid = iptux_get_hex_number(attach, ':', 0);
     filectime = iptux_get_dec_number(attach, ':', 1);
@@ -130,6 +130,7 @@ void SendFile::SendFileInfo(PPalInfo pal,
       continue;
     }
     name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
+    file->filesize = afs.ftwsize(file->filepath);  //不得不计算文件长度了
     file->packetn = cmd.Packetn();
     snprintf(ptr, MAX_UDPLEN - len,
              "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a",

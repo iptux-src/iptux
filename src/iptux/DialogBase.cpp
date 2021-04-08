@@ -178,7 +178,7 @@ void DialogBase::AttachEnclosure(const GSList* list) {
     filename = ipmsg_get_filename_me((char*)tlist->data, &filepath);
     pallist = GetSelPal();
     while (pallist) {
-      file = new FileInfo;
+      file = new FileInfo(false);
       file->fileid = g_cthrd->PrnQuote()++;
       /* file->packetn = 0;//没必要设置此字段 */
       file->fileattr =

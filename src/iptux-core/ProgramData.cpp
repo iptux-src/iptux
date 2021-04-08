@@ -151,7 +151,7 @@ void ProgramData::ReadProgData() {
       continue;
     }
     /* 加入文件信息到链表 */
-    FileInfo fileInfo;
+    FileInfo fileInfo(true);
     fileInfo.fileid = pbn++;
     fileInfo.fileattr =
         S_ISREG(st.st_mode) ? FileAttr::REGULAR : FileAttr::DIRECTORY;
