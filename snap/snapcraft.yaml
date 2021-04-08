@@ -30,13 +30,13 @@ apps:
     extensions: [gnome-3-28]
     slots:
       - dbus-iptux
-    plugs: [home, network, gsettings]
+    plugs: [home, network, gsettings, unity7]
 
 parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
-    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev, unity7]
+    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev]
     plugin: meson
     meson-parameters: ["--prefix=/snap/iptux/current/usr"]
     override-pull: |
