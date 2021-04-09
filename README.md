@@ -29,19 +29,9 @@
 
 ## Install
 
-### Linux (Debian and Ubuntu)
+### Linux
 
-stable version:
-
-```
-sudo apt-get install iptux
-```
-
-head version:
-
-```
-sudo snap install --edge iptux --devmode
-```
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/iptux)
 
 ### Mac OS X
 
@@ -121,7 +111,9 @@ iptux -b 127.0.0.3 &
 
 ## Contributing
 
-You can help improve [translation](http://translations.launchpad.net/iptux/trunk), test the [compatibility](https://github.com/iptux-src/iptux/wiki/Compatible-List), fix [bugs](https://github.com/iptux-src/iptux/issues).
+* Help improve [translation](https://hosted.weblate.org/projects/iptux/#languages), we are using weblate for translation
+* Test the [compatibility](https://github.com/iptux-src/iptux/wiki/Compatible-List), 
+* Fix [bugs](https://github.com/iptux-src/iptux/issues).
 
 ### How to update `po/iptux.pot`
 
