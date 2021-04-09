@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-04-09 23:32+0800\n"
-"PO-Revision-Date: 2021-04-09 16:21+0000\n"
+"PO-Revision-Date: 2021-04-09 16:31+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 #: share/iptux/ui/main.ui:13
 msgid "A GTK+ based LAN Messenger."
-msgstr "一个基于GTK+的局域网通信工具"
+msgstr "一个基于GTK+的局域网通信工具。"
 
 #: share/iptux/ui/main.ui:57
 msgid "Detect pal"
@@ -62,8 +62,7 @@ msgid ""
 "Fatal Error!! Failed to create new socket!\n"
 "%s"
 msgstr ""
-"致命错误！！\n"
-"创建新的套接口失败！\n"
+"致命错误！！创建新的套接口失败！\n"
 "%s"
 
 #: src/iptux-core/CoreThread.cpp:205
@@ -295,7 +294,7 @@ msgstr "您的头像:"
 
 #: src/iptux/DataSettings.cpp:203
 msgid "Save files to: "
-msgstr "保存文件到:"
+msgstr "保存文件到: "
 
 #: src/iptux/DataSettings.cpp:213
 msgid "Photo"
@@ -487,7 +486,7 @@ msgstr "通知已经发送到%s。"
 #: src/iptux/DialogBase.cpp:218
 #, c-format
 msgid "%s To Send."
-msgstr "%s 等待传输"
+msgstr "%s 等待传输。"
 
 #: src/iptux/DialogBase.cpp:273
 msgid "Close"
@@ -515,11 +514,11 @@ msgstr "移除选中项"
 
 #: src/iptux/DialogBase.cpp:637
 msgid "File to send."
-msgstr "等待传输的文件"
+msgstr "等待传输的文件。"
 
 #: src/iptux/DialogBase.cpp:642
 msgid "Sending progress."
-msgstr "传输进度"
+msgstr "传输进度。"
 
 #: src/iptux/DialogBase.cpp:645
 msgid "Dirs"
@@ -534,9 +533,8 @@ msgid "Detail"
 msgstr "详情"
 
 #: src/iptux/DialogBase.cpp:701
-#, fuzzy
 msgid "PeerName"
-msgstr "名称"
+msgstr "好友名"
 
 #: src/iptux/DialogBase.cpp:708 src/iptux/DialogPeer.cpp:727
 msgid "Name"
@@ -554,16 +552,16 @@ msgstr "路径"
 
 #: src/iptux/DialogBase.cpp:781
 msgid "Sending Progress."
-msgstr "传输进度"
+msgstr "传输进度。"
 
 #: src/iptux/DialogBase.cpp:784
-#, fuzzy, c-format
+#, c-format
 msgid "%s of %s Sent."
-msgstr "已传输 %s，总共 %s "
+msgstr "已传输 %s，总共 %s。"
 
 #: src/iptux/DialogBase.cpp:791 src/iptux/DialogPeer.cpp:846
 msgid "Mission Completed!"
-msgstr "任务完成"
+msgstr "任务完成！"
 
 #: src/iptux/DialogGroup.cpp:202
 #, c-format
@@ -585,7 +583,7 @@ msgstr "与 %s(%s) 对话 IP地址: %s"
 
 #: src/iptux/DialogPeer.cpp:296
 msgid "Info."
-msgstr "信息"
+msgstr "信息。"
 
 #: src/iptux/DialogPeer.cpp:329
 #, c-format
@@ -653,11 +651,11 @@ msgstr "请选择插入缓冲区的图片"
 
 #: src/iptux/DialogPeer.cpp:528
 msgid "Enclosure."
-msgstr "附件"
+msgstr "附件。"
 
 #: src/iptux/DialogPeer.cpp:573
 msgid "File to be receive."
-msgstr "等待接收的文件"
+msgstr "等待接收的文件。"
 
 #: src/iptux/DialogPeer.cpp:577
 msgid "Receiving progress."
@@ -699,11 +697,11 @@ msgstr "已接收 %s，总共 %s "
 
 #: src/iptux/HelpDialog.cpp:64
 msgid "TRANSLATOR NAME"
-msgstr ""
+msgstr "LI Daobing <lidaobing@gmail.com>"
 
 #: src/iptux/HelpDialog.cpp:78
 msgid "Thanks to"
-msgstr ""
+msgstr "感谢"
 
 #: src/iptux/LogSystem.cpp:72
 #, c-format
@@ -725,9 +723,8 @@ msgid "User:%s Host:%s"
 msgstr "用户:%s 主机:%s"
 
 #: src/iptux/MainWindow.cpp:458 src/iptux/MainWindow.cpp:461
-#, fuzzy
 msgid "Iptux"
-msgstr "信使(iptux)"
+msgstr "信使(Iptux)"
 
 #: src/iptux/MainWindow.cpp:526
 msgid "Pals Online: 0"
@@ -758,59 +755,56 @@ msgid "Host"
 msgstr "主机"
 
 #: src/iptux/MainWindow.cpp:885
-#, fuzzy, c-format
+#, c-format
 msgid "Version: %s"
-msgstr "版本: %s\n"
+msgstr "版本: %s"
 
 #: src/iptux/MainWindow.cpp:889
-#, fuzzy, c-format
+#, c-format
 msgid "Nickname: %s@%s"
-msgstr "昵称: %s@%s\n"
+msgstr "昵称: %s@%s"
 
 #: src/iptux/MainWindow.cpp:892
-#, fuzzy, c-format
+#, c-format
 msgid "Nickname: %s"
-msgstr "昵称: %s\n"
+msgstr "昵称: %s"
 
 #: src/iptux/MainWindow.cpp:894
-#, fuzzy, c-format
+#, c-format
 msgid "User: %s"
-msgstr "用户: %s\n"
+msgstr "用户: %s"
 
 #: src/iptux/MainWindow.cpp:895
-#, fuzzy, c-format
+#, c-format
 msgid "Host: %s"
-msgstr "主机: %s\n"
+msgstr "主机: %s"
 
 #: src/iptux/MainWindow.cpp:899
-#, fuzzy, c-format
+#, c-format
 msgid "Address: %s(%s)"
-msgstr "地址: %s(%s)\n"
+msgstr "地址: %s(%s)"
 
 #: src/iptux/MainWindow.cpp:901
-#, fuzzy, c-format
+#, c-format
 msgid "Address: %s"
-msgstr "地址: %s\n"
+msgstr "地址: %s"
 
 #: src/iptux/MainWindow.cpp:905
-#, fuzzy
 msgid "Compatibility: Microsoft"
-msgstr "兼容性: Microsoft\n"
+msgstr "兼容性: Microsoft"
 
 #: src/iptux/MainWindow.cpp:907
-#, fuzzy
 msgid "Compatibility: GNU/Linux"
-msgstr "兼容性: GNU/Linux\n"
+msgstr "兼容性: GNU/Linux"
 
 #: src/iptux/MainWindow.cpp:910
-#, fuzzy, c-format
+#, c-format
 msgid "System coding: %s"
-msgstr "系统编码: %s\n"
+msgstr "系统编码: %s"
 
 #: src/iptux/MainWindow.cpp:914
-#, fuzzy
 msgid "Signature:"
-msgstr "个性签名:\n"
+msgstr "个性签名:"
 
 #: src/iptux/MainWindow.cpp:956
 #, c-format
@@ -1093,7 +1087,7 @@ msgstr "查找(_F)"
 
 #: src/iptux/resources/gtk/menus.ui:28
 msgid "_View"
-msgstr ""
+msgstr "查看(_V)"
 
 #: src/iptux/resources/gtk/menus.ui:31
 msgid "Sort"
@@ -1117,11 +1111,11 @@ msgstr "降序"
 
 #: src/iptux/resources/gtk/menus.ui:58
 msgid "_Refresh"
-msgstr ""
+msgstr "刷新(_R)"
 
 #: src/iptux/resources/gtk/menus.ui:65
 msgid "_Chat"
-msgstr ""
+msgstr "对话(_C)"
 
 #: src/iptux/resources/gtk/menus.ui:68
 msgid "Insert Picture"
@@ -1136,22 +1130,20 @@ msgid "Attach Folder"
 msgstr "增添目录"
 
 #: src/iptux/resources/gtk/menus.ui:87
-#, fuzzy
 msgid "Clear Chat History"
-msgstr "聊天记录"
+msgstr "清理聊天记录"
 
 #: src/iptux/resources/gtk/menus.ui:94 src/iptux/resources/gtk/menus.ui:141
 msgid "Send Message"
 msgstr "发送消息"
 
 #: src/iptux/resources/gtk/menus.ui:98
-#, fuzzy
 msgid "Close Chat"
-msgstr "关闭"
+msgstr "关闭对话"
 
 #: src/iptux/resources/gtk/menus.ui:104
 msgid "_Window"
-msgstr ""
+msgstr "窗口(_W)"
 
 #: src/iptux/resources/gtk/menus.ui:107
 msgid "_Transmission"
@@ -1163,12 +1155,11 @@ msgstr "共享管理器(_S)"
 
 #: src/iptux/resources/gtk/menus.ui:115
 msgid "_Chat Log"
-msgstr ""
+msgstr "聊天记录(_C)"
 
 #: src/iptux/resources/gtk/menus.ui:119
-#, fuzzy
 msgid "_System Log"
-msgstr "系统编码:"
+msgstr "系统日志(_S)"
 
 #: src/iptux/resources/gtk/menus.ui:125
 msgid "_Help"
@@ -1176,14 +1167,13 @@ msgstr "帮助(_H)"
 
 #: src/iptux/resources/gtk/menus.ui:128
 msgid "_About"
-msgstr ""
+msgstr "关于(_A)"
 
 #: src/iptux/resources/gtk/menus.ui:132
 msgid "Report Bug"
-msgstr ""
+msgstr "报告Bug"
 
 #: src/iptux/resources/gtk/menus.ui:149
-#, fuzzy
 msgid "Change Info"
 msgstr "更改信息"
 
