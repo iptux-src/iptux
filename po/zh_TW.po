@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 00:14+0800\n"
+"POT-Creation-Date: 2021-04-10 00:20+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -540,8 +540,9 @@ msgid "Detail"
 msgstr ""
 
 #: src/iptux/DialogBase.cpp:701
-msgid "PeelName"
-msgstr ""
+#, fuzzy
+msgid "PeerName"
+msgstr "好友"
 
 #: src/iptux/DialogBase.cpp:708 src/iptux/DialogPeer.cpp:727
 msgid "Name"
