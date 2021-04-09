@@ -280,7 +280,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
   }
   if (type == EventType::RECV_FILE_FINISHED) {
     auto event = dynamic_pointer_cast<const RecvFileFinishedEvent>(_event);
-    auto title = _("Receiveing File Finished");
+    auto title = _("Receiving File Finished");
     auto taskStat = getCoreThread()->GetTransTaskStat(event->GetTaskId());
     string summary;
     if (!taskStat) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-09 23:32+0800\n"
+"POT-Creation-Date: 2021-04-10 00:14+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -230,7 +230,7 @@ msgid "New File from %s"
 msgstr ""
 
 #: src/iptux/Application.cpp:283
-msgid "Receiveing File Finished"
+msgid "Receiving File Finished"
 msgstr ""
 
 #: src/iptux/Application.cpp:287
