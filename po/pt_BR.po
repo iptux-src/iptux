@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 00:20+0800\n"
+"POT-Creation-Date: 2021-04-10 00:31+0800\n"
 "PO-Revision-Date: 2016-11-01 13:56+0000\n"
 "Last-Translator: EquipeLinux <Unknown>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
@@ -658,8 +658,9 @@ msgid "Enclosure."
 msgstr ""
 
 #: src/iptux/DialogPeer.cpp:573
-msgid "File to be receive."
-msgstr ""
+#, fuzzy
+msgid "Files to be received"
+msgstr "Mensagem recebida"
 
 #: src/iptux/DialogPeer.cpp:577
 msgid "Receiving progress."
@@ -1237,9 +1238,6 @@ msgstr ""
 
 #~ msgid "Transfer finished"
 #~ msgstr "Transferência encerrada"
-
-#~ msgid "Message received"
-#~ msgstr "Mensagem recebida"
 
 #~ msgid "Play"
 #~ msgstr "Reproduzir"

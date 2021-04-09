@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 00:20+0800\n"
+"POT-Creation-Date: 2021-04-10 00:31+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -665,8 +665,9 @@ msgid "Enclosure."
 msgstr "附件"
 
 #: src/iptux/DialogPeer.cpp:573
-msgid "File to be receive."
-msgstr ""
+#, fuzzy
+msgid "Files to be received"
+msgstr "收到訊息"
 
 #: src/iptux/DialogPeer.cpp:577
 msgid "Receiving progress."

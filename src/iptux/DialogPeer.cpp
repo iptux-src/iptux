@@ -570,7 +570,7 @@ GtkWidget* DialogPeer::CreateFileToReceiveArea() {
   GtkWidget *frame, *hbox, *vbox, *button, *pbar, *sw, *treeview;
   GtkTreeModel* model;
 
-  frame = gtk_frame_new(_("File to be receive."));
+  frame = gtk_frame_new(_("Files to be received"));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   pbar = gtk_progress_bar_new();
   g_datalist_set_data(&widset, "file-receive-progress-bar-widget", pbar);
