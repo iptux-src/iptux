@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-04-09 23:32+0800\n"
-"PO-Revision-Date: 2021-04-09 16:15+0000\n"
+"PO-Revision-Date: 2021-04-09 16:21+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -230,16 +230,16 @@ msgstr "从 %s 来的新文件"
 
 #: src/iptux/Application.cpp:283
 msgid "Receiving File Finished"
-msgstr ""
+msgstr "接收文件完成"
 
 #: src/iptux/Application.cpp:287
 msgid "file info no longer exist"
-msgstr ""
+msgstr "文件信息不再存在"
 
 #: src/iptux/Darwin.cpp:16
 #, c-format
 msgid "Couldn’t load icon: %s"
-msgstr ""
+msgstr "无法加载图标: %s"
 
 #: src/iptux/DataSettings.cpp:66
 msgid "Personal"
@@ -259,22 +259,19 @@ msgstr "参数选择"
 
 #: src/iptux/DataSettings.cpp:142 src/iptux/RevisePal.cpp:111
 #: src/iptux/dialog.cpp:104 src/iptux/dialog.cpp:166
-#, fuzzy
 msgid "_OK"
-msgstr "确定"
+msgstr "确定(_O)"
 
 #: src/iptux/DataSettings.cpp:143
-#, fuzzy
 msgid "_Apply"
-msgstr "应用"
+msgstr "应用(_A)"
 
 #: src/iptux/DataSettings.cpp:143 src/iptux/DataSettings.cpp:1260
 #: src/iptux/DataSettings.cpp:1307 src/iptux/DialogBase.cpp:344
 #: src/iptux/RevisePal.cpp:112 src/iptux/ShareFile.cpp:389
 #: src/iptux/callback.cpp:88 src/iptux/dialog.cpp:167 src/iptux/dialog.cpp:226
-#, fuzzy
 msgid "_Cancel"
-msgstr "取消"
+msgstr "取消(_C)"
 
 #: src/iptux/DataSettings.cpp:168
 msgid "Your nickname:"
@@ -472,16 +469,15 @@ msgstr "请选择导入数据的文件"
 #: src/iptux/DataSettings.cpp:1259 src/iptux/DialogBase.cpp:343
 #: src/iptux/ShareFile.cpp:388 src/iptux/callback.cpp:87
 msgid "_Open"
-msgstr ""
+msgstr "打开(_O)"
 
 #: src/iptux/DataSettings.cpp:1306
 msgid "Save data to file"
 msgstr "保存数据到文件"
 
 #: src/iptux/DataSettings.cpp:1307 src/iptux/dialog.cpp:227
-#, fuzzy
 msgid "_Save"
-msgstr "另存为"
+msgstr "保存(_S)"
 
 #: src/iptux/DetectPal.cpp:45
 #, c-format
