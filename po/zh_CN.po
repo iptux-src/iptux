@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-04-09 23:32+0800\n"
-"PO-Revision-Date: 2021-04-09 15:52+0000\n"
+"PO-Revision-Date: 2021-04-09 16:15+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -67,21 +67,21 @@ msgstr ""
 "%s"
 
 #: src/iptux-core/CoreThread.cpp:205
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Fatal Error!! Failed to bind the TCP port(%s:%d)!\n"
 "%s"
 msgstr ""
-"致命错误！！绑定TCP/UDP端口(%d)失败！\n"
+"致命错误！！绑定 TCP 端口(%s:%d)失败！\n"
 "%s"
 
 #: src/iptux-core/CoreThread.cpp:218
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Fatal Error!! Failed to bind the UDP port(%s:%d)!\n"
 "%s"
 msgstr ""
-"致命错误！！绑定TCP/UDP端口(%d)失败！\n"
+"致命错误！！绑定 UDP 端口(%s:%d)失败！\n"
 "%s"
 
 #: src/iptux-core/CoreThread.cpp:473 src/iptux-core/CoreThread.cpp:507
@@ -98,13 +98,12 @@ msgstr ""
 "%s"
 
 #: src/iptux-core/Models.cpp:157
-#, fuzzy
 msgid "Empty Message"
-msgstr "发送消息"
+msgstr "空消息"
 
 #: src/iptux-core/Models.cpp:236
 msgid "Received an image"
-msgstr ""
+msgstr "收到一张图片"
 
 # "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 #: src/iptux-core/internal/AnalogFS.cpp:94
@@ -135,7 +134,7 @@ msgstr "你的好友没有接收到此数据包，他可能已经下线。"
 #: src/iptux-core/internal/CommandMode.cpp:37
 #, c-format
 msgid "unknown command mode: %d"
-msgstr ""
+msgstr "未知的命令模式: %d"
 
 #: src/iptux-core/internal/RecvFileData.cpp:117
 msgid "receive"
@@ -145,15 +144,14 @@ msgstr "接收"
 #: src/iptux-core/internal/RecvFileData.cpp:253
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:191
-#, fuzzy
 msgid "Unknown"
 msgstr "未知"
 
 #: src/iptux-core/internal/RecvFileData.cpp:175
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %d, received %d"
-msgstr "接收文件\"%s\"(来自%s)失败！"
+msgstr "从 %2$s 接收文件\"%1$s\"失败！期望长度 %3$d，收到 %4$d"
 
 #: src/iptux-core/internal/RecvFileData.cpp:180
 #, c-format
@@ -223,12 +221,12 @@ msgstr "进程加载成功！"
 #: src/iptux/Application.cpp:264
 #, c-format
 msgid "New Message from %s"
-msgstr ""
+msgstr "从 %s 来的新消息"
 
 #: src/iptux/Application.cpp:274
 #, c-format
 msgid "New File from %s"
-msgstr ""
+msgstr "从 %s 来的新文件"
 
 #: src/iptux/Application.cpp:283
 msgid "Receiving File Finished"
