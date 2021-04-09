@@ -8,15 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 00:20+0800\n"
-"PO-Revision-Date: 2010-03-26 00:20+0800\n"
-"Last-Translator: NightSharp <hxlqrj@126.com>\n"
+"POT-Creation-Date: 2021-04-09 23:32+0800\n"
+"PO-Revision-Date: 2021-04-09 15:52+0000\n"
+"Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"iptux/iptux/zh_Hans/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 0.3\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Weblate 4.6-dev\n"
 
 #: share/applications/io.github.iptux-src.iptux.desktop.in:3
 msgid "iptux"
@@ -24,24 +26,25 @@ msgstr "信使(iptux)"
 
 #: share/applications/io.github.iptux-src.iptux.desktop.in:4
 msgid "LAN communication software"
-msgstr ""
+msgstr "局域网通信软件"
 
 #: share/applications/io.github.iptux-src.iptux.desktop.in:5
 msgid "chat;talk;im;message;ipmsg;feige;"
-msgstr ""
+msgstr "chat;talk;im;message;ipmsg;feige;"
 
 #: share/iptux/ui/main.ui:11
 msgid ""
 "Copyright © 2008-2009, Jally\n"
 "Copyright © 2013-2015,2017-2019, LI Daobing"
 msgstr ""
+"Copyright © 2008-2009, Jally\n"
+"Copyright © 2013-2015,2017-2019, LI Daobing"
 
 #: share/iptux/ui/main.ui:13
 msgid "A GTK+ based LAN Messenger."
 msgstr "一个基于GTK+的局域网通信工具"
 
 #: share/iptux/ui/main.ui:57
-#, fuzzy
 msgid "Detect pal"
 msgstr "探测好友"
 
