@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-04-10 00:31+0800\n"
-"PO-Revision-Date: 2021-04-09 16:31+0000\n"
+"PO-Revision-Date: 2021-04-09 16:41+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -659,7 +659,7 @@ msgstr "等待接收的文件"
 
 #: src/iptux/DialogPeer.cpp:577
 msgid "Receiving progress."
-msgstr "接收进度"
+msgstr "接收进度。"
 
 #: src/iptux/DialogPeer.cpp:580
 msgid "Accept"
@@ -671,7 +671,7 @@ msgstr "拒绝"
 
 #: src/iptux/DialogPeer.cpp:621
 msgid "File received."
-msgstr "已接收的文件"
+msgstr "已接收的文件。"
 
 #: src/iptux/DialogPeer.cpp:663 src/iptux/DialogPeer.cpp:721
 msgid "Source"
@@ -683,17 +683,17 @@ msgstr "另存为"
 
 #: src/iptux/DialogPeer.cpp:829 src/iptux/DialogPeer.cpp:895
 msgid "Receiving Progress."
-msgstr "接收进度"
+msgstr "接收进度。"
 
 #: src/iptux/DialogPeer.cpp:832 src/iptux/DialogPeer.cpp:898
 #, c-format
 msgid "%s to Receive."
-msgstr "%s 等待接收"
+msgstr "%s 等待接收。"
 
 #: src/iptux/DialogPeer.cpp:836 src/iptux/DialogPeer.cpp:902
 #, c-format
 msgid "%s Of %s Received."
-msgstr "已接收 %s，总共 %s "
+msgstr "已接收 %s，总共 %s。"
 
 #: src/iptux/HelpDialog.cpp:64
 msgid "TRANSLATOR NAME"
@@ -953,7 +953,7 @@ msgstr "速率"
 
 #: src/iptux/TransWindow.cpp:329
 msgid "The path you want to open not exist!"
-msgstr "你想打开的路径不存在"
+msgstr "你想打开的路径不存在！"
 
 #: src/iptux/TransWindow.cpp:403
 msgid "The file you want to open not exist!"
@@ -1031,7 +1031,7 @@ msgstr "请输入获取共享文件的密码"
 #: src/iptux/dialog.cpp:124
 #, c-format
 msgid "(%s)[%s]Password:"
-msgstr "(%s)[%s]密码: "
+msgstr "(%s)[%s]密码:"
 
 #: src/iptux/dialog.cpp:142 src/iptux/dialog.cpp:203
 msgid ""
@@ -1063,7 +1063,7 @@ msgstr ""
 
 #: src/iptux/dialog.cpp:225
 msgid "Please select a folder to save files."
-msgstr "请选择一个文件夹来保存文件"
+msgstr "请选择一个文件夹来保存文件。"
 
 #: src/iptux/resources/gtk/menus.ui:6
 msgid "_Preferences"
