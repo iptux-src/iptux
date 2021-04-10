@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-04-10 08:27+0800\n"
-"PO-Revision-Date: 2021-04-09 16:41+0000\n"
+"PO-Revision-Date: 2021-04-10 01:48+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -33,18 +33,16 @@ msgid "chat;talk;im;message;ipmsg;feige;"
 msgstr "chat;talk;im;message;ipmsg;feige;"
 
 #: share/iptux/ui/main.ui:11
-#, fuzzy
 msgid ""
 "Copyright © 2008–2009, Jally\n"
 "Copyright © 2013–2015,2017–2021, LI Daobing"
 msgstr ""
-"Copyright © 2008-2009, Jally\n"
-"Copyright © 2013-2015,2017-2019, LI Daobing"
+"Copyright © 2008–2009, Jally\n"
+"Copyright © 2013–2015,2017–2021, LI Daobing"
 
 #: share/iptux/ui/main.ui:13
-#, fuzzy
 msgid "A GTK based LAN messenger."
-msgstr "一个基于GTK+的局域网通信工具。"
+msgstr "一个基于GTK的局域网通信工具。"
 
 #: share/iptux/ui/main.ui:57
 msgid "Detect pal"
