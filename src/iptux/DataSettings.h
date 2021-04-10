@@ -66,12 +66,10 @@ class DataSettings {
   void WriteNetSegment(const char* filename, GSList* list);
   void ReadNetSegment(const char* filename, GSList** list);
 
-  static GtkWidget* CreatePopupMenu(GtkTreeModel* model);
   static gint IconfileGetItemPos(GtkTreeModel* model, const char* pathname);
 
   //回调处理部分
  private:
-  static gboolean PopupPickMenu(GtkWidget* treeview, GdkEventButton* event);
   static void AddNewIcon(GtkWidget* button, GData** widset);
   static void ChoosePhoto(GData** widset);
 

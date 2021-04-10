@@ -957,34 +957,6 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
 }
 
 /**
- * 创建选择项的弹出菜单.
- * @param model model
- * @return 菜单
- */
-GtkWidget* DataSettings::CreatePopupMenu(GtkTreeModel* model) {
-  GtkWidget *menu, *menuitem;
-
-  menu = gtk_menu_new();
-
-  menuitem = gtk_menu_item_new_with_label(_("Select All"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(model_select_all),
-                           model);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Reverse Select"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(model_turn_all),
-                           model);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Clear Up"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(model_clear_all),
-                           model);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  return menu;
-}
-
-/**
  * 查询(pathname)文件在(model)中的位置，若没有则加入到后面.
  * @param model model
  * @param pathname 文件路径
@@ -1032,28 +1004,6 @@ gint DataSettings::IconfileGetItemPos(GtkTreeModel* model,
     pos = -1;
 
   return pos;
-}
-
-/**
- * 弹出选择项的菜单.
- * @param treeview tree-view
- * @param event event
- * @return Gtk+库所需
- */
-gboolean DataSettings::PopupPickMenu(GtkWidget* treeview,
-                                     GdkEventButton* event) {
-  GtkWidget* menu;
-  GtkTreeModel* model;
-
-  if (event->button != GDK_BUTTON_SECONDARY) {
-    return FALSE;
-  }
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  menu = CreatePopupMenu(model);
-  gtk_widget_show_all(menu);
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)(event));
-
-  return TRUE;
 }
 
 /**
