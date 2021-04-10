@@ -226,9 +226,9 @@ void Application::onToolsTransmission(void*, void*, Application& self) {
 
 void Application::onToolsSharedManagement(void*, void*, Application& self) {
   if (!self.shareFile) {
-    self.shareFile = shareFileNew(&self, GTK_WINDOW(self.window->getWindow()));
+    self.shareFile = shareFileNew(&self);
   }
-  shareFileRun(self.shareFile);
+  shareFileRun(self.shareFile, GTK_WINDOW(self.window->getWindow()));
 }
 
 void Application::onOpenChatLog(void*, void*, Application& self) {

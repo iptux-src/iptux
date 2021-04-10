@@ -19,8 +19,8 @@
 namespace iptux {
 
 typedef GtkDialog ShareFile;
-ShareFile* shareFileNew(Application* app, GtkWindow* parent);
-void shareFileRun(ShareFile* dialog);
+ShareFile* shareFileNew(Application* app);
+void shareFileRun(ShareFile* dialog, GtkWindow* parent);
 
 }  // namespace iptux
 

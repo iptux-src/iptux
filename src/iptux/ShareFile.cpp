@@ -63,14 +63,15 @@ ShareFilePrivate* getPriv(ShareFile* window) {
   return (ShareFilePrivate*)g_object_get_data(G_OBJECT(window), IPTUX_PRIVATE);
 }
 
-void shareFileRun(ShareFile* dialog) {
+void shareFileRun(ShareFile* dialog, GtkWindow* parent) {
+  gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:
       ApplySharedData(dialog);
       break;
     case GTK_RESPONSE_APPLY:
       ApplySharedData(dialog);
-      shareFileRun(dialog);
+      shareFileRun(dialog, parent);
       break;
     default:
       break;
@@ -96,14 +97,14 @@ void InitSublayer(ShareFile* self) {
  * @param parent 父窗口指针
  * @return 对话框
  */
-ShareFile* shareFileNew(Application* app, GtkWindow* parent) {
+ShareFile* shareFileNew(Application* app) {
   ShareFile* dialog;
 
   dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(
-      _("Shared Files Management"), GTK_WINDOW(parent), GTK_DIALOG_MODAL,
-      _("OK"), GTK_RESPONSE_OK,          //
-      _("Apply"), GTK_RESPONSE_APPLY,    //
-      _("Cancel"), GTK_RESPONSE_CANCEL,  //
+      _("Shared Files Management"), nullptr, GTK_DIALOG_MODAL,  //
+      _("OK"), GTK_RESPONSE_OK,                                 //
+      _("Apply"), GTK_RESPONSE_APPLY,                           //
+      _("Cancel"), GTK_RESPONSE_CANCEL,                         //
       NULL));
 
   ShareFilePrivate* priv = new ShareFilePrivate();
