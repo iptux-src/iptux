@@ -29,11 +29,11 @@ namespace iptux {
 
 class ShareFilePrivate {
  public:
-  Application* app;
-  GtkTreeModel* model;
+  Application* app = 0;
+  GtkTreeModel* model = 0;
 
  public:
-  ~ShareFilePrivate() { g_object_unref(model); }
+  ~ShareFilePrivate() { g_clear_object(&model); }
 
   static void destroy(ShareFilePrivate* priv) { delete priv; }
   void FillFileModel(GtkTreeModel* model);
@@ -87,10 +87,7 @@ void InitSublayer(ShareFile* self) {
   model = CreateFileModel();
 
   auto priv = getPriv(self);
-  priv->model = model;
-
-  g_object_set_data_full(G_OBJECT(self), "file-model", model,
-                         GDestroyNotify(g_object_unref));
+  g_set_object(&priv->model, model);
   priv->FillFileModel(model);
 }
 
@@ -139,7 +136,6 @@ ShareFile* shareFileNew(Application* app, GtkWindow* parent) {
 GtkWidget* CreateAllArea(ShareFile* self) {
   GtkWidget *box, *vbox;
   GtkWidget *sw, *button, *widget;
-  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -150,7 +146,9 @@ GtkWidget* CreateAllArea(ShareFile* self) {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_end(GTK_BOX(box), sw, TRUE, TRUE, 0);
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(self), "file-model"));
+
+  auto model = getPriv(self)->model;
+
   widget = CreateFileTree(model);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_object_set_data(G_OBJECT(self), "file-treeview-widget", widget);
