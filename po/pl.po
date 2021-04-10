@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 08:27+0800\n"
+"POT-Creation-Date: 2021-04-10 15:53+0800\n"
 "PO-Revision-Date: 2010-07-29 13:29+0000\n"
 "Last-Translator: Twojwujaszek <twojwujaszek@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -738,98 +738,98 @@ msgstr "Wysłane-Rozgłoszenie"
 msgid "User:%s Host:%s"
 msgstr "Użytkownik:%s Host:%s"
 
-#: src/iptux/MainWindow.cpp:458 src/iptux/MainWindow.cpp:461
+#: src/iptux/MainWindow.cpp:426 src/iptux/MainWindow.cpp:429
 #, fuzzy
 msgid "Iptux"
 msgstr "iptux"
 
-#: src/iptux/MainWindow.cpp:526
+#: src/iptux/MainWindow.cpp:494
 msgid "Pals Online: 0"
 msgstr "Znajomych Online: 0"
 
-#: src/iptux/MainWindow.cpp:611
+#: src/iptux/MainWindow.cpp:579
 msgid "Search Pals"
 msgstr "Szukaj Znajomych"
 
-#: src/iptux/MainWindow.cpp:725
+#: src/iptux/MainWindow.cpp:693
 msgid "Nickname"
 msgstr "Nick"
 
-#: src/iptux/MainWindow.cpp:736
+#: src/iptux/MainWindow.cpp:704
 msgid "Group"
 msgstr "Grupa"
 
-#: src/iptux/MainWindow.cpp:742 src/iptux/TransWindow.cpp:256
+#: src/iptux/MainWindow.cpp:710 src/iptux/TransWindow.cpp:256
 msgid "IPv4"
 msgstr "IPv4"
 
-#: src/iptux/MainWindow.cpp:748
+#: src/iptux/MainWindow.cpp:716
 msgid "User"
 msgstr "Użytkownik"
 
-#: src/iptux/MainWindow.cpp:754
+#: src/iptux/MainWindow.cpp:722
 msgid "Host"
 msgstr "Host"
 
-#: src/iptux/MainWindow.cpp:885
+#: src/iptux/MainWindow.cpp:853
 #, fuzzy, c-format
 msgid "Version: %s"
 msgstr "Wersja: %s\n"
 
-#: src/iptux/MainWindow.cpp:889
+#: src/iptux/MainWindow.cpp:857
 #, fuzzy, c-format
 msgid "Nickname: %s@%s"
 msgstr "Nick: %s@%s\n"
 
-#: src/iptux/MainWindow.cpp:892
+#: src/iptux/MainWindow.cpp:860
 #, fuzzy, c-format
 msgid "Nickname: %s"
 msgstr "Nick: %s\n"
 
-#: src/iptux/MainWindow.cpp:894
+#: src/iptux/MainWindow.cpp:862
 #, fuzzy, c-format
 msgid "User: %s"
 msgstr "Użytkownik: %s\n"
 
-#: src/iptux/MainWindow.cpp:895
+#: src/iptux/MainWindow.cpp:863
 #, fuzzy, c-format
 msgid "Host: %s"
 msgstr "Host: %s\n"
 
-#: src/iptux/MainWindow.cpp:899
+#: src/iptux/MainWindow.cpp:867
 #, fuzzy, c-format
 msgid "Address: %s(%s)"
 msgstr "Addres: %s(%s)\n"
 
-#: src/iptux/MainWindow.cpp:901
+#: src/iptux/MainWindow.cpp:869
 #, fuzzy, c-format
 msgid "Address: %s"
 msgstr "Addres: %s\n"
 
-#: src/iptux/MainWindow.cpp:905
+#: src/iptux/MainWindow.cpp:873
 #, fuzzy
 msgid "Compatibility: Microsoft"
 msgstr "Kompatybilność: Microsoft\n"
 
-#: src/iptux/MainWindow.cpp:907
+#: src/iptux/MainWindow.cpp:875
 #, fuzzy
 msgid "Compatibility: GNU/Linux"
 msgstr "Kompatybilność: GNU/Linux\n"
 
-#: src/iptux/MainWindow.cpp:910
+#: src/iptux/MainWindow.cpp:878
 #, fuzzy, c-format
 msgid "System coding: %s"
 msgstr "Kodowanie Systemu: %s\n"
 
-#: src/iptux/MainWindow.cpp:914
+#: src/iptux/MainWindow.cpp:882
 #, fuzzy
 msgid "Signature:"
 msgstr "Sygnatura:\n"
 
-#: src/iptux/MainWindow.cpp:956
-#, c-format
-msgid "Pals Online: %<PRIu32>"
-msgstr "Znajomi Online: %<PRIu32>"
+#: src/iptux/MainWindow.cpp:924
+#, fuzzy, c-format
+msgid "Pals Online: %d"
+msgstr "Znajomych Online: 0"
 
 #: src/iptux/RevisePal.cpp:111
 msgid "Change Pal's Information"
@@ -989,7 +989,7 @@ msgstr "Błąd"
 msgid "Others"
 msgstr "Inne"
 
-#: src/iptux/UiCoreThread.cpp:398 src/iptux/UiModels.cpp:461
+#: src/iptux/UiCoreThread.cpp:398 src/iptux/UiModels.cpp:476
 msgid "<ERROR>"
 msgstr "<Błąd>"
 
@@ -1237,6 +1237,10 @@ msgstr "iptux: Program do komunikacji w sieciach LAN\n"
 #, fuzzy, c-format
 msgid "option parsing failed: %s\n"
 msgstr "Opendir() katalog \"%s\" błąd, %s"
+
+#, c-format
+#~ msgid "Pals Online: %<PRIu32>"
+#~ msgstr "Znajomi Online: %<PRIu32>"
 
 #~ msgid "Sound"
 #~ msgstr "Dźwięk"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 08:27+0800\n"
+"POT-Creation-Date: 2021-04-10 15:53+0800\n"
 "PO-Revision-Date: 2021-04-10 01:48+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -722,94 +722,94 @@ msgstr "发送广播"
 msgid "User:%s Host:%s"
 msgstr "用户:%s 主机:%s"
 
-#: src/iptux/MainWindow.cpp:458 src/iptux/MainWindow.cpp:461
+#: src/iptux/MainWindow.cpp:426 src/iptux/MainWindow.cpp:429
 msgid "Iptux"
 msgstr "信使(Iptux)"
 
-#: src/iptux/MainWindow.cpp:526
+#: src/iptux/MainWindow.cpp:494
 msgid "Pals Online: 0"
 msgstr "在线好友: 0"
 
-#: src/iptux/MainWindow.cpp:611
+#: src/iptux/MainWindow.cpp:579
 msgid "Search Pals"
 msgstr "搜索好友"
 
-#: src/iptux/MainWindow.cpp:725
+#: src/iptux/MainWindow.cpp:693
 msgid "Nickname"
 msgstr "昵称"
 
-#: src/iptux/MainWindow.cpp:736
+#: src/iptux/MainWindow.cpp:704
 msgid "Group"
 msgstr "组名"
 
-#: src/iptux/MainWindow.cpp:742 src/iptux/TransWindow.cpp:256
+#: src/iptux/MainWindow.cpp:710 src/iptux/TransWindow.cpp:256
 msgid "IPv4"
 msgstr "IPv4"
 
-#: src/iptux/MainWindow.cpp:748
+#: src/iptux/MainWindow.cpp:716
 msgid "User"
 msgstr "用户"
 
-#: src/iptux/MainWindow.cpp:754
+#: src/iptux/MainWindow.cpp:722
 msgid "Host"
 msgstr "主机"
 
-#: src/iptux/MainWindow.cpp:885
+#: src/iptux/MainWindow.cpp:853
 #, c-format
 msgid "Version: %s"
 msgstr "版本: %s"
 
-#: src/iptux/MainWindow.cpp:889
+#: src/iptux/MainWindow.cpp:857
 #, c-format
 msgid "Nickname: %s@%s"
 msgstr "昵称: %s@%s"
 
-#: src/iptux/MainWindow.cpp:892
+#: src/iptux/MainWindow.cpp:860
 #, c-format
 msgid "Nickname: %s"
 msgstr "昵称: %s"
 
-#: src/iptux/MainWindow.cpp:894
+#: src/iptux/MainWindow.cpp:862
 #, c-format
 msgid "User: %s"
 msgstr "用户: %s"
 
-#: src/iptux/MainWindow.cpp:895
+#: src/iptux/MainWindow.cpp:863
 #, c-format
 msgid "Host: %s"
 msgstr "主机: %s"
 
-#: src/iptux/MainWindow.cpp:899
+#: src/iptux/MainWindow.cpp:867
 #, c-format
 msgid "Address: %s(%s)"
 msgstr "地址: %s(%s)"
 
-#: src/iptux/MainWindow.cpp:901
+#: src/iptux/MainWindow.cpp:869
 #, c-format
 msgid "Address: %s"
 msgstr "地址: %s"
 
-#: src/iptux/MainWindow.cpp:905
+#: src/iptux/MainWindow.cpp:873
 msgid "Compatibility: Microsoft"
 msgstr "兼容性: Microsoft"
 
-#: src/iptux/MainWindow.cpp:907
+#: src/iptux/MainWindow.cpp:875
 msgid "Compatibility: GNU/Linux"
 msgstr "兼容性: GNU/Linux"
 
-#: src/iptux/MainWindow.cpp:910
+#: src/iptux/MainWindow.cpp:878
 #, c-format
 msgid "System coding: %s"
 msgstr "系统编码: %s"
 
-#: src/iptux/MainWindow.cpp:914
+#: src/iptux/MainWindow.cpp:882
 msgid "Signature:"
 msgstr "个性签名:"
 
-#: src/iptux/MainWindow.cpp:956
-#, c-format
-msgid "Pals Online: %<PRIu32>"
-msgstr "在线好友: %<PRIu32>"
+#: src/iptux/MainWindow.cpp:924
+#, fuzzy, c-format
+msgid "Pals Online: %d"
+msgstr "在线好友: 0"
 
 #: src/iptux/RevisePal.cpp:111
 msgid "Change Pal's Information"
@@ -968,7 +968,7 @@ msgstr "iptux 错误"
 msgid "Others"
 msgstr "其他"
 
-#: src/iptux/UiCoreThread.cpp:398 src/iptux/UiModels.cpp:461
+#: src/iptux/UiCoreThread.cpp:398 src/iptux/UiModels.cpp:476
 msgid "<ERROR>"
 msgstr "<错误>"
 
@@ -1209,6 +1209,10 @@ msgstr "- 一款用于在局域网内共享文件的软件"
 #, c-format
 msgid "option parsing failed: %s\n"
 msgstr "选项解析失败: %s\n"
+
+#, c-format
+#~ msgid "Pals Online: %<PRIu32>"
+#~ msgstr "在线好友: %<PRIu32>"
 
 #~ msgid "Sound"
 #~ msgstr "声音"

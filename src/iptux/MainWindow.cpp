@@ -912,16 +912,16 @@ gchar* palInfo2HintMarkup(const PalInfo* pal) {
  * @return Gtk+库所需
  */
 gboolean MainWindow::UpdateUI(MainWindow* mwin) {
-  static uint32_t sumonline = 0;  //避免每次都作一次设置
+  static int sumonline = 0;  //避免每次都作一次设置
   GtkWidget* widget;
-  uint32_t sum;
+  int sum;
 
   /* 统计当前在线人数 */
   sum = g_cthrd->GetOnlineCount();
 
   /* 更新UI */
   if (sumonline != sum) {
-    auto label = stringFormat(_("Pals Online: %" PRIu32), sum);
+    auto label = stringFormat(_("Pals Online: %d"), sum);
     widget =
         GTK_WIDGET(g_datalist_get_data(&mwin->widset, "online-label-widget"));
     gtk_label_set_text(GTK_LABEL(widget), label.c_str());
