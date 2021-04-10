@@ -7,8 +7,9 @@ namespace iptux {
 
 enum class EventType {
   NEW_PAL_ONLINE,
-  NEW_MESSAGE,
+  PAL_UPDATE,
   PAL_OFFLINE,
+  NEW_MESSAGE,
   ICON_UPDATE,
   PASSWORD_REQUIRED,
   PERMISSION_REQUIRED,
@@ -18,6 +19,7 @@ enum class EventType {
   RECV_FILE_STARTED,
   RECV_FILE_FINISHED,
   TRANS_TASKS_CHANGED,
+  CONFIG_CHANGED,
 };
 
 class Event {
@@ -33,11 +35,20 @@ class Event {
 
 class NewPalOnlineEvent : public Event {
  public:
-  explicit NewPalOnlineEvent(PPalInfo palInfo);
+  explicit NewPalOnlineEvent(CPPalInfo palInfo);
   CPPalInfo getPalInfo() const;
 
  private:
-  PPalInfo palInfo;
+  CPPalInfo palInfo;
+};
+
+class PalUpdateEvent : public Event {
+ public:
+  explicit PalUpdateEvent(CPPalInfo palInfo);
+  CPPalInfo getPalInfo() const;
+
+ private:
+  CPPalInfo palInfo;
 };
 
 class NewMessageEvent : public Event {
@@ -135,7 +146,12 @@ class RecvFileFinishedEvent : public AbstractTaskIdEvent {
 
 class TransTasksChangedEvent : public Event {
  public:
-  explicit TransTasksChangedEvent() : Event(EventType::TRANS_TASKS_CHANGED) {}
+  TransTasksChangedEvent() : Event(EventType::TRANS_TASKS_CHANGED) {}
+};
+
+class ConfigChangedEvent : public Event {
+ public:
+  ConfigChangedEvent() : Event(EventType::CONFIG_CHANGED) {}
 };
 
 }  // namespace iptux

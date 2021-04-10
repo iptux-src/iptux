@@ -79,8 +79,7 @@ TEST(CoreThread, SendMessage_ChipData) {
   CoreThread* thread = new CoreThread(core);
   auto pal = make_shared<PalInfo>();
   thread->AttachPalToList(pal);
-  ChipData chipData;
-  chipData.data = "hello world";
+  ChipData chipData("hello world");
   EXPECT_TRUE(thread->SendMessage(pal, chipData));
   delete thread;
 }
@@ -92,8 +91,7 @@ TEST(CoreThread, SendMsgPara) {
   CoreThread* thread = new CoreThread(core);
   PPalInfo pal = make_shared<PalInfo>();
   thread->AttachPalToList(pal);
-  ChipData chipData;
-  chipData.data = "hello world";
+  ChipData chipData("hello world");
   MsgPara para(pal);
   para.dtlist.push_back(move(chipData));
   EXPECT_TRUE(thread->SendMsgPara(para));
@@ -184,18 +182,17 @@ TEST(CoreThread, FullCase) {
   }
   {
     auto event = thread2Events[0];
-    EXPECT_EQ(event->getType(), EventType::ICON_UPDATE);
-    auto event2 = (IconUpdateEvent*)(event.get());
-    EXPECT_EQ(event2->GetPalKey().ToString(), "127.0.0.1:2425");
+    EXPECT_EQ(event->getType(), EventType::PAL_UPDATE);
+    auto event2 = dynamic_pointer_cast<const PalUpdateEvent>(event);
+    EXPECT_TRUE(event2);
+    EXPECT_EQ(event2->getPalInfo()->GetKey().ToString(), "127.0.0.1:2425");
   }
 
   // send ask shared
   thread1->SendAskShared(pal2InThread1);
 
   // send picture
-  ChipData chipData;
-  chipData.type = MessageContentType::PICTURE;
-  chipData.data = testDataPath("iptux.png");
+  ChipData chipData(MessageContentType::PICTURE, testDataPath("iptux.png"));
   chipData.SetDeleteFileAfterSent(false);
   thread1->SendMessage(pal2InThread1, chipData);
   // WARNING: does not work as expected, the message will be sent from

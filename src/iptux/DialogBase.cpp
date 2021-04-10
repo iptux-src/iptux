@@ -21,7 +21,7 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/HelpDialog.h"
-#include "iptux/MainWindow.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 
@@ -254,7 +254,10 @@ GtkWidget* DialogBase::CreateInputArea() {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+
   widget = gtk_text_view_new();
+  inputTextviewWidget = GTK_TEXT_VIEW(widget);
+  inputBuffer = gtk_text_view_get_buffer(inputTextviewWidget);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
   gtk_drag_dest_add_uri_targets(widget);
   gtk_container_add(GTK_CONTAINER(sw), widget);
@@ -382,6 +385,7 @@ bool DialogBase::SendEnclosureMsg() {
     gtk_tree_model_get(model, &iter, 3, &filepath, 4, &file, -1);
     files.push_back(file);
   } while (gtk_tree_model_iter_next(model, &iter));
+  gtk_list_store_clear(GTK_LIST_STORE(model));
 
   BroadcastEnclosureMsg(files);
   if (!timersend) {
@@ -399,9 +403,7 @@ void DialogBase::FeedbackMsg(const gchar* msg) {
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
 
-  ChipData chip;
-  chip.type = MESSAGE_CONTENT_TYPE_STRING;
-  chip.data = msg;
+  ChipData chip(msg);
   para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
@@ -648,7 +650,8 @@ GtkWidget* DialogBase::CreateFileSendArea() {
   g_signal_connect_swapped(button, "clicked", G_CALLBACK(AttachRegular), this);
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(OpenTransDlg), this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "app.tools.transmission");
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -657,6 +660,7 @@ GtkWidget* DialogBase::CreateFileSendArea() {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   model = CreateFileSendModel();
+  fileSendModel = GTK_LIST_STORE(model);
   treeview = CreateFileSendTree(model);
   g_datalist_set_data_full(&mdlset, "enclosure-model", model,
                            GDestroyNotify(g_object_unref));
@@ -694,7 +698,7 @@ GtkWidget* DialogBase::CreateFileSendTree(GtkTreeModel* model) {
 
   if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) {
     cell = gtk_cell_renderer_text_new();
-    column = gtk_tree_view_column_new_with_attributes(_("PeelName"), cell,
+    column = gtk_tree_view_column_new_with_attributes(_("PeerName"), cell,
                                                       "text", 5, NULL);
     gtk_tree_view_column_set_resizable(column, TRUE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
@@ -790,12 +794,4 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), progresstip.c_str());
   return TRUE;
 }
-/**
- * 打开文件传输窗口.
- * @param dlgpr 对话框类
- */
-void DialogBase::OpenTransDlg(DialogBase* self) {
-  self->app->getMainWindow()->OpenTransWindow();
-}
-
 }  // namespace iptux

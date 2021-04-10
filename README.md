@@ -7,6 +7,8 @@
 [![Join the chat at https://gitter.im/iptux-src/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/iptux-src/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![codecov](https://codecov.io/gh/iptux-src/iptux/branch/master/graph/badge.svg)](https://codecov.io/gh/iptux-src/iptux/branch/master)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/iptux-src/iptux.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/iptux-src/iptux/alerts/)
+[![Snapcraft](https://snapcraft.io/iptux/badge.svg)](https://snapcraft.io/iptux)
+[![Weblate Translation Status](https://hosted.weblate.org/widgets/iptux/-/iptux/svg-badge.svg)](https://hosted.weblate.org/engage/iptux/)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -29,19 +31,9 @@
 
 ## Install
 
-### Linux (Debian and Ubuntu)
+### Linux
 
-stable version:
-
-```
-sudo apt-get install iptux
-```
-
-head version:
-
-```
-sudo snap install --edge iptux --devmode
-```
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/iptux)
 
 ### Mac OS X
 
@@ -121,14 +113,18 @@ iptux -b 127.0.0.3 &
 
 ## Contributing
 
-You can help improve [translation](http://translations.launchpad.net/iptux/trunk), test the [compatibility](https://github.com/iptux-src/iptux/wiki/Compatible-List), fix [bugs](https://github.com/iptux-src/iptux/issues).
+* Help improve [translation](https://hosted.weblate.org/projects/iptux/#languages), we are using weblate for translation
+* Test the [compatibility](https://github.com/iptux-src/iptux/wiki/Compatible-List), 
+* Fix [bugs](https://github.com/iptux-src/iptux/issues).
 
 ### How to update `po/iptux.pot`
 
 ```
 meson builddir
+find . \( -name '*.cpp' -or -name '*.desktop.in' -or -name '*.ui' \) | grep -v Test | grep -v builddir | sort > po/POTFILES
 ninja -C builddir iptux-pot
 ninja -C builddir iptux-update-po
+for f in  po/*.po; do echo -n "$f: "; msgfmt -v $f; done
 ```
 
 ## Stargazers over time

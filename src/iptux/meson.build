@@ -97,6 +97,7 @@ test_sources = files([
     'TransWindowTest.cpp',
     'UiCoreThreadTest.cpp',
     'UiHelperTest.cpp',
+    'UiModelsTest.cpp',
     'UiProgramDataTest.cpp',
 ])
 libiptux_test = executable('libiptux_test',

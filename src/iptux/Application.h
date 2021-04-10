@@ -6,15 +6,16 @@
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
 #include "iptux/EventAdaptor.h"
+#include "iptux/NotificationService.h"
 #include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
-#include "iptux/NotificationService.h"
 
 namespace iptux {
 
 class MainWindow;
 class UiCoreThread;
+typedef GtkWindow TransWindow;
 
 class Application {
  public:
@@ -22,6 +23,8 @@ class Application {
   ~Application();
 
   int run(int argc, char** argv);
+
+  void openTransWindow();
 
   GtkApplication* getApp() { return app; }
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
@@ -40,13 +43,16 @@ class Application {
   std::shared_ptr<UiCoreThread> cthrd;
 
   GtkApplication* app;
-  MainWindow* window;
   GtkBuilder* menuBuilder;
-  ShareFile* shareFile;
+
   TransModel* transModel;
-  EventAdaptor* eventAdaptor;
-  LogSystem* logSystem;
-  NotificationService* notificationService;
+
+  MainWindow* window = 0;
+  ShareFile* shareFile = 0;
+  TransWindow* transWindow = 0;
+  EventAdaptor* eventAdaptor = 0;
+  LogSystem* logSystem = 0;
+  NotificationService* notificationService = 0;
   bool started{false};
 
  public:
@@ -56,6 +62,8 @@ class Application {
 
  private:
   void onEvent(std::shared_ptr<const Event> event);
+  void onConfigChanged();
+  void updateItemToTransTree(const TransFileModel& para);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
   static void onPreferences(void*, void*, Application& self);
@@ -66,6 +74,7 @@ class Application {
   static void onOpenChatLog(void*, void*, Application& self);
   static void onOpenSystemLog(void*, void*, Application& self);
   static void onTransModelClear(void*, void*, Application& self);
+  static gboolean onTransWindowDelete(Application& self);
 };
 
 }  // namespace iptux

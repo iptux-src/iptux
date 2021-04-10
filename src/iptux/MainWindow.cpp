@@ -27,7 +27,6 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
-#include "iptux/TransWindow.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
 #include "iptux/callback.h"
@@ -56,7 +55,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       timerid(0),
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
-  transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
@@ -90,7 +88,6 @@ void MainWindow::CreateWindow() {
   /* 创建主窗口 */
   window = CreateMainWindow();
   g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-  g_object_set_data(G_OBJECT(window), "trans-model", app->getTransModel());
 
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
@@ -353,50 +350,6 @@ void MainWindow::ClearAllItemFromPaltree() {
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
   gtk_tree_store_clear(GTK_TREE_STORE(model));
-}
-
-/**
- * 打开文件传输窗口.
- */
-void MainWindow::OpenTransWindow() {
-  if (transWindow == nullptr) {
-    transWindow = GTK_WIDGET(trans_window_new(app, GTK_WINDOW(window)));
-    gtk_widget_show_all(transWindow);
-    gtk_widget_hide(transWindow);
-    g_signal_connect_swapped(transWindow, "delete-event",
-                             G_CALLBACK(onTransWindowDelete), this);
-  }
-  gtk_window_present(GTK_WINDOW(transWindow));
-}
-
-void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
-  GtkTreeModel* model;
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
-  transModelUpdateFromTransFileModel(model, para);
-  g_action_group_activate_action(G_ACTION_GROUP(app->getApp()),
-                                 "trans_model.changed", nullptr);
-}
-
-/**
- * 查询此刻是否存在活动的文件传输.
- * @return 活动与否
- */
-bool MainWindow::isTransmissionActive() const {
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gpointer data;
-
-  data = nullptr;
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
-  if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {
-      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
-      if (data)
-        break;
-    } while (gtk_tree_model_iter_next(model, &iter));
-  }
-
-  return !!data;
 }
 
 /**
@@ -959,16 +912,16 @@ gchar* palInfo2HintMarkup(const PalInfo* pal) {
  * @return Gtk+库所需
  */
 gboolean MainWindow::UpdateUI(MainWindow* mwin) {
-  static uint32_t sumonline = 0;  //避免每次都作一次设置
+  static int sumonline = 0;  //避免每次都作一次设置
   GtkWidget* widget;
-  uint32_t sum;
+  int sum;
 
   /* 统计当前在线人数 */
   sum = g_cthrd->GetOnlineCount();
 
   /* 更新UI */
   if (sumonline != sum) {
-    auto label = stringFormat(_("Pals Online: %" PRIu32), sum);
+    auto label = stringFormat(_("Pals Online: %d"), sum);
     widget =
         GTK_WIDGET(g_datalist_get_data(&mwin->widset, "online-label-widget"));
     gtk_label_set_text(GTK_LABEL(widget), label.c_str());
@@ -1414,7 +1367,8 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      RevisePal::ReviseEntry(&self, groupInfo->getMembers()[0].get());
+      RevisePal::ReviseEntry(self.app, GTK_WINDOW(self.window),
+                             groupInfo->getMembers()[0].get());
       break;
     default:
       CHECK(false);
@@ -1672,15 +1626,21 @@ void MainWindow::InitThemeSublayerData() {
   g_object_unref(factory);
 }
 
-gboolean MainWindow::onTransWindowDelete(MainWindow& self) {
-  self.transWindow = nullptr;
-  return FALSE;
-}
-
 void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());
+    auto ipv4 = event->getPalInfo()->ipv4;
+    if (PaltreeContainItem(ipv4)) {
+      UpdateItemToPaltree(ipv4);
+    } else {
+      AttachItemToPaltree(ipv4);
+    }
+    return;
+  }
+
+  if (type == EventType::PAL_UPDATE) {
+    auto event = dynamic_pointer_cast<const PalUpdateEvent>(_event);
     auto ipv4 = event->getPalInfo()->ipv4;
     if (PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
@@ -1781,41 +1741,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     return;
   }
 
-  if (type == EventType::SEND_FILE_STARTED ||
-      type == EventType::RECV_FILE_STARTED) {
-    auto event =
-        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
-    auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
-    if (!para.get()) {
-      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
-      return;
-    }
-    this->UpdateItemToTransTree(*para);
-    auto g_progdt = g_cthrd->getUiProgramData();
-    if (g_progdt->IsAutoOpenFileTrans()) {
-      this->OpenTransWindow();
-    }
-    return;
-  }
-
-  if (type == EventType::SEND_FILE_FINISHED ||
-      type == EventType::RECV_FILE_FINISHED) {
-    auto event =
-        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
-    auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
-    this->UpdateItemToTransTree(*para);
-    auto g_progdt = g_cthrd->getUiProgramData();
-    return;
-  }
-
-  if (type == EventType::TRANS_TASKS_CHANGED) {
-    app->refreshTransTasks();
-    return;
-  }
-
-  LOG_WARN("unknown event type: %d", int(type));
+  LOG_DEBUG("event type %d is ignored by `MainWindow`", int(type));
 }
 
 void MainWindow::setCurrentGroupInfo(GroupInfo* groupInfo) {

@@ -410,6 +410,7 @@ void CoreThread::UpdatePalToList(PalKey palKey) {
     return;
   }
   pal->setOnline(true);
+  emitEvent(make_shared<const PalUpdateEvent>(pal));
 }
 
 /**
@@ -566,6 +567,7 @@ void CoreThread::UpdateMyInfo() {
     }
   }
   Unlock();
+  emitEvent(make_shared<const ConfigChangedEvent>());
 }
 
 /**

@@ -12,7 +12,9 @@
 #include "iptux/HelpDialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
+#include "iptux/MainWindow.h"
 #include "iptux/ShareFile.h"
+#include "iptux/TransWindow.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
@@ -60,18 +62,26 @@ Application::Application(shared_ptr<IptuxConfig> config)
     : config(config), data(nullptr), window(nullptr), shareFile(nullptr) {
   auto application_id =
       config->GetString("debug_application_id", "io.github.iptux-src.iptux");
-  app = gtk_application_new(application_id.c_str(), G_APPLICATION_FLAGS_NONE);
-  g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
-  g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
 
   transModel = transModelNew();
   menuBuilder = nullptr;
   eventAdaptor = nullptr;
   logSystem = nullptr;
+
+  app = gtk_application_new(application_id.c_str(), G_APPLICATION_FLAGS_NONE);
+  g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
+  g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
+
 #if SYSTEM_DARWIN
   notificationService = new TerminalNotifierNoticationService();
 #else
   notificationService = new GioNotificationService();
+  // GError* error = nullptr;
+  // if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
+  //   LOG_WARN("g_application_register failed: %s-%d-%s",
+  //   g_quark_to_string(error->domain),
+  //     error->code, error->message);
+  // }
 #endif
 }
 
@@ -176,7 +186,7 @@ void Application::onStartup(Application& self) {
   add_accelerator(self.app, "win.attach_folder", "<Ctrl>D");
   add_accelerator(self.app, "win.request_shared_resources", "<Ctrl>R");
   add_accelerator(self.app, "win.close", "<Primary>W");
-  add_accelerator(self.app, "win.send_message", "<Primary>Return");
+  self.onConfigChanged();
 
 #if SYSTEM_DARWIN
   install_darwin_icon();
@@ -200,7 +210,7 @@ void Application::onActivate(Application& self) {
 }
 
 void Application::onQuit(void*, void*, Application& self) {
-  if (self.window->isTransmissionActive()) {
+  if (!transModelIsFinished(self.transModel)) {
     if (!pop_request_quit(GTK_WINDOW(self.window->getWindow()))) {
       return;
     }
@@ -213,7 +223,7 @@ void Application::onPreferences(void*, void*, Application& self) {
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
-  self.window->OpenTransWindow();
+  self.openTransWindow();
 }
 
 void Application::onToolsSharedManagement(void*, void*, Application& self) {
@@ -270,7 +280,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
   }
   if (type == EventType::RECV_FILE_FINISHED) {
     auto event = dynamic_pointer_cast<const RecvFileFinishedEvent>(_event);
-    auto title = _("Receiveing File Finished");
+    auto title = _("Receiving File Finished");
     auto taskStat = getCoreThread()->GetTransTaskStat(event->GetTaskId());
     string summary;
     if (!taskStat) {
@@ -282,10 +292,75 @@ void Application::onEvent(shared_ptr<const Event> _event) {
         G_APPLICATION(app), "iptux-recv-file-finished", title, summary,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
+  if (type == EventType::CONFIG_CHANGED) {
+    this->onConfigChanged();
+  }
+  if (type == EventType::SEND_FILE_STARTED ||
+      type == EventType::RECV_FILE_STARTED) {
+    auto event =
+        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    if (!para.get()) {
+      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
+      return;
+    }
+    this->updateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (g_progdt->IsAutoOpenFileTrans()) {
+      this->openTransWindow();
+    }
+    return;
+  }
+
+  if (type == EventType::SEND_FILE_FINISHED ||
+      type == EventType::RECV_FILE_FINISHED) {
+    auto event =
+        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    this->updateItemToTransTree(*para);
+    return;
+  }
+
+  if (type == EventType::TRANS_TASKS_CHANGED) {
+    this->refreshTransTasks();
+    return;
+  }
 }
 
 PPalInfo Application::getMe() {
   return this->getCoreThread()->getMe();
+}
+
+void Application::openTransWindow() {
+  if (transWindow == nullptr) {
+    transWindow = trans_window_new(this, GTK_WINDOW(window->getWindow()));
+    gtk_widget_show_all(GTK_WIDGET(transWindow));
+    gtk_widget_hide(GTK_WIDGET(transWindow));
+    g_signal_connect_swapped(transWindow, "delete-event",
+                             G_CALLBACK(onTransWindowDelete), this);
+  }
+  gtk_window_present(GTK_WINDOW(transWindow));
+}
+
+gboolean Application::onTransWindowDelete(iptux::Application& self) {
+  self.transWindow = nullptr;
+  return FALSE;
+}
+
+void Application::onConfigChanged() {
+  if (getCoreThread()->getProgramData()->IsEnterSendMessage()) {
+    add_accelerator(app, "win.send_message", "Return");
+  } else {
+    add_accelerator(app, "win.send_message", "<Primary>Return");
+  }
+}
+
+void Application::updateItemToTransTree(const TransFileModel& para) {
+  transModelUpdateFromTransFileModel(transModel, para);
+  g_action_group_activate_action(G_ACTION_GROUP(this->getApp()),
+                                 "trans_model.changed", nullptr);
 }
 
 }  // namespace iptux
