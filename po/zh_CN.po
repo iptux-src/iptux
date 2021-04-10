@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 18:35+0800\n"
-"PO-Revision-Date: 2021-04-10 01:48+0000\n"
+"POT-Creation-Date: 2021-04-10 15:53+0800\n"
+"PO-Revision-Date: 2021-04-10 10:36+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -807,9 +807,9 @@ msgid "Signature:"
 msgstr "个性签名:"
 
 #: src/iptux/MainWindow.cpp:922
-#, fuzzy, c-format
+#, c-format
 msgid "Pals Online: %d"
-msgstr "在线好友: 0"
+msgstr "在线好友: %d"
 
 #: src/iptux/RevisePal.cpp:110
 msgid "Change Pal's Information"
