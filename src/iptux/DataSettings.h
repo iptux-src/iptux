@@ -40,8 +40,6 @@ class DataSettings {
 
   void SetPersonalValue();
   void SetSystemValue();
-  void SetSoundValue();
-  static void SetNetworkValue();
 
   GtkTreeModel* CreateIconModel();
   GtkTreeModel* CreateNetworkModel();
@@ -60,7 +58,6 @@ class DataSettings {
  private:
   void ObtainPersonalValue();
   void ObtainSystemValue();
-  void ObtainSoundValue();
   void ObtainNetworkValue();
 
   void WriteNetSegment(const char* filename, GSList* list);

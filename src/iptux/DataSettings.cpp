@@ -76,7 +76,6 @@ void DataSettings::ResetDataEntry(Application* app,
   /* 设置相关数据默认值 */
   dset.SetPersonalValue();
   dset.SetSystemValue();
-  dset.SetNetworkValue();
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
@@ -511,11 +510,6 @@ void DataSettings::SetSystemValue() {
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsFilterFileShareRequest());
 }
-
-/**
- * 为界面设置与网络相关的数据
- */
-void DataSettings::SetNetworkValue() {}
 
 /**
  * 头像树(icon-tree)底层数据结构.
