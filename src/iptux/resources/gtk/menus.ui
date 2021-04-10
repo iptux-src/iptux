@@ -179,4 +179,12 @@
             </item>
         </section>
     </menu>
+    <menu id="peer-recv-popup">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Refuse</attribute>
+                <attribute name="action">win.refuse</attribute>
+            </item>
+        </section>
+    </menu>
 </interface>

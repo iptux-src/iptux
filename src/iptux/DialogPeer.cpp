@@ -1036,20 +1036,19 @@ void DialogPeer::onRefuse(void*, void*, DialogPeer& self) {
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogPeer::RcvTreePopup(GtkWidget* widget, GdkEvent* event, DialogPeer*) {
-  GtkWidget *menu, *menuitem;
+gint DialogPeer::RcvTreePopup(GtkWidget* widget,
+                              GdkEvent* event,
+                              DialogPeer* self) {
+  GtkWidget* menu;
   GdkEventButton* event_button;
 
-  menu = gtk_menu_new();
-  menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(menuitem), "win.refuse");
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+  menu = gtk_menu_new_from_model(G_MENU_MODEL(
+      gtk_builder_get_object(self->app->getMenuBuilder(), "peer-recv-popup")));
   gtk_menu_attach_to_widget(GTK_MENU(menu), widget, nullptr);
 
   if (event->type == GDK_BUTTON_PRESS) {
     event_button = (GdkEventButton*)event;
     if (event_button->button == GDK_BUTTON_SECONDARY) {
-      gtk_widget_show(menuitem);
       gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
       return TRUE;
     }
