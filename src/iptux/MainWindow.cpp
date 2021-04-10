@@ -55,7 +55,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       timerid(0),
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
-  transWindow = nullptr;
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
@@ -89,7 +88,6 @@ void MainWindow::CreateWindow() {
   /* 创建主窗口 */
   window = CreateMainWindow();
   g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-  g_object_set_data(G_OBJECT(window), "trans-model", app->getTransModel());
 
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
@@ -352,36 +350,6 @@ void MainWindow::ClearAllItemFromPaltree() {
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "broadcast-paltree-model"));
   gtk_tree_store_clear(GTK_TREE_STORE(model));
-}
-
-void MainWindow::UpdateItemToTransTree(const TransFileModel& para) {
-  GtkTreeModel* model;
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
-  transModelUpdateFromTransFileModel(model, para);
-  g_action_group_activate_action(G_ACTION_GROUP(app->getApp()),
-                                 "trans_model.changed", nullptr);
-}
-
-/**
- * 查询此刻是否存在活动的文件传输.
- * @return 活动与否
- */
-bool MainWindow::isTransmissionActive() const {
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gpointer data;
-
-  data = nullptr;
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(window), "trans-model"));
-  if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {
-      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
-      if (data)
-        break;
-    } while (gtk_tree_model_iter_next(model, &iter));
-  }
-
-  return !!data;
 }
 
 /**
@@ -1770,40 +1738,6 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     CHECK_NOTNULL(event);
     auto file = new FileInfo(event->GetFileInfo());
     g_cthrd->PushItemToEnclosureList(file);
-    return;
-  }
-
-  if (type == EventType::SEND_FILE_STARTED ||
-      type == EventType::RECV_FILE_STARTED) {
-    auto event =
-        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
-    auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
-    if (!para.get()) {
-      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
-      return;
-    }
-    this->UpdateItemToTransTree(*para);
-    auto g_progdt = g_cthrd->getUiProgramData();
-    if (g_progdt->IsAutoOpenFileTrans()) {
-      this->app->openTransWindow();
-    }
-    return;
-  }
-
-  if (type == EventType::SEND_FILE_FINISHED ||
-      type == EventType::RECV_FILE_FINISHED) {
-    auto event =
-        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
-    auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
-    this->UpdateItemToTransTree(*para);
-    auto g_progdt = g_cthrd->getUiProgramData();
-    return;
-  }
-
-  if (type == EventType::TRANS_TASKS_CHANGED) {
-    app->refreshTransTasks();
     return;
   }
 

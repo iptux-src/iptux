@@ -29,12 +29,23 @@ namespace iptux {
  */
 TransModel* transModelNew() {
   GtkListStore* model;
-
-  model = gtk_list_store_new(
-      int(TransModelColumn::N_COLUMNS), G_TYPE_STRING, G_TYPE_STRING,
-      G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-      G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-      G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_BOOLEAN);
+  model = gtk_list_store_new(int(TransModelColumn::N_COLUMNS),
+                             G_TYPE_STRING,   // STATUS
+                             G_TYPE_STRING,   // TASK
+                             G_TYPE_STRING,   // PEER
+                             G_TYPE_STRING,   // IP
+                             G_TYPE_STRING,   // FILENAME
+                             G_TYPE_STRING,   // FILE_LENGTH_TEXT
+                             G_TYPE_STRING,   // FINISHED_LENGTH_TEXT
+                             G_TYPE_INT,      // PROGRESS
+                             G_TYPE_STRING,   // PROGRESS_TEXT
+                             G_TYPE_STRING,   // COST
+                             G_TYPE_STRING,   // REMAIN
+                             G_TYPE_STRING,   // RATE
+                             G_TYPE_STRING,   // FILE_PATH
+                             G_TYPE_BOOLEAN,  // FINISHED
+                             G_TYPE_INT       // TASK_ID
+  );
   return GTK_TREE_MODEL(model);
 }
 
@@ -46,20 +57,24 @@ static void transModelFillFromTransFileModel(TransModel* model,
                                              GtkTreeIter* iter,
                                              const TransFileModel& para) {
   gtk_list_store_set(
-      GTK_LIST_STORE(model), iter, TransModelColumn::STATUS,
-      para.getStatus().c_str(), TransModelColumn::TASK, para.getTask().c_str(),
-      TransModelColumn::PEER, para.getPeer().c_str(), TransModelColumn::IP,
-      para.getIp().c_str(), TransModelColumn::FILENAME,
-      para.getFilename().c_str(), TransModelColumn::FILE_LENGTH_TEXT,
-      para.getFileLengthText().c_str(), TransModelColumn::FINISHED_LENGTH_TEXT,
-      para.getFinishedLengthText().c_str(), TransModelColumn::PROGRESS,
-      int(para.getProgress()), TransModelColumn::PROGRESS_TEXT,
-      g_strdup(para.getProgressText().c_str()), TransModelColumn::COST,
-      para.getCost().c_str(), TransModelColumn::REMAIN,
-      para.getRemain().c_str(), TransModelColumn::RATE, para.getRate().c_str(),
-      TransModelColumn::FILE_PATH, para.getFilePath().c_str(),
-      TransModelColumn::TASK_ID, para.getTaskId(), TransModelColumn::FINISHED,
-      para.isFinished(), -1);
+      GTK_LIST_STORE(model), iter,                                           //
+      TransModelColumn::STATUS, para.getStatus().c_str(),                    //
+      TransModelColumn::TASK, para.getTask().c_str(),                        //
+      TransModelColumn::PEER, para.getPeer().c_str(),                        //
+      TransModelColumn::IP, para.getIp().c_str(),                            //
+      TransModelColumn::FILENAME, para.getFilename().c_str(),                //
+      TransModelColumn::FILE_LENGTH_TEXT, para.getFileLengthText().c_str(),  //
+      TransModelColumn::FINISHED_LENGTH_TEXT,
+      para.getFinishedLengthText().c_str(),                             //
+      TransModelColumn::PROGRESS, int(para.getProgress()),              //
+      TransModelColumn::PROGRESS_TEXT, para.getProgressText().c_str(),  //
+      TransModelColumn::COST, para.getCost().c_str(),                   //
+      TransModelColumn::REMAIN, para.getRemain().c_str(),               //
+      TransModelColumn::RATE, para.getRate().c_str(),                   //
+      TransModelColumn::FILE_PATH, para.getFilePath().c_str(),          //
+      TransModelColumn::FINISHED, para.isFinished(),                    //
+      TransModelColumn::TASK_ID, para.getTaskId(),                      //
+      -1);
 }
 
 void transModelUpdateFromTransFileModel(TransModel* model,
@@ -525,6 +540,21 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
     }
   }
   addMsgCount(1);
+}
+
+bool transModelIsFinished(TransModel* model) {
+  GtkTreeIter iter;
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      gboolean finished = false;
+      gtk_tree_model_get(model, &iter, TransModelColumn::FINISHED, &finished,
+                         -1);
+
+      if (!finished)
+        return false;
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+  return true;
 }
 
 }  // namespace iptux

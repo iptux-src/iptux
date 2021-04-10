@@ -210,7 +210,7 @@ void Application::onActivate(Application& self) {
 }
 
 void Application::onQuit(void*, void*, Application& self) {
-  if (self.window->isTransmissionActive()) {
+  if (!transModelIsFinished(self.transModel)) {
     if (!pop_request_quit(GTK_WINDOW(self.window->getWindow()))) {
       return;
     }
@@ -295,6 +295,38 @@ void Application::onEvent(shared_ptr<const Event> _event) {
   if (type == EventType::CONFIG_CHANGED) {
     this->onConfigChanged();
   }
+  if (type == EventType::SEND_FILE_STARTED ||
+      type == EventType::RECV_FILE_STARTED) {
+    auto event =
+        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    if (!para.get()) {
+      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
+      return;
+    }
+    this->updateItemToTransTree(*para);
+    auto g_progdt = g_cthrd->getUiProgramData();
+    if (g_progdt->IsAutoOpenFileTrans()) {
+      this->openTransWindow();
+    }
+    return;
+  }
+
+  if (type == EventType::SEND_FILE_FINISHED ||
+      type == EventType::RECV_FILE_FINISHED) {
+    auto event =
+        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto taskId = event->GetTaskId();
+    auto para = g_cthrd->GetTransTaskStat(taskId);
+    this->updateItemToTransTree(*para);
+    return;
+  }
+
+  if (type == EventType::TRANS_TASKS_CHANGED) {
+    this->refreshTransTasks();
+    return;
+  }
 }
 
 PPalInfo Application::getMe() {
@@ -323,6 +355,12 @@ void Application::onConfigChanged() {
   } else {
     add_accelerator(app, "win.send_message", "<Primary>Return");
   }
+}
+
+void Application::updateItemToTransTree(const TransFileModel& para) {
+  transModelUpdateFromTransFileModel(transModel, para);
+  g_action_group_activate_action(G_ACTION_GROUP(this->getApp()),
+                                 "trans_model.changed", nullptr);
 }
 
 }  // namespace iptux

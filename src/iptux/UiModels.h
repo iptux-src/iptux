@@ -101,7 +101,6 @@ enum class TransModelColumn {
   REMAIN,
   RATE,
   FILE_PATH,
-  PARA,
   FINISHED,
   TASK_ID,
   N_COLUMNS
@@ -114,6 +113,7 @@ void transModelUpdateFromTransFileModel(TransModel* model,
 void transModelLoadFromTransFileModels(
     TransModel* model,
     const std::vector<std::unique_ptr<TransFileModel>>& fileModels);
+bool transModelIsFinished(TransModel*);
 
 enum class PalTreeModelSortKey { NICKNAME, IP };
 enum class PalTreeModelColumn {

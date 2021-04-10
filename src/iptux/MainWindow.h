@@ -48,9 +48,6 @@ class MainWindow : public sigc::trackable {
   void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
 
-  void UpdateItemToTransTree(const TransFileModel& para);
-  bool isTransmissionActive() const;
-
   std::shared_ptr<UiProgramData> GetProgramData() { return progdt; }
 
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
@@ -61,7 +58,6 @@ class MainWindow : public sigc::trackable {
   Application* app;
   UiCoreThread& coreThread;
   GtkWidget* window;
-  GtkWidget* transWindow;
   EventAdaptor* eventAdaptor;
 
   std::shared_ptr<UiProgramData> progdt;
