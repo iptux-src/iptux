@@ -46,6 +46,5 @@
 ./src/iptux/WindowConfig.cpp
 ./src/iptux/callback.cpp
 ./src/iptux/dialog.cpp
-./src/iptux/global.cpp
 ./src/iptux/resources/gtk/menus.ui
 ./src/main/iptux.cpp

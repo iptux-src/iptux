@@ -19,7 +19,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
-#include "iptux/global.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/TerminalNotifierNotificationService.h"
@@ -115,8 +114,7 @@ void Application::onStartup(Application& self) {
   self.data = make_shared<UiProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
-  g_cthrd = self.cthrd.get();
-  self.window = new MainWindow(&self, *g_cthrd);
+  self.window = new MainWindow(&self, *self.cthrd);
   self.eventAdaptor = new EventAdaptor(
       self.cthrd->signalEvent,
       [&](shared_ptr<const Event> event) { self.onEvent(event); });
@@ -201,7 +199,7 @@ void Application::onActivate(Application& self) {
 
   self.window->CreateWindow();
   try {
-    g_cthrd->start();
+    self.cthrd->start();
   } catch (const Exception& e) {
     pop_warning(self.window->getWindow(), "%s", e.what());
     exit(1);
@@ -219,7 +217,7 @@ void Application::onQuit(void*, void*, Application& self) {
 }
 
 void Application::onPreferences(void*, void*, Application& self) {
-  DataSettings::ResetDataEntry(GTK_WIDGET(self.window->getWindow()));
+  DataSettings::ResetDataEntry(&self, GTK_WIDGET(self.window->getWindow()));
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
@@ -228,9 +226,9 @@ void Application::onToolsTransmission(void*, void*, Application& self) {
 
 void Application::onToolsSharedManagement(void*, void*, Application& self) {
   if (!self.shareFile) {
-    self.shareFile = share_file_new(GTK_WINDOW(self.window->getWindow()));
+    self.shareFile = shareFileNew(&self);
   }
-  share_file_run(self.shareFile);
+  shareFileRun(self.shareFile, GTK_WINDOW(self.window->getWindow()));
 }
 
 void Application::onOpenChatLog(void*, void*, Application& self) {
@@ -300,13 +298,13 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto event =
         CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
+    auto para = cthrd->GetTransTaskStat(taskId);
     if (!para.get()) {
       LOG_WARN("got task id %d, but no info in CoreThread", taskId);
       return;
     }
     this->updateItemToTransTree(*para);
-    auto g_progdt = g_cthrd->getUiProgramData();
+    auto g_progdt = cthrd->getUiProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {
       this->openTransWindow();
     }
@@ -318,7 +316,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto event =
         CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
+    auto para = cthrd->GetTransTaskStat(taskId);
     this->updateItemToTransTree(*para);
     return;
   }

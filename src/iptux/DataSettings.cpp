@@ -24,7 +24,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/callback.h"
-#include "iptux/global.h"
 
 using namespace std;
 
@@ -33,7 +32,8 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-DataSettings::DataSettings() : widset(NULL), mdlset(NULL) {
+DataSettings::DataSettings(Application* app)
+    : app(app), widset(NULL), mdlset(NULL) {
   InitSublayer();
 }
 
@@ -48,11 +48,14 @@ DataSettings::~DataSettings() {
  * 程序数据设置入口.
  * @param parent 父窗口指针
  */
-void DataSettings::ResetDataEntry(GtkWidget* parent, bool run) {
-  DataSettings dset;
+void DataSettings::ResetDataEntry(Application* app,
+                                  GtkWidget* parent,
+                                  bool run) {
+  DataSettings dset(app);
   GtkWidget* dialog;
   GtkWidget *note, *label;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   dialog = dset.CreateMainDialog(parent);
@@ -434,6 +437,7 @@ void DataSettings::SetPersonalValue() {
   GdkPixbuf* pixbuf;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
@@ -468,6 +472,7 @@ void DataSettings::SetSystemValue() {
   GtkTreeModel* model;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
@@ -583,6 +588,7 @@ void DataSettings::FillIconModel(GtkTreeModel* model) {
  * @note 与修改此链表的代码段是串行关系，无需加锁
  */
 void DataSettings::FillNetworkModel(GtkTreeModel* model) {
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
   for (const NetSegment& pns : g_progdt->getNetSegments()) {
     GtkTreeIter iter;
@@ -700,6 +706,7 @@ void DataSettings::ObtainPersonalValue() {
   const gchar* text;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
@@ -761,6 +768,7 @@ void DataSettings::ObtainSystemValue() {
   gchar* text;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
@@ -859,6 +867,7 @@ void DataSettings::ObtainNetworkValue() {
       netSegments.push_back(move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
   g_progdt->Lock();
   g_progdt->setNetSegments(move(netSegments));

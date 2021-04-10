@@ -94,8 +94,7 @@ class DialogPeer : public DialogBase {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
   void onGroupInfoUpdated(GroupInfo* groupInfo);
-  static void onInputBufferChanged(GtkTextBuffer* textBuffer,
-                                   DialogPeer& self) {
+  static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {
     self.refreshSendAction();
   }
   static void onSendFileModelChanged(DialogPeer& self) {

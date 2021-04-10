@@ -17,13 +17,27 @@
 #include <sys/stat.h>
 
 #include "iptux-utils/utils.h"
+#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/dialog.h"
-#include "iptux/global.h"
 
 using namespace std;
 
+#define IPTUX_PRIVATE "iptux-private"
+
 namespace iptux {
+
+class ShareFilePrivate {
+ public:
+  Application* app = 0;
+  GtkTreeModel* model = 0;
+
+ public:
+  ~ShareFilePrivate() { g_clear_object(&model); }
+
+  static void destroy(ShareFilePrivate* priv) { delete priv; }
+  void FillFileModel(GtkTreeModel* model);
+};
 
 static void DragDataReceived(ShareFile* sfile,
                              GdkDragContext* context,
@@ -33,7 +47,6 @@ static void DragDataReceived(ShareFile* sfile,
                              guint info,
                              guint time);
 static GtkTreeModel* CreateFileModel();
-static void FillFileModel(GtkTreeModel* model);
 static GtkWidget* CreateAllArea(ShareFile* self);
 static void ApplySharedData(ShareFile* self);
 static GtkWidget* CreateFileTree(GtkTreeModel* model);
@@ -46,14 +59,19 @@ static gint FileTreeCompareFunc(GtkTreeModel* model,
                                 GtkTreeIter* a,
                                 GtkTreeIter* b);
 
-void share_file_run(ShareFile* dialog) {
+ShareFilePrivate* getPriv(ShareFile* window) {
+  return (ShareFilePrivate*)g_object_get_data(G_OBJECT(window), IPTUX_PRIVATE);
+}
+
+void shareFileRun(ShareFile* dialog, GtkWindow* parent) {
+  gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
   switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:
       ApplySharedData(dialog);
       break;
     case GTK_RESPONSE_APPLY:
       ApplySharedData(dialog);
-      share_file_run(dialog);
+      shareFileRun(dialog, parent);
       break;
     default:
       break;
@@ -68,9 +86,10 @@ void InitSublayer(ShareFile* self) {
   GtkTreeModel* model;
 
   model = CreateFileModel();
-  g_object_set_data_full(G_OBJECT(self), "file-model", model,
-                         GDestroyNotify(g_object_unref));
-  FillFileModel(model);
+
+  auto priv = getPriv(self);
+  g_set_object(&priv->model, model);
+  priv->FillFileModel(model);
 }
 
 /**
@@ -78,13 +97,21 @@ void InitSublayer(ShareFile* self) {
  * @param parent 父窗口指针
  * @return 对话框
  */
-ShareFile* share_file_new(GtkWindow* parent) {
+ShareFile* shareFileNew(Application* app) {
   ShareFile* dialog;
 
   dialog = GTK_DIALOG(gtk_dialog_new_with_buttons(
-      _("Shared Files Management"), GTK_WINDOW(parent), GTK_DIALOG_MODAL,
-      _("OK"), GTK_RESPONSE_OK, _("Apply"), GTK_RESPONSE_APPLY, _("Cancel"),
-      GTK_RESPONSE_CANCEL, NULL));
+      _("Shared Files Management"), nullptr, GTK_DIALOG_MODAL,  //
+      _("OK"), GTK_RESPONSE_OK,                                 //
+      _("Apply"), GTK_RESPONSE_APPLY,                           //
+      _("Cancel"), GTK_RESPONSE_CANCEL,                         //
+      NULL));
+
+  ShareFilePrivate* priv = new ShareFilePrivate();
+  priv->app = app;
+
+  g_object_set_data_full(G_OBJECT(dialog), IPTUX_PRIVATE, priv,
+                         GDestroyNotify(ShareFilePrivate::destroy));
 
   InitSublayer(dialog);
 
@@ -110,7 +137,6 @@ ShareFile* share_file_new(GtkWindow* parent) {
 GtkWidget* CreateAllArea(ShareFile* self) {
   GtkWidget *box, *vbox;
   GtkWidget *sw, *button, *widget;
-  GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -121,7 +147,9 @@ GtkWidget* CreateAllArea(ShareFile* self) {
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_end(GTK_BOX(box), sw, TRUE, TRUE, 0);
-  model = GTK_TREE_MODEL(g_object_get_data(G_OBJECT(self), "file-model"));
+
+  auto model = getPriv(self)->model;
+
   widget = CreateFileTree(model);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_object_set_data(G_OBJECT(self), "file-treeview-widget", widget);
@@ -183,14 +211,15 @@ GtkTreeModel* CreateFileModel() {
  * 为文件树(file-tree)填充底层数据.
  * @param model file-model
  */
-void FillFileModel(GtkTreeModel* model) {
+void ShareFilePrivate::FillFileModel(GtkTreeModel* model) {
   const char* iconname;
   GtkTreeIter iter;
   char* filesize;
   const char* filetype;
 
   /* 将现在的共享文件填入model */
-  for (FileInfo& file : g_cthrd->getProgramData()->GetSharedFileInfos()) {
+  for (FileInfo& file :
+       app->getCoreThread()->getProgramData()->GetSharedFileInfos()) {
     /* 获取文件大小 */
     file.filesize = utils::fileOrDirectorySize(file.filepath);
     filesize = numeric_to_size(file.filesize);
@@ -274,6 +303,7 @@ void ApplySharedData(ShareFile* self) {
   struct stat st;
 
   /* 更新共享文件链表 */
+  auto g_cthrd = getPriv(self)->app->getCoreThread();
   g_cthrd->Lock();
   g_cthrd->getProgramData()->ClearShareFileInfos();
   g_cthrd->PbnQuote() = 1;

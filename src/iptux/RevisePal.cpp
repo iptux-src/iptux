@@ -22,7 +22,6 @@
 #include "iptux-utils/utils.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/callback.h"
-#include "iptux/global.h"
 
 namespace iptux {
 
@@ -287,11 +286,11 @@ void RevisePal::ApplyReviseData() {
   /* 设置好友信息已被手工修改 */
   pal->setChanged(true);
 
+  auto g_cthrd = app->getCoreThread();
   /* 更新好友信息 */
   g_cthrd->Lock();
   g_cthrd->UpdatePalToList(pal->ipv4);
   g_cthrd->Unlock();
-  // mainWin->UpdateItemToPaltree(pal->ipv4);
 }
 
 /**
