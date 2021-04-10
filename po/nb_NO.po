@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.8.0-b2\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 00:31+0800\n"
+"POT-Creation-Date: 2021-04-10 08:27+0800\n"
 "PO-Revision-Date: 2021-04-09 23:45+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/iptux/"
@@ -32,16 +32,17 @@ msgid "chat;talk;im;message;ipmsg;feige;"
 msgstr ""
 
 #: share/iptux/ui/main.ui:11
+#, fuzzy
 msgid ""
-"Copyright © 2008-2009, Jally\n"
-"Copyright © 2013-2015,2017-2019, LI Daobing"
+"Copyright © 2008–2009, Jally\n"
+"Copyright © 2013–2015,2017–2021, LI Daobing"
 msgstr ""
 "Copyright © 2008–2009, Jally\n"
 "Copyright © 2013–2015,2017-2019, Li Daobing"
 
 #: share/iptux/ui/main.ui:13
 #, fuzzy
-msgid "A GTK+ based LAN Messenger."
+msgid "A GTK based LAN messenger."
 msgstr "En GTK-basert lokalnettmeldingstjeneste."
 
 #: share/iptux/ui/main.ui:57

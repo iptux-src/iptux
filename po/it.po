@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 00:31+0800\n"
+"POT-Creation-Date: 2021-04-10 08:27+0800\n"
 "PO-Revision-Date: 2013-09-08 09:34+0000\n"
 "Last-Translator: Wonderfulheart <Unknown>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -32,12 +32,13 @@ msgstr ""
 
 #: share/iptux/ui/main.ui:11
 msgid ""
-"Copyright © 2008-2009, Jally\n"
-"Copyright © 2013-2015,2017-2019, LI Daobing"
+"Copyright © 2008–2009, Jally\n"
+"Copyright © 2013–2015,2017–2021, LI Daobing"
 msgstr ""
 
 #: share/iptux/ui/main.ui:13
-msgid "A GTK+ based LAN Messenger."
+#, fuzzy
+msgid "A GTK based LAN messenger."
 msgstr "Un LAN Messenger basato su GTK+."
 
 #: share/iptux/ui/main.ui:57
