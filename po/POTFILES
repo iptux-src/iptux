@@ -1,6 +1,5 @@
 ./examples/count-bot/main.cpp
 ./share/applications/io.github.iptux-src.iptux.desktop.in
-./share/iptux/ui/main.ui
 ./src/iptux-core/CoreThread.cpp
 ./src/iptux-core/Event.cpp
 ./src/iptux-core/Exception.cpp
@@ -45,5 +44,6 @@
 ./src/iptux/WindowConfig.cpp
 ./src/iptux/callback.cpp
 ./src/iptux/dialog.cpp
+./src/iptux/resources/gtk/main.ui
 ./src/iptux/resources/gtk/menus.ui
 ./src/main/iptux.cpp

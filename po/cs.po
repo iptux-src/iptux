@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-10 19:40+0800\n"
+"POT-Creation-Date: 2021-04-10 23:47+0800\n"
 "PO-Revision-Date: 2013-04-15 18:07+0000\n"
 "Last-Translator: Jakub Jezbera <Unknown>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -29,30 +29,6 @@ msgstr ""
 #: share/applications/io.github.iptux-src.iptux.desktop.in:5
 msgid "chat;talk;im;message;ipmsg;feige;"
 msgstr ""
-
-#: share/iptux/ui/main.ui:11
-msgid ""
-"Copyright © 2008–2009, Jally\n"
-"Copyright © 2013–2015,2017–2021, LI Daobing"
-msgstr ""
-
-#: share/iptux/ui/main.ui:13
-#, fuzzy
-msgid "A GTK based LAN messenger."
-msgstr "LAN komunikátor založený na GTK+"
-
-#: share/iptux/ui/main.ui:56
-#, fuzzy
-msgid "Detect pal"
-msgstr "Detekovat partnery"
-
-#: share/iptux/ui/main.ui:64
-msgid "Detect"
-msgstr "Rozpoznat"
-
-#: share/iptux/ui/main.ui:112
-msgid "Please input an IP address (IPv4 only):"
-msgstr "Prosím zadejte IP adresu (pouze IPv4):"
 
 #: src/iptux-core/CoreThread.cpp:189
 #, fuzzy, c-format
@@ -227,21 +203,21 @@ msgstr ""
 msgid "Loading the process successfully!"
 msgstr ""
 
-#: src/iptux/Application.cpp:262
+#: src/iptux/Application.cpp:261
 #, c-format
 msgid "New Message from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:272
+#: src/iptux/Application.cpp:271
 #, c-format
 msgid "New File from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:281
+#: src/iptux/Application.cpp:280
 msgid "Receiving File Finished"
 msgstr ""
 
-#: src/iptux/Application.cpp:285
+#: src/iptux/Application.cpp:284
 msgid "file info no longer exist"
 msgstr ""
 
@@ -262,208 +238,196 @@ msgstr "Systém"
 msgid "Network"
 msgstr "Síť"
 
-#: src/iptux/DataSettings.cpp:145
+#: src/iptux/DataSettings.cpp:144
 msgid "Preferences"
 msgstr "Předvolby"
 
-#: src/iptux/DataSettings.cpp:145 src/iptux/RevisePal.cpp:110
+#: src/iptux/DataSettings.cpp:144 src/iptux/RevisePal.cpp:110
 #: src/iptux/dialog.cpp:104 src/iptux/dialog.cpp:166
 #, fuzzy
 msgid "_OK"
 msgstr "OK"
 
-#: src/iptux/DataSettings.cpp:146
+#: src/iptux/DataSettings.cpp:145
 #, fuzzy
 msgid "_Apply"
 msgstr "Použít"
 
-#: src/iptux/DataSettings.cpp:146 src/iptux/DataSettings.cpp:1269
-#: src/iptux/DataSettings.cpp:1316 src/iptux/DialogBase.cpp:343
+#: src/iptux/DataSettings.cpp:145 src/iptux/DataSettings.cpp:1213
+#: src/iptux/DataSettings.cpp:1260 src/iptux/DialogBase.cpp:343
 #: src/iptux/RevisePal.cpp:111 src/iptux/ShareFile.cpp:419
 #: src/iptux/callback.cpp:88 src/iptux/dialog.cpp:167 src/iptux/dialog.cpp:226
 #, fuzzy
 msgid "_Cancel"
 msgstr "Zrušit"
 
-#: src/iptux/DataSettings.cpp:171
+#: src/iptux/DataSettings.cpp:170
 msgid "Your nickname:"
 msgstr "Vaše přezdívka:"
 
-#: src/iptux/DataSettings.cpp:177
+#: src/iptux/DataSettings.cpp:176
 msgid "Please input your nickname!"
 msgstr "Prosím zadejte vaši přezdívku!"
 
-#: src/iptux/DataSettings.cpp:182
+#: src/iptux/DataSettings.cpp:181
 msgid "Your group name:"
 msgstr "Název vaší skupiny:"
 
-#: src/iptux/DataSettings.cpp:188
+#: src/iptux/DataSettings.cpp:187
 msgid "Please input your group name!"
 msgstr "Prosím zadejte název vaší skupiny!"
 
-#: src/iptux/DataSettings.cpp:193
+#: src/iptux/DataSettings.cpp:192
 msgid "Your face picture:"
 msgstr "Váš profilový obrázek:"
 
-#: src/iptux/DataSettings.cpp:206
+#: src/iptux/DataSettings.cpp:205
 msgid "Save files to: "
 msgstr "Uložit soubory do: "
 
-#: src/iptux/DataSettings.cpp:216
+#: src/iptux/DataSettings.cpp:215
 msgid "Photo"
 msgstr "Fotografie"
 
-#: src/iptux/DataSettings.cpp:228
+#: src/iptux/DataSettings.cpp:227
 msgid "Signature"
 msgstr "Podpis"
 
-#: src/iptux/DataSettings.cpp:258
+#: src/iptux/DataSettings.cpp:257
 msgid "Candidate network coding:"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:264
+#: src/iptux/DataSettings.cpp:263
 msgid "Candidate network coding"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:269
+#: src/iptux/DataSettings.cpp:268
 msgid "Preference network coding:"
 msgstr "Předvolby síťového kódování:"
 
-#: src/iptux/DataSettings.cpp:275
+#: src/iptux/DataSettings.cpp:274
 msgid ""
 "Preference network coding (You should be aware of what you are doing if you "
 "want to modify it.)"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:281
+#: src/iptux/DataSettings.cpp:280
 msgid "Pal's default face picture:"
 msgstr "Partnerův základní avatar:"
 
-#: src/iptux/DataSettings.cpp:294
+#: src/iptux/DataSettings.cpp:293
 msgid "Panel font:"
 msgstr "Font panelu:"
 
-#: src/iptux/DataSettings.cpp:302
+#: src/iptux/DataSettings.cpp:301
 msgid "Automatically open the chat dialog"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:307
+#: src/iptux/DataSettings.cpp:306
 msgid "Automatically hide the panel after login"
 msgstr "Automaticky skrýt panel po přihlášení"
 
-#: src/iptux/DataSettings.cpp:312
+#: src/iptux/DataSettings.cpp:311
 msgid "Automatically open the File Transmission Management"
 msgstr "Automaticky otevřít Správce přenosu souborů"
 
-#: src/iptux/DataSettings.cpp:317
+#: src/iptux/DataSettings.cpp:316
 msgid "Use the 'Enter' key to send message"
 msgstr "Používat klávesu 'Enter' k odeslání zprávy"
 
-#: src/iptux/DataSettings.cpp:322
+#: src/iptux/DataSettings.cpp:321
 msgid "Automatically clean up the chat history"
 msgstr "Automaticky smazat historii diskuze"
 
-#: src/iptux/DataSettings.cpp:326
+#: src/iptux/DataSettings.cpp:325
 msgid "Save the chat history"
 msgstr "Uložit historii diskuze"
 
-#: src/iptux/DataSettings.cpp:331
+#: src/iptux/DataSettings.cpp:330
 msgid "Use the Blacklist (NOT recommended)"
 msgstr "Použít Černou listinu (Nedoporučeno!)"
 
-#: src/iptux/DataSettings.cpp:336
+#: src/iptux/DataSettings.cpp:335
 msgid "Filter the request of sharing files"
 msgstr "Filtrovat žádosti o sdílení souborů"
 
-#: src/iptux/DataSettings.cpp:358
+#: src/iptux/DataSettings.cpp:357
 msgid "From:"
 msgstr "Od:"
 
-#: src/iptux/DataSettings.cpp:364
+#: src/iptux/DataSettings.cpp:363
 msgid "Beginning of the IP(v4) section"
 msgstr "Začátek sekce IP(v4)"
 
-#: src/iptux/DataSettings.cpp:368
+#: src/iptux/DataSettings.cpp:367
 msgid "To:"
 msgstr "Pro:"
 
-#: src/iptux/DataSettings.cpp:374
+#: src/iptux/DataSettings.cpp:373
 msgid "End of the IP(v4) section"
 msgstr "Konec sekce IP(v4)"
 
-#: src/iptux/DataSettings.cpp:382
+#: src/iptux/DataSettings.cpp:381
 msgid "Add"
 msgstr "Přidat"
 
-#: src/iptux/DataSettings.cpp:387
+#: src/iptux/DataSettings.cpp:386
 msgid "Delete"
 msgstr "Smazat"
 
-#: src/iptux/DataSettings.cpp:394
+#: src/iptux/DataSettings.cpp:393
 msgid "Added IP(v4) Section:"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:413
+#: src/iptux/DataSettings.cpp:412
 msgid "Import"
 msgstr "Importovat"
 
-#: src/iptux/DataSettings.cpp:417
+#: src/iptux/DataSettings.cpp:416
 msgid "Export"
 msgstr "Exportovat"
 
-#: src/iptux/DataSettings.cpp:421 src/iptux/TransWindow.cpp:169
+#: src/iptux/DataSettings.cpp:420 src/iptux/TransWindow.cpp:169
 msgid "Clear"
 msgstr "Vyčistit"
 
-#: src/iptux/DataSettings.cpp:638
+#: src/iptux/DataSettings.cpp:632
 msgid "From"
 msgstr "Od"
 
-#: src/iptux/DataSettings.cpp:645
+#: src/iptux/DataSettings.cpp:639
 msgid "To"
 msgstr "Pro"
 
-#: src/iptux/DataSettings.cpp:652
+#: src/iptux/DataSettings.cpp:646
 msgid "Description"
 msgstr "Popis"
 
-#: src/iptux/DataSettings.cpp:668
+#: src/iptux/DataSettings.cpp:662
 msgid "Please select download folder"
 msgstr "Prosím zvolte složku pro stahování"
 
-#: src/iptux/DataSettings.cpp:690
+#: src/iptux/DataSettings.cpp:684
 msgid "Select Font"
 msgstr "Vybrat font"
 
-#: src/iptux/DataSettings.cpp:890 src/iptux/DataSettings.cpp:921
+#: src/iptux/DataSettings.cpp:884 src/iptux/DataSettings.cpp:915
 #, c-format
 msgid ""
 "Fopen() file \"%s\" failed!\n"
 "%s"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:969 src/iptux/DialogGroup.cpp:479
-msgid "Select All"
-msgstr "Vybrat vše"
-
-#: src/iptux/DataSettings.cpp:974 src/iptux/DialogGroup.cpp:484
-msgid "Reverse Select"
-msgstr "Obrátit výběr"
-
-#: src/iptux/DataSettings.cpp:979 src/iptux/DialogGroup.cpp:489
-msgid "Clear Up"
-msgstr "Vyčistit"
-
-#: src/iptux/DataSettings.cpp:1071 src/iptux/RevisePal.cpp:421
+#: src/iptux/DataSettings.cpp:1015 src/iptux/RevisePal.cpp:421
 msgid "Please select a face picture"
 msgstr "Prosím vyberte profilový obrázek"
 
-#: src/iptux/DataSettings.cpp:1093
+#: src/iptux/DataSettings.cpp:1037
 msgid "Please select a personal photo"
 msgstr "Prosím vyberte osobní fotografii"
 
-#: src/iptux/DataSettings.cpp:1162 src/iptux/DataSettings.cpp:1169
-#: src/iptux/DetectPal.cpp:50
+#: src/iptux/DataSettings.cpp:1106 src/iptux/DataSettings.cpp:1113
+#: src/iptux/DetectPal.cpp:65
 #, c-format
 msgid ""
 "\n"
@@ -472,25 +436,25 @@ msgstr ""
 "\n"
 "Neplatná IP(v4) adresa: %s!"
 
-#: src/iptux/DataSettings.cpp:1267
+#: src/iptux/DataSettings.cpp:1211
 msgid "Please select a file to import data"
 msgstr "Prosím vyberte soubor pro import dat"
 
-#: src/iptux/DataSettings.cpp:1268 src/iptux/DialogBase.cpp:342
+#: src/iptux/DataSettings.cpp:1212 src/iptux/DialogBase.cpp:342
 #: src/iptux/ShareFile.cpp:418 src/iptux/callback.cpp:87
 msgid "_Open"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:1315
+#: src/iptux/DataSettings.cpp:1259
 msgid "Save data to file"
 msgstr "Uložit data do souboru"
 
-#: src/iptux/DataSettings.cpp:1316 src/iptux/dialog.cpp:227
+#: src/iptux/DataSettings.cpp:1260 src/iptux/dialog.cpp:227
 #, fuzzy
 msgid "_Save"
 msgstr "Uložit jako"
 
-#: src/iptux/DetectPal.cpp:45
+#: src/iptux/DetectPal.cpp:60
 #, c-format
 msgid "The notification has been sent to %s."
 msgstr "Bylo zasláno upozornění pro %s."
@@ -522,7 +486,7 @@ msgstr ""
 msgid "Choose enclosure folders"
 msgstr "Vybrat složky ke sdílení"
 
-#: src/iptux/DialogBase.cpp:580 src/iptux/DialogPeer.cpp:1044
+#: src/iptux/DialogBase.cpp:580
 msgid "Remove Selected"
 msgstr "Smazat vybrané"
 
@@ -544,7 +508,7 @@ msgstr ""
 msgid "Files"
 msgstr "Soubor"
 
-#: src/iptux/DialogBase.cpp:650 src/iptux/DialogPeer.cpp:589
+#: src/iptux/DialogBase.cpp:650 src/iptux/DialogPeer.cpp:591
 msgid "Detail"
 msgstr ""
 
@@ -553,12 +517,12 @@ msgstr ""
 msgid "PeerName"
 msgstr "Název"
 
-#: src/iptux/DialogBase.cpp:707 src/iptux/DialogPeer.cpp:726
+#: src/iptux/DialogBase.cpp:707 src/iptux/DialogPeer.cpp:742
 msgid "Name"
 msgstr "Název"
 
-#: src/iptux/DialogBase.cpp:713 src/iptux/DialogPeer.cpp:675
-#: src/iptux/DialogPeer.cpp:732 src/iptux/ShareFile.cpp:280
+#: src/iptux/DialogBase.cpp:713 src/iptux/DialogPeer.cpp:678
+#: src/iptux/DialogPeer.cpp:748 src/iptux/ShareFile.cpp:280
 #: src/iptux/TransWindow.cpp:269
 msgid "Size"
 msgstr "Velikost"
@@ -577,7 +541,7 @@ msgstr "Stav přenosu."
 msgid "%s of %s Sent."
 msgstr ""
 
-#: src/iptux/DialogBase.cpp:790 src/iptux/DialogPeer.cpp:845
+#: src/iptux/DialogBase.cpp:790 src/iptux/DialogPeer.cpp:861
 msgid "Mission Completed!"
 msgstr ""
 
@@ -594,68 +558,80 @@ msgstr "Člen"
 msgid "Pals"
 msgstr "Partneři"
 
-#: src/iptux/DialogPeer.cpp:133
+#: src/iptux/DialogGroup.cpp:479
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: src/iptux/DialogGroup.cpp:484
+msgid "Reverse Select"
+msgstr "Obrátit výběr"
+
+#: src/iptux/DialogGroup.cpp:489
+msgid "Clear Up"
+msgstr "Vyčistit"
+
+#: src/iptux/DialogPeer.cpp:134
 #, c-format
 msgid "Talk with %s(%s) IP:%s"
 msgstr "Komunikace s %s(%s) IP:%s"
 
-#: src/iptux/DialogPeer.cpp:295
+#: src/iptux/DialogPeer.cpp:296
 msgid "Info."
 msgstr "Informace."
 
-#: src/iptux/DialogPeer.cpp:328
+#: src/iptux/DialogPeer.cpp:329
 #, c-format
 msgid "Version: %s\n"
 msgstr "Verze: %s\n"
 
-#: src/iptux/DialogPeer.cpp:330
+#: src/iptux/DialogPeer.cpp:331
 #, c-format
 msgid "Nickname: %s@%s\n"
 msgstr "Přezdívka: %s@%s\n"
 
-#: src/iptux/DialogPeer.cpp:333
+#: src/iptux/DialogPeer.cpp:334
 #, c-format
 msgid "Nickname: %s\n"
 msgstr "Přezdívka: %s\n"
 
-#: src/iptux/DialogPeer.cpp:335
+#: src/iptux/DialogPeer.cpp:336
 #, c-format
 msgid "User: %s\n"
 msgstr "Uživatel: %s\n"
 
-#: src/iptux/DialogPeer.cpp:336
+#: src/iptux/DialogPeer.cpp:337
 #, c-format
 msgid "Host: %s\n"
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:339
+#: src/iptux/DialogPeer.cpp:340
 #, c-format
 msgid "Address: %s(%s)\n"
 msgstr "Adresa: %s(%s)\n"
 
-#: src/iptux/DialogPeer.cpp:341
+#: src/iptux/DialogPeer.cpp:342
 #, c-format
 msgid "Address: %s\n"
 msgstr "Adresa: %s\n"
 
-#: src/iptux/DialogPeer.cpp:344
+#: src/iptux/DialogPeer.cpp:345
 msgid "Compatibility: Microsoft\n"
 msgstr "Kompatibilita: Microsoft\n"
 
-#: src/iptux/DialogPeer.cpp:346
+#: src/iptux/DialogPeer.cpp:347
 msgid "Compatibility: GNU/Linux\n"
 msgstr "Kompatibilita: GNU/Linux\n"
 
-#: src/iptux/DialogPeer.cpp:348
+#: src/iptux/DialogPeer.cpp:349
 #, c-format
 msgid "System coding: %s\n"
 msgstr "Systémové kódování: %s\n"
 
-#: src/iptux/DialogPeer.cpp:353
+#: src/iptux/DialogPeer.cpp:354
 msgid "Signature:\n"
 msgstr "Podpis:\n"
 
-#: src/iptux/DialogPeer.cpp:360
+#: src/iptux/DialogPeer.cpp:361
 msgid ""
 "\n"
 "Photo:\n"
@@ -663,53 +639,54 @@ msgstr ""
 "\n"
 "Fotografie:\n"
 
-#: src/iptux/DialogPeer.cpp:498
+#: src/iptux/DialogPeer.cpp:499
 msgid "Please select a picture to insert the buffer"
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:527
+#: src/iptux/DialogPeer.cpp:528
 msgid "Enclosure."
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:572
+#: src/iptux/DialogPeer.cpp:573
 #, fuzzy
 msgid "Files to be received"
 msgstr "Soubor přenesen."
 
-#: src/iptux/DialogPeer.cpp:576
+#: src/iptux/DialogPeer.cpp:577
 msgid "Receiving progress."
 msgstr "Stav přenosu."
 
-#: src/iptux/DialogPeer.cpp:579
+#: src/iptux/DialogPeer.cpp:580
 msgid "Accept"
 msgstr "Přijmout"
 
-#: src/iptux/DialogPeer.cpp:584 src/iptux/dialog.cpp:60
+#: src/iptux/DialogPeer.cpp:586 src/iptux/dialog.cpp:60
+#: src/iptux/resources/gtk/menus.ui:185
 msgid "Refuse"
 msgstr "Odmítnout"
 
-#: src/iptux/DialogPeer.cpp:620
+#: src/iptux/DialogPeer.cpp:622
 msgid "File received."
 msgstr "Soubor přenesen."
 
-#: src/iptux/DialogPeer.cpp:662 src/iptux/DialogPeer.cpp:720
+#: src/iptux/DialogPeer.cpp:665 src/iptux/DialogPeer.cpp:736
 msgid "Source"
 msgstr "Zdroj"
 
-#: src/iptux/DialogPeer.cpp:669
+#: src/iptux/DialogPeer.cpp:672
 msgid "SaveAs"
 msgstr "Uložit jako"
 
-#: src/iptux/DialogPeer.cpp:828 src/iptux/DialogPeer.cpp:894
+#: src/iptux/DialogPeer.cpp:844 src/iptux/DialogPeer.cpp:910
 msgid "Receiving Progress."
 msgstr "Stav přenosu."
 
-#: src/iptux/DialogPeer.cpp:831 src/iptux/DialogPeer.cpp:897
+#: src/iptux/DialogPeer.cpp:847 src/iptux/DialogPeer.cpp:913
 #, c-format
 msgid "%s to Receive."
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:835 src/iptux/DialogPeer.cpp:901
+#: src/iptux/DialogPeer.cpp:851 src/iptux/DialogPeer.cpp:917
 #, c-format
 msgid "%s Of %s Received."
 msgstr ""
@@ -1079,6 +1056,30 @@ msgstr ""
 msgid "Please select a folder to save files."
 msgstr "Vyberte prosím složku do které chcete uložit soubory."
 
+#: src/iptux/resources/gtk/main.ui:11
+msgid ""
+"Copyright © 2008–2009, Jally\n"
+"Copyright © 2013–2015,2017–2021, LI Daobing"
+msgstr ""
+
+#: src/iptux/resources/gtk/main.ui:13
+#, fuzzy
+msgid "A GTK based LAN messenger."
+msgstr "LAN komunikátor založený na GTK+"
+
+#: src/iptux/resources/gtk/main.ui:56
+#, fuzzy
+msgid "Detect pal"
+msgstr "Detekovat partnery"
+
+#: src/iptux/resources/gtk/main.ui:64
+msgid "Detect"
+msgstr "Rozpoznat"
+
+#: src/iptux/resources/gtk/main.ui:110
+msgid "Please input an IP address (IPv4 only):"
+msgstr "Prosím zadejte IP adresu (pouze IPv4):"
+
 #: src/iptux/resources/gtk/menus.ui:6
 msgid "_Preferences"
 msgstr "_Předvolby"
@@ -1218,6 +1219,11 @@ msgstr "Ukončit vše"
 #: src/iptux/resources/gtk/menus.ui:177
 msgid "Clear Tasklist"
 msgstr "Vyčistit seznam úkolů"
+
+#: src/iptux/resources/gtk/menus.ui:189
+#, fuzzy
+msgid "Refuse All"
+msgstr "Odmítnout"
 
 #: src/main/iptux.cpp:150
 #, fuzzy

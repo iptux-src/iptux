@@ -186,7 +186,7 @@
                 <attribute name="action">win.refuse</attribute>
             </item>
             <item>
-                <attribute name="label" translatable="yes">RefuseAll</attribute>
+                <attribute name="label" translatable="yes">Refuse All</attribute>
                 <attribute name="action">win.refuse_all</attribute>
             </item>
         </section>
