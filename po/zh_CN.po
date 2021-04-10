@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-11 14:49+0800\n"
-"PO-Revision-Date: 2021-04-10 10:36+0000\n"
+"POT-Creation-Date: 2021-04-10 23:47+0800\n"
+"PO-Revision-Date: 2021-04-11 06:48+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -1203,9 +1203,8 @@ msgid "Clear Tasklist"
 msgstr "清理任务"
 
 #: src/iptux/resources/gtk/menus.ui:189
-#, fuzzy
 msgid "Refuse All"
-msgstr "拒绝"
+msgstr "全部拒绝"
 
 #: src/main/iptux.cpp:150
 msgid "- A software for sharing in LAN"
