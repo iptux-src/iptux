@@ -99,6 +99,7 @@ void DialogPeer::init() {
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
+  g_action_map_disable_actions(G_ACTION_MAP(window), "refuse", nullptr);
 
   g_signal_connect(G_OBJECT(inputBuffer), "changed",
                    G_CALLBACK(onInputBufferChanged), this);
@@ -648,6 +649,7 @@ GtkWidget* DialogPeer::CreateFileToReceiveTree(GtkTreeModel* model) {
   GtkTreeViewColumn* column;
 
   view = gtk_tree_view_new_with_model(model);
+  this->fileToReceiveTree = GTK_TREE_VIEW(view);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
@@ -680,7 +682,20 @@ GtkWidget* DialogPeer::CreateFileToReceiveTree(GtkTreeModel* model) {
   g_signal_connect(GTK_WIDGET(view), "button_press_event",
                    G_CALLBACK(RcvTreePopup), this);
 
+  g_signal_connect_swapped(selection, "changed",
+                           G_CALLBACK(onRecvTreeSelectionChanged), this);
+
   return view;
+}
+
+void DialogPeer::onRecvTreeSelectionChanged(DialogPeer& self,
+                                            GtkTreeSelection* selection) {
+  gint count = gtk_tree_selection_count_selected_rows(selection);
+  if (count > 0) {
+    g_action_map_enable_actions(G_ACTION_MAP(self.window), "refuse", nullptr);
+  } else {
+    g_action_map_disable_actions(G_ACTION_MAP(self.window), "refuse", nullptr);
+  }
 }
 /**
  * 创建待接收文件树底层数据结构.

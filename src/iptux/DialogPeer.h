@@ -38,6 +38,7 @@ class DialogPeer : public DialogBase {
 
  private:
   Application* app;
+  GtkTreeView* fileToReceiveTree = 0;
 
  private:
   void ReadUILayout();
@@ -68,6 +69,7 @@ class DialogPeer : public DialogBase {
 
   //回调处理部分
  private:
+  static void onRecvTreeSelectionChanged(DialogPeer& self, GtkTreeSelection*);
   static void onAcceptButtonClicked(DialogPeer* self);
   static void ShowInfoEnclosure(DialogPeer* dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer* dlgpr);
