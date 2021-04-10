@@ -15,18 +15,19 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/Models.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
 class DataSettings {
  public:
-  DataSettings();
+  explicit DataSettings(Application* app);
   ~DataSettings();
 
-  static void ResetDataEntry(GtkWidget* parent) {
-    ResetDataEntry(parent, true);
+  static void ResetDataEntry(Application* app, GtkWidget* parent) {
+    ResetDataEntry(app, parent, true);
   }
-  static void ResetDataEntry(GtkWidget* parent, bool run);
+  static void ResetDataEntry(Application* app, GtkWidget* parent, bool run);
 
  private:
   void InitSublayer();
@@ -45,13 +46,14 @@ class DataSettings {
   GtkTreeModel* CreateIconModel();
   GtkTreeModel* CreateNetworkModel();
   static void FillIconModel(GtkTreeModel* model);
-  static void FillNetworkModel(GtkTreeModel* model);
+  void FillNetworkModel(GtkTreeModel* model);
   GtkWidget* CreateIconTree(GtkTreeModel* model);
   GtkWidget* CreateNetworkTree(GtkTreeModel* model);
 
   GtkWidget* CreateArchiveChooser();
   GtkWidget* CreateFontChooser();
 
+  Application* app;
   GData* widset;  //窗体集
   GData* mdlset;  //数据model集
 

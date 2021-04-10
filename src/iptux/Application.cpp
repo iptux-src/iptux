@@ -219,7 +219,7 @@ void Application::onQuit(void*, void*, Application& self) {
 }
 
 void Application::onPreferences(void*, void*, Application& self) {
-  DataSettings::ResetDataEntry(GTK_WIDGET(self.window->getWindow()));
+  DataSettings::ResetDataEntry(&self, GTK_WIDGET(self.window->getWindow()));
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
