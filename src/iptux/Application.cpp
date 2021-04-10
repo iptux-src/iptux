@@ -111,6 +111,8 @@ void Application::activate() {
 }
 
 void Application::onStartup(Application& self) {
+  init_theme();
+  iptux_register_resource();
   self.data = make_shared<UiProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
@@ -119,9 +121,6 @@ void Application::onStartup(Application& self) {
       self.cthrd->signalEvent,
       [&](shared_ptr<const Event> event) { self.onEvent(event); });
 
-  init_theme();
-
-  iptux_register_resource();
   GActionEntry app_entries[] = {
       {"quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL, {0, 0, 0}},
       {"preferences",
