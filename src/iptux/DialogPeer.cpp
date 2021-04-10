@@ -93,6 +93,7 @@ void DialogPeer::init() {
       {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
       {"close", G_ACTION_CALLBACK(onClose)},
       {"refuse", G_ACTION_CALLBACK(onRefuse)},
+      {"refuse_all", G_ACTION_CALLBACK(onRefuseAll)},
       {"insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
       {"request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
       {"send_message", G_ACTION_CALLBACK(onSendMessage)},
@@ -1046,6 +1047,24 @@ void DialogPeer::onRefuse(void*, void*, DialogPeer& self) {
   //重新刷新窗口显示
   self.ShowInfoEnclosure(&self);
 }
+
+void DialogPeer::onRefuseAll(void*, void*, DialogPeer& self) {
+  GtkTreeModel* model;
+  GtkTreeIter iter;
+  FileInfo* file;
+
+  GtkWidget* widget = self.fileToReceiveTreeviewWidget;
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
+
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      gtk_tree_model_get(model, &iter, 5, &file, -1);
+      self.app->getCoreThread()->PopItemFromEnclosureList(file);
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+}
+
 /**
  *显示接收附件的TreeView的弹出菜单回调函数.(待接收和已接收都用此函数)
  * @param widget TreeView

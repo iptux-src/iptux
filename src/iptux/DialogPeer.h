@@ -74,6 +74,8 @@ class DialogPeer : public DialogBase {
   static void ShowInfoEnclosure(DialogPeer* dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer* dlgpr);
   static gint RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self);
+  static void onRefuse(void*, void*, DialogPeer& self);
+  static void onRefuseAll(void*, void*, DialogPeer& self);
   void onNewFileReceived(GroupInfo*);
   static void onClearChatHistory(void*, void*, DialogPeer& self) {
     self.ClearHistoryTextView();
@@ -94,7 +96,6 @@ class DialogPeer : public DialogBase {
   static void onClose(void*, void*, DialogPeer& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
-  static void onRefuse(void*, void*, DialogPeer& self);
   void onGroupInfoUpdated(GroupInfo* groupInfo);
   static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {
     self.refreshSendAction();
