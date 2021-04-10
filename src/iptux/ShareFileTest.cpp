@@ -14,6 +14,6 @@ TEST(ShareFile, Constructor) {
   app.startup();
   app.activate();
 
-  ShareFile* shareFile = share_file_new(nullptr);
+  ShareFile* shareFile = shareFileNew(&app, nullptr);
   gtk_widget_destroy(GTK_WIDGET(shareFile));
 }
