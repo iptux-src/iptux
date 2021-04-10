@@ -21,11 +21,9 @@ using namespace std;
 
 namespace iptux {
 
-static gboolean onActivateLink(GtkAboutDialog* label,
-                               gchar* uri,
-                               gpointer user_data) {
+static gboolean iptux_on_activate_link(GtkAboutDialog*, gchar* uri, gpointer) {
   iptux_open_url(uri);
-  return true;
+  return TRUE;
 }
 
 /**
@@ -54,8 +52,8 @@ void CreateAboutDialog(AboutDialog* dialog) {
   };
   gtk_about_dialog_add_credit_section(GTK_ABOUT_DIALOG(dialog), _("Thanks to"),
                                       credits);
-  // g_signal_connect(dialog, "activate-link", G_CALLBACK(onActivateLink),
-  // NULL);
+  g_signal_connect(dialog, "activate-link", G_CALLBACK(iptux_on_activate_link),
+                   nullptr);
 }
 
 /**

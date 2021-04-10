@@ -20,7 +20,6 @@ LiWeijian &lt;weijian_li88@qq.com&gt;
 ManPT &lt;pentie@gmail.com&gt;</property>
     <property name="logo_icon_name">iptux-icon</property>
     <property name="license_type">gpl-2-0</property>
-    <signal name="activate-link" handler="iptux_on_activate_link" swapped="no"/>
     <child>
       <placeholder/>
     </child>
