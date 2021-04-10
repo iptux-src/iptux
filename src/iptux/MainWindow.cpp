@@ -24,7 +24,6 @@
 #include "iptux/DetectPal.h"
 #include "iptux/DialogGroup.h"
 #include "iptux/DialogPeer.h"
-#include "iptux/HelpDialog.h"
 #include "iptux/RevisePal.h"
 #include "iptux/ShareFile.h"
 #include "iptux/UiHelper.h"

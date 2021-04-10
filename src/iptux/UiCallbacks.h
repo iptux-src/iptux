@@ -5,10 +5,6 @@
 #include <gtk/gtk.h>
 
 extern "C" {
-G_MODULE_EXPORT
-gboolean iptux_on_activate_link(GtkAboutDialog* label,
-                                gchar* uri,
-                                gpointer user_data);
 
 G_MODULE_EXPORT
 void iptux_on_ipv4_entry_insert_text(GtkWidget* entry,

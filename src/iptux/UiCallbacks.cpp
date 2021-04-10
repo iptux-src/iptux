@@ -7,11 +7,6 @@
 
 using namespace iptux;
 
-gboolean iptux_on_activate_link(GtkAboutDialog*, gchar* uri, gpointer) {
-  iptux_open_url(uri);
-  return TRUE;
-}
-
 void iptux_on_ipv4_entry_insert_text(GtkWidget* entry,
                                      gchar* text,
                                      gint length) {

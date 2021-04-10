@@ -8,8 +8,8 @@
 #include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux/AboutDialog.h"
 #include "iptux/DataSettings.h"
-#include "iptux/HelpDialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
@@ -246,7 +246,7 @@ void Application::onTransModelClear(void*, void*, Application& self) {
 }
 
 void Application::onAbout(void*, void*, Application& self) {
-  HelpDialog::AboutEntry(GTK_WINDOW(self.window->getWindow()));
+  aboutDialogEntry(GTK_WINDOW(self.window->getWindow()));
 }
 
 void Application::refreshTransTasks() {

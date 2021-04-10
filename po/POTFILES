@@ -22,6 +22,7 @@
 ./src/iptux-utils/Exception.cpp
 ./src/iptux-utils/output.cpp
 ./src/iptux-utils/utils.cpp
+./src/iptux/AboutDialog.cpp
 ./src/iptux/Application.cpp
 ./src/iptux/Darwin.cpp
 ./src/iptux/DataSettings.cpp
@@ -31,7 +32,6 @@
 ./src/iptux/DialogPeer.cpp
 ./src/iptux/EventAdaptor.cpp
 ./src/iptux/GioNotificationService.cpp
-./src/iptux/HelpDialog.cpp
 ./src/iptux/LogSystem.cpp
 ./src/iptux/MainWindow.cpp
 ./src/iptux/RevisePal.cpp
