@@ -16,25 +16,31 @@
 
 namespace iptux {
 
-class HelpDialog {
- public:
-  HelpDialog();
-  ~HelpDialog();
+typedef GtkAboutDialog AboutDialog;
+AboutDialog* aboutDialogNew();
+void aboutDialogRun(AboutDialog* aboutDialog, GtkWindow* parent);
+void aboutDialogEntry(GtkWindow* parent);
 
-  static void AboutEntry(GtkWindow* parent, bool run);
+// class HelpDialog {
+//  public:
+//   HelpDialog();
+//   ~HelpDialog();
 
-  static void AboutEntry(GtkWindow* parent) { return AboutEntry(parent, true); }
+//   static void AboutEntry(GtkWindow* parent, bool run);
 
- private:
-  GtkWidget* CreateAboutDialog(GtkAboutDialog* dlg, GtkWindow* parent);
-  void RunHelpDialog(GtkWidget** dialog);
+//   static void AboutEntry(GtkWindow* parent) { return AboutEntry(parent,
+//   true); }
 
-  static GtkWidget* about;
-  static GtkWidget* more;
-  //回调处理部分
- private:
-  static void DialogDestroy(GtkWidget** dialog);
-};
+//  private:
+//   GtkWidget* CreateAboutDialog(GtkAboutDialog* dlg, GtkWindow* parent);
+//   void RunHelpDialog(GtkWidget** dialog);
+
+//   static GtkWidget* about;
+//   static GtkWidget* more;
+//   //回调处理部分
+//  private:
+//   static void DialogDestroy(GtkWidget** dialog);
+// };
 
 }  // namespace iptux
 

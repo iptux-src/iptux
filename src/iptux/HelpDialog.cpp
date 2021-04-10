@@ -15,8 +15,11 @@
 
 #include <glib/gi18n.h>
 #include <glog/logging.h>
+#include <string>
 
 #include "iptux/UiHelper.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -27,43 +30,19 @@ static gboolean onActivateLink(GtkAboutDialog* label,
   return true;
 }
 
-HelpDialog::HelpDialog() {}
-
-HelpDialog::~HelpDialog() {}
-
-/**
- * 关于对话框入口.
- */
-void HelpDialog::AboutEntry(GtkWindow* parent, bool run) {
-  auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
-  gtk_builder_connect_signals(builder, nullptr);
-  auto aboutDialog = GTK_ABOUT_DIALOG(
-      CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog")));
-
-  HelpDialog hlp;
-  auto dialog = hlp.CreateAboutDialog(aboutDialog, parent);
-
-  if (run) {
-    gtk_dialog_run(GTK_DIALOG(dialog));
-  }
-  gtk_widget_hide(GTK_WIDGET(aboutDialog));
-  g_object_unref(builder);
-}
-
 /**
  * 创建关于对话框.
  */
-GtkWidget* HelpDialog::CreateAboutDialog(GtkAboutDialog* dialog,
-                                         GtkWindow* parent) {
+void CreateAboutDialog(AboutDialog* dialog) {
   if (g_object_get_data(G_OBJECT(dialog), "inited")) {
-    return GTK_WIDGET(dialog);
+    return;
   }
   g_object_set_data(G_OBJECT(dialog), "inited", GINT_TO_POINTER(TRUE));
-  gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
+  // gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   const char* translator = _("TRANSLATOR NAME");
-  const char* origin_translator = "TRANSLATOR NAME";
-  if (strcmp(translator, origin_translator) != 0) {
+  string originTranslator = "TRANSLATOR NAME";
+  if (originTranslator != translator) {
     gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(dialog),
                                             translator);
   }
@@ -79,8 +58,33 @@ GtkWidget* HelpDialog::CreateAboutDialog(GtkAboutDialog* dialog,
                                       credits);
   // g_signal_connect(dialog, "activate-link", G_CALLBACK(onActivateLink),
   // NULL);
+}
 
-  return GTK_WIDGET(dialog);
+/**
+ * 关于对话框入口.
+ */
+AboutDialog* aboutDialogNew() {
+  auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
+  gtk_builder_connect_signals(builder, nullptr);
+  auto aboutDialog = GTK_ABOUT_DIALOG(
+      CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog")));
+  g_object_unref(builder);
+
+  CreateAboutDialog(aboutDialog);
+  return aboutDialog;
+}
+
+void aboutDialogRun(AboutDialog* aboutDialog, GtkWindow* parent) {
+  gtk_window_set_transient_for(GTK_WINDOW(aboutDialog), parent);
+  gtk_dialog_run(GTK_DIALOG(aboutDialog));
+  gtk_widget_hide(GTK_WIDGET(aboutDialog));
+}
+
+void aboutDialogEntry(GtkWindow* parent) {
+  AboutDialog* aboutDialog = aboutDialogNew();
+  g_object_ref_sink(G_OBJECT(aboutDialog));
+  aboutDialogRun(aboutDialog, parent);
+  g_object_unref(aboutDialog);
 }
 
 }  // namespace iptux

@@ -246,7 +246,7 @@ void Application::onTransModelClear(void*, void*, Application& self) {
 }
 
 void Application::onAbout(void*, void*, Application& self) {
-  HelpDialog::AboutEntry(GTK_WINDOW(self.window->getWindow()));
+  aboutDialogEntry(GTK_WINDOW(self.window->getWindow()));
 }
 
 void Application::refreshTransTasks() {

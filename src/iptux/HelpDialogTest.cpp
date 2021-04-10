@@ -7,5 +7,6 @@ using namespace std;
 using namespace iptux;
 
 TEST(HelpDialog, AboutEntry) {
-  HelpDialog::AboutEntry(nullptr, false);
+  auto aboutDialog = aboutDialogNew();
+  g_object_unref(aboutDialog);
 }
