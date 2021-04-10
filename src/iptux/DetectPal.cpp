@@ -18,10 +18,21 @@
 #include "iptux-core/Exception.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
+#include "iptux/callback.h"
 
 using namespace std;
 
 namespace iptux {
+
+static gboolean iptux_on_detect_pal_ipv4_entry_escape(GtkWidget* widget,
+                                                      GdkEventKey* event,
+                                                      gpointer) {
+  if (event->keyval == GDK_KEY_Escape) {
+    gtk_dialog_response(GTK_DIALOG(gtk_widget_get_toplevel(widget)),
+                        GTK_RESPONSE_CLOSE);
+  }
+  return FALSE;
+}
 
 DetectPal::DetectPal(Application* app, GtkBuilder* builder, GtkWindow* window)
     : app(app) {
@@ -30,6 +41,10 @@ DetectPal::DetectPal(Application* app, GtkBuilder* builder, GtkWindow* window)
   gtk_window_set_transient_for(GTK_WINDOW(this->detectPalDialog), window);
   this->detectPalIpv4Entry = CHECK_NOTNULL(
       GTK_ENTRY(gtk_builder_get_object(builder, "detect_pal_ipv4_entry")));
+  g_signal_connect(detectPalIpv4Entry, "insert-text",
+                   G_CALLBACK(entry_insert_numeric), nullptr);
+  g_signal_connect(detectPalIpv4Entry, "key-release-event",
+                   G_CALLBACK(iptux_on_detect_pal_ipv4_entry_escape), nullptr);
 }
 
 void DetectPal::run() {

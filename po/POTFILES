@@ -38,7 +38,6 @@
 ./src/iptux/ShareFile.cpp
 ./src/iptux/TerminalNotifierNotificationService.cpp
 ./src/iptux/TransWindow.cpp
-./src/iptux/UiCallbacks.cpp
 ./src/iptux/UiCoreThread.cpp
 ./src/iptux/UiHelper.cpp
 ./src/iptux/UiModels.cpp
