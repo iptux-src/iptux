@@ -5,7 +5,7 @@
 
 #mesondefine IPTUX_VERSION
 #mesondefine GETTEXT_PACKAGE
-#define IPTUX_RESOURCE "/io/github/iptux-src/"
+#define IPTUX_RESOURCE "/io/github/iptux-src/iptux/"
 
 #define __PIXMAPS_PATH "@SHARE_IPTUX_DIR@/pixmaps"
 #define __LOCALE_PATH "@SHARE_DIR@/locale"

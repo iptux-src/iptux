@@ -5,9 +5,7 @@
 namespace iptux {
 
 GtkBuilder* newTestGtkBuilder() {
-  auto builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
-  gtk_builder_connect_signals(builder, nullptr);
-  return builder;
+  return gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/main.ui");
 }
 
 }  // namespace iptux

@@ -54,7 +54,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
   windowConfig.LoadFromConfig(config);
-  builder = gtk_builder_new_from_file(__UI_PATH "/main.ui");
+  builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/main.ui");
   gtk_builder_connect_signals(builder, nullptr);
   eventAdaptor = new EventAdaptor(coreThread.signalEvent,
                                   [&](shared_ptr<const Event> event) {
