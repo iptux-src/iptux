@@ -584,7 +584,7 @@ gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent* event) {
 
   if (event->type == GDK_BUTTON_PRESS) {
     event_button = (GdkEventButton*)event;
-    if (event_button->button == GDK_BUTTON_SECONDARY) {
+    if (gdk_event_triggers_context_menu(event)) {
       gtk_widget_show(menuitem);
       gtk_menu_popup_at_pointer(GTK_MENU(menu), nullptr);
       return TRUE;

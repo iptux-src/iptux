@@ -1199,7 +1199,7 @@ gboolean MainWindow::PaltreePopupMenu(GtkWidget* treeview,
   GroupInfo* grpinf;
 
   /* 检查事件是否可用 */
-  if (event->button != GDK_BUTTON_SECONDARY ||
+  if (!gdk_event_triggers_context_menu((GdkEvent*)event) ||
       !gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), (event->x),
                                      (event->y), &path, NULL, NULL, NULL)) {
     return FALSE;

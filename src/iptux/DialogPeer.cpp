@@ -1082,7 +1082,7 @@ gint DialogPeer::RcvTreePopup(GtkWidget* widget,
 
   if (event->type == GDK_BUTTON_PRESS) {
     event_button = (GdkEventButton*)event;
-    if (event_button->button == GDK_BUTTON_SECONDARY) {
+    if (gdk_event_triggers_context_menu(event)) {
       gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
       return TRUE;
     }
