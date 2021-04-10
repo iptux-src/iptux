@@ -527,4 +527,20 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
   addMsgCount(1);
 }
 
+bool transModelIsFinished(TransModel* model) {
+  GtkTreeIter iter;
+  gpointer data;
+
+  data = nullptr;
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      gtk_tree_model_get(model, &iter, TransModelColumn::PARA, &data, -1);
+      if (data)
+        break;
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+
+  return !data;
+}
+
 }  // namespace iptux
