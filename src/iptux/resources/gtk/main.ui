@@ -99,8 +99,6 @@ ManPT &lt;pentie@gmail.com&gt;</property>
                     <property name="can_focus">True</property>
                     <property name="max_length">16</property>
                     <property name="placeholder-text">1.2.3.4</property>
-                    <signal name="insert-text" handler="iptux_on_ipv4_entry_insert_text" swapped="no"/>
-                    <signal name="key-release-event" handler="iptux_on_detect_pal_ipv4_entry_escape" swapped="no"/>
                   </object>
                 </child>
               </object>
