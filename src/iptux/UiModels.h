@@ -101,7 +101,6 @@ enum class TransModelColumn {
   REMAIN,
   RATE,
   FILE_PATH,
-  PARA,
   FINISHED,
   TASK_ID,
   N_COLUMNS
