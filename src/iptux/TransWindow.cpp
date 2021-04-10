@@ -190,7 +190,7 @@ static gboolean TransPopupMenu(GtkWidget* treeview,
   GtkTreePath* path;
 
   /* 检查事件是否可用 */
-  if (event->button != GDK_BUTTON_SECONDARY) {
+  if (!gdk_event_triggers_context_menu((GdkEvent*)event)) {
     return FALSE;
   }
 

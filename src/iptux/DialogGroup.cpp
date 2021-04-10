@@ -559,7 +559,7 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget* treeview,
   GtkWidget* menu;
   GtkTreeModel* model;
 
-  if (event->button != GDK_BUTTON_SECONDARY) {
+  if (!gdk_event_triggers_context_menu((GdkEvent*)event)) {
     return FALSE;
   }
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
