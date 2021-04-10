@@ -5,6 +5,7 @@ gflags_dep = dependency('gflags')
 sigc_dep = dependency('sigc++-2.0')
 
 sources = files([
+    'AboutDialog.cpp',
     'Application.cpp',
     'callback.cpp',
     'DataSettings.cpp',
@@ -15,7 +16,6 @@ sources = files([
     'DialogPeer.cpp',
     'EventAdaptor.cpp',
     'GioNotificationService.cpp',
-    'HelpDialog.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
     'RevisePal.cpp',
@@ -81,12 +81,12 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
+    'AboutDialogTest.cpp',
     'ApplicationTest.cpp',
     'DataSettingsTest.cpp',
     'DetectPalTest.cpp',
     'DialogGroupTest.cpp',
     'DialogPeerTest.cpp',
-    'HelpDialogTest.cpp',
     'LogSystemTest.cpp',
     'MainWindowTest.cpp',
     'RevisePalTest.cpp',

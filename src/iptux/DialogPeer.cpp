@@ -25,7 +25,6 @@
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux/HelpDialog.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"

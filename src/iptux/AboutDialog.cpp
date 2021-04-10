@@ -1,6 +1,4 @@
 //
-// C++ Implementation: HelpDialog
-//
 // Description:
 //
 //
@@ -11,7 +9,7 @@
 //
 //
 #include "config.h"
-#include "HelpDialog.h"
+#include "AboutDialog.h"
 
 #include <glib/gi18n.h>
 #include <glog/logging.h>
