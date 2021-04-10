@@ -69,7 +69,6 @@ class DialogPeer : public DialogBase {
   //回调处理部分
  private:
   static void onAcceptButtonClicked(DialogPeer* self);
-  static void onRefuseButtonClicked(DialogPeer* self);
   static void ShowInfoEnclosure(DialogPeer* dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer* dlgpr);
   static gint RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self);
@@ -93,6 +92,7 @@ class DialogPeer : public DialogBase {
   static void onClose(void*, void*, DialogPeer& self) {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
+  static void onRefuse(void*, void*, DialogPeer& self);
   void onGroupInfoUpdated(GroupInfo* groupInfo);
   static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {
     self.refreshSendAction();
