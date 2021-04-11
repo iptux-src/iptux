@@ -1,4 +1,4 @@
-# [unreleased] (2021-XX-XX)
+# [0.8.0] (2021-04-11)
 
 ## Features
 
