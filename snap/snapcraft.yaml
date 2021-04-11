@@ -13,7 +13,7 @@ description: |
   It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ)
   from China, and with the original “IP Messenger” clients from Japan
   as listed on http://ipmsg.org/ including g2ipmsg and xipmsg in Debian.
-grade: devel # must be 'stable' to release into candidate/stable channels
+grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 base: core18
 
