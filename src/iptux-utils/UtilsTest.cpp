@@ -27,7 +27,7 @@ TEST(Utils, numeric_to_size) {
   EXPECT_STREQ(numeric_to_size(1000000000), "953.7MiB");
   EXPECT_STREQ(numeric_to_size(1 << 30), "1.0GiB");
   EXPECT_STREQ(numeric_to_size(1000000000000L), "931.3GiB");
-  EXPECT_STREQ(numeric_to_size(1L << 40), "1.0TiB");
+  EXPECT_STREQ(numeric_to_size((int64_t)1 << 40), "1.0TiB");
   EXPECT_STREQ(numeric_to_size(-1), "-1B");
   EXPECT_STREQ(numeric_to_size(-1024), "-1024B");
 }
