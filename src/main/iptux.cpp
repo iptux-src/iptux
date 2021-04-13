@@ -62,7 +62,7 @@ static GOptionEntry entries[] = {
      "Specify log level: DEBUG, INFO, WARN, default is WARN", "LEVEL"},
     {"bind", 'b', 0, G_OPTION_ARG_STRING, &bindIp,
      "Specify bind IP, like 127.0.0.2", "IP"},
-    {NULL}};
+    {nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr}};
 
 static string nowAsString() {
   time_t rawtime;
@@ -96,7 +96,7 @@ static const char* logLevelAsString(GLogLevelFlags logLevel) {
 static void logHandler(const gchar* log_domain,
                        GLogLevelFlags log_level,
                        const gchar* message,
-                       gpointer user_data)
+                       gpointer)
 
 {
   if (log_level > logLevel) {
