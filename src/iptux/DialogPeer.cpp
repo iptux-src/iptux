@@ -88,15 +88,17 @@ void DialogPeer::init() {
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
   GActionEntry win_entries[] = {
-      {"attach_file", G_ACTION_CALLBACK(onAttachFile)},
-      {"attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
-      {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      {"close", G_ACTION_CALLBACK(onClose)},
-      {"refuse", G_ACTION_CALLBACK(onRefuse)},
-      {"refuse_all", G_ACTION_CALLBACK(onRefuseAll)},
-      {"insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
-      {"request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
-      {"send_message", G_ACTION_CALLBACK(onSendMessage)},
+      makeActionEntry("attach_file", G_ACTION_CALLBACK(onAttachFile)),
+      makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
+      makeActionEntry("clear_chat_history",
+                      G_ACTION_CALLBACK(onClearChatHistory)),
+      makeActionEntry("close", G_ACTION_CALLBACK(onClose)),
+      makeActionEntry("refuse", G_ACTION_CALLBACK(onRefuse)),
+      makeActionEntry("refuse_all", G_ACTION_CALLBACK(onRefuseAll)),
+      makeActionEntry("insert_picture", G_ACTION_CALLBACK(onInsertPicture)),
+      makeActionEntry("request_shared_resources",
+                      G_ACTION_CALLBACK(onRequestSharedResources)),
+      makeActionEntry("send_message", G_ACTION_CALLBACK(onSendMessage)),
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);

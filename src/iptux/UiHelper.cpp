@@ -257,4 +257,16 @@ const GRegex* getUrlRegex() {
   return res;
 }
 
+GActionEntry makeActionEntry(const string& name, GActionCallback f) {
+  return GActionEntry({name.c_str(), f, nullptr, nullptr, nullptr, {0, 0, 0}});
+}
+
+GActionEntry makeStateActionEntry(const string& name,
+                                  GActionCallback f,
+                                  const string& paramType,
+                                  const string& state) {
+  return GActionEntry(
+      {name.c_str(), nullptr, paramType.c_str(), state.c_str(), f, {0, 0, 0}});
+}
+
 }  // namespace iptux

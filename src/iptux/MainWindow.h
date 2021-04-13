@@ -75,7 +75,6 @@ class MainWindow : public sigc::trackable {
   GroupInfo* currentGroupInfo = 0;
 
  private:
-  void setActionSensitive(const std::string& actionName, bool sensitive);
   void setCurrentGroupInfo(GroupInfo* groupInfo);
 
   void InitSublayer();
