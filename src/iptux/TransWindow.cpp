@@ -101,10 +101,12 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
   priv->signals.push_back(signalHandler);
 
   GActionEntry win_entries[] = {
-      {"trans.open_file", G_ACTION_CALLBACK(onOpenFile)},
-      {"trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)},
-      {"trans.terminate_task", G_ACTION_CALLBACK(onTerminateTask)},
-      {"trans.terminate_all", G_ACTION_CALLBACK(onTerminateAllTasks)},
+      makeActionEntry("trans.open_file", G_ACTION_CALLBACK(onOpenFile)),
+      makeActionEntry("trans.open_folder", G_ACTION_CALLBACK(onOpenFolder)),
+      makeActionEntry("trans.terminate_task",
+                      G_ACTION_CALLBACK(onTerminateTask)),
+      makeActionEntry("trans.terminate_all",
+                      G_ACTION_CALLBACK(onTerminateAllTasks)),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,

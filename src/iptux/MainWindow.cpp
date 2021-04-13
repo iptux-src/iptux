@@ -91,16 +91,18 @@ void MainWindow::CreateWindow() {
   gtk_widget_show_all(window);
 
   GActionEntry win_entries[] = {
-      {"refresh", G_ACTION_CALLBACK(onRefresh)},
-      {"sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
-      {"sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
-      {"detect", G_ACTION_CALLBACK(onDetect)},
-      {"find", G_ACTION_CALLBACK(onFind)},
-      {"pal.send_message", G_ACTION_CALLBACK(onPalSendMessage)},
-      {"pal.request_shared_resources",
-       G_ACTION_CALLBACK(onPalRequestSharedResources)},
-      {"pal.change_info", G_ACTION_CALLBACK(onPalChangeInfo)},
-      {"pal.delete_pal", G_ACTION_CALLBACK(onDeletePal)},
+      makeActionEntry("refresh", G_ACTION_CALLBACK(onRefresh)),
+      makeStateActionEntry("sort_type", G_ACTION_CALLBACK(onSortType), "s",
+                           "'ascending'"),
+      makeStateActionEntry("sort_by", G_ACTION_CALLBACK(onSortBy), "s",
+                           "'nickname'"),
+      makeActionEntry("detect", G_ACTION_CALLBACK(onDetect)),
+      makeActionEntry("find", G_ACTION_CALLBACK(onFind)),
+      makeActionEntry("pal.send_message", G_ACTION_CALLBACK(onPalSendMessage)),
+      makeActionEntry("pal.request_shared_resources",
+                      G_ACTION_CALLBACK(onPalRequestSharedResources)),
+      makeActionEntry("pal.change_info", G_ACTION_CALLBACK(onPalChangeInfo)),
+      makeActionEntry("pal.delete_pal", G_ACTION_CALLBACK(onDeletePal)),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
@@ -1720,33 +1722,26 @@ void MainWindow::setCurrentGroupInfo(GroupInfo* groupInfo) {
   this->currentGroupInfo = CHECK_NOTNULL(groupInfo);
   switch (currentGroupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      setActionSensitive("pal.send_message", true);
-      setActionSensitive("pal.request_shared_resources", true);
-      setActionSensitive("pal.change_info", true);
-      setActionSensitive("pal.delete_pal", true);
+      g_action_map_enable_actions(G_ACTION_MAP(window), "pal.send_message",
+                                  "pal.request_shared_resources",
+                                  "pal.change_info", "pal.delete_pal", nullptr);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
     case GROUP_BELONG_TYPE_BROADCAST:
-      setActionSensitive("pal.send_message", true);
-      setActionSensitive("pal.request_shared_resources", false);
-      setActionSensitive("pal.change_info", false);
-      setActionSensitive("pal.delete_pal", false);
+      g_action_map_enable_actions(G_ACTION_MAP(window), "pal.send_message",
+                                  nullptr);
+      g_action_map_disable_actions(
+          G_ACTION_MAP(window), "pal.request_shared_resources",
+          "pal.change_info", "pal.delete_pal", nullptr);
       break;
     default:
-      setActionSensitive("pal.send_message", false);
-      setActionSensitive("pal.request_shared_resources", false);
-      setActionSensitive("pal.change_info", false);
-      setActionSensitive("pal.delete_pal", false);
+      g_action_map_disable_actions(G_ACTION_MAP(window), "pal.send_message",
+                                   "pal.request_shared_resources",
+                                   "pal.change_info", "pal.delete_pal",
+                                   nullptr);
       break;
   }
-}
-
-void MainWindow::setActionSensitive(const std::string& actionName,
-                                    bool sensitive) {
-  g_simple_action_set_enabled(G_SIMPLE_ACTION(g_action_map_lookup_action(
-                                  G_ACTION_MAP(window), actionName.c_str())),
-                              sensitive);
 }
 
 void MainWindow::onGroupInfoUpdated(GroupInfo* groupInfo) {
