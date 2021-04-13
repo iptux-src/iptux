@@ -159,7 +159,6 @@ string MsgPara::getSummary() const {
   return this->dtlist[0].getSummary();
 }
 
-ChipData::ChipData() : type(MessageContentType::STRING), data("") {}
 ChipData::ChipData(const string& data)
     : type(MessageContentType::STRING), data(data) {}
 ChipData::ChipData(MessageContentType type, const string& data)
