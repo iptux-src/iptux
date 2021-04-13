@@ -597,9 +597,7 @@ void UdpData::InsertMessage(PPalInfo pal,
   /* 构建消息封装包 */
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
-  ChipData chip;
-  chip.type = MESSAGE_CONTENT_TYPE_STRING;
-  chip.data = msg;
+  ChipData chip(MESSAGE_CONTENT_TYPE_STRING, msg);
   para.dtlist.push_back(move(chip));
 
   /* 交给某人处理吧 */

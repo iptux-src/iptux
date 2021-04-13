@@ -176,7 +176,6 @@ class ChipData {
  public:
   explicit ChipData(const std::string& data);
   ChipData(MessageContentType type, const std::string& data);
-  [[deprecated]] ChipData();
   ~ChipData();
 
   std::string ToString() const;

@@ -483,12 +483,10 @@ void Command::FeedbackError(CPPalInfo pal,
                             GroupBelongType btype,
                             const char* error) {
   MsgPara para(coreThread.GetPal(pal->GetKey()));
-  ChipData chip;
-
   para.stype = MessageSourceType::ERROR;
   para.btype = btype;
-  chip.type = MESSAGE_CONTENT_TYPE_STRING;
-  chip.data = error;
+
+  ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
   para.dtlist.push_back(move(chip));
   /* 交给某人处理吧 */
   coreThread.InsertMessage(move(para));

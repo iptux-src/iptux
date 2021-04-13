@@ -216,9 +216,7 @@ void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
   /* 构建消息封装包 */
   para.stype = MessageSourceType::PAL;
   para.btype = GROUP_BELONG_TYPE_REGULAR;
-  ChipData chip;
-  chip.type = MESSAGE_CONTENT_TYPE_PICTURE;
-  chip.data = g_strdup(path);
+  ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, path);
   para.dtlist.push_back(chip);
 
   /* 交给某人处理吧 */
