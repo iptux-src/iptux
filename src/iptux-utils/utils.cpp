@@ -21,7 +21,6 @@
 
 #include <arpa/inet.h>
 #include <glib/gi18n.h>
-// #include <sys/mount.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <unistd.h>
