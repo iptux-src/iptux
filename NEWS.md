@@ -1,3 +1,11 @@
+# [git] (2021-XX-XX)
+
+* [#442] fix unittest fail under 32-bit system.
+* [#439] try to fix compile problem under Hurd.
+* Translation updated
+  * Simplified Chinese
+  * Russian - Thanks to @KovalevArtem
+
 # [0.8.0] (2021-04-11)
 
 ## Features
@@ -9,6 +17,10 @@
 * add a config option `bind_ip` to specify binding ip.
 * add icon for macOS.
 * switch from `cmake` to `meson`.
+* Translation Updated:
+  * New language: Norwegian Bokmål - Thanks to @comradekingu.
+  * German - Thanks to @comradekingu.
+  * Simplified Chinese.
 
 ## Bugs
 
