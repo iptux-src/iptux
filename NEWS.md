@@ -2,6 +2,7 @@
 
 * [#442] fix unittest fail under 32-bit system.
 * [#439] try to fix compile problem under Hurd.
+* [#447] fix bug: use defined icon no longer works.
 * Translation updated
   * Simplified Chinese
   * Russian - Thanks to @KovalevArtem
