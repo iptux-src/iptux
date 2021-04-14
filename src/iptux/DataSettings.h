@@ -41,7 +41,6 @@ class DataSettings {
   void SetPersonalValue();
   void SetSystemValue();
 
-  GtkTreeModel* CreateIconModel();
   GtkTreeModel* CreateNetworkModel();
   static void FillIconModel(GtkTreeModel* model);
   void FillNetworkModel(GtkTreeModel* model);
@@ -54,6 +53,7 @@ class DataSettings {
   Application* app;
   GData* widset;  //窗体集
   GData* mdlset;  //数据model集
+  IconModel* iconModel = 0;
 
  private:
   void ObtainPersonalValue();

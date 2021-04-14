@@ -49,11 +49,13 @@ void iptux_init(LogSystem* logSystem) {
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
 
-void init_theme() {
+void init_theme(Application* app) {
   auto theme = gtk_icon_theme_get_default();
   gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/icon");
   gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/menu");
   gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/tip");
+  gtk_icon_theme_prepend_search_path(
+      theme, app->getCoreThread()->getUserIconPath().c_str());
 }
 }  // namespace
 
@@ -111,7 +113,7 @@ void Application::activate() {
 }
 
 void Application::onStartup(Application& self) {
-  init_theme();
+  init_theme(&self);
   iptux_register_resource();
   self.data = make_shared<UiProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);

@@ -109,16 +109,12 @@ mark:
  * 初始化底层数据.
  */
 void DataSettings::InitSublayer() {
-  GtkTreeModel* model;
-
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
 
-  model = CreateIconModel();
-  g_datalist_set_data_full(&mdlset, "icon-model", model,
-                           GDestroyNotify(g_object_unref));
-  FillIconModel(model);
-  model = CreateNetworkModel();
+  iconModel = iconModelNew();
+  FillIconModel(GTK_TREE_MODEL(iconModel));
+  auto model = CreateNetworkModel();
   g_datalist_set_data_full(&mdlset, "network-model", model,
                            GDestroyNotify(g_object_unref));
   FillNetworkModel(model);
@@ -130,6 +126,7 @@ void DataSettings::InitSublayer() {
 void DataSettings::ClearSublayer() {
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
+  g_object_unref(iconModel);
 }
 
 /**
@@ -191,7 +188,7 @@ GtkWidget* DataSettings::CreatePersonal() {
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Your face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "icon-model"));
+  model = GTK_TREE_MODEL(iconModel);
   widget = CreateIconTree(model);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "myicon-combo-widget", widget);
@@ -279,7 +276,7 @@ GtkWidget* DataSettings::CreateSystem() {
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's default face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "icon-model"));
+  model = GTK_TREE_MODEL(this->iconModel);
   widget = CreateIconTree(model);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "palicon-combo-widget", widget);
@@ -509,20 +506,6 @@ void DataSettings::SetSystemValue() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsFilterFileShareRequest());
-}
-
-/**
- * 头像树(icon-tree)底层数据结构.
- * 2,0 icon,1 iconfile \n
- * 头像;文件名(带后缀) \n
- * @return icon-model
- */
-GtkTreeModel* DataSettings::CreateIconModel() {
-  GtkListStore* model;
-
-  model = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
-
-  return GTK_TREE_MODEL(model);
 }
 
 /**

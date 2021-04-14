@@ -152,6 +152,10 @@ void groupInfo2PalTreeModel(GroupInfo* grpinf,
                             GtkTreeIter* iter,
                             const char* font);
 
+enum class IconModelColumn { ICON, ICON_NAME, N_COLUMNS };
+typedef GtkListStore IconModel;
+IconModel* iconModelNew();
+
 }  // namespace iptux
 
 #endif  // IPTUX_UIMODELS_H

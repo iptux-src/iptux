@@ -142,5 +142,22 @@ int64_t fileOrDirectorySize(const std::string& fileOrDirName);
 
 }  // namespace utils
 
+/**
+ * @brief calculate the sha256 of string s, in hexadecimal format
+ *
+ * @param s
+ * @return std::string
+ */
+std::string sha256(const std::string& s);
+
+/**
+ * @brief calculate the sha256 of string, in hexadecimal format
+ *
+ * @param s the start of the string
+ * @param length the length of the string
+ * @return std::string
+ */
+std::string sha256(const char* s, int length);
+
 }  // namespace iptux
 #endif

@@ -707,9 +707,11 @@ char* UdpData::RecvPalIcon() {
   if ((len = strlen(buf) + 1) >= size)
     return NULL;
 
+  auto hash = sha256(buf + len, size - len);
+
   /* 将头像数据刷入磁盘 */
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
-           g_get_user_cache_dir(), inAddrToUint32(ipv4));
+  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s.png", g_get_user_cache_dir(),
+           hash.c_str());
   Helper::prepareDir(path);
   if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
     LOG_ERROR("write icon to path failed: %s", path);
@@ -717,7 +719,7 @@ char* UdpData::RecvPalIcon() {
   }
   xwrite(fd, buf + len, size - len);
   close(fd);
-  iconfile = g_strdup_printf("%" PRIx32, inAddrToUint32(ipv4));
+  iconfile = g_strdup(hash.c_str());
   return iconfile;
 }
 
