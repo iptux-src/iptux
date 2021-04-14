@@ -757,4 +757,8 @@ PPalInfo CoreThread::getMe() {
   return this->pImpl->me;
 }
 
+string CoreThread::getUserIconPath() const {
+  return stringFormat("%s%s", g_get_user_cache_dir(), ICON_PATH);
+}
+
 }  // namespace iptux

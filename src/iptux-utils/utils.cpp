@@ -875,4 +875,11 @@ int64_t fileOrDirectorySize(const string& fileOrDirName) {
 
 }  // namespace utils
 
+std::string sha256(const char* s, int length) {
+  auto res1 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, s, length);
+  string res(res1);
+  g_free(res1);
+  return res;
+}
+
 }  // namespace iptux
