@@ -60,7 +60,8 @@ void CreateAboutDialog(AboutDialog* dialog) {
  * 关于对话框入口.
  */
 AboutDialog* aboutDialogNew() {
-  auto builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/main.ui");
+  auto builder =
+      gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/AboutDialog.ui");
   gtk_builder_connect_signals(builder, nullptr);
   auto aboutDialog = GTK_ABOUT_DIALOG(
       CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog")));

@@ -31,10 +31,17 @@ sources = files([
 
 glib_compile_resources = find_program('glib-compile-resources')
 
+ui_files = [
+    'resources/gtk/AboutDialog.ui',
+    'resources/gtk/MainWindow.ui',
+    'resources/gtk/DetectPal.ui',
+    'resources/gtk/menus.ui',
+]
+
 iptux_resource_h = custom_target('iptux_resource_h',
   output : 'IptuxResource.h',
   input : 'resources/iptux.gresource.xml',
-  depend_files: ['resources/gtk/menus.ui', 'resources/gtk/main.ui'],
+  depend_files: ui_files,
   command : [glib_compile_resources,
     '--generate-header',
     '--manual-register',
@@ -44,7 +51,7 @@ iptux_resource_h = custom_target('iptux_resource_h',
 iptux_resource_cpp = custom_target('iptux_resource_cpp',
   output : 'IptuxResource.cpp',
   input : 'resources/iptux.gresource.xml',
-  depend_files: ['resources/gtk/menus.ui', 'resources/gtk/main.ui'],
+  depend_files: ui_files,
   command : [glib_compile_resources,
     '--generate-source',
     '--manual-register',

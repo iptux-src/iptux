@@ -3,8 +3,6 @@
 
 #include <gtk/gtk.h>
 
-namespace iptux {
-GtkBuilder* newTestGtkBuilder();
-}
+namespace iptux {}
 
 #endif
