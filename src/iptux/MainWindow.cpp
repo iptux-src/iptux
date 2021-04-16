@@ -62,6 +62,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
                                   });
   coreThread.signalGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
+  CreateWindow();
 }
 
 /**

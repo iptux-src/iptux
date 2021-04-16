@@ -39,7 +39,6 @@ class MainWindow : public sigc::trackable {
 
   GtkWidget* getWindow();
 
-  void CreateWindow();
   void AlterWindowMode();
 
   bool PaltreeContainItem(in_addr ipv4);
@@ -80,6 +79,7 @@ class MainWindow : public sigc::trackable {
   void InitSublayer();
   void ClearSublayer();
 
+  void CreateWindow();
   GtkWidget* CreateMainWindow();
   GtkWidget* CreateAllArea();
 

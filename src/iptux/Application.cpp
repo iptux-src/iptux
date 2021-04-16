@@ -115,6 +115,8 @@ void Application::activate() {
 void Application::onStartup(Application& self) {
   init_theme(&self);
   iptux_register_resource();
+  self.menuBuilder =
+      gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
   self.data = make_shared<UiProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
@@ -142,8 +144,6 @@ void Application::onStartup(Application& self) {
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
                                   G_N_ELEMENTS(app_entries), &self);
-  self.menuBuilder =
-      gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
   auto app_menu =
       G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "appmenu"));
   gtk_application_set_app_menu(GTK_APPLICATION(self.app), app_menu);
@@ -172,7 +172,6 @@ void Application::onActivate(Application& self) {
   }
   self.started = true;
 
-  self.window->CreateWindow();
   try {
     self.cthrd->start();
   } catch (const Exception& e) {
