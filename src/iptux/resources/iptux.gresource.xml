@@ -3,5 +3,6 @@
     <gresource prefix="/io/github/iptux-src/iptux">
         <file preprocess="xml-stripblanks">gtk/menus.ui</file>
         <file preprocess="xml-stripblanks">gtk/main.ui</file>
+        <file preprocess="xml-stripblanks">gtk/DetectPal.ui</file>
     </gresource>
 </gresources>

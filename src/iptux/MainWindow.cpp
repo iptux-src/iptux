@@ -86,8 +86,6 @@ void MainWindow::CreateWindow() {
 
   /* 创建主窗口 */
   window = CreateMainWindow();
-  g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -1001,7 +999,7 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
 }
 
 void MainWindow::onDetect(void*, void*, MainWindow& self) {
-  DetectPal pal(self.app, self.builder, GTK_WINDOW(self.window));
+  DetectPal pal(self.app, GTK_WINDOW(self.window));
   pal.run();
 }
 
