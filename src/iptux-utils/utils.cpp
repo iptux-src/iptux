@@ -504,11 +504,9 @@ void FLAG_SET(uint8_t& num, int bit, bool value) {
 }
 
 std::string inAddrToString(in_addr inAddr) {
-  ostringstream oss;
-  auto ipv4 = inAddr.s_addr;
-  oss << int(ipv4 & 0xff) << "." << int((ipv4 & 0xff00) >> 8) << "."
-      << int((ipv4 & 0xff0000) >> 16) << "." << int((ipv4 & 0xff000000) >> 24);
-  return oss.str();
+  char res[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &inAddr.s_addr, res, INET_ADDRSTRLEN);
+  return res;
 }
 
 in_addr inAddrFromString(const std::string& s) {
