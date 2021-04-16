@@ -119,8 +119,8 @@ void MainWindow::CreateWindow() {
     gtk_widget_hide(window);
   }
 
-  palPopupMenu = GTK_MENU(gtk_menu_new_from_model(G_MENU_MODEL(
-      gtk_builder_get_object(app->getMenuBuilder(), "pal-popup"))));
+  palPopupMenu = GTK_MENU(gtk_menu_new_from_model(
+      G_MENU_MODEL(gtk_builder_get_object(builder, "pal-popup"))));
   gtk_menu_attach_to_widget(palPopupMenu, window, nullptr);
 }
 
