@@ -421,14 +421,7 @@ GtkWidget* MainWindow::CreateMainWindow() {
       GDK_HINT_USER_SIZE);
   window = gtk_application_window_new(app->getApp());
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
-  if (config->GetString("bind_ip").empty()) {
-    gtk_window_set_title(GTK_WINDOW(window), _("Iptux"));
-  } else {
-    gtk_window_set_title(GTK_WINDOW(window),
-                         stringFormat("%s - %s", _("Iptux"),
-                                      config->GetString("bind_ip").c_str())
-                             .c_str());
-  }
+  gtk_window_set_title(GTK_WINDOW(window), getTitle().c_str());
   gtk_window_set_default_size(GTK_WINDOW(window), windowConfig.GetWidth(),
                               windowConfig.GetHeight());
   gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
@@ -440,6 +433,15 @@ GtkWidget* MainWindow::CreateMainWindow() {
   return window;
 }
 
+string MainWindow::getTitle() const {
+  if (config->GetString("bind_ip").empty()) {
+    return _("Iptux");
+  } else {
+    return stringFormat("%s - %s", _("Iptux"),
+                        config->GetString("bind_ip").c_str());
+  }
+}
+
 /**
  * 创建所有区域.
  * @return 主窗体
@@ -448,6 +450,15 @@ GtkWidget* MainWindow::CreateAllArea() {
   GtkWidget *box, *paned;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
+  GtkHeaderBar* headerBar =
+      GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
+  gtk_header_bar_set_title(headerBar, getTitle().c_str());
+  gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(headerBar), FALSE, FALSE, 0);
+  auto menuButton = gtk_builder_get_object(builder, "menu_button");
+  gtk_menu_button_set_menu_model(
+      GTK_MENU_BUTTON(menuButton),
+      G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar")));
 
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);
 

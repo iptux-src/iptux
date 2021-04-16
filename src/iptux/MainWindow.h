@@ -110,6 +110,7 @@ class MainWindow : public sigc::trackable {
   void processEventInMainThread(std::shared_ptr<const Event> event);
 
  private:
+  std::string getTitle() const;
   static gboolean UpdateUI(MainWindow* mwin);
   static void GoPrevTreeModel(MainWindow* mwin);
   static void GoNextTreeModel(MainWindow* mwin);
