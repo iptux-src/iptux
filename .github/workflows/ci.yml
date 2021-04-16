@@ -155,7 +155,7 @@ jobs:
           run: |
             meson builddir
             ninja -v -C builddir
-            sudo ninja -C builddir install
+            ninja -C builddir install
             xvfb-run -a meson test -C builddir --verbose --no-stdsplit
 
       # - name: Show the artifact
