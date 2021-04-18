@@ -21,7 +21,6 @@
 
 #include <arpa/inet.h>
 #include <glib/gi18n.h>
-#include <sys/mount.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -505,11 +504,9 @@ void FLAG_SET(uint8_t& num, int bit, bool value) {
 }
 
 std::string inAddrToString(in_addr inAddr) {
-  ostringstream oss;
-  auto ipv4 = inAddr.s_addr;
-  oss << int(ipv4 & 0xff) << "." << int((ipv4 & 0xff00) >> 8) << "."
-      << int((ipv4 & 0xff0000) >> 16) << "." << int((ipv4 & 0xff000000) >> 24);
-  return oss.str();
+  char res[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &inAddr.s_addr, res, INET_ADDRSTRLEN);
+  return res;
 }
 
 in_addr inAddrFromString(const std::string& s) {
@@ -875,5 +872,12 @@ int64_t fileOrDirectorySize(const string& fileOrDirName) {
 }
 
 }  // namespace utils
+
+std::string sha256(const char* s, int length) {
+  auto res1 = g_compute_checksum_for_string(G_CHECKSUM_SHA256, s, length);
+  string res(res1);
+  g_free(res1);
+  return res;
+}
 
 }  // namespace iptux

@@ -27,16 +27,16 @@ TEST(Utils, numeric_to_size) {
   EXPECT_STREQ(numeric_to_size(1000000000), "953.7MiB");
   EXPECT_STREQ(numeric_to_size(1 << 30), "1.0GiB");
   EXPECT_STREQ(numeric_to_size(1000000000000L), "931.3GiB");
-  EXPECT_STREQ(numeric_to_size(1L << 40), "1.0TiB");
+  EXPECT_STREQ(numeric_to_size((int64_t)1 << 40), "1.0TiB");
   EXPECT_STREQ(numeric_to_size(-1), "-1B");
   EXPECT_STREQ(numeric_to_size(-1024), "-1024B");
 }
 
 TEST(Utils, inAddrFromString) {
-  EXPECT_EQ(inAddrFromString("127.0.0.1").s_addr, 0x100007fu);
-  EXPECT_EQ(inAddrFromString("1.2.3.4").s_addr, 0x4030201u);
-  EXPECT_EQ(inAddrFromString("1.2.3.255").s_addr, 0xff030201u);
-  EXPECT_EQ(inAddrFromString("255.2.3.4").s_addr, 0x40302ffu);
+  EXPECT_EQ(inAddrToString(inAddrFromString("127.0.0.1")), "127.0.0.1");
+  EXPECT_EQ(inAddrToString(inAddrFromString("1.2.3.4")), "1.2.3.4");
+  EXPECT_EQ(inAddrToString(inAddrFromString("1.2.3.255")), "1.2.3.255");
+  EXPECT_EQ(inAddrToString(inAddrFromString("255.2.3.4")), "255.2.3.4");
 
   vector<string> cases = {
       "",          "123",         "123.234", "123.234.2", "123.235.0.256",

@@ -38,6 +38,7 @@ class DialogPeer : public DialogBase {
 
  private:
   Application* app;
+  GtkTreeView* fileToReceiveTree = 0;
 
  private:
   void ReadUILayout();
@@ -68,11 +69,13 @@ class DialogPeer : public DialogBase {
 
   //回调处理部分
  private:
+  static void onRecvTreeSelectionChanged(DialogPeer& self, GtkTreeSelection*);
   static void onAcceptButtonClicked(DialogPeer* self);
-  static void onRefuseButtonClicked(DialogPeer* self);
   static void ShowInfoEnclosure(DialogPeer* dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer* dlgpr);
   static gint RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self);
+  static void onRefuse(void*, void*, DialogPeer& self);
+  static void onRefuseAll(void*, void*, DialogPeer& self);
   void onNewFileReceived(GroupInfo*);
   static void onClearChatHistory(void*, void*, DialogPeer& self) {
     self.ClearHistoryTextView();
@@ -94,8 +97,7 @@ class DialogPeer : public DialogBase {
     gtk_widget_destroy(GTK_WIDGET(self.window));
   }
   void onGroupInfoUpdated(GroupInfo* groupInfo);
-  static void onInputBufferChanged(GtkTextBuffer* textBuffer,
-                                   DialogPeer& self) {
+  static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {
     self.refreshSendAction();
   }
   static void onSendFileModelChanged(DialogPeer& self) {

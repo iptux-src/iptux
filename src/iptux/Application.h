@@ -7,7 +7,6 @@
 #include "iptux-core/Models.h"
 #include "iptux/EventAdaptor.h"
 #include "iptux/NotificationService.h"
-#include "iptux/ShareFile.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
 
@@ -16,6 +15,7 @@ namespace iptux {
 class MainWindow;
 class UiCoreThread;
 typedef GtkWindow TransWindow;
+typedef GtkDialog ShareFile;
 
 class Application {
  public:

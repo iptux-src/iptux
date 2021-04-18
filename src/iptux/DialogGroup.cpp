@@ -19,7 +19,6 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/DialogPeer.h"
-#include "iptux/HelpDialog.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
@@ -212,13 +211,16 @@ GtkWindow* DialogGroup::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
 
   GActionEntry win_entries[] = {
-      {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      {"attach_file", G_ACTION_CALLBACK(onAttachFile)},
-      {"attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
-      {"close", G_ACTION_CALLBACK(onClose)},
-      {"sort_type", nullptr, "s", "'ascending'", G_ACTION_CALLBACK(onSortType)},
-      {"sort_by", nullptr, "s", "'nickname'", G_ACTION_CALLBACK(onSortBy)},
-      {"send_message", G_ACTION_CALLBACK(onSendMessage)},
+      makeActionEntry("clear_chat_history",
+                      G_ACTION_CALLBACK(onClearChatHistory)),
+      makeActionEntry("attach_file", G_ACTION_CALLBACK(onAttachFile)),
+      makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
+      makeActionEntry("close", G_ACTION_CALLBACK(onClose)),
+      makeStateActionEntry("sort_type", G_ACTION_CALLBACK(onSortType), "s",
+                           "'ascending'"),
+      makeStateActionEntry("sort_by", G_ACTION_CALLBACK(onSortBy), "s",
+                           "'nickname'"),
+      makeActionEntry("send_message", G_ACTION_CALLBACK(onSendMessage)),
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
@@ -560,7 +562,7 @@ gboolean DialogGroup::PopupPickMenu(GtkWidget* treeview,
   GtkWidget* menu;
   GtkTreeModel* model;
 
-  if (event->button != GDK_BUTTON_SECONDARY) {
+  if (!gdk_event_triggers_context_menu((GdkEvent*)event)) {
     return FALSE;
   }
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));

@@ -15,10 +15,10 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Install](#install)
-  - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu)
+  - [Linux](#linux)
   - [Mac OS X](#mac-os-x)
 - [Build from source](#build-from-source)
-  - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu-1)
+  - [Linux (Debian and Ubuntu)](#linux-debian-and-ubuntu)
   - [Mac OS X](#mac-os-x-1)
 - [Usage](#usage)
   - [Compatible list](#compatible-list)
@@ -35,44 +35,22 @@
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/iptux)
 
+* for Ubuntu 14.04, please check 0.6.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-6
+* for Ubuntu 16.04, please check 0.7.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-7
+
 ### Mac OS X
 
-stable version without gstreamer:
-
-```sh
-brew unlink gstreamer # check #211
-brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
 ```
-
-stable version with gstream: # much slower
-
-```sh
-brew install https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb --with-gstreamer
+brew tap iptux-src/iptux
+brew install iptux
 ```
-
-head version without gstreamer:
-
-```sh
-brew unlink gstreamer # check #211
-brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb
-```
-
-head version with gstreamer: # much slower
-
-```sh
-brew install --HEAD https://raw.githubusercontent.com/iptux-src/iptux/master/homebrew/iptux.rb --with-gstreamer
-```
-
 
 ## Build from source
 
 ### Linux (Debian and Ubuntu)
 
-* for Ubuntu 14.04, please check 0.6.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-6
-* for Ubuntu 16.04, please check 0.7.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-7
-
 ```sh
-sudo apt-get install git libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ make meson libgoogle-glog-dev
+sudo apt-get install git libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson libsigc++-2.0-dev
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 meson builddir && ninja -C builddir
@@ -83,7 +61,7 @@ iptux
 ### Mac OS X
 
 ```sh
-brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration
+brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 meson builddir
@@ -114,7 +92,7 @@ iptux -b 127.0.0.3 &
 ## Contributing
 
 * Help improve [translation](https://hosted.weblate.org/projects/iptux/#languages), we are using weblate for translation
-* Test the [compatibility](https://github.com/iptux-src/iptux/wiki/Compatible-List), 
+* Test the [compatibility](https://github.com/iptux-src/iptux/wiki/Compatible-List),
 * Fix [bugs](https://github.com/iptux-src/iptux/issues).
 
 ### How to update `po/iptux.pot`

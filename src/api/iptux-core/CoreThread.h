@@ -63,6 +63,13 @@ class CoreThread {
 
   virtual void AttachPalToList(PPalInfo pal);
 
+  /**
+   * @brief Get the directory path to store the received pal icon;
+   *
+   * @return std::string
+   */
+  std::string getUserIconPath() const;
+
   void AddPrivateFile(PFileInfo file);
   /**
    * return true if exist, return false if not exist.

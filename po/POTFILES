@@ -1,6 +1,5 @@
 ./examples/count-bot/main.cpp
 ./share/applications/io.github.iptux-src.iptux.desktop.in
-./share/iptux/ui/main.ui
 ./src/iptux-core/CoreThread.cpp
 ./src/iptux-core/Event.cpp
 ./src/iptux-core/Exception.cpp
@@ -22,6 +21,7 @@
 ./src/iptux-utils/Exception.cpp
 ./src/iptux-utils/output.cpp
 ./src/iptux-utils/utils.cpp
+./src/iptux/AboutDialog.cpp
 ./src/iptux/Application.cpp
 ./src/iptux/Darwin.cpp
 ./src/iptux/DataSettings.cpp
@@ -31,14 +31,12 @@
 ./src/iptux/DialogPeer.cpp
 ./src/iptux/EventAdaptor.cpp
 ./src/iptux/GioNotificationService.cpp
-./src/iptux/HelpDialog.cpp
 ./src/iptux/LogSystem.cpp
 ./src/iptux/MainWindow.cpp
 ./src/iptux/RevisePal.cpp
 ./src/iptux/ShareFile.cpp
 ./src/iptux/TerminalNotifierNotificationService.cpp
 ./src/iptux/TransWindow.cpp
-./src/iptux/UiCallbacks.cpp
 ./src/iptux/UiCoreThread.cpp
 ./src/iptux/UiHelper.cpp
 ./src/iptux/UiModels.cpp
@@ -46,6 +44,6 @@
 ./src/iptux/WindowConfig.cpp
 ./src/iptux/callback.cpp
 ./src/iptux/dialog.cpp
-./src/iptux/global.cpp
+./src/iptux/resources/gtk/main.ui
 ./src/iptux/resources/gtk/menus.ui
 ./src/main/iptux.cpp

@@ -15,18 +15,19 @@
 #include <gtk/gtk.h>
 
 #include "iptux-core/Models.h"
+#include "iptux/Application.h"
 
 namespace iptux {
 
 class DataSettings {
  public:
-  DataSettings();
+  explicit DataSettings(Application* app);
   ~DataSettings();
 
-  static void ResetDataEntry(GtkWidget* parent) {
-    ResetDataEntry(parent, true);
+  static void ResetDataEntry(Application* app, GtkWidget* parent) {
+    ResetDataEntry(app, parent, true);
   }
-  static void ResetDataEntry(GtkWidget* parent, bool run);
+  static void ResetDataEntry(Application* app, GtkWidget* parent, bool run);
 
  private:
   void InitSublayer();
@@ -39,37 +40,33 @@ class DataSettings {
 
   void SetPersonalValue();
   void SetSystemValue();
-  void SetSoundValue();
-  static void SetNetworkValue();
 
-  GtkTreeModel* CreateIconModel();
   GtkTreeModel* CreateNetworkModel();
   static void FillIconModel(GtkTreeModel* model);
-  static void FillNetworkModel(GtkTreeModel* model);
+  void FillNetworkModel(GtkTreeModel* model);
   GtkWidget* CreateIconTree(GtkTreeModel* model);
   GtkWidget* CreateNetworkTree(GtkTreeModel* model);
 
   GtkWidget* CreateArchiveChooser();
   GtkWidget* CreateFontChooser();
 
+  Application* app;
   GData* widset;  //窗体集
   GData* mdlset;  //数据model集
+  IconModel* iconModel = 0;
 
  private:
   void ObtainPersonalValue();
   void ObtainSystemValue();
-  void ObtainSoundValue();
   void ObtainNetworkValue();
 
   void WriteNetSegment(const char* filename, GSList* list);
   void ReadNetSegment(const char* filename, GSList** list);
 
-  static GtkWidget* CreatePopupMenu(GtkTreeModel* model);
   static gint IconfileGetItemPos(GtkTreeModel* model, const char* pathname);
 
   //回调处理部分
  private:
-  static gboolean PopupPickMenu(GtkWidget* treeview, GdkEventButton* event);
   static void AddNewIcon(GtkWidget* button, GData** widset);
   static void ChoosePhoto(GData** widset);
 

@@ -5,6 +5,7 @@ gflags_dep = dependency('gflags')
 sigc_dep = dependency('sigc++-2.0')
 
 sources = files([
+    'AboutDialog.cpp',
     'Application.cpp',
     'callback.cpp',
     'DataSettings.cpp',
@@ -15,8 +16,6 @@ sources = files([
     'DialogPeer.cpp',
     'EventAdaptor.cpp',
     'GioNotificationService.cpp',
-    'global.cpp',
-    'HelpDialog.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
     'RevisePal.cpp',
@@ -35,7 +34,7 @@ glib_compile_resources = find_program('glib-compile-resources')
 iptux_resource_h = custom_target('iptux_resource_h',
   output : 'IptuxResource.h',
   input : 'resources/iptux.gresource.xml',
-  depend_files: 'resources/gtk/menus.ui',
+  depend_files: ['resources/gtk/menus.ui', 'resources/gtk/main.ui'],
   command : [glib_compile_resources,
     '--generate-header',
     '--manual-register',
@@ -45,7 +44,7 @@ iptux_resource_h = custom_target('iptux_resource_h',
 iptux_resource_cpp = custom_target('iptux_resource_cpp',
   output : 'IptuxResource.cpp',
   input : 'resources/iptux.gresource.xml',
-  depend_files: 'resources/gtk/menus.ui',
+  depend_files: ['resources/gtk/menus.ui', 'resources/gtk/main.ui'],
   command : [glib_compile_resources,
     '--generate-source',
     '--manual-register',
@@ -82,12 +81,12 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
+    'AboutDialogTest.cpp',
     'ApplicationTest.cpp',
     'DataSettingsTest.cpp',
     'DetectPalTest.cpp',
     'DialogGroupTest.cpp',
     'DialogPeerTest.cpp',
-    'HelpDialogTest.cpp',
     'LogSystemTest.cpp',
     'MainWindowTest.cpp',
     'RevisePalTest.cpp',

@@ -33,7 +33,7 @@ jobs:
         sudo ifconfig lo0 alias 127.0.0.2 up
         sudo ifconfig lo0 alias 127.0.0.3 up
         sudo ifconfig lo0 alias 127.0.0.4 up
-        ninja -v -C builddir test
+        meson test -C builddir --verbose --no-stdsplit
 
   build-on-linux:
     strategy:
@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: apt install
-      run: sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
+      run: sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
     - name: meson
       run: meson builddir
       env:
@@ -55,15 +55,14 @@ jobs:
       run: sudo ninja -C builddir install
     - name: test
       run: |
-        xvfb-run -a ./builddir/src/iptux/libiptux_test
-        xvfb-run -a ninja -v -C builddir test
+        xvfb-run -a meson test -C builddir --verbose --no-stdsplit
 
   codecov:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
     - name: apt install
-      run: sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libgstreamer1.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
+      run: sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
     - name: meson
       run: meson -D b_coverage=true builddir
     - name: build
@@ -72,8 +71,7 @@ jobs:
       run: sudo ninja -C builddir install
     - name: test
       run: |
-        xvfb-run -a ./builddir/src/iptux/libiptux_test
-        xvfb-run -a ninja -v -C builddir test
+        xvfb-run -a meson test -C builddir --verbose --no-stdsplit
     - name: lcov
       run: |
         lcov --directory . --capture --output-file coverage.info; # capture coverage info
@@ -85,3 +83,83 @@ jobs:
       with:
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
+
+  build_job:
+    # The host should always be linux
+    runs-on: ubuntu-18.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    # Run steps on a matrix of 3 arch/distro combinations
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            distro: ubuntu18.04
+          - arch: ppc64le
+            distro: ubuntu18.04
+          - arch: s390x
+            distro: ubuntu18.04
+          - arch: armv7
+            distro: ubuntu18.04
+
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Build artifact
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+
+          # Create an artifacts directory
+          setup: |
+            mkdir -p "${PWD}/artifacts"
+
+          # Mount the artifacts directory as /artifacts in the container
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+
+          # Pass some environment variables to the container
+          env: | # YAML, but pipe character is necessary
+            artifact_name: git-${{ matrix.distro }}_${{ matrix.arch }}
+
+          # The shell to run commands with in the container
+          shell: /bin/sh
+
+          # Install some dependencies in the container. This speeds up builds if
+          # you are also using githubToken. Any dependencies installed here will
+          # be part of the container image that gets cached, so subsequent
+          # builds don't have to re-install them. The image layer is cached
+          # publicly in your project's package repository, so it is vital that
+          # no secrets are present in the container state or logs.
+          install: |
+            case "${{ matrix.distro }}" in
+              ubuntu*|jessie|stretch|buster)
+                apt-get update -q -y
+                apt-get install -q -y git libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
+                ;;
+              fedora*)
+                dnf -y update
+                dnf -y install git which
+                ;;
+              alpine*)
+                apk update
+                apk add git
+                ;;
+            esac
+
+          # Produce a binary artifact and place it in the mounted volume
+          run: |
+            meson builddir
+            ninja -v -C builddir
+            ninja -C builddir install
+            xvfb-run -a meson test -C builddir --verbose --no-stdsplit
+
+      # - name: Show the artifact
+      #   # Items placed in /artifacts in the container will be in
+      #   # ${PWD}/artifacts on the host.
+      #   run: |
+      #     ls -al "${PWD}/artifacts"

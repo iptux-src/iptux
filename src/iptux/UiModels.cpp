@@ -557,4 +557,8 @@ bool transModelIsFinished(TransModel* model) {
   return true;
 }
 
+IconModel* iconModelNew() {
+  return gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+}
+
 }  // namespace iptux

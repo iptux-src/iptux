@@ -24,7 +24,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/callback.h"
-#include "iptux/global.h"
 
 using namespace std;
 
@@ -33,7 +32,8 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-DataSettings::DataSettings() : widset(NULL), mdlset(NULL) {
+DataSettings::DataSettings(Application* app)
+    : app(app), widset(NULL), mdlset(NULL) {
   InitSublayer();
 }
 
@@ -48,11 +48,14 @@ DataSettings::~DataSettings() {
  * 程序数据设置入口.
  * @param parent 父窗口指针
  */
-void DataSettings::ResetDataEntry(GtkWidget* parent, bool run) {
-  DataSettings dset;
+void DataSettings::ResetDataEntry(Application* app,
+                                  GtkWidget* parent,
+                                  bool run) {
+  DataSettings dset(app);
   GtkWidget* dialog;
   GtkWidget *note, *label;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   dialog = dset.CreateMainDialog(parent);
@@ -73,7 +76,6 @@ void DataSettings::ResetDataEntry(GtkWidget* parent, bool run) {
   /* 设置相关数据默认值 */
   dset.SetPersonalValue();
   dset.SetSystemValue();
-  dset.SetNetworkValue();
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
@@ -107,16 +109,12 @@ mark:
  * 初始化底层数据.
  */
 void DataSettings::InitSublayer() {
-  GtkTreeModel* model;
-
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
 
-  model = CreateIconModel();
-  g_datalist_set_data_full(&mdlset, "icon-model", model,
-                           GDestroyNotify(g_object_unref));
-  FillIconModel(model);
-  model = CreateNetworkModel();
+  iconModel = iconModelNew();
+  FillIconModel(GTK_TREE_MODEL(iconModel));
+  auto model = CreateNetworkModel();
   g_datalist_set_data_full(&mdlset, "network-model", model,
                            GDestroyNotify(g_object_unref));
   FillNetworkModel(model);
@@ -128,6 +126,7 @@ void DataSettings::InitSublayer() {
 void DataSettings::ClearSublayer() {
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
+  g_object_unref(iconModel);
 }
 
 /**
@@ -189,7 +188,7 @@ GtkWidget* DataSettings::CreatePersonal() {
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Your face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "icon-model"));
+  model = GTK_TREE_MODEL(iconModel);
   widget = CreateIconTree(model);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "myicon-combo-widget", widget);
@@ -277,7 +276,7 @@ GtkWidget* DataSettings::CreateSystem() {
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's default face picture:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "icon-model"));
+  model = GTK_TREE_MODEL(this->iconModel);
   widget = CreateIconTree(model);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "palicon-combo-widget", widget);
@@ -434,6 +433,7 @@ void DataSettings::SetPersonalValue() {
   GdkPixbuf* pixbuf;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
@@ -468,6 +468,7 @@ void DataSettings::SetSystemValue() {
   GtkTreeModel* model;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
@@ -505,25 +506,6 @@ void DataSettings::SetSystemValue() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsFilterFileShareRequest());
-}
-
-/**
- * 为界面设置与网络相关的数据
- */
-void DataSettings::SetNetworkValue() {}
-
-/**
- * 头像树(icon-tree)底层数据结构.
- * 2,0 icon,1 iconfile \n
- * 头像;文件名(带后缀) \n
- * @return icon-model
- */
-GtkTreeModel* DataSettings::CreateIconModel() {
-  GtkListStore* model;
-
-  model = gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
-
-  return GTK_TREE_MODEL(model);
 }
 
 /**
@@ -583,6 +565,7 @@ void DataSettings::FillIconModel(GtkTreeModel* model) {
  * @note 与修改此链表的代码段是串行关系，无需加锁
  */
 void DataSettings::FillNetworkModel(GtkTreeModel* model) {
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
   for (const NetSegment& pns : g_progdt->getNetSegments()) {
     GtkTreeIter iter;
@@ -700,6 +683,7 @@ void DataSettings::ObtainPersonalValue() {
   const gchar* text;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
@@ -761,6 +745,7 @@ void DataSettings::ObtainSystemValue() {
   gchar* text;
   gint active;
 
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
@@ -859,6 +844,7 @@ void DataSettings::ObtainNetworkValue() {
       netSegments.push_back(move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
+  auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getUiProgramData();
   g_progdt->Lock();
   g_progdt->setNetSegments(move(netSegments));
@@ -948,34 +934,6 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
 }
 
 /**
- * 创建选择项的弹出菜单.
- * @param model model
- * @return 菜单
- */
-GtkWidget* DataSettings::CreatePopupMenu(GtkTreeModel* model) {
-  GtkWidget *menu, *menuitem;
-
-  menu = gtk_menu_new();
-
-  menuitem = gtk_menu_item_new_with_label(_("Select All"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(model_select_all),
-                           model);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Reverse Select"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(model_turn_all),
-                           model);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  menuitem = gtk_menu_item_new_with_label(_("Clear Up"));
-  g_signal_connect_swapped(menuitem, "activate", G_CALLBACK(model_clear_all),
-                           model);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-  return menu;
-}
-
-/**
  * 查询(pathname)文件在(model)中的位置，若没有则加入到后面.
  * @param model model
  * @param pathname 文件路径
@@ -1023,28 +981,6 @@ gint DataSettings::IconfileGetItemPos(GtkTreeModel* model,
     pos = -1;
 
   return pos;
-}
-
-/**
- * 弹出选择项的菜单.
- * @param treeview tree-view
- * @param event event
- * @return Gtk+库所需
- */
-gboolean DataSettings::PopupPickMenu(GtkWidget* treeview,
-                                     GdkEventButton* event) {
-  GtkWidget* menu;
-  GtkTreeModel* model;
-
-  if (event->button != GDK_BUTTON_SECONDARY) {
-    return FALSE;
-  }
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  menu = CreatePopupMenu(model);
-  gtk_widget_show_all(menu);
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)(event));
-
-  return TRUE;
 }
 
 /**

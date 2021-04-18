@@ -25,7 +25,6 @@
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux/HelpDialog.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
@@ -77,8 +76,6 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
     return;
 
   DialogPeer* dlgpr;
-  GtkWidget *window, *widget;
-
   dlgpr = new DialogPeer(app, grpinf);
   dlgpr->init();
 }
@@ -91,16 +88,21 @@ void DialogPeer::init() {
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
   GActionEntry win_entries[] = {
-      {"clear_chat_history", G_ACTION_CALLBACK(onClearChatHistory)},
-      {"insert_picture", G_ACTION_CALLBACK(onInsertPicture)},
-      {"attach_file", G_ACTION_CALLBACK(onAttachFile)},
-      {"attach_folder", G_ACTION_CALLBACK(onAttachFolder)},
-      {"request_shared_resources", G_ACTION_CALLBACK(onRequestSharedResources)},
-      {"close", G_ACTION_CALLBACK(onClose)},
-      {"send_message", G_ACTION_CALLBACK(onSendMessage)},
+      makeActionEntry("attach_file", G_ACTION_CALLBACK(onAttachFile)),
+      makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
+      makeActionEntry("clear_chat_history",
+                      G_ACTION_CALLBACK(onClearChatHistory)),
+      makeActionEntry("close", G_ACTION_CALLBACK(onClose)),
+      makeActionEntry("refuse", G_ACTION_CALLBACK(onRefuse)),
+      makeActionEntry("refuse_all", G_ACTION_CALLBACK(onRefuseAll)),
+      makeActionEntry("insert_picture", G_ACTION_CALLBACK(onInsertPicture)),
+      makeActionEntry("request_shared_resources",
+                      G_ACTION_CALLBACK(onRequestSharedResources)),
+      makeActionEntry("send_message", G_ACTION_CALLBACK(onSendMessage)),
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
+  g_action_map_disable_actions(G_ACTION_MAP(window), "refuse", nullptr);
 
   g_signal_connect(G_OBJECT(inputBuffer), "changed",
                    G_CALLBACK(onInputBufferChanged), this);
@@ -582,10 +584,11 @@ GtkWidget* DialogPeer::CreateFileToReceiveArea() {
                            this);
   g_datalist_set_data(&widset, "file-receive-accept-button", button);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+
   button = gtk_button_new_with_label(_("Refuse"));
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.refuse");
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(onRefuseButtonClicked),
-                           this);
+
   g_datalist_set_data(&widset, "file-receive-refuse-button", button);
   button = gtk_button_new_with_label(_("Detail"));
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
@@ -649,6 +652,7 @@ GtkWidget* DialogPeer::CreateFileToReceiveTree(GtkTreeModel* model) {
   GtkTreeViewColumn* column;
 
   view = gtk_tree_view_new_with_model(model);
+  this->fileToReceiveTree = GTK_TREE_VIEW(view);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), TRUE);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
@@ -681,7 +685,20 @@ GtkWidget* DialogPeer::CreateFileToReceiveTree(GtkTreeModel* model) {
   g_signal_connect(GTK_WIDGET(view), "button_press_event",
                    G_CALLBACK(RcvTreePopup), this);
 
+  g_signal_connect_swapped(selection, "changed",
+                           G_CALLBACK(onRecvTreeSelectionChanged), this);
+
   return view;
+}
+
+void DialogPeer::onRecvTreeSelectionChanged(DialogPeer& self,
+                                            GtkTreeSelection* selection) {
+  gint count = gtk_tree_selection_count_selected_rows(selection);
+  if (count > 0) {
+    g_action_map_enable_actions(G_ACTION_MAP(self.window), "refuse", nullptr);
+  } else {
+    g_action_map_disable_actions(G_ACTION_MAP(self.window), "refuse", nullptr);
+  }
 }
 /**
  * 创建待接收文件树底层数据结构.
@@ -1005,14 +1022,14 @@ GSList* DialogPeer::GetSelPal() {
  *从接收文件的TreeView删除选定行（待接收和已接收都用此函数）.
  * @param widget TreeView
  */
-void DialogPeer::onRefuseButtonClicked(DialogPeer* self) {
+void DialogPeer::onRefuse(void*, void*, DialogPeer& self) {
   GtkTreeModel* model;
   GtkTreeSelection* TreeSel;
   GtkTreeIter iter;
   FileInfo* file;
   GList* list;
 
-  GtkWidget* widget = self->fileToReceiveTreeviewWidget;
+  GtkWidget* widget = self.fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
   //从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
@@ -1023,34 +1040,51 @@ void DialogPeer::onRefuseButtonClicked(DialogPeer* self) {
     gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter,
                             (GtkTreePath*)g_list_nth(list, 0)->data);
     gtk_tree_model_get(model, &iter, 5, &file, -1);
-    self->app->getCoreThread()->PopItemFromEnclosureList(file);
+    self.app->getCoreThread()->PopItemFromEnclosureList(file);
     list = g_list_next(list);
   }
   g_list_free(list);
   //从列表中删除
   RemoveSelectedFromTree(widget);
   //重新刷新窗口显示
-  self->ShowInfoEnclosure(self);
+  self.ShowInfoEnclosure(&self);
 }
+
+void DialogPeer::onRefuseAll(void*, void*, DialogPeer& self) {
+  GtkTreeModel* model;
+  GtkTreeIter iter;
+  FileInfo* file;
+
+  GtkWidget* widget = self.fileToReceiveTreeviewWidget;
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
+
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      gtk_tree_model_get(model, &iter, 5, &file, -1);
+      self.app->getCoreThread()->PopItemFromEnclosureList(file);
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+}
+
 /**
  *显示接收附件的TreeView的弹出菜单回调函数.(待接收和已接收都用此函数)
  * @param widget TreeView
  * @param event 事件
  */
-gint DialogPeer::RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self) {
-  GtkWidget *menu, *menuitem;
+gint DialogPeer::RcvTreePopup(GtkWidget* widget,
+                              GdkEvent* event,
+                              DialogPeer* self) {
+  GtkWidget* menu;
   GdkEventButton* event_button;
 
-  menu = gtk_menu_new();
-  menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
-  g_signal_connect_swapped(menuitem, "activate",
-                           G_CALLBACK(onRefuseButtonClicked), self);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+  menu = gtk_menu_new_from_model(G_MENU_MODEL(
+      gtk_builder_get_object(self->app->getMenuBuilder(), "peer-recv-popup")));
+  gtk_menu_attach_to_widget(GTK_MENU(menu), widget, nullptr);
 
   if (event->type == GDK_BUTTON_PRESS) {
     event_button = (GdkEventButton*)event;
-    if (event_button->button == GDK_BUTTON_SECONDARY) {
-      gtk_widget_show(menuitem);
+    if (gdk_event_triggers_context_menu(event)) {
       gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
       return TRUE;
     }

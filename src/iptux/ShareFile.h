@@ -14,11 +14,13 @@
 
 #include <gtk/gtk.h>
 
+#include "iptux/Application.h"
+
 namespace iptux {
 
 typedef GtkDialog ShareFile;
-ShareFile* share_file_new(GtkWindow* parent);
-void share_file_run(ShareFile* dialog);
+ShareFile* shareFileNew(Application* app);
+void shareFileRun(ShareFile* dialog, GtkWindow* parent);
 
 }  // namespace iptux
 

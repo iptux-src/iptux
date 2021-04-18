@@ -75,7 +75,6 @@ class MainWindow : public sigc::trackable {
   GroupInfo* currentGroupInfo = 0;
 
  private:
-  void setActionSensitive(const std::string& actionName, bool sensitive);
   void setCurrentGroupInfo(GroupInfo* groupInfo);
 
   void InitSublayer();
@@ -108,7 +107,6 @@ class MainWindow : public sigc::trackable {
                                GtkTreeIter* iter,
                                bool blinking);
   static void FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal);
-  void InitThemeSublayerData();
   void processEventInMainThread(std::shared_ptr<const Event> event);
 
  private:
@@ -142,7 +140,7 @@ class MainWindow : public sigc::trackable {
                                       MainWindow* self);
   static void HidePallistArea(GData** widset);
   static gboolean ClearPallistEntry(GtkWidget* entry, GdkEventKey* event);
-  static void PallistEntryChanged(GtkWidget* entry, GData** widset);
+  static void PallistEntryChanged(GtkWidget* entry, MainWindow* self);
   static void PallistItemActivated(GtkWidget* treeview,
                                    GtkTreePath* path,
                                    GtkTreeViewColumn* column,

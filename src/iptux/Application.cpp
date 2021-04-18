@@ -8,8 +8,8 @@
 #include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux/AboutDialog.h"
 #include "iptux/DataSettings.h"
-#include "iptux/HelpDialog.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
@@ -19,7 +19,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
-#include "iptux/global.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/TerminalNotifierNotificationService.h"
@@ -50,11 +49,13 @@ void iptux_init(LogSystem* logSystem) {
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
 
-void init_theme() {
+void init_theme(Application* app) {
   auto theme = gtk_icon_theme_get_default();
   gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/icon");
   gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/menu");
   gtk_icon_theme_prepend_search_path(theme, __PIXMAPS_PATH "/tip");
+  gtk_icon_theme_prepend_search_path(
+      theme, app->getCoreThread()->getUserIconPath().c_str());
 }
 }  // namespace
 
@@ -112,59 +113,31 @@ void Application::activate() {
 }
 
 void Application::onStartup(Application& self) {
+  init_theme(&self);
+  iptux_register_resource();
   self.data = make_shared<UiProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
-  g_cthrd = self.cthrd.get();
-  self.window = new MainWindow(&self, *g_cthrd);
+  self.window = new MainWindow(&self, *self.cthrd);
   self.eventAdaptor = new EventAdaptor(
       self.cthrd->signalEvent,
       [&](shared_ptr<const Event> event) { self.onEvent(event); });
 
-  init_theme();
-
-  iptux_register_resource();
   GActionEntry app_entries[] = {
-      {"quit", G_ACTION_CALLBACK(onQuit), NULL, NULL, NULL, {0, 0, 0}},
-      {"preferences",
-       G_ACTION_CALLBACK(onPreferences),
-       NULL,
-       NULL,
-       NULL,
-       {0, 0, 0}},
-      {"help.report_bug",
-       G_ACTION_CALLBACK(onReportBug),
-       NULL,
-       NULL,
-       NULL,
-       {0, 0, 0}},
-      {"tools.transmission",
-       G_ACTION_CALLBACK(onToolsTransmission),
-       NULL,
-       NULL,
-       NULL,
-       {0, 0, 0}},
-      {"tools.shared_management",
-       G_ACTION_CALLBACK(onToolsSharedManagement),
-       NULL,
-       NULL,
-       NULL,
-       {0, 0, 0}},
-      {"tools.open_chat_log",
-       G_ACTION_CALLBACK(onOpenChatLog),
-       NULL,
-       NULL,
-       NULL,
-       {0, 0, 0}},
-      {"tools.open_system_log",
-       G_ACTION_CALLBACK(onOpenSystemLog),
-       NULL,
-       NULL,
-       NULL,
-       {0, 0, 0}},
-      {"trans_model.changed"},
-      {"trans_model.clear", G_ACTION_CALLBACK(onTransModelClear)},
-      {"about", G_ACTION_CALLBACK(onAbout)},
+      makeActionEntry("quit", G_ACTION_CALLBACK(onQuit)),
+      makeActionEntry("preferences", G_ACTION_CALLBACK(onPreferences)),
+      makeActionEntry("help.report_bug", G_ACTION_CALLBACK(onReportBug)),
+      makeActionEntry("tools.transmission",
+                      G_ACTION_CALLBACK(onToolsTransmission)),
+      makeActionEntry("tools.shared_management",
+                      G_ACTION_CALLBACK(onToolsSharedManagement)),
+      makeActionEntry("tools.open_chat_log", G_ACTION_CALLBACK(onOpenChatLog)),
+      makeActionEntry("tools.open_system_log",
+                      G_ACTION_CALLBACK(onOpenSystemLog)),
+      makeActionEntry("trans_model.changed", nullptr),
+      makeActionEntry("trans_model.clear",
+                      G_ACTION_CALLBACK(onTransModelClear)),
+      makeActionEntry("about", G_ACTION_CALLBACK(onAbout)),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
@@ -201,7 +174,7 @@ void Application::onActivate(Application& self) {
 
   self.window->CreateWindow();
   try {
-    g_cthrd->start();
+    self.cthrd->start();
   } catch (const Exception& e) {
     pop_warning(self.window->getWindow(), "%s", e.what());
     exit(1);
@@ -219,7 +192,7 @@ void Application::onQuit(void*, void*, Application& self) {
 }
 
 void Application::onPreferences(void*, void*, Application& self) {
-  DataSettings::ResetDataEntry(GTK_WIDGET(self.window->getWindow()));
+  DataSettings::ResetDataEntry(&self, GTK_WIDGET(self.window->getWindow()));
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
@@ -228,9 +201,9 @@ void Application::onToolsTransmission(void*, void*, Application& self) {
 
 void Application::onToolsSharedManagement(void*, void*, Application& self) {
   if (!self.shareFile) {
-    self.shareFile = share_file_new(GTK_WINDOW(self.window->getWindow()));
+    self.shareFile = shareFileNew(&self);
   }
-  share_file_run(self.shareFile);
+  shareFileRun(self.shareFile, GTK_WINDOW(self.window->getWindow()));
 }
 
 void Application::onOpenChatLog(void*, void*, Application& self) {
@@ -248,7 +221,7 @@ void Application::onTransModelClear(void*, void*, Application& self) {
 }
 
 void Application::onAbout(void*, void*, Application& self) {
-  HelpDialog::AboutEntry(GTK_WINDOW(self.window->getWindow()));
+  aboutDialogEntry(GTK_WINDOW(self.window->getWindow()));
 }
 
 void Application::refreshTransTasks() {
@@ -300,13 +273,13 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto event =
         CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
+    auto para = cthrd->GetTransTaskStat(taskId);
     if (!para.get()) {
       LOG_WARN("got task id %d, but no info in CoreThread", taskId);
       return;
     }
     this->updateItemToTransTree(*para);
-    auto g_progdt = g_cthrd->getUiProgramData();
+    auto g_progdt = cthrd->getUiProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {
       this->openTransWindow();
     }
@@ -318,7 +291,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto event =
         CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
     auto taskId = event->GetTaskId();
-    auto para = g_cthrd->GetTransTaskStat(taskId);
+    auto para = cthrd->GetTransTaskStat(taskId);
     this->updateItemToTransTree(*para);
     return;
   }

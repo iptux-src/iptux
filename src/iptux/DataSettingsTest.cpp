@@ -14,5 +14,5 @@ TEST(DataSettings, Constructor) {
   app.startup();
   app.activate();
 
-  DataSettings::ResetDataEntry(nullptr, false);
+  DataSettings::ResetDataEntry(&app, nullptr, false);
 }
