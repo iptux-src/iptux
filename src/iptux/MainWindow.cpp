@@ -451,14 +451,17 @@ GtkWidget* MainWindow::CreateAllArea() {
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
+#if SYSTEM_DARWIN
+#else
   GtkHeaderBar* headerBar =
       GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
   gtk_header_bar_set_title(headerBar, getTitle().c_str());
-  gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(headerBar), FALSE, FALSE, 0);
+  gtk_window_set_titlebar(GTK_WINDOW(window), GTK_WIDGET(headerBar));
   auto menuButton = gtk_builder_get_object(builder, "menu_button");
   gtk_menu_button_set_menu_model(
       GTK_MENU_BUTTON(menuButton),
       G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar")));
+#endif
 
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);
 
