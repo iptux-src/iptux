@@ -10,7 +10,7 @@ indent_style = space
 indent_size = 4
 charset = utf-8
 
-[*.{h,cpp,xml,ui}]
+[*.{h,cpp,xml,yml,ui}]
 indent_size = 2
 
 [Makefile]
