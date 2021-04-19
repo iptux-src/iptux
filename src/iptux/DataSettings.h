@@ -35,6 +35,7 @@ class DataSettings {
 
   GtkWidget* CreateMainDialog(GtkWidget* parent);
   GtkWidget* CreatePersonal();
+  GtkWidget* CreatePersonal2();
   GtkWidget* CreateSystem();
   GtkWidget* CreateNetwork();
 
@@ -51,6 +52,7 @@ class DataSettings {
   GtkWidget* CreateFontChooser();
 
   Application* app;
+  GtkBuilder* builder = 0;
   GData* widset;  //窗体集
   GData* mdlset;  //数据model集
   IconModel* iconModel = 0;

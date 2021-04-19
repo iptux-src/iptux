@@ -68,6 +68,8 @@ void DataSettings::ResetDataEntry(Application* app,
                      note, TRUE, TRUE, 0);
   label = gtk_label_new(_("Personal"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
+  label = gtk_label_new(_("Personal"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal2(), label);
   label = gtk_label_new(_("System"));
   gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSystem(), label);
   label = gtk_label_new(_("Network"));
@@ -118,6 +120,8 @@ void DataSettings::InitSublayer() {
   g_datalist_set_data_full(&mdlset, "network-model", model,
                            GDestroyNotify(g_object_unref));
   FillNetworkModel(model);
+
+  builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/DataSettings.ui");
 }
 
 /**
@@ -126,7 +130,8 @@ void DataSettings::InitSublayer() {
 void DataSettings::ClearSublayer() {
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
-  g_object_unref(iconModel);
+  g_clear_object(&iconModel);
+  g_clear_object(&builder);
 }
 
 /**
@@ -154,6 +159,9 @@ GtkWidget* DataSettings::CreateMainDialog(GtkWidget* parent) {
  * 创建与个人相关的数据设置窗体.
  * @return 主窗体
  */
+GtkWidget* DataSettings::CreatePersonal2() {
+  return GTK_WIDGET(gtk_builder_get_object(builder, "personal"));
+}
 GtkWidget* DataSettings::CreatePersonal() {
   GtkWidget *box, *hbox;
   GtkWidget *frame, *sw;
