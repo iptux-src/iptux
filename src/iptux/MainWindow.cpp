@@ -54,7 +54,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
   windowConfig.LoadFromConfig(config);
-  builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/main.ui");
+  builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/MainWindow.ui");
   gtk_builder_connect_signals(builder, nullptr);
   eventAdaptor = new EventAdaptor(coreThread.signalEvent,
                                   [&](shared_ptr<const Event> event) {
@@ -62,6 +62,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
                                   });
   coreThread.signalGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
+  CreateWindow();
 }
 
 /**
@@ -85,8 +86,6 @@ void MainWindow::CreateWindow() {
 
   /* 创建主窗口 */
   window = CreateMainWindow();
-  g_object_set_data(G_OBJECT(window), "iptux-config", &config);
-
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -118,8 +117,8 @@ void MainWindow::CreateWindow() {
     gtk_widget_hide(window);
   }
 
-  palPopupMenu = GTK_MENU(gtk_menu_new_from_model(G_MENU_MODEL(
-      gtk_builder_get_object(app->getMenuBuilder(), "pal-popup"))));
+  palPopupMenu = GTK_MENU(gtk_menu_new_from_model(
+      G_MENU_MODEL(gtk_builder_get_object(builder, "pal-popup"))));
   gtk_menu_attach_to_widget(palPopupMenu, window, nullptr);
 }
 
@@ -422,14 +421,7 @@ GtkWidget* MainWindow::CreateMainWindow() {
       GDK_HINT_USER_SIZE);
   window = gtk_application_window_new(app->getApp());
   gtk_window_set_icon_name(GTK_WINDOW(window), "iptux");
-  if (config->GetString("bind_ip").empty()) {
-    gtk_window_set_title(GTK_WINDOW(window), _("Iptux"));
-  } else {
-    gtk_window_set_title(GTK_WINDOW(window),
-                         stringFormat("%s - %s", _("Iptux"),
-                                      config->GetString("bind_ip").c_str())
-                             .c_str());
-  }
+  gtk_window_set_title(GTK_WINDOW(window), getTitle().c_str());
   gtk_window_set_default_size(GTK_WINDOW(window), windowConfig.GetWidth(),
                               windowConfig.GetHeight());
   gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
@@ -441,6 +433,15 @@ GtkWidget* MainWindow::CreateMainWindow() {
   return window;
 }
 
+string MainWindow::getTitle() const {
+  if (config->GetString("bind_ip").empty()) {
+    return _("Iptux");
+  } else {
+    return stringFormat("%s - %s", _("Iptux"),
+                        config->GetString("bind_ip").c_str());
+  }
+}
+
 /**
  * 创建所有区域.
  * @return 主窗体
@@ -449,6 +450,18 @@ GtkWidget* MainWindow::CreateAllArea() {
   GtkWidget *box, *paned;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
+#if SYSTEM_DARWIN
+#else
+  GtkHeaderBar* headerBar =
+      GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
+  gtk_header_bar_set_title(headerBar, getTitle().c_str());
+  gtk_window_set_titlebar(GTK_WINDOW(window), GTK_WIDGET(headerBar));
+  auto menuButton = gtk_builder_get_object(builder, "menu_button");
+  gtk_menu_button_set_menu_model(
+      GTK_MENU_BUTTON(menuButton),
+      G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar")));
+#endif
 
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);
 
@@ -1000,7 +1013,7 @@ void MainWindow::onRefresh(void*, void*, MainWindow& self) {
 }
 
 void MainWindow::onDetect(void*, void*, MainWindow& self) {
-  DetectPal pal(self.app, self.builder, GTK_WINDOW(self.window));
+  DetectPal pal(self.app, GTK_WINDOW(self.window));
   pal.run();
 }
 

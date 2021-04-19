@@ -14,7 +14,5 @@ TEST(DetectPal, Constructor) {
   app.startup();
   app.activate();
 
-  auto builder = newTestGtkBuilder();
-
-  DetectPal pal(&app, builder, nullptr);
+  DetectPal pal(&app, nullptr);
 }

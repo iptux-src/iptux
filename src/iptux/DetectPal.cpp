@@ -34,17 +34,27 @@ static gboolean iptux_on_detect_pal_ipv4_entry_escape(GtkWidget* widget,
   return FALSE;
 }
 
-DetectPal::DetectPal(Application* app, GtkBuilder* builder, GtkWindow* window)
-    : app(app) {
-  this->detectPalDialog = CHECK_NOTNULL(
-      GTK_DIALOG(gtk_builder_get_object(builder, "detect_pal_dialog")));
+DetectPal::DetectPal(Application* app, GtkWindow* window) : app(app) {
+  auto builder =
+      gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/DetectPal.ui");
+
+  g_set_object(&detectPalDialog,
+               CHECK_NOTNULL(GTK_DIALOG(
+                   gtk_builder_get_object(builder, "detect_pal_dialog"))));
   gtk_window_set_transient_for(GTK_WINDOW(this->detectPalDialog), window);
-  this->detectPalIpv4Entry = CHECK_NOTNULL(
-      GTK_ENTRY(gtk_builder_get_object(builder, "detect_pal_ipv4_entry")));
+  g_set_object(&detectPalIpv4Entry,
+               CHECK_NOTNULL(GTK_ENTRY(
+                   gtk_builder_get_object(builder, "detect_pal_ipv4_entry"))));
   g_signal_connect(detectPalIpv4Entry, "insert-text",
                    G_CALLBACK(entry_insert_numeric), nullptr);
   g_signal_connect(detectPalIpv4Entry, "key-release-event",
                    G_CALLBACK(iptux_on_detect_pal_ipv4_entry_escape), nullptr);
+  g_object_unref(builder);
+}
+
+DetectPal::~DetectPal() {
+  g_clear_object(&detectPalDialog);
+  g_clear_object(&detectPalIpv4Entry);
 }
 
 void DetectPal::run() {

@@ -20,13 +20,14 @@ namespace iptux {
 
 class DetectPal {
  public:
-  DetectPal(Application* app, GtkBuilder* builder, GtkWindow* parent);
+  DetectPal(Application* app, GtkWindow* parent);
+  ~DetectPal();
   void run();
 
  private:
   Application* app;
-  GtkDialog* detectPalDialog;
-  GtkEntry* detectPalIpv4Entry;
+  GtkDialog* detectPalDialog = 0;
+  GtkEntry* detectPalIpv4Entry = 0;
 };
 
 }  // namespace iptux
