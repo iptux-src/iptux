@@ -70,7 +70,6 @@ class UiCoreThread : public CoreThread {
   void InitSublayer();
   void ClearSublayer() override;
 
-  void InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para);
   void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* string);
   void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path);
 

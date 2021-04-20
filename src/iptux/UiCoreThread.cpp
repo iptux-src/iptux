@@ -366,47 +366,6 @@ void UiCoreThread::ClearSublayer() {
 }
 
 /**
- * 插入消息头到TextBuffer(非UI线程安全).
- * @param buffer text-buffer
- * @param para 消息参数
- */
-void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para) {
-  GtkTextIter iter;
-  gchar* header;
-
-  auto g_progdt = getProgramData();
-
-  /**
-   * @note (para->pal)可能为null.
-   */
-  switch (para->stype) {
-    case MessageSourceType::PAL:
-      header = getformattime(FALSE, "%s", para->getPal()->getName().c_str());
-      gtk_text_buffer_get_end_iter(buffer, &iter);
-      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
-                                               "pal-color", NULL);
-      g_free(header);
-      break;
-    case MessageSourceType::SELF:
-      header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
-      gtk_text_buffer_get_end_iter(buffer, &iter);
-      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
-                                               "me-color", NULL);
-      g_free(header);
-      break;
-    case MessageSourceType::ERROR:
-      header = getformattime(FALSE, "%s", _("<ERROR>"));
-      gtk_text_buffer_get_end_iter(buffer, &iter);
-      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
-                                               "error-color", NULL);
-      g_free(header);
-      break;
-    default:
-      break;
-  }
-}
-
-/**
  * 获取(pal)在分组模式下当前所在的群组.
  * @param pal class PalInfo
  * @return 群组信息
