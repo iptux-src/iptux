@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <fstream>
+#include <mutex>
 #include <thread>
 
 #include "iptux-core/CoreThread.h"
