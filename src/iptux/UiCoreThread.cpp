@@ -111,37 +111,6 @@ void UiCoreThread::ClearAllPalFromList() {
 }
 
 /**
- * 从好友链表中删除指定的好友信息数据(非UI线程安全).
- * @param ipv4 ipv4
- * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可；
- * 鉴于群组中只能包含在线的好友，所以若某群组中包含了此好友，则必须从此群组中删除此好友
- */
-void UiCoreThread::DelPalFromList(PalKey palKey) {
-  CoreThread::DelPalFromList(palKey);
-
-  PPalInfo pal;
-  GroupInfo* grpinf;
-
-  /* 获取好友信息数据，并将其置为下线状态 */
-  if (!(pal = GetPal(palKey)))
-    return;
-
-  /* 从群组中移除好友 */
-  if ((grpinf = GetPalRegularItem(pal.get()))) {
-    DelPalFromGroupInfoItem(grpinf, pal.get());
-  }
-  if ((grpinf = GetPalSegmentItem(pal.get()))) {
-    DelPalFromGroupInfoItem(grpinf, pal.get());
-  }
-  if ((grpinf = GetPalGroupItem(pal.get()))) {
-    DelPalFromGroupInfoItem(grpinf, pal.get());
-  }
-  if ((grpinf = GetPalBroadcastItem(pal.get()))) {
-    DelPalFromGroupInfoItem(grpinf, pal.get());
-  }
-}
-
-/**
  * 通告指定的好友信息数据已经被更新(非UI线程安全).
  * @param ipv4 ipv4
  * @note 什么时候会用到？1、好友更新个人资料；2、好友下线后又上线了
