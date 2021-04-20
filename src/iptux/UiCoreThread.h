@@ -46,7 +46,6 @@ class UiCoreThread : public CoreThread {
   std::shared_ptr<UiProgramData> getUiProgramData();
 
   void ClearAllPalFromList() override;
-  void DelPalFromList(PalKey palKey) override;
   void UpdatePalToList(PalKey palKey) override;
 
   void AttachPalToList(std::shared_ptr<PalInfo> pal) override;

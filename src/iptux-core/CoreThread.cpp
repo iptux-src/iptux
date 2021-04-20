@@ -393,6 +393,7 @@ void CoreThread::DelPalFromList(PalKey palKey) {
   if (!(pal = GetPal(palKey)))
     return;
   pal->setOnline(false);
+  emitEvent(make_shared<const PalOfflineEvent>(palKey));
 }
 
 /**

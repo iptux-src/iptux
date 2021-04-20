@@ -1638,7 +1638,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   }
 
   if (type == EventType::PAL_OFFLINE) {
-    auto event = (const PalOfflineEvent*)(_event.get());
+    auto event = dynamic_pointer_cast<const PalOfflineEvent>(_event);
     auto ipv4 = event->GetPalKey().GetIpv4();
     if (PaltreeContainItem(ipv4)) {
       DelItemFromPaltree(ipv4);
