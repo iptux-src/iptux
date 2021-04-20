@@ -404,9 +404,7 @@ void DialogBase::FeedbackMsg(const gchar* msg) {
 
   ChipData chip(msg);
   para.dtlist.push_back(std::move(chip));
-
-  /* 交给某人处理吧 */
-  app->getCoreThread()->InsertMsgToGroupInfoItem(grpinf, &para);
+  grpinf->addMsgPara(para);
 }
 
 /**

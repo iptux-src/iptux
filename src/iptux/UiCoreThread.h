@@ -45,8 +45,6 @@ class UiCoreThread : public CoreThread {
 
   std::shared_ptr<UiProgramData> getUiProgramData();
 
-  void InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para);
-
   void ClearAllPalFromList() override;
   void DelPalFromList(PalKey palKey) override;
   void UpdatePalToList(PalKey palKey) override;
@@ -69,10 +67,6 @@ class UiCoreThread : public CoreThread {
  private:
   void InitSublayer();
   void ClearSublayer() override;
-
-  void InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para);
-  void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* string);
-  void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path);
 
   GroupInfo* GetPalPrevGroupItem(PalInfo* pal);
   GroupInfo* AttachPalRegularItem(PPalInfo pal);

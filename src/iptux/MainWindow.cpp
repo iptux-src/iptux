@@ -1686,7 +1686,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     /* 如果群组存在则插入消息 */
     /* 群组不存在是编程上的错误，请发送Bug报告 */
     if (grpinf) {
-      coreThread.InsertMsgToGroupInfoItem(grpinf, &para);
+      grpinf->addMsgPara(para);
       if (grpinf->dialog) {
         session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
                                                       "session-class");

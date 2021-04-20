@@ -54,15 +54,6 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
 UiCoreThread::~UiCoreThread() {}
 
 /**
- * 插入消息到群组消息缓冲区(非UI线程安全).
- * @param grpinf 群组信息
- * @param para 消息参数
- */
-void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para) {
-  grpinf->addMsgPara(*CHECK_NOTNULL(para));
-}
-
-/**
  * 从好友链表中移除所有好友数据(非UI线程安全).
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */
@@ -363,47 +354,6 @@ void UiCoreThread::ClearSublayer() {
   for (tlist = ecsList; tlist; tlist = g_slist_next(tlist))
     delete (FileInfo*)tlist->data;
   g_slist_free(ecsList);
-}
-
-/**
- * 插入消息头到TextBuffer(非UI线程安全).
- * @param buffer text-buffer
- * @param para 消息参数
- */
-void UiCoreThread::InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para) {
-  GtkTextIter iter;
-  gchar* header;
-
-  auto g_progdt = getProgramData();
-
-  /**
-   * @note (para->pal)可能为null.
-   */
-  switch (para->stype) {
-    case MessageSourceType::PAL:
-      header = getformattime(FALSE, "%s", para->getPal()->getName().c_str());
-      gtk_text_buffer_get_end_iter(buffer, &iter);
-      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
-                                               "pal-color", NULL);
-      g_free(header);
-      break;
-    case MessageSourceType::SELF:
-      header = getformattime(FALSE, "%s", g_progdt->nickname.c_str());
-      gtk_text_buffer_get_end_iter(buffer, &iter);
-      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
-                                               "me-color", NULL);
-      g_free(header);
-      break;
-    case MessageSourceType::ERROR:
-      header = getformattime(FALSE, "%s", _("<ERROR>"));
-      gtk_text_buffer_get_end_iter(buffer, &iter);
-      gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
-                                               "error-color", NULL);
-      g_free(header);
-      break;
-    default:
-      break;
-  }
 }
 
 /**
