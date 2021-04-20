@@ -45,8 +45,6 @@ class UiCoreThread : public CoreThread {
 
   std::shared_ptr<UiProgramData> getUiProgramData();
 
-  void InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para);
-
   void ClearAllPalFromList() override;
   void DelPalFromList(PalKey palKey) override;
   void UpdatePalToList(PalKey palKey) override;

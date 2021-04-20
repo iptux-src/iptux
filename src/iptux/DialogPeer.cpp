@@ -453,13 +453,11 @@ bool DialogPeer::SendTextMsg() {
 void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
   MsgPara para(grpinf->getMembers()[0]);
 
-  auto g_cthrd = app->getCoreThread();
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
   para.dtlist = dtlist;
 
-  /* 交给某人处理吧 */
-  g_cthrd->InsertMsgToGroupInfoItem(grpinf, &para);
+  grpinf->addMsgPara(para);
 }
 
 /**

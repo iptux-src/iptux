@@ -54,15 +54,6 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
 UiCoreThread::~UiCoreThread() {}
 
 /**
- * 插入消息到群组消息缓冲区(非UI线程安全).
- * @param grpinf 群组信息
- * @param para 消息参数
- */
-void UiCoreThread::InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para) {
-  grpinf->addMsgPara(*CHECK_NOTNULL(para));
-}
-
-/**
  * 从好友链表中移除所有好友数据(非UI线程安全).
  * @note 鉴于好友链表成员不能被删除，所以将成员改为下线标记即可
  */
