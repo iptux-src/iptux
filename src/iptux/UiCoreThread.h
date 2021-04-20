@@ -70,9 +70,6 @@ class UiCoreThread : public CoreThread {
   void InitSublayer();
   void ClearSublayer() override;
 
-  void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* string);
-  void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path);
-
   GroupInfo* GetPalPrevGroupItem(PalInfo* pal);
   GroupInfo* AttachPalRegularItem(PPalInfo pal);
   GroupInfo* AttachPalSegmentItem(PPalInfo pal);
