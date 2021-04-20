@@ -19,11 +19,11 @@ TEST(Command, encodeFileInfo) {
   ASSERT_EQ(fileInfos[0], fileInfo);
 
   fileInfos = Command::decodeFileInfos(a + a);
-  ASSERT_EQ(fileInfos.size(), 2);
+  ASSERT_EQ(int(fileInfos.size()), 2);
   ASSERT_EQ(fileInfos[0], fileInfo);
   ASSERT_EQ(fileInfos[1], fileInfo);
 
   string b = "0:bashrc:ffffffffffffffff:0:0:\a:";
   fileInfos = Command::decodeFileInfos(b);
-  ASSERT_EQ(fileInfos.size(), 0);
+  ASSERT_EQ(int(fileInfos.size()), 0);
 }
