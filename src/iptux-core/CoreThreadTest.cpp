@@ -145,38 +145,46 @@ TEST(CoreThread, FullCase) {
   EXPECT_TRUE(thread1->GetPal("127.0.0.2"));
 
   vector<shared_ptr<const Event>> thread2Events;
+  mutex thread2EventsMutex;
+
   thread2->signalEvent.connect([&](shared_ptr<const Event> event) {
+    lock_guard<std::mutex> l(thread2EventsMutex);
     thread2Events.emplace_back(event);
   });
 
   auto pal2InThread1 = thread1->GetPal("127.0.0.2");
   auto pal1InThread2 = thread2->GetPal("127.0.0.1");
 
-  // send message
-  while (thread2Events.size() < 1) {
+  shared_ptr<const Event> event;
+  thread1->SendMessage(pal2InThread1, "hello world");
+  while (true) {
+    lock_guard<std::mutex> l(thread2EventsMutex);
+    bool finished = false;
+    for (auto e : thread2Events) {
+      if (e->getType() == EventType::NEW_MESSAGE) {
+        event = e;
+        finished = true;
+        break;
+      }
+    }
+    if (finished) {
+      break;
+    }
     thread1->SendMessage(pal2InThread1, "hello world");
     this_thread::sleep_for(10ms);
   }
-  int i = 0;
-  auto event = thread2Events[i];
-  while (true) {
-    ASSERT_GT(int(thread2Events.size()), i);
-    event = thread2Events[i];
-    if (event->getType() == EventType::NEW_PAL_ONLINE) {
-      i++;
-    } else {
-      ASSERT_EQ(event->getType(), EventType::NEW_MESSAGE);
-      break;
-    }
-  }
-  auto event2 = (NewMessageEvent*)(event.get());
+
+  auto event2 = dynamic_pointer_cast<const NewMessageEvent>(event);
   ASSERT_EQ(event2->getMsgPara().dtlist[0].ToString(),
             "ChipData(MessageContentType::STRING, hello world)");
-  thread2Events.clear();
+  {
+    lock_guard<std::mutex> l(thread2EventsMutex);
+    thread2Events.clear();
+  }
 
   // send my icon
-  ifstream ifs(testDataPath("iptux.png"));
   while (thread2Events.size() < 1) {
+    ifstream ifs(testDataPath("iptux.png"));
     thread1->SendMyIcon(pal2InThread1, ifs);
     this_thread::sleep_for(10ms);
   }

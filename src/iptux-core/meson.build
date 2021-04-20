@@ -88,6 +88,4 @@ libiptux_core_test = executable('libiptux_core_test',
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('iptux core unit test', libiptux_core_test)
-
-
+test('iptux core unit test', libiptux_core_test, is_parallel : false)
