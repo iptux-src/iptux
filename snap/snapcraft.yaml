@@ -36,7 +36,7 @@ parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
-    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev, xvfb]
+    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev, xvfb, libxml2-utils]
     plugin: meson
     meson-parameters: ["--prefix=/snap/iptux/current/usr"]
     override-pull: |
