@@ -36,12 +36,15 @@ parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
-    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev]
+    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev, xvfb]
     plugin: meson
     meson-parameters: ["--prefix=/snap/iptux/current/usr"]
     override-pull: |
       snapcraftctl pull
       sed -i.bak -e 's|Icon=iptux-icon|Icon=/usr/share/iptux/pixmaps/icon/iptux-icon.png|g' share/applications/io.github.iptux-src.iptux.desktop.in
+    override-build: |
+      snapcraftctl build
+      xvfb-run -a meson test -C builddir --verbose --no-stdsplit
     organize:
       snap/iptux/current/usr: usr
     stage-packages:
