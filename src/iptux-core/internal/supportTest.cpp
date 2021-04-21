@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "support.h"
+#include <netinet/in.h>
+#include <sys/socket.h>
 
 using namespace iptux;
 using namespace std;
