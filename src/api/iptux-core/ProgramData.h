@@ -3,9 +3,6 @@
 
 #include <memory>
 
-#include <glib.h>
-#include <netinet/in.h>
-
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
 

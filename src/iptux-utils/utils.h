@@ -12,11 +12,10 @@
 #ifndef IPTUX_UTILS_H
 #define IPTUX_UTILS_H
 
-#include <memory>
-#include <string>
-
 #include <glib.h>
+#include <memory>
 #include <netinet/in.h>
+#include <string>
 
 namespace iptux {
 

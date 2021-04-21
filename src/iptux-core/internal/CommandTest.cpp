@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "Command.h"
-
 #include "iptux-core/internal/ipmsg.h"
+#include <glib.h>
 
 using namespace iptux;
 using namespace std;

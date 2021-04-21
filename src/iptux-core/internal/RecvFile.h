@@ -14,6 +14,7 @@
 #ifndef IPTUX_RECVFILE_H
 #define IPTUX_RECVFILE_H
 
+#include <glib.h>
 #include <string>
 
 #include "iptux-core/CoreThread.h"
