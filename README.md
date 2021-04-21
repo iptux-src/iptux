@@ -4,7 +4,6 @@
 [![CI](https://github.com/iptux-src/iptux/workflows/CI/badge.svg)](https://github.com/iptux-src/iptux/actions)
 [![CodeFactor](https://www.codefactor.io/repository/github/iptux-src/iptux/badge)](https://www.codefactor.io/repository/github/iptux-src/iptux)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d0340710e474453aa5d4c6943cadeb80)](https://app.codacy.com/app/lidaobing/iptux?utm_source=github.com&utm_medium=referral&utm_content=iptux-src/iptux&utm_campaign=badger)
-[![GitHub version](https://badge.fury.io/gh/iptux-src%2Fiptux.svg)](http://badge.fury.io/gh/iptux-src%2Fiptux)
 [![codecov](https://codecov.io/gh/iptux-src/iptux/branch/master/graph/badge.svg)](https://codecov.io/gh/iptux-src/iptux/branch/master)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/iptux-src/iptux.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/iptux-src/iptux/alerts/)
 [![Weblate Translation Status](https://hosted.weblate.org/widgets/iptux/-/iptux/svg-badge.svg)](https://hosted.weblate.org/engage/iptux/)
