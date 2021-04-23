@@ -287,12 +287,12 @@ const char* iptux_skip_section(const char* string, char ch, uint8_t times) {
  */
 int64_t iptux_get_hex64_number(const char* msg, char ch, uint8_t times) {
   const char* ptr;
-  int64_t number;
+  uint64_t number;
 
   if (!(ptr = iptux_skip_section(msg, ch, times)))
     return 0;
   if (sscanf(ptr, "%" SCNx64, &number) == 1)
-    return number;
+    return (int64_t)number;
   return 0;
 }
 
