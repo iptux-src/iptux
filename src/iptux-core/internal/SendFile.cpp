@@ -132,9 +132,9 @@ void SendFile::SendFileInfo(PPalInfo pal,
     name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
     file->packetn = cmd.Packetn();
     snprintf(ptr, MAX_UDPLEN - len,
-             "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a",
+             "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a",
              file->fileid, name, file->filesize, file->filectime,
-             file->fileattr);
+             (unsigned int)file->fileattr);
     g_free(name);
     len += strlen(ptr);
     ptr = buf + len;
@@ -155,15 +155,8 @@ void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals,
                             const std::vector<FileInfo*>& files) {
   AnalogFS afs;
   Command cmd(*coreThread);
-  char buf[MAX_UDPLEN];
-  size_t len;
-  char* ptr;
 
   for (auto pal : pals) {
-    /* 初始化 */
-    len = 0;
-    ptr = buf;
-    buf[0] = '\0';
     vector<string> buffer;
     for (auto file : files) {
       if (!(file->fileown->GetKey() == pal->GetKey()))
