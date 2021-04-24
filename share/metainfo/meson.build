@@ -1,5 +1,5 @@
 # Validate MetaInfo file
-metainfo_file = 'io.github.iptux_src.iptux.metainfo.xml'
+metainfo_file = files('io.github.iptux_src.iptux.metainfo.xml')
 ascli_exe = find_program('appstreamcli', required: false)
 if ascli_exe.found()
   test('validate metainfo file',
