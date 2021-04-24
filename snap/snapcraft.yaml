@@ -24,7 +24,7 @@ parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
-    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev, xvfb, libxml2-utils]
+    build-packages: [gettext, libgoogle-glog-dev, libjsoncpp-dev, libsigc++-2.0-dev, xvfb, libxml2-utils, appstream]
     plugin: meson
     meson-parameters: ["--prefix=/snap/iptux/current/usr"]
     override-pull: |
@@ -42,4 +42,4 @@ parts:
       - libsigc++-2.0-0v5
       - try:
         - libunwind8 # not available in s390x
-    parse-info: [usr/share/metainfo/com.example.sampleapp.appdata.xml]
+    parse-info: [usr/share/metainfo/io.github.iptux_src.iptux.metainfo.xml]
