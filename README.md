@@ -1,4 +1,4 @@
-# iptux: 飞鸽传书 GNU/Linux 版
+# iptux: LAN communication software
 
 [![Snapcraft](https://snapcraft.io/iptux/badge.svg)](https://snapcraft.io/iptux)
 [![CI](https://github.com/iptux-src/iptux/workflows/CI/badge.svg)](https://github.com/iptux-src/iptux/actions)
