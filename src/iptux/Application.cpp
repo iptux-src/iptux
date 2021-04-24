@@ -62,7 +62,7 @@ void init_theme(Application* app) {
 Application::Application(shared_ptr<IptuxConfig> config)
     : config(config), data(nullptr), window(nullptr), shareFile(nullptr) {
   auto application_id =
-      config->GetString("debug_application_id", "io.github.iptux-src.iptux");
+      config->GetString("debug_application_id", "io.github.iptux_src.iptux");
 
   transModel = transModelNew();
   menuBuilder = nullptr;

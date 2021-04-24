@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.iptux_src.iptux</id>
+
+  <name>iptux</name>
+  <summary>LAN communication software</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+
+  <description>
+    <p>
+      iptux is an “IP Messenger” client.
+    </p>
+    <p>
+       It can:
+       <ul>
+       <li>auto-detect other clients on the intranet.</li>
+       <li>send messages to other clients.</li>
+       <li>send files to other clients.</li>
+       </ul>
+    </p>
+    <p>
+      It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from China, and with the original “IP Messenger” clients from Japan as listed on http://ipmsg.org/ including g2ipmsg and xipmsg in Debian.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.iptux_src.iptux.desktop</launchable>
+</component>

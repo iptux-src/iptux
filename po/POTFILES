@@ -1,5 +1,6 @@
 ./examples/count-bot/main.cpp
-./share/applications/io.github.iptux-src.iptux.desktop.in
+./share/applications/io.github.iptux_src.iptux.desktop.in
+./share/metainfo/io.github.iptux_src.iptux.metainfo.xml
 ./src/iptux-core/CoreThread.cpp
 ./src/iptux-core/Event.cpp
 ./src/iptux-core/Exception.cpp
