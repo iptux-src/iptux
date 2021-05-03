@@ -20,7 +20,6 @@ static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
 ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
     : palicon(NULL), font(NULL), config(config), flags(0) {
   gettimeofday(&timestamp, NULL);
-  pthread_mutex_init(&mutex, NULL);
   InitSublayer();
 }
 
@@ -30,8 +29,6 @@ ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
 ProgramData::~ProgramData() {
   g_free(palicon);
   g_free(font);
-
-  pthread_mutex_destroy(&mutex);
 }
 
 shared_ptr<IptuxConfig> ProgramData::getConfig() {
@@ -165,12 +162,12 @@ void ProgramData::ReadProgData() {
  */
 void ProgramData::WriteNetSegment() {
   vector<Json::Value> jsons;
-
-  pthread_mutex_lock(&mutex);
-  for (size_t i = 0; i < netseg.size(); ++i) {
-    jsons.push_back(netseg[i].ToJsonValue());
+  {
+    lock_guard<std::mutex> l(mutex);
+    for (size_t i = 0; i < netseg.size(); ++i) {
+      jsons.push_back(netseg[i].ToJsonValue());
+    }
   }
-  pthread_mutex_unlock(&mutex);
   config->SetVector("scan_net_segment", jsons);
 }
 
@@ -186,11 +183,11 @@ void ProgramData::ReadNetSegment() {
 }
 
 void ProgramData::Lock() {
-  pthread_mutex_lock(&mutex);
+  mutex.lock();
 }
 
 void ProgramData::Unlock() {
-  pthread_mutex_unlock(&mutex);
+  mutex.unlock();
 }
 
 bool ProgramData::IsAutoOpenCharDialog() const {
