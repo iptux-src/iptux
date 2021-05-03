@@ -2,6 +2,7 @@
 #define IPTUX_PROGRAMDATACORE_H
 
 #include <memory>
+#include <mutex>
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
@@ -91,7 +92,7 @@ class ProgramData {
  private:
   std::vector<NetSegment> netseg;  //需要通知登录的IP段
   std::shared_ptr<IptuxConfig> config;
-  pthread_mutex_t mutex;  //锁
+  std::mutex mutex;  //锁
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
   std::string passwd;
   std::vector<FileInfo> sharedFileInfos;
