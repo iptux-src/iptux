@@ -2,6 +2,7 @@
 #define IPTUX_PROGRAMDATACORE_H
 
 #include <memory>
+#include <mutex>
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
