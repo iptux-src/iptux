@@ -123,6 +123,8 @@ void SendFileData::SendRegularFile() {
     return;
   }
 
+  file->ensureFilesizeFilled();
+
   /* 发送文件数据 */
   gettimeofday(&filetime, NULL);
   finishsize = SendData(fd, file->filesize);

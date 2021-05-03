@@ -13,8 +13,11 @@
 #include "iptux-core/Models.h"
 
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <sstream>
+#include <unistd.h>
 
+#include "iptux-core/internal/AnalogFS.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/utils.h"
 
@@ -128,6 +131,7 @@ FileInfo::FileInfo()
       filectime(0),
       filemtime(0),
       filenum(0) {}
+
 FileInfo::~FileInfo() {
   g_free(filepath);
 }
@@ -143,6 +147,18 @@ FileInfo::FileInfo(const FileInfo& f)
       filemtime(f.filemtime),
       filenum(f.filenum) {
   filepath = g_strdup(f.filepath);
+}
+
+bool FileInfo::isExist() const {
+  return g_access(filepath, F_OK) != -1;
+}
+
+void FileInfo::ensureFilesizeFilled() {
+  if (filesize >= 0) {
+    return;
+  }
+  AnalogFS afs;
+  filesize = afs.ftwsize(filepath);
 }
 
 MsgPara::MsgPara(CPPalInfo pal)
