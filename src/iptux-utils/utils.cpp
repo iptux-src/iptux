@@ -108,15 +108,15 @@ char* convert_encode(const char* string,
  * @param path 文件路径
  * @return 新文件路径 *
  */
-char* assert_filename_inexist(const char* path) {
+string assert_filename_inexist(const char* path) {
   if (access(path, F_OK) != 0)
-    return g_strdup(path);
+    return path;
 
   int idx = 1;
   while (true) {
     string newPath = dupPath(path, idx);
     if (access(newPath.c_str(), F_OK) != 0) {
-      return g_strdup(newPath.c_str());
+      return newPath;
     }
     idx++;
   }
