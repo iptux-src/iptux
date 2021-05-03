@@ -1,4 +1,4 @@
-# [0.8.1] (2021-05-031)
+# [0.8.1] (2021-05-03)
 
 * [#442] fix unittest fail under 32-bit system.
 * [#439] try to fix compile problem under Hurd.
