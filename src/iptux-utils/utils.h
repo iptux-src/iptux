@@ -45,7 +45,8 @@ char* iptux_string_validate(const char* s,
 char* convert_encode(const char* string,
                      const char* tocode,
                      const char* fromcode);
-char* assert_filename_inexist(const char* path);
+std::string assert_filename_inexist(const char* path);
+std::string dupPath(const std::string& fname, int idx);
 char* getformattime(gboolean date, const char* format, ...);
 
 gboolean giter_compare_foreach(gunichar src, gunichar dst);

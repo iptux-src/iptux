@@ -4,6 +4,7 @@
 * [#439] try to fix compile problem under Hurd.
 * [#447] fix bug: use defined icon no longer works.
 * [#441] use `GtkHeaderBar` under Linux.
+* [#462] when recv file, if file exist, save to `foo (1).ext` (was `1_foo.ext`).
 * Translation updated
   * Simplified Chinese
   * Russian - Thanks to @KovalevArtem

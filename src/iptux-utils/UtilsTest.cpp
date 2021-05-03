@@ -125,3 +125,18 @@ TEST(Utils, utf8MakeValid) {
   ASSERT_EQ(utf8MakeValid("\xe4\xe6\x96\x87"), "�文");
   ASSERT_EQ(utf8MakeValid("\xe4\xb8\xad\xe6"), "中�");
 }
+
+TEST(Utils, dupPath) {
+  ASSERT_EQ(dupPath("/", 1), "/(1)");
+  ASSERT_EQ(dupPath("/a.b", 1), "/a (1).b");
+  ASSERT_EQ(dupPath("/a.b/.", 1), "/a.b/(1)");
+  ASSERT_EQ(dupPath("/a.b/c.d", 1), "/a.b/c (1).d");
+  ASSERT_EQ(dupPath("a.b/.", 1), "a.b/(1)");
+  ASSERT_EQ(dupPath("a.b/c.d", 1), "a.b/c (1).d");
+  ASSERT_EQ(dupPath("", 1), "(1)");
+  ASSERT_EQ(dupPath("a", 1), "a (1)");
+  ASSERT_EQ(dupPath("a.b", 1), "a (1).b");
+  ASSERT_EQ(dupPath("a.b.c", 1), "a.b (1).c");
+  ASSERT_EQ(dupPath("a.b", 2), "a (2).b");
+  ASSERT_EQ(dupPath("a.b", 10), "a (10).b");
+}
