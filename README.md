@@ -97,7 +97,7 @@ iptux -b 127.0.0.3 &
 
 ```
 meson builddir
-find . \( -name '*.cpp' -or -name '*.desktop.in' -or -name '*.ui' \) | grep -v Test | grep -v builddir | sort > po/POTFILES
+git ls-files *.cpp *.desktop.in *.ui *.metainfo.xml | grep -v Test | LC_ALL=C sort > po/POTFILES
 ninja -C builddir iptux-pot
 ninja -C builddir iptux-update-po
 for f in  po/*.po; do echo -n "$f: "; msgfmt -v $f; done

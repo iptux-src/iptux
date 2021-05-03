@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.8.0\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-04-24 22:20+0800\n"
+"POT-Creation-Date: 2021-05-03 23:45+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,28 +58,28 @@ msgid ""
 "g2ipmsg and xipmsg in Debian."
 msgstr ""
 
-#: src/iptux-core/CoreThread.cpp:189
+#: src/iptux-core/CoreThread.cpp:188
 #, c-format
 msgid ""
 "Fatal Error!! Failed to create new socket!\n"
 "%s"
 msgstr ""
 
-#: src/iptux-core/CoreThread.cpp:205
+#: src/iptux-core/CoreThread.cpp:204
 #, c-format
 msgid ""
 "Fatal Error!! Failed to bind the TCP port(%s:%d)!\n"
 "%s"
 msgstr ""
 
-#: src/iptux-core/CoreThread.cpp:218
+#: src/iptux-core/CoreThread.cpp:217
 #, c-format
 msgid ""
 "Fatal Error!! Failed to bind the UDP port(%s:%d)!\n"
 "%s"
 msgstr ""
 
-#: src/iptux-core/CoreThread.cpp:474 src/iptux-core/CoreThread.cpp:508
+#: src/iptux-core/CoreThread.cpp:473 src/iptux-core/CoreThread.cpp:507
 #: src/iptux-core/internal/RecvFileData.cpp:142
 #: src/iptux-core/internal/RecvFileData.cpp:205
 #, c-format
@@ -89,31 +89,31 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/iptux-core/Models.cpp:157
+#: src/iptux-core/Models.cpp:173
 msgid "Empty Message"
 msgstr ""
 
-#: src/iptux-core/Models.cpp:235
+#: src/iptux-core/Models.cpp:251
 msgid "Received an image"
 msgstr ""
 
-#: src/iptux-core/internal/AnalogFS.cpp:94
-#: src/iptux-core/internal/AnalogFS.cpp:99
+#: src/iptux-core/internal/AnalogFS.cpp:93
+#: src/iptux-core/internal/AnalogFS.cpp:98
 #, c-format
 msgid "Open() file \"%s\" failed, %s"
 msgstr ""
 
-#: src/iptux-core/internal/AnalogFS.cpp:118
+#: src/iptux-core/internal/AnalogFS.cpp:117
 #, c-format
 msgid "Stat64() file \"%s\" failed, %s"
 msgstr ""
 
-#: src/iptux-core/internal/AnalogFS.cpp:139
+#: src/iptux-core/internal/AnalogFS.cpp:138
 #, c-format
 msgid "Mkdir() directory \"%s\" failed, %s"
 msgstr ""
 
-#: src/iptux-core/internal/AnalogFS.cpp:165
+#: src/iptux-core/internal/AnalogFS.cpp:164
 #, c-format
 msgid "Opendir() directory \"%s\" failed, %s"
 msgstr ""
@@ -134,7 +134,7 @@ msgstr ""
 #: src/iptux-core/internal/RecvFileData.cpp:124
 #: src/iptux-core/internal/RecvFileData.cpp:254
 #: src/iptux-core/internal/SendFileData.cpp:108
-#: src/iptux-core/internal/SendFileData.cpp:191
+#: src/iptux-core/internal/SendFileData.cpp:193
 msgid "Unknown"
 msgstr ""
 
@@ -163,22 +163,22 @@ msgstr ""
 msgid "send"
 msgstr ""
 
-#: src/iptux-core/internal/SendFileData.cpp:135
+#: src/iptux-core/internal/SendFileData.cpp:137
 #, c-format
 msgid "Failed to send the file \"%s\" to %s!"
 msgstr ""
 
-#: src/iptux-core/internal/SendFileData.cpp:140
+#: src/iptux-core/internal/SendFileData.cpp:142
 #, c-format
 msgid "Send the file \"%s\" to %s successfully!"
 msgstr ""
 
-#: src/iptux-core/internal/SendFileData.cpp:264
+#: src/iptux-core/internal/SendFileData.cpp:266
 #, c-format
 msgid "Failed to send the directory \"%s\" to %s!"
 msgstr ""
 
-#: src/iptux-core/internal/SendFileData.cpp:269
+#: src/iptux-core/internal/SendFileData.cpp:271
 #, c-format
 msgid "Send the directory \"%s\" to %s successfully!"
 msgstr ""
@@ -190,17 +190,17 @@ msgstr ""
 msgid "mysterious"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:829
+#: src/iptux-utils/utils.cpp:854
 #, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:837
+#: src/iptux-utils/utils.cpp:862
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:844
+#: src/iptux-utils/utils.cpp:869
 #, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr ""
@@ -709,91 +709,91 @@ msgstr ""
 msgid "User:%s Host:%s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:438 src/iptux/MainWindow.cpp:440
+#: src/iptux/MainWindow.cpp:439 src/iptux/MainWindow.cpp:441
 msgid "Iptux"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:507
+#: src/iptux/MainWindow.cpp:508
 msgid "Pals Online: 0"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:592
+#: src/iptux/MainWindow.cpp:593
 msgid "Search Pals"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:705
+#: src/iptux/MainWindow.cpp:706
 msgid "Nickname"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:716
+#: src/iptux/MainWindow.cpp:717
 msgid "Group"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:722 src/iptux/TransWindow.cpp:258
+#: src/iptux/MainWindow.cpp:723 src/iptux/TransWindow.cpp:258
 msgid "IPv4"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:728
+#: src/iptux/MainWindow.cpp:729
 msgid "User"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:734
+#: src/iptux/MainWindow.cpp:735
 msgid "Host"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:865
+#: src/iptux/MainWindow.cpp:866
 #, c-format
 msgid "Version: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:869
+#: src/iptux/MainWindow.cpp:870
 #, c-format
 msgid "Nickname: %s@%s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:872
+#: src/iptux/MainWindow.cpp:873
 #, c-format
 msgid "Nickname: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:874
+#: src/iptux/MainWindow.cpp:875
 #, c-format
 msgid "User: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:875
+#: src/iptux/MainWindow.cpp:876
 #, c-format
 msgid "Host: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:879
+#: src/iptux/MainWindow.cpp:880
 #, c-format
 msgid "Address: %s(%s)"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:881
+#: src/iptux/MainWindow.cpp:882
 #, c-format
 msgid "Address: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:885
+#: src/iptux/MainWindow.cpp:886
 msgid "Compatibility: Microsoft"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:887
+#: src/iptux/MainWindow.cpp:888
 msgid "Compatibility: GNU/Linux"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:890
+#: src/iptux/MainWindow.cpp:891
 #, c-format
 msgid "System coding: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:894
+#: src/iptux/MainWindow.cpp:895
 msgid "Signature:"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:936
+#: src/iptux/MainWindow.cpp:937
 #, c-format
 msgid "Pals Online: %d"
 msgstr ""

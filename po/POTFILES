@@ -49,5 +49,4 @@ src/iptux/resources/gtk/AboutDialog.ui
 src/iptux/resources/gtk/DetectPal.ui
 src/iptux/resources/gtk/MainWindow.ui
 src/iptux/resources/gtk/menus.ui
-src/iptux/resources/iptux.gresource.xml
 src/main/iptux.cpp
