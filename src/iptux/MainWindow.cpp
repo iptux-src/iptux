@@ -16,6 +16,7 @@
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 #include <string>
+#include <thread>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
@@ -1000,16 +1001,13 @@ void MainWindow::GoNextTreeModel(MainWindow* mwin) {
 void MainWindow::onRefresh(void*, void*, MainWindow& self) {
   auto mwin = &self;
 
-  pthread_t pid;
-
   self.coreThread.Lock();
   mwin->ClearAllItemFromPaltree();
   self.coreThread.ClearAllPalFromList();
   self.coreThread.Unlock();
-
-  pthread_create(&pid, NULL, ThreadFunc(UiCoreThread::SendNotifyToAll),
-                 &self.coreThread);
-  pthread_detach(pid);
+  thread([](CoreThread* thread) { CoreThread::SendNotifyToAll(thread); },
+         &self.coreThread)
+      .detach();
 }
 
 void MainWindow::onDetect(void*, void*, MainWindow& self) {
