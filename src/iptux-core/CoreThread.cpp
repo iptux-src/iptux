@@ -637,6 +637,8 @@ bool CoreThread::DelPrivateFile(uint32_t id) {
 PFileInfo CoreThread::GetPrivateFileById(uint32_t id) {
   if (id < MAX_SHAREDFILE) {
     FileInfo* f = programData->GetShareFileInfo(id);
+    if (!f)
+      return PFileInfo();
     return make_shared<FileInfo>(*f);
   }
 
