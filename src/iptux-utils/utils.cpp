@@ -109,25 +109,50 @@ char* convert_encode(const char* string,
  * @return 新文件路径 *
  */
 char* assert_filename_inexist(const char* path) {
-  const char* ptr;
-  uint16_t count;
-
   if (access(path, F_OK) != 0)
     return g_strdup(path);
 
-  ptr = strrchr(path, '/');
-  ptr = ptr ? ptr + 1 : path;
-  count = 1;
-  string res;
-  while (count) {
-    res =
-        stringFormat("%.*s%" PRIu16 "_%s", (int)(ptr - path), path, count, ptr);
-    if (access(res.c_str(), F_OK) != 0)
-      break;
-    count++;
+  int idx = 1;
+  while (true) {
+    string newPath = dupPath(path, idx);
+    if (access(newPath.c_str(), F_OK) != 0) {
+      return g_strdup(newPath.c_str());
+    }
+    idx++;
+  }
+}
+
+string dupFilename(const string& filename, int idx) {
+  if (filename == "." || filename == "/") {
+    return stringFormat("(%d)", idx);
   }
 
-  return g_strdup(res.c_str());
+  auto pos = filename.find_last_of('.');
+  if (pos == string::npos) {
+    return stringFormat("%s (%d)", filename.c_str(), idx);
+  }
+
+  return stringFormat("%s (%d).%s", filename.substr(0, pos).c_str(), idx,
+                      filename.substr(pos + 1, filename.size()).c_str());
+}
+
+string dupPath(const string& path, int idx) {
+  auto basename_ = g_path_get_basename(path.c_str());
+  auto dirname_ = g_path_get_dirname(path.c_str());
+
+  string basename = basename_;
+  string dirname = dirname_;
+  g_free(basename_);
+  g_free(dirname_);
+
+  if (dirname == ".") {
+    return dupFilename(basename, idx);
+  }
+  if (dirname == "/") {
+    return "/" + dupFilename(basename, idx);
+  }
+  return stringFormat("%s/%s", dirname.c_str(),
+                      dupFilename(basename, idx).c_str());
 }
 
 /**
