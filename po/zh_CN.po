@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-05-03 23:45+0800\n"
-"PO-Revision-Date: 2021-04-11 06:48+0000\n"
+"PO-Revision-Date: 2021-05-03 15:52+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -36,23 +36,23 @@ msgstr "chat;talk;im;message;ipmsg;feige;"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:12
 msgid "iptux is an “IP Messenger” client."
-msgstr ""
+msgstr "iptux 是一个 IP Messenger 客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
 msgid "It can:"
-msgstr ""
+msgstr "它可以："
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
 msgid "auto-detect other clients on the intranet."
-msgstr ""
+msgstr "自动检测局域网的其他客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
 msgid "send messages to other clients."
-msgstr ""
+msgstr "发送消息到其他客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
 msgid "send files to other clients."
-msgstr ""
+msgstr "发送文件到其它客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:23
 msgid ""
@@ -60,6 +60,7 @@ msgid ""
 "China, and with the original “IP Messenger” clients from Japan, including "
 "g2ipmsg and xipmsg in Debian."
 msgstr ""
+"它可以兼容（期望如此）中国的飞鸽传书和飞秋，以及日本原版的\"IP Messenger\"，还有Debian提供的 g2ipmsg 和 xipmsg。"
 
 #: src/iptux-core/CoreThread.cpp:188
 #, c-format
@@ -155,7 +156,7 @@ msgstr "未知"
 #, fuzzy, c-format
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
-msgstr "从 %2$s 接收文件\"%1$s\"失败！期望长度 %3$d，收到 %4$d"
+msgstr "从 %2$s 接收文件\"%1$s\"失败！期望长度 %3$lld，收到 %4$lld"
 
 #: src/iptux-core/internal/RecvFileData.cpp:181
 #, c-format
