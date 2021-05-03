@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "iptux-core/Models.h"
+#include "iptux-utils/TestHelper.h"
 #include "iptux-utils/utils.h"
 
 using namespace std;
@@ -73,4 +74,24 @@ TEST(MsgPara, getSummary) {
   msg.dtlist.clear();
   msg.dtlist.push_back(ChipData(MessageContentType::PICTURE, "foobar"));
   EXPECT_EQ(msg.getSummary(), "Received an image");
+}
+
+TEST(FileInfo, isExist) {
+  auto path1 = testDataPath("hexdumptest.dat");
+  FileInfo f;
+  f.filepath = g_strdup(path1.c_str());
+  ASSERT_TRUE(f.isExist());
+
+  auto path2 = testDataPath("hexdumptest-notexist.dat");
+  FileInfo f2;
+  f2.filepath = g_strdup(path2.c_str());
+  ASSERT_FALSE(f2.isExist());
+}
+
+TEST(FileInfo, ensureFilesizeFilled) {
+  auto path1 = testDataPath("hexdumptest.dat");
+  FileInfo f;
+  f.filepath = g_strdup(path1.c_str());
+  f.ensureFilesizeFilled();
+  ASSERT_EQ(f.filesize, 256);
 }
