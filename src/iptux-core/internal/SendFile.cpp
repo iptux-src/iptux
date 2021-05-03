@@ -92,12 +92,10 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
     LOG_INFO("Pal not exist: %s", inAddrToString(addr.sin_addr).c_str());
     return;
   }
-
-  /* 发送文件数据 */
-  //        /**
-  //         *文件信息可能被删除或修改，必须单独复制一份.
-  //         */
-  //        file->fileown = pal;
+  if (!file->fileown) {
+    // for public shared file, there need one owner
+    file->fileown = coreThread->getMe();
+  }
   SendFile(coreThread).ThreadSendFile(sock, file);
 }
 
