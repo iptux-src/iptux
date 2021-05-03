@@ -155,6 +155,8 @@ class FileInfo {
   FileInfo& operator=(const FileInfo& fileInfo);
 
   bool operator==(const FileInfo& rhs) const;
+  bool isExist() const;
+  void ensureFilesizeFilled();
 
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号

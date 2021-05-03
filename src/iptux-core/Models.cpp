@@ -13,7 +13,9 @@
 #include "iptux-core/Models.h"
 
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <sstream>
+#include <unistd.h>
 
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/utils.h"
@@ -143,6 +145,10 @@ FileInfo::FileInfo(const FileInfo& f)
       filemtime(f.filemtime),
       filenum(f.filenum) {
   filepath = g_strdup(f.filepath);
+}
+
+bool FileInfo::isExist() const {
+  return g_access(filepath, F_OK) != -1;
 }
 
 MsgPara::MsgPara(CPPalInfo pal)

@@ -15,7 +15,6 @@
 #include <cinttypes>
 #include <cstring>
 #include <memory>
-
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -126,15 +125,14 @@ void SendFile::SendFileInfo(PPalInfo pal,
   /* 将文件信息写入缓冲区 */
   for (FileInfo& fileInfo : fileInfos) {
     auto file = &fileInfo;
-    if (access(file->filepath, F_OK) == -1) {
+    if (!fileInfo.isExist()) {
       continue;
     }
     name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
     file->packetn = cmd.Packetn();
     snprintf(ptr, MAX_UDPLEN - len,
-             "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a",
-             file->fileid, name, file->filesize, file->filectime,
-             (unsigned int)file->fileattr);
+             "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a", file->fileid, name,
+             file->filesize, file->filectime, (unsigned int)file->fileattr);
     g_free(name);
     len += strlen(ptr);
     ptr = buf + len;
