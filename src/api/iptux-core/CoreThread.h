@@ -172,7 +172,7 @@ class CoreThread {
   std::shared_ptr<IptuxConfig> config;
   int tcpSock;
   int udpSock;
-  mutable pthread_mutex_t mutex;  //锁
+  mutable std::mutex mutex;  //锁
 
  private:
   std::atomic_bool started;

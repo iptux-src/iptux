@@ -134,7 +134,6 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       udpSock(-1),
       started(false),
       pImpl(std::make_unique<Impl>()) {
-  pthread_mutex_init(&mutex, NULL);
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
@@ -341,11 +340,11 @@ bool CoreThread::IsBlocked(in_addr ipv4) const {
 }
 
 void CoreThread::Lock() const {
-  pthread_mutex_lock(&mutex);
+  mutex.lock();
 }
 
 void CoreThread::Unlock() const {
-  pthread_mutex_unlock(&mutex);
+  mutex.unlock();
 }
 
 /**
