@@ -18,6 +18,7 @@ core_sources += files([
     'internal/AnalogFS.cpp',
     'internal/Command.cpp',
     'internal/CommandMode.cpp',
+    'internal/Ipv4ConnectService.cpp',
     'internal/RecvFile.cpp',
     'internal/RecvFileData.cpp',
     'internal/SendFile.cpp',
