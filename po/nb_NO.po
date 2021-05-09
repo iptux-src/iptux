@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.8.0-b2\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-05-03 23:45+0800\n"
-"PO-Revision-Date: 2021-04-10 10:36+0000\n"
+"PO-Revision-Date: 2021-05-10 08:34+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/iptux/"
 "iptux/nb_NO/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -152,11 +152,11 @@ msgid "Unknown"
 msgstr "Ukjent"
 
 #: src/iptux-core/internal/RecvFileData.cpp:176
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
 msgstr ""
-"Klarte ikke å motta filen «%s» fra %s. Forventet lengde %d. Mottatt %d."
+"Klarte ikke å motta filen «%s» fra %s. Forventet lengde %lld. Mottatt %lld."
 
 #: src/iptux-core/internal/RecvFileData.cpp:181
 #, fuzzy, c-format
