@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-05-03 23:45+0800\n"
-"PO-Revision-Date: 2021-04-10 10:36+0000\n"
-"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"PO-Revision-Date: 2021-05-17 00:40+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/iptux/iptux/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
@@ -974,7 +974,7 @@ msgstr "Die Datei, die geöffnet werden soll, existiert nicht!"
 
 #: src/iptux/TransWindow.cpp:406
 msgid "iptux Error"
-msgstr "Iptux Fehler"
+msgstr "iptux-Fehler"
 
 #: src/iptux/UiCoreThread.cpp:252 src/iptux/UiCoreThread.cpp:276
 #: src/iptux/UiCoreThread.cpp:376 src/iptux/UiCoreThread.cpp:399
@@ -991,7 +991,7 @@ msgstr "Es kann kein verfügbarer Webbrowser gefunden werden!\n"
 
 #: src/iptux/UiHelper.cpp:153
 msgid "Information"
-msgstr "Information"
+msgstr "Informationen"
 
 #: src/iptux/UiHelper.cpp:176
 msgid "Warning"
