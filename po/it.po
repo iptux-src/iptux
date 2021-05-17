@@ -8,15 +8,17 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-05-03 23:45+0800\n"
-"PO-Revision-Date: 2013-09-08 09:34+0000\n"
-"Last-Translator: Wonderfulheart <Unknown>\n"
-"Language-Team: Italian <it@li.org>\n"
+"PO-Revision-Date: 2021-05-17 00:40+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"Language-Team: Italian <https://hosted.weblate.org/projects/iptux/iptux/it/>"
+"\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.7-dev\n"
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
-"X-Generator: Launchpad (build 18532)\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -258,7 +260,7 @@ msgstr ""
 
 #: src/iptux/DataSettings.cpp:69
 msgid "Personal"
-msgstr "Dati Personali"
+msgstr "Dati personali"
 
 #: src/iptux/DataSettings.cpp:71
 msgid "System"
@@ -595,11 +597,11 @@ msgstr "Conoscenti"
 
 #: src/iptux/DialogGroup.cpp:482
 msgid "Select All"
-msgstr "Seleziona Tutto"
+msgstr "Seleziona tutto"
 
 #: src/iptux/DialogGroup.cpp:487
 msgid "Reverse Select"
-msgstr "Inverti la Selezione"
+msgstr "Inverti la selezione"
 
 #: src/iptux/DialogGroup.cpp:492
 msgid "Clear Up"
@@ -876,7 +878,7 @@ msgstr "Deve essere compatibile con il protocollo iptux (PERICOLOSO)"
 
 #: src/iptux/ShareFile.cpp:104
 msgid "Shared Files Management"
-msgstr "Gestione File Condivisi"
+msgstr "Gestione dei file condivisi"
 
 #: src/iptux/ShareFile.cpp:105
 msgid "OK"
@@ -998,14 +1000,13 @@ msgstr "Altri"
 
 #: src/iptux/UiCoreThread.cpp:420
 msgid "Broadcast"
-msgstr "Broadcast"
+msgstr "Trasmetti"
 
 #: src/iptux/UiHelper.cpp:46
 msgid "Can't find any available web browser!\n"
 msgstr "Impossibile trovare alcun web browser disponibile!\n"
 
 #: src/iptux/UiHelper.cpp:153
-#, fuzzy
 msgid "Information"
 msgstr "Informazioni"
 
@@ -1015,7 +1016,7 @@ msgstr "Avviso"
 
 #: src/iptux/UiModels.cpp:476
 msgid "<ERROR>"
-msgstr "<ERROR>"
+msgstr "<ERRORE>"
 
 #: src/iptux/dialog.cpp:36
 msgid ""
@@ -1032,7 +1033,7 @@ msgstr "Conferma l'Uscita"
 #: src/iptux/dialog.cpp:59 src/iptux/resources/gtk/MainWindow.ui:12
 #: src/iptux/resources/gtk/menus.ui:83
 msgid "Request Shared Resources"
-msgstr "Richiedi le Risorse Condivise"
+msgstr "Richiedi le risorse condivise"
 
 #: src/iptux/dialog.cpp:59
 msgid "Agree"
@@ -1051,7 +1052,7 @@ msgstr ""
 
 #: src/iptux/dialog.cpp:103
 msgid "Access Password"
-msgstr "Password di Accesso"
+msgstr "Password di accesso"
 
 #: src/iptux/dialog.cpp:110
 msgid "Please input the password for the shared files behind"
@@ -1068,11 +1069,11 @@ msgid ""
 "Empty Password!"
 msgstr ""
 "\n"
-"Password Vuota!"
+"Password vuota!"
 
 #: src/iptux/dialog.cpp:166
 msgid "Enter a New Password"
-msgstr "Inserisci la Nuova Password"
+msgstr "Inserisci la nuova password"
 
 #: src/iptux/dialog.cpp:174
 msgid "Password: "
@@ -1120,16 +1121,15 @@ msgstr "Per favore, inserisci un indirizzo IP (solo IPv4):"
 
 #: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:94
 msgid "Send Message"
-msgstr "Invia Messaggio"
+msgstr "Invia il messaggio"
 
 #: src/iptux/resources/gtk/MainWindow.ui:16
-#, fuzzy
 msgid "Change Info"
-msgstr "Modifica le Informazioni"
+msgstr "Modifica le informazioni"
 
 #: src/iptux/resources/gtk/MainWindow.ui:20
 msgid "Delete Pal"
-msgstr "Elimina Conoscenti"
+msgstr "Elimina conoscenti"
 
 #: src/iptux/resources/gtk/menus.ui:6
 msgid "_Preferences"
@@ -1185,25 +1185,23 @@ msgstr ""
 
 #: src/iptux/resources/gtk/menus.ui:68
 msgid "Insert Picture"
-msgstr "Inserisci un'Immagine"
+msgstr "Inserisci un'immagine"
 
 #: src/iptux/resources/gtk/menus.ui:73
 msgid "Attach File"
-msgstr "Allega File"
+msgstr "Allega un file"
 
 #: src/iptux/resources/gtk/menus.ui:77
 msgid "Attach Folder"
-msgstr "Allega Cartella"
+msgstr "Allega una cartella"
 
 #: src/iptux/resources/gtk/menus.ui:87
-#, fuzzy
 msgid "Clear Chat History"
-msgstr "Salva la cronologia della chat"
+msgstr "Cancella la cronologia della chat"
 
 #: src/iptux/resources/gtk/menus.ui:98
-#, fuzzy
 msgid "Close Chat"
-msgstr "Chiudi"
+msgstr "Chiudi la chat"
 
 #: src/iptux/resources/gtk/menus.ui:104
 msgid "_Window"
@@ -1232,15 +1230,15 @@ msgstr "_Aiuto"
 
 #: src/iptux/resources/gtk/menus.ui:128
 msgid "_About"
-msgstr ""
+msgstr "_Informazioni"
 
 #: src/iptux/resources/gtk/menus.ui:132
 msgid "Report Bug"
-msgstr ""
+msgstr "Segnala un errore"
 
 #: src/iptux/resources/gtk/menus.ui:141
 msgid "Open This File"
-msgstr "Apri Questo File"
+msgstr "Apri questo file"
 
 #: src/iptux/resources/gtk/menus.ui:145
 msgid "Open Containing Folder"

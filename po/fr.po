@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-05-03 23:45+0800\n"
-"PO-Revision-Date: 2016-07-07 21:30+0000\n"
-"Last-Translator: L'Africain <Unknown>\n"
-"Language-Team: Moi\n"
+"PO-Revision-Date: 2021-05-17 00:40+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"Language-Team: French <https://hosted.weblate.org/projects/iptux/iptux/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.7-dev\n"
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
-"X-Generator: Launchpad (build 18532)\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -26,31 +27,31 @@ msgstr "iptux"
 #: share/applications/io.github.iptux_src.iptux.desktop.in:4
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "LAN communication software"
-msgstr ""
+msgstr "Logiciel de communication LAN"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:5
 msgid "chat;talk;im;message;ipmsg;feige;"
-msgstr ""
+msgstr "discussion;conversation;im;message;ipmsg;feige;"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:12
 msgid "iptux is an “IP Messenger” client."
-msgstr ""
+msgstr "iptux est un client de messagerie IP."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
 msgid "It can:"
-msgstr ""
+msgstr "Il peut :"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
 msgid "auto-detect other clients on the intranet."
-msgstr ""
+msgstr "détecter automatiquement les autres clients sur l'intranet."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
 msgid "send messages to other clients."
-msgstr ""
+msgstr "envoyer des messages à d'autres clients."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
 msgid "send files to other clients."
-msgstr ""
+msgstr "envoyer des fichiers à d'autres clients."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:23
 msgid ""
@@ -58,15 +59,17 @@ msgid ""
 "China, and with the original “IP Messenger” clients from Japan, including "
 "g2ipmsg and xipmsg in Debian."
 msgstr ""
+"Il est (censément) compatible avec 飞鸽传书 (Feige) et 飞秋 (FeiQ) de Chine, et "
+"avec les clients de messagerie IP originaux du Japon, y compris g2ipmsg et "
+"xipmsg dans Debian."
 
 #: src/iptux-core/CoreThread.cpp:188
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Fatal Error!! Failed to create new socket!\n"
 "%s"
 msgstr ""
-"Erreur fatale !\n"
-"Erreur d'entrées/sorties!\n"
+"Erreur fatale ! Impossible de créer un nouveau socket !\n"
 "%s"
 
 #: src/iptux-core/CoreThread.cpp:204
@@ -103,19 +106,18 @@ msgstr ""
 "%s"
 
 #: src/iptux-core/Models.cpp:173
-#, fuzzy
 msgid "Empty Message"
-msgstr "Envoyer un message"
+msgstr "Message vide"
 
 #: src/iptux-core/Models.cpp:251
 msgid "Received an image"
-msgstr ""
+msgstr "Image reçue"
 
 #: src/iptux-core/internal/AnalogFS.cpp:93
 #: src/iptux-core/internal/AnalogFS.cpp:98
 #, c-format
 msgid "Open() file \"%s\" failed, %s"
-msgstr "L'ouverture() du fichier \"%s\" a échoué, %s"
+msgstr "L'ouverture() du fichier « %s » a échoué, %s"
 
 #: src/iptux-core/internal/AnalogFS.cpp:117
 #, c-format
@@ -145,15 +147,14 @@ msgstr ""
 
 #: src/iptux-core/internal/RecvFileData.cpp:117
 msgid "receive"
-msgstr "Reçu"
+msgstr "réception"
 
 #: src/iptux-core/internal/RecvFileData.cpp:124
 #: src/iptux-core/internal/RecvFileData.cpp:254
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:193
-#, fuzzy
 msgid "Unknown"
-msgstr "inconnu"
+msgstr "Inconnu"
 
 #: src/iptux-core/internal/RecvFileData.cpp:176
 #, fuzzy, c-format
@@ -174,31 +175,31 @@ msgstr "Échec de la réception du dossier \"%s\" de %s !"
 #: src/iptux-core/internal/RecvFileData.cpp:324
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
-msgstr "Le dossier \"%s\" de %s a été reçu avec succès !"
+msgstr "Le dossier « %s » de %s a été reçu avec succès !"
 
 #: src/iptux-core/internal/SendFileData.cpp:101
 msgid "send"
-msgstr "Envoyer"
+msgstr "envoyer"
 
 #: src/iptux-core/internal/SendFileData.cpp:137
 #, c-format
 msgid "Failed to send the file \"%s\" to %s!"
-msgstr "Échec de l'envoi du fichier \"%s\" à %s !"
+msgstr "Échec de l'envoi du fichier « %s » à %s !"
 
 #: src/iptux-core/internal/SendFileData.cpp:142
 #, c-format
 msgid "Send the file \"%s\" to %s successfully!"
-msgstr "Le fichier \"%s\" a été envoyé avec succès à %s !"
+msgstr "Le fichier « %s » a été envoyé avec succès à %s !"
 
 #: src/iptux-core/internal/SendFileData.cpp:266
 #, c-format
 msgid "Failed to send the directory \"%s\" to %s!"
-msgstr "Échec de l'envoi du dossier \"%s\" à %s !"
+msgstr "Échec de l'envoi du dossier « %s » à %s !"
 
 #: src/iptux-core/internal/SendFileData.cpp:271
 #, c-format
 msgid "Send the directory \"%s\" to %s successfully!"
-msgstr "Le dossier \"%s\" a été envoyé avec succès à %s !"
+msgstr "Le dossier « %s » a été envoyé avec succès à %s !"
 
 #: src/iptux-core/internal/UdpData.cpp:170
 #: src/iptux-core/internal/UdpData.cpp:171
@@ -228,34 +229,34 @@ msgstr ""
 
 #: src/iptux/AboutDialog.cpp:53
 msgid "Thanks to"
-msgstr ""
+msgstr "Merci à"
 
 #: src/iptux/Application.cpp:49
 msgid "Loading the process successfully!"
-msgstr "Le processus a été charger avec succès !"
+msgstr "Le processus a été chargé avec succès !"
 
 #: src/iptux/Application.cpp:236
 #, c-format
 msgid "New Message from %s"
-msgstr ""
+msgstr "Nouveau message de %s"
 
 #: src/iptux/Application.cpp:246
 #, c-format
 msgid "New File from %s"
-msgstr ""
+msgstr "Nouveau fichier de %s"
 
 #: src/iptux/Application.cpp:255
 msgid "Receiving File Finished"
-msgstr ""
+msgstr "Réception du fichier terminée"
 
 #: src/iptux/Application.cpp:259
 msgid "file info no longer exist"
-msgstr ""
+msgstr "les infos du fichier n'existent plus"
 
 #: src/iptux/Darwin.cpp:16
 #, c-format
 msgid "Couldn’t load icon: %s"
-msgstr ""
+msgstr "Impossible de charger l'icône : %s"
 
 #: src/iptux/DataSettings.cpp:69
 msgid "Personal"
@@ -596,11 +597,11 @@ msgstr "Ami(e)s"
 
 #: src/iptux/DialogGroup.cpp:482
 msgid "Select All"
-msgstr "Tout Sélectionner"
+msgstr "Tout sélectionner"
 
 #: src/iptux/DialogGroup.cpp:487
 msgid "Reverse Select"
-msgstr "Inverser la Sélection"
+msgstr "Inverser la sélection"
 
 #: src/iptux/DialogGroup.cpp:492
 msgid "Clear Up"
@@ -684,9 +685,8 @@ msgid "Enclosure."
 msgstr "Enceinte."
 
 #: src/iptux/DialogPeer.cpp:573
-#, fuzzy
 msgid "Files to be received"
-msgstr "Fichier à recevoir."
+msgstr "Fichier à recevoir"
 
 #: src/iptux/DialogPeer.cpp:577
 msgid "Receiving progress."
@@ -795,29 +795,28 @@ msgid "Nickname: %s"
 msgstr "Pseudo : %s\n"
 
 #: src/iptux/MainWindow.cpp:875
-#, fuzzy, c-format
+#, c-format
 msgid "User: %s"
-msgstr "Utilisateur : %s\n"
+msgstr "Utilisateur : %s"
 
 #: src/iptux/MainWindow.cpp:876
-#, fuzzy, c-format
+#, c-format
 msgid "Host: %s"
-msgstr "Hôte : %s\n"
+msgstr "Hôte : %s"
 
 #: src/iptux/MainWindow.cpp:880
-#, fuzzy, c-format
+#, c-format
 msgid "Address: %s(%s)"
-msgstr "Adresse : %s(%s)\n"
+msgstr "Adresse : %s(%s)"
 
 #: src/iptux/MainWindow.cpp:882
-#, fuzzy, c-format
+#, c-format
 msgid "Address: %s"
-msgstr "Adresse : %s\n"
+msgstr "Adresse : %s"
 
 #: src/iptux/MainWindow.cpp:886
-#, fuzzy
 msgid "Compatibility: Microsoft"
-msgstr "Compatibilité : Microsoft\n"
+msgstr "Compatibilité : Microsoft"
 
 #: src/iptux/MainWindow.cpp:888
 #, fuzzy
@@ -865,7 +864,7 @@ msgstr "Encodage :"
 
 #: src/iptux/RevisePal.cpp:165
 msgid "Be SURE to know what you are doing!"
-msgstr "Soyez CERTAIN de savoir ce que vous faites !"
+msgstr "ASSUREZ-VOUS de savoir ce que vous faites !"
 
 #: src/iptux/RevisePal.cpp:171
 msgid "Pal's face picture:"
@@ -988,9 +987,8 @@ msgid "The file you want to open not exist!"
 msgstr "Le fichier que vous souhaitez ouvrir n'existe pas !"
 
 #: src/iptux/TransWindow.cpp:406
-#, fuzzy
 msgid "iptux Error"
-msgstr "iptux"
+msgstr "Erreur iptux"
 
 #: src/iptux/UiCoreThread.cpp:252 src/iptux/UiCoreThread.cpp:276
 #: src/iptux/UiCoreThread.cpp:376 src/iptux/UiCoreThread.cpp:399
@@ -1006,9 +1004,8 @@ msgid "Can't find any available web browser!\n"
 msgstr "Impossible de trouver un navigateur web disponible !\n"
 
 #: src/iptux/UiHelper.cpp:153
-#, fuzzy
 msgid "Information"
-msgstr "Information"
+msgstr "Informations"
 
 #: src/iptux/UiHelper.cpp:176
 msgid "Warning"
@@ -1052,7 +1049,7 @@ msgstr ""
 
 #: src/iptux/dialog.cpp:103
 msgid "Access Password"
-msgstr "Mot de passe pour d'accès"
+msgstr "Mot de passe d'accès"
 
 #: src/iptux/dialog.cpp:110
 msgid "Please input the password for the shared files behind"
@@ -1124,9 +1121,8 @@ msgid "Send Message"
 msgstr "Envoyer un message"
 
 #: src/iptux/resources/gtk/MainWindow.ui:16
-#, fuzzy
 msgid "Change Info"
-msgstr "Modifier l'info."
+msgstr "Modifier les infos"
 
 #: src/iptux/resources/gtk/MainWindow.ui:20
 msgid "Delete Pal"
@@ -1154,7 +1150,7 @@ msgstr "_Rechercher"
 
 #: src/iptux/resources/gtk/menus.ui:28
 msgid "_View"
-msgstr ""
+msgstr "_Visualiser"
 
 #: src/iptux/resources/gtk/menus.ui:31
 msgid "Sort"
@@ -1178,11 +1174,11 @@ msgstr "Ordre décroissant"
 
 #: src/iptux/resources/gtk/menus.ui:58
 msgid "_Refresh"
-msgstr ""
+msgstr "_Actualiser"
 
 #: src/iptux/resources/gtk/menus.ui:65
 msgid "_Chat"
-msgstr ""
+msgstr "_Discussion"
 
 #: src/iptux/resources/gtk/menus.ui:68
 msgid "Insert Picture"
@@ -1208,7 +1204,7 @@ msgstr "Fermer"
 
 #: src/iptux/resources/gtk/menus.ui:104
 msgid "_Window"
-msgstr ""
+msgstr "_Fenêtre"
 
 #: src/iptux/resources/gtk/menus.ui:107
 msgid "_Transmission"
@@ -1220,12 +1216,11 @@ msgstr "_Gestionnaire de partage"
 
 #: src/iptux/resources/gtk/menus.ui:115
 msgid "_Chat Log"
-msgstr ""
+msgstr "_Historique"
 
 #: src/iptux/resources/gtk/menus.ui:119
-#, fuzzy
 msgid "_System Log"
-msgstr "Encodage :"
+msgstr "_Journal système"
 
 #: src/iptux/resources/gtk/menus.ui:125
 msgid "_Help"
@@ -1233,11 +1228,11 @@ msgstr "Aid_e"
 
 #: src/iptux/resources/gtk/menus.ui:128
 msgid "_About"
-msgstr ""
+msgstr "_À propos"
 
 #: src/iptux/resources/gtk/menus.ui:132
 msgid "Report Bug"
-msgstr ""
+msgstr "Signaler une erreur"
 
 #: src/iptux/resources/gtk/menus.ui:141
 msgid "Open This File"
@@ -1260,9 +1255,8 @@ msgid "Clear Tasklist"
 msgstr "Vider la liste des tâches"
 
 #: src/iptux/resources/gtk/menus.ui:169
-#, fuzzy
 msgid "Refuse All"
-msgstr "Refuser"
+msgstr "Tout refuser"
 
 #: src/main/iptux.cpp:150
 #, fuzzy
