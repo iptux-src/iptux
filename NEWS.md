@@ -1,6 +1,9 @@
 # [0.8.2] ???
 
 * [#473] iconify main window when delete.
+* Translation updated:
+  * Norwegian Bokmål - Thanks to Allan Nordhøy
+  * German, French, Italy - Thanks to J. Lavoie
 
 # [0.8.1] (2021-05-03)
 
