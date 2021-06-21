@@ -19,6 +19,7 @@ bool ValidateDragData(GtkSelectionData* data,
 
 const GRegex* getUrlRegex();
 
+gboolean gtk_window_iconify_on_delete(GtkWindow* window);
 void add_accelerator(GtkApplication* app,
                      const char* action,
                      const char* accel);

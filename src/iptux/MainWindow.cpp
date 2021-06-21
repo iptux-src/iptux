@@ -431,6 +431,7 @@ GtkWidget* MainWindow::CreateMainWindow() {
 
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
+  g_signal_connect(window, "delete-event", G_CALLBACK(gtk_window_iconify_on_delete), nullptr);
   return window;
 }
 

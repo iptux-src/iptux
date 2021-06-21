@@ -274,4 +274,9 @@ GActionEntry makeStateActionEntry(const string& name,
                        {0, 0, 0}});
 }
 
+gboolean gtk_window_iconify_on_delete(GtkWindow* window) {
+  gtk_window_iconify(window);
+  return TRUE;
+}
+
 }  // namespace iptux
