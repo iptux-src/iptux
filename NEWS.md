@@ -1,4 +1,4 @@
-# [0.8.2] ???
+# [0.8.2] (2021-06-21)
 
 * [#473] iconify main window when delete.
 * Translation updated:
