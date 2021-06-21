@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-05-03 23:45+0800\n"
+"POT-Creation-Date: 2021-06-21 23:26+0800\n"
 "PO-Revision-Date: 2016-11-01 13:56+0000\n"
 "Last-Translator: EquipeLinux <Unknown>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
@@ -734,92 +734,92 @@ msgstr ""
 msgid "User:%s Host:%s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:439 src/iptux/MainWindow.cpp:441
+#: src/iptux/MainWindow.cpp:440 src/iptux/MainWindow.cpp:442
 msgid "Iptux"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:508
+#: src/iptux/MainWindow.cpp:509
 msgid "Pals Online: 0"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:593
+#: src/iptux/MainWindow.cpp:594
 msgid "Search Pals"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:706
+#: src/iptux/MainWindow.cpp:707
 msgid "Nickname"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:717
+#: src/iptux/MainWindow.cpp:718
 msgid "Group"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:723 src/iptux/TransWindow.cpp:258
+#: src/iptux/MainWindow.cpp:724 src/iptux/TransWindow.cpp:258
 msgid "IPv4"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:729
+#: src/iptux/MainWindow.cpp:730
 msgid "User"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:735
+#: src/iptux/MainWindow.cpp:736
 msgid "Host"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:866
+#: src/iptux/MainWindow.cpp:867
 #, c-format
 msgid "Version: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:870
+#: src/iptux/MainWindow.cpp:871
 #, fuzzy, c-format
 msgid "Nickname: %s@%s"
 msgstr "Por Apelido"
 
-#: src/iptux/MainWindow.cpp:873
+#: src/iptux/MainWindow.cpp:874
 #, fuzzy, c-format
 msgid "Nickname: %s"
 msgstr "Por Apelido"
 
-#: src/iptux/MainWindow.cpp:875
+#: src/iptux/MainWindow.cpp:876
 #, c-format
 msgid "User: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:876
+#: src/iptux/MainWindow.cpp:877
 #, c-format
 msgid "Host: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:880
+#: src/iptux/MainWindow.cpp:881
 #, c-format
 msgid "Address: %s(%s)"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:882
+#: src/iptux/MainWindow.cpp:883
 #, c-format
 msgid "Address: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:886
+#: src/iptux/MainWindow.cpp:887
 msgid "Compatibility: Microsoft"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:888
+#: src/iptux/MainWindow.cpp:889
 msgid "Compatibility: GNU/Linux"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:891
+#: src/iptux/MainWindow.cpp:892
 #, c-format
 msgid "System coding: %s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:895
+#: src/iptux/MainWindow.cpp:896
 #, fuzzy
 msgid "Signature:"
 msgstr "Assinatura"
 
-#: src/iptux/MainWindow.cpp:937
+#: src/iptux/MainWindow.cpp:938
 #, c-format
 msgid "Pals Online: %d"
 msgstr ""

@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-05-03 23:45+0800\n"
+"POT-Creation-Date: 2021-06-21 23:26+0800\n"
 "PO-Revision-Date: 2021-05-17 00:40+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
-"Language-Team: Italian <https://hosted.weblate.org/projects/iptux/iptux/it/>"
-"\n"
+"Language-Team: Italian <https://hosted.weblate.org/projects/iptux/iptux/it/"
+">\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -747,95 +747,95 @@ msgstr "Invio Broadcast"
 msgid "User:%s Host:%s"
 msgstr "Utente:%s Host:%s"
 
-#: src/iptux/MainWindow.cpp:439 src/iptux/MainWindow.cpp:441
+#: src/iptux/MainWindow.cpp:440 src/iptux/MainWindow.cpp:442
 #, fuzzy
 msgid "Iptux"
 msgstr "iptux"
 
-#: src/iptux/MainWindow.cpp:508
+#: src/iptux/MainWindow.cpp:509
 msgid "Pals Online: 0"
 msgstr "Conoscenti Collegati: 0"
 
-#: src/iptux/MainWindow.cpp:593
+#: src/iptux/MainWindow.cpp:594
 msgid "Search Pals"
 msgstr "Cerca Conoscenti"
 
-#: src/iptux/MainWindow.cpp:706
+#: src/iptux/MainWindow.cpp:707
 msgid "Nickname"
 msgstr "Nickname"
 
-#: src/iptux/MainWindow.cpp:717
+#: src/iptux/MainWindow.cpp:718
 msgid "Group"
 msgstr "Gruppo"
 
-#: src/iptux/MainWindow.cpp:723 src/iptux/TransWindow.cpp:258
+#: src/iptux/MainWindow.cpp:724 src/iptux/TransWindow.cpp:258
 msgid "IPv4"
 msgstr "IPv4"
 
-#: src/iptux/MainWindow.cpp:729
+#: src/iptux/MainWindow.cpp:730
 msgid "User"
 msgstr "Utente"
 
-#: src/iptux/MainWindow.cpp:735
+#: src/iptux/MainWindow.cpp:736
 msgid "Host"
 msgstr "Host"
 
-#: src/iptux/MainWindow.cpp:866
+#: src/iptux/MainWindow.cpp:867
 #, fuzzy, c-format
 msgid "Version: %s"
 msgstr "Versione: %s\n"
 
-#: src/iptux/MainWindow.cpp:870
+#: src/iptux/MainWindow.cpp:871
 #, fuzzy, c-format
 msgid "Nickname: %s@%s"
 msgstr "Nickname: %s@%s\n"
 
-#: src/iptux/MainWindow.cpp:873
+#: src/iptux/MainWindow.cpp:874
 #, fuzzy, c-format
 msgid "Nickname: %s"
 msgstr "Nickname: %s\n"
 
-#: src/iptux/MainWindow.cpp:875
+#: src/iptux/MainWindow.cpp:876
 #, fuzzy, c-format
 msgid "User: %s"
 msgstr "Utente: %s\n"
 
-#: src/iptux/MainWindow.cpp:876
+#: src/iptux/MainWindow.cpp:877
 #, fuzzy, c-format
 msgid "Host: %s"
 msgstr "Host: %s\n"
 
-#: src/iptux/MainWindow.cpp:880
+#: src/iptux/MainWindow.cpp:881
 #, fuzzy, c-format
 msgid "Address: %s(%s)"
 msgstr "Indirizzo: %s(%s)\n"
 
-#: src/iptux/MainWindow.cpp:882
+#: src/iptux/MainWindow.cpp:883
 #, fuzzy, c-format
 msgid "Address: %s"
 msgstr "Indirizzo: %s\n"
 
-#: src/iptux/MainWindow.cpp:886
+#: src/iptux/MainWindow.cpp:887
 #, fuzzy
 msgid "Compatibility: Microsoft"
 msgstr "Compatibilità: Microsoft\n"
 
-#: src/iptux/MainWindow.cpp:888
+#: src/iptux/MainWindow.cpp:889
 #, fuzzy
 msgid "Compatibility: GNU/Linux"
 msgstr "Compatibilità: GNU/Linux\n"
 
-#: src/iptux/MainWindow.cpp:891
+#: src/iptux/MainWindow.cpp:892
 #, fuzzy, c-format
 msgid "System coding: %s"
 msgstr "Sistema di codifica: %s\n"
 
-#: src/iptux/MainWindow.cpp:895
+#: src/iptux/MainWindow.cpp:896
 #, fuzzy
 msgid "Signature:"
 msgstr "Firma:\n"
 
-#: src/iptux/MainWindow.cpp:937
+#: src/iptux/MainWindow.cpp:938
 #, fuzzy, c-format
 msgid "Pals Online: %d"
 msgstr "Conoscenti Collegati: 0"
