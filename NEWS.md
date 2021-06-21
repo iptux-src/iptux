@@ -1,3 +1,7 @@
+# [0.8.2] ???
+
+* [#473] iconify main window when delete.
+
 # [0.8.1] (2021-05-03)
 
 * [#442] fix unittest fail under 32-bit system.
