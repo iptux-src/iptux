@@ -9,7 +9,7 @@
 
 * [#442] fix unittest fail under 32-bit system.
 * [#439] try to fix compile problem under Hurd.
-* [#447] fix bug: use defined icon no longer works.
+* [#447] fix bug: user defined icon no longer works.
 * [#422] fix bug: request shared resource no longer works.
 * [#441] use `GtkHeaderBar` under Linux.
 * [#462] when recv file, if file exist, save to `foo (1).ext` (was `1_foo.ext`).
