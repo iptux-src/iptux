@@ -1,3 +1,7 @@
+# [0.8.3] ???
+
+* [#476] open chat when clicking the new message notification (only works under Linux).
+
 # [0.8.2] (2021-06-21)
 
 * [#473] iconify main window when delete.
