@@ -88,7 +88,9 @@ Application::Application(shared_ptr<IptuxConfig> config)
 
 Application::~Application() {
   g_object_unref(app);
-  g_object_unref(menuBuilder);
+  if(menuBuilder) {
+    g_object_unref(menuBuilder);
+  }
   transModelDelete(transModel);
   if (eventAdaptor) {
     delete eventAdaptor;
