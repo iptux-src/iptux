@@ -262,6 +262,11 @@ GActionEntry makeActionEntry(const string& name, GActionCallback f) {
       {g_strdup(name.c_str()), f, nullptr, nullptr, nullptr, {0, 0, 0}});
 }
 
+GActionEntry makeParamActionEntry(const string& name, GActionCallback f, const string& paramType) {
+  return GActionEntry(
+      {g_strdup(name.c_str()), f, g_strdup(paramType.c_str()), nullptr, nullptr, {0, 0, 0}});
+}
+
 GActionEntry makeStateActionEntry(const string& name,
                                   GActionCallback f,
                                   const string& paramType,

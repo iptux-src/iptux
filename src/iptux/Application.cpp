@@ -19,6 +19,7 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
+#include "iptux/DialogPeer.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/TerminalNotifierNotificationService.h"
@@ -142,6 +143,7 @@ void Application::onStartup(Application& self) {
       makeActionEntry("trans_model.clear",
                       G_ACTION_CALLBACK(onTransModelClear)),
       makeActionEntry("about", G_ACTION_CALLBACK(onAbout)),
+      makeParamActionEntry("open-chat", G_ACTION_CALLBACK(onOpenChat), "s"),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
@@ -238,9 +240,11 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto title = stringFormat(_("New Message from %s"),
                               event->getMsgPara().getPal()->getName().c_str());
     auto summary = event->getMsgPara().getSummary();
+    auto action = stringFormat("app.open-chat::%s",
+      event->getMsgPara().getPal()->GetKey().GetIpv4String().c_str());
     notificationService->sendNotification(
         G_APPLICATION(app), "iptux-new-message", title, summary,
-        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+        action, G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   if (type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
     const NewShareFileFromFriendEvent* event =
@@ -249,7 +253,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
                               event->GetFileInfo().fileown->getName().c_str());
     auto summary = event->GetFileInfo().filepath;
     notificationService->sendNotification(
-        G_APPLICATION(app), "iptux-new-file", title, summary,
+        G_APPLICATION(app), "iptux-new-file", title, summary, "",
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   if (type == EventType::RECV_FILE_FINISHED) {
@@ -263,7 +267,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
       summary = taskStat->getFilename();
     }
     notificationService->sendNotification(
-        G_APPLICATION(app), "iptux-recv-file-finished", title, summary,
+        G_APPLICATION(app), "iptux-recv-file-finished", title, summary, "",
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   if (type == EventType::CONFIG_CHANGED) {
@@ -336,5 +340,25 @@ void Application::updateItemToTransTree(const TransFileModel& para) {
   g_action_group_activate_action(G_ACTION_GROUP(this->getApp()),
                                  "trans_model.changed", nullptr);
 }
+
+void Application::onOpenChat(GSimpleAction*,
+                         GVariant* value,
+                         Application& self) {
+  string ipv4 = g_variant_get_string(value, nullptr);
+  auto pal = self.cthrd->GetPal(ipv4);
+  if(!pal) {
+    return;
+  }
+  auto groupInfo = self.cthrd->GetPalRegularItem(pal.get());
+  if(!groupInfo) {
+    return;
+  }
+  if (groupInfo->dialog) {
+    gtk_window_present(GTK_WINDOW(groupInfo->dialog));
+    return;
+  }
+  DialogPeer::PeerDialogEntry(&self, groupInfo);
+}
+
 
 }  // namespace iptux

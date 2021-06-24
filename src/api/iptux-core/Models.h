@@ -60,6 +60,7 @@ class PalKey {
   bool operator==(const PalKey& rhs) const;
 
   in_addr GetIpv4() const { return ipv4; }
+  std::string GetIpv4String() const;
   int GetPort() const { return port; }
   std::string ToString() const;
 

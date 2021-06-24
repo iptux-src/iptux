@@ -74,6 +74,9 @@ class Application {
   static void onOpenChatLog(void*, void*, Application& self);
   static void onOpenSystemLog(void*, void*, Application& self);
   static void onTransModelClear(void*, void*, Application& self);
+  static void onOpenChat(GSimpleAction* action,
+                         GVariant* value,
+                         Application& self);
   static gboolean onTransWindowDelete(Application& self);
 };
 
