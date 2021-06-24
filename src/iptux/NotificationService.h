@@ -15,6 +15,7 @@ class NotificationService {
                                 const std::string& id,
                                 const std::string& title,
                                 const std::string& body,
+                                const std::string& detailedAction,
                                 GNotificationPriority priority,
                                 GIcon* icon) = 0;
 };

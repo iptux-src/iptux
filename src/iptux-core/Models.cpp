@@ -259,6 +259,10 @@ PalKey::PalKey(in_addr ipv4) : ipv4(ipv4), port(IPTUX_DEFAULT_PORT) {}
 
 PalKey::PalKey(in_addr ipv4, int port) : ipv4(ipv4), port(port) {}
 
+string PalKey::GetIpv4String() const {
+  return inAddrToString(ipv4);
+}
+
 bool PalKey::operator==(const PalKey& rhs) const {
   return ipv4Equal(this->ipv4, rhs.ipv4) && this->port == rhs.port;
 }

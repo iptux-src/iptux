@@ -19,6 +19,11 @@ TEST(PalKey, CopyConstructor) {
   ASSERT_EQ(key2.ToString(), "1.2.3.4:1234");
 }
 
+TEST(PalKey, GetIpv4String) {
+  PalKey key1(inAddrFromString("1.2.3.4"), 1234);
+  ASSERT_EQ(key1.GetIpv4String(), "1.2.3.4");
+}
+
 TEST(NetSegment, ContainIP) {
   NetSegment netSegment("1.2.3.4", "1.2.4.5", "");
 

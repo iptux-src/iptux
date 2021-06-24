@@ -14,6 +14,7 @@ void TerminalNotifierNoticationService::sendNotification(
     const std::string& id,
     const std::string& title,
     const std::string& body,
+    const std::string&,
     GNotificationPriority,
     GIcon*) {
   vector<string> args = {"terminal-notifier",
