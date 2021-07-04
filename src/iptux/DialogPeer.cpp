@@ -43,7 +43,6 @@ namespace iptux {
  */
 DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
     : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
-      app(app),
       config(app->getConfig()),
       torcvsize(0),
       rcvdsize(0),

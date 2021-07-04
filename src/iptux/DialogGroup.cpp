@@ -33,7 +33,6 @@ namespace iptux {
  */
 DialogGroup::DialogGroup(Application* app, GroupInfo* grp)
     : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
-      app(app),
       config(app->getConfig()) {
   InitSublayerSpecify();
 }
@@ -528,8 +527,8 @@ void DialogGroup::SetMemberTreeSortFunc(GtkWidget* menuitem,
 
   if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem)))
     return;
-  func = (GtkTreeIterCompareFunc)(
-      g_object_get_data(G_OBJECT(menuitem), "compare-func"));
+  func = (GtkTreeIterCompareFunc)(g_object_get_data(G_OBJECT(menuitem),
+                                                    "compare-func"));
   gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), func, NULL,
                                           NULL);
 }

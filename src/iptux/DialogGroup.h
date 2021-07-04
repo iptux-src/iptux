@@ -34,7 +34,6 @@ class DialogGroup : public DialogBase {
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
-  Application* app;
   GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;

@@ -37,7 +37,6 @@ class DialogPeer : public DialogBase {
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
-  Application* app;
   GtkTreeView* fileToReceiveTree = 0;
 
  private:
