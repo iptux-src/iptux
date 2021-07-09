@@ -2,7 +2,6 @@
 #include "UiProgramData.h"
 
 #include <sys/time.h>
-#include <unistd.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"

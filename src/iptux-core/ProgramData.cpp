@@ -3,7 +3,6 @@
 
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <unistd.h>
 
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/utils.h"

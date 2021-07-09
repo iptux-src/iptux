@@ -15,7 +15,6 @@
 #include <cinttypes>
 #include <sys/socket.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include <glib/gi18n.h>
 #include <glog/logging.h>
