@@ -9,7 +9,6 @@
 #include <mutex>
 #include <thread>
 
-#include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <glog/logging.h>
