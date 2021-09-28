@@ -123,3 +123,4 @@ coverage.info
 .vscode/tasks.json
 .DS_Store
 meson-cmake-wrapper.log
+src/gtkmm4/simple
