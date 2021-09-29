@@ -1,6 +1,9 @@
 gtkmm4_dep = dependency('gtkmm-4.0')
 
-iptux_sources = files(['iptux-gtkmm4.cpp'])
+iptux_sources = files([
+  'iptux-gtkmm4.cpp',
+  'Iptux.cpp'
+  ])
 executable('iptux-gtkmm4',
     iptux_sources,
     include_directories: inc,
