@@ -4,6 +4,7 @@ iptux_sources = files([
   'iptux-gtkmm4.cpp',
   'Iptux.cpp',
   'MainWindow.cpp',
+  'UiHelper.cpp',
   ])
 
 glib_compile_resources = find_program('glib-compile-resources')

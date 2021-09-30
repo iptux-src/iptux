@@ -2,6 +2,7 @@
 #include "Iptux.h"
 #include "IptuxResource.h"
 #include "MainWindow.h"
+#include "UiHelper.h"
 #include <iostream>
 
 using namespace std;
@@ -38,8 +39,19 @@ void Iptux::on_activate() {
   add_window(*window);
 }
 
+static bool iptuxOnActivateLink(const string& url) {
+  iptux_open_url(url.c_str());
+  return true;
+}
+
 void Iptux::on_about() {
-  cout << "Iptux::on_about" << endl;
+  auto builder =
+      Gtk::Builder::create_from_resource(IPTUX_RESOURCE "gtk/AboutDialog.ui");
+  auto aboutDialog = builder->get_widget<Gtk::AboutDialog>("about_dialog");
+  aboutDialog->signal_activate_link().connect(
+      sigc::ptr_fun(&iptuxOnActivateLink), false);
+  aboutDialog->set_transient_for(*this->get_active_window());
+  aboutDialog->present();
 }
 
 }  // namespace iptux

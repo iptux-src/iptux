@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk" version="4.0"/>
   <object class="GtkAboutDialog" id="about_dialog">
-    <property name="can_focus">False</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="type_hint">dialog</property>
+    <property name="destroy_with_parent">1</property>
     <property name="program_name">iptux</property>
     <property name="version">VERSION</property>
     <property name="copyright" translatable="yes">Copyright © 2008–2009, Jally
@@ -23,13 +20,14 @@ ManPT &lt;pentie@gmail.com&gt;</property>
     <child>
       <placeholder/>
     </child>
-    <child internal-child="vbox">
+    <!-- <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="visible">0</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
+            <property name="valign">center</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
@@ -39,16 +37,11 @@ ManPT &lt;pentie@gmail.com&gt;</property>
               <placeholder/>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
         </child>
         <child>
           <placeholder/>
         </child>
       </object>
-    </child>
+    </child> -->
   </object>
 </interface>
