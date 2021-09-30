@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkDialog" id="detect_pal_dialog">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Detect pal</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="border-width">5</property>
+    <child type="action">
+      <object class="GtkButton" id="detect_pal_dialog_detect">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Detect</property>
+        <property name="can-default">True</property>
+      </object>
+    </child>
+    <child type="action">
+      <object class="GtkButton" id="detect_pal_dialog_cancel">
+        <property name="visible">True</property>
+        <property name="label">Cancel</property>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="cancel">detect_pal_dialog_cancel</action-widget>
+      <action-widget response="accept" default="true">detect_pal_dialog_detect</action-widget>
+    </action-widgets>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkAlignment">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="top_padding">6</property>
+                <property name="left_padding">12</property>
+                <child>
+                  <object class="GtkEntry" id="detect_pal_ipv4_entry">
+                    <property name="activates-default">True</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="max_length">16</property>
+                    <property name="placeholder-text">1.2.3.4</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Please input an IP address (IPv4 only):</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+
+</interface>
