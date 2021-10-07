@@ -1,4 +1,4 @@
-# [0.8.3] ???
+# [0.8.3] (2021-10-07)
 
 * [#476] open chat when clicking the new message notification (only works under Linux).
 
