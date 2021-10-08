@@ -70,7 +70,7 @@ DialogPeer::~DialogPeer() {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
-  if (grpinf->dialog)
+  if (grpinf->getDialog())
     return;
 
   DialogPeer* dlgpr;
@@ -81,7 +81,7 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
 void DialogPeer::init() {
   auto dlgpr = this;
   auto window = GTK_WIDGET(dlgpr->CreateMainWindow());
-  grpinf->dialog = window;
+  grpinf->setDialog(GTK_WINDOW(window));
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
@@ -226,7 +226,6 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   widget_enable_dnd_uri(GTK_WIDGET(window));
   g_datalist_set_data(&widset, "window-widget", window);
-  grpinf->dialog = GTK_WIDGET(window);
   g_object_set_data(G_OBJECT(window), "dialog", this);
 
   MainWindowSignalSetup(GTK_WINDOW(window));
@@ -969,8 +968,8 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
 
   auto g_progdt = self->app->getCoreThread()->getUiProgramData();
 
-  const gchar* filepath =
-      pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
+  const gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->getDialog()),
+                                        g_progdt->path.c_str());
   if (filepath == nullptr) {
     return;
   }

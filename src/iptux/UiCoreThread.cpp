@@ -67,9 +67,9 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = groupInfos;
   while (tlist) {
     grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -78,9 +78,9 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = sgmlist;
   while (tlist) {
     grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -89,9 +89,9 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = grplist;
   while (tlist) {
     grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -100,9 +100,9 @@ void UiCoreThread::ClearAllPalFromList() {
   tlist = brdlist;
   while (tlist) {
     grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->ClearAllPalData();
     }
     tlist = g_slist_next(tlist);
@@ -136,9 +136,9 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   if ((grpinf = GetPalRegularItem(pal))) {
     if (!grpinf->hasPal(pal)) {
       AttachPalToGroupInfoItem(grpinf, ppal);
-    } else if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    } else if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->UpdatePalData(pal);
     }
   } else {
@@ -150,9 +150,9 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   if ((grpinf = GetPalSegmentItem(pal))) {
     if (!grpinf->hasPal(pal)) {
       AttachPalToGroupInfoItem(grpinf, ppal);
-    } else if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    } else if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->UpdatePalData(pal);
     }
   } else {
@@ -167,9 +167,9 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
       if (!(grpinf = GetPalGroupItem(pal)))
         grpinf = AttachPalGroupItem(ppal);
       AttachPalToGroupInfoItem(grpinf, ppal);
-    } else if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    } else if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->UpdatePalData(pal);
     }
   } else {
@@ -181,9 +181,9 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   if ((grpinf = GetPalBroadcastItem(pal))) {
     if (!grpinf->hasPal(pal)) {
       AttachPalToGroupInfoItem(grpinf, ppal);
-    } else if (grpinf->dialog) {
-      session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                    "session-class");
+    } else if (grpinf->getDialog()) {
+      session = (SessionAbstract*)g_object_get_data(
+          G_OBJECT(grpinf->getDialog()), "session-class");
       session->UpdatePalData(pal);
     }
   } else {
@@ -354,7 +354,7 @@ GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   grpinf->grpid = inAddrToUint32(pal->ipv4);
   grpinf->name = pal->getName();
   grpinf->buffer = gtk_text_buffer_new(programData->table);
-  grpinf->dialog = NULL;
+  grpinf->clearDialog();
   grpinf->signalUnreadMsgCountUpdated.connect(
       sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate));
   groupInfos = g_slist_append(groupInfos, grpinf);
@@ -380,7 +380,7 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
   grpinf->grpid = g_quark_from_static_string(name.c_str());
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
-  grpinf->dialog = NULL;
+  grpinf->clearDialog();
   sgmlist = g_slist_append(sgmlist, grpinf);
 
   return grpinf;
@@ -401,7 +401,7 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
                          logSystem);
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
-  grpinf->dialog = NULL;
+  grpinf->clearDialog();
   grplist = g_slist_append(grplist, grpinf);
 
   return grpinf;
@@ -423,7 +423,7 @@ GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
   grpinf->grpid = g_quark_from_static_string(name);
   grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(programData->table);
-  grpinf->dialog = NULL;
+  grpinf->clearDialog();
   brdlist = g_slist_append(brdlist, grpinf);
 
   return grpinf;
@@ -438,8 +438,8 @@ void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal) {
   SessionAbstract* session;
 
   grpinf->delPal(pal);
-  if (grpinf->dialog) {
-    session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+  if (grpinf->getDialog()) {
+    session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->getDialog()),
                                                   "session-class");
     session->DelPalData(pal);
   }
@@ -453,8 +453,8 @@ void UiCoreThread::DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal) {
 void UiCoreThread::AttachPalToGroupInfoItem(GroupInfo* grpinf, PPalInfo pal) {
   SessionAbstract* session;
   grpinf->addPal(pal);
-  if (grpinf->dialog) {
-    session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+  if (grpinf->getDialog()) {
+    session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->getDialog()),
                                                   "session-class");
     session->InsertPalData(pal.get());
   }

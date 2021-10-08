@@ -10,6 +10,7 @@
 #include "iptux-utils/utils.h"
 #include "iptux/AboutDialog.h"
 #include "iptux/DataSettings.h"
+#include "iptux/DialogPeer.h"
 #include "iptux/IptuxResource.h"
 #include "iptux/LogSystem.h"
 #include "iptux/MainWindow.h"
@@ -19,7 +20,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
-#include "iptux/DialogPeer.h"
 
 #if SYSTEM_DARWIN
 #include "iptux/TerminalNotifierNotificationService.h"
@@ -89,7 +89,7 @@ Application::Application(shared_ptr<IptuxConfig> config)
 
 Application::~Application() {
   g_object_unref(app);
-  if(menuBuilder) {
+  if (menuBuilder) {
     g_object_unref(menuBuilder);
   }
   transModelDelete(transModel);
@@ -240,11 +240,12 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto title = stringFormat(_("New Message from %s"),
                               event->getMsgPara().getPal()->getName().c_str());
     auto summary = event->getMsgPara().getSummary();
-    auto action = stringFormat("app.open-chat::%s",
-      event->getMsgPara().getPal()->GetKey().GetIpv4String().c_str());
+    auto action = stringFormat(
+        "app.open-chat::%s",
+        event->getMsgPara().getPal()->GetKey().GetIpv4String().c_str());
     notificationService->sendNotification(
-        G_APPLICATION(app), "iptux-new-message", title, summary,
-        action, G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
+        G_APPLICATION(app), "iptux-new-message", title, summary, action,
+        G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   if (type == EventType::NEW_SHARE_FILE_FROM_FRIEND) {
     const NewShareFileFromFriendEvent* event =
@@ -342,23 +343,22 @@ void Application::updateItemToTransTree(const TransFileModel& para) {
 }
 
 void Application::onOpenChat(GSimpleAction*,
-                         GVariant* value,
-                         Application& self) {
+                             GVariant* value,
+                             Application& self) {
   string ipv4 = g_variant_get_string(value, nullptr);
   auto pal = self.cthrd->GetPal(ipv4);
-  if(!pal) {
+  if (!pal) {
     return;
   }
   auto groupInfo = self.cthrd->GetPalRegularItem(pal.get());
-  if(!groupInfo) {
+  if (!groupInfo) {
     return;
   }
-  if (groupInfo->dialog) {
-    gtk_window_present(GTK_WINDOW(groupInfo->dialog));
+  if (groupInfo->getDialog()) {
+    gtk_window_present(GTK_WINDOW(groupInfo->getDialog()));
     return;
   }
   DialogPeer::PeerDialogEntry(&self, groupInfo);
 }
-
 
 }  // namespace iptux

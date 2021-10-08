@@ -62,7 +62,7 @@ void DialogBase::ClearSublayerGeneral() {
   if (progdt->IsAutoCleanChatHistory()) {
     ClearHistoryTextView();
   }
-  grpinf->dialog = NULL;
+  grpinf->clearDialog();
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
   g_datalist_clear(&dtset);

@@ -67,6 +67,10 @@ class GroupInfo {
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }
 
+  void setDialog(GtkWindow* dialog) { this->dialog = GTK_WIDGET(dialog); }
+  GtkWidget* getDialog() const { return dialog; }
+  void clearDialog() { dialog = nullptr; }
+
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
   sigc::signal<void(GroupInfo*)> signalNewFileReceived;
@@ -75,9 +79,9 @@ class GroupInfo {
   GQuark grpid;           ///< 唯一标识
   std::string name;       ///< 群组名称 *
   GtkTextBuffer* buffer;  ///< 历史消息缓冲区 *
-  GtkWidget* dialog;  ///< 对话框(若存在则必须与对话框类关联)
 
  private:
+  GtkWidget* dialog;  ///< 对话框(若存在则必须与对话框类关联)
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
 
  private:

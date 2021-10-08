@@ -205,7 +205,7 @@ GtkWindow* DialogGroup::CreateMainWindow() {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   g_datalist_set_data(&widset, "window-widget", window);
   widget_enable_dnd_uri(GTK_WIDGET(window));
-  grpinf->dialog = GTK_WIDGET(window);
+  grpinf->setDialog(GTK_WINDOW(window));
 
   MainWindowSignalSetup(GTK_WINDOW(window));
 
@@ -590,8 +590,8 @@ void DialogGroup::MembertreeItemActivated(GtkWidget* treeview,
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, 3, &pal, -1);
   if ((grpinf = self->app->getCoreThread()->GetPalRegularItem(pal))) {
-    if ((grpinf->dialog))
-      gtk_window_present(GTK_WINDOW(grpinf->dialog));
+    if ((grpinf->getDialog()))
+      gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
     else
       DialogPeer::PeerDialogEntry(self->app, grpinf);
   }
