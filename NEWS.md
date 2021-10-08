@@ -1,3 +1,7 @@
+# [0.8.4] (2021-??-??)
+
+* [#482](https://github.com/iptux-src/iptux/issues/482) add "What's New" in the menu.
+
 # [0.8.3] (2021-10-07)
 
 * [#476] open chat when clicking the new message notification (only works under Linux).
