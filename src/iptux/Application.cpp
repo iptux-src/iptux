@@ -45,6 +45,10 @@ void onReportBug() {
   iptux_open_url("https://github.com/iptux-src/iptux/issues/new");
 }
 
+void onWhatsNew() {
+  iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS.md");
+}
+
 void iptux_init(LogSystem* logSystem) {
   signal(SIGPIPE, SIG_IGN);
   logSystem->systemLog("%s", _("Loading the process successfully!"));
@@ -132,6 +136,7 @@ void Application::onStartup(Application& self) {
       makeActionEntry("quit", G_ACTION_CALLBACK(onQuit)),
       makeActionEntry("preferences", G_ACTION_CALLBACK(onPreferences)),
       makeActionEntry("help.report_bug", G_ACTION_CALLBACK(onReportBug)),
+      makeActionEntry("help.whats_new", G_ACTION_CALLBACK(onWhatsNew)),
       makeActionEntry("tools.transmission",
                       G_ACTION_CALLBACK(onToolsTransmission)),
       makeActionEntry("tools.shared_management",
