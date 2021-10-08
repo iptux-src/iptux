@@ -58,11 +58,10 @@ DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
  * 类析构函数.
  */
 DialogPeer::~DialogPeer() {
+  g_signal_handler_disconnect(G_OBJECT(grpinf->getInputBuffer()), sigId);
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0)
     g_source_remove(timerrcv);
-  // grpinf->disconnect(sigId);
-  /*---------------------------------------------------------------*/
   WriteUILayout();
 }
 
@@ -103,8 +102,8 @@ void DialogPeer::init() {
                                   G_N_ELEMENTS(win_entries), this);
   g_action_map_disable_actions(G_ACTION_MAP(window), "refuse", nullptr);
 
-  g_signal_connect(G_OBJECT(getInputBuffer()), "changed",
-                   G_CALLBACK(onInputBufferChanged), this);
+  sigId = g_signal_connect(G_OBJECT(getInputBuffer()), "changed",
+                           G_CALLBACK(onInputBufferChanged), this);
   g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-deleted",
                            G_CALLBACK(onSendFileModelChanged), this);
   g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-inserted",
