@@ -58,11 +58,10 @@ DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
  * 类析构函数.
  */
 DialogPeer::~DialogPeer() {
+  g_signal_handler_disconnect(G_OBJECT(grpinf->getInputBuffer()), sigId);
   /* 非常重要，必须在窗口析构之前把定时触发事件停止，不然会出现意想不到的情况 */
   if (timerrcv > 0)
     g_source_remove(timerrcv);
-  // grpinf->disconnect(sigId);
-  /*---------------------------------------------------------------*/
   WriteUILayout();
 }
 
@@ -71,7 +70,7 @@ DialogPeer::~DialogPeer() {
  * @param grpinf 好友群组信息
  */
 void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
-  if (grpinf->dialog)
+  if (grpinf->getDialog())
     return;
 
   DialogPeer* dlgpr;
@@ -82,7 +81,7 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
 void DialogPeer::init() {
   auto dlgpr = this;
   auto window = GTK_WIDGET(dlgpr->CreateMainWindow());
-  grpinf->dialog = window;
+  grpinf->setDialogBase(this);
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
@@ -103,8 +102,8 @@ void DialogPeer::init() {
                                   G_N_ELEMENTS(win_entries), this);
   g_action_map_disable_actions(G_ACTION_MAP(window), "refuse", nullptr);
 
-  g_signal_connect(G_OBJECT(inputBuffer), "changed",
-                   G_CALLBACK(onInputBufferChanged), this);
+  sigId = g_signal_connect(G_OBJECT(getInputBuffer()), "changed",
+                           G_CALLBACK(onInputBufferChanged), this);
   g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-deleted",
                            G_CALLBACK(onSendFileModelChanged), this);
   g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-inserted",
@@ -227,7 +226,6 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   widget_enable_dnd_uri(GTK_WIDGET(window));
   g_datalist_set_data(&widset, "window-widget", window);
-  grpinf->dialog = GTK_WIDGET(window);
   g_object_set_data(G_OBJECT(window), "dialog", this);
 
   MainWindowSignalSetup(GTK_WINDOW(window));
@@ -392,7 +390,7 @@ bool DialogPeer::SendTextMsg() {
   std::vector<ChipData> dtlist;
 
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));  //为下一次任务做准备
-  buffer = inputBuffer;
+  buffer = getInputBuffer();
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   if (gtk_text_iter_equal(&start, &end))
     return false;
@@ -970,8 +968,8 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
 
   auto g_progdt = self->app->getCoreThread()->getUiProgramData();
 
-  const gchar* filepath =
-      pop_save_path(GTK_WIDGET(self->grpinf->dialog), g_progdt->path.c_str());
+  const gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->getDialog()),
+                                        g_progdt->path.c_str());
   if (filepath == nullptr) {
     return;
   }
@@ -1103,7 +1101,7 @@ void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
 
 void DialogPeer::refreshSendAction() {
   bool can_send = false;
-  if (gtk_text_buffer_get_char_count(inputBuffer) > 0) {
+  if (gtk_text_buffer_get_char_count(getInputBuffer()) > 0) {
     can_send = true;
   } else {
     GtkTreeIter iter;

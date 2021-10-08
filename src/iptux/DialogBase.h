@@ -29,6 +29,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   DialogBase(Application* app, GroupInfo* grp);
   virtual ~DialogBase();
 
+  virtual GtkWindow* getWindow() = 0;
   void ClearHistoryTextView();
 
  protected:
@@ -45,12 +46,12 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   virtual GtkWidget* CreateHistoryArea();
   virtual GtkWidget* CreateFileSendArea();
   virtual GtkWidget* CreateFileSendTree(GtkTreeModel* model);
-  virtual GtkWindow* getWindow() = 0;
   virtual GSList* GetSelPal() { return NULL; };
 
   void MainWindowSignalSetup(GtkWindow* window);
   GtkTreeModel* CreateFileSendModel();
   GSList* PickEnclosure(FileAttr fileattr);
+  GtkTextBuffer* getInputBuffer();
 
   bool SendEnclosureMsg();
   virtual bool SendTextMsg() = 0;
@@ -89,7 +90,6 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   GtkTreeView* fileSendTree = 0;
   GtkTextView* inputTextviewWidget = 0;
 
-  GtkTextBuffer* inputBuffer = 0;
   GtkListStore* fileSendModel = 0;
 
   GData* widset;            //窗体集

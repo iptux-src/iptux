@@ -431,7 +431,8 @@ GtkWidget* MainWindow::CreateMainWindow() {
 
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);
-  g_signal_connect(window, "delete-event", G_CALLBACK(gtk_window_iconify_on_delete), nullptr);
+  g_signal_connect(window, "delete-event",
+                   G_CALLBACK(gtk_window_iconify_on_delete), nullptr);
   return window;
 }
 
@@ -1179,8 +1180,8 @@ void MainWindow::onPaltreeItemActivated(GtkWidget* treeview,
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
   /* 检查是否需要新建对话框 */
-  if (grpinf->dialog) {
-    gtk_window_present(GTK_WINDOW(grpinf->dialog));
+  if (grpinf->getDialog()) {
+    gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
     return;
   }
 
@@ -1321,7 +1322,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget* treeview,
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
 
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
-  if (!(grpinf->dialog)) {
+  if (!(grpinf->getDialog())) {
     switch (grpinf->getType()) {
       case GROUP_BELONG_TYPE_REGULAR:
         DialogPeer::PeerDialogEntry(self->app, grpinf);
@@ -1334,9 +1335,9 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget* treeview,
         break;
     }
   } else
-    gtk_window_present(GTK_WINDOW(grpinf->dialog));
+    gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
   /* 获取会话对象，并将数据添加到会话对象 */
-  session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+  session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->getDialog()),
                                                 "session-class");
   list = selection_data_get_path(data);  //获取所有文件
   session->AttachEnclosure(list);
@@ -1387,8 +1388,8 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
 
 void MainWindow::onPalSendMessage(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
-  if (groupInfo->dialog) {
-    gtk_window_present(GTK_WINDOW(groupInfo->dialog));
+  if (groupInfo->getDialog()) {
+    gtk_window_present(GTK_WINDOW(groupInfo->getDialog()));
     return;
   }
   switch (groupInfo->getType()) {
@@ -1517,10 +1518,10 @@ void MainWindow::PallistItemActivated(GtkWidget* treeview,
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, 6, &pal, -1);
   if ((grpinf = self->coreThread.GetPalRegularItem(pal))) {
-    if (!(grpinf->dialog))
+    if (!(grpinf->getDialog()))
       DialogPeer::PeerDialogEntry(self->app, grpinf);
     else
-      gtk_window_present(GTK_WINDOW(grpinf->dialog));
+      gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
   }
 }
 
@@ -1568,12 +1569,12 @@ void MainWindow::PallistDragDataReceived(GtkWidget* treeview,
     return;
 
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
-  if (!(grpinf->dialog))
+  if (!(grpinf->getDialog()))
     DialogPeer::PeerDialogEntry(self->app, grpinf);
   else
-    gtk_window_present(GTK_WINDOW(grpinf->dialog));
+    gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
   /* 获取会话对象，并将数据添加到会话对象 */
-  session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
+  session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->getDialog()),
                                                 "session-class");
   list = selection_data_get_path(data);  //获取所有文件
   session->AttachEnclosure(list);
@@ -1661,10 +1662,10 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
       case GROUP_BELONG_TYPE_REGULAR:
         grpinf = coreThread.GetPalRegularItem(para.getPal().get());
         if (coreThread.getProgramData()->IsAutoOpenCharDialog()) {
-          if (!(grpinf->dialog)) {
+          if (!(grpinf->getDialog())) {
             DialogPeer::PeerDialogEntry(this->app, grpinf);
           } else {
-            gtk_window_present(GTK_WINDOW(grpinf->dialog));
+            gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
           }
         }
         break;
@@ -1686,9 +1687,9 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
     /* 群组不存在是编程上的错误，请发送Bug报告 */
     if (grpinf) {
       grpinf->addMsgPara(para);
-      if (grpinf->dialog) {
-        session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->dialog),
-                                                      "session-class");
+      if (grpinf->getDialog()) {
+        session = (SessionAbstract*)g_object_get_data(
+            G_OBJECT(grpinf->getDialog()), "session-class");
         session->OnNewMessageComing();
       }
     }
