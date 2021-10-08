@@ -103,7 +103,7 @@ void DialogPeer::init() {
                                   G_N_ELEMENTS(win_entries), this);
   g_action_map_disable_actions(G_ACTION_MAP(window), "refuse", nullptr);
 
-  g_signal_connect(G_OBJECT(inputBuffer), "changed",
+  g_signal_connect(G_OBJECT(getInputBuffer()), "changed",
                    G_CALLBACK(onInputBufferChanged), this);
   g_signal_connect_swapped(G_OBJECT(fileSendModel), "row-deleted",
                            G_CALLBACK(onSendFileModelChanged), this);
@@ -392,7 +392,7 @@ bool DialogPeer::SendTextMsg() {
   std::vector<ChipData> dtlist;
 
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));  //为下一次任务做准备
-  buffer = inputBuffer;
+  buffer = getInputBuffer();
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   if (gtk_text_iter_equal(&start, &end))
     return false;
@@ -1103,7 +1103,7 @@ void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
 
 void DialogPeer::refreshSendAction() {
   bool can_send = false;
-  if (gtk_text_buffer_get_char_count(inputBuffer) > 0) {
+  if (gtk_text_buffer_get_char_count(getInputBuffer()) > 0) {
     can_send = true;
   } else {
     GtkTreeIter iter;

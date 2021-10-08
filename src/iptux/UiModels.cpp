@@ -339,6 +339,7 @@ GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
       type(GROUP_BELONG_TYPE_REGULAR),
       logSystem(logSystem) {
   members.push_back(pal);
+  inputBuffer = gtk_text_buffer_new(NULL);
 }
 
 GroupInfo::GroupInfo(iptux::GroupBelongType t,
@@ -351,7 +352,9 @@ GroupInfo::GroupInfo(iptux::GroupBelongType t,
       me(me),
       members(pals),
       type(t),
-      logSystem(logSystem) {}
+      logSystem(logSystem) {
+  inputBuffer = gtk_text_buffer_new(NULL);
+}
 
 bool GroupInfo::addPal(PPalInfo pal) {
   if (type == GROUP_BELONG_TYPE_REGULAR) {

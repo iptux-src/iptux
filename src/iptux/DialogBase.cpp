@@ -254,9 +254,8 @@ GtkWidget* DialogBase::CreateInputArea() {
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
 
-  widget = gtk_text_view_new();
+  widget = gtk_text_view_new_with_buffer(grpinf->getInputBuffer());
   inputTextviewWidget = GTK_TEXT_VIEW(widget);
-  inputBuffer = gtk_text_view_get_buffer(inputTextviewWidget);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
   gtk_drag_dest_add_uri_targets(widget);
   gtk_container_add(GTK_CONTAINER(sw), widget);
@@ -789,4 +788,9 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), progresstip.c_str());
   return TRUE;
 }
+
+GtkTextBuffer* DialogBase::getInputBuffer() {
+  return grpinf->getInputBuffer();
+}
+
 }  // namespace iptux
