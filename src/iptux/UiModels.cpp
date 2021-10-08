@@ -9,6 +9,7 @@
 #include "iptux-core/Models.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux/DialogBase.h"
 #include "iptux/UiHelper.h"
 
 using namespace std;
@@ -334,7 +335,7 @@ bool GroupInfo::hasPal(PPalInfo pal) const {
 GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
     : grpid(0),
       buffer(NULL),
-      dialog(NULL),
+      dialogBase(NULL),
       me(me),
       type(GROUP_BELONG_TYPE_REGULAR),
       logSystem(logSystem) {
@@ -348,12 +349,16 @@ GroupInfo::GroupInfo(iptux::GroupBelongType t,
                      LogSystem* logSystem)
     : grpid(0),
       buffer(NULL),
-      dialog(NULL),
+      dialogBase(NULL),
       me(me),
       members(pals),
       type(t),
       logSystem(logSystem) {
   inputBuffer = gtk_text_buffer_new(NULL);
+}
+
+GtkWidget* GroupInfo::getDialog() const {
+  return dialogBase ? GTK_WIDGET(dialogBase->getWindow()) : nullptr;
 }
 
 bool GroupInfo::addPal(PPalInfo pal) {

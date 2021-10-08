@@ -81,7 +81,7 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
 void DialogPeer::init() {
   auto dlgpr = this;
   auto window = GTK_WIDGET(dlgpr->CreateMainWindow());
-  grpinf->setDialog(GTK_WINDOW(window));
+  grpinf->setDialogBase(this);
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));

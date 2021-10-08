@@ -36,6 +36,7 @@ class SessionAbstract {
 /**
  * 群组信息.
  */
+class DialogBase;
 class GroupInfo {
  public:
   GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem);
@@ -67,9 +68,9 @@ class GroupInfo {
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }
 
-  void setDialog(GtkWindow* dialog) { this->dialog = GTK_WIDGET(dialog); }
-  GtkWidget* getDialog() const { return dialog; }
-  void clearDialog() { dialog = nullptr; }
+  void setDialogBase(DialogBase* dialogBase) { this->dialogBase = dialogBase; }
+  GtkWidget* getDialog() const;
+  void clearDialog() { dialogBase = nullptr; }
 
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
@@ -81,7 +82,7 @@ class GroupInfo {
   GtkTextBuffer* buffer;  ///< 历史消息缓冲区 *
 
  private:
-  GtkWidget* dialog;  ///< 对话框(若存在则必须与对话框类关联)
+  DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
 
  private:

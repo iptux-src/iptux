@@ -205,7 +205,7 @@ GtkWindow* DialogGroup::CreateMainWindow() {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   g_datalist_set_data(&widset, "window-widget", window);
   widget_enable_dnd_uri(GTK_WIDGET(window));
-  grpinf->setDialog(GTK_WINDOW(window));
+  grpinf->setDialogBase(this);
 
   MainWindowSignalSetup(GTK_WINDOW(window));
 
