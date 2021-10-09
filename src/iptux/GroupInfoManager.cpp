@@ -3,6 +3,8 @@
 
 #include "iptux-utils/utils.h"
 
+using namespace std;
+
 namespace iptux {
 
 GroupInfoManager::GroupInfoManager(UiProgramData_S programData,
