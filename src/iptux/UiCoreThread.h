@@ -59,7 +59,7 @@ class UiCoreThread : public CoreThread {
   void PushItemToEnclosureList(FileInfo* file);
   void PopItemFromEnclosureList(FileInfo* file);
 
-  LogSystem* getLogSystem() { return logSystem; }
+  LogSystem_S getLogSystem() { return logSystem; }
 
  public:
   sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
@@ -79,7 +79,7 @@ class UiCoreThread : public CoreThread {
 
  private:
   std::shared_ptr<UiProgramData> programData;
-  LogSystem* logSystem;
+  LogSystem_S logSystem;
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)

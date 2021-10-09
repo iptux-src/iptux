@@ -11,7 +11,7 @@ namespace iptux {
 GroupInfo::GroupInfo(iptux::GroupBelongType t,
                      const vector<PPalInfo>& pals,
                      CPPalInfo me,
-                     LogSystem* logSystem)
+                     LogSystem_S logSystem)
     : grpid(0),
       buffer(NULL),
       dialogBase(NULL),
@@ -19,6 +19,17 @@ GroupInfo::GroupInfo(iptux::GroupBelongType t,
       members(pals),
       type(t),
       logSystem(logSystem) {
+  inputBuffer = gtk_text_buffer_new(NULL);
+}
+
+GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem_S logSystem)
+    : grpid(0),
+      buffer(NULL),
+      dialogBase(NULL),
+      me(me),
+      type(GROUP_BELONG_TYPE_REGULAR),
+      logSystem(logSystem) {
+  members.push_back(pal);
   inputBuffer = gtk_text_buffer_new(NULL);
 }
 
@@ -37,17 +48,6 @@ bool GroupInfo::hasPal(PalInfo* pal) const {
 
 bool GroupInfo::hasPal(PPalInfo pal) const {
   return hasPal(pal.get());
-}
-
-GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
-    : grpid(0),
-      buffer(NULL),
-      dialogBase(NULL),
-      me(me),
-      type(GROUP_BELONG_TYPE_REGULAR),
-      logSystem(logSystem) {
-  members.push_back(pal);
-  inputBuffer = gtk_text_buffer_new(NULL);
 }
 
 GtkWidget* GroupInfo::getDialog() const {

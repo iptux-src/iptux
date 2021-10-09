@@ -14,11 +14,11 @@ namespace iptux {
 class DialogBase;
 class GroupInfo {
  public:
-  GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem);
+  GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem_S logSystem);
   GroupInfo(GroupBelongType type,
             const std::vector<PPalInfo>& pals,
             CPPalInfo me,
-            LogSystem* logSystem);
+            LogSystem_S logSystem);
   ~GroupInfo();
 
   const std::vector<PPalInfo>& getMembers() const { return members; }
@@ -64,7 +64,7 @@ class GroupInfo {
   CPPalInfo me;
   std::vector<PPalInfo> members;
   GroupBelongType type;  ///< 群组类型
-  LogSystem* logSystem;
+  LogSystem_S logSystem;
   int allMsgCount = 0;  /* all received message count */
   int readMsgCount = 0; /* already read message count */
 

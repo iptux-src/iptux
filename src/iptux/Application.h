@@ -31,7 +31,7 @@ class Application {
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
-  LogSystem* getLogSystem() { return logSystem; }
+  LogSystem_S getLogSystem() { return logSystem; }
   std::shared_ptr<UiProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   void refreshTransTasks();
@@ -51,7 +51,7 @@ class Application {
   ShareFile* shareFile = 0;
   TransWindow* transWindow = 0;
   EventAdaptor* eventAdaptor = 0;
-  LogSystem* logSystem = 0;
+  LogSystem_S logSystem;
   NotificationService* notificationService = 0;
   bool started{false};
 
