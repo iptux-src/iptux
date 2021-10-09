@@ -93,9 +93,6 @@ class DialogGroup : public DialogBase {
   static void onAttachFolder(void*, void*, DialogGroup& self) {
     DialogBase::AttachFolder(&self);
   }
-  static void onClose(void*, void*, DialogGroup& self) {
-    gtk_widget_destroy(GTK_WIDGET(self.window));
-  }
   static void onSortType(GSimpleAction* action,
                          GVariant* value,
                          DialogGroup& self);

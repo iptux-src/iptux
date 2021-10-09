@@ -90,7 +90,6 @@ void DialogPeer::init() {
       makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
       makeActionEntry("clear_chat_history",
                       G_ACTION_CALLBACK(onClearChatHistory)),
-      makeActionEntry("close", G_ACTION_CALLBACK(onClose)),
       makeActionEntry("refuse", G_ACTION_CALLBACK(onRefuse)),
       makeActionEntry("refuse_all", G_ACTION_CALLBACK(onRefuseAll)),
       makeActionEntry("insert_picture", G_ACTION_CALLBACK(onInsertPicture)),

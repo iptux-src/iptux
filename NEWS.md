@@ -2,6 +2,7 @@
 
 * [#481](https://github.com/iptux-src/iptux/issues/481) chatbox can remember the unsent text.
 * [#482](https://github.com/iptux-src/iptux/issues/482) add "What's New" in the menu.
+* [#485](https://github.com/iptux-src/iptux/issues/485) `<Primary>W` can close all kinds of windows.
 
 # [0.8.3] (2021-10-07)
 

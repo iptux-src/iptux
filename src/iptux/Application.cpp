@@ -149,6 +149,7 @@ void Application::onStartup(Application& self) {
                       G_ACTION_CALLBACK(onTransModelClear)),
       makeActionEntry("about", G_ACTION_CALLBACK(onAbout)),
       makeParamActionEntry("open-chat", G_ACTION_CALLBACK(onOpenChat), "s"),
+      makeActionEntry("window.close", G_ACTION_CALLBACK(onWindowClose)),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
@@ -167,7 +168,7 @@ void Application::onStartup(Application& self) {
   add_accelerator(self.app, "win.attach_file", "<Ctrl>S");
   add_accelerator(self.app, "win.attach_folder", "<Ctrl>D");
   add_accelerator(self.app, "win.request_shared_resources", "<Ctrl>R");
-  add_accelerator(self.app, "win.close", "<Primary>W");
+  add_accelerator(self.app, "app.window.close", "<Primary>W");
   self.onConfigChanged();
 
 #if SYSTEM_DARWIN
@@ -226,6 +227,13 @@ void Application::onOpenSystemLog(void*, void*, Application& self) {
 
 void Application::onTransModelClear(void*, void*, Application& self) {
   self.getCoreThread()->clearFinishedTransTasks();
+}
+
+void Application::onWindowClose(void*, void*, Application& self) {
+  auto window = gtk_application_get_active_window(self.app);
+  if (window) {
+    gtk_window_close(window);
+  }
 }
 
 void Application::onAbout(void*, void*, Application& self) {

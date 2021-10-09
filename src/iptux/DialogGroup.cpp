@@ -214,7 +214,6 @@ GtkWindow* DialogGroup::CreateMainWindow() {
                       G_ACTION_CALLBACK(onClearChatHistory)),
       makeActionEntry("attach_file", G_ACTION_CALLBACK(onAttachFile)),
       makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
-      makeActionEntry("close", G_ACTION_CALLBACK(onClose)),
       makeStateActionEntry("sort_type", G_ACTION_CALLBACK(onSortType), "s",
                            "'ascending'"),
       makeStateActionEntry("sort_by", G_ACTION_CALLBACK(onSortBy), "s",

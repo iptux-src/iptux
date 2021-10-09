@@ -92,9 +92,6 @@ class DialogPeer : public DialogBase {
   static void onSendMessage(void*, void*, DialogPeer& self) {
     DialogBase::SendMessage(&self);
   }
-  static void onClose(void*, void*, DialogPeer& self) {
-    gtk_widget_destroy(GTK_WIDGET(self.window));
-  }
   void onGroupInfoUpdated(GroupInfo* groupInfo);
   static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {
     self.refreshSendAction();

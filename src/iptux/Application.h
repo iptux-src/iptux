@@ -77,6 +77,7 @@ class Application {
   static void onOpenChat(GSimpleAction* action,
                          GVariant* value,
                          Application& self);
+  static void onWindowClose(void*, void*, Application& self);
   static gboolean onTransWindowDelete(Application& self);
 };
 
