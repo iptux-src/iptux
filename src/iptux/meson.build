@@ -16,6 +16,7 @@ sources = files([
     'DialogPeer.cpp',
     'EventAdaptor.cpp',
     'GioNotificationService.cpp',
+    'GroupInfo.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
     'RevisePal.cpp',
