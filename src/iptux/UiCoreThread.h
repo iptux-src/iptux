@@ -84,7 +84,8 @@ class UiCoreThread : public CoreThread {
   std::queue<MsgPara> messages;
 
   GroupInfoManager_U groupInfoManager;
-  GSList *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  // GSList *sgmlist;
+  GSList *grplist, *brdlist;  //群组链表(成员不能被删除)
 
   uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
   GSList* ecsList;    //文件链表(好友发过来)

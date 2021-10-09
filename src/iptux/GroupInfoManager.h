@@ -12,8 +12,12 @@ class GroupInfoManager {
   GroupInfoManager(UiProgramData_S programData, LogSystem_S logSystem);
 
   void addGroupInfo(GroupInfo_S groupInfo);
+
   GroupInfo_S addPal(PalInfo_S pal, PalInfo_SC me);
+  GroupInfo_S addGroup(GroupBelongType type, PalInfo_SC me, std::string name);
+
   GroupInfo_S getGroupInfo(const PalInfo* pal);
+  GroupInfo_S getGroupInfo(const GroupInfo::KeyType& key);
 
  private:
   UiProgramData_S programData;

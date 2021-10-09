@@ -21,6 +21,22 @@ GroupInfo_S GroupInfoManager::addPal(PalInfo_S pal, PalInfo_SC me) {
   return grpinf;
 }
 
+GroupInfo_S GroupInfoManager::getGroupInfo(const GroupInfo::KeyType& key) {
+  return groupInfos[key];
+}
+
+GroupInfo_S GroupInfoManager::addGroup(GroupBelongType type,
+                                       PalInfo_SC me,
+                                       std::string name) {
+  GroupInfo_S grpinf(new GroupInfo(type, vector<PPalInfo>(), me, logSystem));
+  grpinf->grpid = g_quark_from_static_string(name.c_str());
+  grpinf->name = name;
+  grpinf->buffer = gtk_text_buffer_new(programData->table);
+  grpinf->clearDialog();
+  addGroupInfo(grpinf);
+  return grpinf;
+}
+
 GroupInfo_S GroupInfoManager::getGroupInfo(const PalInfo* pal) {
   return groupInfos[GroupInfo::genKey(pal)];
 }
