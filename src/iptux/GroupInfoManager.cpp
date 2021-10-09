@@ -12,7 +12,7 @@ GroupInfoManager::GroupInfoManager(UiProgramData_S programData,
     : programData(programData), logSystem(logSystem) {}
 
 GroupInfo_S GroupInfoManager::addPal(PalInfo_S pal, PalInfo_SC me) {
-  auto grpinf = make_shared<GroupInfo>(pal, me, logSystem);
+  GroupInfo_S grpinf(new GroupInfo(pal, me, logSystem));
   grpinf->grpid = inAddrToUint32(pal->ipv4);
   grpinf->name = pal->getName();
   grpinf->buffer = gtk_text_buffer_new(programData->table);
@@ -22,7 +22,7 @@ GroupInfo_S GroupInfoManager::addPal(PalInfo_S pal, PalInfo_SC me) {
 }
 
 GroupInfo_S GroupInfoManager::getGroupInfo(const PalInfo* pal) {
-  return groupInfos[pal->GetKey()];
+  return groupInfos[GroupInfo::genKey(pal)];
 }
 
 void GroupInfoManager::addGroupInfo(GroupInfo_S groupInfo) {

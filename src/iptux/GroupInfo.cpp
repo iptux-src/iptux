@@ -54,11 +54,15 @@ GtkWidget* GroupInfo::getDialog() const {
   return dialogBase ? GTK_WIDGET(dialogBase->getWindow()) : nullptr;
 }
 
-PalKey GroupInfo::getKey() const {
+GroupInfo::KeyType GroupInfo::getKey() const {
   if (type == GROUP_BELONG_TYPE_REGULAR) {
-    return getMembers()[0]->GetKey();
+    return make_pair(type, getMembers()[0]->GetKey().ToString());
   }
-  throw std::runtime_error("GroupInfo::getKey()");
+  return make_pair(type, name);
+}
+
+GroupInfo::KeyType GroupInfo::genKey(const PalInfo* pal) {
+  return make_pair(GROUP_BELONG_TYPE_REGULAR, pal->GetKey().ToString());
 }
 
 bool GroupInfo::addPal(PPalInfo pal) {

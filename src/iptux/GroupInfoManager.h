@@ -18,7 +18,7 @@ class GroupInfoManager {
  private:
   UiProgramData_S programData;
   LogSystem_S logSystem;
-  std::map<PalKey, GroupInfo_S> groupInfos;
+  std::map<GroupInfo::KeyType, GroupInfo_S> groupInfos;
 };
 
 using GroupInfoManager_U = std::unique_ptr<GroupInfoManager>;

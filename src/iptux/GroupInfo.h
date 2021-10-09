@@ -12,19 +12,26 @@ namespace iptux {
  * 群组信息.
  */
 class DialogBase;
+class GroupInfoManager;
 class GroupInfo {
- public:
+ private:
+  // only for friend class GroupInfoManager
   GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem_S logSystem);
+
+ public:
   GroupInfo(GroupBelongType type,
             const std::vector<PPalInfo>& pals,
             CPPalInfo me,
             LogSystem_S logSystem);
+
   ~GroupInfo();
 
   const std::vector<PPalInfo>& getMembers() const { return members; }
   GroupBelongType getType() const { return type; }
 
-  PalKey getKey() const;
+  using KeyType = std::pair<GroupBelongType, std::string>;
+  KeyType getKey() const;
+  static KeyType genKey(const PalInfo* pal);
 
   /** return true if successful added, noop for regular group */
   bool addPal(PPalInfo pal);
@@ -72,6 +79,7 @@ class GroupInfo {
 
  private:
   void addMsgCount(int i);
+  friend GroupInfoManager;
 };
 
 using GroupInfo_S = std::shared_ptr<GroupInfo>;
