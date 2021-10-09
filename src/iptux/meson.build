@@ -17,6 +17,7 @@ sources = files([
     'EventAdaptor.cpp',
     'GioNotificationService.cpp',
     'GroupInfo.cpp',
+    'GroupInfoManager.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
     'RevisePal.cpp',

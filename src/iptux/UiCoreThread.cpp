@@ -24,7 +24,6 @@
 #include "iptux-utils/utils.h"
 #include "iptux/LogSystem.h"
 #include "iptux/UiHelper.h"
-#include "iptux/UiProgramData.h"
 
 using namespace std;
 
@@ -36,13 +35,14 @@ namespace iptux {
 UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
     : CoreThread(data),
       programData(data),
-      groupInfos(NULL),
       sgmlist(NULL),
       grplist(NULL),
       brdlist(NULL),
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
+  groupInfoManager =
+      make_unique<GroupInfoManager>(app->getProgramData(), app->getLogSystem());
   logSystem = app->getLogSystem();
   InitSublayer();
 }
@@ -63,17 +63,17 @@ void UiCoreThread::ClearAllPalFromList() {
   GroupInfo* grpinf;
   GSList* tlist;
 
-  /* 清空常规模式下所有群组的成员 */
-  tlist = groupInfos;
-  while (tlist) {
-    grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->getDialog()) {
-      session = (SessionAbstract*)g_object_get_data(
-          G_OBJECT(grpinf->getDialog()), "session-class");
-      session->ClearAllPalData();
-    }
-    tlist = g_slist_next(tlist);
-  }
+  // /* 清空常规模式下所有群组的成员 */
+  // tlist = groupInfos;
+  // while (tlist) {
+  //   grpinf = (GroupInfo*)tlist->data;
+  //   if (grpinf->getDialog()) {
+  //     session = (SessionAbstract*)g_object_get_data(
+  //         G_OBJECT(grpinf->getDialog()), "session-class");
+  //     session->ClearAllPalData();
+  //   }
+  //   tlist = g_slist_next(tlist);
+  // }
   /* 清空网段模式下所有群组的成员 */
   tlist = sgmlist;
   while (tlist) {
@@ -225,16 +225,8 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
  * @return 群组信息
  */
 GroupInfo* UiCoreThread::GetPalRegularItem(const PalInfo* pal) {
-  GSList* tlist;
-
-  tlist = groupInfos;
-  while (tlist) {
-    if (((GroupInfo*)tlist->data)->grpid == inAddrToUint32(pal->ipv4))
-      break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return (GroupInfo*)(tlist ? tlist->data : NULL);
+  auto res = groupInfoManager->getGroupInfo(pal);
+  return res ? res.get() : nullptr;
 }
 
 /**
@@ -306,9 +298,6 @@ void UiCoreThread::ClearSublayer() {
 
   CoreThread::ClearSublayer();
 
-  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo*)tlist->data;
-  g_slist_free(groupInfos);
   for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo*)tlist->data;
   g_slist_free(sgmlist);
@@ -348,17 +337,10 @@ GroupInfo* UiCoreThread::GetPalPrevGroupItem(PalInfo* pal) {
  * @return 新加入的群组
  */
 GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
-  GroupInfo* grpinf;
-
-  grpinf = new GroupInfo(pal, getMe(), logSystem);
-  grpinf->grpid = inAddrToUint32(pal->ipv4);
-  grpinf->name = pal->getName();
-  grpinf->buffer = gtk_text_buffer_new(programData->table);
-  grpinf->clearDialog();
+  auto grpinf = groupInfoManager->addPal(pal, getMe());
   grpinf->signalUnreadMsgCountUpdated.connect(
       sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate));
-  groupInfos = g_slist_append(groupInfos, grpinf);
-  return grpinf;
+  return grpinf.get();
 }
 
 /**

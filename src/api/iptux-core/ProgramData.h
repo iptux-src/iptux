@@ -104,6 +104,9 @@ class ProgramData {
   void WriteNetSegment();
   void ReadNetSegment();
 };
+
+using ProgramData_S = std::shared_ptr<ProgramData>;
+
 }  // namespace iptux
 
 #endif  // IPTUX_PROGRAMDATACORE_H

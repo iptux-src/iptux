@@ -54,6 +54,13 @@ GtkWidget* GroupInfo::getDialog() const {
   return dialogBase ? GTK_WIDGET(dialogBase->getWindow()) : nullptr;
 }
 
+PalKey GroupInfo::getKey() const {
+  if (type == GROUP_BELONG_TYPE_REGULAR) {
+    return getMembers()[0]->GetKey();
+  }
+  throw std::runtime_error("GroupInfo::getKey()");
+}
+
 bool GroupInfo::addPal(PPalInfo pal) {
   if (type == GROUP_BELONG_TYPE_REGULAR) {
     LOG_WARN("should not call addPal on GROUP_BELONG_TYPE_REGULAR");

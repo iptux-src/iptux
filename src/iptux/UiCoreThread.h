@@ -24,6 +24,7 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/GroupInfo.h"
+#include "iptux/GroupInfoManager.h"
 #include "iptux/UiModels.h"
 #include "iptux/UiProgramData.h"
 
@@ -82,7 +83,8 @@ class UiCoreThread : public CoreThread {
   LogSystem_S logSystem;
   std::queue<MsgPara> messages;
 
-  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  GroupInfoManager_U groupInfoManager;
+  GSList *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
 
   uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
   GSList* ecsList;    //文件链表(好友发过来)

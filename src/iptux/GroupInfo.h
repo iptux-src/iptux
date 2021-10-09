@@ -24,6 +24,8 @@ class GroupInfo {
   const std::vector<PPalInfo>& getMembers() const { return members; }
   GroupBelongType getType() const { return type; }
 
+  PalKey getKey() const;
+
   /** return true if successful added, noop for regular group */
   bool addPal(PPalInfo pal);
 
@@ -71,6 +73,8 @@ class GroupInfo {
  private:
   void addMsgCount(int i);
 };
+
+using GroupInfo_S = std::shared_ptr<GroupInfo>;
 
 }  // namespace iptux
 

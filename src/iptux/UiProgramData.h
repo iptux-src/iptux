@@ -30,6 +30,9 @@ class UiProgramData : public ProgramData {
   void CreateTagTable();
   void CheckIconTheme();
 };
+
+using UiProgramData_S = std::shared_ptr<UiProgramData>;
+
 }  // namespace iptux
 
 #endif
