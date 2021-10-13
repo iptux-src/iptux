@@ -8,25 +8,27 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-10-07 18:16+0800\n"
-"PO-Revision-Date: 2016-11-01 13:56+0000\n"
-"Last-Translator: EquipeLinux <Unknown>\n"
-"Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
+"PO-Revision-Date: 2021-10-12 15:17+0000\n"
+"Last-Translator: inkhorn <inkhorn@hostux.ninja>\n"
+"Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
+"iptux/iptux/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
-"X-Generator: Launchpad (build 18532)\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
 msgid "iptux"
-msgstr ""
+msgstr "iptux"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:4
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "LAN communication software"
-msgstr ""
+msgstr "Software de comunicação LAN"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:5
 msgid "chat;talk;im;message;ipmsg;feige;"
@@ -34,23 +36,23 @@ msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:12
 msgid "iptux is an “IP Messenger” client."
-msgstr ""
+msgstr "iptux é um cliente do \"IP Messenger\"."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
 msgid "It can:"
-msgstr ""
+msgstr "Ele pode:"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
 msgid "auto-detect other clients on the intranet."
-msgstr ""
+msgstr "detectar automaticamente outros clientes na intranet."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
 msgid "send messages to other clients."
-msgstr ""
+msgstr "enviar mensagens a outros clientes."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
 msgid "send files to other clients."
-msgstr ""
+msgstr "enviar arquivos para outros clientes."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:23
 msgid ""
@@ -58,15 +60,17 @@ msgid ""
 "China, and with the original “IP Messenger” clients from Japan, including "
 "g2ipmsg and xipmsg in Debian."
 msgstr ""
+"É (supostamente) compatível com 飞鸽传书 (Feige) e 飞秋 (FeiQ) da China, e com o "
+"cliente original “IP Messenger” do Japão, incluindo g2ipmsg e xipmsg no "
+"Debian."
 
 #: src/iptux-core/CoreThread.cpp:187
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Fatal Error!! Failed to create new socket!\n"
 "%s"
 msgstr ""
-"Êrro Fatal!!\n"
-"Falhou em criar novo socket!\n"
+"Erro Fatal!! Falha ao criar novo Socket!\n"
 "%s"
 
 #: src/iptux-core/CoreThread.cpp:203
