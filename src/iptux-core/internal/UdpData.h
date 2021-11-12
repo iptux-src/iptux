@@ -23,7 +23,7 @@ namespace iptux {
 
 class UdpData {
  public:
-  explicit UdpData(CoreThread& coreThread);
+  UdpData(CoreThread& coreThread, in_addr ipv4, const char buf[], size_t size);
   ~UdpData();
 
   static std::unique_ptr<UdpData> UdpDataEntry(
@@ -38,10 +38,9 @@ class UdpData {
   // for test
  public:
   std::shared_ptr<PalInfo> CreatePalInfo();
-
- private:
   void DispatchUdpData();
 
+ private:
   void SomeoneLost();
   void SomeoneEntry();
   void SomeoneExit();

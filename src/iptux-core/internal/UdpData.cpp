@@ -39,8 +39,19 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UdpData::UdpData(CoreThread& coreThread)
-    : coreThread(coreThread), ipv4({0}), size(0), encode(NULL) {}
+UdpData::UdpData(CoreThread& coreThread,
+                 in_addr ipv4,
+                 const char buf_[],
+                 size_t size_)
+    : coreThread(coreThread),
+      ipv4(ipv4),
+      size(size_ < MAX_UDPLEN ? size_ : MAX_UDPLEN),
+      encode(NULL) {
+  memcpy(buf, buf_, size);
+  if (size != MAX_UDPLEN) {
+    buf[size] = '\0';
+  }
+}
 
 /**
  * 类析构函数.
@@ -49,32 +60,32 @@ UdpData::~UdpData() {
   g_free(encode);
 }
 
-unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
-                                          in_addr ipv4,
-                                          int port,
-                                          const char buf[],
-                                          size_t size,
-                                          bool run) {
-  if (Log::IsDebugEnabled()) {
-    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
-              inAddrToString(ipv4).c_str(), port, size,
-              stringDumpAsCString(string(buf, size)).c_str());
-  } else {
-    LOG_INFO("received udp message from %s:%d, size %zu",
-             inAddrToString(ipv4).c_str(), port, size);
-  }
-  auto udata = make_unique<UdpData>(coreThread);
+// unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
+//                                           in_addr ipv4,
+//                                           int port,
+//                                           const char buf[],
+//                                           size_t size,
+//                                           bool run) {
+//   if (Log::IsDebugEnabled()) {
+//     LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
+//               inAddrToString(ipv4).c_str(), port, size,
+//               stringDumpAsCString(string(buf, size)).c_str());
+//   } else {
+//     LOG_INFO("received udp message from %s:%d, size %zu",
+//              inAddrToString(ipv4).c_str(), port, size);
+//   }
+//   auto udata = make_unique<UdpData>(coreThread);
 
-  udata->ipv4 = ipv4;
-  udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
-  memcpy(udata->buf, buf, size);
-  if (size != MAX_UDPLEN)
-    udata->buf[size] = '\0';
-  if (run) {
-    udata->DispatchUdpData();
-  }
-  return udata;
-}
+//   udata->ipv4 = ipv4;
+//   udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
+//   memcpy(udata->buf, buf, size);
+//   if (size != MAX_UDPLEN)
+//     udata->buf[size] = '\0';
+//   if (run) {
+//     udata->DispatchUdpData();
+//   }
+//   return udata;
+// }
 
 /**
  * 分派UDP数据到相应的函数去进行处理.
