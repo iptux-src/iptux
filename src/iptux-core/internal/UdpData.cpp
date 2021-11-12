@@ -60,88 +60,6 @@ UdpData::~UdpData() {
   g_free(encode);
 }
 
-// unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
-//                                           in_addr ipv4,
-//                                           int port,
-//                                           const char buf[],
-//                                           size_t size,
-//                                           bool run) {
-//   if (Log::IsDebugEnabled()) {
-//     LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
-//               inAddrToString(ipv4).c_str(), port, size,
-//               stringDumpAsCString(string(buf, size)).c_str());
-//   } else {
-//     LOG_INFO("received udp message from %s:%d, size %zu",
-//              inAddrToString(ipv4).c_str(), port, size);
-//   }
-//   auto udata = make_unique<UdpData>(coreThread);
-
-//   udata->ipv4 = ipv4;
-//   udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
-//   memcpy(udata->buf, buf, size);
-//   if (size != MAX_UDPLEN)
-//     udata->buf[size] = '\0';
-//   if (run) {
-//     udata->DispatchUdpData();
-//   }
-//   return udata;
-// }
-
-/**
- * 分派UDP数据到相应的函数去进行处理.
- */
-void UdpData::DispatchUdpData() {
-  uint32_t commandno;
-
-  /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
-  /* 嘿嘿，那就不要怪偶心狠手辣了 */
-  if (coreThread.IsBlocked(ipv4)) {
-    LOG_INFO("address is blocked: %s", inAddrToString(ipv4).c_str());
-    return;
-  }
-
-  /* 决定消息去向 */
-  commandno = iptux_get_dec_number(buf, ':', 4);
-  auto commandMode = GET_MODE(commandno);
-  LOG_INFO("command NO.: [0x%x] %s", commandno,
-           CommandMode(commandMode).toString().c_str());
-  switch (commandMode) {
-    case IPMSG_BR_ENTRY:
-      SomeoneEntry();
-      break;
-    case IPMSG_BR_EXIT:
-      SomeoneExit();
-      break;
-    case IPMSG_ANSENTRY:
-      SomeoneAnsEntry();
-      break;
-    case IPMSG_BR_ABSENCE:
-      SomeoneAbsence();
-      break;
-    case IPMSG_SENDMSG:
-      SomeoneSendmsg();
-      break;
-    case IPMSG_RECVMSG:
-      SomeoneRecvmsg();
-      break;
-    case IPTUX_ASKSHARED:
-      SomeoneAskShared();
-      break;
-    case IPTUX_SENDICON:
-      SomeoneSendIcon();
-      break;
-    case IPTUX_SEND_SIGN:
-      SomeoneSendSign();
-      break;
-    case IPTUX_SENDMSG:
-      SomeoneBcstmsg();
-      break;
-    default:
-      LOG_WARN("unknown command mode: 0x%lx", commandMode);
-      break;
-  }
-}
-
 /**
  * 好友信息数据丢失默认处理函数.
  * 若xx并不在好友列表中，但是程序却期望能够接受xx的本次会话，
@@ -777,6 +695,18 @@ void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal) {
   } else {
     SendFile::SendSharedInfoEntry(coreThread, pal);
   }
+}
+
+uint32_t UdpData::getCommandNo() const {
+  return iptux_get_dec_number(buf, ':', 4);
+}
+
+string UdpData::getIpv4String() const {
+  return inAddrToString(ipv4);
+}
+
+CommandMode UdpData::getCommandMode() const {
+  return CommandMode(GET_MODE(getCommandNo()));
 }
 
 }  // namespace iptux

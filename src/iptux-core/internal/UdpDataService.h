@@ -21,6 +21,8 @@ class UdpDataService {
                                    size_t size,
                                    bool run);
 
+  void process(UdpData& udpData);
+
  private:
   CoreThread& core_thread_;
 };
