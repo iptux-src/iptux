@@ -53,6 +53,12 @@ UdpData::UdpData(CoreThread& coreThread,
   }
 }
 
+UdpData::UdpData(const string& buf_, const string& ipv4String)
+    : coreThread(*(CoreThread*)NULL), size(buf_.size()), encode(nullptr) {
+  this->ipv4 = inAddrFromString(ipv4String);
+  memcpy(buf, &buf_[0], buf_.size());
+}
+
 /**
  * 类析构函数.
  */
