@@ -13,7 +13,7 @@ TEST(UdpDataService, process) {
   service->process(inAddrFromString("127.0.0.1"), 1234, "", 0, true);
 }
 
-TEST(UdpData, SomeoneEntry) {
+TEST(UdpDataService, SomeoneEntry) {
   auto core = newCoreThread();
   auto service = new UdpDataService(*core.get());
   const char* data = "iptux 0.8.0:1:lidaobing:lidaobing.lan:257:lidaobing";
@@ -21,7 +21,7 @@ TEST(UdpData, SomeoneEntry) {
                    true);
 }
 
-TEST(UdpData, CreatePalInfo) {
+TEST(UdpDataService, CreatePalInfo) {
   auto core = newCoreThread();
   {
     const char* data =
