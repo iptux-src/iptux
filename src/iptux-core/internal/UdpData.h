@@ -26,11 +26,6 @@ class UdpData {
   explicit UdpData(CoreThread& coreThread);
   ~UdpData();
 
-  static std::unique_ptr<UdpData> UdpDataEntry(CoreThread& coreThread,
-                                               in_addr ipv4,
-                                               int port,
-                                               const char buf[],
-                                               size_t size);
   static std::unique_ptr<UdpData> UdpDataEntry(
       CoreThread& coreThread,
       in_addr ipv4,

@@ -49,20 +49,6 @@ UdpData::~UdpData() {
   g_free(encode);
 }
 
-/**
- * UDP数据解析入口.
- * @param ipv4 ipv4
- * @param buf[] 数据缓冲区
- * @param size 数据有效长度
- */
-unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
-                                          in_addr ipv4,
-                                          int port,
-                                          const char buf[],
-                                          size_t size) {
-  return UdpDataEntry(coreThread, ipv4, port, buf, size, true);
-}
-
 unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
                                           in_addr ipv4,
                                           int port,
