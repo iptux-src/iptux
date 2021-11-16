@@ -21,6 +21,7 @@
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpData.h"
+#include "iptux-core/internal/UdpDataService.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
@@ -84,6 +85,9 @@ void init_iptux_environment() {
 
 struct CoreThread::Impl {
   PPalInfo me;
+
+  UdpDataService_U udp_data_service;
+
   GSList* blacklist{nullptr};  //黑名单链表
   bool debugDontBroadcast{false};
   vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
@@ -136,6 +140,7 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
+  pImpl->udp_data_service = make_unique<UdpDataService>(*this);
   pImpl->me = make_shared<PalInfo>();
   pImpl->me->ipv4 = inAddrFromString("127.0.0.1");
   (*pImpl->me)
@@ -250,7 +255,7 @@ void CoreThread::RecvUdpData(CoreThread* self) {
     if (size != MAX_UDPLEN)
       buf[size] = '\0';
     auto port = ntohs(addr.sin_port);
-    UdpData::UdpDataEntry(*self, addr.sin_addr, port, buf, size);
+    self->pImpl->udp_data_service->process(addr.sin_addr, port, buf, size);
   }
 }
 

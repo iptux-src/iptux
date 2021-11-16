@@ -26,6 +26,7 @@ core_sources += files([
     'internal/TcpData.cpp',
     'internal/TransAbstract.cpp',
     'internal/UdpData.cpp',
+    'internal/UdpDataService.cpp',
 ])
 
 inc = include_directories('..', '../api')
@@ -77,6 +78,7 @@ core_test_sources = files([
     'internal/CommandTest.cpp',
     'internal/supportTest.cpp',
     'internal/UdpDataTest.cpp',
+    'internal/UdpDataServiceTest.cpp',
     'IptuxConfigTest.cpp',
     'ModelsTest.cpp',
     'ProgramDataTest.cpp',
