@@ -301,7 +301,7 @@ GtkWidget* DialogPeer::CreateInfoArea() {
                                       GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(frame), sw);
 
-  buffer = gtk_text_buffer_new(progdt->table);
+  buffer = gtk_text_buffer_new(app->getCoreThread()->tag_table());
   FillPalInfoToBuffer(buffer, grpinf->getMembers()[0].get());
   widget = gtk_text_view_new_with_buffer(buffer);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
@@ -965,7 +965,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
   gchar* filename;
   FileInfo* file;
 
-  auto g_progdt = self->app->getCoreThread()->getUiProgramData();
+  auto g_progdt = self->app->getCoreThread()->getProgramData();
 
   const gchar* filepath = pop_save_path(GTK_WIDGET(self->grpinf->getDialog()),
                                         g_progdt->path.c_str());

@@ -20,7 +20,6 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/UiModels.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -85,7 +84,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
  protected:
   Application* app;
-  std::shared_ptr<UiProgramData> progdt;
+  std::shared_ptr<ProgramData> progdt;
 
   GtkTreeView* fileSendTree = 0;
   GtkTextView* inputTextviewWidget = 0;

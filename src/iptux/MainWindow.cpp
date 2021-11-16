@@ -45,7 +45,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
     : app(app),
       coreThread(coreThread),
       window(nullptr),
-      progdt(coreThread.getUiProgramData()),
+      progdt(coreThread.getProgramData()),
       config(progdt->getConfig()),
       widset(NULL),
       mdlset(NULL),
