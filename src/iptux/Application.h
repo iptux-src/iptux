@@ -8,7 +8,6 @@
 #include "iptux/EventAdaptor.h"
 #include "iptux/NotificationService.h"
 #include "iptux/UiModels.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -32,14 +31,14 @@ class Application {
   MainWindow* getMainWindow() { return window; }
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
   LogSystem* getLogSystem() { return logSystem; }
-  std::shared_ptr<UiProgramData> getProgramData() { return data; }
+  std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   void refreshTransTasks();
   PPalInfo getMe();
 
  private:
   std::shared_ptr<IptuxConfig> config;
-  std::shared_ptr<UiProgramData> data;
+  std::shared_ptr<ProgramData> data;
   std::shared_ptr<UiCoreThread> cthrd;
 
   GtkApplication* app;

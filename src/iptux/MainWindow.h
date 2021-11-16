@@ -20,7 +20,6 @@
 #include "iptux/EventAdaptor.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiModels.h"
-#include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
 
 namespace iptux {
@@ -47,7 +46,7 @@ class MainWindow : public sigc::trackable {
   void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
 
-  std::shared_ptr<UiProgramData> GetProgramData() { return progdt; }
+  std::shared_ptr<ProgramData> GetProgramData() { return progdt; }
 
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
 
@@ -59,7 +58,7 @@ class MainWindow : public sigc::trackable {
   GtkWidget* window;
   EventAdaptor* eventAdaptor;
 
-  std::shared_ptr<UiProgramData> progdt;
+  std::shared_ptr<ProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
 
   GData* widset;         //窗体集

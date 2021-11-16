@@ -16,7 +16,6 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/DialogBase.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 

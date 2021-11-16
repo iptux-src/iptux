@@ -9,7 +9,7 @@ using namespace iptux;
 TEST(UiCoreThread, Constructor) {
   gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
-  auto core = make_shared<UiProgramData>(config);
+  auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
 
   Application app(config);

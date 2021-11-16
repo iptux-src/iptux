@@ -19,7 +19,6 @@
 
 #include "iptux-core/Const.h"
 #include "iptux/UiHelper.h"
-#include "iptux/UiProgramData.h"
 
 using namespace std;
 

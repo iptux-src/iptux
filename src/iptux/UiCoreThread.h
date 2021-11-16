@@ -24,7 +24,6 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/UiModels.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -40,10 +39,10 @@ class LogSystem;
  */
 class UiCoreThread : public CoreThread {
  public:
-  UiCoreThread(Application* app, std::shared_ptr<UiProgramData> data);
+  UiCoreThread(Application* app, std::shared_ptr<ProgramData> data);
   ~UiCoreThread() override;
 
-  std::shared_ptr<UiProgramData> getUiProgramData();
+  std::shared_ptr<ProgramData> getProgramData() { return programData; }
 
   void ClearAllPalFromList() override;
   void UpdatePalToList(PalKey palKey) override;
@@ -60,6 +59,8 @@ class UiCoreThread : public CoreThread {
 
   LogSystem* getLogSystem() { return logSystem; }
 
+  GtkTextTagTable* tag_table() { return tag_table_; }
+
  public:
   sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
 
@@ -75,16 +76,19 @@ class UiCoreThread : public CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal);
   static void AttachPalToGroupInfoItem(GroupInfo* grpinf, PPalInfo pal);
   void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
+  GtkTextTagTable* CreateTagTable();
+  void CheckIconTheme();
 
  private:
-  std::shared_ptr<UiProgramData> programData;
+  std::shared_ptr<ProgramData> programData;
   LogSystem* logSystem;
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
 
-  uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
-  GSList* ecsList;    //文件链表(好友发过来)
+  uint32_t pbn, prn;            //当前已使用的文件编号(共享/私有)
+  GSList* ecsList;              //文件链表(好友发过来)
+  GtkTextTagTable* tag_table_;  // tag table
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 
   //内联成员函数

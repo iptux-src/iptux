@@ -18,6 +18,7 @@ src/iptux-core/internal/SendFileData.cpp
 src/iptux-core/internal/TcpData.cpp
 src/iptux-core/internal/TransAbstract.cpp
 src/iptux-core/internal/UdpData.cpp
+src/iptux-core/internal/UdpDataService.cpp
 src/iptux-core/internal/support.cpp
 src/iptux-utils/Exception.cpp
 src/iptux-utils/output.cpp
@@ -41,7 +42,6 @@ src/iptux/TransWindow.cpp
 src/iptux/UiCoreThread.cpp
 src/iptux/UiHelper.cpp
 src/iptux/UiModels.cpp
-src/iptux/UiProgramData.cpp
 src/iptux/WindowConfig.cpp
 src/iptux/callback.cpp
 src/iptux/dialog.cpp

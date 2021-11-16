@@ -18,7 +18,6 @@
 #include "iptux/TransWindow.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
-#include "iptux/UiProgramData.h"
 #include "iptux/dialog.h"
 
 #if SYSTEM_DARWIN
@@ -124,7 +123,7 @@ void Application::onStartup(Application& self) {
   iptux_register_resource();
   self.menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
-  self.data = make_shared<UiProgramData>(self.config);
+  self.data = make_shared<ProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   self.window = new MainWindow(&self, *self.cthrd);
@@ -298,7 +297,7 @@ void Application::onEvent(shared_ptr<const Event> _event) {
       return;
     }
     this->updateItemToTransTree(*para);
-    auto g_progdt = cthrd->getUiProgramData();
+    auto g_progdt = cthrd->getProgramData();
     if (g_progdt->IsAutoOpenFileTrans()) {
       this->openTransWindow();
     }
