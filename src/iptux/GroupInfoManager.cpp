@@ -2,20 +2,21 @@
 #include "GroupInfoManager.h"
 
 #include "iptux-utils/utils.h"
+#include "iptux/UiCoreThread.h"
 
 using namespace std;
 
 namespace iptux {
 
-GroupInfoManager::GroupInfoManager(UiProgramData_S programData,
+GroupInfoManager::GroupInfoManager(UiCoreThread* coreThread,
                                    LogSystem_S logSystem)
-    : programData(programData), logSystem(logSystem) {}
+    : core_thread_(coreThread), logSystem(logSystem) {}
 
 GroupInfo_S GroupInfoManager::addPal(PalInfo_S pal, PalInfo_SC me) {
   GroupInfo_S grpinf(new GroupInfo(pal, me, logSystem));
   grpinf->grpid = inAddrToUint32(pal->ipv4);
   grpinf->name = pal->getName();
-  grpinf->buffer = gtk_text_buffer_new(programData->table);
+  grpinf->buffer = gtk_text_buffer_new(core_thread_->tag_table());
   grpinf->clearDialog();
   addGroupInfo(grpinf);
   return grpinf;
@@ -31,7 +32,7 @@ GroupInfo_S GroupInfoManager::addGroup(GroupBelongType type,
   GroupInfo_S grpinf(new GroupInfo(type, vector<PPalInfo>(), me, logSystem));
   grpinf->grpid = g_quark_from_static_string(name.c_str());
   grpinf->name = name;
-  grpinf->buffer = gtk_text_buffer_new(programData->table);
+  grpinf->buffer = gtk_text_buffer_new(core_thread_->tag_table());
   grpinf->clearDialog();
   addGroupInfo(grpinf);
   return grpinf;

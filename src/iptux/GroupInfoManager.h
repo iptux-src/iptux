@@ -3,13 +3,13 @@
 
 #include "iptux/GroupInfo.h"
 #include "iptux/LogSystem.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
+class UiCoreThread;
 class GroupInfoManager {
  public:
-  GroupInfoManager(UiProgramData_S programData, LogSystem_S logSystem);
+  GroupInfoManager(UiCoreThread* coreThread, LogSystem_S logSystem);
 
   void addGroupInfo(GroupInfo_S groupInfo);
 
@@ -20,7 +20,7 @@ class GroupInfoManager {
   GroupInfo_S getGroupInfo(const GroupInfo::KeyType& key);
 
  private:
-  UiProgramData_S programData;
+  UiCoreThread* core_thread_;
   LogSystem_S logSystem;
   std::map<GroupInfo::KeyType, GroupInfo_S> groupInfos;
 };

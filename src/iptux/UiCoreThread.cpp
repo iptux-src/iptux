@@ -40,8 +40,7 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<ProgramData> data)
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
-  groupInfoManager =
-      make_unique<GroupInfoManager>(app->getProgramData(), app->getLogSystem());
+  groupInfoManager = make_unique<GroupInfoManager>(this, app->getLogSystem());
   tag_table_ = CreateTagTable();
   CheckIconTheme();
   logSystem = app->getLogSystem();
