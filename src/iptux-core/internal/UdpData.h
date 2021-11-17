@@ -17,36 +17,27 @@
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
+#include "iptux-core/internal/CommandMode.h"
 #include "iptux-core/internal/ipmsg.h"
 
 namespace iptux {
 
 class UdpData {
  public:
-  explicit UdpData(CoreThread& coreThread);
+  UdpData(CoreThread& coreThread, in_addr ipv4, const char buf[], size_t size);
+  UdpData(const std::string& buf, const std::string& ipv4String);
   ~UdpData();
 
-  static std::unique_ptr<UdpData> UdpDataEntry(CoreThread& coreThread,
-                                               in_addr ipv4,
-                                               int port,
-                                               const char buf[],
-                                               size_t size);
-  static std::unique_ptr<UdpData> UdpDataEntry(
-      CoreThread& coreThread,
-      in_addr ipv4,
-      int port,
-      const char buf[],
-      size_t size,
-      bool run /** if run is false, don't do DispatchUdpData */
-  );
+  in_addr getIpv4() const { return ipv4; }
+  std::string getIpv4String() const;
 
-  // for test
+  uint32_t getCommandNo() const;
+  CommandMode getCommandMode() const;
+
  public:
   std::shared_ptr<PalInfo> CreatePalInfo();
 
- private:
-  void DispatchUdpData();
-
+ public:
   void SomeoneLost();
   void SomeoneEntry();
   void SomeoneExit();
@@ -59,6 +50,7 @@ class UdpData {
   void SomeoneSendSign();
   void SomeoneBcstmsg();
 
+ private:
   void UpdatePalInfo(PalInfo* pal);
 
   void InsertMessage(PPalInfo pal, GroupBelongType btype, const char* msg);

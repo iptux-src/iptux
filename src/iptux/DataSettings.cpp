@@ -21,7 +21,6 @@
 #include "iptux-utils/utils.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
-#include "iptux/UiProgramData.h"
 #include "iptux/callback.h"
 
 using namespace std;
@@ -55,7 +54,7 @@ void DataSettings::ResetDataEntry(Application* app,
   GtkWidget *note, *label;
 
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
 
   dialog = dset.CreateMainDialog(parent);
 
@@ -433,7 +432,7 @@ void DataSettings::SetPersonalValue() {
   gint active;
 
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
   gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->nickname.c_str());
@@ -468,7 +467,7 @@ void DataSettings::SetSystemValue() {
   gint active;
 
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->codeset.c_str());
@@ -565,7 +564,7 @@ void DataSettings::FillIconModel(GtkTreeModel* model) {
  */
 void DataSettings::FillNetworkModel(GtkTreeModel* model) {
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
   for (const NetSegment& pns : g_progdt->getNetSegments()) {
     GtkTreeIter iter;
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -683,7 +682,7 @@ void DataSettings::ObtainPersonalValue() {
   gint active;
 
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "nickname-entry-widget"));
   if (*(text = gtk_entry_get_text(GTK_ENTRY(widget))) != '\0') {
@@ -745,7 +744,7 @@ void DataSettings::ObtainSystemValue() {
   gint active;
 
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
@@ -844,7 +843,7 @@ void DataSettings::ObtainNetworkValue() {
     } while (gtk_tree_model_iter_next(model, &iter));
   }
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getUiProgramData();
+  auto g_progdt = g_cthrd->getProgramData();
   g_progdt->Lock();
   g_progdt->setNetSegments(move(netSegments));
   g_progdt->Unlock();

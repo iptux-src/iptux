@@ -27,7 +27,6 @@ sources = files([
     'UiCoreThread.cpp',
     'UiHelper.cpp',
     'UiModels.cpp',
-    'UiProgramData.cpp',
     'WindowConfig.cpp',
 ])
 
@@ -106,7 +105,6 @@ test_sources = files([
     'UiCoreThreadTest.cpp',
     'UiHelperTest.cpp',
     'UiModelsTest.cpp',
-    'UiProgramDataTest.cpp',
 ])
 libiptux_test = executable('libiptux_test',
     test_sources,

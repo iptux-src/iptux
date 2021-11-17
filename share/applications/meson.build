@@ -1,5 +1,5 @@
 i18n = import('i18n')
-i18n.merge_file('io.github.iptux_src.iptux.desktop',
+i18n.merge_file(
     type: 'desktop',
     output: 'io.github.iptux_src.iptux.desktop',
     input: 'io.github.iptux_src.iptux.desktop.in',

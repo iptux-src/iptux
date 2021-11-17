@@ -32,7 +32,7 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
+UiCoreThread::UiCoreThread(Application* app, shared_ptr<ProgramData> data)
     : CoreThread(data),
       programData(data),
       grplist(NULL),
@@ -42,6 +42,8 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
       ecsList(NULL) {
   groupInfoManager =
       make_unique<GroupInfoManager>(app->getProgramData(), app->getLogSystem());
+  tag_table_ = CreateTagTable();
+  CheckIconTheme();
   logSystem = app->getLogSystem();
   InitSublayer();
 }
@@ -49,7 +51,9 @@ UiCoreThread::UiCoreThread(Application* app, shared_ptr<UiProgramData> data)
 /**
  * 类析构函数.
  */
-UiCoreThread::~UiCoreThread() {}
+UiCoreThread::~UiCoreThread() {
+  g_object_unref(tag_table_);
+}
 
 /**
  * 从好友链表中移除所有好友数据(非UI线程安全).
@@ -350,7 +354,7 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>(), getMe(),
                          logSystem);
   grpinf->name = name;
-  grpinf->buffer = gtk_text_buffer_new(programData->table);
+  grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   grplist = g_slist_append(grplist, grpinf);
 
@@ -372,7 +376,7 @@ GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
                          getMe(), logSystem);
   grpinf->grpid = g_quark_from_static_string(name);
   grpinf->name = name;
-  grpinf->buffer = gtk_text_buffer_new(programData->table);
+  grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   brdlist = g_slist_append(brdlist, grpinf);
 
@@ -445,12 +449,83 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo* file) {
   delete file;
 }
 
-shared_ptr<UiProgramData> UiCoreThread::getUiProgramData() {
-  return programData;
-}
-
 void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int, int) {
   signalGroupInfoUpdated.emit(grpinf);
+}
+
+/**
+ * 创建用于(text-view)的一些通用tag.
+ * @note 给这些tag一个"global"标记，表示这些对象是全局共享的
+ */
+GtkTextTagTable* UiCoreThread::CreateTagTable() {
+  GtkTextTag* tag;
+
+  GtkTextTagTable* table = gtk_text_tag_table_new();
+
+  tag = gtk_text_tag_new("pal-color");
+  g_object_set(tag, "foreground", "blue", NULL);
+  g_object_set_data(G_OBJECT(tag), "global", GINT_TO_POINTER(TRUE));
+  gtk_text_tag_table_add(table, tag);
+  g_object_unref(tag);
+
+  tag = gtk_text_tag_new("me-color");
+  g_object_set(tag, "foreground", "green", NULL);
+  g_object_set_data(G_OBJECT(tag), "global", GINT_TO_POINTER(TRUE));
+  gtk_text_tag_table_add(table, tag);
+  g_object_unref(tag);
+
+  tag = gtk_text_tag_new("error-color");
+  g_object_set(tag, "foreground", "red", NULL);
+  g_object_set_data(G_OBJECT(tag), "global", GINT_TO_POINTER(TRUE));
+  gtk_text_tag_table_add(table, tag);
+  g_object_unref(tag);
+
+  tag = gtk_text_tag_new("sign-words");
+  g_object_set(tag, "indent", 10, "foreground", "#1005F0", "font",
+               "Sans Italic 8", NULL);
+  g_object_set_data(G_OBJECT(tag), "global", GINT_TO_POINTER(TRUE));
+  gtk_text_tag_table_add(table, tag);
+  g_object_unref(tag);
+
+  tag = gtk_text_tag_new("url-link");
+  g_object_set(tag, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE,
+               NULL);
+  g_object_set_data(G_OBJECT(tag), "global", GINT_TO_POINTER(TRUE));
+  gtk_text_tag_table_add(table, tag);
+  g_object_unref(tag);
+  return table;
+}
+
+/**
+ * 确保头像数据被存放在主题库中.
+ */
+void UiCoreThread::CheckIconTheme() {
+  char pathbuf[MAX_PATHLEN];
+  GdkPixbuf* pixbuf;
+
+  snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s",
+           programData->myicon.c_str());
+  if (access(pathbuf, F_OK) != 0) {
+    snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
+             g_get_user_config_dir(), programData->myicon.c_str());
+    if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
+      gtk_icon_theme_add_builtin_icon(programData->myicon.c_str(), MAX_ICONSIZE,
+                                      pixbuf);
+      g_object_unref(pixbuf);
+    }
+  }
+
+  snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s",
+           programData->palicon);
+  if (access(pathbuf, F_OK) != 0) {
+    snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
+             g_get_user_config_dir(), programData->palicon);
+    if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
+      gtk_icon_theme_add_builtin_icon(programData->palicon, MAX_ICONSIZE,
+                                      pixbuf);
+      g_object_unref(pixbuf);
+    }
+  }
 }
 
 }  // namespace iptux
