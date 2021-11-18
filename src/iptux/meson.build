@@ -106,6 +106,7 @@ test_sources = files([
     'UiHelperTest.cpp',
     'UiModelsTest.cpp',
 ])
+test_sources += [iptux_resource_h]
 libiptux_test = executable('libiptux_test',
     test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, thread_dep, sigc_dep],
