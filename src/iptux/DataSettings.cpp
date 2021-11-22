@@ -159,9 +159,8 @@ GtkWidget* DataSettings::CreatePersonal() {
   GtkTreeModel* model;
 
   box = gtk_grid_new();
-  g_object_set(box, "margin", 10, NULL);
-  gtk_grid_set_column_spacing(GTK_GRID(box), 10);
-  gtk_grid_set_row_spacing(GTK_GRID(box), 10);
+  g_object_set(box, "margin", 10, "column-spacing", 10, "row-spacing", 10,
+               NULL);
   /* 昵称 */
   label = gtk_label_new_with_mnemonic(_("Your _nickname:"));
   gtk_widget_set_halign(label, GTK_ALIGN_END);
@@ -258,35 +257,40 @@ GtkWidget* DataSettings::CreateSystem() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel* model;
 
-  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  box = gtk_grid_new();
+  g_object_set(box, "margin", 10, "column-spacing", 10, "row-spacing", 5, NULL);
+
   /* 候选编码 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  label = gtk_label_new(_("Candidate network coding:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  label = gtk_label_new(_("Candidate network encodings:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 0, 1, 1);
+
   widget = gtk_entry_new();
-  g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  g_object_set(widget, "has-tooltip", TRUE, "hexpand", TRUE, NULL);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
-                   _("Candidate network coding"));
+                   _("Candidate network encodings, separated by \",\""));
   g_datalist_set_data(&widset, "codeset-entry-widget", widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, 0, 1, 1);
+
   /* 首选编码 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  label = gtk_label_new(_("Preference network coding:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  label = gtk_label_new(_("Prefered network encoding:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 1, 1, 1);
+
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Preference network coding (You should be aware of "
                      "what you are doing if you want to modify it.)"));
   g_datalist_set_data(&widset, "encode-entry-widget", widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, 1, 1, 1);
+
   /* 好友头像 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's default face picture:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 2, 1, 1);
+
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   model = GTK_TREE_MODEL(this->iconModel);
   widget = CreateIconTree(model);
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
@@ -295,53 +299,55 @@ GtkWidget* DataSettings::CreateSystem() {
   g_object_set_data(G_OBJECT(button), "icon-combo-widget", widget);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
+  gtk_grid_attach(GTK_GRID(box), hbox, 1, 2, 1, 1);
+
   /* 面板字体 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Panel font:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 3, 1, 1);
+
   widget = CreateFontChooser();
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "font-chooser-widget", widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, 3, 1, 1);
 
   /* 有消息时直接弹出聊天窗口 */
   widget =
       gtk_check_button_new_with_label(_("Automatically open the chat dialog"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 4, 2, 1);
   g_datalist_set_data(&widset, "chat-check-widget", widget);
   /* 隐藏面板，只显示状态图标 */
   widget = gtk_check_button_new_with_label(
       _("Automatically hide the panel after login"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 5, 2, 1);
   g_datalist_set_data(&widset, "statusicon-check-widget", widget);
   /* 打开文件传输管理器 */
   widget = gtk_check_button_new_with_label(
       _("Automatically open the File Transmission Management"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 6, 2, 1);
   g_datalist_set_data(&widset, "transmission-check-widget", widget);
   /* enter键发送消息 */
   widget =
       gtk_check_button_new_with_label(_("Use the 'Enter' key to send message"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 7, 2, 1);
   g_datalist_set_data(&widset, "enterkey-check-widget", widget);
   /* 清空聊天历史记录 */
   widget = gtk_check_button_new_with_label(
       _("Automatically clean up the chat history"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 8, 2, 1);
   g_datalist_set_data(&widset, "history-check-widget", widget);
   /* 记录日志 */
   widget = gtk_check_button_new_with_label(_("Save the chat history"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 9, 2, 1);
   g_datalist_set_data(&widset, "log-check-widget", widget);
   /* 黑名单 */
   widget =
       gtk_check_button_new_with_label(_("Use the Blacklist (NOT recommended)"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 10, 2, 1);
   g_datalist_set_data(&widset, "blacklist-check-widget", widget);
   /* 过滤共享文件请求 */
   widget =
       gtk_check_button_new_with_label(_("Filter the request of sharing files"));
-  gtk_box_pack_start(GTK_BOX(box), widget, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, 11, 2, 1);
   g_datalist_set_data(&widset, "shared-check-widget", widget);
 
   return box;
@@ -359,6 +365,7 @@ GtkWidget* DataSettings::CreateNetwork() {
   GtkTreeModel* model;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  g_object_set(box, "margin", 10, NULL);
   /* 接受输入 */
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
