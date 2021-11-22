@@ -60,7 +60,7 @@ void DataSettings::ResetDataEntry(Application* app,
 
   /* 创建相关数据设置标签 */
   note = gtk_notebook_new();
-  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_LEFT);
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_TOP);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
                      note, TRUE, TRUE, 0);
@@ -158,53 +158,66 @@ GtkWidget* DataSettings::CreatePersonal() {
   GtkWidget *label, *button, *widget;
   GtkTreeModel* model;
 
-  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  box = gtk_grid_new();
+  g_object_set(box, "margin", 10, NULL);
+  gtk_grid_set_column_spacing(GTK_GRID(box), 10);
+  gtk_grid_set_row_spacing(GTK_GRID(box), 10);
   /* 昵称 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  label = gtk_label_new(_("Your nickname:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  label = gtk_label_new_with_mnemonic(_("Your _nickname:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 0, 1, 1);
+
   widget = gtk_entry_new();
-  g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  g_object_set(widget, "has-tooltip", TRUE, "hexpand", TRUE, NULL);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Please input your nickname!"));
   g_datalist_set_data(&widset, "nickname-entry-widget", widget);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, 0, 1, 1);
+
   /* 群组 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  label = gtk_label_new(_("Your group name:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  label = gtk_label_new_with_mnemonic(_("Your _group name:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 1, 1, 1);
+
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Please input your group name!"));
   g_datalist_set_data(&widset, "mygroup-entry-widget", widget);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, 1, 1, 1);
+
   /* 头像 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  label = gtk_label_new(_("Your face picture:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  label = gtk_label_new_with_mnemonic(_("Your _face picture:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 2, 1, 1);
+
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   model = GTK_TREE_MODEL(iconModel);
   widget = CreateIconTree(model);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   g_datalist_set_data(&widset, "myicon-combo-widget", widget);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+
   button = gtk_button_new_with_label("...");
   g_object_set_data(G_OBJECT(button), "icon-combo-widget", widget);
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
+  gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(box), hbox, 1, 2, 1, 1);
+
   /* 文件存档 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  label = gtk_label_new(_("Save files to: "));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  label = gtk_label_new_with_mnemonic(_("_Save files to: "));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, 3, 1, 1);
+
   widget = CreateArchiveChooser();
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
   g_datalist_set_data(&widset, "archive-chooser-widget", widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, 3, 1, 1);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+  gtk_grid_attach(GTK_GRID(box), hbox, 0, 4, 2, 1);
   /* 个人形象照片 */
   NO_OPERATION_C
   frame = gtk_frame_new(_("Photo"));
