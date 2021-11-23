@@ -1,21 +1,27 @@
-# [0.8.4] (2021-??-??)
+# NEWS
+
+## [0.8.4] (2021-??-??)
 
 * [#481](https://github.com/iptux-src/iptux/issues/481) chatbox can remember the unsent text.
 * [#482](https://github.com/iptux-src/iptux/issues/482) add "What's New" in the menu.
 * [#485](https://github.com/iptux-src/iptux/issues/485) `<Primary>W` can close all kinds of windows.
+* [#492](https://github.com/iptux-src/iptux/pull/492) [#495](https://github.com/iptux-src/iptux/pull/495) improve meson config, Thanks to @r-value for the patch.
+* [#497](https://github.com/iptux-src/iptux/pull/497) update Preferences dialog.
+* Translation updates:
+  * Portuguese (Brazil) - Thanks to inkhorn
 
-# [0.8.3] (2021-10-07)
+## [0.8.3] (2021-10-07)
 
 * [#476] open chat when clicking the new message notification (only works under Linux).
 
-# [0.8.2] (2021-06-21)
+## [0.8.2] (2021-06-21)
 
 * [#473] iconify main window when delete.
 * Translation updated:
   * Norwegian Bokmål - Thanks to Allan Nordhøy
   * German, French, Italy - Thanks to J. Lavoie
 
-# [0.8.1] (2021-05-03)
+## [0.8.1] (2021-05-03)
 
 * [#442] fix unittest fail under 32-bit system.
 * [#439] try to fix compile problem under Hurd.
@@ -27,9 +33,9 @@
   * Simplified Chinese
   * Russian - Thanks to @KovalevArtem
 
-# [0.8.0] (2021-04-11)
+## [0.8.0] (2021-04-11)
 
-## Features
+### Features
 
 * migrate to GTK+3, and use `GtkApplication`.
 * switch from `GtkStatusIcon` to `GNotification`.
@@ -43,7 +49,7 @@
   * German - Thanks to @comradekingu.
   * Simplified Chinese.
 
-## Bugs
+### Bugs
 
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
@@ -59,27 +65,27 @@
 * [#123] don't use `obtain_pixbuf_from_stock`.
 * [#136] the binding failed dialog should be a child of the main window.
 
-# [0.7.6] (2018-12-29)
+## [0.7.6] (2018-12-29)
 
 * [#219] fix compatible with FeiQ. thanks to caowai.
 
-# [0.7.5] (2018-05-28)
+## [0.7.5] (2018-05-28)
 
 * [#114] fix icon size.
 * [#119] check the return code of `setsockopt`.
 * [#207] fix crash when config the `Network`.
 
-# [0.7.4] (2018-01-24)
+## [0.7.4] (2018-01-24)
 
 * [#?] fix bug in save share management.
 * [#97] don't download googletest if already installed.
 
-# [0.7.3] (2018-01-20)
+## [0.7.3] (2018-01-20)
 
 * [#98] fix typo, thanks to @hosiet.
 * [#100] fix crash on the context menu of statusicon.
 
-# [0.7.2] (2018-01-16)
+## [0.7.2] (2018-01-16)
 
 * [?] fix crash when clicking on the popup menu of the mainwindow.
 
@@ -88,13 +94,13 @@
 * [#92] clean the icon namespace.
 * [?] update po/iptux.pot, update `zh_CN` translation.
 
-# [0.7.1] (2018-01-14)
+## [0.7.1] (2018-01-14)
 
 * [?] fix build guide in `README.md` and homebrew.
 * [#80] honor the default `CMAKE_C_FLAGS` and `CMAKE_CXX_FLAGS`, thanks to @hosiet.
 * [#81] fix crash on status icon click.
 
-# [0.7.0] (2018-01-10)
+## [0.7.0] (2018-01-10)
 
 * [#33] refactor src/AnalogFS.cpp to make the bug log has more information.
 * [#61] switch from autotools to cmake.
@@ -102,34 +108,33 @@
 * [#70] switch config system from gconf to jsoncpp1.
 * [#74] fix critial warning on peer window.
 
-# [0.6.4] (2017-08-22)
+## [0.6.4] (2017-08-22)
 
 * [#58] fix compile problem under gcc 7.
 
-# [0.6.3] (2015-09-29)
+## [0.6.3] (2015-09-29)
 
 * [#44] Add "Keywords" entries to iptux.desktop, etc.
 * [#43] Remove deprecated "Encoding" in group "Desktop Entry".
 * [#45] Upgrade to GStreamer from 0.10 to 1.0.
 
-# [0.6.2] (2014-02-06)
+## [0.6.2] (2014-02-06)
 
 * [#26] iptux --version should work without DISPLAY env.
 * [#28] code.google.com -> github.com
 
-# [0.6.1] (2013-12-14)
+## [0.6.1] (2013-12-14)
 
 * [#20] fix compile problem under MacOSX 10.9
 
-# 0.6.0 (2013-06-05)
+## 0.6.0 (2013-06-05)
 
 * [#8] fix autoreconf warning
 * [#6] add travis support
 * [#4] buildable under Linux
 * [#1] buildable under Mac OSX
 
-
-# OLD RELEASES
+## OLD RELEASES
 
 * 2012-2-29  把文件接收发送界面放在了聊天窗口内，根据此功能需要底层数据结构作相应改动
 * 2011-12-24 改进了如下问题
