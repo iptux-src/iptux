@@ -105,4 +105,4 @@ for f in  po/*.po; do echo -n "$f: "; msgfmt -v $f; done
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starcharts.herokuapp.com/iptux-src/iptux.svg)](https://starcharts.herokuapp.com/iptux-src/iptux)
+[![Stargazers over time](https://starchart.cc/iptux-src/iptux.svg)](https://starchart.cc/iptux-src/iptux)
