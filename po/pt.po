@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.8.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2021-11-22 22:23+0800\n"
-"PO-Revision-Date: 2023-02-20 07:39+0000\n"
+"PO-Revision-Date: 2023-03-19 11:37+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/iptux/iptux/"
 "pt/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -434,7 +434,7 @@ msgstr "Descrição"
 
 #: src/iptux/DataSettings.cpp:663
 msgid "Please select download folder"
-msgstr "Por favor, escolha uma pasta de download"
+msgstr "Por favor, escolha uma pasta para descargas"
 
 #: src/iptux/DataSettings.cpp:685
 msgid "Select Font"
@@ -601,7 +601,7 @@ msgstr "Converse com %s(%s) IP:%s"
 
 #: src/iptux/DialogPeer.cpp:294
 msgid "Info."
-msgstr "Detalhes"
+msgstr "Informações."
 
 #: src/iptux/DialogPeer.cpp:327
 #, c-format
