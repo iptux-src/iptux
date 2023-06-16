@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-11-22 22:23+0800\n"
+"POT-Creation-Date: 2023-06-16 21:34+0800\n"
 "PO-Revision-Date: 2021-05-17 00:40+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/iptux/iptux/it/"
@@ -235,21 +235,21 @@ msgstr ""
 msgid "Loading the process successfully!"
 msgstr "Processo caricato con successo!"
 
-#: src/iptux/Application.cpp:252
+#: src/iptux/Application.cpp:265
 #, c-format
 msgid "New Message from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:265
+#: src/iptux/Application.cpp:278
 #, c-format
 msgid "New File from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:274
+#: src/iptux/Application.cpp:287
 msgid "Receiving File Finished"
 msgstr ""
 
-#: src/iptux/Application.cpp:278
+#: src/iptux/Application.cpp:291
 msgid "file info no longer exist"
 msgstr ""
 
@@ -705,7 +705,7 @@ msgid "Accept"
 msgstr "Accetto"
 
 #: src/iptux/DialogPeer.cpp:582 src/iptux/dialog.cpp:60
-#: src/iptux/resources/gtk/menus.ui:171
+#: src/iptux/resources/gtk/menus.ui:312
 msgid "Refuse"
 msgstr "Rifiuto"
 
@@ -1038,7 +1038,7 @@ msgid "Confirm Exit"
 msgstr "Conferma l'Uscita"
 
 #: src/iptux/dialog.cpp:59 src/iptux/resources/gtk/MainWindow.ui:12
-#: src/iptux/resources/gtk/menus.ui:83
+#: src/iptux/resources/gtk/menus.ui:83 src/iptux/resources/gtk/menus.ui:213
 msgid "Request Shared Resources"
 msgstr "Richiedi le risorse condivise"
 
@@ -1127,6 +1127,7 @@ msgid "Please input an IP address (IPv4 only):"
 msgstr "Per favore, inserisci un indirizzo IP (solo IPv4):"
 
 #: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:94
+#: src/iptux/resources/gtk/menus.ui:224
 msgid "Send Message"
 msgstr "Invia il messaggio"
 
@@ -1138,136 +1139,136 @@ msgstr "Modifica le informazioni"
 msgid "Delete Pal"
 msgstr "Elimina conoscenti"
 
-#: src/iptux/resources/gtk/menus.ui:6
+#: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:276
 msgid "_Preferences"
 msgstr "_Preferenze"
 
-#: src/iptux/resources/gtk/menus.ui:10
+#: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:280
 msgid "_Quit"
 msgstr "_Esci"
 
-#: src/iptux/resources/gtk/menus.ui:17
+#: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:147
 msgid "_File"
 msgstr "_File"
 
-#: src/iptux/resources/gtk/menus.ui:19
+#: src/iptux/resources/gtk/menus.ui:19 src/iptux/resources/gtk/menus.ui:149
 msgid "_Detect"
 msgstr "_Rileva"
 
-#: src/iptux/resources/gtk/menus.ui:23
+#: src/iptux/resources/gtk/menus.ui:23 src/iptux/resources/gtk/menus.ui:153
 msgid "_Find"
 msgstr "_Trova"
 
-#: src/iptux/resources/gtk/menus.ui:28
+#: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:158
 msgid "_View"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:31
+#: src/iptux/resources/gtk/menus.ui:31 src/iptux/resources/gtk/menus.ui:161
 msgid "Sort"
 msgstr "Ordinamento"
 
-#: src/iptux/resources/gtk/menus.ui:34
+#: src/iptux/resources/gtk/menus.ui:34 src/iptux/resources/gtk/menus.ui:164
 msgid "By Nickname"
 msgstr "Per Nickname"
 
-#: src/iptux/resources/gtk/menus.ui:39
+#: src/iptux/resources/gtk/menus.ui:39 src/iptux/resources/gtk/menus.ui:169
 msgid "By IP"
 msgstr "Per IP"
 
-#: src/iptux/resources/gtk/menus.ui:46
+#: src/iptux/resources/gtk/menus.ui:46 src/iptux/resources/gtk/menus.ui:176
 msgid "Ascending"
 msgstr "Ascendente"
 
-#: src/iptux/resources/gtk/menus.ui:51
+#: src/iptux/resources/gtk/menus.ui:51 src/iptux/resources/gtk/menus.ui:181
 msgid "Descending"
 msgstr "Discendente"
 
-#: src/iptux/resources/gtk/menus.ui:58
+#: src/iptux/resources/gtk/menus.ui:58 src/iptux/resources/gtk/menus.ui:188
 msgid "_Refresh"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:65
+#: src/iptux/resources/gtk/menus.ui:65 src/iptux/resources/gtk/menus.ui:195
 msgid "_Chat"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:68
+#: src/iptux/resources/gtk/menus.ui:68 src/iptux/resources/gtk/menus.ui:198
 msgid "Insert Picture"
 msgstr "Inserisci un'immagine"
 
-#: src/iptux/resources/gtk/menus.ui:73
+#: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:203
 msgid "Attach File"
 msgstr "Allega un file"
 
-#: src/iptux/resources/gtk/menus.ui:77
+#: src/iptux/resources/gtk/menus.ui:77 src/iptux/resources/gtk/menus.ui:207
 msgid "Attach Folder"
 msgstr "Allega una cartella"
 
-#: src/iptux/resources/gtk/menus.ui:87
+#: src/iptux/resources/gtk/menus.ui:87 src/iptux/resources/gtk/menus.ui:217
 msgid "Clear Chat History"
 msgstr "Cancella la cronologia della chat"
 
-#: src/iptux/resources/gtk/menus.ui:100
+#: src/iptux/resources/gtk/menus.ui:100 src/iptux/resources/gtk/menus.ui:230
 msgid "_Window"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:103
+#: src/iptux/resources/gtk/menus.ui:103 src/iptux/resources/gtk/menus.ui:233
 msgid "_Transmission"
 msgstr "Tras_missione"
 
-#: src/iptux/resources/gtk/menus.ui:107
+#: src/iptux/resources/gtk/menus.ui:107 src/iptux/resources/gtk/menus.ui:237
 msgid "_Shared Management"
 msgstr "_Gestione Condivisioni"
 
-#: src/iptux/resources/gtk/menus.ui:111
+#: src/iptux/resources/gtk/menus.ui:111 src/iptux/resources/gtk/menus.ui:241
 msgid "_Chat Log"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:115
+#: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:245
 #, fuzzy
 msgid "_System Log"
 msgstr "Sistema di codifica:"
 
-#: src/iptux/resources/gtk/menus.ui:121
+#: src/iptux/resources/gtk/menus.ui:121 src/iptux/resources/gtk/menus.ui:251
 msgid "Close Window"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:127
+#: src/iptux/resources/gtk/menus.ui:127 src/iptux/resources/gtk/menus.ui:257
 msgid "_Help"
 msgstr "_Aiuto"
 
-#: src/iptux/resources/gtk/menus.ui:130
+#: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:260
 msgid "_About"
 msgstr "_Informazioni"
 
-#: src/iptux/resources/gtk/menus.ui:134
+#: src/iptux/resources/gtk/menus.ui:134 src/iptux/resources/gtk/menus.ui:264
 msgid "Report Bug"
 msgstr "Segnala un errore"
 
-#: src/iptux/resources/gtk/menus.ui:138
+#: src/iptux/resources/gtk/menus.ui:138 src/iptux/resources/gtk/menus.ui:268
 msgid "What's New"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:147
+#: src/iptux/resources/gtk/menus.ui:288
 msgid "Open This File"
 msgstr "Apri questo file"
 
-#: src/iptux/resources/gtk/menus.ui:151
+#: src/iptux/resources/gtk/menus.ui:292
 msgid "Open Containing Folder"
 msgstr "Apri cartella in cui è contenuto"
 
-#: src/iptux/resources/gtk/menus.ui:155
+#: src/iptux/resources/gtk/menus.ui:296
 msgid "Terminate Task"
 msgstr "Termina Attività"
 
-#: src/iptux/resources/gtk/menus.ui:159
+#: src/iptux/resources/gtk/menus.ui:300
 msgid "Terminate All"
 msgstr "Termina Tutto"
 
-#: src/iptux/resources/gtk/menus.ui:163
+#: src/iptux/resources/gtk/menus.ui:304
 msgid "Clear Tasklist"
 msgstr "Cancella Lista Attività"
 
-#: src/iptux/resources/gtk/menus.ui:175
+#: src/iptux/resources/gtk/menus.ui:316
 #, fuzzy
 msgid "Refuse All"
 msgstr "Rifiuto"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2021-11-22 22:23+0800\n"
+"POT-Creation-Date: 2023-06-16 21:34+0800\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -233,21 +233,21 @@ msgstr ""
 msgid "Loading the process successfully!"
 msgstr "程序載入成功！"
 
-#: src/iptux/Application.cpp:252
+#: src/iptux/Application.cpp:265
 #, c-format
 msgid "New Message from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:265
+#: src/iptux/Application.cpp:278
 #, c-format
 msgid "New File from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:274
+#: src/iptux/Application.cpp:287
 msgid "Receiving File Finished"
 msgstr ""
 
-#: src/iptux/Application.cpp:278
+#: src/iptux/Application.cpp:291
 msgid "file info no longer exist"
 msgstr ""
 
@@ -699,7 +699,7 @@ msgid "Accept"
 msgstr "接受"
 
 #: src/iptux/DialogPeer.cpp:582 src/iptux/dialog.cpp:60
-#: src/iptux/resources/gtk/menus.ui:171
+#: src/iptux/resources/gtk/menus.ui:312
 msgid "Refuse"
 msgstr "拒絕"
 
@@ -1033,7 +1033,7 @@ msgid "Confirm Exit"
 msgstr "確認退出"
 
 #: src/iptux/dialog.cpp:59 src/iptux/resources/gtk/MainWindow.ui:12
-#: src/iptux/resources/gtk/menus.ui:83
+#: src/iptux/resources/gtk/menus.ui:83 src/iptux/resources/gtk/menus.ui:213
 msgid "Request Shared Resources"
 msgstr "請求共享資源"
 
@@ -1123,6 +1123,7 @@ msgid "Please input an IP address (IPv4 only):"
 msgstr "請輸入IP位址(限IPv4格式)："
 
 #: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:94
+#: src/iptux/resources/gtk/menus.ui:224
 msgid "Send Message"
 msgstr "傳送訊息"
 
@@ -1135,137 +1136,137 @@ msgstr "更改資訊"
 msgid "Delete Pal"
 msgstr "刪除好友"
 
-#: src/iptux/resources/gtk/menus.ui:6
+#: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:276
 msgid "_Preferences"
 msgstr "偏好設定(_P)"
 
-#: src/iptux/resources/gtk/menus.ui:10
+#: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:280
 msgid "_Quit"
 msgstr "退出(_Q)"
 
-#: src/iptux/resources/gtk/menus.ui:17
+#: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:147
 msgid "_File"
 msgstr "檔案(_F)"
 
-#: src/iptux/resources/gtk/menus.ui:19
+#: src/iptux/resources/gtk/menus.ui:19 src/iptux/resources/gtk/menus.ui:149
 msgid "_Detect"
 msgstr "搜尋(_D)"
 
-#: src/iptux/resources/gtk/menus.ui:23
+#: src/iptux/resources/gtk/menus.ui:23 src/iptux/resources/gtk/menus.ui:153
 msgid "_Find"
 msgstr "尋找(_F)"
 
-#: src/iptux/resources/gtk/menus.ui:28
+#: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:158
 msgid "_View"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:31
+#: src/iptux/resources/gtk/menus.ui:31 src/iptux/resources/gtk/menus.ui:161
 msgid "Sort"
 msgstr "排序"
 
-#: src/iptux/resources/gtk/menus.ui:34
+#: src/iptux/resources/gtk/menus.ui:34 src/iptux/resources/gtk/menus.ui:164
 msgid "By Nickname"
 msgstr "依暱稱"
 
-#: src/iptux/resources/gtk/menus.ui:39
+#: src/iptux/resources/gtk/menus.ui:39 src/iptux/resources/gtk/menus.ui:169
 msgid "By IP"
 msgstr "依 IP"
 
-#: src/iptux/resources/gtk/menus.ui:46
+#: src/iptux/resources/gtk/menus.ui:46 src/iptux/resources/gtk/menus.ui:176
 msgid "Ascending"
 msgstr "升冪"
 
-#: src/iptux/resources/gtk/menus.ui:51
+#: src/iptux/resources/gtk/menus.ui:51 src/iptux/resources/gtk/menus.ui:181
 msgid "Descending"
 msgstr "降冪"
 
-#: src/iptux/resources/gtk/menus.ui:58
+#: src/iptux/resources/gtk/menus.ui:58 src/iptux/resources/gtk/menus.ui:188
 msgid "_Refresh"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:65
+#: src/iptux/resources/gtk/menus.ui:65 src/iptux/resources/gtk/menus.ui:195
 msgid "_Chat"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:68
+#: src/iptux/resources/gtk/menus.ui:68 src/iptux/resources/gtk/menus.ui:198
 msgid "Insert Picture"
 msgstr "插入圖片"
 
-#: src/iptux/resources/gtk/menus.ui:73
+#: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:203
 msgid "Attach File"
 msgstr "新增檔案"
 
-#: src/iptux/resources/gtk/menus.ui:77
+#: src/iptux/resources/gtk/menus.ui:77 src/iptux/resources/gtk/menus.ui:207
 msgid "Attach Folder"
 msgstr "新增目錄"
 
-#: src/iptux/resources/gtk/menus.ui:87
+#: src/iptux/resources/gtk/menus.ui:87 src/iptux/resources/gtk/menus.ui:217
 #, fuzzy
 msgid "Clear Chat History"
 msgstr "聊天記錄"
 
-#: src/iptux/resources/gtk/menus.ui:100
+#: src/iptux/resources/gtk/menus.ui:100 src/iptux/resources/gtk/menus.ui:230
 msgid "_Window"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:103
+#: src/iptux/resources/gtk/menus.ui:103 src/iptux/resources/gtk/menus.ui:233
 msgid "_Transmission"
 msgstr "傳輸管理器(_T)"
 
-#: src/iptux/resources/gtk/menus.ui:107
+#: src/iptux/resources/gtk/menus.ui:107 src/iptux/resources/gtk/menus.ui:237
 msgid "_Shared Management"
 msgstr "共享管理器(_S)"
 
-#: src/iptux/resources/gtk/menus.ui:111
+#: src/iptux/resources/gtk/menus.ui:111 src/iptux/resources/gtk/menus.ui:241
 msgid "_Chat Log"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:115
+#: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:245
 #, fuzzy
 msgid "_System Log"
 msgstr "系統編碼:"
 
-#: src/iptux/resources/gtk/menus.ui:121
+#: src/iptux/resources/gtk/menus.ui:121 src/iptux/resources/gtk/menus.ui:251
 msgid "Close Window"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:127
+#: src/iptux/resources/gtk/menus.ui:127 src/iptux/resources/gtk/menus.ui:257
 msgid "_Help"
 msgstr "幫助(_H)"
 
-#: src/iptux/resources/gtk/menus.ui:130
+#: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:260
 msgid "_About"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:134
+#: src/iptux/resources/gtk/menus.ui:134 src/iptux/resources/gtk/menus.ui:264
 msgid "Report Bug"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:138
+#: src/iptux/resources/gtk/menus.ui:138 src/iptux/resources/gtk/menus.ui:268
 msgid "What's New"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:147
+#: src/iptux/resources/gtk/menus.ui:288
 msgid "Open This File"
 msgstr "打開此文件"
 
-#: src/iptux/resources/gtk/menus.ui:151
+#: src/iptux/resources/gtk/menus.ui:292
 msgid "Open Containing Folder"
 msgstr "打開所在的文件夾"
 
-#: src/iptux/resources/gtk/menus.ui:155
+#: src/iptux/resources/gtk/menus.ui:296
 msgid "Terminate Task"
 msgstr "終止任務"
 
-#: src/iptux/resources/gtk/menus.ui:159
+#: src/iptux/resources/gtk/menus.ui:300
 msgid "Terminate All"
 msgstr "終止所有"
 
-#: src/iptux/resources/gtk/menus.ui:163
+#: src/iptux/resources/gtk/menus.ui:304
 msgid "Clear Tasklist"
 msgstr "清理任務"
 
-#: src/iptux/resources/gtk/menus.ui:175
+#: src/iptux/resources/gtk/menus.ui:316
 #, fuzzy
 msgid "Refuse All"
 msgstr "拒絕"
