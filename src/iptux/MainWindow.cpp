@@ -463,7 +463,7 @@ GtkWidget* MainWindow::CreateAllArea() {
   auto menuButton = gtk_builder_get_object(builder, "menu_button");
   gtk_menu_button_set_menu_model(
       GTK_MENU_BUTTON(menuButton),
-      G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar")));
+      G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar-when-no-app-menu")));
 #endif
 
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);

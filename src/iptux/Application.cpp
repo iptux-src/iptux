@@ -153,12 +153,25 @@ void Application::onStartup(Application& self) {
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
                                   G_N_ELEMENTS(app_entries), &self);
-  auto app_menu =
-      G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "appmenu"));
-  gtk_application_set_app_menu(GTK_APPLICATION(self.app), app_menu);
-  auto menubar =
-      G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar"));
-  gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+
+  bool use_app_menu = true;
+#if SYSTEM_DARWIN
+#else
+  use_app_menu = gtk_application_prefers_app_menu(self.app);
+#endif
+
+  if(use_app_menu) {
+    auto app_menu =
+        G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "appmenu"));
+    gtk_application_set_app_menu(GTK_APPLICATION(self.app), app_menu);
+    auto menubar =
+        G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar-when-app-menu"));
+    gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+  } else {
+    auto menubar =
+        G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar-when-no-app-menu"));
+    gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+  }
 
   add_accelerator(self.app, "app.quit", "<Primary>Q");
   add_accelerator(self.app, "win.refresh", "F5");
