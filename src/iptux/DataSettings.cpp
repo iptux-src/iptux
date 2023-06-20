@@ -273,7 +273,7 @@ GtkWidget* DataSettings::CreateSystem() {
   gtk_grid_attach(GTK_GRID(box), widget, 1, 0, 1, 1);
 
   /* 首选编码 */
-  label = gtk_label_new(_("Prefered network encoding:"));
+  label = gtk_label_new(_("Preferred network encoding:"));
   gtk_widget_set_halign(label, GTK_ALIGN_END);
   gtk_grid_attach(GTK_GRID(box), label, 0, 1, 1, 1);
 
