@@ -83,7 +83,7 @@ void DialogGroup::UpdatePalData(PalInfo* pal) {
   /* 查询项所在的位置，若没有则添加 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "member-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  data = NULL;  //防止可能出现的(data == pal)
+  data = NULL;  // 防止可能出现的(data == pal)
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
       gtk_tree_model_get(model, &iter, 3, &data, -1);
@@ -247,7 +247,7 @@ GtkWidget* DialogGroup::CreateAllArea() {
   gtk_paned_set_position(
       GTK_PANED(memberEnclosurePaned),
       config->GetInt("group_memberenclosure_paned_divide", 100));
-  gtk_paned_pack1(GTK_PANED(mainPaned), memberEnclosurePaned, FALSE, TRUE);
+  gtk_paned_pack1(GTK_PANED(mainPaned), memberEnclosurePaned, FALSE, FALSE);
   g_signal_connect_swapped(memberEnclosurePaned, "notify::position",
                            G_CALLBACK(onUIChanged), this);
 
@@ -604,7 +604,7 @@ bool DialogGroup::SendTextMsg() {
 
   /* 考察缓冲区内是否存在数据 */
   textview = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
-  gtk_widget_grab_focus(textview);  //为下一次任务做准备
+  gtk_widget_grab_focus(textview);  // 为下一次任务做准备
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   if (gtk_text_iter_equal(&start, &end))
