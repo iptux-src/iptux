@@ -38,7 +38,7 @@ jobs:
   build-on-linux:
     strategy:
       matrix:
-        runs-on: [ubuntu-20.04, ubuntu-22.04]
+        runs-on: [ubuntu-20.04]
         compiler: [g++, clang++]
     runs-on: ${{ matrix.runs-on }}
     steps:
