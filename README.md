@@ -52,8 +52,8 @@ brew install iptux
 sudo apt-get install git libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson libsigc++-2.0-dev
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
-meson builddir && ninja -C builddir
-sudo ninja -C builddir install
+meson setup build && meson compile -C build
+sudo meson install -C build
 iptux
 ```
 
@@ -63,8 +63,8 @@ iptux
 brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
-meson builddir
-ninja -C builddir install
+meson setup build
+meson install -C build
 iptux
 ```
 
@@ -79,7 +79,7 @@ check https://github.com/iptux-src/iptux/wiki/Compatible-List
 
 ## Develop
 
-* use `meson -Ddev=true builddir` to build an iptux which can use resource in source directory.
+* use `meson setup -Ddev=true build` to build an iptux which can use resource in source directory.
 * start 2 iptux on one machine for test
   * It's a known bug that you can not send file between 127.0.0.2 and 127.0.0.3
 ```sh
@@ -97,11 +97,11 @@ iptux -b 127.0.0.3 &
 ### How to update `po/iptux.pot`
 
 ```
-meson builddir
+meson setup build
 git ls-files *.cpp *.desktop.in *.ui *.metainfo.xml | grep -v Test | LC_ALL=C sort > po/POTFILES
-ninja -C builddir iptux-pot
-ninja -C builddir iptux-update-po
-for f in  po/*.po; do echo -n "$f: "; msgfmt -v $f; done
+ninja -C build iptux-pot
+ninja -C build iptux-update-po
+for f in po/*.po; do echo -n "$f: "; msgfmt -v $f; done
 ```
 
 ## Stargazers over time
