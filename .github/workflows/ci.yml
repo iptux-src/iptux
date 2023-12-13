@@ -52,7 +52,7 @@ jobs:
         env:
           CXX: ${{ matrix.compiler }}
       - name: build
-        run: meson compile -C build
+        run: ninja -v -C build
       - name: install
         run: sudo meson install -C build
       - name: test
@@ -68,7 +68,7 @@ jobs:
       - name: meson
         run: meson setup -D b_coverage=true build
       - name: build
-        run: meson compile -C build
+        run: ninja -v -C build
       - name: install
         run: sudo meson install -C build
       - name: test
@@ -156,7 +156,7 @@ jobs:
           # Produce a binary artifact and place it in the mounted volume
           run: |
             meson setup build
-            meson compile -C build
+            ninja -v -C build
             meson install -C build
             xvfb-run -a meson test -C build --verbose --no-stdsplit
 
