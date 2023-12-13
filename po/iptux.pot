@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.8.4\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2023-06-16 21:34+0800\n"
+"POT-Creation-Date: 2023-12-13 13:04+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -313,7 +313,7 @@ msgid "Candidate network encodings, separated by \",\""
 msgstr ""
 
 #: src/iptux/DataSettings.cpp:276
-msgid "Prefered network encoding:"
+msgid "Preferred network encoding:"
 msgstr ""
 
 #: src/iptux/DataSettings.cpp:283

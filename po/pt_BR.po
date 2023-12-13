@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2023-06-16 21:34+0800\n"
+"POT-Creation-Date: 2023-12-13 13:04+0800\n"
 "PO-Revision-Date: 2021-11-23 16:33+0000\n"
 "Last-Translator: inkhorn <inkhorn@hostux.ninja>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
@@ -329,7 +329,7 @@ msgid "Candidate network encodings, separated by \",\""
 msgstr "Sugestão de codificação da rede, separado por \",\""
 
 #: src/iptux/DataSettings.cpp:276
-msgid "Prefered network encoding:"
+msgid "Preferred network encoding:"
 msgstr "Codificação da rede preferida:"
 
 #: src/iptux/DataSettings.cpp:283
