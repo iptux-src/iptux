@@ -46,7 +46,9 @@ jobs:
       - name: apt install
         run: sudo apt update && sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev appstream
       - name: meson
-        run: meson setup build
+        run: |
+          meson --version
+          meson setup build
         env:
           CXX: ${{ matrix.compiler }}
       - name: build
