@@ -8,17 +8,17 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2023-12-13 13:04+0800\n"
-"PO-Revision-Date: 2023-11-25 21:56+0200\n"
-"Last-Translator: Ruslan Nix <orbin3g@gmail.com>\n"
-"Language-Team: UA -Тарас Шевченко,Володимир Сосюра,Леся Українка,Григорій "
-"Сковорода...\n"
-"Language: uk_UA\n"
+"PO-Revision-Date: 2024-01-08 13:06+0000\n"
+"Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
+"Language-Team: Ukrainian <https://hosted.weblate.org/projects/iptux/iptux/uk/"
+">\n"
+"Language: ua\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.4\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.4-dev\n"
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
@@ -33,7 +33,7 @@ msgstr "Програмне забезпечення для зв'язку по л
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:5
 msgid "chat;talk;im;message;ipmsg;feige;"
-msgstr ""
+msgstr "chat;talk;im;message;ipmsg;feige;"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:12
 msgid "iptux is an “IP Messenger” client."
@@ -173,7 +173,7 @@ msgstr "Не вдалося отримати каталог \"%s\" від %s!"
 #: src/iptux-core/internal/RecvFileData.cpp:324
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
-msgstr "Каталог  отримано\"%s\" від %s успішно!"
+msgstr "Каталог отримано\"%s\" від %s успішно!"
 
 #: src/iptux-core/internal/SendFileData.cpp:101
 msgid "send"
@@ -223,15 +223,7 @@ msgstr "відкрити каталог \"%s\" не вдалося: %s"
 
 #: src/iptux/AboutDialog.cpp:39
 msgid "TRANSLATOR NAME"
-msgstr ""
-"Володимир Сосюра\n"
-"Любіть Україну\n"
-"🇺🇦️\n"
-"Любіть Україну, як сонце любіть,\n"
-"як вітер, і трави, і води...\n"
-"В годину щасливу і в радості мить,\n"
-"любіть у годину негоди.\n"
-"🇺🇦️"
+msgstr "Перекладачі з weblate.org️"
 
 #: src/iptux/AboutDialog.cpp:53
 msgid "Thanks to"
@@ -338,7 +330,7 @@ msgstr "Додаткові кодування мережі, розділені \
 
 #: src/iptux/DataSettings.cpp:276
 msgid "Preferred network encoding:"
-msgstr "Система кодування:"
+msgstr "Бажане мережеве кодування:"
 
 #: src/iptux/DataSettings.cpp:283
 msgid ""
@@ -547,7 +539,7 @@ msgstr "Подробиці"
 
 #: src/iptux/DialogBase.cpp:695
 msgid "PeerName"
-msgstr ""
+msgstr "Ім'я піра"
 
 #: src/iptux/DialogBase.cpp:702 src/iptux/DialogPeer.cpp:738
 msgid "Name"
@@ -570,7 +562,7 @@ msgstr "Хід надсилання."
 #: src/iptux/DialogBase.cpp:778
 #, c-format
 msgid "%s of %s Sent."
-msgstr ""
+msgstr "Відправлено %s від %s."
 
 #: src/iptux/DialogBase.cpp:785 src/iptux/DialogPeer.cpp:857
 msgid "Mission Completed!"
@@ -599,7 +591,7 @@ msgstr "Відмінити вибір"
 
 #: src/iptux/DialogGroup.cpp:490
 msgid "Clear Up"
-msgstr "Очистити"
+msgstr "Прибрати"
 
 #: src/iptux/DialogPeer.cpp:133
 #, c-format
@@ -633,7 +625,7 @@ msgstr "Користувач: %s\n"
 #: src/iptux/DialogPeer.cpp:335
 #, c-format
 msgid "Host: %s\n"
-msgstr ""
+msgstr "Хост: %s\n"
 
 #: src/iptux/DialogPeer.cpp:338
 #, c-format
@@ -733,7 +725,7 @@ msgstr "Надіслати: Псевдонім:%s Користувач:%s Host:%
 
 #: src/iptux/LogSystem.cpp:80
 msgid "Send-Broadcast"
-msgstr ""
+msgstr "Широкомовна відправка"
 
 #: src/iptux/LogSystem.cpp:99
 #, c-format
@@ -770,7 +762,7 @@ msgstr "Користувач"
 
 #: src/iptux/MainWindow.cpp:737
 msgid "Host"
-msgstr ""
+msgstr "Хост"
 
 #: src/iptux/MainWindow.cpp:868
 #, c-format
@@ -795,7 +787,7 @@ msgstr "Користувач: %s"
 #: src/iptux/MainWindow.cpp:878
 #, c-format
 msgid "Host: %s"
-msgstr ""
+msgstr "Хост: %s"
 
 #: src/iptux/MainWindow.cpp:882
 #, c-format
@@ -943,7 +935,7 @@ msgstr "Завдання"
 
 #: src/iptux/TransWindow.cpp:253
 msgid "Peer"
-msgstr ""
+msgstr "Пір"
 
 #: src/iptux/TransWindow.cpp:265
 msgid "Filename"
@@ -959,7 +951,7 @@ msgstr "Прогрес"
 
 #: src/iptux/TransWindow.cpp:291
 msgid "Cost"
-msgstr ""
+msgstr "Вартість"
 
 #: src/iptux/TransWindow.cpp:297
 msgid "Remaining"
