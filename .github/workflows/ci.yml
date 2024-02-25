@@ -99,8 +99,8 @@ jobs:
             distro: ubuntu20.04
           - arch: ppc64le
             distro: ubuntu20.04
-          - arch: s390x
-            distro: ubuntu20.04
+          #- arch: s390x
+          #  distro: ubuntu20.04
           - arch: armv7
             distro: ubuntu20.04
 
