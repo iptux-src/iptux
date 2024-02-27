@@ -5,7 +5,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/iptux-src/iptux/badge)](https://www.codefactor.io/repository/github/iptux-src/iptux)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0d2720ebbf474c02ac5ebc1036849889)](https://app.codacy.com/gh/iptux-src/iptux/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/gh/iptux-src/iptux/branch/master/graph/badge.svg)](https://codecov.io/gh/iptux-src/iptux/branch/master)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/iptux-src/iptux.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/iptux-src/iptux/alerts/)
+[![CodeQL](https://github.com/iptux-src/iptux/actions/workflows/codeql.yml/badge.svg)](https://github.com/iptux-src/iptux/actions/workflows/codeql.yml)
 [![Weblate Translation Status](https://hosted.weblate.org/widgets/iptux/-/iptux/svg-badge.svg)](https://hosted.weblate.org/engage/iptux/)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
