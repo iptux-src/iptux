@@ -52,7 +52,7 @@
       "cStandard": "c11",
       "cppStandard": "c++14",
       "intelliSenseMode": "macos-clang-x64",
-      "compileCommands": "${workspaceFolder}/builddir/compile_commands.json"
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json"
     },
     {
       "name": "Mac-arm",
