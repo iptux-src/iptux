@@ -265,8 +265,8 @@ void RevisePal::ApplyReviseData() {
       g_free(file);
       g_free(pal->iconfile);
       snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
-               g_get_user_cache_dir(), pal->ipv4);
-      pal->iconfile = g_strdup_printf("%" PRIx32, pal->ipv4);
+               g_get_user_cache_dir(), ntohl(pal->ipv4.s_addr));
+      pal->iconfile = g_strdup_printf("%" PRIx32, ntohl(pal->ipv4.s_addr));
       gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
       gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
       gtk_icon_theme_add_builtin_icon(pal->iconfile, MAX_ICONSIZE, pixbuf);

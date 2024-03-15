@@ -1,12 +1,13 @@
 # NEWS
 
-## [0.8.4] (2021-??-??)
+## [0.8.4] (2023-06-16)
 
 * [#481](https://github.com/iptux-src/iptux/issues/481) chatbox can remember the unsent text.
 * [#482](https://github.com/iptux-src/iptux/issues/482) add "What's New" in the menu.
 * [#485](https://github.com/iptux-src/iptux/issues/485) `<Primary>W` can close all kinds of windows.
 * [#492](https://github.com/iptux-src/iptux/pull/492) [#495](https://github.com/iptux-src/iptux/pull/495) improve meson config, Thanks to @r-value for the patch.
 * [#497](https://github.com/iptux-src/iptux/pull/497) update Preferences dialog.
+* [#514](https://github.com/iptux-src/iptux/issues/514) show quit and preference menu when no appmenu.
 * Translation updates:
   * Portuguese (Brazil) - Thanks to inkhorn
 
