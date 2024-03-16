@@ -7,6 +7,7 @@
 #include <execinfo.h>
 #include <signal.h>
 #include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -25,11 +26,24 @@ static void segvHandler(int sig) {
     }
 
     const char* symname = dlinfo.dli_sname;
+    char* demangled = 0;
+    if (symname) {
+      int status;
+      demangled = abi::__cxa_demangle(symname, NULL, 0, &status);
+      if (status == 0 && demangled) {
+        symname = demangled;
+      }
+    }
 
-    int status;
-    char* demangled = abi::__cxa_demangle(symname, NULL, 0, &status);
-    if (status == 0 && demangled)
-      symname = demangled;
+    const char* fname = dlinfo.dli_fname;
+    if (fname) {
+      const char* p = strrchr(fname, '/');
+      if (p) {
+        fname = p + 1;
+      }
+    } else {
+      fname = "null";
+    }
 
     off64_t offset = 0;
     if (dlinfo.dli_saddr) {
@@ -38,12 +52,7 @@ static void segvHandler(int sig) {
       offset = (off64_t)(trace[i]) - (off64_t)(dlinfo.dli_fbase);
     }
 
-    // fprintf(stderr, "%s(%s+0x%lx)[%p][%p][%p]\n",
-    //         dlinfo.dli_fname ? dlinfo.dli_fname : "null",
-    //         symname ? symname : "", offset, trace[i], dlinfo.dli_fbase,
-    //         dlinfo.dli_saddr);
-    fprintf(stderr, "%-3d %-40s %p %s + 0x%lx\n", i,
-            dlinfo.dli_fname ? dlinfo.dli_fname : "null", trace[i],
+    fprintf(stderr, "%-3d %-40s %p %s + 0x%lx\n", i, fname, trace[i],
             symname ? symname : "", offset);
     if (demangled) {
       free(demangled);
