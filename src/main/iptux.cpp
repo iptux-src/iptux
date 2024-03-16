@@ -21,16 +21,14 @@
 #include <string>
 
 #include <glib.h>
-#include <libintl.h>
-
 #include <glib/gi18n.h>
-#include <glog/logging.h>
-#include <execinfo.h>
+#include <libintl.h>
 
 #include "iptux/Application.h"
 
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux_crash_utils.h"
 
 using namespace std;
 using namespace iptux;
@@ -136,25 +134,6 @@ static void dealLog(const IptuxConfig& config) {
   } else {
     LOG_ERROR("unknown log level: %s", logger);
   }
-}
-
-static void segvHandler(int sig) {
-  void *array[99];
-  size_t size;
-
-  // get void*'s for all entries on the stack
-  size = backtrace(array, 99);
-
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, STDERR_FILENO);
-  exit(1);
-}
-
-static void installCrashHandler() {
-  signal(SIGSEGV, segvHandler);
-  signal(SIGABRT, segvHandler);
-  signal(SIGTRAP, segvHandler);
 }
 
 int main(int argc, char** argv) {

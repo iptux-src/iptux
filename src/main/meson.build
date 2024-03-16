@@ -1,4 +1,4 @@
-iptux_sources = files(['iptux.cpp'])
+iptux_sources = files(['iptux.cpp', 'iptux_crash_utils.cpp'])
 executable('iptux',
     iptux_sources,
     include_directories: inc,
