@@ -45,11 +45,11 @@ static void segvHandler(int sig) {
       fname = "null";
     }
 
-    off64_t offset = 0;
+    off_t offset = 0;
     if (dlinfo.dli_saddr) {
-      offset = (off64_t)(trace[i]) - (off64_t)(dlinfo.dli_saddr);
+      offset = (off_t)(trace[i]) - (off_t)(dlinfo.dli_saddr);
     } else {
-      offset = (off64_t)(trace[i]) - (off64_t)(dlinfo.dli_fbase);
+      offset = (off_t)(trace[i]) - (off_t)(dlinfo.dli_fbase);
     }
 
     fprintf(stderr, "%-3d %-40s %p %s + 0x%lx\n", i, fname, trace[i],
