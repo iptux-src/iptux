@@ -6,4 +6,5 @@ executable('iptux',
     link_with: [libiptux],
     export_dynamic: true,
     install: true,
+    link_args: ['-ldl'],
 )
