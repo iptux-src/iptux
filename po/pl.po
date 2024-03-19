@@ -8,15 +8,17 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2023-12-13 13:04+0800\n"
-"PO-Revision-Date: 2010-07-29 13:29+0000\n"
-"Last-Translator: Twojwujaszek <twojwujaszek@gmail.com>\n"
-"Language-Team: Polish <pl@li.org>\n"
+"PO-Revision-Date: 2024-03-18 15:02+0000\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/iptux/iptux/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.5-dev\n"
 "X-Launchpad-Export-Date: 2010-07-29 14:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -38,7 +40,7 @@ msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
 msgid "It can:"
-msgstr ""
+msgstr "Umożliwia:"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
 msgid "auto-detect other clients on the intranet."
@@ -223,11 +225,11 @@ msgstr "Opendir() katalog \"%s\" błąd, %s"
 
 #: src/iptux/AboutDialog.cpp:39
 msgid "TRANSLATOR NAME"
-msgstr ""
+msgstr "Eryk Michalak"
 
 #: src/iptux/AboutDialog.cpp:53
 msgid "Thanks to"
-msgstr ""
+msgstr "Podziękowania dla"
 
 #: src/iptux/Application.cpp:53
 msgid "Loading the process successfully!"
@@ -245,7 +247,7 @@ msgstr ""
 
 #: src/iptux/Application.cpp:287
 msgid "Receiving File Finished"
-msgstr ""
+msgstr "Zakończono otrzymywanie pliku"
 
 #: src/iptux/Application.cpp:291
 msgid "file info no longer exist"
@@ -483,7 +485,7 @@ msgstr "Wybierz plik do zaimportowania danych"
 #: src/iptux/DataSettings.cpp:1213 src/iptux/DialogBase.cpp:341
 #: src/iptux/ShareFile.cpp:418 src/iptux/callback.cpp:86
 msgid "_Open"
-msgstr ""
+msgstr "_Otwórz"
 
 #: src/iptux/DataSettings.cpp:1260
 msgid "Save data to file"
@@ -491,7 +493,7 @@ msgstr "Zapisz dane do pliku"
 
 #: src/iptux/DataSettings.cpp:1261 src/iptux/dialog.cpp:227
 msgid "_Save"
-msgstr ""
+msgstr "_Zapisz"
 
 #: src/iptux/DetectPal.cpp:70
 #, c-format
@@ -501,7 +503,7 @@ msgstr "Zgłoszenie zostało wysłane do %s."
 #: src/iptux/DialogBase.cpp:217
 #, c-format
 msgid "%s To Send."
-msgstr ""
+msgstr "%s do wysłania."
 
 #: src/iptux/DialogBase.cpp:271
 msgid "Close"
@@ -532,15 +534,15 @@ msgstr "Wybór zwrotu"
 
 #: src/iptux/DialogBase.cpp:631
 msgid "File to send."
-msgstr ""
+msgstr "Plik do wysłania."
 
 #: src/iptux/DialogBase.cpp:636
 msgid "Sending progress."
-msgstr ""
+msgstr "Postęp wysyłania."
 
 #: src/iptux/DialogBase.cpp:639
 msgid "Dirs"
-msgstr ""
+msgstr "Katalogi"
 
 #: src/iptux/DialogBase.cpp:642
 #, fuzzy
@@ -549,7 +551,7 @@ msgstr "Plik"
 
 #: src/iptux/DialogBase.cpp:645 src/iptux/DialogPeer.cpp:587
 msgid "Detail"
-msgstr ""
+msgstr "Szczegół"
 
 #: src/iptux/DialogBase.cpp:695
 #, fuzzy
@@ -558,7 +560,7 @@ msgstr "Partner"
 
 #: src/iptux/DialogBase.cpp:702 src/iptux/DialogPeer.cpp:738
 msgid "Name"
-msgstr ""
+msgstr "Nazwa"
 
 #: src/iptux/DialogBase.cpp:708 src/iptux/DialogPeer.cpp:674
 #: src/iptux/DialogPeer.cpp:744 src/iptux/ShareFile.cpp:280
@@ -568,7 +570,7 @@ msgstr "Rozmiar"
 
 #: src/iptux/DialogBase.cpp:714
 msgid "Path"
-msgstr ""
+msgstr "Ścieżka"
 
 #: src/iptux/DialogBase.cpp:775
 #, fuzzy
@@ -694,7 +696,7 @@ msgstr "Odebrano wiadomość"
 
 #: src/iptux/DialogPeer.cpp:573
 msgid "Receiving progress."
-msgstr ""
+msgstr "Postęp otrzymywania."
 
 #: src/iptux/DialogPeer.cpp:576
 msgid "Accept"
@@ -716,7 +718,7 @@ msgstr "Źródło"
 
 #: src/iptux/DialogPeer.cpp:668
 msgid "SaveAs"
-msgstr ""
+msgstr "Zapisz jako"
 
 #: src/iptux/DialogPeer.cpp:840 src/iptux/DialogPeer.cpp:906
 msgid "Receiving Progress."
@@ -725,7 +727,7 @@ msgstr ""
 #: src/iptux/DialogPeer.cpp:843 src/iptux/DialogPeer.cpp:909
 #, c-format
 msgid "%s to Receive."
-msgstr ""
+msgstr "%s do otrzymania."
 
 #: src/iptux/DialogPeer.cpp:847 src/iptux/DialogPeer.cpp:913
 #, c-format
@@ -1161,7 +1163,7 @@ msgstr "_Znajdź"
 
 #: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:158
 msgid "_View"
-msgstr ""
+msgstr "_Widok"
 
 #: src/iptux/resources/gtk/menus.ui:31 src/iptux/resources/gtk/menus.ui:161
 msgid "Sort"
@@ -1185,11 +1187,11 @@ msgstr "Malejąco"
 
 #: src/iptux/resources/gtk/menus.ui:58 src/iptux/resources/gtk/menus.ui:188
 msgid "_Refresh"
-msgstr ""
+msgstr "_Odśwież"
 
 #: src/iptux/resources/gtk/menus.ui:65 src/iptux/resources/gtk/menus.ui:195
 msgid "_Chat"
-msgstr ""
+msgstr "_Czat"
 
 #: src/iptux/resources/gtk/menus.ui:68 src/iptux/resources/gtk/menus.ui:198
 msgid "Insert Picture"
@@ -1210,7 +1212,7 @@ msgstr "Zapisz historię rozmowy"
 
 #: src/iptux/resources/gtk/menus.ui:100 src/iptux/resources/gtk/menus.ui:230
 msgid "_Window"
-msgstr ""
+msgstr "_Okno"
 
 #: src/iptux/resources/gtk/menus.ui:103 src/iptux/resources/gtk/menus.ui:233
 msgid "_Transmission"
@@ -1222,7 +1224,7 @@ msgstr "_Zarządzanie Współdzieleniem Plików i Folderów"
 
 #: src/iptux/resources/gtk/menus.ui:111 src/iptux/resources/gtk/menus.ui:241
 msgid "_Chat Log"
-msgstr ""
+msgstr "_Logi czatu"
 
 #: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:245
 #, fuzzy
@@ -1231,7 +1233,7 @@ msgstr "Kodowanie Systemu:"
 
 #: src/iptux/resources/gtk/menus.ui:121 src/iptux/resources/gtk/menus.ui:251
 msgid "Close Window"
-msgstr ""
+msgstr "Zamknij okno"
 
 #: src/iptux/resources/gtk/menus.ui:127 src/iptux/resources/gtk/menus.ui:257
 msgid "_Help"
@@ -1239,23 +1241,23 @@ msgstr "_Pomoc"
 
 #: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:260
 msgid "_About"
-msgstr ""
+msgstr "_O programie"
 
 #: src/iptux/resources/gtk/menus.ui:134 src/iptux/resources/gtk/menus.ui:264
 msgid "Report Bug"
-msgstr ""
+msgstr "Zgłoś błąd"
 
 #: src/iptux/resources/gtk/menus.ui:138 src/iptux/resources/gtk/menus.ui:268
 msgid "What's New"
-msgstr ""
+msgstr "Co nowego"
 
 #: src/iptux/resources/gtk/menus.ui:288
 msgid "Open This File"
-msgstr ""
+msgstr "Otwórz ten plik"
 
 #: src/iptux/resources/gtk/menus.ui:292
 msgid "Open Containing Folder"
-msgstr ""
+msgstr "Otwórz katalog zawierający"
 
 #: src/iptux/resources/gtk/menus.ui:296
 msgid "Terminate Task"
