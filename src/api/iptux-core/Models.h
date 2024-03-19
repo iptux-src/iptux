@@ -58,6 +58,7 @@ class PalKey {
   PalKey(in_addr ipv4, int port);
 
   bool operator==(const PalKey& rhs) const;
+  bool operator<(const PalKey& rhs) const;
 
   in_addr GetIpv4() const { return ipv4; }
   std::string GetIpv4String() const;
@@ -133,10 +134,12 @@ class PalInfo {
 };
 
 /// pointer to PalInfo
-using PPalInfo = std::shared_ptr<PalInfo>;
+using PalInfo_S = std::shared_ptr<PalInfo>;
+using PPalInfo = PalInfo_S;
 
 /// const pointer to PalInfo
-using CPPalInfo = std::shared_ptr<const PalInfo>;
+using PalInfo_SC = std::shared_ptr<const PalInfo>;
+using CPPalInfo = PalInfo_SC;
 
 enum class FileAttr : std::uint32_t { UNKNOWN, REGULAR, DIRECTORY };
 

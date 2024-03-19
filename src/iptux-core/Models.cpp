@@ -267,6 +267,16 @@ bool PalKey::operator==(const PalKey& rhs) const {
   return ipv4Equal(this->ipv4, rhs.ipv4) && this->port == rhs.port;
 }
 
+bool PalKey::operator<(const PalKey& rhs) const {
+  if (ipv4Compare(this->ipv4, rhs.ipv4) < 0) {
+    return true;
+  } else if (ipv4Compare(this->ipv4, rhs.ipv4) > 0) {
+    return false;
+  } else {
+    return this->port < rhs.port;
+  }
+}
+
 string PalKey::ToString() const {
   return stringFormat("%s:%d", inAddrToString(ipv4).c_str(), port);
 }

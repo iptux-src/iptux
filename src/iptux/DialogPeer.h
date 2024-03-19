@@ -17,6 +17,7 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/DialogBase.h"
+#include "iptux/GroupInfo.h"
 
 namespace iptux {
 

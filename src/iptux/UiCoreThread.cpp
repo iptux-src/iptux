@@ -35,13 +35,12 @@ namespace iptux {
 UiCoreThread::UiCoreThread(Application* app, shared_ptr<ProgramData> data)
     : CoreThread(data),
       programData(data),
-      groupInfos(NULL),
-      sgmlist(NULL),
       grplist(NULL),
       brdlist(NULL),
       pbn(1),
       prn(MAX_SHAREDFILE),
       ecsList(NULL) {
+  groupInfoManager = make_unique<GroupInfoManager>(this, app->getLogSystem());
   tag_table_ = CreateTagTable();
   CheckIconTheme();
   logSystem = app->getLogSystem();
@@ -66,28 +65,6 @@ void UiCoreThread::ClearAllPalFromList() {
   GroupInfo* grpinf;
   GSList* tlist;
 
-  /* 清空常规模式下所有群组的成员 */
-  tlist = groupInfos;
-  while (tlist) {
-    grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->getDialog()) {
-      session = (SessionAbstract*)g_object_get_data(
-          G_OBJECT(grpinf->getDialog()), "session-class");
-      session->ClearAllPalData();
-    }
-    tlist = g_slist_next(tlist);
-  }
-  /* 清空网段模式下所有群组的成员 */
-  tlist = sgmlist;
-  while (tlist) {
-    grpinf = (GroupInfo*)tlist->data;
-    if (grpinf->getDialog()) {
-      session = (SessionAbstract*)g_object_get_data(
-          G_OBJECT(grpinf->getDialog()), "session-class");
-      session->ClearAllPalData();
-    }
-    tlist = g_slist_next(tlist);
-  }
   /* 清空分组模式下所有群组的成员 */
   tlist = grplist;
   while (tlist) {
@@ -228,16 +205,8 @@ void UiCoreThread::AttachPalToList(shared_ptr<PalInfo> pal2) {
  * @return 群组信息
  */
 GroupInfo* UiCoreThread::GetPalRegularItem(const PalInfo* pal) {
-  GSList* tlist;
-
-  tlist = groupInfos;
-  while (tlist) {
-    if (((GroupInfo*)tlist->data)->grpid == inAddrToUint32(pal->ipv4))
-      break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return (GroupInfo*)(tlist ? tlist->data : NULL);
+  auto res = groupInfoManager->getGroupInfo(pal);
+  return res ? res.get() : nullptr;
 }
 
 /**
@@ -246,21 +215,12 @@ GroupInfo* UiCoreThread::GetPalRegularItem(const PalInfo* pal) {
  * @return 群组信息
  */
 GroupInfo* UiCoreThread::GetPalSegmentItem(const PalInfo* pal) {
-  GSList* tlist;
-  GQuark grpid;
-
   /* 获取局域网网段ID */
   auto name = ipv4_get_lan_name(pal->ipv4);
-  grpid = g_quark_from_string(name.empty() ? _("Others") : name.c_str());
-
-  tlist = sgmlist;
-  while (tlist) {
-    if (((GroupInfo*)tlist->data)->grpid == grpid)
-      break;
-    tlist = g_slist_next(tlist);
-  }
-
-  return (GroupInfo*)(tlist ? tlist->data : NULL);
+  auto key = make_pair(GROUP_BELONG_TYPE_SEGMENT,
+                       name.empty() ? _("Others") : name.c_str());
+  auto res = groupInfoManager->getGroupInfo(key);
+  return res ? res.get() : nullptr;
 }
 
 /**
@@ -309,12 +269,6 @@ void UiCoreThread::ClearSublayer() {
 
   CoreThread::ClearSublayer();
 
-  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo*)tlist->data;
-  g_slist_free(groupInfos);
-  for (tlist = sgmlist; tlist; tlist = g_slist_next(tlist))
-    delete (GroupInfo*)tlist->data;
-  g_slist_free(sgmlist);
   for (tlist = grplist; tlist; tlist = g_slist_next(tlist))
     delete (GroupInfo*)tlist->data;
   g_slist_free(grplist);
@@ -351,17 +305,10 @@ GroupInfo* UiCoreThread::GetPalPrevGroupItem(PalInfo* pal) {
  * @return 新加入的群组
  */
 GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
-  GroupInfo* grpinf;
-
-  grpinf = new GroupInfo(pal, getMe(), logSystem);
-  grpinf->grpid = inAddrToUint32(pal->ipv4);
-  grpinf->name = pal->getName();
-  grpinf->buffer = gtk_text_buffer_new(tag_table_);
-  grpinf->clearDialog();
+  auto grpinf = groupInfoManager->addPal(pal, getMe());
   grpinf->signalUnreadMsgCountUpdated.connect(
       sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate));
-  groupInfos = g_slist_append(groupInfos, grpinf);
-  return grpinf;
+  return grpinf.get();
 }
 
 /**
@@ -378,15 +325,18 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
     name = _("Others");
   }
 
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>(), getMe(),
-                         logSystem);
-  grpinf->grpid = g_quark_from_static_string(name.c_str());
-  grpinf->name = name;
-  grpinf->buffer = gtk_text_buffer_new(tag_table_);
-  grpinf->clearDialog();
-  sgmlist = g_slist_append(sgmlist, grpinf);
+  auto res =
+      groupInfoManager->addGroup(GROUP_BELONG_TYPE_SEGMENT, getMe(), name);
+  return res.get();
 
-  return grpinf;
+  // grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>(),
+  // getMe(),
+  //                        logSystem);
+  // grpinf->grpid = g_quark_from_static_string(name.c_str());
+  // grpinf->name = name;
+  // grpinf->buffer = gtk_text_buffer_new(programData->table);
+  // grpinf->clearDialog();
+  // sgmlist = g_slist_append(sgmlist, grpinf);
 }
 
 /**

@@ -23,6 +23,8 @@
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
+#include "iptux/GroupInfo.h"
+#include "iptux/GroupInfoManager.h"
 #include "iptux/UiModels.h"
 
 namespace iptux {
@@ -57,7 +59,7 @@ class UiCoreThread : public CoreThread {
   void PushItemToEnclosureList(FileInfo* file);
   void PopItemFromEnclosureList(FileInfo* file);
 
-  LogSystem* getLogSystem() { return logSystem; }
+  LogSystem_S getLogSystem() { return logSystem; }
 
   GtkTextTagTable* tag_table() { return tag_table_; }
 
@@ -81,10 +83,12 @@ class UiCoreThread : public CoreThread {
 
  private:
   std::shared_ptr<ProgramData> programData;
-  LogSystem* logSystem;
+  LogSystem_S logSystem;
   std::queue<MsgPara> messages;
 
-  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  GroupInfoManager_U groupInfoManager;
+  // GSList *sgmlist;
+  GSList *grplist, *brdlist;  //群组链表(成员不能被删除)
 
   uint32_t pbn, prn;            //当前已使用的文件编号(共享/私有)
   GSList* ecsList;              //文件链表(好友发过来)

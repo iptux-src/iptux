@@ -42,6 +42,8 @@ class LogSystem {
   void InitSublayer();
 };
 
+using LogSystem_S = std::shared_ptr<LogSystem>;
+
 }  // namespace iptux
 
 #endif

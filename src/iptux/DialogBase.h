@@ -19,6 +19,7 @@
 
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
+#include "iptux/GroupInfo.h"
 #include "iptux/UiModels.h"
 
 namespace iptux {

@@ -48,7 +48,7 @@ void onWhatsNew() {
   iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS.md");
 }
 
-void iptux_init(LogSystem* logSystem) {
+void iptux_init(LogSystem_S logSystem) {
   signal(SIGPIPE, SIG_IGN);
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
@@ -99,9 +99,6 @@ Application::~Application() {
   if (eventAdaptor) {
     delete eventAdaptor;
   }
-  if (logSystem) {
-    delete logSystem;
-  }
   delete window;
   delete notificationService;
 }
@@ -124,7 +121,7 @@ void Application::onStartup(Application& self) {
   self.menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
   self.data = make_shared<ProgramData>(self.config);
-  self.logSystem = new LogSystem(self.data);
+  self.logSystem = make_shared<LogSystem>(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   self.window = new MainWindow(&self, *self.cthrd);
   self.eventAdaptor = new EventAdaptor(
