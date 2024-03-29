@@ -1,8 +1,8 @@
 project('iptux', 'cpp',
     license: 'GPL2+',
-    version: '0.8.4',
+    version: '0.8.5',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
-so_version = '0.8.4'
+so_version = '0.8.5'
 subdir('src')
 subdir('share')
 subdir('po')
