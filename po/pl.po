@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2023-12-13 13:04+0800\n"
+"POT-Creation-Date: 2024-03-29 13:01-0700\n"
 "PO-Revision-Date: 2024-03-18 15:02+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/iptux/iptux/pl/>\n"
@@ -1276,12 +1276,12 @@ msgstr "Wyczyśc Listę Zadań"
 msgid "Refuse All"
 msgstr "Odrzuć"
 
-#: src/main/iptux.cpp:150
+#: src/main/iptux.cpp:149
 #, fuzzy
 msgid "- A software for sharing in LAN"
 msgstr "iptux: Program do komunikacji w sieciach LAN\n"
 
-#: src/main/iptux.cpp:153
+#: src/main/iptux.cpp:152
 #, fuzzy, c-format
 msgid "option parsing failed: %s\n"
 msgstr "Opendir() katalog \"%s\" błąd, %s"

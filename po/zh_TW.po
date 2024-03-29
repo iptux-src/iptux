@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2023-12-13 13:04+0800\n"
+"POT-Creation-Date: 2024-03-29 13:01-0700\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -1270,11 +1270,11 @@ msgstr "清理任務"
 msgid "Refuse All"
 msgstr "拒絕"
 
-#: src/main/iptux.cpp:150
+#: src/main/iptux.cpp:149
 msgid "- A software for sharing in LAN"
 msgstr ""
 
-#: src/main/iptux.cpp:153
+#: src/main/iptux.cpp:152
 #, fuzzy, c-format
 msgid "option parsing failed: %s\n"
 msgstr "打開目錄\"%s\"失敗，%s"

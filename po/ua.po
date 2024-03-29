@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2023-12-13 13:04+0800\n"
+"POT-Creation-Date: 2024-03-29 13:01-0700\n"
 "PO-Revision-Date: 2024-01-08 13:06+0000\n"
 "Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/iptux/iptux/uk/"
@@ -1244,11 +1244,11 @@ msgstr "Очистити список завдань"
 msgid "Refuse All"
 msgstr "Відмінити всі"
 
-#: src/main/iptux.cpp:150
+#: src/main/iptux.cpp:149
 msgid "- A software for sharing in LAN"
 msgstr "-Програмне забезпечення для спільного використання в локальній мережі"
 
-#: src/main/iptux.cpp:153
+#: src/main/iptux.cpp:152
 #, c-format
 msgid "option parsing failed: %s\n"
 msgstr "помилка аналізу параметра: %s\n"

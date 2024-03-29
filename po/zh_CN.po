@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2023-12-13 13:04+0800\n"
+"POT-Creation-Date: 2024-03-29 13:01-0700\n"
 "PO-Revision-Date: 2021-05-03 15:52+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -1242,11 +1242,11 @@ msgstr "清理任务"
 msgid "Refuse All"
 msgstr "全部拒绝"
 
-#: src/main/iptux.cpp:150
+#: src/main/iptux.cpp:149
 msgid "- A software for sharing in LAN"
 msgstr "- 一款用于在局域网内共享文件的软件"
 
-#: src/main/iptux.cpp:153
+#: src/main/iptux.cpp:152
 #, c-format
 msgid "option parsing failed: %s\n"
 msgstr "选项解析失败: %s\n"
