@@ -6,14 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Portuguese translation. Thanks to inkhorn.
-- Ukrainian translation. Thanks to Сергій.
+
 
 ### Changed
 
 - [#516](https://github.com/iptux-src/iptux/issues/516) Fix typo in the Preferences dialog.
 - [#520](https://github.com/iptux-src/iptux/issues/520) Fix window resize behavior.
 - [#531](https://github.com/iptux-src/iptux/issues/531) [#533](https://github.com/iptux-src/iptux/issues/533) Improve crash handler.
+- Translation updates:
+  - New Portuguese translation. Thanks to inkhorn.
+  - New Ukrainian translation. Thanks to Сергій.
+  - Polish translation. Thanks to Eryk Michalak.
+
 
 ## [0.8.4] (2023-06-16)
 
