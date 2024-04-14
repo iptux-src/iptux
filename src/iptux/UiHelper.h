@@ -55,5 +55,14 @@ GActionEntry makeStateActionEntry(const std::string& name,
  */
 std::string markupEscapeText(const std::string& str);
 
+/**
+ * @brief create a headerbar with menu, and set this headerbar to the window
+ *
+ * we need to set to window inside this func, otherwise we need manage the refcount
+ * manually.
+ *
+ */
+GtkHeaderBar* CreateHeaderBar(GtkWindow* window, GMenuModel* menu);
+
 }  // namespace iptux
 #endif  // IPTUX_UIHELPER_H

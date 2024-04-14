@@ -82,6 +82,7 @@ void DialogPeer::init() {
   auto dlgpr = this;
   auto window = GTK_WIDGET(dlgpr->CreateMainWindow());
   grpinf->setDialogBase(this);
+  CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
@@ -127,12 +128,15 @@ void DialogPeer::UpdatePalData(PalInfo* pal) {
   refreshTitle();
 }
 
-void DialogPeer::refreshTitle() {
+string DialogPeer::GetTitle() {
   auto palinfor = grpinf->getMembers()[0].get();
-  auto title = stringFormat(
+  return stringFormat(
       _("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
       palinfor->getHost().c_str(), inAddrToString(palinfor->ipv4).c_str());
-  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
+}
+
+void DialogPeer::refreshTitle() {
+  gtk_window_set_title(GTK_WINDOW(window), GetTitle().c_str());
 }
 
 /**
@@ -231,6 +235,13 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
   return GTK_WINDOW(window);
+}
+
+void DialogPeer::CreateTitle() {
+  if(app->use_header_bar()) {
+    GtkHeaderBar* headerBar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
+    gtk_header_bar_set_title(headerBar, GetTitle().c_str());
+  }
 }
 
 /**

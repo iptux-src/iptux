@@ -87,6 +87,7 @@ void MainWindow::CreateWindow() {
 
   /* 创建主窗口 */
   window = CreateMainWindow();
+  CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -398,6 +399,7 @@ void MainWindow::ClearSublayer() {
     g_object_unref(accel);
   if (timerid > 0)
     g_source_remove(timerid);
+  g_object_unref(builder);
 }
 
 /**
@@ -445,6 +447,14 @@ string MainWindow::getTitle() const {
   }
 }
 
+
+void MainWindow::CreateTitle() {
+  if(app->use_header_bar()) {
+    GtkHeaderBar* headerBar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
+    gtk_header_bar_set_title(headerBar, getTitle().c_str());
+  }
+}
+
 /**
  * 创建所有区域.
  * @return 主窗体
@@ -453,18 +463,6 @@ GtkWidget* MainWindow::CreateAllArea() {
   GtkWidget *box, *paned;
 
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-#if SYSTEM_DARWIN
-#else
-  GtkHeaderBar* headerBar =
-      GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
-  gtk_header_bar_set_title(headerBar, getTitle().c_str());
-  gtk_window_set_titlebar(GTK_WINDOW(window), GTK_WIDGET(headerBar));
-  auto menuButton = gtk_builder_get_object(builder, "menu_button");
-  gtk_menu_button_set_menu_model(
-      GTK_MENU_BUTTON(menuButton),
-      G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar-when-no-app-menu")));
-#endif
 
   gtk_box_pack_start(GTK_BOX(box), CreateToolBar(), FALSE, FALSE, 0);
 

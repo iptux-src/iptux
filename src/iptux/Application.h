@@ -33,8 +33,10 @@ class Application {
   LogSystem* getLogSystem() { return logSystem; }
   std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
+  bool use_header_bar() { return use_header_bar_; }
   void refreshTransTasks();
   PPalInfo getMe();
+  GMenuModel* menu() { return menu_; }
 
  private:
   std::shared_ptr<IptuxConfig> config;
@@ -52,6 +54,8 @@ class Application {
   EventAdaptor* eventAdaptor = 0;
   LogSystem* logSystem = 0;
   NotificationService* notificationService = 0;
+  GMenuModel* menu_ = 0;
+  bool use_header_bar_ = false;
   bool started{false};
 
  public:

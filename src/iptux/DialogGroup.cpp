@@ -57,6 +57,7 @@ DialogGroup* DialogGroup::GroupDialogEntry(Application* app,
 
   dlggrp = new DialogGroup(app, grpinf);
   window = GTK_WIDGET(dlggrp->CreateMainWindow());
+  dlggrp->CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -195,10 +196,8 @@ void DialogGroup::SaveUILayout() {
  * @return 窗口
  */
 GtkWindow* DialogGroup::CreateMainWindow() {
-  char buf[MAX_BUFLEN];
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
-  snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name.c_str());
-  gtk_window_set_title(GTK_WINDOW(window), buf);
+  gtk_window_set_title(GTK_WINDOW(window), GetTitle().c_str());
   gtk_window_set_default_size(GTK_WINDOW(window),
                               config->GetInt("group_window_width", 500),
                               config->GetInt("group_window_height", 350));
@@ -715,6 +714,17 @@ void DialogGroup::onSortType(GSimpleAction* action,
   gtk_tree_sortable_set_sort_column_id(
       GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
   g_simple_action_set_state(action, value);
+}
+
+void DialogGroup::CreateTitle() {
+  if(app->use_header_bar()) {
+    GtkHeaderBar* header_bar = CreateHeaderBar(GTK_WINDOW(window),  app->menu());
+    gtk_header_bar_set_title(header_bar, GetTitle().c_str());
+  }
+}
+
+string DialogGroup::GetTitle() {
+  return stringFormat(_("Talk with the group %s"), grpinf->name.c_str());
 }
 
 }  // namespace iptux

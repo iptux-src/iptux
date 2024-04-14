@@ -45,6 +45,7 @@ class DialogGroup : public DialogBase {
   void SaveUILayout();
 
   GtkWindow* CreateMainWindow();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateMemberArea();
@@ -57,6 +58,7 @@ class DialogGroup : public DialogBase {
   bool SendTextMsg() override;
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
   void BroadcastTextMsg(const gchar* msg);
+  std::string GetTitle();
 
   static GtkWidget* CreatePopupMenu(GtkTreeModel* model);
   //回调处理部分
