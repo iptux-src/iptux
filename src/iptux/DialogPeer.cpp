@@ -52,7 +52,6 @@ DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
       sigc::mem_fun(*this, &DialogPeer::onNewFileReceived));
   app->getCoreThread()->signalGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated));
-  this->builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/DialogPeer.ui");
 }
 
 /**
@@ -64,7 +63,6 @@ DialogPeer::~DialogPeer() {
   if (timerrcv > 0)
     g_source_remove(timerrcv);
   WriteUILayout();
-  g_object_unref(builder);
 }
 
 /**

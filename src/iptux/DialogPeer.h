@@ -38,7 +38,6 @@ class DialogPeer : public DialogBase {
 
  private:
   GtkTreeView* fileToReceiveTree = 0;
-  GtkBuilder* builder;
 
  private:
   void ReadUILayout();
