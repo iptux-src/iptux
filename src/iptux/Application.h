@@ -33,6 +33,7 @@ class Application {
   LogSystem* getLogSystem() { return logSystem; }
   std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
+  bool GetUseHeaderBar() { return useHeaderBar; }
   void refreshTransTasks();
   PPalInfo getMe();
 
@@ -52,6 +53,7 @@ class Application {
   EventAdaptor* eventAdaptor = 0;
   LogSystem* logSystem = 0;
   NotificationService* notificationService = 0;
+  bool useHeaderBar = false;
   bool started{false};
 
  public:

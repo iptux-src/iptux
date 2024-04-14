@@ -81,6 +81,7 @@ Application::Application(shared_ptr<IptuxConfig> config)
   notificationService = new TerminalNotifierNoticationService();
 #else
   notificationService = new GioNotificationService();
+  useHeaderBar = true;
   // GError* error = nullptr;
   // if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
   //   LOG_WARN("g_application_register failed: %s-%d-%s",
@@ -164,13 +165,17 @@ void Application::onStartup(Application& self) {
     auto app_menu =
         G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "appmenu"));
     gtk_application_set_app_menu(GTK_APPLICATION(self.app), app_menu);
-    auto menubar =
-        G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar-when-app-menu"));
-    gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+    if(!self.useHeaderBar) {
+      auto menubar =
+          G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar-when-app-menu"));
+      gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+    }
   } else {
-    auto menubar =
-        G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar-when-no-app-menu"));
-    gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+    if(!self.useHeaderBar) {
+      auto menubar =
+          G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar-when-no-app-menu"));
+      gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
+    }
   }
 
   add_accelerator(self.app, "app.quit", "<Primary>Q");

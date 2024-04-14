@@ -38,6 +38,7 @@ class DialogPeer : public DialogBase {
 
  private:
   GtkTreeView* fileToReceiveTree = 0;
+  GtkBuilder* builder;
 
  private:
   void ReadUILayout();
@@ -46,6 +47,7 @@ class DialogPeer : public DialogBase {
   void init();
 
   GtkWindow* CreateMainWindow();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateInfoArea();
@@ -65,6 +67,7 @@ class DialogPeer : public DialogBase {
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara* PackageMsg(const std::vector<ChipData>& dtlist);
   void refreshSendAction();
+  std::string getTitle();
 
   //回调处理部分
  private:

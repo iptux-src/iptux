@@ -52,6 +52,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
       sigc::mem_fun(*this, &DialogPeer::onNewFileReceived));
   app->getCoreThread()->signalGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated));
+  this->builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/DialogPeer.ui");
 }
 
 /**
@@ -63,6 +64,7 @@ DialogPeer::~DialogPeer() {
   if (timerrcv > 0)
     g_source_remove(timerrcv);
   WriteUILayout();
+  g_object_unref(builder);
 }
 
 /**
@@ -82,6 +84,7 @@ void DialogPeer::init() {
   auto dlgpr = this;
   auto window = GTK_WIDGET(dlgpr->CreateMainWindow());
   grpinf->setDialogBase(this);
+  CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), dlgpr->CreateAllArea());
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
@@ -127,12 +130,15 @@ void DialogPeer::UpdatePalData(PalInfo* pal) {
   refreshTitle();
 }
 
-void DialogPeer::refreshTitle() {
+string DialogPeer::getTitle() {
   auto palinfor = grpinf->getMembers()[0].get();
-  auto title = stringFormat(
+  return stringFormat(
       _("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
       palinfor->getHost().c_str(), inAddrToString(palinfor->ipv4).c_str());
-  gtk_window_set_title(GTK_WINDOW(window), title.c_str());
+}
+
+void DialogPeer::refreshTitle() {
+  gtk_window_set_title(GTK_WINDOW(window), getTitle().c_str());
 }
 
 /**
@@ -231,6 +237,20 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
   return GTK_WINDOW(window);
+}
+
+void DialogPeer::CreateTitle() {
+  if(app->GetUseHeaderBar()) {
+    GtkHeaderBar* headerBar =
+        GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
+    gtk_header_bar_set_title(headerBar, getTitle().c_str());
+    gtk_header_bar_set_has_subtitle(headerBar, FALSE);
+    gtk_window_set_titlebar(GTK_WINDOW(window), GTK_WIDGET(headerBar));
+    auto menuButton = gtk_builder_get_object(builder, "menu_button");
+    gtk_menu_button_set_menu_model(
+        GTK_MENU_BUTTON(menuButton),
+        G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar-when-no-app-menu")));
+  }
 }
 
 /**

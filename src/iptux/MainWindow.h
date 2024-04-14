@@ -80,6 +80,7 @@ class MainWindow : public sigc::trackable {
 
   void CreateWindow();
   GtkWidget* CreateMainWindow();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateToolBar();
