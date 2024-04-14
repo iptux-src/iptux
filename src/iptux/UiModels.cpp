@@ -342,6 +342,7 @@ GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
   members.push_back(pal);
   inputBuffer = gtk_text_buffer_new(NULL);
   name_ = pal->getName();
+  host_ = pal->getHost();
 }
 
 GroupInfo::GroupInfo(iptux::GroupBelongType t,
@@ -570,6 +571,18 @@ bool transModelIsFinished(TransModel* model) {
 
 IconModel* iconModelNew() {
   return gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+}
+
+PalTreeModelSortKey PalTreeModelSortKeyFromString(const std::string& s) {
+  if (s == "nickname") {
+    return PalTreeModelSortKey::NICKNAME;
+  } else if (s == "ip") {
+    return PalTreeModelSortKey::IP;
+  } else if (s == "host") {
+    return PalTreeModelSortKey::HOST;
+  } else {
+    return PalTreeModelSortKey::INVALID;
+  }
 }
 
 }  // namespace iptux

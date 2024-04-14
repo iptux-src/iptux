@@ -447,9 +447,8 @@ string MainWindow::getTitle() const {
   }
 }
 
-
 void MainWindow::CreateTitle() {
-  if(app->use_header_bar()) {
+  if (app->use_header_bar()) {
     GtkHeaderBar* headerBar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
     gtk_header_bar_set_title(headerBar, getTitle().c_str());
   }
@@ -925,7 +924,7 @@ gchar* palInfo2HintMarkup(const PalInfo* pal) {
  * @return Gtk+库所需
  */
 gboolean MainWindow::UpdateUI(MainWindow* mwin) {
-  static int sumonline = 0;  //避免每次都作一次设置
+  static int sumonline = 0;  // 避免每次都作一次设置
   GtkWidget* widget;
   int sum;
 
@@ -1020,13 +1019,8 @@ void MainWindow::onSortBy(GSimpleAction* action,
                           MainWindow& self) {
   string sortBy = g_variant_get_string(value, nullptr);
 
-  PalTreeModelSortKey key;
-
-  if (sortBy == "nickname") {
-    key = PalTreeModelSortKey::NICKNAME;
-  } else if (sortBy == "ip") {
-    key = PalTreeModelSortKey::IP;
-  } else {
+  PalTreeModelSortKey key = PalTreeModelSortKeyFromString(sortBy);
+  if (key == PalTreeModelSortKey::INVALID) {
     LOG_WARN("unknown sort by: %s", sortBy.c_str());
     return;
   }
@@ -1337,7 +1331,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget* treeview,
   /* 获取会话对象，并将数据添加到会话对象 */
   session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->getDialog()),
                                                 "session-class");
-  list = selection_data_get_path(data);  //获取所有文件
+  list = selection_data_get_path(data);  // 获取所有文件
   session->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -1574,7 +1568,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget* treeview,
   /* 获取会话对象，并将数据添加到会话对象 */
   session = (SessionAbstract*)g_object_get_data(G_OBJECT(grpinf->getDialog()),
                                                 "session-class");
-  list = selection_data_get_path(data);  //获取所有文件
+  list = selection_data_get_path(data);  // 获取所有文件
   session->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);

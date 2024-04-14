@@ -74,6 +74,7 @@ class GroupInfo {
   void clearDialog() { dialogBase = nullptr; }
 
   std::string name() const { return name_; }
+  std::string host() const { return host_; }
 
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
@@ -85,6 +86,7 @@ class GroupInfo {
 
  private:
   std::string name_;  ///< 群组名称 *
+  std::string host_;
   DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
 
@@ -128,7 +130,9 @@ void transModelLoadFromTransFileModels(
     const std::vector<std::unique_ptr<TransFileModel>>& fileModels);
 bool transModelIsFinished(TransModel*);
 
-enum class PalTreeModelSortKey { NICKNAME, IP };
+enum class PalTreeModelSortKey { NICKNAME, IP, HOST, INVALID };
+PalTreeModelSortKey PalTreeModelSortKeyFromString(const std::string& s);
+
 enum class PalTreeModelColumn {
   CLOSED_EXPANDER,
   OPEN_EXPANDER,
