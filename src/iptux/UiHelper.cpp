@@ -287,4 +287,18 @@ gboolean gtk_window_iconify_on_delete(GtkWindow* window) {
   return TRUE;
 }
 
+GtkHeaderBar* CreateHeaderBar(GtkWindow* window, GMenuModel* menu) {
+  GtkBuilder* builder =
+      gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/HeaderBar.ui");
+  GtkHeaderBar* headerBar =
+      GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
+  gtk_header_bar_set_has_subtitle(headerBar, FALSE);
+  auto menuButton = gtk_builder_get_object(builder, "menu_button");
+  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menuButton), menu);
+  gtk_window_set_titlebar(window, GTK_WIDGET(headerBar));
+
+  g_object_unref(builder);
+  return headerBar;
+}
+
 }  // namespace iptux

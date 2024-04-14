@@ -449,15 +449,9 @@ string MainWindow::getTitle() const {
 
 
 void MainWindow::CreateTitle() {
-  if(app->GetUseHeaderBar()) {
-    GtkHeaderBar* headerBar =
-        GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
+  if(app->use_header_bar()) {
+    GtkHeaderBar* headerBar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
     gtk_header_bar_set_title(headerBar, getTitle().c_str());
-    gtk_window_set_titlebar(GTK_WINDOW(window), GTK_WIDGET(headerBar));
-    auto menuButton = gtk_builder_get_object(builder, "menu_button");
-    gtk_menu_button_set_menu_model(
-        GTK_MENU_BUTTON(menuButton),
-        G_MENU_MODEL(gtk_builder_get_object(app->getMenuBuilder(), "menubar-when-no-app-menu")));
   }
 }
 

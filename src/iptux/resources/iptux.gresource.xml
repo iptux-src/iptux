@@ -4,6 +4,7 @@
         <file preprocess="xml-stripblanks">gtk/AboutDialog.ui</file>
         <file preprocess="xml-stripblanks">gtk/DetectPal.ui</file>
         <file preprocess="xml-stripblanks">gtk/DialogPeer.ui</file>
+        <file preprocess="xml-stripblanks">gtk/HeaderBar.ui</file>
         <file preprocess="xml-stripblanks">gtk/MainWindow.ui</file>
         <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     </gresource>

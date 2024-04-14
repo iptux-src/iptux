@@ -1,23 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkHeaderBar" id="header_bar">
-    <property name="visible">True</property>
-    <property name="show-close-button">True</property>
-    <child>
-      <object class="GtkMenuButton" id="menu_button">
-        <property name="visible">True</property>
-        <property name="use_popover">False</property>
-        <property name="image">menu_image</property>
-      </object>
-      <packing>
-        <property name="pack_type">end</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkImage" id="menu_image">
-    <property name="visible">True</property>
-    <property name="icon_name">open-menu-symbolic</property>
-  </object>
 </interface>
