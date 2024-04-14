@@ -725,7 +725,6 @@ void DialogGroup::CreateTitle() {
 
 string DialogGroup::GetTitle() {
   return stringFormat(_("Talk with the group %s"), grpinf->name.c_str());
-
 }
 
 }  // namespace iptux

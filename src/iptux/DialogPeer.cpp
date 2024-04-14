@@ -128,7 +128,7 @@ void DialogPeer::UpdatePalData(PalInfo* pal) {
   refreshTitle();
 }
 
-string DialogPeer::getTitle() {
+string DialogPeer::GetTitle() {
   auto palinfor = grpinf->getMembers()[0].get();
   return stringFormat(
       _("Talk with %s(%s) IP:%s"), palinfor->getName().c_str(),
@@ -136,7 +136,7 @@ string DialogPeer::getTitle() {
 }
 
 void DialogPeer::refreshTitle() {
-  gtk_window_set_title(GTK_WINDOW(window), getTitle().c_str());
+  gtk_window_set_title(GTK_WINDOW(window), GetTitle().c_str());
 }
 
 /**
@@ -240,7 +240,7 @@ GtkWindow* DialogPeer::CreateMainWindow() {
 void DialogPeer::CreateTitle() {
   if(app->use_header_bar()) {
     GtkHeaderBar* headerBar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
-    gtk_header_bar_set_title(headerBar, getTitle().c_str());
+    gtk_header_bar_set_title(headerBar, GetTitle().c_str());
   }
 }
 

@@ -66,7 +66,7 @@ class DialogPeer : public DialogBase {
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara* PackageMsg(const std::vector<ChipData>& dtlist);
   void refreshSendAction();
-  std::string getTitle();
+  std::string GetTitle();
 
   //回调处理部分
  private:
