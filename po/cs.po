@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-03-29 13:01-0700\n"
+"POT-Creation-Date: 2024-04-14 13:17-0700\n"
 "PO-Revision-Date: 2013-04-15 18:07+0000\n"
 "Last-Translator: Jakub Jezbera <Unknown>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -232,21 +232,21 @@ msgstr ""
 msgid "Loading the process successfully!"
 msgstr ""
 
-#: src/iptux/Application.cpp:265
+#: src/iptux/Application.cpp:271
 #, c-format
 msgid "New Message from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:278
+#: src/iptux/Application.cpp:284
 #, c-format
 msgid "New File from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:287
+#: src/iptux/Application.cpp:293
 msgid "Receiving File Finished"
 msgstr ""
 
-#: src/iptux/Application.cpp:291
+#: src/iptux/Application.cpp:297
 msgid "file info no longer exist"
 msgstr ""
 
@@ -503,7 +503,7 @@ msgstr ""
 msgid "Close"
 msgstr "Zavřít"
 
-#: src/iptux/DialogBase.cpp:275 src/iptux/DialogGroup.cpp:375
+#: src/iptux/DialogBase.cpp:275 src/iptux/DialogGroup.cpp:374
 msgid "Send"
 msgstr "Odeslat"
 
@@ -543,7 +543,7 @@ msgstr ""
 msgid "Files"
 msgstr "Soubor"
 
-#: src/iptux/DialogBase.cpp:645 src/iptux/DialogPeer.cpp:587
+#: src/iptux/DialogBase.cpp:645 src/iptux/DialogPeer.cpp:598
 msgid "Detail"
 msgstr ""
 
@@ -552,12 +552,12 @@ msgstr ""
 msgid "PeerName"
 msgstr "Název"
 
-#: src/iptux/DialogBase.cpp:702 src/iptux/DialogPeer.cpp:738
+#: src/iptux/DialogBase.cpp:702 src/iptux/DialogPeer.cpp:749
 msgid "Name"
 msgstr "Název"
 
-#: src/iptux/DialogBase.cpp:708 src/iptux/DialogPeer.cpp:674
-#: src/iptux/DialogPeer.cpp:744 src/iptux/ShareFile.cpp:280
+#: src/iptux/DialogBase.cpp:708 src/iptux/DialogPeer.cpp:685
+#: src/iptux/DialogPeer.cpp:755 src/iptux/ShareFile.cpp:280
 #: src/iptux/TransWindow.cpp:271
 msgid "Size"
 msgstr "Velikost"
@@ -576,97 +576,97 @@ msgstr "Stav přenosu."
 msgid "%s of %s Sent."
 msgstr ""
 
-#: src/iptux/DialogBase.cpp:785 src/iptux/DialogPeer.cpp:857
+#: src/iptux/DialogBase.cpp:785 src/iptux/DialogPeer.cpp:868
 msgid "Mission Completed!"
 msgstr ""
 
-#: src/iptux/DialogGroup.cpp:200
+#: src/iptux/DialogGroup.cpp:284
+msgid "Member"
+msgstr "Člen"
+
+#: src/iptux/DialogGroup.cpp:381
+msgid "Pals"
+msgstr "Partneři"
+
+#: src/iptux/DialogGroup.cpp:479
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: src/iptux/DialogGroup.cpp:484
+msgid "Reverse Select"
+msgstr "Obrátit výběr"
+
+#: src/iptux/DialogGroup.cpp:489
+msgid "Clear Up"
+msgstr "Vyčistit"
+
+#: src/iptux/DialogGroup.cpp:727
 #, c-format
 msgid "Talk with the group %s"
 msgstr "Hovořit se skupinou %s"
 
-#: src/iptux/DialogGroup.cpp:285
-msgid "Member"
-msgstr "Člen"
-
-#: src/iptux/DialogGroup.cpp:382
-msgid "Pals"
-msgstr "Partneři"
-
-#: src/iptux/DialogGroup.cpp:480
-msgid "Select All"
-msgstr "Vybrat vše"
-
-#: src/iptux/DialogGroup.cpp:485
-msgid "Reverse Select"
-msgstr "Obrátit výběr"
-
-#: src/iptux/DialogGroup.cpp:490
-msgid "Clear Up"
-msgstr "Vyčistit"
-
-#: src/iptux/DialogPeer.cpp:133
+#: src/iptux/DialogPeer.cpp:134
 #, c-format
 msgid "Talk with %s(%s) IP:%s"
 msgstr "Komunikace s %s(%s) IP:%s"
 
-#: src/iptux/DialogPeer.cpp:294
+#: src/iptux/DialogPeer.cpp:305
 msgid "Info."
 msgstr "Informace."
 
-#: src/iptux/DialogPeer.cpp:327
+#: src/iptux/DialogPeer.cpp:338
 #, c-format
 msgid "Version: %s\n"
 msgstr "Verze: %s\n"
 
-#: src/iptux/DialogPeer.cpp:329
+#: src/iptux/DialogPeer.cpp:340
 #, c-format
 msgid "Nickname: %s@%s\n"
 msgstr "Přezdívka: %s@%s\n"
 
-#: src/iptux/DialogPeer.cpp:332
+#: src/iptux/DialogPeer.cpp:343
 #, c-format
 msgid "Nickname: %s\n"
 msgstr "Přezdívka: %s\n"
 
-#: src/iptux/DialogPeer.cpp:334
+#: src/iptux/DialogPeer.cpp:345
 #, c-format
 msgid "User: %s\n"
 msgstr "Uživatel: %s\n"
 
-#: src/iptux/DialogPeer.cpp:335
+#: src/iptux/DialogPeer.cpp:346
 #, c-format
 msgid "Host: %s\n"
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:338
+#: src/iptux/DialogPeer.cpp:349
 #, c-format
 msgid "Address: %s(%s)\n"
 msgstr "Adresa: %s(%s)\n"
 
-#: src/iptux/DialogPeer.cpp:340
+#: src/iptux/DialogPeer.cpp:351
 #, c-format
 msgid "Address: %s\n"
 msgstr "Adresa: %s\n"
 
-#: src/iptux/DialogPeer.cpp:343
+#: src/iptux/DialogPeer.cpp:354
 msgid "Compatibility: Microsoft\n"
 msgstr "Kompatibilita: Microsoft\n"
 
-#: src/iptux/DialogPeer.cpp:345
+#: src/iptux/DialogPeer.cpp:356
 msgid "Compatibility: GNU/Linux\n"
 msgstr "Kompatibilita: GNU/Linux\n"
 
-#: src/iptux/DialogPeer.cpp:347
+#: src/iptux/DialogPeer.cpp:358
 #, c-format
 msgid "System coding: %s\n"
 msgstr "Systémové kódování: %s\n"
 
-#: src/iptux/DialogPeer.cpp:352
+#: src/iptux/DialogPeer.cpp:363
 msgid "Signature:\n"
 msgstr "Podpis:\n"
 
-#: src/iptux/DialogPeer.cpp:359
+#: src/iptux/DialogPeer.cpp:370
 msgid ""
 "\n"
 "Photo:\n"
@@ -674,54 +674,54 @@ msgstr ""
 "\n"
 "Fotografie:\n"
 
-#: src/iptux/DialogPeer.cpp:495
+#: src/iptux/DialogPeer.cpp:506
 msgid "Please select a picture to insert the buffer"
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:524
+#: src/iptux/DialogPeer.cpp:535
 msgid "Enclosure."
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:569
+#: src/iptux/DialogPeer.cpp:580
 #, fuzzy
 msgid "Files to be received"
 msgstr "Soubor přenesen."
 
-#: src/iptux/DialogPeer.cpp:573
+#: src/iptux/DialogPeer.cpp:584
 msgid "Receiving progress."
 msgstr "Stav přenosu."
 
-#: src/iptux/DialogPeer.cpp:576
+#: src/iptux/DialogPeer.cpp:587
 msgid "Accept"
 msgstr "Přijmout"
 
-#: src/iptux/DialogPeer.cpp:582 src/iptux/dialog.cpp:60
+#: src/iptux/DialogPeer.cpp:593 src/iptux/dialog.cpp:60
 #: src/iptux/resources/gtk/menus.ui:312
 msgid "Refuse"
 msgstr "Odmítnout"
 
-#: src/iptux/DialogPeer.cpp:618
+#: src/iptux/DialogPeer.cpp:629
 msgid "File received."
 msgstr "Soubor přenesen."
 
-#: src/iptux/DialogPeer.cpp:661 src/iptux/DialogPeer.cpp:732
+#: src/iptux/DialogPeer.cpp:672 src/iptux/DialogPeer.cpp:743
 msgid "Source"
 msgstr "Zdroj"
 
-#: src/iptux/DialogPeer.cpp:668
+#: src/iptux/DialogPeer.cpp:679
 msgid "SaveAs"
 msgstr "Uložit jako"
 
-#: src/iptux/DialogPeer.cpp:840 src/iptux/DialogPeer.cpp:906
+#: src/iptux/DialogPeer.cpp:851 src/iptux/DialogPeer.cpp:917
 msgid "Receiving Progress."
 msgstr "Stav přenosu."
 
-#: src/iptux/DialogPeer.cpp:843 src/iptux/DialogPeer.cpp:909
+#: src/iptux/DialogPeer.cpp:854 src/iptux/DialogPeer.cpp:920
 #, c-format
 msgid "%s to Receive."
 msgstr ""
 
-#: src/iptux/DialogPeer.cpp:847 src/iptux/DialogPeer.cpp:913
+#: src/iptux/DialogPeer.cpp:858 src/iptux/DialogPeer.cpp:924
 #, c-format
 msgid "%s Of %s Received."
 msgstr ""
@@ -745,95 +745,95 @@ msgstr ""
 msgid "User:%s Host:%s"
 msgstr "Uživatel:%s Počítač:%s"
 
-#: src/iptux/MainWindow.cpp:441 src/iptux/MainWindow.cpp:443
+#: src/iptux/MainWindow.cpp:443 src/iptux/MainWindow.cpp:445
 #, fuzzy
 msgid "Iptux"
 msgstr "iptux"
 
-#: src/iptux/MainWindow.cpp:510
+#: src/iptux/MainWindow.cpp:508
 msgid "Pals Online: 0"
 msgstr "Partnerů online: 0"
 
-#: src/iptux/MainWindow.cpp:595
+#: src/iptux/MainWindow.cpp:593
 msgid "Search Pals"
 msgstr "Vyhledat partnery"
 
-#: src/iptux/MainWindow.cpp:708
+#: src/iptux/MainWindow.cpp:706
 msgid "Nickname"
 msgstr "Ptřezdívka"
 
-#: src/iptux/MainWindow.cpp:719
+#: src/iptux/MainWindow.cpp:717
 msgid "Group"
 msgstr "Skupina"
 
-#: src/iptux/MainWindow.cpp:725 src/iptux/TransWindow.cpp:258
+#: src/iptux/MainWindow.cpp:723 src/iptux/TransWindow.cpp:258
 msgid "IPv4"
 msgstr "IPv4"
 
-#: src/iptux/MainWindow.cpp:731
+#: src/iptux/MainWindow.cpp:729
 msgid "User"
 msgstr "Uživatel"
 
-#: src/iptux/MainWindow.cpp:737
+#: src/iptux/MainWindow.cpp:735
 msgid "Host"
 msgstr "Počítač"
 
-#: src/iptux/MainWindow.cpp:868
+#: src/iptux/MainWindow.cpp:866
 #, fuzzy, c-format
 msgid "Version: %s"
 msgstr "Verze: %s\n"
 
-#: src/iptux/MainWindow.cpp:872
+#: src/iptux/MainWindow.cpp:870
 #, fuzzy, c-format
 msgid "Nickname: %s@%s"
 msgstr "Přezdívka: %s@%s\n"
 
-#: src/iptux/MainWindow.cpp:875
+#: src/iptux/MainWindow.cpp:873
 #, fuzzy, c-format
 msgid "Nickname: %s"
 msgstr "Přezdívka: %s\n"
 
-#: src/iptux/MainWindow.cpp:877
+#: src/iptux/MainWindow.cpp:875
 #, fuzzy, c-format
 msgid "User: %s"
 msgstr "Uživatel: %s\n"
 
-#: src/iptux/MainWindow.cpp:878
+#: src/iptux/MainWindow.cpp:876
 #, fuzzy, c-format
 msgid "Host: %s"
 msgstr "Počítač"
 
-#: src/iptux/MainWindow.cpp:882
+#: src/iptux/MainWindow.cpp:880
 #, fuzzy, c-format
 msgid "Address: %s(%s)"
 msgstr "Adresa: %s(%s)\n"
 
-#: src/iptux/MainWindow.cpp:884
+#: src/iptux/MainWindow.cpp:882
 #, fuzzy, c-format
 msgid "Address: %s"
 msgstr "Adresa: %s\n"
 
-#: src/iptux/MainWindow.cpp:888
+#: src/iptux/MainWindow.cpp:886
 #, fuzzy
 msgid "Compatibility: Microsoft"
 msgstr "Kompatibilita: Microsoft\n"
 
-#: src/iptux/MainWindow.cpp:890
+#: src/iptux/MainWindow.cpp:888
 #, fuzzy
 msgid "Compatibility: GNU/Linux"
 msgstr "Kompatibilita: GNU/Linux\n"
 
-#: src/iptux/MainWindow.cpp:893
+#: src/iptux/MainWindow.cpp:891
 #, fuzzy, c-format
 msgid "System coding: %s"
 msgstr "Systémové kódování: %s\n"
 
-#: src/iptux/MainWindow.cpp:897
+#: src/iptux/MainWindow.cpp:895
 #, fuzzy
 msgid "Signature:"
 msgstr "Podpis:\n"
 
-#: src/iptux/MainWindow.cpp:939
+#: src/iptux/MainWindow.cpp:937
 #, fuzzy, c-format
 msgid "Pals Online: %d"
 msgstr "Partnerů online: 0"

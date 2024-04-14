@@ -47,6 +47,7 @@ src/iptux/callback.cpp
 src/iptux/dialog.cpp
 src/iptux/resources/gtk/AboutDialog.ui
 src/iptux/resources/gtk/DetectPal.ui
+src/iptux/resources/gtk/HeaderBar.ui
 src/iptux/resources/gtk/MainWindow.ui
 src/iptux/resources/gtk/menus.ui
 src/main/iptux.cpp
