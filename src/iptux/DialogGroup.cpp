@@ -717,14 +717,14 @@ void DialogGroup::onSortType(GSimpleAction* action,
 }
 
 void DialogGroup::CreateTitle() {
-  if(app->use_header_bar()) {
-    GtkHeaderBar* header_bar = CreateHeaderBar(GTK_WINDOW(window),  app->menu());
+  if (app->use_header_bar()) {
+    GtkHeaderBar* header_bar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
     gtk_header_bar_set_title(header_bar, GetTitle().c_str());
   }
 }
 
 string DialogGroup::GetTitle() {
-  return stringFormat(_("Talk with the group %s"), grpinf->name.c_str());
+  return stringFormat(_("Talk with the group %s"), grpinf->name().c_str());
 }
 
 }  // namespace iptux

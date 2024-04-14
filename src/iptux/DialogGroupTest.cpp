@@ -17,7 +17,7 @@ TEST(DialogGroup, Constructor) {
   pal->iconfile = g_strdup("pig");
 
   GroupInfo groupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>({pal}),
-                      app.getMe(), nullptr);
+                      app.getMe(), "groupname", nullptr);
 
   DialogGroup* dialog = DialogGroup::GroupDialogEntry(&app, &groupInfo);
   delete dialog;

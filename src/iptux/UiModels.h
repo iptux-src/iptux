@@ -43,6 +43,7 @@ class GroupInfo {
   GroupInfo(GroupBelongType type,
             const std::vector<PPalInfo>& pals,
             CPPalInfo me,
+            const std::string& name,
             LogSystem* logSystem);
   ~GroupInfo();
 
@@ -72,16 +73,18 @@ class GroupInfo {
   GtkWidget* getDialog() const;
   void clearDialog() { dialogBase = nullptr; }
 
+  std::string name() const { return name_; }
+
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
   sigc::signal<void(GroupInfo*)> signalNewFileReceived;
 
  public:
   GQuark grpid;           ///< 唯一标识
-  std::string name;       ///< 群组名称 *
   GtkTextBuffer* buffer;  ///< 历史消息缓冲区 *
 
  private:
+  std::string name_;  ///< 群组名称 *
   DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
 

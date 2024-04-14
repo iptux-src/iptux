@@ -126,7 +126,7 @@ gint paltreeCompareByNameFunc(GtkTreeModel* model,
 
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
-  result = strcmp(agrpinf->name.c_str(), bgrpinf->name.c_str());
+  result = strcmp(agrpinf->name().c_str(), bgrpinf->name().c_str());
 
   return result;
 }
@@ -268,7 +268,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
                           markupEscapeText(ipstr).c_str());
     }
   } else
-    info = markupEscapeText(grpinf->name);
+    info = markupEscapeText(grpinf->name());
 
   /* 创建扩展信息 */
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
@@ -341,11 +341,13 @@ GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
       logSystem(logSystem) {
   members.push_back(pal);
   inputBuffer = gtk_text_buffer_new(NULL);
+  name_ = pal->getName();
 }
 
 GroupInfo::GroupInfo(iptux::GroupBelongType t,
                      const vector<PPalInfo>& pals,
                      CPPalInfo me,
+                     const string& name,
                      LogSystem* logSystem)
     : grpid(0),
       buffer(NULL),
@@ -355,6 +357,7 @@ GroupInfo::GroupInfo(iptux::GroupBelongType t,
       type(t),
       logSystem(logSystem) {
   inputBuffer = gtk_text_buffer_new(NULL);
+  name_ = name;
 }
 
 GtkWidget* GroupInfo::getDialog() const {
