@@ -40,6 +40,11 @@
               <attribute name='action'>win.sort_by</attribute>
               <attribute name='target'>ip</attribute>
             </item>
+            <item>
+              <attribute name='label' translatable='yes'>By Host</attribute>
+              <attribute name='action'>win.sort_by</attribute>
+              <attribute name='target'>host</attribute>
+            </item>
           </section>
           <section>
             <item>

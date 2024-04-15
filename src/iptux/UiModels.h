@@ -132,6 +132,7 @@ bool transModelIsFinished(TransModel*);
 
 enum class PalTreeModelSortKey { NICKNAME, IP, HOST, INVALID };
 PalTreeModelSortKey PalTreeModelSortKeyFromString(const std::string& s);
+GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k);
 
 enum class PalTreeModelColumn {
   CLOSED_EXPANDER,

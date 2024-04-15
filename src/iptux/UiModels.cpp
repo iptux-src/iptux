@@ -158,6 +158,16 @@ gint paltreeCompareByIPFunc(GtkTreeModel* model,
   return 0;
 }
 
+gint paltreeCompareByHostFunc(GtkTreeModel* model,
+                              GtkTreeIter* a,
+                              GtkTreeIter* b) {
+  GroupInfo *agrpinf, *bgrpinf;
+
+  gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
+  gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
+  return strcmp(agrpinf->host().c_str(), bgrpinf->host().c_str());
+}
+
 /**
  * 好友树(paltree)底层数据结构.
  * 7,0 closed-expander,1 open-expander,2 info.,3 extras,4 style,5 color,6 data
@@ -180,20 +190,13 @@ PalTreeModel* palTreeModelNew() {
 }
 
 void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key) {
-  switch (key) {
-    case PalTreeModelSortKey::NICKNAME:
-      gtk_tree_sortable_set_default_sort_func(
-          GTK_TREE_SORTABLE(model),
-          GtkTreeIterCompareFunc(paltreeCompareByNameFunc), NULL, NULL);
-      break;
-    case PalTreeModelSortKey::IP:
-      gtk_tree_sortable_set_default_sort_func(
-          GTK_TREE_SORTABLE(model),
-          GtkTreeIterCompareFunc(paltreeCompareByIPFunc), NULL, NULL);
-      break;
-    default:
-      LOG_WARN("unknown PalTreeModelSortKey: %d", key);
+  GtkTreeIterCompareFunc f = PalTreeModelSortKeyToCompareFunc(key);
+  if (!f) {
+    LOG_WARN("unknown PalTreeModelSortKey: %d", key);
+    return;
   }
+  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), f, NULL,
+                                          NULL);
 }
 
 /**
@@ -582,6 +585,19 @@ PalTreeModelSortKey PalTreeModelSortKeyFromString(const std::string& s) {
     return PalTreeModelSortKey::HOST;
   } else {
     return PalTreeModelSortKey::INVALID;
+  }
+}
+
+GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k) {
+  switch (k) {
+    case PalTreeModelSortKey::NICKNAME:
+      return GtkTreeIterCompareFunc(paltreeCompareByNameFunc);
+    case PalTreeModelSortKey::IP:
+      return GtkTreeIterCompareFunc(paltreeCompareByIPFunc);
+    case PalTreeModelSortKey::HOST:
+      return GtkTreeIterCompareFunc(paltreeCompareByHostFunc);
+    default:
+      return nullptr;
   }
 }
 
