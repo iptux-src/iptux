@@ -97,6 +97,8 @@ void MainWindow::CreateWindow() {
                            "'ascending'"),
       makeStateActionEntry("sort_by", G_ACTION_CALLBACK(onSortBy), "s",
                            "'nickname'"),
+      makeStateActionEntry("info_style", G_ACTION_CALLBACK(onInfoStyle), "s",
+                           "'ip'"),
       makeActionEntry("detect", G_ACTION_CALLBACK(onDetect)),
       makeActionEntry("find", G_ACTION_CALLBACK(onFind)),
       makeActionEntry("pal.send_message", G_ACTION_CALLBACK(onPalSendMessage)),
@@ -179,7 +181,7 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   /* 更新常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   if (GroupGetPaltreeItem(model, &iter, grpinf)) {
-    groupInfo2PalTreeModel(grpinf, model, &iter, font);
+    FillGroupInfoToPaltree(model, &iter, grpinf);
   } else {
     LOG_WARN("GroupGetPaltreeItem return false");
   }
@@ -188,7 +190,7 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   pgrpinf = coreThread.GetPalSegmentItem(pal);
   if (GroupGetPaltreeItem(model, &iter, pgrpinf) &&
       GroupGetPaltreeItemWithParent(model, &iter, grpinf)) {
-    groupInfo2PalTreeModel(grpinf, model, &iter, font);
+    FillGroupInfoToPaltree(model, &iter, grpinf);
   }
   /* 更新分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
@@ -202,11 +204,11 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
       gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
     if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
       gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-      palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+      FillGroupInfoToPaltree(model, &parent, pgrpinf);
     }
     gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-    palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
-    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+    FillGroupInfoToPaltree(model, &iter, grpinf);
+    FillGroupInfoToPaltree(model, &parent, pgrpinf);
   }
   /* 更新广播模式树 */
   model =
@@ -214,7 +216,7 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   pgrpinf = coreThread.GetPalBroadcastItem(pal);
   GroupGetPaltreeItem(model, &iter, pgrpinf);
   GroupGetPaltreeItemWithParent(model, &iter, grpinf);
-  groupInfo2PalTreeModel(grpinf, model, &iter, font);
+  FillGroupInfoToPaltree(model, &iter, grpinf);
 }
 
 /**
@@ -240,28 +242,27 @@ void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   /* 添加到常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, NULL);
-  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
+  FillGroupInfoToPaltree(model, &iter, grpinf);
   /* 添加到网段模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "segment-paltree-model"));
   pgrpinf = coreThread.GetPalSegmentItem(pal);
   if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
     gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+    FillGroupInfoToPaltree(model, &parent, pgrpinf);
   }
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
-  groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
+  FillGroupInfoToPaltree(model, &iter, grpinf);
   /* 添加到分组模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "group-paltree-model"));
   pgrpinf = coreThread.GetPalGroupItem(pal);
   if (pgrpinf) {
     if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
       gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-      palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+      FillGroupInfoToPaltree(model, &parent, pgrpinf);
     }
     gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-    palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
-    groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
+    FillGroupInfoToPaltree(model, &iter, grpinf);
+    FillGroupInfoToPaltree(model, &parent, pgrpinf);
   }
   /* 添加到广播模式树 */
   model =
@@ -269,11 +270,11 @@ void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   pgrpinf = coreThread.GetPalBroadcastItem(pal);
   if (!GroupGetPaltreeItem(model, &parent, pgrpinf)) {
     gtk_tree_store_append(GTK_TREE_STORE(model), &parent, NULL);
-    palTreeModelFillFromGroupInfo(model, &parent, pgrpinf, progdt->font);
+    FillGroupInfoToPaltree(model, &parent, pgrpinf);
   }
   gtk_tree_store_append(GTK_TREE_STORE(model), &iter, &parent);
-  palTreeModelFillFromGroupInfo(model, &iter, grpinf, progdt->font);
-  groupInfo2PalTreeModel(pgrpinf, model, &parent, font);
+  FillGroupInfoToPaltree(model, &iter, grpinf);
+  FillGroupInfoToPaltree(model, &parent, pgrpinf);
 }
 
 /**
@@ -307,7 +308,7 @@ void MainWindow::DelItemFromPaltree(in_addr ipv4) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt->font);
+    FillGroupInfoToPaltree(model, &parent, pgrpinf);
   } else
     gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
   /* 从分组模式树移除 */
@@ -319,7 +320,7 @@ void MainWindow::DelItemFromPaltree(in_addr ipv4) {
       iter = parent;
       GroupGetPaltreeItemWithParent(model, &iter, grpinf);
       gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-      groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt->font);
+      FillGroupInfoToPaltree(model, &parent, pgrpinf);
     } else
       gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
   }
@@ -332,7 +333,7 @@ void MainWindow::DelItemFromPaltree(in_addr ipv4) {
     iter = parent;
     GroupGetPaltreeItemWithParent(model, &iter, grpinf);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    groupInfo2PalTreeModel(pgrpinf, model, &parent, progdt->font);
+    FillGroupInfoToPaltree(model, &parent, pgrpinf);
   } else
     gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
 }
@@ -1085,6 +1086,21 @@ void MainWindow::onSortType(GSimpleAction* action,
   g_simple_action_set_state(action, value);
 }
 
+void MainWindow::onInfoStyle(GSimpleAction* action,
+                             GVariant* value,
+                             MainWindow& self) {
+  string s = g_variant_get_string(value, nullptr);
+
+  GroupInfoStyle style = GroupInfoStyleFromStr(s);
+  if (style == GroupInfoStyle::INVALID) {
+    LOG_WARN("invalid info style: %s", s.c_str());
+    return;
+  }
+
+  self.info_style_ = style;
+  g_simple_action_set_state(action, value);
+}
+
 /**
  * 删除好友项.
  * @param grpinf 好友群组信息
@@ -1754,8 +1770,14 @@ void MainWindow::onGroupInfoUpdated(GroupInfo* groupInfo) {
       GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   GtkTreeIter iter;
   if (GroupGetPaltreeItem(model, &iter, groupInfo)) {
-    palTreeModelFillFromGroupInfo(model, &iter, groupInfo, progdt->font);
+    FillGroupInfoToPaltree(model, &iter, groupInfo);
   }
+}
+
+void MainWindow::FillGroupInfoToPaltree(GtkTreeModel* model,
+                                        GtkTreeIter* iter,
+                                        GroupInfo* grpinf) {
+  palTreeModelFillFromGroupInfo(model, iter, grpinf, info_style_, progdt->font);
 }
 
 }  // namespace iptux

@@ -61,16 +61,17 @@ class MainWindow : public sigc::trackable {
   std::shared_ptr<ProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
 
-  GData* widset;         //窗体集
-  GData* mdlset;         //数据model集
+  GData* widset;         // 窗体集
+  GData* mdlset;         // 数据model集
   GList* tmdllist;       // model链表，用于构建model循环结构
-  GtkAccelGroup* accel;  //快捷键集组
+  GtkAccelGroup* accel;  // 快捷键集组
   guint timerid;         // UI更新定时器ID
   WindowConfig windowConfig;
   GtkBuilder* builder;
   GtkMenu* palPopupMenu;
 
   GroupInfo* currentGroupInfo = 0;
+  GroupInfoStyle info_style_ = GroupInfoStyle::IP;
 
  private:
   void setCurrentGroupInfo(GroupInfo* groupInfo);
@@ -177,6 +178,9 @@ class MainWindow : public sigc::trackable {
   static void onSortBy(GSimpleAction* action,
                        GVariant* value,
                        MainWindow& self);
+  static void onInfoStyle(GSimpleAction* action,
+                          GVariant* value,
+                          MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
   void onGroupInfoUpdated(GroupInfo* groupInfo);
 };

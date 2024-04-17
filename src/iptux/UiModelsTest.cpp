@@ -41,15 +41,15 @@ TEST(GroupInfo, GetInfoAsMarkup) {
   PPalInfo cpal = make_shared<PalInfo>(pal);
   CPPalInfo cme = make_shared<PalInfo>(me);
   GroupInfo gi(cpal, cme, nullptr);
-  ASSERT_EQ(gi.GetInfoAsMarkup(), "palname\n0.0.0.0");
+  ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP), "palname\n0.0.0.0");
 
   MsgPara msg(cpal);
   gi.addMsgPara(msg);
-  ASSERT_EQ(gi.GetInfoAsMarkup(),
+  ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP),
             "palname <span foreground=\"red\">(1)</span>\n0.0.0.0");
 
   vector<PPalInfo> pals;
   pals.push_back(cpal);
   GroupInfo gi2(GROUP_BELONG_TYPE_SEGMENT, pals, cme, "group_name", nullptr);
-  ASSERT_EQ(gi2.GetInfoAsMarkup(), "group_name");
+  ASSERT_EQ(gi2.GetInfoAsMarkup(GroupInfoStyle::IP), "group_name");
 }

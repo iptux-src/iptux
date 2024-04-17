@@ -199,19 +199,6 @@ void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key) {
                                           NULL);
 }
 
-/**
- * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-void groupInfo2PalTreeModel(GroupInfo* grpinf,
-                            PalTreeModel* model,
-                            GtkTreeIter* iter,
-                            const char* font) {
-  palTreeModelFillFromGroupInfo(model, iter, grpinf, font);
-}
-
 static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
 
 /**
@@ -223,12 +210,13 @@ static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
 void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
                                    GtkTreeIter* iter,
                                    const GroupInfo* grpinf,
-                                   const char* font) {
+                                   GroupInfoStyle style,
+                                   const string& font) {
   GtkIconTheme* theme;
   GdkPixbuf *cpixbuf, *opixbuf = nullptr;
   PangoAttrList* attrs;
   PangoAttribute* attr;
-  gchar* extra;
+  string extra;
   PalInfo* pal;
   GError* error = nullptr;
 
@@ -256,15 +244,14 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   }
 
   /* 创建扩展信息 */
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
-    extra = NULL;
-  else
-    extra = g_strdup_printf("(%d)", (int)(grpinf->getMembers().size()));
+  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) {
+    extra = stringFormat("(%d)", (int)(grpinf->getMembers().size()));
+  }
 
   /* 创建字体风格 */
   attrs = pango_attr_list_new();
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
-    auto dspt = pango_font_description_from_string(font);
+    auto dspt = pango_font_description_from_string(font.c_str());
     attr = pango_attr_font_desc_new(dspt);
     pango_attr_list_insert(attrs, attr);
     pango_font_description_free(dspt);
@@ -281,18 +268,27 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   gtk_tree_store_set(
       GTK_TREE_STORE(model), iter, PalTreeModelColumn ::CLOSED_EXPANDER,
       cpixbuf, PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
-      PalTreeModelColumn ::INFO, grpinf->GetInfoAsMarkup().c_str(),
-      PalTreeModelColumn ::EXTRAS, extra, PalTreeModelColumn ::STYLE, attrs,
-      PalTreeModelColumn ::COLOR, &color, PalTreeModelColumn ::DATA, grpinf,
-      -1);
+      PalTreeModelColumn ::INFO, grpinf->GetInfoAsMarkup(style).c_str(),
+      PalTreeModelColumn ::EXTRAS, extra.c_str(), PalTreeModelColumn ::STYLE,
+      attrs, PalTreeModelColumn ::COLOR, &color, PalTreeModelColumn ::DATA,
+      grpinf, -1);
 
   /* 释放资源 */
   if (cpixbuf)
     g_object_unref(cpixbuf);
   if (opixbuf)
     g_object_unref(opixbuf);
-  g_free(extra);
   pango_attr_list_unref(attrs);
+}
+
+GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
+  if (s == "ip") {
+    return GroupInfoStyle::IP;
+  }
+  if (s == "host") {
+    return GroupInfoStyle::HOST;
+  }
+  return GroupInfoStyle::INVALID;
 }
 
 // GroupInfo::GroupInfo()
@@ -401,21 +397,32 @@ int GroupInfo::getUnreadMsgCount() const {
   return allMsgCount - readMsgCount;
 }
 
-string GroupInfo::GetInfoAsMarkup() const {
+string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
   string info;
   /* 创建主信息 */
   if (getType() == GROUP_BELONG_TYPE_REGULAR) {
-    char ipstr[INET_ADDRSTRLEN];
+    string line2;
+    switch (style) {
+      case GroupInfoStyle::HOST:
+        line2 = this->host();
+        break;
+      case GroupInfoStyle::IP:
+      default:
+        char ipstr[INET_ADDRSTRLEN];
+        auto pal = this->getMembers()[0].get();
+        inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+        line2 = ipstr;
+    }
+
     auto pal = this->getMembers()[0].get();
-    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
     int unreadMsgCount = this->getUnreadMsgCount();
     if (unreadMsgCount > 0) {
       return stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
                           markupEscapeText(pal->getName()).c_str(),
-                          unreadMsgCount, markupEscapeText(ipstr).c_str());
+                          unreadMsgCount, markupEscapeText(line2).c_str());
     } else {
       return stringFormat("%s\n%s", markupEscapeText(pal->getName()).c_str(),
-                          markupEscapeText(ipstr).c_str());
+                          markupEscapeText(line2).c_str());
     }
   } else {
     return markupEscapeText(this->name());

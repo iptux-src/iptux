@@ -37,6 +37,10 @@ class SessionAbstract {
  * 群组信息.
  */
 class DialogBase;
+
+enum class GroupInfoStyle { IP, HOST, INVALID };
+GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
+
 class GroupInfo {
  public:
   GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem);
@@ -65,7 +69,7 @@ class GroupInfo {
   void addMsgPara(const MsgPara& msg);
   void readAllMsg();
   int getUnreadMsgCount() const;
-  std::string GetInfoAsMarkup() const;
+  std::string GetInfoAsMarkup(GroupInfoStyle style) const;
   void newFileReceived();
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }
@@ -153,23 +157,14 @@ void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key);
  * @param model model
  * @param iter iter
  * @param grpinf class GroupInfo
+ * @param style info style
+ * @param font font
  */
 void palTreeModelFillFromGroupInfo(PalTreeModel* model,
                                    GtkTreeIter* iter,
                                    const GroupInfo* grpinf,
-                                   const char* font);
-
-/**
- * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-G_DEPRECATED_FOR(palTreeModelFillFromGroupInfo)
-void groupInfo2PalTreeModel(GroupInfo* grpinf,
-                            PalTreeModel* model,
-                            GtkTreeIter* iter,
-                            const char* font);
+                                   GroupInfoStyle style,
+                                   const std::string& font);
 
 enum class IconModelColumn { ICON, ICON_NAME, N_COLUMNS };
 typedef GtkListStore IconModel;
