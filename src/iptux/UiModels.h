@@ -151,6 +151,7 @@ enum class PalTreeModelColumn {
 };
 typedef GtkTreeModel PalTreeModel;
 PalTreeModel* palTreeModelNew();
+GroupInfo* PalTreeModelGetGroupInfo(PalTreeModel* model, GtkTreeIter* iter);
 void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key);
 /**
  * 填充群组数据(grpinf)到数据集(model)指定位置(iter).

@@ -199,6 +199,12 @@ void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key) {
                                           NULL);
 }
 
+GroupInfo* PalTreeModelGetGroupInfo(PalTreeModel* model, GtkTreeIter* iter) {
+  GroupInfo* pgrpinf;
+  gtk_tree_model_get(model, iter, PalTreeModelColumn::DATA, &pgrpinf, -1);
+  return pgrpinf;
+}
+
 static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
 
 /**

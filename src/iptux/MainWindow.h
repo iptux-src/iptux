@@ -61,8 +61,10 @@ class MainWindow : public sigc::trackable {
   std::shared_ptr<ProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
 
-  GData* widset;         // 窗体集
-  GData* mdlset;         // 数据model集
+  GData* widset;  // 窗体集
+  GData* mdlset;  // 数据model集
+  PalTreeModel* regular_model = 0;
+
   GList* tmdllist;       // model链表，用于构建model循环结构
   GtkAccelGroup* accel;  // 快捷键集组
   guint timerid;         // UI更新定时器ID
@@ -92,6 +94,11 @@ class MainWindow : public sigc::trackable {
   GtkWidget* CreatePaltreeTree(GtkTreeModel* model);
   GtkWidget* CreatePallistTree(GtkTreeModel* model);
 
+  /**
+   * @brief refresh pal list, used when change view options.
+   */
+  void RefreshPalList();
+  void RefreshPalListRegular();
   bool GroupGetPrevPaltreeItem(GtkTreeModel* model,
                                GtkTreeIter* iter,
                                GroupInfo* grpinf);

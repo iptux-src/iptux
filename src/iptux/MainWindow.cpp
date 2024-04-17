@@ -176,8 +176,6 @@ void MainWindow::UpdateItemToPaltree(in_addr ipv4) {
   if (!grpinf)
     return;
 
-  const char* font = progdt->font;
-
   /* 更新常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   if (GroupGetPaltreeItem(model, &iter, grpinf)) {
@@ -236,8 +234,6 @@ void MainWindow::AttachItemToPaltree(in_addr ipv4) {
   auto grpinf = app->getCoreThread()->GetPalRegularItem(pal);
   if (!grpinf)
     return;
-
-  const char* font = progdt->font;
 
   /* 添加到常规模式树 */
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
@@ -369,6 +365,7 @@ void MainWindow::InitSublayer() {
   timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
 
   model = palTreeModelNew();
+  this->regular_model = model;
   g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
@@ -1098,6 +1095,7 @@ void MainWindow::onInfoStyle(GSimpleAction* action,
   }
 
   self.info_style_ = style;
+  self.RefreshPalList();
   g_simple_action_set_state(action, value);
 }
 
@@ -1766,12 +1764,30 @@ void MainWindow::setCurrentGroupInfo(GroupInfo* groupInfo) {
 }
 
 void MainWindow::onGroupInfoUpdated(GroupInfo* groupInfo) {
-  auto model =
-      GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "regular-paltree-model"));
   GtkTreeIter iter;
-  if (GroupGetPaltreeItem(model, &iter, groupInfo)) {
-    FillGroupInfoToPaltree(model, &iter, groupInfo);
+  if (GroupGetPaltreeItem(regular_model, &iter, groupInfo)) {
+    FillGroupInfoToPaltree(regular_model, &iter, groupInfo);
   }
+}
+
+void MainWindow::RefreshPalList() {
+  RefreshPalListRegular();
+}
+
+void MainWindow::RefreshPalListRegular() {
+  auto model = regular_model;
+  GtkTreeIter iter;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+    return;
+  do {
+    GroupInfo* grpinf = PalTreeModelGetGroupInfo(model, &iter);
+    if (grpinf == nullptr) {
+      LOG_WARN("don't have pgrpinf in this model and iter: %p, %p",
+               (void*)model, (void*)&iter);
+      continue;
+    }
+    FillGroupInfoToPaltree(model, &iter, grpinf);
+  } while (gtk_tree_model_iter_next(model, &iter));
 }
 
 void MainWindow::FillGroupInfoToPaltree(GtkTreeModel* model,
