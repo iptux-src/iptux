@@ -294,6 +294,9 @@ GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
   if (s == "host") {
     return GroupInfoStyle::HOST;
   }
+  if (s == "version") {
+    return GroupInfoStyle::VERSION_NAME;
+  }
   return GroupInfoStyle::INVALID;
 }
 
@@ -408,9 +411,14 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
   /* 创建主信息 */
   if (getType() == GROUP_BELONG_TYPE_REGULAR) {
     string line2;
+    auto pal = this->getMembers()[0].get();
+
     switch (style) {
       case GroupInfoStyle::HOST:
         line2 = this->host();
+        break;
+      case GroupInfoStyle::VERSION_NAME:
+        line2 = pal->getVersion();
         break;
       case GroupInfoStyle::IP:
       default:
@@ -420,7 +428,6 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         line2 = ipstr;
     }
 
-    auto pal = this->getMembers()[0].get();
     int unreadMsgCount = this->getUnreadMsgCount();
     if (unreadMsgCount > 0) {
       return stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",

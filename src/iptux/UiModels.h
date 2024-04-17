@@ -38,7 +38,7 @@ class SessionAbstract {
  */
 class DialogBase;
 
-enum class GroupInfoStyle { IP, HOST, INVALID };
+enum class GroupInfoStyle { IP, HOST, VERSION_NAME, INVALID };
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
 
 class GroupInfo {

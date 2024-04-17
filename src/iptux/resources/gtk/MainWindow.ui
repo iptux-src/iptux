@@ -67,6 +67,11 @@
             <attribute name='action'>win.info_style</attribute>
             <attribute name='target'>host</attribute>
           </item>
+          <item>
+            <attribute name='label' translatable='yes'>Version</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>version</attribute>
+          </item>
         </section>
       </submenu>
     </section>
