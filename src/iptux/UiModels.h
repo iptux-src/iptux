@@ -65,6 +65,7 @@ class GroupInfo {
   void addMsgPara(const MsgPara& msg);
   void readAllMsg();
   int getUnreadMsgCount() const;
+  std::string GetInfoAsMarkup() const;
   void newFileReceived();
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }

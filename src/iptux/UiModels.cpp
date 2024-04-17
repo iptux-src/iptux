@@ -255,24 +255,6 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
                                        GtkIconLookupFlags(0), NULL);
   }
 
-  string info;
-  /* 创建主信息 */
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
-    char ipstr[INET_ADDRSTRLEN];
-    pal = grpinf->getMembers()[0].get();
-    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-    int unreadMsgCount = grpinf->getUnreadMsgCount();
-    if (unreadMsgCount > 0) {
-      info = stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
-                          markupEscapeText(pal->getName()).c_str(),
-                          unreadMsgCount, markupEscapeText(ipstr).c_str());
-    } else {
-      info = stringFormat("%s\n%s", markupEscapeText(pal->getName()).c_str(),
-                          markupEscapeText(ipstr).c_str());
-    }
-  } else
-    info = markupEscapeText(grpinf->name());
-
   /* 创建扩展信息 */
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
     extra = NULL;
@@ -299,9 +281,10 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   gtk_tree_store_set(
       GTK_TREE_STORE(model), iter, PalTreeModelColumn ::CLOSED_EXPANDER,
       cpixbuf, PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
-      PalTreeModelColumn ::INFO, info.c_str(), PalTreeModelColumn ::EXTRAS,
-      extra, PalTreeModelColumn ::STYLE, attrs, PalTreeModelColumn ::COLOR,
-      &color, PalTreeModelColumn ::DATA, grpinf, -1);
+      PalTreeModelColumn ::INFO, grpinf->GetInfoAsMarkup().c_str(),
+      PalTreeModelColumn ::EXTRAS, extra, PalTreeModelColumn ::STYLE, attrs,
+      PalTreeModelColumn ::COLOR, &color, PalTreeModelColumn ::DATA, grpinf,
+      -1);
 
   /* 释放资源 */
   if (cpixbuf)
@@ -416,6 +399,27 @@ void GroupInfo::readAllMsg() {
 int GroupInfo::getUnreadMsgCount() const {
   g_assert(allMsgCount >= readMsgCount);
   return allMsgCount - readMsgCount;
+}
+
+string GroupInfo::GetInfoAsMarkup() const {
+  string info;
+  /* 创建主信息 */
+  if (getType() == GROUP_BELONG_TYPE_REGULAR) {
+    char ipstr[INET_ADDRSTRLEN];
+    auto pal = this->getMembers()[0].get();
+    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+    int unreadMsgCount = this->getUnreadMsgCount();
+    if (unreadMsgCount > 0) {
+      return stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
+                          markupEscapeText(pal->getName()).c_str(),
+                          unreadMsgCount, markupEscapeText(ipstr).c_str());
+    } else {
+      return stringFormat("%s\n%s", markupEscapeText(pal->getName()).c_str(),
+                          markupEscapeText(ipstr).c_str());
+    }
+  } else {
+    return markupEscapeText(this->name());
+  }
 }
 
 /**

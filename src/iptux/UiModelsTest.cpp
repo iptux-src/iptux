@@ -1,5 +1,9 @@
 #include "gtest/gtest.h"
 
+#include <memory>
+#include <vector>
+
+#include "iptux-core/Models.h"
 #include "iptux/UiModels.h"
 
 using namespace std;
@@ -28,4 +32,24 @@ TEST(TransModel, transModelIsFinished) {
   transModelUpdateFromTransFileModel(transModel, transFileModel2);
   ASSERT_EQ(gtk_tree_model_iter_n_children(transModel, nullptr), 2);
   ASSERT_FALSE(transModelIsFinished(transModel));
+}
+
+TEST(GroupInfo, GetInfoAsMarkup) {
+  PalInfo pal;
+  pal.setName("palname");
+  PalInfo me;
+  PPalInfo cpal = make_shared<PalInfo>(pal);
+  CPPalInfo cme = make_shared<PalInfo>(me);
+  GroupInfo gi(cpal, cme, nullptr);
+  ASSERT_EQ(gi.GetInfoAsMarkup(), "palname\n0.0.0.0");
+
+  MsgPara msg(cpal);
+  gi.addMsgPara(msg);
+  ASSERT_EQ(gi.GetInfoAsMarkup(),
+            "palname <span foreground=\"red\">(1)</span>\n0.0.0.0");
+
+  vector<PPalInfo> pals;
+  pals.push_back(cpal);
+  GroupInfo gi2(GROUP_BELONG_TYPE_SEGMENT, pals, cme, "group_name", nullptr);
+  ASSERT_EQ(gi2.GetInfoAsMarkup(), "group_name");
 }
