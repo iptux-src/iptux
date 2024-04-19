@@ -72,6 +72,11 @@
             <attribute name='action'>win.info_style</attribute>
             <attribute name='target'>version</attribute>
           </item>
+          <item>
+            <attribute name='label' translatable='yes'>Last Activity</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>last_activity</attribute>
+          </item>
         </section>
       </submenu>
     </section>

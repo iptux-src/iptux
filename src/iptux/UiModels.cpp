@@ -296,6 +296,7 @@ static const char* group_info_style_names[] = {
     [(int)GroupInfoStyle::IP] = "ip",
     [(int)GroupInfoStyle::HOST] = "host",
     [(int)GroupInfoStyle::VERSION_NAME] = "version",
+    [(int)GroupInfoStyle::LAST_ACTIVITY] = "last_activity",
 };
 
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
@@ -454,6 +455,17 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
       case GroupInfoStyle::VERSION_NAME:
         line2 = pal->getVersion();
         break;
+      case GroupInfoStyle::LAST_ACTIVITY:
+        if (last_activity == 0) {
+          line2 = "";
+        } else {
+          struct tm result;
+          localtime_r(&last_activity, &result);
+          char loc[25];
+          strftime(loc, sizeof(loc), "%FT%T%z", &result);
+          line2 = loc;
+        }
+        break;
       case GroupInfoStyle::IP:
       default:
         char ipstr[INET_ADDRSTRLEN];
@@ -586,6 +598,8 @@ static void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path) {
 void GroupInfo::addMsgPara(const MsgPara& para) {
   GtkTextIter iter;
   const gchar* data;
+
+  time(&last_activity);
 
   for (size_t i = 0; i < para.dtlist.size(); ++i) {
     const ChipData* chipData = &para.dtlist[i];

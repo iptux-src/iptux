@@ -38,7 +38,7 @@ class SessionAbstract {
  */
 class DialogBase;
 
-enum class GroupInfoStyle { IP, HOST, VERSION_NAME, INVALID };
+enum class GroupInfoStyle { IP, HOST, VERSION_NAME, LAST_ACTIVITY, INVALID };
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
 const char* GroupInfoStyleToStr(GroupInfoStyle style);
 
@@ -99,6 +99,7 @@ class GroupInfo {
   std::string host_;
   DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
+  time_t last_activity = 0;
 
  private:
   CPPalInfo me;
