@@ -36,6 +36,20 @@ using namespace std;
 
 namespace iptux {
 
+enum config_key {
+  CFG_MAIN_PANED_DIVIDE,
+  CFG_SORT_BY,
+  CFG_SORT_TYPE,
+  CFG_INFO_STYLE,
+};
+
+static const char* config_names[] = {
+    [CFG_MAIN_PANED_DIVIDE] = "mwin_main_paned_divide",
+    [CFG_SORT_BY] = "mwin_sort_by",
+    [CFG_SORT_TYPE] = "mwin_sort_type",
+    [CFG_INFO_STYLE] = "mwin_info_style",
+};
+
 static gchar* palInfo2HintMarkup(const PalInfo* pal);
 
 /**
@@ -87,10 +101,28 @@ void MainWindow::CreateWindow() {
 
   /* 创建主窗口 */
   window = CreateMainWindow();
+  CreateActions();
   CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());
   gtk_widget_show_all(window);
 
+  /* 聚焦到好友树(paltree)区域 */
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "paltree-treeview-widget"));
+  gtk_widget_grab_focus(widget);
+  /* 隐藏好友清单 */
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "pallist-box-widget"));
+  gtk_widget_hide(widget);
+
+  if (progdt->IsAutoHidePanelAfterLogin()) {
+    gtk_widget_hide(window);
+  }
+
+  palPopupMenu = GTK_MENU(gtk_menu_new_from_model(
+      G_MENU_MODEL(gtk_builder_get_object(builder, "pal-popup"))));
+  gtk_menu_attach_to_widget(palPopupMenu, window, nullptr);
+}
+
+void MainWindow::CreateActions() {
   GActionEntry win_entries[] = {
       makeActionEntry("refresh", G_ACTION_CALLBACK(onRefresh)),
       makeStateActionEntry("sort_type", G_ACTION_CALLBACK(onSortType), "s",
@@ -108,22 +140,18 @@ void MainWindow::CreateWindow() {
       makeActionEntry("pal.delete_pal", G_ACTION_CALLBACK(onDeletePal)),
   };
 
-  g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
-                                  G_N_ELEMENTS(win_entries), this);
-  /* 聚焦到好友树(paltree)区域 */
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "paltree-treeview-widget"));
-  gtk_widget_grab_focus(widget);
-  /* 隐藏好友清单 */
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "pallist-box-widget"));
-  gtk_widget_hide(widget);
-
-  if (progdt->IsAutoHidePanelAfterLogin()) {
-    gtk_widget_hide(window);
-  }
-
-  palPopupMenu = GTK_MENU(gtk_menu_new_from_model(
-      G_MENU_MODEL(gtk_builder_get_object(builder, "pal-popup"))));
-  gtk_menu_attach_to_widget(palPopupMenu, window, nullptr);
+  GActionMap* m = G_ACTION_MAP(window);
+  g_action_map_add_action_entries(m, win_entries, G_N_ELEMENTS(win_entries),
+                                  this);
+  g_simple_action_set_state(
+      G_SIMPLE_ACTION(g_action_map_lookup_action(m, "info_style")),
+      g_variant_new_string(GroupInfoStyleToStr(info_style_)));
+  g_simple_action_set_state(
+      G_SIMPLE_ACTION(g_action_map_lookup_action(m, "sort_type")),
+      g_variant_new_string(GtkSortTypeToStr(sort_type_)));
+  g_simple_action_set_state(
+      G_SIMPLE_ACTION(g_action_map_lookup_action(m, "sort_by")),
+      g_variant_new_string(PalTreeModelSortKeyToStr(sort_key_)));
 }
 
 /**
@@ -351,11 +379,43 @@ void MainWindow::ClearAllItemFromPaltree() {
   gtk_tree_store_clear(GTK_TREE_STORE(model));
 }
 
+void MainWindow::LoadConfig() {
+  GroupInfoStyle info_style = GroupInfoStyleFromStr(
+      this->config->GetString(config_names[CFG_INFO_STYLE]));
+  if (info_style != GroupInfoStyle::INVALID) {
+    this->info_style_ = info_style;
+  }
+
+  GtkSortType sort_type =
+      GtkSortTypeFromStr(this->config->GetString(config_names[CFG_SORT_TYPE]));
+  if (sort_type != GTK_SORT_TYPE_INVALID) {
+    this->sort_type_ = sort_type;
+  }
+
+  PalTreeModelSortKey sort_key = PalTreeModelSortKeyFromStr(
+      this->config->GetString(config_names[CFG_SORT_BY]));
+  if (sort_key != PalTreeModelSortKey::INVALID) {
+    this->sort_key_ = sort_key;
+  }
+}
+
+void MainWindow::SaveConfig() {
+  this->config->SetString(config_names[CFG_INFO_STYLE],
+                          GroupInfoStyleToStr(info_style_));
+  this->config->SetString(config_names[CFG_SORT_TYPE],
+                          GtkSortTypeToStr(sort_type_));
+  this->config->SetString(config_names[CFG_SORT_BY],
+                          PalTreeModelSortKeyToStr(sort_key_));
+  this->config->Save();
+}
+
 /**
  * 初始化底层数据.
  */
 void MainWindow::InitSublayer() {
   GtkTreeModel* model;
+
+  LoadConfig();
 
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
@@ -364,23 +424,27 @@ void MainWindow::InitSublayer() {
   CHECK_EQ(int(timerid), 0);
   timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
 
-  model = palTreeModelNew();
+  model = palTreeModelNew(sort_key_, sort_type_);
   this->regular_model = model;
   g_datalist_set_data_full(&mdlset, "regular-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = palTreeModelNew();
+
+  model = palTreeModelNew(sort_key_, sort_type_);
   g_datalist_set_data_full(&mdlset, "segment-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = palTreeModelNew();
+
+  model = palTreeModelNew(sort_key_, sort_type_);
   g_datalist_set_data_full(&mdlset, "group-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
-  model = palTreeModelNew();
+
+  model = palTreeModelNew(sort_key_, sort_type_);
   g_datalist_set_data_full(&mdlset, "broadcast-paltree-model", model,
                            GDestroyNotify(g_object_unref));
   tmdllist = g_list_append(tmdllist, model);
+
   model = CreatePallistModel();
   g_datalist_set_data_full(&mdlset, "pallist-model", model,
                            GDestroyNotify(g_object_unref));
@@ -466,8 +530,9 @@ GtkWidget* MainWindow::CreateAllArea() {
   paned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(paned), "position-name",
                     (gpointer) "mwin-main-paned-divide");
-  gtk_paned_set_position(GTK_PANED(paned),
-                         config->GetInt("mwin_main_paned_divide", 210));
+  gtk_paned_set_position(
+      GTK_PANED(paned),
+      config->GetInt(config_names[CFG_MAIN_PANED_DIVIDE], 210));
   gtk_container_set_border_width(GTK_CONTAINER(paned), 4);
   gtk_box_pack_start(GTK_BOX(box), paned, TRUE, TRUE, 0);
   g_signal_connect(paned, "notify::position", G_CALLBACK(PanedDivideChanged),
@@ -1017,11 +1082,12 @@ void MainWindow::onSortBy(GSimpleAction* action,
                           MainWindow& self) {
   string sortBy = g_variant_get_string(value, nullptr);
 
-  PalTreeModelSortKey key = PalTreeModelSortKeyFromString(sortBy);
+  PalTreeModelSortKey key = PalTreeModelSortKeyFromStr(sortBy);
   if (key == PalTreeModelSortKey::INVALID) {
     LOG_WARN("unknown sort by: %s", sortBy.c_str());
     return;
   }
+  self.sort_key_ = key;
 
   GtkTreeModel* model;
 
@@ -1041,46 +1107,48 @@ void MainWindow::onSortBy(GSimpleAction* action,
       g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
   palTreeModelSetSortKey(model, key);
   g_simple_action_set_state(action, value);
+  self.SaveConfig();
 }
 
 void MainWindow::onSortType(GSimpleAction* action,
                             GVariant* value,
                             MainWindow& self) {
   string sortType = g_variant_get_string(value, nullptr);
+  GtkSortType sort_type = GtkSortTypeFromStr(sortType);
 
-  GtkSortType type;
-
-  if (sortType == "ascending") {
-    type = GTK_SORT_ASCENDING;
-  } else if (sortType == "descending") {
-    type = GTK_SORT_DESCENDING;
-  } else {
+  if (sort_type == GTK_SORT_TYPE_INVALID) {
     LOG_WARN("unknown sorttype: %s", sortType.c_str());
     return;
   }
+  self.sort_type_ = sort_type;
 
   GtkTreeModel* model;
 
   model = GTK_TREE_MODEL(
       g_datalist_get_data(&self.mdlset, "regular-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
+                                       GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
+                                       self.sort_type_);
 
   model = GTK_TREE_MODEL(
       g_datalist_get_data(&self.mdlset, "segment-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
+                                       GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
+                                       self.sort_type_);
 
   model =
       GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "group-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
+                                       GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
+                                       self.sort_type_);
 
   model = GTK_TREE_MODEL(
       g_datalist_get_data(&self.mdlset, "broadcast-paltree-model"));
-  gtk_tree_sortable_set_sort_column_id(
-      GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
+  gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
+                                       GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
+                                       self.sort_type_);
   g_simple_action_set_state(action, value);
+  self.SaveConfig();
 }
 
 void MainWindow::onInfoStyle(GSimpleAction* action,
@@ -1097,6 +1165,7 @@ void MainWindow::onInfoStyle(GSimpleAction* action,
   self.info_style_ = style;
   self.RefreshPalList();
   g_simple_action_set_state(action, value);
+  self.SaveConfig();
 }
 
 /**
@@ -1614,7 +1683,7 @@ gboolean MainWindow::MWinConfigureEvent(GtkWidget*,
 void MainWindow::PanedDivideChanged(GtkWidget* paned,
                                     GParamSpec*,
                                     MainWindow* self) {
-  self->config->SetInt("mwin_main_paned_divide",
+  self->config->SetInt(config_names[CFG_MAIN_PANED_DIVIDE],
                        gtk_paned_get_position(GTK_PANED(paned)));
   self->config->Save();
 }

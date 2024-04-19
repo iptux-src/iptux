@@ -73,16 +73,21 @@ class MainWindow : public sigc::trackable {
   GtkMenu* palPopupMenu;
 
   GroupInfo* currentGroupInfo = 0;
+  GtkSortType sort_type_ = GTK_SORT_ASCENDING;
+  PalTreeModelSortKey sort_key_ = PalTreeModelSortKey::NICKNAME;
   GroupInfoStyle info_style_ = GroupInfoStyle::IP;
 
  private:
   void setCurrentGroupInfo(GroupInfo* groupInfo);
 
   void InitSublayer();
+  void LoadConfig();
+  void SaveConfig();
   void ClearSublayer();
 
   void CreateWindow();
   GtkWidget* CreateMainWindow();
+  void CreateActions();
   void CreateTitle();
   GtkWidget* CreateAllArea();
 

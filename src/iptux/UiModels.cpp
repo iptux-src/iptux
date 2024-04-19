@@ -175,16 +175,21 @@ gint paltreeCompareByHostFunc(GtkTreeModel* model,
  * @return paltree-model
  */
 PalTreeModel* palTreeModelNew() {
+  return palTreeModelNew(PalTreeModelSortKey::IP, GTK_SORT_ASCENDING);
+}
+
+PalTreeModel* palTreeModelNew(PalTreeModelSortKey sort_key,
+                              GtkSortType sort_type) {
   GtkTreeStore* model;
 
   model =
       gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS), GDK_TYPE_PIXBUF,
                          GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
                          PANGO_TYPE_ATTR_LIST, GDK_TYPE_RGBA, G_TYPE_POINTER);
-  palTreeModelSetSortKey(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
+  palTreeModelSetSortKey(GTK_TREE_MODEL(model), sort_key);
   gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
                                        GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
-                                       GTK_SORT_ASCENDING);
+                                       sort_type);
 
   return GTK_TREE_MODEL(model);
 }
@@ -287,17 +292,46 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   pango_attr_list_unref(attrs);
 }
 
+static const char* group_info_style_names[] = {
+    [(int)GroupInfoStyle::IP] = "ip",
+    [(int)GroupInfoStyle::HOST] = "host",
+    [(int)GroupInfoStyle::VERSION_NAME] = "version",
+};
+
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
-  if (s == "ip") {
-    return GroupInfoStyle::IP;
-  }
-  if (s == "host") {
-    return GroupInfoStyle::HOST;
-  }
-  if (s == "version") {
-    return GroupInfoStyle::VERSION_NAME;
+  for (int i = 0; i < (int)GroupInfoStyle::INVALID; ++i) {
+    if (s == group_info_style_names[i]) {
+      return (GroupInfoStyle)i;
+    }
   }
   return GroupInfoStyle::INVALID;
+}
+
+const char* GroupInfoStyleToStr(GroupInfoStyle style) {
+  if (style >= GroupInfoStyle::IP && style < GroupInfoStyle::INVALID) {
+    return group_info_style_names[(int)style];
+  }
+  return "";
+}
+
+static const char* gtk_sort_type_names[] = {
+    [GTK_SORT_ASCENDING] = "ascending",
+    [GTK_SORT_DESCENDING] = "descending",
+};
+
+GtkSortType GtkSortTypeFromStr(const std::string& s) {
+  for (int i = GTK_SORT_ASCENDING; i <= GTK_SORT_DESCENDING; ++i) {
+    if (s == gtk_sort_type_names[i]) {
+      return (GtkSortType)i;
+    }
+  }
+  return GTK_SORT_TYPE_INVALID;
+}
+const char* GtkSortTypeToStr(GtkSortType t) {
+  if (GTK_SORT_ASCENDING <= t && t <= GTK_SORT_DESCENDING) {
+    return gtk_sort_type_names[t];
+  }
+  return "";
 }
 
 // GroupInfo::GroupInfo()
@@ -600,16 +634,26 @@ IconModel* iconModelNew() {
   return gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
 }
 
-PalTreeModelSortKey PalTreeModelSortKeyFromString(const std::string& s) {
-  if (s == "nickname") {
-    return PalTreeModelSortKey::NICKNAME;
-  } else if (s == "ip") {
-    return PalTreeModelSortKey::IP;
-  } else if (s == "host") {
-    return PalTreeModelSortKey::HOST;
-  } else {
-    return PalTreeModelSortKey::INVALID;
+const char* pal_tree_model_sort_key_names[] = {
+    [(int)PalTreeModelSortKey::NICKNAME] = "nickname",
+    [(int)PalTreeModelSortKey::IP] = "ip",
+    [(int)PalTreeModelSortKey::HOST] = "host",
+};
+
+PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s) {
+  for (int i = 0; i < (int)PalTreeModelSortKey::INVALID; ++i) {
+    if (s == pal_tree_model_sort_key_names[i]) {
+      return (PalTreeModelSortKey)i;
+    }
   }
+  return PalTreeModelSortKey::INVALID;
+}
+
+const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k) {
+  if (PalTreeModelSortKey::NICKNAME <= k && k < PalTreeModelSortKey::INVALID) {
+    return pal_tree_model_sort_key_names[(int)k];
+  }
+  return "";
 }
 
 GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k) {

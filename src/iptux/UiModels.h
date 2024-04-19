@@ -40,6 +40,11 @@ class DialogBase;
 
 enum class GroupInfoStyle { IP, HOST, VERSION_NAME, INVALID };
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
+const char* GroupInfoStyleToStr(GroupInfoStyle style);
+
+const GtkSortType GTK_SORT_TYPE_INVALID = (GtkSortType)-1;
+GtkSortType GtkSortTypeFromStr(const std::string& s);
+const char* GtkSortTypeToStr(GtkSortType t);
 
 class GroupInfo {
  public:
@@ -136,7 +141,8 @@ void transModelLoadFromTransFileModels(
 bool transModelIsFinished(TransModel*);
 
 enum class PalTreeModelSortKey { NICKNAME, IP, HOST, INVALID };
-PalTreeModelSortKey PalTreeModelSortKeyFromString(const std::string& s);
+PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s);
+const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k);
 GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k);
 
 enum class PalTreeModelColumn {
@@ -151,6 +157,8 @@ enum class PalTreeModelColumn {
 };
 typedef GtkTreeModel PalTreeModel;
 PalTreeModel* palTreeModelNew();
+PalTreeModel* palTreeModelNew(PalTreeModelSortKey sort_key,
+                              GtkSortType sort_type);
 GroupInfo* PalTreeModelGetGroupInfo(PalTreeModel* model, GtkTreeIter* iter);
 void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key);
 /**
