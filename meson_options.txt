@@ -1,9 +1,20 @@
-option('dev',
-    type : 'boolean',
-    value : false,
-    description: 'enable dev mode, iptux will read resource file from source dir.')
+option(
+  'dev',
+  type: 'boolean',
+  value: false,
+  description: 'enable dev mode, iptux will read resource file from source dir.',
+)
 
-option('static-link',
-    type: 'boolean',
-    value: false,
-    description: 'static link libiptux-core.')
+option(
+  'static-link',
+  type: 'boolean',
+  value: false,
+  description: 'static link libiptux-core.',
+)
+
+option(
+  'appindicator',
+  type: 'feature',
+  value: 'auto',
+  description: 'enable app indicator support',
+)

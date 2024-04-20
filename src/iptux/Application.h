@@ -2,6 +2,7 @@
 #define IPTUX_APPLICATION_H
 
 #include <gtk/gtk.h>
+#include <memory>
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
@@ -13,6 +14,7 @@ namespace iptux {
 
 class MainWindow;
 class UiCoreThread;
+class IptuxAppIndicator;
 typedef GtkWindow TransWindow;
 typedef GtkDialog ShareFile;
 
@@ -42,6 +44,7 @@ class Application {
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<ProgramData> data;
   std::shared_ptr<UiCoreThread> cthrd;
+  std::shared_ptr<IptuxAppIndicator> app_indicator;
 
   GtkApplication* app;
   GtkBuilder* menuBuilder;
