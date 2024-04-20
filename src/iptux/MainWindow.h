@@ -52,6 +52,10 @@ class MainWindow : public sigc::trackable {
 
   Application* getApp() { return app; }
 
+  PalTreeModelSortKey sort_key() const { return sort_key_; }
+  GtkSortType sort_type() const { return sort_type_; }
+  GroupInfoStyle info_style() const { return info_style_; }
+
  private:
   Application* app;
   UiCoreThread& coreThread;
