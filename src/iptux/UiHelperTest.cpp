@@ -31,3 +31,15 @@ TEST(UiHelper, TimeToStr) {
   ASSERT_EQ(TimeToStr_((1713583969 / 86400 + 1) * 86400, 1713583969),
             "2024-04-21");
 }
+
+TEST(UiHelper, StrFirstNonEmptyLine) {
+  ASSERT_EQ(StrFirstNonEmptyLine(""), "");
+  ASSERT_EQ(StrFirstNonEmptyLine("a"), "a");
+  ASSERT_EQ(StrFirstNonEmptyLine(" a"), "a");
+  ASSERT_EQ(StrFirstNonEmptyLine(" a\n"), "a");
+  ASSERT_EQ(StrFirstNonEmptyLine(" a \n"), "a ");
+  ASSERT_EQ(StrFirstNonEmptyLine(" a \n b"), "a ");
+  ASSERT_EQ(StrFirstNonEmptyLine("\n b"), "b");
+  ASSERT_EQ(StrFirstNonEmptyLine("\n b"), "b");
+  ASSERT_EQ(StrFirstNonEmptyLine(" \n b\n"), "b");
+}

@@ -48,4 +48,6 @@ TEST(MainWindow, Constructor) {
   ASSERT_EQ(mw.info_style(), GroupInfoStyle::VERSION_NAME);
   do_action(&mw, "info_style", "last_activity");
   ASSERT_EQ(mw.info_style(), GroupInfoStyle::LAST_ACTIVITY);
+  do_action(&mw, "info_style", "last_message");
+  ASSERT_EQ(mw.info_style(), GroupInfoStyle::LAST_MESSAGE);
 }

@@ -49,6 +49,8 @@ GActionEntry makeStateActionEntry(const std::string& name,
                                   const std::string& paramType,
                                   const std::string& state);
 
+std::string StrFirstNonEmptyLine(const std::string& s);
+
 /**
  * @brief wrapper for g_makeup_escape_text
  *

@@ -705,7 +705,7 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
         InsertStringToBuffer(buffer, data);
         gtk_text_buffer_get_end_iter(buffer, &iter);
         gtk_text_buffer_insert(buffer, &iter, "\n", -1);
-        last_message_ = chipData->data;
+        last_message_ = StrFirstNonEmptyLine(chipData->data);
         if (logSystem) {
           logSystem->communicateLog(&para, "[STRING]%s", data);
         }

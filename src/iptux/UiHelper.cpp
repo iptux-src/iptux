@@ -321,4 +321,16 @@ std::string TimeToStr_(time_t t, time_t now) {
   return res;
 }
 
+string StrFirstNonEmptyLine(const string& s) {
+  size_t pos = s.find_first_not_of(" \r\n");
+  if (pos == string::npos) {
+    return "";
+  }
+  size_t pos2 = s.find_first_of("\r\n", pos);
+  if (pos2 == string::npos) {
+    return s.substr(pos);
+  }
+  return s.substr(pos, pos2 - pos);
+}
+
 }  // namespace iptux
