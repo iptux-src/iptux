@@ -94,6 +94,7 @@ class GroupInfo {
   std::string name() const { return name_; }
   std::string user_name() const;
   std::string host() const { return host_; }
+  time_t last_activity() const { return last_activity_; }
 
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
@@ -108,7 +109,7 @@ class GroupInfo {
   std::string host_;
   DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
-  time_t last_activity = 0;
+  time_t last_activity_ = 0;
 
  private:
   CPPalInfo me;
@@ -150,7 +151,14 @@ void transModelLoadFromTransFileModels(
     const std::vector<std::unique_ptr<TransFileModel>>& fileModels);
 bool transModelIsFinished(TransModel*);
 
-enum class PalTreeModelSortKey { NICKNAME, USERNAME, IP, HOST, INVALID };
+enum class PalTreeModelSortKey {
+  NICKNAME,
+  USERNAME,
+  IP,
+  HOST,
+  LAST_ACTIVITY,
+  INVALID,
+};
 PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s);
 const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k);
 GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k);

@@ -181,6 +181,22 @@ gint paltreeCompareByHostFunc(GtkTreeModel* model,
   return strcmp(agrpinf->host().c_str(), bgrpinf->host().c_str());
 }
 
+gint paltreeCompareByLastActivityFunc(GtkTreeModel* model,
+                                      GtkTreeIter* a,
+                                      GtkTreeIter* b) {
+  GroupInfo *agrpinf, *bgrpinf;
+
+  gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
+  gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
+  if (agrpinf->last_activity() < bgrpinf->last_activity()) {
+    return -1;
+  } else if (agrpinf->last_activity() == bgrpinf->last_activity()) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
 /**
  * 好友树(paltree)底层数据结构.
  * 7,0 closed-expander,1 open-expander,2 info.,3 extras,4 style,5 color,6 data
@@ -481,7 +497,7 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         line2 = user_name();
         break;
       case GroupInfoStyle::LAST_ACTIVITY:
-        line2 = last_activity ? TimeToStr(last_activity) : "";
+        line2 = last_activity_ ? TimeToStr(last_activity_) : "";
         break;
       case GroupInfoStyle::IP:
       default:
@@ -672,7 +688,7 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
   GtkTextIter iter;
   const gchar* data;
 
-  time(&last_activity);
+  time(&last_activity_);
 
   for (size_t i = 0; i < para.dtlist.size(); ++i) {
     const ChipData* chipData = &para.dtlist[i];
@@ -726,6 +742,7 @@ const char* pal_tree_model_sort_key_names[] = {
     [(int)PalTreeModelSortKey::USERNAME] = "username",
     [(int)PalTreeModelSortKey::IP] = "ip",
     [(int)PalTreeModelSortKey::HOST] = "host",
+    [(int)PalTreeModelSortKey::LAST_ACTIVITY] = "last_activity",
 };
 
 PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s) {
@@ -754,6 +771,8 @@ GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k) {
       return GtkTreeIterCompareFunc(paltreeCompareByIPFunc);
     case PalTreeModelSortKey::HOST:
       return GtkTreeIterCompareFunc(paltreeCompareByHostFunc);
+    case PalTreeModelSortKey::LAST_ACTIVITY:
+      return GtkTreeIterCompareFunc(paltreeCompareByLastActivityFunc);
     default:
       return nullptr;
   }

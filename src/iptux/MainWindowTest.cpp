@@ -30,6 +30,8 @@ TEST(MainWindow, Constructor) {
   ASSERT_EQ(mw.sort_key(), PalTreeModelSortKey::IP);
   do_action(&mw, "sort_by", "host");
   ASSERT_EQ(mw.sort_key(), PalTreeModelSortKey::HOST);
+  do_action(&mw, "sort_by", "last_activity");
+  ASSERT_EQ(mw.sort_key(), PalTreeModelSortKey::LAST_ACTIVITY);
 
   do_action(&mw, "sort_type", "ascending");
   ASSERT_EQ(mw.sort_type(), GTK_SORT_ASCENDING);
