@@ -53,3 +53,23 @@ TEST(GroupInfo, GetInfoAsMarkup) {
   GroupInfo gi2(GROUP_BELONG_TYPE_SEGMENT, pals, cme, "group_name", nullptr);
   ASSERT_EQ(gi2.GetInfoAsMarkup(GroupInfoStyle::IP), "group_name");
 }
+
+TEST(GroupInfo, GetHintAsMarkup) {
+  PalInfo pal;
+  pal.setVersion("1_iptux");
+  pal.setName("palname");
+  PalInfo me;
+  PPalInfo cpal = make_shared<PalInfo>(pal);
+  CPPalInfo cme = make_shared<PalInfo>(me);
+  GroupInfo gi(cpal, cme, nullptr);
+  ASSERT_EQ(gi.GetHintAsMarkup(),
+            "Version: 1_iptux\nNickname: palname\nUser: \nHost: \nAddress: "
+            "0.0.0.0\nCompatibility: Microsoft\nSystem coding: ");
+
+  cpal->sign = strdup("hello");
+  ASSERT_EQ(gi.GetHintAsMarkup(),
+            "Version: 1_iptux\nNickname: palname\nUser: \nHost: \nAddress: "
+            "0.0.0.0\nCompatibility: Microsoft\nSystem coding: "
+            "\nSignature:\n<span foreground=\"#00FF00\" font_style=\"italic\" "
+            "size=\"smaller\">hello</span>");
+}
