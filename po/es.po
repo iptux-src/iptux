@@ -8,15 +8,17 @@ msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2024-04-14 13:17-0700\n"
-"PO-Revision-Date: 2013-06-05 13:46-0300\n"
-"Last-Translator: Fernando Toledo <ftoledo@docksud.com.ar>\n"
-"Language-Team: Spanish <es@li.org>\n"
+"PO-Revision-Date: 2024-04-19 16:07+0000\n"
+"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/iptux/iptux/es/>"
+"\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.5-dev\n"
 "X-Launchpad-Export-Date: 2010-04-01 12:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:3
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
@@ -26,7 +28,7 @@ msgstr "iptux"
 #: share/applications/io.github.iptux_src.iptux.desktop.in:4
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "LAN communication software"
-msgstr ""
+msgstr "Software de comunicación LAN"
 
 #: share/applications/io.github.iptux_src.iptux.desktop.in:5
 msgid "chat;talk;im;message;ipmsg;feige;"
