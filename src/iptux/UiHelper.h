@@ -41,11 +41,15 @@ void g_action_map_disable_actions(GActionMap* map,
                                   ...) G_GNUC_NULL_TERMINATED;
 
 GActionEntry makeActionEntry(const std::string& name, GActionCallback f);
-GActionEntry makeParamActionEntry(const std::string& name, GActionCallback f, const std::string& paramType);
+GActionEntry makeParamActionEntry(const std::string& name,
+                                  GActionCallback f,
+                                  const std::string& paramType);
 GActionEntry makeStateActionEntry(const std::string& name,
                                   GActionCallback f,
                                   const std::string& paramType,
                                   const std::string& state);
+
+std::string StrFirstNonEmptyLine(const std::string& s);
 
 /**
  * @brief wrapper for g_makeup_escape_text
@@ -55,14 +59,34 @@ GActionEntry makeStateActionEntry(const std::string& name,
  */
 std::string markupEscapeText(const std::string& str);
 
+template <typename... Args>
+std::string MarkupPrintf(const char* format, ...) G_GNUC_PRINTF(1, 2);
+
+template <typename... Args>
+std::string MarkupPrintf(const char* format, ...) {
+  va_list args;
+
+  va_start(args, format);
+  gchar* buf = g_markup_vprintf_escaped(format, args);
+  va_end(args);
+  std::string res(buf, strlen(buf));
+  g_free(buf);
+  return res;
+}
+
 /**
  * @brief create a headerbar with menu, and set this headerbar to the window
  *
- * we need to set to window inside this func, otherwise we need manage the refcount
- * manually.
+ * we need to set to window inside this func, otherwise we need manage the
+ * refcount manually.
  *
  */
 GtkHeaderBar* CreateHeaderBar(GtkWindow* window, GMenuModel* menu);
+
+std::string TimeToStr(time_t t);
+
+/* only used for test */
+std::string TimeToStr_(time_t t, time_t now);
 
 }  // namespace iptux
 #endif  // IPTUX_UIHELPER_H

@@ -94,7 +94,7 @@ TEST(CoreThread, SendMsgPara) {
   thread->AttachPalToList(pal);
   ChipData chipData("hello world");
   MsgPara para(pal);
-  para.dtlist.push_back(move(chipData));
+  para.dtlist.push_back(std::move(chipData));
   EXPECT_TRUE(thread->SendMsgPara(para));
   delete thread;
 }

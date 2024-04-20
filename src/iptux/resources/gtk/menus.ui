@@ -36,9 +36,24 @@
               <attribute name='target'>nickname</attribute>
             </item>
             <item>
+              <attribute name='label' translatable='yes'>By Username</attribute>
+              <attribute name='action'>win.sort_by</attribute>
+              <attribute name='target'>username</attribute>
+            </item>
+            <item>
               <attribute name='label' translatable='yes'>By IP</attribute>
               <attribute name='action'>win.sort_by</attribute>
               <attribute name='target'>ip</attribute>
+            </item>
+            <item>
+              <attribute name='label' translatable='yes'>By Host</attribute>
+              <attribute name='action'>win.sort_by</attribute>
+              <attribute name='target'>host</attribute>
+            </item>
+            <item>
+              <attribute name='label' translatable='yes'>By Last Activity</attribute>
+              <attribute name='action'>win.sort_by</attribute>
+              <attribute name='target'>last_activity</attribute>
             </item>
           </section>
           <section>
@@ -166,9 +181,24 @@
                 <attribute name='target'>nickname</attribute>
               </item>
               <item>
+                <attribute name='label' translatable='yes'>By Username</attribute>
+                <attribute name='action'>win.sort_by</attribute>
+                <attribute name='target'>username</attribute>
+              </item>
+              <item>
                 <attribute name='label' translatable='yes'>By IP</attribute>
                 <attribute name='action'>win.sort_by</attribute>
                 <attribute name='target'>ip</attribute>
+              </item>
+              <item>
+                <attribute name='label' translatable='yes'>By Host</attribute>
+                <attribute name='action'>win.sort_by</attribute>
+                <attribute name='target'>host</attribute>
+              </item>
+              <item>
+                <attribute name='label' translatable='yes'>By Last Activity</attribute>
+                <attribute name='action'>win.sort_by</attribute>
+                <attribute name='target'>last_activity</attribute>
               </item>
             </section>
             <section>

@@ -37,12 +37,30 @@ class SessionAbstract {
  * 群组信息.
  */
 class DialogBase;
+
+enum class GroupInfoStyle {
+  IP,
+  HOST,
+  USERNAME,
+  VERSION_NAME,
+  LAST_ACTIVITY,
+  LAST_MESSAGE,
+  INVALID
+};
+GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
+const char* GroupInfoStyleToStr(GroupInfoStyle style);
+
+const GtkSortType GTK_SORT_TYPE_INVALID = (GtkSortType)-1;
+GtkSortType GtkSortTypeFromStr(const std::string& s);
+const char* GtkSortTypeToStr(GtkSortType t);
+
 class GroupInfo {
  public:
   GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem);
   GroupInfo(GroupBelongType type,
             const std::vector<PPalInfo>& pals,
             CPPalInfo me,
+            const std::string& name,
             LogSystem* logSystem);
   ~GroupInfo();
 
@@ -64,6 +82,8 @@ class GroupInfo {
   void addMsgPara(const MsgPara& msg);
   void readAllMsg();
   int getUnreadMsgCount() const;
+  std::string GetInfoAsMarkup(GroupInfoStyle style) const;
+  std::string GetHintAsMarkup() const;
   void newFileReceived();
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }
@@ -72,18 +92,27 @@ class GroupInfo {
   GtkWidget* getDialog() const;
   void clearDialog() { dialogBase = nullptr; }
 
+  const std::string& name() const { return name_; }
+  std::string user_name() const;
+  const std::string& host() const { return host_; }
+  time_t last_activity() const { return last_activity_; }
+  const std::string& last_message() const { return last_message_; }
+
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
   sigc::signal<void(GroupInfo*)> signalNewFileReceived;
 
  public:
   GQuark grpid;           ///< 唯一标识
-  std::string name;       ///< 群组名称 *
   GtkTextBuffer* buffer;  ///< 历史消息缓冲区 *
 
  private:
+  std::string name_;  ///< 群组名称 *
+  std::string host_;
   DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
+  time_t last_activity_ = 0;
+  std::string last_message_;
 
  private:
   CPPalInfo me;
@@ -125,7 +154,18 @@ void transModelLoadFromTransFileModels(
     const std::vector<std::unique_ptr<TransFileModel>>& fileModels);
 bool transModelIsFinished(TransModel*);
 
-enum class PalTreeModelSortKey { NICKNAME, IP };
+enum class PalTreeModelSortKey {
+  NICKNAME,
+  USERNAME,
+  IP,
+  HOST,
+  LAST_ACTIVITY,
+  INVALID,
+};
+PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s);
+const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k);
+GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k);
+
 enum class PalTreeModelColumn {
   CLOSED_EXPANDER,
   OPEN_EXPANDER,
@@ -138,29 +178,23 @@ enum class PalTreeModelColumn {
 };
 typedef GtkTreeModel PalTreeModel;
 PalTreeModel* palTreeModelNew();
+PalTreeModel* palTreeModelNew(PalTreeModelSortKey sort_key,
+                              GtkSortType sort_type);
+GroupInfo* PalTreeModelGetGroupInfo(PalTreeModel* model, GtkTreeIter* iter);
 void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key);
 /**
  * 填充群组数据(grpinf)到数据集(model)指定位置(iter).
  * @param model model
  * @param iter iter
  * @param grpinf class GroupInfo
+ * @param style info style
+ * @param font font
  */
 void palTreeModelFillFromGroupInfo(PalTreeModel* model,
                                    GtkTreeIter* iter,
                                    const GroupInfo* grpinf,
-                                   const char* font);
-
-/**
- * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-G_DEPRECATED_FOR(palTreeModelFillFromGroupInfo)
-void groupInfo2PalTreeModel(GroupInfo* grpinf,
-                            PalTreeModel* model,
-                            GtkTreeIter* iter,
-                            const char* font);
+                                   GroupInfoStyle style,
+                                   const std::string& font);
 
 enum class IconModelColumn { ICON, ICON_NAME, N_COLUMNS };
 typedef GtkListStore IconModel;

@@ -165,7 +165,7 @@ void UiCoreThread::UpdatePalToList(PalKey palKey) {
   }
   /*/* 更新分组模式下的群组 */
   if ((grpinf = GetPalPrevGroupItem(pal))) {
-    if (strcmp(grpinf->name.c_str(), pal->getGroup().c_str()) != 0) {
+    if (strcmp(grpinf->name().c_str(), pal->getGroup().c_str()) != 0) {
       DelPalFromGroupInfoItem(grpinf, pal);
       if (!(grpinf = GetPalGroupItem(pal)))
         grpinf = AttachPalGroupItem(ppal);
@@ -355,7 +355,6 @@ GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
 
   grpinf = new GroupInfo(pal, getMe(), logSystem);
   grpinf->grpid = inAddrToUint32(pal->ipv4);
-  grpinf->name = pal->getName();
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   grpinf->signalUnreadMsgCountUpdated.connect(
@@ -379,9 +378,8 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
   }
 
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>(), getMe(),
-                         logSystem);
+                         name, logSystem);
   grpinf->grpid = g_quark_from_static_string(name.c_str());
-  grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   sgmlist = g_slist_append(sgmlist, grpinf);
@@ -401,8 +399,7 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
     name = _("Others");
   }
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>(), getMe(),
-                         logSystem);
-  grpinf->name = name;
+                         name, logSystem);
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   grplist = g_slist_append(grplist, grpinf);
@@ -422,9 +419,8 @@ GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
   name = g_strdup(_("Broadcast"));
 
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_BROADCAST, vector<PPalInfo>(),
-                         getMe(), logSystem);
+                         getMe(), name, logSystem);
   grpinf->grpid = g_quark_from_static_string(name);
-  grpinf->name = name;
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   brdlist = g_slist_append(brdlist, grpinf);
