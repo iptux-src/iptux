@@ -712,7 +712,7 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         InsertPixbufToBuffer(buffer, data);
-        last_message_ = "[IMG]";
+        last_message_ = _("[IMG]");
         if (logSystem) {
           logSystem->communicateLog(&para, "[PICTURE]%s", data);
         }
