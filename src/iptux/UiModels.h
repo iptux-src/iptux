@@ -44,6 +44,7 @@ enum class GroupInfoStyle {
   USERNAME,
   VERSION_NAME,
   LAST_ACTIVITY,
+  LAST_MESSAGE,
   INVALID
 };
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
@@ -91,10 +92,11 @@ class GroupInfo {
   GtkWidget* getDialog() const;
   void clearDialog() { dialogBase = nullptr; }
 
-  std::string name() const { return name_; }
+  const std::string& name() const { return name_; }
   std::string user_name() const;
-  std::string host() const { return host_; }
+  const std::string& host() const { return host_; }
   time_t last_activity() const { return last_activity_; }
+  const std::string& last_message() const { return last_message_; }
 
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
@@ -110,6 +112,7 @@ class GroupInfo {
   DialogBase* dialogBase;
   GtkTextBuffer* inputBuffer;  /// 输入缓冲
   time_t last_activity_ = 0;
+  std::string last_message_;
 
  private:
   CPPalInfo me;

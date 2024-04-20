@@ -327,6 +327,7 @@ static const char* group_info_style_names[] = {
     [(int)GroupInfoStyle::USERNAME] = "username",
     [(int)GroupInfoStyle::VERSION_NAME] = "version",
     [(int)GroupInfoStyle::LAST_ACTIVITY] = "last_activity",
+    [(int)GroupInfoStyle::LAST_MESSAGE] = "last_message",
 };
 
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
@@ -498,6 +499,9 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         break;
       case GroupInfoStyle::LAST_ACTIVITY:
         line2 = last_activity_ ? TimeToStr(last_activity_) : "";
+        break;
+      case GroupInfoStyle::LAST_MESSAGE:
+        line2 = last_message_;
         break;
       case GroupInfoStyle::IP:
       default:
@@ -701,12 +705,14 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
         InsertStringToBuffer(buffer, data);
         gtk_text_buffer_get_end_iter(buffer, &iter);
         gtk_text_buffer_insert(buffer, &iter, "\n", -1);
+        last_message_ = chipData->data;
         if (logSystem) {
           logSystem->communicateLog(&para, "[STRING]%s", data);
         }
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         InsertPixbufToBuffer(buffer, data);
+        last_message_ = "[IMG]";
         if (logSystem) {
           logSystem->communicateLog(&para, "[PICTURE]%s", data);
         }

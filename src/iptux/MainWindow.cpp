@@ -713,7 +713,8 @@ GtkWidget* MainWindow::CreatePaltreeTree(GtkTreeModel* model) {
   g_object_set_data(G_OBJECT(column), "expander-cell", cell);
   /* 群组信息区域 */
   cell = gtk_cell_renderer_text_new();
-  g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, NULL);
+  g_object_set(cell, "xalign", 0.0, "wrap-mode", PANGO_WRAP_WORD, "ellipsize",
+               PANGO_ELLIPSIZE_END, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(
       GTK_TREE_VIEW_COLUMN(column), cell, "markup", PalTreeModelColumn ::INFO,

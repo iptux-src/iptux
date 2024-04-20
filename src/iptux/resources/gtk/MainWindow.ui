@@ -92,6 +92,11 @@
             <attribute name='action'>win.info_style</attribute>
             <attribute name='target'>last_activity</attribute>
           </item>
+          <item>
+            <attribute name='label' translatable='yes'>Last Message</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>last_message</attribute>
+          </item>
         </section>
       </submenu>
     </section>
