@@ -3,6 +3,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <ctime>
 #include <glib/gi18n.h>
 #include <sys/socket.h>
 
@@ -299,6 +300,25 @@ GtkHeaderBar* CreateHeaderBar(GtkWindow* window, GMenuModel* menu) {
 
   g_object_unref(builder);
   return headerBar;
+}
+
+std::string TimeToStr(time_t t) {
+  time_t now = time(nullptr);
+  return TimeToStr_(t, now);
+}
+
+std::string TimeToStr_(time_t t, time_t now) {
+  struct tm tm_t;
+  struct tm tm_now;
+  localtime_r(&t, &tm_t);
+  localtime_r(&now, &tm_now);
+  char res[11];
+  if (tm_t.tm_year == tm_now.tm_year && tm_t.tm_yday == tm_now.tm_yday) {
+    strftime(res, sizeof(res), "%H:%M", &tm_t);
+  } else {
+    strftime(res, sizeof(res), "%F", &tm_t);
+  }
+  return res;
 }
 
 }  // namespace iptux

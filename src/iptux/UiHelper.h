@@ -41,7 +41,9 @@ void g_action_map_disable_actions(GActionMap* map,
                                   ...) G_GNUC_NULL_TERMINATED;
 
 GActionEntry makeActionEntry(const std::string& name, GActionCallback f);
-GActionEntry makeParamActionEntry(const std::string& name, GActionCallback f, const std::string& paramType);
+GActionEntry makeParamActionEntry(const std::string& name,
+                                  GActionCallback f,
+                                  const std::string& paramType);
 GActionEntry makeStateActionEntry(const std::string& name,
                                   GActionCallback f,
                                   const std::string& paramType,
@@ -58,11 +60,16 @@ std::string markupEscapeText(const std::string& str);
 /**
  * @brief create a headerbar with menu, and set this headerbar to the window
  *
- * we need to set to window inside this func, otherwise we need manage the refcount
- * manually.
+ * we need to set to window inside this func, otherwise we need manage the
+ * refcount manually.
  *
  */
 GtkHeaderBar* CreateHeaderBar(GtkWindow* window, GMenuModel* menu);
+
+std::string TimeToStr(time_t t);
+
+/* only used for test */
+std::string TimeToStr_(time_t t, time_t now);
 
 }  // namespace iptux
 #endif  // IPTUX_UIHELPER_H

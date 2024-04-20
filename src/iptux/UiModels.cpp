@@ -456,15 +456,7 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         line2 = pal->getVersion();
         break;
       case GroupInfoStyle::LAST_ACTIVITY:
-        if (last_activity == 0) {
-          line2 = "";
-        } else {
-          struct tm result;
-          localtime_r(&last_activity, &result);
-          char loc[25];
-          strftime(loc, sizeof(loc), "%FT%T%z", &result);
-          line2 = loc;
-        }
+        line2 = last_activity ? TimeToStr(last_activity) : "";
         break;
       case GroupInfoStyle::IP:
       default:
