@@ -62,7 +62,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       widset(NULL),
       mdlset(NULL),
       tmdllist(NULL),
-      accel(NULL),
       timerid(0),
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
@@ -418,7 +417,6 @@ void MainWindow::InitSublayer() {
   g_datalist_init(&widset);
   g_datalist_init(&mdlset);
 
-  accel = gtk_accel_group_new();
   CHECK_EQ(int(timerid), 0);
   timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
 
@@ -455,8 +453,6 @@ void MainWindow::ClearSublayer() {
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
   g_list_free(tmdllist);
-  if (accel)
-    g_object_unref(accel);
   if (timerid > 0)
     g_source_remove(timerid);
   g_object_unref(builder);
@@ -489,7 +485,6 @@ GtkWidget* MainWindow::CreateMainWindow() {
                               windowConfig.GetHeight());
   gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
   gtk_window_set_default_icon_name("iptux");
-  gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
   g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
                    this);

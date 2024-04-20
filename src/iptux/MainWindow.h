@@ -69,9 +69,8 @@ class MainWindow : public sigc::trackable {
   GData* mdlset;  // 数据model集
   PalTreeModel* regular_model = 0;
 
-  GList* tmdllist;       // model链表，用于构建model循环结构
-  GtkAccelGroup* accel;  // 快捷键集组
-  guint timerid;         // UI更新定时器ID
+  GList* tmdllist;  // model链表，用于构建model循环结构
+  guint timerid;    // UI更新定时器ID
   WindowConfig windowConfig;
   GtkBuilder* builder;
   GtkMenu* palPopupMenu;
