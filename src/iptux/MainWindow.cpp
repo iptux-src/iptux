@@ -13,6 +13,7 @@
 #include "MainWindow.h"
 
 #include <cinttypes>
+#include <ctime>
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 #include <string>
@@ -65,6 +66,8 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       timerid(0),
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
+  time_t now = time(nullptr);
+  localtime_r(&now, &info_refresh_tm);
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/MainWindow.ui");
   gtk_builder_connect_signals(builder, nullptr);
@@ -418,7 +421,7 @@ void MainWindow::InitSublayer() {
   g_datalist_init(&mdlset);
 
   CHECK_EQ(int(timerid), 0);
-  timerid = g_timeout_add(1000, GSourceFunc(UpdateUI), this);
+  timerid = g_timeout_add_seconds(1, GSourceFunc(UpdateUI), this);
 
   model = palTreeModelNew(sort_key_, sort_type_);
   this->regular_model = model;
@@ -932,6 +935,19 @@ gboolean MainWindow::UpdateUI(MainWindow* mwin) {
         GTK_WIDGET(g_datalist_get_data(&mwin->widset, "online-label-widget"));
     gtk_label_set_text(GTK_LABEL(widget), label.c_str());
     sumonline = sum;
+  }
+
+  // after midnight, refresh the last activity display
+  if (mwin->info_style_ == GroupInfoStyle::LAST_ACTIVITY) {
+    time_t now = time(nullptr);
+    struct tm now_tm;
+    localtime_r(&now, &now_tm);
+    if (mwin->info_refresh_tm.tm_year != now_tm.tm_year ||
+        mwin->info_refresh_tm.tm_mon != now_tm.tm_mon ||
+        mwin->info_refresh_tm.tm_mday != now_tm.tm_mday) {
+      mwin->info_refresh_tm = now_tm;
+      mwin->RefreshPalList();
+    }
   }
 
   return TRUE;

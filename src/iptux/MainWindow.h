@@ -71,6 +71,7 @@ class MainWindow : public sigc::trackable {
 
   GList* tmdllist;  // model链表，用于构建model循环结构
   guint timerid;    // UI更新定时器ID
+  struct tm info_refresh_tm;
   WindowConfig windowConfig;
   GtkBuilder* builder;
   GtkMenu* palPopupMenu;
