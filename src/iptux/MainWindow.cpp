@@ -50,8 +50,6 @@ static const char* config_names[] = {
     [CFG_INFO_STYLE] = "mwin_info_style",
 };
 
-static gchar* palInfo2HintMarkup(const PalInfo* pal);
-
 /**
  * 类构造函数.
  */
@@ -919,69 +917,6 @@ void MainWindow::BlinkGroupItemToPaltree(GtkTreeModel* model,
 }
 
 /**
- * @param pal class PalInfo
- * @return use g_free to free the return value
- */
-gchar* palInfo2HintMarkup(const PalInfo* pal) {
-  char ipstr[INET_ADDRSTRLEN];
-  gchar* version =
-      g_markup_printf_escaped(_("Version: %s"), pal->getVersion().c_str());
-  gchar* nickname;
-  if (!pal->getGroup().empty()) {
-    nickname = g_markup_printf_escaped(
-        _("Nickname: %s@%s"), pal->getName().c_str(), pal->getGroup().c_str());
-  } else {
-    nickname =
-        g_markup_printf_escaped(_("Nickname: %s"), pal->getName().c_str());
-  }
-  gchar* user = g_markup_printf_escaped(_("User: %s"), pal->getUser().c_str());
-  gchar* host = g_markup_printf_escaped(_("Host: %s"), pal->getHost().c_str());
-  gchar* address;
-  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-  if (pal->segdes && *pal->segdes != '\0') {
-    address = g_markup_printf_escaped(_("Address: %s(%s)"), pal->segdes, ipstr);
-  } else {
-    address = g_markup_printf_escaped(_("Address: %s"), ipstr);
-  }
-  gchar* compatibility;
-  if (!pal->isCompatible()) {
-    compatibility = g_markup_escape_text(_("Compatibility: Microsoft"), -1);
-  } else {
-    compatibility = g_markup_escape_text(_("Compatibility: GNU/Linux"), -1);
-  }
-  gchar* coding =
-      g_markup_printf_escaped(_("System coding: %s"), pal->getEncode().c_str());
-  gchar* signature1 = nullptr;
-  gchar* signature2 = nullptr;
-  if (pal->sign && *pal->sign != '\0') {
-    signature1 = g_markup_printf_escaped("%s", _("Signature:"));
-    signature2 = g_markup_escape_text(pal->sign, -1);
-  }
-
-  gchar* result;
-  if (signature1) {
-    result = g_strdup_printf(
-        "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n<span foreground=\"#00FF00\" "
-        "font_style=\"italic\" size=\"smaller\">%s</span>",
-        version, nickname, user, host, address, compatibility, coding,
-        signature1, signature2);
-  } else {
-    result = g_strdup_printf("%s\n%s\n%s\n%s\n%s\n%s\n%s", version, nickname,
-                             user, host, address, compatibility, coding);
-  }
-  g_free(version);
-  g_free(nickname);
-  g_free(user);
-  g_free(host);
-  g_free(address);
-  g_free(coding);
-  g_free(compatibility);
-  g_free(signature1);
-  g_free(signature2);
-  return result;
-}
-
-/**
  * 更新UI.
  * @param mwin 主窗口类
  * @return Gtk+库所需
@@ -1229,9 +1164,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget* treeview,
   if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR)
     return FALSE;
 
-  char* tooltipMarkup = palInfo2HintMarkup(grpinf->getMembers()[0].get());
-  gtk_tooltip_set_markup(tooltip, tooltipMarkup);
-  g_free(tooltipMarkup);
+  gtk_tooltip_set_markup(tooltip, grpinf->GetHintAsMarkup().c_str());
 
   return TRUE;
 }

@@ -131,6 +131,19 @@ gint paltreeCompareByNameFunc(GtkTreeModel* model,
   return result;
 }
 
+gint paltreeCompareByUserNameFunc(GtkTreeModel* model,
+                                  GtkTreeIter* a,
+                                  GtkTreeIter* b) {
+  GroupInfo *agrpinf, *bgrpinf;
+  gint result;
+
+  gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
+  gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
+  result = strcmp(agrpinf->user_name().c_str(), bgrpinf->user_name().c_str());
+
+  return result;
+}
+
 /**
  * 好友树(paltree)按IP排序的比较函数.
  * @param model paltree-model
@@ -295,6 +308,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
 static const char* group_info_style_names[] = {
     [(int)GroupInfoStyle::IP] = "ip",
     [(int)GroupInfoStyle::HOST] = "host",
+    [(int)GroupInfoStyle::USERNAME] = "username",
     [(int)GroupInfoStyle::VERSION_NAME] = "version",
     [(int)GroupInfoStyle::LAST_ACTIVITY] = "last_activity",
 };
@@ -356,6 +370,14 @@ bool GroupInfo::hasPal(PalInfo* pal) const {
 
 bool GroupInfo::hasPal(PPalInfo pal) const {
   return hasPal(pal.get());
+}
+
+string GroupInfo::user_name() const {
+  if (getType() == GROUP_BELONG_TYPE_REGULAR) {
+    auto pal = this->getMembers()[0].get();
+    return pal->getUser();
+  }
+  return "";
 }
 
 GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
@@ -455,6 +477,9 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
       case GroupInfoStyle::VERSION_NAME:
         line2 = pal->getVersion();
         break;
+      case GroupInfoStyle::USERNAME:
+        line2 = user_name();
+        break;
       case GroupInfoStyle::LAST_ACTIVITY:
         line2 = last_activity ? TimeToStr(last_activity) : "";
         break;
@@ -478,6 +503,62 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
   } else {
     return markupEscapeText(this->name());
   }
+}
+
+string GroupInfo::GetHintAsMarkup() const {
+  if (this->type != GROUP_BELONG_TYPE_REGULAR) {
+    return "";
+  }
+  auto pal = this->members[0];
+  char ipstr[INET_ADDRSTRLEN];
+
+  ostringstream res;
+  res << MarkupPrintf(_("Version: %s"), pal->getVersion().c_str());
+  res << "\n";
+
+  if (!pal->getGroup().empty()) {
+    res << MarkupPrintf(_("Nickname: %s@%s"), pal->getName().c_str(),
+                        pal->getGroup().c_str());
+  } else {
+    res << MarkupPrintf(_("Nickname: %s"), pal->getName().c_str());
+  }
+  res << "\n";
+
+  res << MarkupPrintf(_("User: %s"), pal->getUser().c_str());
+  res << "\n";
+
+  res << MarkupPrintf(_("Host: %s"), pal->getHost().c_str());
+  res << "\n";
+
+  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+  if (pal->segdes && *pal->segdes != '\0') {
+    res << MarkupPrintf(_("Address: %s(%s)"), pal->segdes, ipstr);
+  } else {
+    res << MarkupPrintf(_("Address: %s"), ipstr);
+  }
+  res << "\n";
+
+  if (!pal->isCompatible()) {
+    res << markupEscapeText(_("Compatibility: Microsoft"));
+  } else {
+    res << markupEscapeText(_("Compatibility: GNU/Linux"));
+  }
+  res << "\n";
+
+  res << MarkupPrintf(_("System coding: %s"), pal->getEncode().c_str());
+
+  if (pal->sign && pal->sign[0]) {
+    string signature1;
+    string signature2;
+    signature1 = markupEscapeText(_("Signature:"));
+    signature2 = markupEscapeText(pal->sign);
+    res << stringFormat(
+        "\n%s\n<span foreground=\"#00FF00\" "
+        "font_style=\"italic\" size=\"smaller\">%s</span>",
+        signature1.c_str(), signature2.c_str());
+  }
+
+  return res.str();
 }
 
 /**
@@ -642,6 +723,7 @@ IconModel* iconModelNew() {
 
 const char* pal_tree_model_sort_key_names[] = {
     [(int)PalTreeModelSortKey::NICKNAME] = "nickname",
+    [(int)PalTreeModelSortKey::USERNAME] = "username",
     [(int)PalTreeModelSortKey::IP] = "ip",
     [(int)PalTreeModelSortKey::HOST] = "host",
 };
@@ -665,6 +747,8 @@ const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k) {
 GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k) {
   switch (k) {
     case PalTreeModelSortKey::NICKNAME:
+      return GtkTreeIterCompareFunc(paltreeCompareByNameFunc);
+    case PalTreeModelSortKey::USERNAME:
       return GtkTreeIterCompareFunc(paltreeCompareByNameFunc);
     case PalTreeModelSortKey::IP:
       return GtkTreeIterCompareFunc(paltreeCompareByIPFunc);

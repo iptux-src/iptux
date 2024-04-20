@@ -38,7 +38,14 @@ class SessionAbstract {
  */
 class DialogBase;
 
-enum class GroupInfoStyle { IP, HOST, VERSION_NAME, LAST_ACTIVITY, INVALID };
+enum class GroupInfoStyle {
+  IP,
+  HOST,
+  USERNAME,
+  VERSION_NAME,
+  LAST_ACTIVITY,
+  INVALID
+};
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
 const char* GroupInfoStyleToStr(GroupInfoStyle style);
 
@@ -75,6 +82,7 @@ class GroupInfo {
   void readAllMsg();
   int getUnreadMsgCount() const;
   std::string GetInfoAsMarkup(GroupInfoStyle style) const;
+  std::string GetHintAsMarkup() const;
   void newFileReceived();
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }
@@ -84,6 +92,7 @@ class GroupInfo {
   void clearDialog() { dialogBase = nullptr; }
 
   std::string name() const { return name_; }
+  std::string user_name() const;
   std::string host() const { return host_; }
 
  public:
@@ -141,7 +150,7 @@ void transModelLoadFromTransFileModels(
     const std::vector<std::unique_ptr<TransFileModel>>& fileModels);
 bool transModelIsFinished(TransModel*);
 
-enum class PalTreeModelSortKey { NICKNAME, IP, HOST, INVALID };
+enum class PalTreeModelSortKey { NICKNAME, USERNAME, IP, HOST, INVALID };
 PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s);
 const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k);
 GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k);

@@ -57,6 +57,21 @@ GActionEntry makeStateActionEntry(const std::string& name,
  */
 std::string markupEscapeText(const std::string& str);
 
+template <typename... Args>
+std::string MarkupPrintf(const char* format, ...) G_GNUC_PRINTF(1, 2);
+
+template <typename... Args>
+std::string MarkupPrintf(const char* format, ...) {
+  va_list args;
+
+  va_start(args, format);
+  gchar* buf = g_markup_vprintf_escaped(format, args);
+  va_end(args);
+  std::string res(buf, strlen(buf));
+  g_free(buf);
+  return res;
+}
+
 /**
  * @brief create a headerbar with menu, and set this headerbar to the window
  *
