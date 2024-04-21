@@ -495,7 +495,8 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo* file) {
 }
 
 void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int, int) {
-  signalGroupInfoUpdated.emit(grpinf);
+  sigGroupInfoUpdated.emit(grpinf);
+  sigUnreadMsgCountUpdated.emit(unread_msg_count());
 }
 
 /**
@@ -571,6 +572,16 @@ void UiCoreThread::CheckIconTheme() {
       g_object_unref(pixbuf);
     }
   }
+}
+
+int UiCoreThread::unread_msg_count() const {
+  int count = 0;
+  GSList* tlist;
+
+  for (tlist = groupInfos; tlist; tlist = g_slist_next(tlist)) {
+    count += ((GroupInfo*)tlist->data)->getUnreadMsgCount();
+  }
+  return count;
 }
 
 }  // namespace iptux

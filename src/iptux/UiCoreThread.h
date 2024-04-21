@@ -61,8 +61,11 @@ class UiCoreThread : public CoreThread {
 
   GtkTextTagTable* tag_table() { return tag_table_; }
 
+  int unread_msg_count() const;
+
  public:
-  sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
+  sigc::signal<void(GroupInfo*)> sigGroupInfoUpdated;
+  sigc::signal<void(int)> sigUnreadMsgCountUpdated;
 
  private:
   void InitSublayer();

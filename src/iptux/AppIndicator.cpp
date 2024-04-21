@@ -5,7 +5,7 @@
 #include <libayatana-appindicator/app-indicator.h>
 
 #include "iptux/Application.h"
-#include "iptux-utils/utils.h"
+#include "iptux/UiCoreThread.h"
 
 namespace iptux {
 
@@ -42,10 +42,13 @@ IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   gtk_widget_insert_action_group(GTK_WIDGET(menu), "app",
                                  G_ACTION_GROUP(app->getApp()));
   app_indicator_set_menu(priv->indicator, menu);
+
+  app->getCoreThread()->sigUnreadMsgCountUpdated.connect(
+      sigc::mem_fun(*this, &IptuxAppIndicator::SetUnreadCount));
 }
 
 void IptuxAppIndicator::SetUnreadCount(int i) {
-  if(i > 0) {
+  if (i > 0) {
     app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ATTENTION);
   } else {
     app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);

@@ -75,7 +75,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
                                   [&](shared_ptr<const Event> event) {
                                     this->processEventInMainThread(event);
                                   });
-  coreThread.signalGroupInfoUpdated.connect(
+  coreThread.sigGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
   CreateWindow();
 }

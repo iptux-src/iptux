@@ -50,7 +50,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
   ReadUILayout();
   grp->signalNewFileReceived.connect(
       sigc::mem_fun(*this, &DialogPeer::onNewFileReceived));
-  app->getCoreThread()->signalGroupInfoUpdated.connect(
+  app->getCoreThread()->sigGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated));
 }
 
