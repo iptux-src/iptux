@@ -21,7 +21,7 @@
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpData.h"
-#include "iptux-core/internal/UdpDataService.h"
+#include "iptux-core/internal/UdpServer.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"

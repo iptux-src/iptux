@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "iptux-core/TestHelper.h"
-#include "iptux-core/internal/UdpDataService.h"
+#include "iptux-core/internal/UdpServer.h"
 #include "iptux-utils/utils.h"
 
 using namespace std;
