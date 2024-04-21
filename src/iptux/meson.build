@@ -41,7 +41,9 @@ glib_compile_resources = find_program('glib-compile-resources')
 
 ui_files = [
     'resources/gtk/AboutDialog.ui',
+    'resources/gtk/AppIndicator.ui',
     'resources/gtk/MainWindow.ui',
+    'resources/gtk/HeaderBar.ui',
     'resources/gtk/DetectPal.ui',
     'resources/gtk/menus.ui',
 ]
