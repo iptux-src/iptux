@@ -1,7 +1,11 @@
 #include "UdpServer.h"
 
+#include "glib/gi18n.h"
+#include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux-core/internal/support.h"
+#include <netinet/in.h>
 
 using namespace std;
 namespace iptux {
@@ -83,6 +87,43 @@ void UdpServer::process(UdpData& udata) {
       LOG_WARN("unknown command mode: 0x%x", commandMode.getMode());
       break;
   }
+}
+
+bool UdpServer::start() {
+  if (status != UdpServerStatus::INITED) {
+    LOG_ERROR("udp server status is not inited");
+    return false;
+  }
+
+  int udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  if(udpSock < 0) {
+    LOG_ERROR("create udp socket failed: %s", strerror(errno));
+    status = UdpServerStatus::START_FAILED;
+    return false;
+  }
+
+  socket_enable_reuse(udpSock);
+  socket_enable_broadcast(udpSock);
+
+  struct sockaddr_in addr;
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(bind_port);
+  addr.sin_addr = inAddrFromString(bind_ip);
+
+  if (::bind(udpSock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+    int ec = errno;
+    close(udpSock);
+    auto errmsg =
+        stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
+                     bind_ip.c_str(), bind_port, strerror(ec));
+    LOG_ERROR("%s", errmsg.c_str());
+    throw Exception(UDP_BIND_FAILED, errmsg);
+  } else {
+    LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), bind_port);
+  }
+
+  status = UdpServerStatus::RUNNING;
+  return true;
 }
 
 }  // namespace iptux
