@@ -17,7 +17,7 @@ conf_data.set(
 if get_option('dev')
   conf_data.set(
     'SHARE_IPTUX_DIR',
-    join_paths(meson.current_source_dir(), 'share'),
+    join_paths(meson.current_source_dir(), '../share'),
   )
 else
   conf_data.set(
@@ -39,7 +39,7 @@ configure_file(
 )
 
 test_conf_data = configuration_data()
-test_conf_data.set_quoted('PROJECT_ROOT_PATH', meson.current_source_dir())
+test_conf_data.set_quoted('CURRENT_SOURCE_PATH', meson.current_source_dir())
 configure_file(
   input: 'TestConfig.h.in',
   output: 'TestConfig.h',
