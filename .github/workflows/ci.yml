@@ -44,7 +44,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: apt install
-        run: sudo apt update && sudo apt install -y libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev appstream
+        run: >-
+          sudo apt update &&
+          sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev
+          libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
+          libayatana-appindicator3-dev appstream
       - name: meson
         run: |
           meson --version
@@ -64,7 +68,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: apt install
-        run: sudo apt update && sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev appstream
+        run: >-
+          sudo apt update &&
+          sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev
+          libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
+          libayatana-appindicator3-dev appstream
       - name: meson
         run: meson setup -D b_coverage=true build
       - name: build

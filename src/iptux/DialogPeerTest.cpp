@@ -1,22 +1,20 @@
+#include "Application.h"
 #include "gtest/gtest.h"
 
-#include "iptux-core/TestHelper.h"
 #include "iptux/DialogPeer.h"
+#include "iptux/TestHelper.h"
 #include "iptux/UiCoreThread.h"
 
 using namespace std;
 using namespace iptux;
 
 TEST(DialogPeer, Constructor) {
-  gtk_init(nullptr, nullptr);
-  auto config = newTestIptuxConfig();
-  Application app(config);
-  app.startup();
-  app.activate();
+  Application* app = CreateApplication();
 
   PPalInfo pal = make_shared<PalInfo>();
-  app.getCoreThread()->AttachPalToList(pal);
+  app->getCoreThread()->AttachPalToList(pal);
 
-  GroupInfo* grpinf = app.getCoreThread()->GetPalRegularItem(pal.get());
-  DialogPeer::PeerDialogEntry(&app, grpinf);
+  GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
+  DialogPeer::PeerDialogEntry(app, grpinf);
+  DestroyApplication(app);
 }

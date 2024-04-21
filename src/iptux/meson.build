@@ -27,12 +27,23 @@ sources = files([
     'UiModels.cpp',
     'WindowConfig.cpp',
 ])
+dependencies = [gtk_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep]
+
+appindicator_dep = dependency('ayatana-appindicator3-0.1', required: get_option('appindicator'))
+if appindicator_dep.found()
+    sources += ['AppIndicator.cpp']
+    dependencies += [appindicator_dep]
+else
+    sources += ['AppIndicatorDummy.cpp']
+endif
 
 glib_compile_resources = find_program('glib-compile-resources')
 
 ui_files = [
     'resources/gtk/AboutDialog.ui',
+    'resources/gtk/AppIndicator.ui',
     'resources/gtk/MainWindow.ui',
+    'resources/gtk/HeaderBar.ui',
     'resources/gtk/DetectPal.ui',
     'resources/gtk/menus.ui',
 ]
@@ -69,7 +80,6 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 sources += [iptux_resource_cpp, iptux_resource_h]
 inc = include_directories('..', '../api')
 
-dependencies = [gtk_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep]
 
 if host_machine.system() == 'darwin'
     gtk_mac_integration_dep = dependency('gtk-mac-integration-gtk3')

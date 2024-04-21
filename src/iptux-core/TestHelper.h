@@ -6,7 +6,6 @@
 
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/IptuxConfig.h"
-#include "iptux-utils/TestHelper.h"
 
 namespace iptux {
 std::shared_ptr<IptuxConfig> newTestIptuxConfig();

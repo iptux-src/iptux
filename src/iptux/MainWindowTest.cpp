@@ -1,8 +1,10 @@
+#include "Application.h"
 #include "UiModels.h"
 #include "gtest/gtest.h"
 
 #include "iptux-core/TestHelper.h"
 #include "iptux/MainWindow.h"
+#include "iptux/TestHelper.h"
 
 using namespace std;
 using namespace iptux;
@@ -14,12 +16,9 @@ void do_action(MainWindow* w, const string& name, const string& val) {
 }
 
 TEST(MainWindow, Constructor) {
-  gtk_init(nullptr, nullptr);
-  auto config = newTestIptuxConfig();
-  Application app(config);
-  app.startup();
+  Application* app = CreateApplication();
 
-  MainWindow mw(&app, *app.getCoreThread());
+  MainWindow mw(app, *app->getCoreThread());
   mw.getWindow();
 
   do_action(&mw, "sort_by", "nickname");
@@ -50,4 +49,6 @@ TEST(MainWindow, Constructor) {
   ASSERT_EQ(mw.info_style(), GroupInfoStyle::LAST_ACTIVITY);
   do_action(&mw, "info_style", "last_message");
   ASSERT_EQ(mw.info_style(), GroupInfoStyle::LAST_MESSAGE);
+
+  DestroyApplication(app);
 }

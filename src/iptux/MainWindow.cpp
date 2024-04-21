@@ -75,7 +75,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
                                   [&](shared_ptr<const Event> event) {
                                     this->processEventInMainThread(event);
                                   });
-  coreThread.signalGroupInfoUpdated.connect(
+  coreThread.sigGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
   CreateWindow();
 }
@@ -89,6 +89,10 @@ MainWindow::~MainWindow() {
 
 GtkWidget* MainWindow::getWindow() {
   return window;
+}
+
+void MainWindow::Show() {
+  gtk_window_present(GTK_WINDOW(window));
 }
 
 /**
@@ -152,17 +156,6 @@ void MainWindow::CreateActions() {
   g_simple_action_set_state(
       G_SIMPLE_ACTION(g_action_map_lookup_action(m, "sort_by")),
       g_variant_new_string(PalTreeModelSortKeyToStr(sort_key_)));
-}
-
-/**
- * 更改窗口显示模式.
- */
-void MainWindow::AlterWindowMode() {
-  if (gtk_widget_get_visible(window)) {
-    gtk_window_iconify(GTK_WINDOW(window));
-  } else {
-    gtk_window_deiconify(GTK_WINDOW(window));
-  }
 }
 
 /**
