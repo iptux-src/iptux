@@ -1,4 +1,3 @@
-// license: GPL v2
 #pragma once
 
 #include "iptux/Application.h"
@@ -9,6 +8,7 @@ class IptuxAppIndicator {
  public:
   IptuxAppIndicator(Application* app);
   void SetUnreadCount(int count);
+
  private:
   std::shared_ptr<IptuxAppIndicatorPrivate> priv;
 };
