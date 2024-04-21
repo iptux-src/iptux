@@ -128,7 +128,9 @@ void Application::onStartup(Application& self) {
   self.data = make_shared<ProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
-  self.app_indicator = make_shared<IptuxAppIndicator>(&self);
+  if (self.enable_app_indicator_) {
+    self.app_indicator = make_shared<IptuxAppIndicator>(&self);
+  }
 
   bool use_app_menu = true;
 #if SYSTEM_DARWIN

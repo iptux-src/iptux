@@ -45,6 +45,7 @@ class Application {
   std::shared_ptr<ProgramData> data;
   std::shared_ptr<UiCoreThread> cthrd;
   std::shared_ptr<IptuxAppIndicator> app_indicator;
+  bool enable_app_indicator_ = true;
 
   GtkApplication* app;
   GtkBuilder* menuBuilder;
@@ -65,6 +66,7 @@ class Application {
   // for test
   void startup();
   void activate();
+  void set_enable_app_indicator(bool enable) { enable_app_indicator_ = enable; }
 
  private:
   void onEvent(std::shared_ptr<const Event> event);
