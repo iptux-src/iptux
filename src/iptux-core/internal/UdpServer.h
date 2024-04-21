@@ -6,9 +6,9 @@
 
 namespace iptux {
 
-class UdpDataService {
+class UdpServer {
  public:
-  explicit UdpDataService(CoreThread& coreThread);
+  explicit UdpServer(CoreThread& coreThread);
 
   std::unique_ptr<UdpData> process(in_addr ipv4,
                                    int port,
@@ -27,7 +27,7 @@ class UdpDataService {
   CoreThread& core_thread_;
 };
 
-using UdpDataService_U = std::unique_ptr<UdpDataService>;
+using UdpDataService_U = std::unique_ptr<UdpServer>;
 
 }  // namespace iptux
 

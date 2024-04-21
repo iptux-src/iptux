@@ -6,17 +6,17 @@
 using namespace std;
 namespace iptux {
 
-UdpDataService::UdpDataService(CoreThread& coreThread)
+UdpServer::UdpServer(CoreThread& coreThread)
     : core_thread_(coreThread) {}
 
-unique_ptr<UdpData> UdpDataService::process(in_addr ipv4,
+unique_ptr<UdpData> UdpServer::process(in_addr ipv4,
                                             int port,
                                             const char buf[],
                                             size_t size) {
   return process(ipv4, port, buf, size, true);
 }
 
-unique_ptr<UdpData> UdpDataService::process(in_addr ipv4,
+unique_ptr<UdpData> UdpServer::process(in_addr ipv4,
                                             int port,
                                             const char buf[],
                                             size_t size,
@@ -37,7 +37,7 @@ unique_ptr<UdpData> UdpDataService::process(in_addr ipv4,
   return udata;
 }
 
-void UdpDataService::process(UdpData& udata) {
+void UdpServer::process(UdpData& udata) {
   /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
   if (core_thread_.IsBlocked(udata.getIpv4())) {
     LOG_INFO("address is blocked: %s", udata.getIpv4String().c_str());

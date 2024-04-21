@@ -20,7 +20,6 @@
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
-#include "iptux-core/internal/UdpData.h"
 #include "iptux-core/internal/UdpServer.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
@@ -140,7 +139,7 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
-  pImpl->udp_data_service = make_unique<UdpDataService>(*this);
+  pImpl->udp_data_service = make_unique<UdpServer>(*this);
   pImpl->me = make_shared<PalInfo>();
   pImpl->me->ipv4 = inAddrFromString("127.0.0.1");
   (*pImpl->me)
