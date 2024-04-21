@@ -8,7 +8,8 @@ class IptuxAppIndicatorPrivate;
 class IptuxAppIndicator {
  public:
   IptuxAppIndicator(Application* app);
-
+  void SetStatusActive();
+  void SetStatusAttention();
  private:
   std::shared_ptr<IptuxAppIndicatorPrivate> priv;
 };

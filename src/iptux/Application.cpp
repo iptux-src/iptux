@@ -176,6 +176,8 @@ void Application::onStartup(Application& self) {
       makeActionEntry("about", G_ACTION_CALLBACK(onAbout)),
       makeParamActionEntry("open-chat", G_ACTION_CALLBACK(onOpenChat), "s"),
       makeActionEntry("window.close", G_ACTION_CALLBACK(onWindowClose)),
+      makeActionEntry("appindicator.active", G_ACTION_CALLBACK(onAppIndicatorActive)),
+      makeActionEntry("appindicator.attention", G_ACTION_CALLBACK(onAppIndicatorAttention)),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
@@ -222,6 +224,14 @@ void Application::onQuit(void*, void*, Application& self) {
 
 void Application::onPreferences(void*, void*, Application& self) {
   DataSettings::ResetDataEntry(&self, GTK_WIDGET(self.window->getWindow()));
+}
+
+void Application::onAppIndicatorActive(void*, void*, Application& self) {
+  self.app_indicator->SetStatusActive();
+}
+
+void Application::onAppIndicatorAttention(void*, void*, Application& self) {
+  self.app_indicator->SetStatusAttention();
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {

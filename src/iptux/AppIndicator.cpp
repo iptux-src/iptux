@@ -24,9 +24,10 @@ class IptuxAppIndicatorPrivate {
 
 IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   this->priv = std::make_shared<IptuxAppIndicatorPrivate>(app);
-  priv->indicator = app_indicator_new("io.github.iptux_src.iptux", "iptux",
+  priv->indicator = app_indicator_new("io.github.iptux_src.iptux", "iptux-icon",
                                       APP_INDICATOR_CATEGORY_COMMUNICATIONS);
   app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
+  app_indicator_set_attention_icon(priv->indicator, "iptux-attention");
 
   priv->menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/AppIndicator.ui");
@@ -36,5 +37,13 @@ IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   gtk_widget_insert_action_group(GTK_WIDGET(menu), "app",
                                  G_ACTION_GROUP(app->getApp()));
   app_indicator_set_menu(priv->indicator, menu);
+}
+
+void IptuxAppIndicator::SetStatusActive() {
+  app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
+}
+
+void IptuxAppIndicator::SetStatusAttention() {
+  app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ATTENTION);
 }
 }  // namespace iptux

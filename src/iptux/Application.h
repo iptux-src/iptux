@@ -72,6 +72,8 @@ class Application {
   void updateItemToTransTree(const TransFileModel& para);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
+  static void onAppIndicatorActive(void*, void*, Application& self);
+  static void onAppIndicatorAttention(void*, void*, Application& self);
   static void onPreferences(void*, void*, Application& self);
   static void onQuit(void*, void*, Application& self);
   static void onStartup(Application& self);
