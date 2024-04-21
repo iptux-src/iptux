@@ -1,8 +1,11 @@
 #include "config.h"
 #include "AppIndicator.h"
 
-#include "Application.h"
+#include <glib/gi18n.h>
 #include <libayatana-appindicator/app-indicator.h>
+
+#include "iptux/Application.h"
+#include "iptux-utils/utils.h"
 
 namespace iptux {
 
@@ -29,6 +32,8 @@ IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
   app_indicator_set_attention_icon(priv->indicator, "iptux-attention");
 
+  app_indicator_set_title(priv->indicator, _("Iptux"));
+
   priv->menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/AppIndicator.ui");
 
@@ -39,11 +44,12 @@ IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   app_indicator_set_menu(priv->indicator, menu);
 }
 
-void IptuxAppIndicator::SetStatusActive() {
-  app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
+void IptuxAppIndicator::SetUnreadCount(int i) {
+  if(i > 0) {
+    app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ATTENTION);
+  } else {
+    app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
+  }
 }
 
-void IptuxAppIndicator::SetStatusAttention() {
-  app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ATTENTION);
-}
 }  // namespace iptux

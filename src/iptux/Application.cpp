@@ -227,11 +227,11 @@ void Application::onPreferences(void*, void*, Application& self) {
 }
 
 void Application::onAppIndicatorActive(void*, void*, Application& self) {
-  self.app_indicator->SetStatusActive();
+  self.app_indicator->SetUnreadCount(0);
 }
 
 void Application::onAppIndicatorAttention(void*, void*, Application& self) {
-  self.app_indicator->SetStatusAttention();
+  self.app_indicator->SetUnreadCount(1);
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
