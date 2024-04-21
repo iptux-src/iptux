@@ -23,6 +23,11 @@ class IptuxAppIndicatorPrivate {
   Application* app;
   AppIndicator* indicator;
   GtkBuilder* menuBuilder;
+
+  static void onScrollEvent(IptuxAppIndicatorPrivate* self) {
+    g_action_group_activate_action(G_ACTION_GROUP(self->app->getApp()),
+                                   "open_main_window", NULL);
+  }
 };
 
 IptuxAppIndicator::IptuxAppIndicator(Application* app) {
@@ -42,6 +47,10 @@ IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   gtk_widget_insert_action_group(GTK_WIDGET(menu), "app",
                                  G_ACTION_GROUP(app->getApp()));
   app_indicator_set_menu(priv->indicator, menu);
+
+  g_signal_connect_swapped(priv->indicator, "scroll-event",
+                           G_CALLBACK(IptuxAppIndicatorPrivate::onScrollEvent),
+                           priv.get());
 
   app->getCoreThread()->sigUnreadMsgCountUpdated.connect(
       sigc::mem_fun(*this, &IptuxAppIndicator::SetUnreadCount));
