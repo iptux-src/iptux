@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "numbers": "cpp",
+        "cstring": "cpp"
+    },
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
+    "editor.inlayHints.enabled": "offUnlessPressed"
+}
