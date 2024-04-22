@@ -30,6 +30,7 @@ parts:
         libgoogle-glog-dev,
         libjsoncpp-dev,
         libsigc++-2.0-dev,
+        libayatana-appindicator3-dev,
         xvfb,
         libxml2-utils,
         appstream,
@@ -49,6 +50,7 @@ parts:
       - libgoogle-glog0v5
       - libjsoncpp1
       - libsigc++-2.0-0v5
+      - libayatana-appindicator3-1
       - try:
           - libunwind8 # not available in s390x
     parse-info: [usr/share/metainfo/io.github.iptux_src.iptux.metainfo.xml]
