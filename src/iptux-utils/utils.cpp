@@ -56,8 +56,8 @@ char* iptux_string_validate(const char* s,
   char *tstring, *cset;
   gsize rbytes, wbytes;
 
-  *encode = NULL;  //设置字符集编码未知
-  tstring = NULL;  //设置utf8有效串尚未成功获取
+  *encode = NULL;  // 设置字符集编码未知
+  tstring = NULL;  // 设置utf8有效串尚未成功获取
   if (!g_utf8_validate(s, -1, NULL) && !codeset.empty()) {
     cset = NULL;
     ptr = codeset.c_str();
@@ -296,7 +296,7 @@ const char* iptux_skip_section(const char* string, char ch, uint8_t times) {
   while (count < times) {
     if (!(ptr = strchr(ptr, ch)))
       break;
-    ptr++;  //跳过当前分割字符
+    ptr++;  // 跳过当前分割字符
     count++;
   }
 
@@ -389,17 +389,17 @@ char* iptux_get_section_string(const char* msg, char ch, uint8_t times) {
  * @note (msg)串会被修改
  */
 char* ipmsg_get_filename(const char* msg, char ch, uint8_t times) {
-  char filename[256];  //文件最大长度为255
+  char filename[256];  // 文件最大长度为255
   const char* ptr;
 
   if ((ptr = iptux_skip_section(msg, ch, times))) {
     size_t len = 0;
     while (*ptr != ':' || strncmp(ptr, "::", 2) == 0) {
-      if (len < 255) {  //防止缓冲区溢出
+      if (len < 255) {  // 防止缓冲区溢出
         filename[len] = *ptr;
         len++;
       }
-      if (*ptr == ':') {  //抹除分割符
+      if (*ptr == ':') {  // 抹除分割符
         memcpy((void*)ptr, "xx", 2);
         ptr++;
       }
@@ -437,7 +437,7 @@ char* ipmsg_get_attach(const char* msg, char ch, uint8_t times) {
  * @note 文件名特殊格式请参考IPMsg协议
  */
 char* ipmsg_get_filename_pal(const char* pathname) {
-  char filename[512];  //文件最大长度为255
+  char filename[512];  // 文件最大长度为255
   const char* ptr;
   size_t len;
 
@@ -629,6 +629,8 @@ ssize_t xwrite(int fd, const void* buf, size_t count) {
   size_t offset;
   ssize_t size;
 
+  LOG_INFO("xwrite: %d, %p, %zu", fd, buf, count);
+
   size = -1;
   offset = 0;
   while ((offset != count) && (size != 0)) {
@@ -639,6 +641,8 @@ ssize_t xwrite(int fd, const void* buf, size_t count) {
     }
     offset += size;
   }
+
+  LOG_INFO("xwrite: %zu", offset);
 
   return offset;
 }
@@ -792,7 +796,7 @@ ssize_t read_ipmsg_fileinfo(int fd, void* buf, size_t count, size_t offset) {
   ssize_t size;
   uint32_t headsize;
 
-  if (offset < count)  //注意不要写到缓冲区外了
+  if (offset < count)  // 注意不要写到缓冲区外了
     ((char*)buf)[offset] = '\0';
   while (!offset || !strchr((char*)buf, ':') ||
          sscanf((char*)buf, "%" SCNx32, &headsize) != 1 || headsize > offset) {

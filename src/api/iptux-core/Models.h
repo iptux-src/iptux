@@ -102,13 +102,25 @@ class PalInfo {
   PalInfo& setGroup(const std::string& group);
   const std::string& getGroup() const { return group; }
 
+  const std::string& icon_file() const { return icon_file_; }
+  PalInfo& set_icon_file(const std::string& icon_file) {
+    icon_file_ = icon_file;
+    return *this;
+  }
+  PalInfo& set_icon_file(const std::string& icon_file, const std::string& def) {
+    if (icon_file.empty())
+      icon_file_ = def;
+    else
+      icon_file_ = icon_file;
+    return *this;
+  }
+
   std::string toString() const;
 
   in_addr ipv4;       ///< 好友IP
   char* segdes;       ///< 所在网段描述
   char* photo;        ///< 形象照片
   char* sign;         ///< 个性签名
-  char* iconfile;     ///< 好友头像 *
   uint32_t packetn;   ///< 已接受最大的包编号
   uint32_t rpacketn;  ///< 需要接受检查的包编号
 
@@ -123,6 +135,7 @@ class PalInfo {
   PalInfo& setInBlacklistl(bool value);
 
  private:
+  std::string icon_file_;  ///< 好友头像 *
   std::string user;
   std::string name;
   std::string host;

@@ -89,10 +89,10 @@ void UdpData::SomeoneLost() {
       .setHost(host ? host : "???")
       .setEncode(encode ? encode : "utf-8")
       .setName(_("mysterious"))
-      .setGroup(_("mysterious"));
+      .setGroup(_("mysterious"))
+      .set_icon_file(g_progdt->palicon);
   pal->photo = NULL;
   pal->sign = NULL;
-  pal->iconfile = g_strdup(g_progdt->palicon);
   pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
@@ -191,7 +191,7 @@ void UdpData::SomeoneAbsence() {
   auto g_progdt = coreThread.getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
-  pal = coreThread.GetPal(ipv4);  //利用好友链表只增不减的特性，无须加锁
+  pal = coreThread.GetPal(ipv4);  // 利用好友链表只增不减的特性，无须加锁
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
@@ -282,7 +282,7 @@ void UdpData::SomeoneRecvmsg() {
   if ((pal = coreThread.GetPal(ipv4))) {
     packetno = iptux_get_dec_number(buf, ':', 5);
     if (packetno == pal->rpacketn)
-      pal->rpacketn = 0;  //标记此包编号已经被回复
+      pal->rpacketn = 0;  // 标记此包编号已经被回复
   } else {
     LOG_WARN("message from unknown pal: %s", inAddrToString(ipv4).c_str());
   }
@@ -332,8 +332,8 @@ void UdpData::SomeoneSendIcon() {
 
   /* 接收并更新数据 */
   if ((iconfile = RecvPalIcon())) {
-    g_free(pal->iconfile);
-    pal->iconfile = iconfile;
+    pal->set_icon_file(iconfile);
+    free(iconfile);
     coreThread.EmitIconUpdate(PalKey(ipv4));
   }
 }
@@ -447,8 +447,7 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   pal->setGroup(GetPalGroup());
   pal->photo = NULL;
   pal->sign = NULL;
-  if (!(pal->iconfile = GetPalIcon()))
-    pal->iconfile = g_strdup(programData->palicon);
+  pal->set_icon_file(GetPalIcon(), programData->palicon);
   auto localEncode = GetPalEncode();
   if (localEncode) {
     pal->setEncode(localEncode);
@@ -487,9 +486,7 @@ void UdpData::UpdatePalInfo(PalInfo* pal) {
       pal->setName(name);
     }
     pal->setGroup(GetPalGroup());
-    g_free(pal->iconfile);
-    if (!(pal->iconfile = GetPalIcon()))
-      pal->iconfile = g_strdup(g_progdt->palicon);
+    pal->set_icon_file(GetPalIcon(), g_progdt->palicon);
     pal->setCompatible(false);
     auto localEncode = GetPalEncode();
     if (localEncode) {
@@ -519,10 +516,10 @@ void UdpData::InsertMessage(PPalInfo pal,
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, msg);
-  para.dtlist.push_back(move(chip));
+  para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
-  coreThread.InsertMessage(move(para));
+  coreThread.InsertMessage(std::move(para));
 }
 
 void UdpData::ConvertEncode(const char* enc) {
@@ -590,16 +587,15 @@ string UdpData::GetPalGroup() {
  * 获取好友头像图标.
  * @return 头像
  */
-char* UdpData::GetPalIcon() {
-  char path[MAX_PATHLEN];
+string UdpData::GetPalIcon() {
   const char* ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 2)) && *ptr != '\0') {
-    snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", ptr);
-    if (access(path, F_OK) == 0)
-      return g_strdup(ptr);
+    string res = stringFormat(__PIXMAPS_PATH "/icon/%s", ptr);
+    if (access(res.c_str(), F_OK) == 0)
+      return ptr;
   }
-  return NULL;
+  return "";
 }
 
 /**
