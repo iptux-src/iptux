@@ -630,8 +630,6 @@ ssize_t xwrite(int fd, const void* buf, size_t count) {
   size_t offset;
   ssize_t size;
 
-  LOG_INFO("xwrite: %d, %p, %zu", fd, buf, count);
-
   size = -1;
   offset = 0;
   while (offset < count) {
@@ -665,8 +663,6 @@ ssize_t xsend(int fd, const void* buf, size_t count) {
     }
     offset += size;
   }
-
-  LOG_INFO("xwrite: %zu", offset);
 
   return offset;
 }
