@@ -15,6 +15,7 @@
 
 #include <cinttypes>
 #include <functional>
+#include <string>
 #include <thread>
 
 #include <fcntl.h>
@@ -614,30 +615,27 @@ char* UdpData::GetPalEncode() {
  * 接收好友头像数据.
  * @return 头像文件名
  */
-char* UdpData::RecvPalIcon() {
-  char path[MAX_PATHLEN];
-  char* iconfile;
+string UdpData::RecvPalIcon() {
   size_t len;
   int fd;
 
   /* 若无头像数据则返回null */
   if ((len = strlen(buf) + 1) >= size)
-    return NULL;
+    return "";
 
   auto hash = sha256(buf + len, size - len);
 
   /* 将头像数据刷入磁盘 */
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s.png", g_get_user_cache_dir(),
-           hash.c_str());
+  auto path = stringFormat("%s" ICON_PATH "/%s.png", g_get_user_cache_dir(),
+                           hash.c_str());
   Helper::prepareDir(path);
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
-    LOG_ERROR("write icon to path failed: %s", path);
-    return NULL;
+  if ((fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+    LOG_ERROR("write icon to path failed: %s", path.c_str());
+    return "";
   }
   xwrite(fd, buf + len, size - len);
   close(fd);
-  iconfile = g_strdup(hash.c_str());
-  return iconfile;
+  return hash;
 }
 
 /**

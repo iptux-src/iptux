@@ -59,7 +59,7 @@ class UdpData {
   std::string GetPalGroup();
   std::string GetPalIcon();
   char* GetPalEncode();
-  char* RecvPalIcon();
+  std::string RecvPalIcon();
   PPalInfo AssertPalOnline();
   void RecvPalFile();
 
