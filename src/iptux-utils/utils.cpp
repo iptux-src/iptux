@@ -22,6 +22,7 @@
 #include <arpa/inet.h>
 #include <glib/gi18n.h>
 #include <sys/param.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -633,10 +634,33 @@ ssize_t xwrite(int fd, const void* buf, size_t count) {
 
   size = -1;
   offset = 0;
-  while ((offset != count) && (size != 0)) {
+  while (offset < count) {
     if ((size = write(fd, (char*)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR)
+      if (errno == EINTR || errno == EAGAIN)
         continue;
+      LOG_ERROR("write to %d failed on %zu/%zu: %s", fd, offset, count,
+                strerror(errno));
+      return -1;
+    }
+    offset += size;
+  }
+
+  return offset;
+}
+
+ssize_t xsend(int fd, const void* buf, size_t count) {
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  while (offset < count) {
+    if ((size = send(fd, (char*)buf + offset, count - offset, MSG_NOSIGNAL)) ==
+        -1) {
+      if (errno == EINTR || errno == EAGAIN)
+        continue;
+      LOG_ERROR("send to %d failed on %zu/%zu: %s", fd, offset, count,
+                strerror(errno));
       return -1;
     }
     offset += size;
