@@ -40,7 +40,7 @@ class UdpServer {
   UdpServerStatus status = UdpServerStatus::INITED;
 };
 
-using UdpDataService_U = std::unique_ptr<UdpServer>;
+using UdpServer_U = std::unique_ptr<UdpServer>;
 
 }  // namespace iptux
 

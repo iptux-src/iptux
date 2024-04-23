@@ -85,11 +85,11 @@ void init_iptux_environment() {
 struct CoreThread::Impl {
   PPalInfo me;
 
-  UdpDataService_U udp_server;
+  UdpServer_U udp_server;
 
-  GSList* blacklist{nullptr};  //黑名单链表
+  GSList* blacklist{nullptr};  // 黑名单链表
   bool debugDontBroadcast{false};
-  vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+  vector<shared_ptr<PalInfo>> pallist;  // 好友链表(成员不能被删除)
 
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
   int lastTransTaskId{0};
@@ -514,10 +514,10 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
         return false;
       }
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
-      close(sock);  //关闭网络套接口
+      close(sock);  // 关闭网络套接口
       /*/* 删除此图片 */
       if (chipData.GetDeleteFileAfterSent()) {
-        unlink(ptr);  //此文件已无用处
+        unlink(ptr);  // 此文件已无用处
       }
       return true;
     default:
