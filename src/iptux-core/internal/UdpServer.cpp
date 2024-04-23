@@ -1,30 +1,31 @@
 #include "UdpServer.h"
 
-#include "glib/gi18n.h"
+#include <glib/gi18n.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
 #include "iptux-core/Exception.h"
+#include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux-core/internal/support.h"
-#include <netinet/in.h>
 
 using namespace std;
 namespace iptux {
 
-UdpServer::UdpServer(CoreThread& coreThread)
-    : core_thread_(coreThread) {}
+UdpServer::UdpServer(CoreThread& coreThread) : core_thread_(coreThread) {}
 
 unique_ptr<UdpData> UdpServer::process(in_addr ipv4,
-                                            int port,
-                                            const char buf[],
-                                            size_t size) {
+                                       int port,
+                                       const char buf[],
+                                       size_t size) {
   return process(ipv4, port, buf, size, true);
 }
 
 unique_ptr<UdpData> UdpServer::process(in_addr ipv4,
-                                            int port,
-                                            const char buf[],
-                                            size_t size,
-                                            bool run) {
+                                       int port,
+                                       const char buf[],
+                                       size_t size,
+                                       bool run) {
   if (Log::IsDebugEnabled()) {
     LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
               inAddrToString(ipv4).c_str(), port, size,
@@ -96,7 +97,7 @@ bool UdpServer::start() {
   }
 
   int udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  if(udpSock < 0) {
+  if (udpSock < 0) {
     LOG_ERROR("create udp socket failed: %s", strerror(errno));
     status = UdpServerStatus::START_FAILED;
     return false;
