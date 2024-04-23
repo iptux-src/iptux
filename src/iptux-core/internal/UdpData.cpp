@@ -325,16 +325,16 @@ void UdpData::SomeoneAskShared() {
  */
 void UdpData::SomeoneSendIcon() {
   PPalInfo pal;
-  char* iconfile;
+  string iconfile;
 
   if (!(pal = coreThread.GetPal(ipv4)) || pal->isChanged()) {
     return;
   }
 
   /* 接收并更新数据 */
-  if ((iconfile = RecvPalIcon())) {
+  iconfile = RecvPalIcon();
+  if (!iconfile.empty()) {
     pal->set_icon_file(iconfile);
-    free(iconfile);
     coreThread.EmitIconUpdate(PalKey(ipv4));
   }
 }
