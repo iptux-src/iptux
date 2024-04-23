@@ -208,8 +208,8 @@ void RevisePal::SetAllValue() {
   /* 预置头像 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
-  if (pal->iconfile) {
-    active = IconfileGetItemPos(model, pal->iconfile);
+  if (!pal->icon_file().empty()) {
+    active = IconfileGetItemPos(model, pal->icon_file().c_str());
     gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
   }
   /* 预置兼容性 */
@@ -259,21 +259,20 @@ void RevisePal::ApplyReviseData() {
   snprintf(path, MAX_PATHLEN, "%d", active);
   gtk_tree_model_get_iter_from_string(model, &iter, path);
   gtk_tree_model_get(model, &iter, 1, &file, -1);
-  if (strcmp(pal->iconfile, file) != 0) {
+  if (pal->icon_file() != file) {
     snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
     if (access(path, F_OK) != 0) {
       g_free(file);
-      g_free(pal->iconfile);
       snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
                g_get_user_cache_dir(), ntohl(pal->ipv4.s_addr));
-      pal->iconfile = g_strdup_printf("%" PRIx32, ntohl(pal->ipv4.s_addr));
+      pal->set_icon_file(stringFormat("%" PRIx32, ntohl(pal->ipv4.s_addr)));
       gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
       gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-      gtk_icon_theme_add_builtin_icon(pal->iconfile, MAX_ICONSIZE, pixbuf);
+      gtk_icon_theme_add_builtin_icon(pal->icon_file().c_str(), MAX_ICONSIZE,
+                                      pixbuf);
       g_object_unref(pixbuf);
     } else {
-      g_free(pal->iconfile);
-      pal->iconfile = file;
+      pal->set_icon_file(file);
     }
   } else
     g_free(file);

@@ -11,7 +11,7 @@ TEST(DialogGroup, Constructor) {
   Application* app = CreateApplication();
 
   auto pal = make_shared<PalInfo>();
-  pal->iconfile = g_strdup("pig");
+  pal->set_icon_file("pig");
 
   GroupInfo groupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>({pal}),
                       app->getMe(), "groupname", nullptr);
