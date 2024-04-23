@@ -264,7 +264,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   theme = gtk_icon_theme_get_default();
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
     pal = grpinf->getMembers()[0].get();
-    auto file = iptux_erase_filename_suffix(pal->iconfile);
+    auto file = iptux_erase_filename_suffix(pal->icon_file().c_str());
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                        GtkIconLookupFlags(0), &error);
     if (cpixbuf == nullptr) {

@@ -1494,7 +1494,7 @@ void MainWindow::PallistEntryChanged(GtkWidget* entry, MainWindow* self) {
         strcasestr(pal->getGroup().c_str(), text) || strcasestr(ipstr, text) ||
         strcasestr(pal->getUser().c_str(), text) ||
         strcasestr(pal->getHost().c_str(), text)) {
-      file = iptux_erase_filename_suffix(pal->iconfile);
+      file = iptux_erase_filename_suffix(pal->icon_file().c_str());
       pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                         GtkIconLookupFlags(0), NULL);
       g_free(file);

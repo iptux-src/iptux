@@ -70,8 +70,8 @@ void TcpData::DispatchTcpData() {
   }
 
   /* 分派消息 */
-  size = len;  //设置缓冲区数据的有效长度
-  commandno = iptux_get_dec_number(buf, ':', 4);  //获取命令字
+  size = len;  // 设置缓冲区数据的有效长度
+  commandno = iptux_get_dec_number(buf, ':', 4);  // 获取命令字
   LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s",
            inAddrToString(addr.sin_addr).c_str(), commandno,
            CommandMode(GET_MODE(commandno)).toString().c_str());
@@ -155,9 +155,14 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
       break;
   }
 
+  LOG_INFO("recv sublayer data from %s, save to %s",
+           inAddrToString(pal->ipv4).c_str(), path);
+
   /* 终于可以接收数据了^_^ */
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+    LOG_ERROR("open file %s failed: %s", path, strerror(errno));
     return;
+  }
   RecvSublayerData(fd, strlen(buf) + 1);
   close(fd);
 
@@ -220,7 +225,7 @@ void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
   para.dtlist.push_back(chip);
 
   /* 交给某人处理吧 */
-  coreThread->InsertMessage(move(para));
+  coreThread->InsertMessage(std::move(para));
 }
 
 }  // namespace iptux

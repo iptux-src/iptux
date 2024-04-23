@@ -99,7 +99,7 @@ void DialogGroup::UpdatePalData(PalInfo* pal) {
 
   /* 更新数据 */
   theme = gtk_icon_theme_get_default();
-  file = iptux_erase_filename_suffix(pal->iconfile);
+  file = iptux_erase_filename_suffix(pal->icon_file().c_str());
   pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                     GtkIconLookupFlags(0), NULL);
   g_free(file);
@@ -122,7 +122,7 @@ void DialogGroup::InsertPalData(PalInfo* pal) {
   gchar* file;
 
   theme = gtk_icon_theme_get_default();
-  file = iptux_erase_filename_suffix(pal->iconfile);
+  file = iptux_erase_filename_suffix(pal->icon_file().c_str());
   pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                     GtkIconLookupFlags(0), NULL);
   g_free(file);
@@ -339,7 +339,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel* model) {
   g_cthrd->Lock();
   for (auto ppal : grpinf->getMembers()) {
     pal = ppal.get();
-    file = iptux_erase_filename_suffix(pal->iconfile);
+    file = iptux_erase_filename_suffix(pal->icon_file().c_str());
     pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                       GtkIconLookupFlags(0), NULL);
     g_free(file);

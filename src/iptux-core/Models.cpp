@@ -30,7 +30,6 @@ PalInfo::PalInfo()
       segdes(NULL),
       photo(NULL),
       sign(NULL),
-      iconfile(NULL),
       packetn(0),
       rpacketn(0),
       flags(0) {}
@@ -39,7 +38,6 @@ PalInfo::~PalInfo() {
   g_free(segdes);
   g_free(photo);
   g_free(sign);
-  g_free(iconfile);
 }
 
 bool PalInfo::isCompatible() const {
@@ -117,7 +115,7 @@ string PalInfo::toString() const {
       "photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
       inAddrToString(ipv4).c_str(), name.c_str(), segdes, version.c_str(),
       user.c_str(), host.c_str(), group.c_str(), photo ? photo : "(NULL)",
-      sign ? sign : "(NULL)", iconfile, encode.c_str(), int(packetn),
+      sign ? sign : "(NULL)", icon_file_.c_str(), encode.c_str(), int(packetn),
       int(rpacketn), int(flags));
 }
 
