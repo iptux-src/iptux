@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
+  <!-- https://www.freedesktop.org/software/appstream/docs/index.html -->
   <id>io.github.iptux_src.iptux</id>
 
   <name>iptux</name>
   <summary>LAN communication software</summary>
+  <icon type="stock">iptux-icon</icon>
 
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>GPL-2.0-or-later</project_license>
+  <project_license>GPL-2.0</project_license>
+  <content_rating type="oars-1.0"/>
 
   <description>
     <p>
@@ -28,4 +31,22 @@
   </description>
 
   <launchable type="desktop-id">io.github.iptux_src.iptux.desktop</launchable>
+  <releases>
+    <release version="0.8.4" date="2020-01-01" type="stable">
+      <description>
+        <ul>
+          <li>Fix typo in the Preferences dialog.</li>
+          <li>Fix window resize behavior.</li>
+          <li>Improve crash handler.</li>
+          <li>Fix bug in menu.</li>
+        </ul>
+        <p>Translation updates:</p>
+        <ul>
+          <li>New Portuguese translation. Thanks to inkhorn.</li>
+          <li>New Ukrainian translation. Thanks to Сергій.</li>
+          <li>Polish translation. Thanks to Eryk Michalak.</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
 </component>
