@@ -4,7 +4,7 @@ ascli_exe = find_program('appstreamcli', required: true)
 metainfo_with_relinfo = custom_target('gen-output',
     input : ['../../NEWS', metainfo_file[0]],
     output : ['nol10n_withrelinfo_io.github.iptux_src.iptux.metainfo.xml'],
-    command : [ascli_exe, 'news-to-metainfo', '--limit=2', '@INPUT0@', '@INPUT1@', '@OUTPUT@']
+    command : [ascli_exe, 'news-to-metainfo', '--limit=6', '@INPUT0@', '@INPUT1@', '@OUTPUT@']
 )
 
 
