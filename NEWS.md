@@ -1,3 +1,3 @@
 # NEWS
 
-moved to [[NEWS]].
+moved to [NEWS].

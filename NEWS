@@ -3,10 +3,10 @@ Version 0.8.5
 Released: 2024-04-14
 
 Bugfixes:
- * Fix typo in the Preferences dialog. (issue #516)
- * Fix window resize behavior. (issue #520)
- * Improve crash handler. (issues #531, #533)
- * Fix bug in menu. (issue #536)
+ * [#516] Fix typo in the Preferences dialog.
+ * [#520] Fix window resize behavior.
+ * [#531, #533] Improve crash handler.
+ * [#536] Fix bug in menu.
 
 Translation:
  * New Portuguese translation. Thanks to inkhorn.
@@ -18,14 +18,14 @@ Version 0.8.4
 Released: 2023-06-16
 
 Features:
- * [#482] add "What's New" in the menu. (issue #482)
- * `<Primary>W` can close all kinds of windows. (issue #485)
+ * [#482] add "What's New" in the menu.
+ * [#485] `<Primary>W` can close all kinds of windows.
 
 Bugfixes:
- * chatbox can remember the unsent text. (issue #481)
- * improve meson config, Thanks to @r-value for the patch. (issues #492, #495)
- * update Preferences dialog. (issue #497)
- * show quit and preference menu when no appmenu. (issue #514)
+ * [#481] chatbox can remember the unsent text.
+ * [#492, #495] improve meson config, Thanks to @r-value for the patch.
+ * [#497] update Preferences dialog.
+ * [#514] show quit and preference menu when no appmenu.
 
 Translation:
   * Portuguese (Brazil) - Thanks to inkhorn
