@@ -28,6 +28,10 @@
     </p>
   </description>
 
+  <provides>
+    <binary>iptux</binary>
+  </provides>
+
   <categories>
     <category>Network</category>
     <category>InstantMessaging</category>

@@ -21,7 +21,7 @@ jobs:
             ~/Library/Caches/Homebrew
           key: ${{ runner.os }}-v1
       - name: brew install
-        run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2
+        run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2 appstream
       - name: meson
         run: meson setup build
       - name: build

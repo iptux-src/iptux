@@ -21,6 +21,14 @@ metainfo_i18n = i18n.merge_file(
     install_dir: join_paths (get_option ('datadir'), 'metainfo')
 )
 
+desktop_file = custom_target('gen-desktop',
+    input : metainfo_i18n,
+    output : ['io.gitub.iptux_src.iptux.desktop'],
+    command : [ascli_exe, 'make-desktop-file', '@INPUT@', '@OUTPUT@'],
+    install: true,
+    install_dir: join_paths (get_option ('datadir'), 'applications')
+)
+
 # Validate MetaInfo file
 test('validate metainfo file',
       ascli_exe,
