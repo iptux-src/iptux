@@ -9,7 +9,7 @@ on:
 env:
   DEB_PKGS: >-
     g++ meson appstream gettext libgoogle-glog-dev libgtk-3-dev libglib2.0-dev
-    libjsoncpp-dev libsigc++-2.0-dev
+    libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
   DEB_TEST_PKGS: xvfb
   MAC_PKGS: >-
     meson appstream gettext glog gtk+3 jsoncpp gtk-mac-integration libsigc++@2
