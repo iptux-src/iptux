@@ -48,6 +48,8 @@ jobs:
           sudo apt update &&
           apt-cache show libgoogle-glog-dev &&
           apt-cache show libgflags-dev &&
+          apt-cache show libunwind-dev &&
+          sudo apt install libunwind-dev &&
           sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev
           libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
           libayatana-appindicator3-dev appstream gettext
