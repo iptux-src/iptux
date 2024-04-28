@@ -13,15 +13,13 @@
 
   <description>
     <p>
-      iptux is an “IP Messenger” client.
-    </p>
-    <p>
-       It can:
+      iptux is an “IP Messenger” client. The features of iptux include:
     </p>
     <ul>
     <li>auto-detect other clients on the intranet.</li>
-    <li>send messages to other clients.</li>
-    <li>send files to other clients.</li>
+    <li>send/recv messages to other clients.</li>
+    <li>send/recv files to other clients.</li>
+    <li>share your files to other cliens (with optional password protection).</li>
     </ul>
     <p>
       It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from China,
@@ -30,23 +28,17 @@
     </p>
   </description>
 
+  <categories>
+    <category>Network</category>
+    <category>InstantMessaging</category>
+    <category>Chat</category>
+    <category>FileTransfer</category>
+    <category>GTK</category>
+  </categories>
+
+  <translation type="gettext">iptux</translation>
+  <url type="homepage">https://github.com/iptux-src/iptux</url>
+  <url type="bugtracker">https://github.com/iptux-src/iptux/issues</url>
+
   <launchable type="desktop-id">io.github.iptux_src.iptux.desktop</launchable>
-  <releases>
-    <release version="0.8.4" date="2020-01-01" type="stable">
-      <description>
-        <ul>
-          <li>Fix typo in the Preferences dialog.</li>
-          <li>Fix window resize behavior.</li>
-          <li>Improve crash handler.</li>
-          <li>Fix bug in menu.</li>
-        </ul>
-        <p>Translation updates:</p>
-        <ul>
-          <li>New Portuguese translation. Thanks to inkhorn.</li>
-          <li>New Ukrainian translation. Thanks to Сергій.</li>
-          <li>Polish translation. Thanks to Eryk Michalak.</li>
-        </ul>
-      </description>
-    </release>
-  </releases>
 </component>
