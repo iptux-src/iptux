@@ -2,6 +2,7 @@
 #define IPTUX_APPLICATION_H
 
 #include <gtk/gtk.h>
+#include <memory>
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
@@ -13,6 +14,7 @@ namespace iptux {
 
 class MainWindow;
 class UiCoreThread;
+class IptuxAppIndicator;
 typedef GtkWindow TransWindow;
 typedef GtkDialog ShareFile;
 
@@ -33,13 +35,17 @@ class Application {
   LogSystem* getLogSystem() { return logSystem; }
   std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
+  bool use_header_bar() { return use_header_bar_; }
   void refreshTransTasks();
   PPalInfo getMe();
+  GMenuModel* menu() { return menu_; }
 
  private:
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<ProgramData> data;
   std::shared_ptr<UiCoreThread> cthrd;
+  std::shared_ptr<IptuxAppIndicator> app_indicator;
+  bool enable_app_indicator_ = true;
 
   GtkApplication* app;
   GtkBuilder* menuBuilder;
@@ -52,12 +58,15 @@ class Application {
   EventAdaptor* eventAdaptor = 0;
   LogSystem* logSystem = 0;
   NotificationService* notificationService = 0;
+  GMenuModel* menu_ = 0;
+  bool use_header_bar_ = false;
   bool started{false};
 
  public:
   // for test
   void startup();
   void activate();
+  void set_enable_app_indicator(bool enable) { enable_app_indicator_ = enable; }
 
  private:
   void onEvent(std::shared_ptr<const Event> event);
@@ -65,6 +74,7 @@ class Application {
   void updateItemToTransTree(const TransFileModel& para);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
+  static void onOpenMainWindow(void*, void*, Application& self);
   static void onPreferences(void*, void*, Application& self);
   static void onQuit(void*, void*, Application& self);
   static void onStartup(Application& self);

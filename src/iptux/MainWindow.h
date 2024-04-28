@@ -37,8 +37,7 @@ class MainWindow : public sigc::trackable {
   ~MainWindow();
 
   GtkWidget* getWindow();
-
-  void AlterWindowMode();
+  void Show();
 
   bool PaltreeContainItem(in_addr ipv4);
   void UpdateItemToPaltree(in_addr ipv4);
@@ -52,6 +51,10 @@ class MainWindow : public sigc::trackable {
 
   Application* getApp() { return app; }
 
+  PalTreeModelSortKey sort_key() const { return sort_key_; }
+  GtkSortType sort_type() const { return sort_type_; }
+  GroupInfoStyle info_style() const { return info_style_; }
+
  private:
   Application* app;
   UiCoreThread& coreThread;
@@ -61,25 +64,34 @@ class MainWindow : public sigc::trackable {
   std::shared_ptr<ProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
 
-  GData* widset;         //窗体集
-  GData* mdlset;         //数据model集
-  GList* tmdllist;       // model链表，用于构建model循环结构
-  GtkAccelGroup* accel;  //快捷键集组
-  guint timerid;         // UI更新定时器ID
+  GData* widset;  // 窗体集
+  GData* mdlset;  // 数据model集
+  PalTreeModel* regular_model = 0;
+
+  GList* tmdllist;  // model链表，用于构建model循环结构
+  guint timerid;    // UI更新定时器ID
+  struct tm info_refresh_tm;
   WindowConfig windowConfig;
   GtkBuilder* builder;
   GtkMenu* palPopupMenu;
 
   GroupInfo* currentGroupInfo = 0;
+  GtkSortType sort_type_ = GTK_SORT_DESCENDING;
+  PalTreeModelSortKey sort_key_ = PalTreeModelSortKey::LAST_ACTIVITY;
+  GroupInfoStyle info_style_ = GroupInfoStyle::LAST_MESSAGE;
 
  private:
   void setCurrentGroupInfo(GroupInfo* groupInfo);
 
   void InitSublayer();
+  void LoadConfig();
+  void SaveConfig();
   void ClearSublayer();
 
   void CreateWindow();
   GtkWidget* CreateMainWindow();
+  void CreateActions();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateToolBar();
@@ -90,6 +102,11 @@ class MainWindow : public sigc::trackable {
   GtkWidget* CreatePaltreeTree(GtkTreeModel* model);
   GtkWidget* CreatePallistTree(GtkTreeModel* model);
 
+  /**
+   * @brief refresh pal list, used when change view options.
+   */
+  void RefreshPalList();
+  void RefreshPalListRegular();
   bool GroupGetPrevPaltreeItem(GtkTreeModel* model,
                                GtkTreeIter* iter,
                                GroupInfo* grpinf);
@@ -176,6 +193,9 @@ class MainWindow : public sigc::trackable {
   static void onSortBy(GSimpleAction* action,
                        GVariant* value,
                        MainWindow& self);
+  static void onInfoStyle(GSimpleAction* action,
+                          GVariant* value,
+                          MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
   void onGroupInfoUpdated(GroupInfo* groupInfo);
 };

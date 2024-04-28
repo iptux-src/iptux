@@ -46,6 +46,7 @@ class DialogPeer : public DialogBase {
   void init();
 
   GtkWindow* CreateMainWindow();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateInfoArea();
@@ -65,6 +66,7 @@ class DialogPeer : public DialogBase {
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara* PackageMsg(const std::vector<ChipData>& dtlist);
   void refreshSendAction();
+  std::string GetTitle();
 
   //回调处理部分
  private:

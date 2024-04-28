@@ -1,18 +1,6 @@
 # NEWS
 
-## [0.8.4] (2021-??-??)
-
-* [#481](https://github.com/iptux-src/iptux/issues/481) chatbox can remember the unsent text.
-* [#482](https://github.com/iptux-src/iptux/issues/482) add "What's New" in the menu.
-* [#485](https://github.com/iptux-src/iptux/issues/485) `<Primary>W` can close all kinds of windows.
-* [#492](https://github.com/iptux-src/iptux/pull/492) [#495](https://github.com/iptux-src/iptux/pull/495) improve meson config, Thanks to @r-value for the patch.
-* [#497](https://github.com/iptux-src/iptux/pull/497) update Preferences dialog.
-* Translation updates:
-  * Portuguese (Brazil) - Thanks to inkhorn
-
-## [0.8.3] (2021-10-07)
-
-* [#476] open chat when clicking the new message notification (only works under Linux).
+the NEWS after version 0.8.2 had been moved to [NEWS](https://github.com/iptux-src/iptux/blob/master/NEWS).
 
 ## [0.8.2] (2021-06-21)
 
@@ -179,7 +167,12 @@
 
 * 2008-12-04 新上传三个二进制包，由网友 mdjhu@sina.com 提供
 
-[unreleased]: https://github.com/iptux-src/iptux/compare/v0.7.6...HEAD
+[unreleased]: https://github.com/iptux-src/iptux/compare/v0.8.4...HEAD
+[0.8.4]: https://github.com/iptux-src/iptux/compare/v0.8.3...v0.8.4
+[0.8.3]: https://github.com/iptux-src/iptux/compare/v0.8.2...v0.8.3
+[0.8.2]: https://github.com/iptux-src/iptux/compare/v0.8.1...v0.8.2
+[0.8.1]: https://github.com/iptux-src/iptux/compare/v0.8.0...v0.8.1
+[0.8.0]: https://github.com/iptux-src/iptux/compare/v0.7.6...v0.8.0
 [0.7.6]: https://github.com/iptux-src/iptux/compare/v0.7.5...v0.7.6
 [0.7.5]: https://github.com/iptux-src/iptux/compare/v0.7.4...v0.7.5
 [0.7.4]: https://github.com/iptux-src/iptux/compare/v0.7.3...v0.7.4
@@ -191,3 +184,4 @@
 [0.6.3]: https://github.com/iptux-src/iptux/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/iptux-src/iptux/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/iptux-src/iptux/compare/v0.6.0...v0.6.1
+

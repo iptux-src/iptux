@@ -126,7 +126,7 @@ void Command::DialUp(int sock) {
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
 
-  //与某些代码片段的获取网段描述相冲突，必须复制出来使用
+  // 与某些代码片段的获取网段描述相冲突，必须复制出来使用
   programData->Lock();
   vector<NetSegment> list = programData->getNetSegments();
   programData->Unlock();
@@ -209,7 +209,7 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char* msg) {
     throw Exception(PAL_KEY_NOT_EXIST);
   }
 
-  pal2->rpacketn = packetno = packetn;  //此数据包需要检验回复
+  pal2->rpacketn = packetno = packetn;  // 此数据包需要检验回复
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_SENDMSG, msg);
   ConvertEncode(pal->getEncode());
 
@@ -297,7 +297,7 @@ bool Command::SendAskData(int sock,
            offset);
   // IPMSG和Feiq的命令字段都是只有IPMSG_GETFILEDATA,使用(IPMSG_FILEATTACHOPT |
   // IPMSG_GETFILEDATA）
-  //会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
+  // 会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
   if (strstr(pal->getVersion().c_str(), iptuxstr))
     CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
   else
@@ -311,7 +311,7 @@ bool Command::SendAskData(int sock,
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
-      (xwrite(sock, buf, size) == -1))
+      (xsend(sock, buf, size) == -1))
     return false;
 
   return true;
@@ -350,7 +350,7 @@ bool Command::SendAskFiles(int sock,
   struct sockaddr_in addr;
 
   snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno,
-           fileid);  //兼容LanQQ软件
+           fileid);  // 兼容LanQQ软件
   CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
   ConvertEncode(pal->getEncode());
 
@@ -361,7 +361,7 @@ bool Command::SendAskFiles(int sock,
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
-      (xwrite(sock, buf, size) == -1))
+      (xsend(sock, buf, size) == -1))
     return false;
 
   return true;
@@ -464,7 +464,7 @@ void Command::SendSublayer(int sock,
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
-      (xwrite(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1)) {
+      (xsend(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1)) {
     LOG_WARN("send tcp message failed");
     return;
   }
@@ -503,7 +503,7 @@ void Command::SendSublayerData(int sock, int fd) {
   do {
     if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
       break;
-    if ((len = xwrite(sock, buf, len)) <= 0)
+    if ((len = xsend(sock, buf, len)) <= 0)
       break;
   } while (1);
 }
@@ -640,11 +640,11 @@ FileInfo decodeFileInfo(char** extra) {
     throw Exception(INVALID_FILE_ATTR, stringFormat("decode failed: %s", s));
   }
 
-  //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
+  // 分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
   *extra = strchr(*extra, '\a');
-  if (*extra)  //跳过'\a'字符
+  if (*extra)  // 跳过'\a'字符
     (*extra)++;
-  if (*extra && (**extra == ':'))  //跳过可能存在的':'字符
+  if (*extra && (**extra == ':'))  // 跳过可能存在的':'字符
     (*extra)++;
 
   return file;
@@ -669,7 +669,8 @@ vector<FileInfo> Command::decodeFileInfos(const string& s) {
 }
 
 string Command::encodeFileInfo(const FileInfo& fileInfo) {
-  auto name = ipmsg_get_filename_pal(fileInfo.filepath);  //获取面向好友的文件名
+  auto name =
+      ipmsg_get_filename_pal(fileInfo.filepath);  // 获取面向好友的文件名
   auto res = stringFormat(
       "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a:", fileInfo.fileid,
       name, fileInfo.filesize, fileInfo.filectime, fileInfo.fileattr);

@@ -3,6 +3,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <ctime>
 #include <glib/gi18n.h>
 #include <sys/socket.h>
 
@@ -285,6 +286,51 @@ GActionEntry makeStateActionEntry(const string& name,
 gboolean gtk_window_iconify_on_delete(GtkWindow* window) {
   gtk_window_iconify(window);
   return TRUE;
+}
+
+GtkHeaderBar* CreateHeaderBar(GtkWindow* window, GMenuModel* menu) {
+  GtkBuilder* builder =
+      gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/HeaderBar.ui");
+  GtkHeaderBar* headerBar =
+      GTK_HEADER_BAR(gtk_builder_get_object(builder, "header_bar"));
+  gtk_header_bar_set_has_subtitle(headerBar, FALSE);
+  auto menuButton = gtk_builder_get_object(builder, "menu_button");
+  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menuButton), menu);
+  gtk_window_set_titlebar(window, GTK_WIDGET(headerBar));
+
+  g_object_unref(builder);
+  return headerBar;
+}
+
+std::string TimeToStr(time_t t) {
+  time_t now = time(nullptr);
+  return TimeToStr_(t, now);
+}
+
+std::string TimeToStr_(time_t t, time_t now) {
+  struct tm tm_t;
+  struct tm tm_now;
+  localtime_r(&t, &tm_t);
+  localtime_r(&now, &tm_now);
+  char res[11];
+  if (tm_t.tm_year == tm_now.tm_year && tm_t.tm_yday == tm_now.tm_yday) {
+    strftime(res, sizeof(res), "%H:%M", &tm_t);
+  } else {
+    strftime(res, sizeof(res), "%F", &tm_t);
+  }
+  return res;
+}
+
+string StrFirstNonEmptyLine(const string& s) {
+  size_t pos = s.find_first_not_of(" \r\n");
+  if (pos == string::npos) {
+    return "";
+  }
+  size_t pos2 = s.find_first_of("\r\n", pos);
+  if (pos2 == string::npos) {
+    return s.substr(pos);
+  }
+  return s.substr(pos, pos2 - pos);
 }
 
 }  // namespace iptux

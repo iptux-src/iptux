@@ -57,6 +57,7 @@ DialogGroup* DialogGroup::GroupDialogEntry(Application* app,
 
   dlggrp = new DialogGroup(app, grpinf);
   window = GTK_WIDGET(dlggrp->CreateMainWindow());
+  dlggrp->CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), dlggrp->CreateAllArea());
   gtk_widget_show_all(window);
 
@@ -83,7 +84,7 @@ void DialogGroup::UpdatePalData(PalInfo* pal) {
   /* 查询项所在的位置，若没有则添加 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "member-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  data = NULL;  //防止可能出现的(data == pal)
+  data = NULL;  // 防止可能出现的(data == pal)
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
       gtk_tree_model_get(model, &iter, 3, &data, -1);
@@ -98,7 +99,7 @@ void DialogGroup::UpdatePalData(PalInfo* pal) {
 
   /* 更新数据 */
   theme = gtk_icon_theme_get_default();
-  file = iptux_erase_filename_suffix(pal->iconfile);
+  file = iptux_erase_filename_suffix(pal->icon_file().c_str());
   pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                     GtkIconLookupFlags(0), NULL);
   g_free(file);
@@ -121,7 +122,7 @@ void DialogGroup::InsertPalData(PalInfo* pal) {
   gchar* file;
 
   theme = gtk_icon_theme_get_default();
-  file = iptux_erase_filename_suffix(pal->iconfile);
+  file = iptux_erase_filename_suffix(pal->icon_file().c_str());
   pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                     GtkIconLookupFlags(0), NULL);
   g_free(file);
@@ -195,10 +196,8 @@ void DialogGroup::SaveUILayout() {
  * @return 窗口
  */
 GtkWindow* DialogGroup::CreateMainWindow() {
-  char buf[MAX_BUFLEN];
   window = GTK_APPLICATION_WINDOW(gtk_application_window_new(app->getApp()));
-  snprintf(buf, MAX_BUFLEN, _("Talk with the group %s"), grpinf->name.c_str());
-  gtk_window_set_title(GTK_WINDOW(window), buf);
+  gtk_window_set_title(GTK_WINDOW(window), GetTitle().c_str());
   gtk_window_set_default_size(GTK_WINDOW(window),
                               config->GetInt("group_window_width", 500),
                               config->GetInt("group_window_height", 350));
@@ -247,7 +246,7 @@ GtkWidget* DialogGroup::CreateAllArea() {
   gtk_paned_set_position(
       GTK_PANED(memberEnclosurePaned),
       config->GetInt("group_memberenclosure_paned_divide", 100));
-  gtk_paned_pack1(GTK_PANED(mainPaned), memberEnclosurePaned, FALSE, TRUE);
+  gtk_paned_pack1(GTK_PANED(mainPaned), memberEnclosurePaned, FALSE, FALSE);
   g_signal_connect_swapped(memberEnclosurePaned, "notify::position",
                            G_CALLBACK(onUIChanged), this);
 
@@ -340,7 +339,7 @@ void DialogGroup::FillMemberModel(GtkTreeModel* model) {
   g_cthrd->Lock();
   for (auto ppal : grpinf->getMembers()) {
     pal = ppal.get();
-    file = iptux_erase_filename_suffix(pal->iconfile);
+    file = iptux_erase_filename_suffix(pal->icon_file().c_str());
     pixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                       GtkIconLookupFlags(0), NULL);
     g_free(file);
@@ -604,7 +603,7 @@ bool DialogGroup::SendTextMsg() {
 
   /* 考察缓冲区内是否存在数据 */
   textview = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
-  gtk_widget_grab_focus(textview);  //为下一次任务做准备
+  gtk_widget_grab_focus(textview);  // 为下一次任务做准备
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
   gtk_text_buffer_get_bounds(buffer, &start, &end);
   if (gtk_text_iter_equal(&start, &end))
@@ -715,6 +714,17 @@ void DialogGroup::onSortType(GSimpleAction* action,
   gtk_tree_sortable_set_sort_column_id(
       GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
   g_simple_action_set_state(action, value);
+}
+
+void DialogGroup::CreateTitle() {
+  if (app->use_header_bar()) {
+    GtkHeaderBar* header_bar = CreateHeaderBar(GTK_WINDOW(window), app->menu());
+    gtk_header_bar_set_title(header_bar, GetTitle().c_str());
+  }
+}
+
+string DialogGroup::GetTitle() {
+  return stringFormat(_("Talk with the group %s"), grpinf->name().c_str());
 }
 
 }  // namespace iptux

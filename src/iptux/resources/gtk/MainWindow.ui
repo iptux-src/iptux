@@ -1,43 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.20" />
   <menu id="pal-popup">
-      <section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Send Message</attribute>
+        <attribute name="action">win.pal.send_message</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Request Shared Resources</attribute>
+        <attribute name="action">win.pal.request_shared_resources</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Change Info</attribute>
+        <attribute name="action">win.pal.change_info</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Delete Pal</attribute>
+        <attribute name="action">win.pal.delete_pal</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name='label' translatable='yes'>Sort</attribute>
+        <section>
           <item>
-              <attribute name="label" translatable="yes">Send Message</attribute>
-              <attribute name="action">win.pal.send_message</attribute>
+            <attribute name='label' translatable='yes'>By Nickname</attribute>
+            <attribute name='action'>win.sort_by</attribute>
+            <attribute name='target'>nickname</attribute>
           </item>
           <item>
-              <attribute name="label" translatable="yes">Request Shared Resources</attribute>
-              <attribute name="action">win.pal.request_shared_resources</attribute>
+            <attribute name='label' translatable='yes'>By Username</attribute>
+            <attribute name='action'>win.sort_by</attribute>
+            <attribute name='target'>username</attribute>
           </item>
           <item>
-              <attribute name="label" translatable="yes">Change Info</attribute>
-              <attribute name="action">win.pal.change_info</attribute>
+            <attribute name='label' translatable='yes'>By IP</attribute>
+            <attribute name='action'>win.sort_by</attribute>
+            <attribute name='target'>ip</attribute>
           </item>
           <item>
-              <attribute name="label" translatable="yes">Delete Pal</attribute>
-              <attribute name="action">win.pal.delete_pal</attribute>
+            <attribute name='label' translatable='yes'>By Host</attribute>
+            <attribute name='action'>win.sort_by</attribute>
+            <attribute name='target'>host</attribute>
           </item>
-      </section>
+          <item>
+            <attribute name='label' translatable='yes'>By Last Activity</attribute>
+            <attribute name='action'>win.sort_by</attribute>
+            <attribute name='target'>last_activity</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name='label' translatable='yes'>Ascending</attribute>
+            <attribute name='action'>win.sort_type</attribute>
+            <attribute name='target'>ascending</attribute>
+          </item>
+          <item>
+            <attribute name='label' translatable='yes'>Descending</attribute>
+            <attribute name='action'>win.sort_type</attribute>
+            <attribute name='target'>descending</attribute>
+          </item>
+        </section>
+      </submenu>
+      <submenu>
+        <attribute name='label' translatable='yes'>Info Style</attribute>
+        <section>
+          <item>
+            <attribute name='label' translatable='yes'>IP</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>ip</attribute>
+          </item>
+          <item>
+            <attribute name='label' translatable='yes'>Host</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>host</attribute>
+          </item>
+          <item>
+            <attribute name='label' translatable='yes'>Username</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>username</attribute>
+          </item>
+          <item>
+            <attribute name='label' translatable='yes'>Version</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>version</attribute>
+          </item>
+          <item>
+            <attribute name='label' translatable='yes'>Last Activity</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>last_activity</attribute>
+          </item>
+          <item>
+            <attribute name='label' translatable='yes'>Last Message</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>last_message</attribute>
+          </item>
+        </section>
+      </submenu>
+    </section>
   </menu>
-  <object class="GtkHeaderBar" id="header_bar">
-    <property name="visible">True</property>
-    <property name="show-close-button">True</property>
-    <child>
-      <object class="GtkMenuButton" id="menu_button">
-        <property name="visible">True</property>
-        <property name="use_popover">False</property>
-        <property name="image">menu_image</property>
-      </object>
-      <packing>
-        <property name="pack_type">end</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkImage" id="menu_image">
-    <property name="visible">True</property>
-    <property name="icon_name">open-menu-symbolic</property>
-  </object>
 </interface>

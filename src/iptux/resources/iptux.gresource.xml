@@ -2,7 +2,9 @@
 <gresources>
     <gresource prefix="/io/github/iptux_src/iptux">
         <file preprocess="xml-stripblanks">gtk/AboutDialog.ui</file>
+        <file preprocess="xml-stripblanks">gtk/AppIndicator.ui</file>
         <file preprocess="xml-stripblanks">gtk/DetectPal.ui</file>
+        <file preprocess="xml-stripblanks">gtk/HeaderBar.ui</file>
         <file preprocess="xml-stripblanks">gtk/MainWindow.ui</file>
         <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     </gresource>

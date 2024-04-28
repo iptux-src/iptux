@@ -9,6 +9,7 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/AboutDialog.h"
+#include "iptux/AppIndicator.h"
 #include "iptux/DataSettings.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/IptuxResource.h"
@@ -45,7 +46,7 @@ void onReportBug() {
 }
 
 void onWhatsNew() {
-  iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS.md");
+  iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS");
 }
 
 void iptux_init(LogSystem* logSystem) {
@@ -81,6 +82,7 @@ Application::Application(shared_ptr<IptuxConfig> config)
   notificationService = new TerminalNotifierNoticationService();
 #else
   notificationService = new GioNotificationService();
+  use_header_bar_ = true;
   // GError* error = nullptr;
   // if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
   //   LOG_WARN("g_application_register failed: %s-%d-%s",
@@ -126,6 +128,33 @@ void Application::onStartup(Application& self) {
   self.data = make_shared<ProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
+  if (self.enable_app_indicator_) {
+    self.app_indicator = make_shared<IptuxAppIndicator>(&self);
+  }
+
+  bool use_app_menu = true;
+#if SYSTEM_DARWIN
+#else
+  use_app_menu = gtk_application_prefers_app_menu(self.app);
+#endif
+
+  if (use_app_menu) {
+    auto app_menu =
+        G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "appmenu"));
+    gtk_application_set_app_menu(GTK_APPLICATION(self.app), app_menu);
+    self.menu_ = G_MENU_MODEL(
+        gtk_builder_get_object(self.menuBuilder, "menubar-when-app-menu"));
+    if (!self.use_header_bar()) {
+      gtk_application_set_menubar(GTK_APPLICATION(self.app), self.menu());
+    }
+  } else {
+    self.menu_ = G_MENU_MODEL(
+        gtk_builder_get_object(self.menuBuilder, "menubar-when-no-app-menu"));
+    if (!self.use_header_bar()) {
+      gtk_application_set_menubar(GTK_APPLICATION(self.app), self.menu());
+    }
+  }
+
   self.window = new MainWindow(&self, *self.cthrd);
   self.eventAdaptor = new EventAdaptor(
       self.cthrd->signalEvent,
@@ -149,16 +178,11 @@ void Application::onStartup(Application& self) {
       makeActionEntry("about", G_ACTION_CALLBACK(onAbout)),
       makeParamActionEntry("open-chat", G_ACTION_CALLBACK(onOpenChat), "s"),
       makeActionEntry("window.close", G_ACTION_CALLBACK(onWindowClose)),
+      makeActionEntry("open_main_window", G_ACTION_CALLBACK(onOpenMainWindow)),
   };
 
   g_action_map_add_action_entries(G_ACTION_MAP(self.app), app_entries,
                                   G_N_ELEMENTS(app_entries), &self);
-  auto app_menu =
-      G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "appmenu"));
-  gtk_application_set_app_menu(GTK_APPLICATION(self.app), app_menu);
-  auto menubar =
-      G_MENU_MODEL(gtk_builder_get_object(self.menuBuilder, "menubar"));
-  gtk_application_set_menubar(GTK_APPLICATION(self.app), menubar);
 
   add_accelerator(self.app, "app.quit", "<Primary>Q");
   add_accelerator(self.app, "win.refresh", "F5");
@@ -201,6 +225,10 @@ void Application::onQuit(void*, void*, Application& self) {
 
 void Application::onPreferences(void*, void*, Application& self) {
   DataSettings::ResetDataEntry(&self, GTK_WIDGET(self.window->getWindow()));
+}
+
+void Application::onOpenMainWindow(void*, void*, Application& self) {
+  self.getMainWindow()->Show();
 }
 
 void Application::onToolsTransmission(void*, void*, Application& self) {
