@@ -163,7 +163,7 @@ jobs:
           # Produce a binary artifact and place it in the mounted volume
           run: |
             meson setup build
-            ninja -v -C build
+            ninja -C build
             meson install -C build
             xvfb-run -a meson test -C build --verbose --no-stdsplit
 
