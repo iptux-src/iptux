@@ -120,6 +120,8 @@ jobs:
           #  distro: ubuntu20.04
           - arch: armv7
             distro: ubuntu20.04
+          - arch: armv6
+            distro: bookworm
 
     steps:
       - uses: actions/checkout@v2.1.0
@@ -155,11 +157,8 @@ jobs:
           # publicly in your project's package repository, so it is vital that
           # no secrets are present in the container state or logs.
           install: |
-            case "${{ matrix.distro }}" in
-              ubuntu*|jessie|stretch|buster)
-                apt-get update -q -y
-                apt-get install -q -y ${DEB_PKGS} ${DEB_TEST_PKGS}
-            esac
+            apt-get update -q -y
+            apt-get install -q -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
 
           # Produce a binary artifact and place it in the mounted volume
           run: |
