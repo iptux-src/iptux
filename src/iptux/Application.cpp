@@ -46,7 +46,7 @@ void onReportBug() {
 }
 
 void onWhatsNew() {
-  iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS.md");
+  iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS");
 }
 
 void iptux_init(LogSystem* logSystem) {
