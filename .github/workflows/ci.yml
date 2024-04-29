@@ -2,9 +2,17 @@ name: CI
 
 on:
   push:
-    branches: ["**"]
+    branches: [master]
   pull_request:
     branches: [master]
+
+env:
+  DEB_PKGS: >-
+    g++ meson appstream gettext libgoogle-glog-dev libgtk-3-dev libglib2.0-dev
+    libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
+  DEB_TEST_PKGS: xvfb
+  MAC_PKGS: >-
+    meson appstream gettext glog gtk+3 jsoncpp gtk-mac-integration libsigc++@2
 
 jobs:
   build-on-mac:
@@ -21,7 +29,8 @@ jobs:
             ~/Library/Caches/Homebrew
           key: ${{ runner.os }}-v1
       - name: brew install
-        run: brew install --display-times meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2 appstream
+        run: >-
+          brew install --display-times ${{ env.MAC_PKGS }}
       - name: meson
         run: meson setup build
       - name: build
@@ -46,9 +55,7 @@ jobs:
       - name: apt install
         run: >-
           sudo apt update &&
-          sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev
-          libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
-          libayatana-appindicator3-dev appstream gettext
+          sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
       - name: meson
         run: |
           meson --version
@@ -70,9 +77,7 @@ jobs:
       - name: apt install
         run: >-
           sudo apt update &&
-          sudo apt install -y lcov libgoogle-glog-dev libgtk-3-dev
-          libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
-          libayatana-appindicator3-dev appstream gettext
+          sudo apt install -y lcov ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
       - name: meson
         run: meson setup -D b_coverage=true build
       - name: build
@@ -115,10 +120,12 @@ jobs:
           #  distro: ubuntu20.04
           - arch: armv7
             distro: ubuntu20.04
+          #- arch: armv6
+          #  distro: bookworm
 
     steps:
       - uses: actions/checkout@v2.1.0
-      - uses: uraimo/run-on-arch-action@v2.0.5
+      - uses: uraimo/run-on-arch-action@v2
         name: Build artifact
         id: build
         with:
@@ -150,25 +157,13 @@ jobs:
           # publicly in your project's package repository, so it is vital that
           # no secrets are present in the container state or logs.
           install: |
-            case "${{ matrix.distro }}" in
-              ubuntu*|jessie|stretch|buster)
-                apt-get update -q -y
-                apt-get install -q -y git libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev appstream
-                ;;
-              fedora*)
-                dnf -y update
-                dnf -y install git which
-                ;;
-              alpine*)
-                apk update
-                apk add git
-                ;;
-            esac
+            apt-get update -q -y
+            apt-get install -q -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
 
           # Produce a binary artifact and place it in the mounted volume
           run: |
             meson setup build
-            ninja -v -C build
+            ninja -C build
             meson install -C build
             xvfb-run -a meson test -C build --verbose --no-stdsplit
 
