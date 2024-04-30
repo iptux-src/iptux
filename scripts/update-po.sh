@@ -8,4 +8,7 @@ git ls-files '*.cpp' '*.ui' '*.metainfo.xml' \
   > po/POTFILES
 ninja -C "${MESON_BUILD_ROOT}" iptux-pot
 ninja -C "${MESON_BUILD_ROOT}" iptux-update-po
-for f in po/*.po; do echo -n "$f: "; msgfmt -v $f; done
+for f in po/*.po; do
+  echo -n "$f: "
+  msgfmt -v "$f"
+done
