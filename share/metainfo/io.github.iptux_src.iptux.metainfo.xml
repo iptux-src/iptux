@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
+  <!-- https://www.freedesktop.org/software/appstream/docs/index.html -->
   <id>io.github.iptux_src.iptux</id>
 
   <name>iptux</name>
   <summary>LAN communication software</summary>
+  <icon type="stock">iptux-icon</icon>
 
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>GPL-2.0-or-later</project_license>
+  <project_license>GPL-2.0</project_license>
+  <content_rating type="oars-1.0"/>
 
   <description>
     <p>
-      iptux is an “IP Messenger” client.
-    </p>
-    <p>
-       It can:
+      iptux is an “IP Messenger” client. The features of iptux include:
     </p>
     <ul>
     <li>auto-detect other clients on the intranet.</li>
-    <li>send messages to other clients.</li>
-    <li>send files to other clients.</li>
+    <li>send/recv messages to other clients.</li>
+    <li>send/recv files to other clients.</li>
+    <li>share your files to other cliens (with optional password protection).</li>
     </ul>
     <p>
       It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from China,
@@ -26,6 +27,22 @@
       xipmsg in Debian.
     </p>
   </description>
+
+  <provides>
+    <binary>iptux</binary>
+  </provides>
+
+  <categories>
+    <category>Network</category>
+    <category>InstantMessaging</category>
+    <category>Chat</category>
+    <category>FileTransfer</category>
+    <category>GTK</category>
+  </categories>
+
+  <translation type="gettext">iptux</translation>
+  <url type="homepage">https://github.com/iptux-src/iptux</url>
+  <url type="bugtracker">https://github.com/iptux-src/iptux/issues</url>
 
   <launchable type="desktop-id">io.github.iptux_src.iptux.desktop</launchable>
 </component>

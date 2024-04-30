@@ -49,7 +49,7 @@ brew install iptux
 ### Linux (Debian and Ubuntu)
 
 ```sh
-sudo apt-get install git libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson libsigc++-2.0-dev libayatana-appindicator3-dev
+sudo apt-get install git libgoogle-glog-dev libgtk-3-dev libglib2.0-dev libjsoncpp-dev g++ meson libsigc++-2.0-dev libayatana-appindicator3-dev appstream gettext
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 meson setup build
@@ -61,7 +61,7 @@ iptux
 ### Mac OS X
 
 ```sh
-brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2
+brew install meson gettext gtk+3 jsoncpp glog gtk-mac-integration libsigc++@2 appstream
 git clone git://github.com/iptux-src/iptux.git
 cd iptux
 meson setup build
@@ -99,10 +99,7 @@ iptux -b 127.0.0.3 &
 
 ```
 meson setup build
-git ls-files *.cpp *.desktop.in *.ui *.metainfo.xml | grep -v Test | LC_ALL=C sort > po/POTFILES
-ninja -C build iptux-pot
-ninja -C build iptux-update-po
-for f in po/*.po; do echo -n "$f: "; msgfmt -v $f; done
+meson compile update-po -C build
 ```
 
 ## Stargazers over time

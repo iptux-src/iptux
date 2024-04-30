@@ -1,36 +1,6 @@
 # NEWS
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-
-## [unreleased]
-
-### Added
-
-### Changed
-
-- [#516](https://github.com/iptux-src/iptux/issues/516) Fix typo in the Preferences dialog.
-- [#520](https://github.com/iptux-src/iptux/issues/520) Fix window resize behavior.
-- [#531](https://github.com/iptux-src/iptux/issues/531) [#533](https://github.com/iptux-src/iptux/issues/533) Improve crash handler.
-- [#536](https://github.com/iptux-src/iptux/issues/536) Fix bug in menu.
-- Translation updates:
-  - New Portuguese translation. Thanks to inkhorn.
-  - New Ukrainian translation. Thanks to Сергій.
-  - Polish translation. Thanks to Eryk Michalak.
-
-## [0.8.4] (2023-06-16)
-
-* [#481](https://github.com/iptux-src/iptux/issues/481) chatbox can remember the unsent text.
-* [#482](https://github.com/iptux-src/iptux/issues/482) add "What's New" in the menu.
-* [#485](https://github.com/iptux-src/iptux/issues/485) `<Primary>W` can close all kinds of windows.
-* [#492](https://github.com/iptux-src/iptux/pull/492) [#495](https://github.com/iptux-src/iptux/pull/495) improve meson config, Thanks to @r-value for the patch.
-* [#497](https://github.com/iptux-src/iptux/pull/497) update Preferences dialog.
-* [#514](https://github.com/iptux-src/iptux/issues/514) show quit and preference menu when no appmenu.
-* Translation updates:
-  * Portuguese (Brazil) - Thanks to inkhorn
-
-## [0.8.3] (2021-10-07)
-
-* [#476] open chat when clicking the new message notification (only works under Linux).
+the NEWS after version 0.8.2 had been moved to [NEWS](https://github.com/iptux-src/iptux/blob/master/NEWS).
 
 ## [0.8.2] (2021-06-21)
 
@@ -214,3 +184,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 [0.6.3]: https://github.com/iptux-src/iptux/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/iptux-src/iptux/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/iptux-src/iptux/compare/v0.6.0...v0.6.1
+
