@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-04-14 13:17-0700\n"
+"POT-Creation-Date: 2024-04-29 21:10-0700\n"
 "PO-Revision-Date: 2018-01-22 06:45+0000\n"
 "Last-Translator: zhangjiejing <Unknown>\n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
@@ -18,26 +18,16 @@ msgstr ""
 "X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
 "X-Generator: Launchpad (build 18532)\n"
 
-#: share/applications/io.github.iptux_src.iptux.desktop.in:3
-#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:5
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
 msgstr "iptux"
 
-#: share/applications/io.github.iptux_src.iptux.desktop.in:4
-#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:7
 msgid "LAN communication software"
 msgstr ""
 
-#: share/applications/io.github.iptux_src.iptux.desktop.in:5
-msgid "chat;talk;im;message;ipmsg;feige;"
-msgstr ""
-
-#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:12
-msgid "iptux is an “IP Messenger” client."
-msgstr ""
-
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
-msgid "It can:"
+msgid "iptux is an “IP Messenger” client. The features of iptux include:"
 msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
@@ -45,14 +35,18 @@ msgid "auto-detect other clients on the intranet."
 msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
-msgid "send messages to other clients."
+msgid "send/recv messages to other clients."
 msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
-msgid "send files to other clients."
+msgid "send/recv files to other clients."
 msgstr ""
 
-#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:23
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:22
+msgid "share your files to other cliens (with optional password protection)."
+msgstr ""
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:24
 msgid ""
 "It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from "
 "China, and with the original “IP Messenger” clients from Japan, including "
@@ -102,12 +96,12 @@ msgstr ""
 "Failed to create new socket!\n"
 "%s"
 
-#: src/iptux-core/Models.cpp:173
+#: src/iptux-core/Models.cpp:171
 #, fuzzy
 msgid "Empty Message"
 msgstr "Send Message"
 
-#: src/iptux-core/Models.cpp:251
+#: src/iptux-core/Models.cpp:249
 msgid "Received an image"
 msgstr ""
 
@@ -136,7 +130,7 @@ msgstr ""
 msgid "Your pal didn't receive the packet. He or she is offline maybe."
 msgstr "Your pal didn't receive the packet. He or she is offline maybe."
 
-#: src/iptux-core/internal/CommandMode.cpp:37
+#: src/iptux-core/internal/CommandMode.cpp:39
 #, c-format
 msgid "unknown command mode: %d"
 msgstr ""
@@ -198,24 +192,24 @@ msgstr ""
 msgid "Send the directory \"%s\" to %s successfully!"
 msgstr ""
 
-#: src/iptux-core/internal/UdpData.cpp:91
 #: src/iptux-core/internal/UdpData.cpp:92
-#: src/iptux-core/internal/UdpData.cpp:443
+#: src/iptux-core/internal/UdpData.cpp:93
+#: src/iptux-core/internal/UdpData.cpp:444
 #: src/iptux-core/internal/UdpData.cpp:485
 msgid "mysterious"
 msgstr "mysterious"
 
-#: src/iptux-utils/utils.cpp:854
+#: src/iptux-utils/utils.cpp:878
 #, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:862
+#: src/iptux-utils/utils.cpp:886
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:869
+#: src/iptux-utils/utils.cpp:893
 #, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr ""
@@ -228,25 +222,31 @@ msgstr ""
 msgid "Thanks to"
 msgstr ""
 
-#: src/iptux/Application.cpp:53
+#: src/iptux/AppIndicator.cpp:40 src/iptux/MainWindow.cpp:494
+#: src/iptux/MainWindow.cpp:496
+#, fuzzy
+msgid "Iptux"
+msgstr "iptux"
+
+#: src/iptux/Application.cpp:54
 msgid "Loading the process successfully!"
 msgstr ""
 
-#: src/iptux/Application.cpp:271
+#: src/iptux/Application.cpp:280
 #, c-format
 msgid "New Message from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:284
+#: src/iptux/Application.cpp:293
 #, c-format
 msgid "New File from %s"
 msgstr ""
 
-#: src/iptux/Application.cpp:293
+#: src/iptux/Application.cpp:302
 msgid "Receiving File Finished"
 msgstr ""
 
-#: src/iptux/Application.cpp:297
+#: src/iptux/Application.cpp:306
 msgid "file info no longer exist"
 msgstr ""
 
@@ -449,7 +449,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/iptux/DataSettings.cpp:1016 src/iptux/RevisePal.cpp:420
+#: src/iptux/DataSettings.cpp:1016 src/iptux/RevisePal.cpp:419
 msgid "Please select a face picture"
 msgstr ""
 
@@ -681,7 +681,7 @@ msgid "Accept"
 msgstr ""
 
 #: src/iptux/DialogPeer.cpp:593 src/iptux/dialog.cpp:60
-#: src/iptux/resources/gtk/menus.ui:312
+#: src/iptux/resources/gtk/menus.ui:342
 msgid "Refuse"
 msgstr "Refuse"
 
@@ -730,94 +730,35 @@ msgstr ""
 msgid "User:%s Host:%s"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:443 src/iptux/MainWindow.cpp:445
-#, fuzzy
-msgid "Iptux"
-msgstr "iptux"
-
-#: src/iptux/MainWindow.cpp:508
+#: src/iptux/MainWindow.cpp:559
 msgid "Pals Online: 0"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:593
+#: src/iptux/MainWindow.cpp:644
 msgid "Search Pals"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:706
+#: src/iptux/MainWindow.cpp:758
 msgid "Nickname"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:717
+#: src/iptux/MainWindow.cpp:769
 msgid "Group"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:723 src/iptux/TransWindow.cpp:258
+#: src/iptux/MainWindow.cpp:775 src/iptux/TransWindow.cpp:258
 msgid "IPv4"
 msgstr "IPv4"
 
-#: src/iptux/MainWindow.cpp:729
+#: src/iptux/MainWindow.cpp:781
 msgid "User"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:735
+#: src/iptux/MainWindow.cpp:787 src/iptux/resources/gtk/MainWindow.ui:76
 msgid "Host"
 msgstr ""
 
-#: src/iptux/MainWindow.cpp:866
-#, fuzzy, c-format
-msgid "Version: %s"
-msgstr "Version: %s\n"
-
-#: src/iptux/MainWindow.cpp:870
-#, fuzzy, c-format
-msgid "Nickname: %s@%s"
-msgstr "Nickname: %s@%s\n"
-
-#: src/iptux/MainWindow.cpp:873
-#, fuzzy, c-format
-msgid "Nickname: %s"
-msgstr "Nickname: %s\n"
-
-#: src/iptux/MainWindow.cpp:875
-#, fuzzy, c-format
-msgid "User: %s"
-msgstr "User: %s\n"
-
-#: src/iptux/MainWindow.cpp:876
-#, fuzzy, c-format
-msgid "Host: %s"
-msgstr "Host: %s\n"
-
-#: src/iptux/MainWindow.cpp:880
-#, fuzzy, c-format
-msgid "Address: %s(%s)"
-msgstr "Address: %s(%s)\n"
-
-#: src/iptux/MainWindow.cpp:882
-#, fuzzy, c-format
-msgid "Address: %s"
-msgstr "Address: %s(%s)\n"
-
-#: src/iptux/MainWindow.cpp:886
-#, fuzzy
-msgid "Compatibility: Microsoft"
-msgstr "Compatibility: Microsoft\n"
-
-#: src/iptux/MainWindow.cpp:888
-#, fuzzy
-msgid "Compatibility: GNU/Linux"
-msgstr "Compatibility: GNU/Linux\n"
-
-#: src/iptux/MainWindow.cpp:891
-#, c-format
-msgid "System coding: %s"
-msgstr ""
-
-#: src/iptux/MainWindow.cpp:895
-msgid "Signature:"
-msgstr ""
-
-#: src/iptux/MainWindow.cpp:937
+#: src/iptux/MainWindow.cpp:926
 #, c-format
 msgid "Pals Online: %d"
 msgstr ""
@@ -976,30 +917,88 @@ msgid "iptux Error"
 msgstr "iptux"
 
 #: src/iptux/UiCoreThread.cpp:254 src/iptux/UiCoreThread.cpp:278
-#: src/iptux/UiCoreThread.cpp:378 src/iptux/UiCoreThread.cpp:401
+#: src/iptux/UiCoreThread.cpp:377 src/iptux/UiCoreThread.cpp:399
 msgid "Others"
 msgstr "Others"
 
-#: src/iptux/UiCoreThread.cpp:422
+#: src/iptux/UiCoreThread.cpp:419
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: src/iptux/UiHelper.cpp:43
+#: src/iptux/UiHelper.cpp:44
 msgid "Can't find any available web browser!\n"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:150
+#: src/iptux/UiHelper.cpp:151
 #, fuzzy
 msgid "Information"
 msgstr "Infomation"
 
-#: src/iptux/UiHelper.cpp:173
+#: src/iptux/UiHelper.cpp:174
 msgid "Warning"
 msgstr "Warning"
 
-#: src/iptux/UiModels.cpp:484
+#: src/iptux/UiModels.cpp:536
+#, fuzzy, c-format
+msgid "Version: %s"
+msgstr "Version: %s\n"
+
+#: src/iptux/UiModels.cpp:540
+#, fuzzy, c-format
+msgid "Nickname: %s@%s"
+msgstr "Nickname: %s@%s\n"
+
+#: src/iptux/UiModels.cpp:543
+#, fuzzy, c-format
+msgid "Nickname: %s"
+msgstr "Nickname: %s\n"
+
+#: src/iptux/UiModels.cpp:547
+#, fuzzy, c-format
+msgid "User: %s"
+msgstr "User: %s\n"
+
+#: src/iptux/UiModels.cpp:550
+#, fuzzy, c-format
+msgid "Host: %s"
+msgstr "Host: %s\n"
+
+#: src/iptux/UiModels.cpp:555
+#, fuzzy, c-format
+msgid "Address: %s(%s)"
+msgstr "Address: %s(%s)\n"
+
+#: src/iptux/UiModels.cpp:557
+#, fuzzy, c-format
+msgid "Address: %s"
+msgstr "Address: %s(%s)\n"
+
+#: src/iptux/UiModels.cpp:562
+#, fuzzy
+msgid "Compatibility: Microsoft"
+msgstr "Compatibility: Microsoft\n"
+
+#: src/iptux/UiModels.cpp:564
+#, fuzzy
+msgid "Compatibility: GNU/Linux"
+msgstr "Compatibility: GNU/Linux\n"
+
+#: src/iptux/UiModels.cpp:568
+#, c-format
+msgid "System coding: %s"
+msgstr ""
+
+#: src/iptux/UiModels.cpp:573
+msgid "Signature:"
+msgstr ""
+
+#: src/iptux/UiModels.cpp:654
 msgid "<ERROR>"
 msgstr "<ERROR>"
+
+#: src/iptux/UiModels.cpp:715
+msgid "[IMG]"
+msgstr ""
 
 #: src/iptux/dialog.cpp:36
 msgid ""
@@ -1012,7 +1011,7 @@ msgid "Confirm Exit"
 msgstr ""
 
 #: src/iptux/dialog.cpp:59 src/iptux/resources/gtk/MainWindow.ui:12
-#: src/iptux/resources/gtk/menus.ui:83 src/iptux/resources/gtk/menus.ui:213
+#: src/iptux/resources/gtk/menus.ui:98 src/iptux/resources/gtk/menus.ui:243
 msgid "Request Shared Resources"
 msgstr ""
 
@@ -1080,6 +1079,21 @@ msgstr ""
 msgid "A GTK based LAN messenger."
 msgstr "A GTK+ based LAN Messenger."
 
+#: src/iptux/resources/gtk/AppIndicator.ui:6
+#, fuzzy
+msgid "Open Iptux"
+msgstr "iptux"
+
+#: src/iptux/resources/gtk/AppIndicator.ui:12
+#: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:306
+msgid "_Preferences"
+msgstr ""
+
+#: src/iptux/resources/gtk/AppIndicator.ui:16
+#: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:310
+msgid "_Quit"
+msgstr "_Quit"
+
 #: src/iptux/resources/gtk/DetectPal.ui:7
 #, fuzzy
 msgid "Detect pal"
@@ -1093,8 +1107,8 @@ msgstr "Detect"
 msgid "Please input an IP address (IPv4 only):"
 msgstr ""
 
-#: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:94
-#: src/iptux/resources/gtk/menus.ui:224
+#: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:109
+#: src/iptux/resources/gtk/menus.ui:254
 msgid "Send Message"
 msgstr "Send Message"
 
@@ -1106,137 +1120,177 @@ msgstr ""
 msgid "Delete Pal"
 msgstr "Delete Pal"
 
-#: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:276
-msgid "_Preferences"
-msgstr ""
-
-#: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:280
-msgid "_Quit"
-msgstr "_Quit"
-
-#: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:147
-msgid "_File"
-msgstr "_File"
-
-#: src/iptux/resources/gtk/menus.ui:19 src/iptux/resources/gtk/menus.ui:149
-msgid "_Detect"
-msgstr "_Detect"
-
-#: src/iptux/resources/gtk/menus.ui:23 src/iptux/resources/gtk/menus.ui:153
-msgid "_Find"
-msgstr "_Find"
-
-#: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:158
-msgid "_View"
-msgstr ""
-
-#: src/iptux/resources/gtk/menus.ui:31 src/iptux/resources/gtk/menus.ui:161
+#: src/iptux/resources/gtk/MainWindow.ui:26 src/iptux/resources/gtk/menus.ui:31
+#: src/iptux/resources/gtk/menus.ui:176
 msgid "Sort"
 msgstr "Sort"
 
-#: src/iptux/resources/gtk/menus.ui:34 src/iptux/resources/gtk/menus.ui:164
+#: src/iptux/resources/gtk/MainWindow.ui:29 src/iptux/resources/gtk/menus.ui:34
+#: src/iptux/resources/gtk/menus.ui:179
 msgid "By Nickname"
 msgstr "By Nickname"
 
-#: src/iptux/resources/gtk/menus.ui:39 src/iptux/resources/gtk/menus.ui:169
+#: src/iptux/resources/gtk/MainWindow.ui:34 src/iptux/resources/gtk/menus.ui:39
+#: src/iptux/resources/gtk/menus.ui:184
+#, fuzzy
+msgid "By Username"
+msgstr "By Nickname"
+
+#: src/iptux/resources/gtk/MainWindow.ui:39 src/iptux/resources/gtk/menus.ui:44
+#: src/iptux/resources/gtk/menus.ui:189
 msgid "By IP"
 msgstr "By IP"
 
-#: src/iptux/resources/gtk/menus.ui:46 src/iptux/resources/gtk/menus.ui:176
+#: src/iptux/resources/gtk/MainWindow.ui:44 src/iptux/resources/gtk/menus.ui:49
+#: src/iptux/resources/gtk/menus.ui:194
+msgid "By Host"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:49 src/iptux/resources/gtk/menus.ui:54
+#: src/iptux/resources/gtk/menus.ui:199
+msgid "By Last Activity"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:56 src/iptux/resources/gtk/menus.ui:61
+#: src/iptux/resources/gtk/menus.ui:206
 msgid "Ascending"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:51 src/iptux/resources/gtk/menus.ui:181
+#: src/iptux/resources/gtk/MainWindow.ui:61 src/iptux/resources/gtk/menus.ui:66
+#: src/iptux/resources/gtk/menus.ui:211
 msgid "Descending"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:58 src/iptux/resources/gtk/menus.ui:188
+#: src/iptux/resources/gtk/MainWindow.ui:68
+msgid "Info Style"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:71
+#, fuzzy
+msgid "IP"
+msgstr "IPv4"
+
+#: src/iptux/resources/gtk/MainWindow.ui:81
+msgid "Username"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:86
+#, fuzzy
+msgid "Version"
+msgstr "Version: %s\n"
+
+#: src/iptux/resources/gtk/MainWindow.ui:91
+msgid "Last Activity"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:96
+#, fuzzy
+msgid "Last Message"
+msgstr "Send Message"
+
+#: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:162
+msgid "_File"
+msgstr "_File"
+
+#: src/iptux/resources/gtk/menus.ui:19 src/iptux/resources/gtk/menus.ui:164
+msgid "_Detect"
+msgstr "_Detect"
+
+#: src/iptux/resources/gtk/menus.ui:23 src/iptux/resources/gtk/menus.ui:168
+msgid "_Find"
+msgstr "_Find"
+
+#: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:173
+msgid "_View"
+msgstr ""
+
+#: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:218
 msgid "_Refresh"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:65 src/iptux/resources/gtk/menus.ui:195
+#: src/iptux/resources/gtk/menus.ui:80 src/iptux/resources/gtk/menus.ui:225
 msgid "_Chat"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:68 src/iptux/resources/gtk/menus.ui:198
+#: src/iptux/resources/gtk/menus.ui:83 src/iptux/resources/gtk/menus.ui:228
 msgid "Insert Picture"
 msgstr "Insert Picture"
 
-#: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:203
+#: src/iptux/resources/gtk/menus.ui:88 src/iptux/resources/gtk/menus.ui:233
 msgid "Attach File"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:77 src/iptux/resources/gtk/menus.ui:207
+#: src/iptux/resources/gtk/menus.ui:92 src/iptux/resources/gtk/menus.ui:237
 msgid "Attach Folder"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:87 src/iptux/resources/gtk/menus.ui:217
+#: src/iptux/resources/gtk/menus.ui:102 src/iptux/resources/gtk/menus.ui:247
 #, fuzzy
 msgid "Clear Chat History"
 msgstr "Clear Tasklist"
 
-#: src/iptux/resources/gtk/menus.ui:100 src/iptux/resources/gtk/menus.ui:230
+#: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:260
 msgid "_Window"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:103 src/iptux/resources/gtk/menus.ui:233
+#: src/iptux/resources/gtk/menus.ui:118 src/iptux/resources/gtk/menus.ui:263
 msgid "_Transmission"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:107 src/iptux/resources/gtk/menus.ui:237
+#: src/iptux/resources/gtk/menus.ui:122 src/iptux/resources/gtk/menus.ui:267
 msgid "_Shared Management"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:111 src/iptux/resources/gtk/menus.ui:241
+#: src/iptux/resources/gtk/menus.ui:126 src/iptux/resources/gtk/menus.ui:271
 msgid "_Chat Log"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:245
+#: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:275
 #, fuzzy
 msgid "_System Log"
 msgstr "System"
 
-#: src/iptux/resources/gtk/menus.ui:121 src/iptux/resources/gtk/menus.ui:251
+#: src/iptux/resources/gtk/menus.ui:136 src/iptux/resources/gtk/menus.ui:281
 msgid "Close Window"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:127 src/iptux/resources/gtk/menus.ui:257
+#: src/iptux/resources/gtk/menus.ui:142 src/iptux/resources/gtk/menus.ui:287
 msgid "_Help"
 msgstr "_Help"
 
-#: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:260
+#: src/iptux/resources/gtk/menus.ui:145 src/iptux/resources/gtk/menus.ui:290
 msgid "_About"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:134 src/iptux/resources/gtk/menus.ui:264
+#: src/iptux/resources/gtk/menus.ui:149 src/iptux/resources/gtk/menus.ui:294
 msgid "Report Bug"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:138 src/iptux/resources/gtk/menus.ui:268
+#: src/iptux/resources/gtk/menus.ui:153 src/iptux/resources/gtk/menus.ui:298
 msgid "What's New"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:288
+#: src/iptux/resources/gtk/menus.ui:318
 msgid "Open This File"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:292
+#: src/iptux/resources/gtk/menus.ui:322
 msgid "Open Containing Folder"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:296
+#: src/iptux/resources/gtk/menus.ui:326
 msgid "Terminate Task"
 msgstr ""
 
-#: src/iptux/resources/gtk/menus.ui:300
+#: src/iptux/resources/gtk/menus.ui:330
 msgid "Terminate All"
 msgstr "Terminate All"
 
-#: src/iptux/resources/gtk/menus.ui:304
+#: src/iptux/resources/gtk/menus.ui:334
 msgid "Clear Tasklist"
 msgstr "Clear Tasklist"
 
-#: src/iptux/resources/gtk/menus.ui:316
+#: src/iptux/resources/gtk/menus.ui:346
 #, fuzzy
 msgid "Refuse All"
 msgstr "Refuse"
