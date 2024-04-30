@@ -2,7 +2,7 @@
 
 set -e
 cd "${MESON_SOURCE_ROOT}" || exit 1
-git ls-files *.cpp *.desktop.in *.ui *.metainfo.xml \
+git ls-files '*.cpp' '*.ui' '*.metainfo.xml' \
   | grep -v Test \
   | LC_ALL=C sort \
   > po/POTFILES
