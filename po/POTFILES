@@ -1,5 +1,4 @@
 examples/count-bot/main.cpp
-share/applications/io.github.iptux_src.iptux.desktop.in
 share/metainfo/io.github.iptux_src.iptux.metainfo.xml
 src/iptux-core/CoreThread.cpp
 src/iptux-core/Event.cpp
@@ -24,6 +23,8 @@ src/iptux-utils/Exception.cpp
 src/iptux-utils/output.cpp
 src/iptux-utils/utils.cpp
 src/iptux/AboutDialog.cpp
+src/iptux/AppIndicator.cpp
+src/iptux/AppIndicatorDummy.cpp
 src/iptux/Application.cpp
 src/iptux/Darwin.cpp
 src/iptux/DataSettings.cpp
@@ -46,6 +47,7 @@ src/iptux/WindowConfig.cpp
 src/iptux/callback.cpp
 src/iptux/dialog.cpp
 src/iptux/resources/gtk/AboutDialog.ui
+src/iptux/resources/gtk/AppIndicator.ui
 src/iptux/resources/gtk/DetectPal.ui
 src/iptux/resources/gtk/HeaderBar.ui
 src/iptux/resources/gtk/MainWindow.ui

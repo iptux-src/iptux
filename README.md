@@ -99,10 +99,7 @@ iptux -b 127.0.0.3 &
 
 ```
 meson setup build
-git ls-files *.cpp *.desktop.in *.ui *.metainfo.xml | grep -v Test | LC_ALL=C sort > po/POTFILES
-ninja -C build iptux-pot
-ninja -C build iptux-update-po
-for f in po/*.po; do echo -n "$f: "; msgfmt -v $f; done
+meson compile update-po -C build
 ```
 
 ## Stargazers over time
