@@ -41,9 +41,8 @@ parts:
       snapcraftctl pull
     override-build: |
       snapcraftctl build
-      ls -l $SNAPCRAFT_PART_INSTALL/snap/iptux/current/usr/share/applications/
       sed -i -e 's|Icon=iptux-icon|Icon=/usr/share/iptux/pixmaps/icon/iptux-icon.png|g' \
-        $SNAPCRAFT_PART_INSTALL/snap/iptux/current/usr/share/applications/io.gitub.iptux_src.iptux.desktop
+        $SNAPCRAFT_PART_INSTALL/snap/iptux/current/usr/share/applications/io.github.iptux_src.iptux.desktop
       # xvfb-run -a meson test -C snapbuild --verbose --no-stdsplit
     organize:
       snap/iptux/current/usr: usr
