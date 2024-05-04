@@ -9,6 +9,7 @@ using namespace iptux;
 
 TEST(DataSettings, Constructor) {
   Application* app = CreateApplication();
-  DataSettings::ResetDataEntry(app, nullptr, false);
+  DataSettings ds(app, nullptr);
+  ds.Save();
   DestroyApplication(app);
 }

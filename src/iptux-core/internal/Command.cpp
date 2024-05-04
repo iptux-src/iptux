@@ -21,6 +21,7 @@
 #include <glib/gi18n.h>
 
 #include "iptux-core/Exception.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/internal/TransAbstract.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
@@ -81,8 +82,8 @@ static bool commandSendTo(int sockfd,
                           const void* buf,
                           size_t len,
                           int flags,
-                          in_addr ipv4) {
-  return commandSendTo(sockfd, buf, len, flags, ipv4, IPTUX_DEFAULT_PORT);
+                          CPPalInfo pal) {
+  return commandSendTo(sockfd, buf, len, flags, pal->ipv4(), pal->port());
 }
 
 /**
@@ -100,7 +101,7 @@ Command::~Command() {}
  * 向局域网所有计算机广播上线信息.
  * @param sock udp socket
  */
-void Command::BroadCast(int sock) {
+void Command::BroadCast(int sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
@@ -110,7 +111,7 @@ void Command::BroadCast(int sock) {
   auto addrs = get_sys_broadcast_addr(sock);
   for (auto& addr : addrs) {
     in_addr ipv4 = inAddrFromString(addr);
-    commandSendTo(sock, buf, size, 0, ipv4);
+    commandSendTo(sock, buf, size, 0, ipv4, port);
     g_usleep(9999);
   }
 }
@@ -119,7 +120,7 @@ void Command::BroadCast(int sock) {
  * 向局域网某些计算机单独发送上线信息.
  * @param sock udp socket
  */
-void Command::DialUp(int sock) {
+void Command::DialUp(int sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
@@ -134,7 +135,7 @@ void Command::DialUp(int sock) {
     uint64_t c = ns.Count();
     for (uint64_t j = 0; j < c; ++j) {
       auto ip = ns.NthIp(j);
-      commandSendTo(sock, buf, size, 0, inAddrFromString(ip));
+      commandSendTo(sock, buf, size, 0, inAddrFromString(ip), port);
       g_usleep(999);
     }
   }
@@ -152,7 +153,7 @@ void Command::SendAnsentry(int sock, CPPalInfo pal) {
                 programData->nickname.c_str());
   ConvertEncode(pal->getEncode());
   CreateIptuxExtra(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -163,7 +164,7 @@ void Command::SendAnsentry(int sock, CPPalInfo pal) {
 void Command::SendExit(int sock, CPPalInfo pal) {
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_BR_EXIT, NULL);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -177,7 +178,7 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
                 programData->nickname.c_str());
   ConvertEncode(pal->getEncode());
   CreateIptuxExtra(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -185,13 +186,13 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
  * @param sock udp socket
  * @param ipv4 ipv4 address
  */
-void Command::SendDetectPacket(int sock, in_addr ipv4) {
+void Command::SendDetectPacket(int sock, in_addr ipv4, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
-  commandSendTo(sock, buf, size, 0, ipv4);
+  commandSendTo(sock, buf, size, 0, ipv4, port);
 }
 
 /**
@@ -215,7 +216,7 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char* msg) {
 
   count = 0;
   do {
-    commandSendTo(sock, buf, size, 0, pal->ipv4);
+    commandSendTo(sock, buf, size, 0, pal);
     g_usleep(coreThread.getProgramData()->getSendMessageRetryInUs());
     count++;
   } while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
@@ -239,7 +240,7 @@ void Command::SendReply(int sock, CPPalInfo pal, uint32_t packetno) {
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_RECVMSG, packetstr);
   ConvertEncode(pal->getEncode());
 
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 void Command::SendReply(int sock, const PalKey& palKey, uint32_t packetno) {
@@ -256,7 +257,7 @@ void Command::SendReply(int sock, const PalKey& palKey, uint32_t packetno) {
 void Command::SendGroupMsg(int sock, CPPalInfo pal, const char* msg) {
   CreateCommand(IPMSG_BROADCASTOPT | IPMSG_SENDMSG, msg);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -272,7 +273,7 @@ void Command::SendUnitMsg(int sock,
                           const char* msg) {
   CreateCommand(opttype | IPTUX_SENDMSG, msg);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -306,8 +307,8 @@ bool Command::SendAskData(int sock,
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr = pal->ipv4;
+  addr.sin_port = htons(pal->port());
+  addr.sin_addr = pal->ipv4();
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
@@ -356,8 +357,8 @@ bool Command::SendAskFiles(int sock,
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr = pal->ipv4;
+  addr.sin_port = htons(pal->port());
+  addr.sin_addr = pal->ipv4();
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
@@ -380,7 +381,7 @@ void Command::SendAskShared(int sock,
                             const char* attach) {
   CreateCommand(opttype | IPTUX_ASKSHARED, attach);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 void Command::SendAskShared(int sock,
@@ -404,7 +405,7 @@ void Command::SendFileInfo(int sock,
   CreateCommand(opttype | IPMSG_FILEATTACHOPT | IPMSG_SENDMSG, NULL);
   ConvertEncode(pal->getEncode());
   CreateIpmsgExtra(extra, pal->getEncode().c_str());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 void Command::SendFileInfo(int sock,
                            const PalKey& palKey,
@@ -423,7 +424,7 @@ void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
   CreateCommand(IPTUX_SENDICON, NULL);
   ConvertEncode(pal->getEncode());
   CreateIconExtra(iss);
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -435,7 +436,7 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPTUX_SEND_SIGN, programData->sign.c_str());
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -459,8 +460,8 @@ void Command::SendSublayer(int sock,
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr = pal->ipv4;
+  addr.sin_port = htons(pal->port());
+  addr.sin_addr = pal->ipv4();
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
@@ -487,9 +488,9 @@ void Command::FeedbackError(CPPalInfo pal,
   para.btype = btype;
 
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
-  para.dtlist.push_back(move(chip));
+  para.dtlist.push_back(std::move(chip));
   /* 交给某人处理吧 */
-  coreThread.InsertMessage(move(para));
+  coreThread.InsertMessage(std::move(para));
 }
 
 /**

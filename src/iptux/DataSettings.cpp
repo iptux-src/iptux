@@ -30,15 +30,34 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-DataSettings::DataSettings(Application* app)
+DataSettings::DataSettings(Application* app, GtkWidget* parent)
     : app(app), widset(NULL), mdlset(NULL) {
   InitSublayer();
+  dialog_ = GTK_DIALOG(CreateMainDialog(parent));
+
+  /* 创建相关数据设置标签 */
+  GtkWidget* note = gtk_notebook_new();
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_TOP);
+  gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dialog_)), note, TRUE,
+                     TRUE, 0);
+  GtkWidget* label = gtk_label_new(_("Personal"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), CreatePersonal(), label);
+  label = gtk_label_new(_("System"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), CreateSystem(), label);
+  label = gtk_label_new(_("Network"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), CreateNetwork(), label);
+
+  /* 设置相关数据默认值 */
+  SetPersonalValue();
+  SetSystemValue();
 }
 
 /**
  * 类析构函数.
  */
 DataSettings::~DataSettings() {
+  gtk_widget_destroy(GTK_WIDGET(dialog_));
   ClearSublayer();
 }
 
@@ -46,61 +65,34 @@ DataSettings::~DataSettings() {
  * 程序数据设置入口.
  * @param parent 父窗口指针
  */
-void DataSettings::ResetDataEntry(Application* app,
-                                  GtkWidget* parent,
-                                  bool run) {
-  DataSettings dset(app);
-  GtkWidget* dialog;
-  GtkWidget *note, *label;
-
-  auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getProgramData();
-
-  dialog = dset.CreateMainDialog(parent);
-
-  /* 创建相关数据设置标签 */
-  note = gtk_notebook_new();
-  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_TOP);
-  gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
-  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                     note, TRUE, TRUE, 0);
-  label = gtk_label_new(_("Personal"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
-  label = gtk_label_new(_("System"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSystem(), label);
-  label = gtk_label_new(_("Network"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateNetwork(), label);
-
-  /* 设置相关数据默认值 */
-  dset.SetPersonalValue();
-  dset.SetSystemValue();
+void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
+  DataSettings dset(app, parent);
+  GtkWidget* dialog = GTK_WIDGET(dset.dialog());
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
-  if (!run) {
-    gtk_widget_destroy(dialog);
-    return;
+  bool done = false;
+  while (!done) {
+    switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+      case GTK_RESPONSE_OK:
+        dset.Save();
+        if (dset.need_restart) {
+          pop_warning(dialog,
+                      _("The program needs to be restarted to take effect!"));
+        }
+        done = true;
+        break;
+      case GTK_RESPONSE_APPLY:
+        dset.Save();
+        if (dset.need_restart) {
+          pop_warning(dialog,
+                      _("The program needs to be restarted to take effect!"));
+        }
+        break;
+      default:
+        break;
+    }
   }
-mark:
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_OK:
-      dset.ObtainPersonalValue();
-      dset.ObtainSystemValue();
-      dset.ObtainNetworkValue();
-      g_progdt->WriteProgData();
-      g_cthrd->UpdateMyInfo();
-      break;
-    case GTK_RESPONSE_APPLY:
-      dset.ObtainPersonalValue();
-      dset.ObtainSystemValue();
-      dset.ObtainNetworkValue();
-      g_progdt->WriteProgData();
-      g_cthrd->UpdateMyInfo();
-      goto mark;
-    default:
-      break;
-  }
-  gtk_widget_destroy(dialog);
 }
 
 /**
@@ -253,29 +245,49 @@ GtkWidget* DataSettings::CreatePersonal() {
  * @return 主窗体
  */
 GtkWidget* DataSettings::CreateSystem() {
-  GtkWidget *box, *hbox;
+  GtkGrid* box;
+  GtkWidget* hbox;
   GtkWidget *label, *button, *widget;
   GtkTreeModel* model;
 
-  box = gtk_grid_new();
+  box = GTK_GRID(gtk_grid_new());
   g_object_set(box, "margin", 10, "column-spacing", 10, "row-spacing", 5, NULL);
+
+  int row = 0;
+
+  /* port */
+  label = gtk_label_new(_("Port:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(box, label, 0, row, 1, 1);
+
+  widget = gtk_entry_new();
+  g_object_set(widget, "has-tooltip", TRUE, "hexpand", TRUE, "input-purpose",
+               GTK_INPUT_PURPOSE_DIGITS, "max-length", 5, "tooltip-text",
+               _("Any port number between 1024 and 65535"), NULL);
+  g_datalist_set_data(&widset, "port-entry-widget", widget);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+
+  row++;
 
   /* 候选编码 */
   label = gtk_label_new(_("Candidate network encodings:"));
   gtk_widget_set_halign(label, GTK_ALIGN_END);
-  gtk_grid_attach(GTK_GRID(box), label, 0, 0, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), label, 0, row, 1, 1);
 
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, "hexpand", TRUE, NULL);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Candidate network encodings, separated by \",\""));
   g_datalist_set_data(&widset, "codeset-entry-widget", widget);
-  gtk_grid_attach(GTK_GRID(box), widget, 1, 0, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
+
+  row++;
 
   /* 首选编码 */
   label = gtk_label_new(_("Preferred network encoding:"));
   gtk_widget_set_halign(label, GTK_ALIGN_END);
-  gtk_grid_attach(GTK_GRID(box), label, 0, 1, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), label, 0, row, 1, 1);
 
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, NULL);
@@ -283,12 +295,14 @@ GtkWidget* DataSettings::CreateSystem() {
                    _("Preference network coding (You should be aware of "
                      "what you are doing if you want to modify it.)"));
   g_datalist_set_data(&widset, "encode-entry-widget", widget);
-  gtk_grid_attach(GTK_GRID(box), widget, 1, 1, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
+
+  row++;
 
   /* 好友头像 */
   label = gtk_label_new(_("Pal's default face picture:"));
   gtk_widget_set_halign(label, GTK_ALIGN_END);
-  gtk_grid_attach(GTK_GRID(box), label, 0, 2, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), label, 0, row, 1, 1);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   model = GTK_TREE_MODEL(this->iconModel);
@@ -299,58 +313,83 @@ GtkWidget* DataSettings::CreateSystem() {
   g_object_set_data(G_OBJECT(button), "icon-combo-widget", widget);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
-  gtk_grid_attach(GTK_GRID(box), hbox, 1, 2, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), hbox, 1, row, 1, 1);
+
+  row++;
 
   /* 面板字体 */
   label = gtk_label_new(_("Panel font:"));
   gtk_widget_set_halign(label, GTK_ALIGN_END);
-  gtk_grid_attach(GTK_GRID(box), label, 0, 3, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), label, 0, row, 1, 1);
 
   widget = CreateFontChooser();
   g_datalist_set_data(&widset, "font-chooser-widget", widget);
-  gtk_grid_attach(GTK_GRID(box), widget, 1, 3, 1, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
+
+  row++;
 
   /* 有消息时直接弹出聊天窗口 */
   widget =
       gtk_check_button_new_with_label(_("Automatically open the chat dialog"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 4, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "chat-check-widget", widget);
+
+  row++;
+
   /* 隐藏面板，只显示状态图标 */
   widget = gtk_check_button_new_with_label(
       _("Automatically hide the panel after login"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 5, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "statusicon-check-widget", widget);
+
+  row++;
+
   /* 打开文件传输管理器 */
   widget = gtk_check_button_new_with_label(
       _("Automatically open the File Transmission Management"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 6, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "transmission-check-widget", widget);
+
+  row++;
+
   /* enter键发送消息 */
   widget =
       gtk_check_button_new_with_label(_("Use the 'Enter' key to send message"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 7, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "enterkey-check-widget", widget);
+
+  row++;
+
   /* 清空聊天历史记录 */
   widget = gtk_check_button_new_with_label(
       _("Automatically clean up the chat history"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 8, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "history-check-widget", widget);
+
+  row++;
+
   /* 记录日志 */
   widget = gtk_check_button_new_with_label(_("Save the chat history"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 9, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "log-check-widget", widget);
+
+  row++;
+
   /* 黑名单 */
   widget =
       gtk_check_button_new_with_label(_("Use the Blacklist (NOT recommended)"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 10, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "blacklist-check-widget", widget);
+
+  row++;
+
   /* 过滤共享文件请求 */
   widget =
       gtk_check_button_new_with_label(_("Filter the request of sharing files"));
-  gtk_grid_attach(GTK_GRID(box), widget, 0, 11, 2, 1);
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "shared-check-widget", widget);
 
-  return box;
+  return GTK_WIDGET(box);
 }
 
 /**
@@ -489,6 +528,9 @@ void DataSettings::SetSystemValue() {
   auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getProgramData();
 
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "port-entry-widget"));
+  gtk_entry_set_text(GTK_ENTRY(widget),
+                     stringFormat("%d", g_progdt->port()).c_str());
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   gtk_entry_set_text(GTK_ENTRY(widget), g_progdt->codeset.c_str());
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "encode-entry-widget"));
@@ -687,6 +729,14 @@ GtkWidget* DataSettings::CreateFontChooser() {
   return chooser;
 }
 
+void DataSettings::Save() {
+  ObtainPersonalValue();
+  ObtainSystemValue();
+  ObtainNetworkValue();
+  app->getProgramData()->WriteProgData();
+  app->getCoreThread()->UpdateMyInfo();
+}
+
 /**
  * 获取与个人相关的数据.
  */
@@ -765,6 +815,14 @@ void DataSettings::ObtainSystemValue() {
 
   auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getProgramData();
+
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "port-entry-widget"));
+  text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
+  int port = stoi(text);
+  if (port != g_progdt->port()) {
+    g_progdt->set_port(port);
+    need_restart = true;
+  }
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
@@ -859,13 +917,13 @@ void DataSettings::ObtainNetworkValue() {
         ns.endip = endip;
       if (description)
         ns.description = description;
-      netSegments.push_back(move(ns));
+      netSegments.push_back(std::move(ns));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
   auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getProgramData();
   g_progdt->Lock();
-  g_progdt->setNetSegments(move(netSegments));
+  g_progdt->setNetSegments(std::move(netSegments));
   g_progdt->Unlock();
 }
 
@@ -1044,7 +1102,7 @@ void DataSettings::ChoosePhoto(GData** widset) {
              g_get_user_config_dir());
     pixbuf_shrink_scale_1(&pixbuf, MAX_PHOTOSIZE, MAX_PHOTOSIZE);
     gdk_pixbuf_save(pixbuf, path, "bmp", NULL,
-                    NULL);  //命中率极高，不妨直接保存
+                    NULL);  // 命中率极高，不妨直接保存
     image = GTK_WIDGET(g_datalist_get_data(widset, "photo-image-widget"));
     pixbuf_shrink_scale_1(&pixbuf, MAX_PREVIEWSIZE, MAX_PREVIEWSIZE);
     gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);

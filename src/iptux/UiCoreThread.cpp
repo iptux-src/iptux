@@ -232,7 +232,7 @@ GroupInfo* UiCoreThread::GetPalRegularItem(const PalInfo* pal) {
 
   tlist = groupInfos;
   while (tlist) {
-    if (((GroupInfo*)tlist->data)->grpid == inAddrToUint32(pal->ipv4))
+    if (((GroupInfo*)tlist->data)->grpid == inAddrToUint32(pal->ipv4()))
       break;
     tlist = g_slist_next(tlist);
   }
@@ -250,7 +250,7 @@ GroupInfo* UiCoreThread::GetPalSegmentItem(const PalInfo* pal) {
   GQuark grpid;
 
   /* 获取局域网网段ID */
-  auto name = ipv4_get_lan_name(pal->ipv4);
+  auto name = ipv4_get_lan_name(pal->ipv4());
   grpid = g_quark_from_string(name.empty() ? _("Others") : name.c_str());
 
   tlist = sgmlist;
@@ -354,7 +354,7 @@ GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
   GroupInfo* grpinf;
 
   grpinf = new GroupInfo(pal, getMe(), logSystem);
-  grpinf->grpid = inAddrToUint32(pal->ipv4);
+  grpinf->grpid = inAddrToUint32(pal->ipv4());
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
   grpinf->signalUnreadMsgCountUpdated.connect(
@@ -372,7 +372,7 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
   GroupInfo* grpinf;
 
   /* 获取局域网网段名称 */
-  auto name = ipv4_get_lan_name(pal->ipv4);
+  auto name = ipv4_get_lan_name(pal->ipv4());
   if (name.empty()) {
     name = _("Others");
   }

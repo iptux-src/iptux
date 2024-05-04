@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "iptux-core/Models.h"
+#include "iptux-utils/utils.h"
 #include "iptux/UiModels.h"
 
 using namespace std;
@@ -35,18 +36,20 @@ TEST(TransModel, transModelIsFinished) {
 }
 
 TEST(GroupInfo, GetInfoAsMarkup) {
-  PalInfo pal;
+  PalInfo pal("127.0.0.1", 2425);
   pal.setName("palname");
-  PalInfo me;
+  PalInfo me("127.0.0.2", 2425);
   PPalInfo cpal = make_shared<PalInfo>(pal);
   CPPalInfo cme = make_shared<PalInfo>(me);
   GroupInfo gi(cpal, cme, nullptr);
-  ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP), "palname\n0.0.0.0");
+  ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP), "palname\n127.0.0.1");
+  ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP_PORT),
+            "palname\n127.0.0.1:2425");
 
   MsgPara msg(cpal);
   gi.addMsgPara(msg);
   ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP),
-            "palname <span foreground=\"red\">(1)</span>\n0.0.0.0");
+            "palname <span foreground=\"red\">(1)</span>\n127.0.0.1");
 
   vector<PPalInfo> pals;
   pals.push_back(cpal);
@@ -55,21 +58,21 @@ TEST(GroupInfo, GetInfoAsMarkup) {
 }
 
 TEST(GroupInfo, GetHintAsMarkup) {
-  PalInfo pal;
+  PalInfo pal("127.0.0.1", 2425);
   pal.setVersion("1_iptux");
   pal.setName("palname");
-  PalInfo me;
+  PalInfo me("127.0.0.2", 2425);
   PPalInfo cpal = make_shared<PalInfo>(pal);
   CPPalInfo cme = make_shared<PalInfo>(me);
   GroupInfo gi(cpal, cme, nullptr);
   ASSERT_EQ(gi.GetHintAsMarkup(),
             "Version: 1_iptux\nNickname: palname\nUser: \nHost: \nAddress: "
-            "0.0.0.0\nCompatibility: Microsoft\nSystem coding: ");
+            "127.0.0.1\nCompatibility: Microsoft\nSystem coding: ");
 
   cpal->sign = strdup("hello");
   ASSERT_EQ(gi.GetHintAsMarkup(),
             "Version: 1_iptux\nNickname: palname\nUser: \nHost: \nAddress: "
-            "0.0.0.0\nCompatibility: Microsoft\nSystem coding: "
+            "127.0.0.1\nCompatibility: Microsoft\nSystem coding: "
             "\nSignature:\n<span foreground=\"#00FF00\" font_style=\"italic\" "
             "size=\"smaller\">hello</span>");
 }

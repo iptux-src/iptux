@@ -32,12 +32,12 @@ class Command {
   /// Const Pointer to PalInfo
   using CPPalInfo = std::shared_ptr<const PalInfo>;
 
-  void BroadCast(int sock);
-  void DialUp(int sock);
+  void BroadCast(int sock, uint16_t port);
+  void DialUp(int sock, uint16_t port);
   void SendAnsentry(int sock, CPPalInfo pal);
   void SendExit(int sock, CPPalInfo pal);
   void SendAbsence(int sock, CPPalInfo pal);
-  void SendDetectPacket(int sock, in_addr ipv4);
+  void SendDetectPacket(int sock, in_addr ipv4, uint16_t port);
   void SendMessage(int sock, CPPalInfo pal, const char* msg);
   void SendReply(int sock, CPPalInfo pal, uint32_t packetno);
   void SendReply(int sock, const PalKey& pal, uint32_t packetno);
@@ -99,9 +99,9 @@ class Command {
 
  private:
   CoreThread& coreThread;
-  size_t size;              //当前已使用缓冲区的长度
-  char buf[MAX_UDPLEN];     //数据缓冲区
-  static uint32_t packetn;  //包编号
+  size_t size;              // 当前已使用缓冲区的长度
+  char buf[MAX_UDPLEN];     // 数据缓冲区
+  static uint32_t packetn;  // 包编号
 
  public:
   inline uint32_t& Packetn() { return packetn; }

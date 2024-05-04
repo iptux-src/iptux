@@ -11,7 +11,7 @@ using namespace iptux;
 TEST(DialogPeer, Constructor) {
   Application* app = CreateApplication();
 
-  PPalInfo pal = make_shared<PalInfo>();
+  PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   app->getCoreThread()->AttachPalToList(pal);
 
   GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
