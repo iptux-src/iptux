@@ -89,6 +89,10 @@ mark:
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
       g_cthrd->UpdateMyInfo();
+      if (dset.need_restart) {
+        pop_warning(dialog,
+                    _("The program needs to be restarted to take effect!"));
+      }
       break;
     case GTK_RESPONSE_APPLY:
       dset.ObtainPersonalValue();
@@ -96,6 +100,10 @@ mark:
       dset.ObtainNetworkValue();
       g_progdt->WriteProgData();
       g_cthrd->UpdateMyInfo();
+      if (dset.need_restart) {
+        pop_warning(dialog,
+                    _("The program needs to be restarted to take effect!"));
+      }
       goto mark;
     default:
       break;
@@ -815,6 +823,14 @@ void DataSettings::ObtainSystemValue() {
 
   auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getProgramData();
+
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "port-entry-widget"));
+  text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
+  int port = stoi(text);
+  if (port != g_progdt->port()) {
+    g_progdt->set_port(port);
+    need_restart = true;
+  }
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);

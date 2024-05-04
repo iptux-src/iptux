@@ -51,9 +51,10 @@ class DataSettings {
   GtkWidget* CreateFontChooser();
 
   Application* app;
-  GData* widset;  //窗体集
-  GData* mdlset;  //数据model集
+  GData* widset;  // 窗体集
+  GData* mdlset;  // 数据model集
   IconModel* iconModel = 0;
+  bool need_restart = false;
 
  private:
   void ObtainPersonalValue();
@@ -65,7 +66,7 @@ class DataSettings {
 
   static gint IconfileGetItemPos(GtkTreeModel* model, const char* pathname);
 
-  //回调处理部分
+  // 回调处理部分
  private:
   static void AddNewIcon(GtkWidget* button, GData** widset);
   static void ChoosePhoto(GData** widset);
