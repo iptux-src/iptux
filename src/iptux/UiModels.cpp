@@ -329,6 +329,7 @@ static const char* group_info_style_names[] = {
     [(int)GroupInfoStyle::VERSION_NAME] = "version",
     [(int)GroupInfoStyle::LAST_ACTIVITY] = "last_activity",
     [(int)GroupInfoStyle::LAST_MESSAGE] = "last_message",
+    [(int)GroupInfoStyle::IP_PORT] = "ip_port",
 };
 
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
@@ -503,6 +504,9 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         break;
       case GroupInfoStyle::LAST_MESSAGE:
         line2 = last_message_;
+      case GroupInfoStyle::IP_PORT:
+        line2 = stringFormat("%s:%d", inAddrToString(pal->ipv4()).c_str(),
+                             pal->port());
         break;
       case GroupInfoStyle::IP:
       default:

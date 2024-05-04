@@ -43,6 +43,8 @@ TEST(GroupInfo, GetInfoAsMarkup) {
   CPPalInfo cme = make_shared<PalInfo>(me);
   GroupInfo gi(cpal, cme, nullptr);
   ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP), "palname\n127.0.0.1");
+  ASSERT_EQ(gi.GetInfoAsMarkup(GroupInfoStyle::IP_PORT),
+            "palname\n127.0.0.1:2425");
 
   MsgPara msg(cpal);
   gi.addMsgPara(msg);
