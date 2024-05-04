@@ -21,15 +21,23 @@ namespace iptux {
 
 class DataSettings {
  public:
-  explicit DataSettings(Application* app);
+  explicit DataSettings(Application* app, GtkWidget* parent);
   ~DataSettings();
 
-  static void ResetDataEntry(Application* app, GtkWidget* parent) {
-    ResetDataEntry(app, parent, true);
-  }
-  static void ResetDataEntry(Application* app, GtkWidget* parent, bool run);
+  void Save();
+
+  GtkDialog* dialog() { return dialog_; }
+
+  static void ResetDataEntry(Application* app, GtkWidget* parent);
 
  private:
+  Application* app;
+  GtkDialog* dialog_;
+  GData* widset;  // 窗体集
+  GData* mdlset;  // 数据model集
+  IconModel* iconModel = 0;
+  bool need_restart = false;
+
   void InitSublayer();
   void ClearSublayer();
 
@@ -50,13 +58,6 @@ class DataSettings {
   GtkWidget* CreateArchiveChooser();
   GtkWidget* CreateFontChooser();
 
-  Application* app;
-  GData* widset;  // 窗体集
-  GData* mdlset;  // 数据model集
-  IconModel* iconModel = 0;
-  bool need_restart = false;
-
- private:
   void ObtainPersonalValue();
   void ObtainSystemValue();
   void ObtainNetworkValue();

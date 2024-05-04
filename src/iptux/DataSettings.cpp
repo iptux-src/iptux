@@ -30,15 +30,34 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-DataSettings::DataSettings(Application* app)
+DataSettings::DataSettings(Application* app, GtkWidget* parent)
     : app(app), widset(NULL), mdlset(NULL) {
   InitSublayer();
+  dialog_ = GTK_DIALOG(CreateMainDialog(parent));
+
+  /* 创建相关数据设置标签 */
+  GtkWidget* note = gtk_notebook_new();
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_TOP);
+  gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dialog_)), note, TRUE,
+                     TRUE, 0);
+  GtkWidget* label = gtk_label_new(_("Personal"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), CreatePersonal(), label);
+  label = gtk_label_new(_("System"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), CreateSystem(), label);
+  label = gtk_label_new(_("Network"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(note), CreateNetwork(), label);
+
+  /* 设置相关数据默认值 */
+  SetPersonalValue();
+  SetSystemValue();
 }
 
 /**
  * 类析构函数.
  */
 DataSettings::~DataSettings() {
+  gtk_widget_destroy(GTK_WIDGET(dialog_));
   ClearSublayer();
 }
 
@@ -46,69 +65,34 @@ DataSettings::~DataSettings() {
  * 程序数据设置入口.
  * @param parent 父窗口指针
  */
-void DataSettings::ResetDataEntry(Application* app,
-                                  GtkWidget* parent,
-                                  bool run) {
-  DataSettings dset(app);
-  GtkWidget* dialog;
-  GtkWidget *note, *label;
-
-  auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getProgramData();
-
-  dialog = dset.CreateMainDialog(parent);
-
-  /* 创建相关数据设置标签 */
-  note = gtk_notebook_new();
-  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(note), GTK_POS_TOP);
-  gtk_notebook_set_scrollable(GTK_NOTEBOOK(note), TRUE);
-  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                     note, TRUE, TRUE, 0);
-  label = gtk_label_new(_("Personal"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreatePersonal(), label);
-  label = gtk_label_new(_("System"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateSystem(), label);
-  label = gtk_label_new(_("Network"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(note), dset.CreateNetwork(), label);
-
-  /* 设置相关数据默认值 */
-  dset.SetPersonalValue();
-  dset.SetSystemValue();
+void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
+  DataSettings dset(app, parent);
+  GtkWidget* dialog = GTK_WIDGET(dset.dialog());
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
-  if (!run) {
-    gtk_widget_destroy(dialog);
-    return;
+  bool done = false;
+  while (!done) {
+    switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
+      case GTK_RESPONSE_OK:
+        dset.Save();
+        if (dset.need_restart) {
+          pop_warning(dialog,
+                      _("The program needs to be restarted to take effect!"));
+        }
+        done = true;
+        break;
+      case GTK_RESPONSE_APPLY:
+        dset.Save();
+        if (dset.need_restart) {
+          pop_warning(dialog,
+                      _("The program needs to be restarted to take effect!"));
+        }
+        break;
+      default:
+        break;
+    }
   }
-mark:
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_OK:
-      dset.ObtainPersonalValue();
-      dset.ObtainSystemValue();
-      dset.ObtainNetworkValue();
-      g_progdt->WriteProgData();
-      g_cthrd->UpdateMyInfo();
-      if (dset.need_restart) {
-        pop_warning(dialog,
-                    _("The program needs to be restarted to take effect!"));
-      }
-      break;
-    case GTK_RESPONSE_APPLY:
-      dset.ObtainPersonalValue();
-      dset.ObtainSystemValue();
-      dset.ObtainNetworkValue();
-      g_progdt->WriteProgData();
-      g_cthrd->UpdateMyInfo();
-      if (dset.need_restart) {
-        pop_warning(dialog,
-                    _("The program needs to be restarted to take effect!"));
-      }
-      goto mark;
-    default:
-      break;
-  }
-  gtk_widget_destroy(dialog);
 }
 
 /**
@@ -743,6 +727,14 @@ GtkWidget* DataSettings::CreateFontChooser() {
   gtk_font_button_set_title(GTK_FONT_BUTTON(chooser), _("Select Font"));
 
   return chooser;
+}
+
+void DataSettings::Save() {
+  ObtainPersonalValue();
+  ObtainSystemValue();
+  ObtainNetworkValue();
+  app->getProgramData()->WriteProgData();
+  app->getCoreThread()->UpdateMyInfo();
 }
 
 /**
