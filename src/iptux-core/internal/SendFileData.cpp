@@ -95,7 +95,7 @@ void SendFileData::TerminateTrans() {
  * 创建UI参考数据.
  */
 void SendFileData::CreateUIPara() {
-  struct in_addr addr = file->fileown->ipv4;
+  struct in_addr addr = file->fileown->ipv4();
 
   para.setStatus("tip-send")
       .setTask(_("send"))
@@ -119,7 +119,7 @@ void SendFileData::SendRegularFile() {
 
   /* 打开文件 */
   if ((fd = open(file->filepath, O_RDONLY | O_LARGEFILE)) == -1) {
-    terminate = true;  //标记处理过程失败
+    terminate = true;  // 标记处理过程失败
     return;
   }
 
@@ -169,8 +169,8 @@ void SendFileData::SendDirFiles() {
   dirt = &vdirt;
   g_free(dirname);
 
-  result = false;  //预设任务处理失败
-  dir = NULL;      //预设当前目录流无效
+  result = false;  // 预设任务处理失败
+  dir = NULL;      // 预设当前目录流无效
   goto start;
   while (!g_queue_is_empty(&dirstack)) {
     /* 取出最后一次压入堆栈的目录流 */
@@ -215,7 +215,7 @@ void SendFileData::SendDirFiles() {
         goto end;
       /* 选择处理方案 */
       gettimeofday(&filetime, NULL);
-      if (S_ISREG(st.st_mode)) {  //常规文件
+      if (S_ISREG(st.st_mode)) {  // 常规文件
         if ((fd = afs.open(dirt->d_name, O_RDONLY | O_LARGEFILE)) == -1)
           goto end;
         finishsize = SendData(fd, st.st_size);
@@ -223,8 +223,8 @@ void SendFileData::SendDirFiles() {
         if (finishsize < st.st_size)
           goto end;
         //                                sumsize += finishsize;
-      } else if (S_ISDIR(st.st_mode)) {  //目录文件
-        if (dir)  //若当前目录流有效则须压入堆栈
+      } else if (S_ISDIR(st.st_mode)) {  // 目录文件
+        if (dir)  // 若当前目录流有效则须压入堆栈
           g_queue_push_head(&dirstack, dir);
         /* 打开下属目录 */
         if (!(dir = afs.opendir(dirt->d_name)))
@@ -292,8 +292,8 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
   if (filesize == 0)
     return 0;
 
-  tmpsize = finishsize = 0;   //初始化已完成数据量
-  gettimeofday(&val1, NULL);  //初始化起始时间
+  tmpsize = finishsize = 0;   // 初始化已完成数据量
+  gettimeofday(&val1, NULL);  // 初始化起始时间
   do {
     /* 读取文件数据并发送 */
     size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
@@ -316,8 +316,8 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
           .setRemain(
               numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
           .setRate(numeric_to_rate(rate));
-      val1 = val2;           //更新时间参考点
-      tmpsize = finishsize;  //更新下载量
+      val1 = val2;           // 更新时间参考点
+      tmpsize = finishsize;  // 更新下载量
     }
   } while (!terminate && size && finishsize < filesize);
 

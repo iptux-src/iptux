@@ -8,8 +8,8 @@ using namespace std;
 using namespace iptux;
 
 TEST(PalInfo, GetKey) {
-  PalInfo info;
-  ASSERT_EQ(info.GetKey().ToString(), "0.0.0.0:2425");
+  PalInfo info("127.0.0.1", 2425);
+  ASSERT_EQ(info.GetKey().ToString(), "127.0.0.1:2425");
 }
 
 TEST(PalKey, CopyConstructor) {
@@ -69,7 +69,7 @@ TEST(FileAttr, Convert) {
 }
 
 TEST(MsgPara, getSummary) {
-  PPalInfo pal = make_shared<PalInfo>();
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   MsgPara msg(pal);
   EXPECT_EQ(msg.getSummary(), "Empty Message");
   msg.dtlist.push_back(ChipData("foobar"));

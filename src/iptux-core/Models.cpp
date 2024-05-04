@@ -14,6 +14,7 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+#include <netinet/in.h>
 #include <sstream>
 #include <unistd.h>
 
@@ -25,14 +26,17 @@ using namespace std;
 
 namespace iptux {
 
-PalInfo::PalInfo()
-    : ipv4({0}),
-      segdes(NULL),
-      photo(NULL),
-      sign(NULL),
-      packetn(0),
-      rpacketn(0),
-      flags(0) {}
+PalInfo::PalInfo(in_addr ipv4, uint16_t port)
+    : segdes(NULL), photo(NULL), sign(NULL), packetn(0), rpacketn(0), flags(0) {
+  this->ipv4_ = ipv4;
+  this->port_ = port;
+}
+
+PalInfo::PalInfo(const string& ipv4, uint16_t port)
+    : segdes(NULL), photo(NULL), sign(NULL), packetn(0), rpacketn(0), flags(0) {
+  this->ipv4_ = inAddrFromString(ipv4);
+  this->port_ = port;
+}
 
 PalInfo::~PalInfo() {
   g_free(segdes);
@@ -113,7 +117,7 @@ string PalInfo::toString() const {
   return stringFormat(
       "PalInfo(IP=%s,name=%s,segdes=%s,version=%s,user=%s,host=%s,group=%s,"
       "photo=%s,sign=%s,iconfile=%s,encode=%s,packetn=%d,rpacketn=%d,flags=%d)",
-      inAddrToString(ipv4).c_str(), name.c_str(), segdes, version.c_str(),
+      inAddrToString(ipv4()).c_str(), name.c_str(), segdes, version.c_str(),
       user.c_str(), host.c_str(), group.c_str(), photo ? photo : "(NULL)",
       sign ? sign : "(NULL)", icon_file_.c_str(), encode.c_str(), int(packetn),
       int(rpacketn), int(flags));
@@ -252,8 +256,6 @@ string ChipData::getSummary() const {
   }
   return "";
 }
-
-PalKey::PalKey(in_addr ipv4) : ipv4(ipv4), port(IPTUX_DEFAULT_PORT) {}
 
 PalKey::PalKey(in_addr ipv4, int port) : ipv4(ipv4), port(port) {}
 

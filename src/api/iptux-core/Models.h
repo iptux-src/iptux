@@ -14,6 +14,7 @@
 
 #include <arpa/inet.h>
 #include <memory>
+#include <netinet/in.h>
 #include <string>
 
 #include <json/json.h>
@@ -54,7 +55,6 @@ typedef enum {
 
 class PalKey {
  public:
-  PalKey(in_addr ipv4);
   PalKey(in_addr ipv4, int port);
 
   bool operator==(const PalKey& rhs) const;
@@ -79,10 +79,11 @@ class PalKey {
  */
 class PalInfo {
  public:
-  PalInfo();
+  PalInfo(const std::string& ipv4, uint16_t port);
+  PalInfo(in_addr ipv4, uint16_t port);
   ~PalInfo();
 
-  PalKey GetKey() const { return ipv4; }
+  PalKey GetKey() const { return PalKey(ipv4(), port_); }
 
   PalInfo& setName(const std::string& name);
   const std::string& getName() const { return name; }
@@ -116,8 +117,9 @@ class PalInfo {
   }
 
   std::string toString() const;
+  in_addr ipv4() const { return ipv4_; }
+  uint16_t port() const { return port_; }
 
-  in_addr ipv4;       ///< 好友IP
   char* segdes;       ///< 所在网段描述
   char* photo;        ///< 形象照片
   char* sign;         ///< 个性签名
@@ -135,6 +137,8 @@ class PalInfo {
   PalInfo& setInBlacklistl(bool value);
 
  private:
+  in_addr ipv4_;           ///< 好友IP
+  uint16_t port_;          ///< 好友端口
   std::string icon_file_;  ///< 好友头像 *
   std::string user;
   std::string name;

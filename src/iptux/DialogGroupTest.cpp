@@ -10,7 +10,7 @@ using namespace iptux;
 TEST(DialogGroup, Constructor) {
   Application* app = CreateApplication();
 
-  auto pal = make_shared<PalInfo>();
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   pal->set_icon_file("pig");
 
   GroupInfo groupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>({pal}),

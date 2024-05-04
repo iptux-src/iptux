@@ -73,6 +73,11 @@
             <attribute name='target'>ip</attribute>
           </item>
           <item>
+            <attribute name='label' translatable='yes'>IP:PORT</attribute>
+            <attribute name='action'>win.info_style</attribute>
+            <attribute name='target'>ip_port</attribute>
+          </item>
+          <item>
             <attribute name='label' translatable='yes'>Host</attribute>
             <attribute name='action'>win.info_style</attribute>
             <attribute name='target'>host</attribute>

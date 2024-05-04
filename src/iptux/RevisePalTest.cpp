@@ -11,7 +11,7 @@ using namespace iptux;
 TEST(RevisePal, Constructor) {
   Application* app = CreateApplication();
 
-  PalInfo palInfo;
+  PalInfo palInfo("127.0.0.1", 2425);
 
   RevisePal pal(app, nullptr, &palInfo);
   DestroyApplication(app);
@@ -20,7 +20,7 @@ TEST(RevisePal, Constructor) {
 TEST(RevisePal, ReviseEntryDo) {
   Application* app = CreateApplication();
 
-  PalInfo palInfo;
+  PalInfo palInfo("127.0.0.1", 2425);
 
   RevisePal::ReviseEntryDo(app, nullptr, &palInfo, false);
   DestroyApplication(app);

@@ -102,6 +102,6 @@ meson setup build
 meson compile update-po -C build
 ```
 
-## Stargazers over time
+## Stats
 
-[![Stargazers over time](https://starchart.cc/iptux-src/iptux.svg)](https://starchart.cc/iptux-src/iptux)
+![Alt](https://repobeats.axiom.co/api/embed/8944a2744839c5ea58b0ea10f46a1d31c7fefa07.svg "Repobeats analytics image")

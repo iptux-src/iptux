@@ -46,7 +46,7 @@ TEST(CoreThread, GetPalList) {
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
   EXPECT_EQ(int(thread->GetPalList().size()), 0);
-  PPalInfo pal = make_shared<PalInfo>();
+  PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   int eventCount = thread->getEventCount();
   thread->AttachPalToList(pal);
   EXPECT_EQ(int(thread->GetPalList().size()), 1);
@@ -60,7 +60,7 @@ TEST(CoreThread, SendMessage) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  auto pal = make_shared<PalInfo>();
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   try {
     thread->SendMessage(pal, "hello world");
     EXPECT_TRUE(false);
@@ -78,7 +78,7 @@ TEST(CoreThread, SendMessage_ChipData) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  auto pal = make_shared<PalInfo>();
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->AttachPalToList(pal);
   ChipData chipData("hello world");
   EXPECT_TRUE(thread->SendMessage(pal, chipData));
@@ -90,7 +90,7 @@ TEST(CoreThread, SendMsgPara) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  PPalInfo pal = make_shared<PalInfo>();
+  PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->AttachPalToList(pal);
   ChipData chipData("hello world");
   MsgPara para(pal);
@@ -120,7 +120,7 @@ TEST(CoreThread, SendAskShared) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  auto pal = make_shared<PalInfo>();
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->SendAskShared(pal);
   delete thread;
 }

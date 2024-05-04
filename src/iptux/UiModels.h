@@ -45,6 +45,7 @@ enum class GroupInfoStyle {
   VERSION_NAME,
   LAST_ACTIVITY,
   LAST_MESSAGE,
+  IP_PORT,
   INVALID
 };
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
