@@ -112,7 +112,7 @@ void RecvFileData::TerminateTrans() {
  * 创建UI参考数据.
  */
 void RecvFileData::CreateUIPara() {
-  struct in_addr addr = file->fileown->ipv4;
+  struct in_addr addr = file->fileown->ipv4();
   para.setStatus("tip-recv")
       .setTask(_("receive"))
       .setPeer(file->fileown->getName())
@@ -147,7 +147,7 @@ void RecvFileData::RecvRegularFile() {
   if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn,
                        file->fileid, 0)) {
     close(sock);
-    terminate = true;  //标记处理过程失败
+    terminate = true;  // 标记处理过程失败
     return;
   }
   /* 打开文件 */
@@ -210,7 +210,7 @@ void RecvFileData::RecvDirFiles() {
   if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn,
                         file->fileid)) {
     close(sock);
-    terminate = true;  //标记处理过程失败
+    terminate = true;  // 标记处理过程失败
     return;
   }
   /* 转到文件存档目录 */
@@ -220,8 +220,8 @@ void RecvFileData::RecvDirFiles() {
   g_free(pathname);
 
   /* 接收目录数据 */
-  result = false;  //预设任务处理失败
-  len = 0;         //预设缓冲区有效数据量为0
+  result = false;  // 预设任务处理失败
+  len = 0;         // 预设缓冲区有效数据量为0
   while (!terminate) {
     /* 读取足够的数据，并分析数据头 */
     if ((size = read_ipmsg_fileinfo(sock, buf, MAX_SOCKLEN, len)) == -1)
@@ -236,7 +236,7 @@ void RecvFileData::RecvDirFiles() {
       timebuf.actime = int(iptux_get_hex_number(filectime, '=', 1));
     if (filemtime != NULL)
       timebuf.modtime = int(iptux_get_hex_number(filemtime, '=', 1));
-    len = size - headsize;  //更新缓冲区有效数据量
+    len = size - headsize;  // 更新缓冲区有效数据量
 
     /* 转码(如果好友不兼容iptux协议) */
     if (!file->fileown->isCompatible() &&
@@ -262,7 +262,7 @@ void RecvFileData::RecvDirFiles() {
         if (len)
           memmove(buf, buf + headsize, len);
         if (strlen(afs.cwd()) < strlen(file->filepath)) {
-          //如果这时候还不成功结束就会陷入while开关第1句的死循环
+          // 如果这时候还不成功结束就会陷入while开关第1句的死循环
           result = true;
           goto end;
         }
@@ -290,13 +290,13 @@ void RecvFileData::RecvDirFiles() {
       close(fd);
       goto end;
     }
-    if (size == filesize) {  //文件数据读取已完成
+    if (size == filesize) {  // 文件数据读取已完成
       len -= size;
       if (len)
         memmove(buf, buf + headsize + size, len);
       finishsize = size;
-    } else {    //尚需继续读取文件数据
-      len = 0;  //首先标记缓冲区已无有效数据
+    } else {    // 尚需继续读取文件数据
+      len = 0;  // 首先标记缓冲区已无有效数据
       finishsize = RecvData(sock, fd, filesize, size);
       if (finishsize < filesize) {
         close(fd);
@@ -351,8 +351,8 @@ int64_t RecvFileData::RecvData(int sock,
     return filesize;
 
   /* 接收数据 */
-  tmpsize = finishsize = offset;  //初始化已读取数据量
-  gettimeofday(&val1, NULL);      //初始化起始时间
+  tmpsize = finishsize = offset;  // 初始化已读取数据量
+  gettimeofday(&val1, NULL);      // 初始化起始时间
   do {
     /* 接收数据并写入磁盘 */
     size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
@@ -375,8 +375,8 @@ int64_t RecvFileData::RecvData(int sock,
           .setRemain(
               numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
           .setRate(numeric_to_rate(rate));
-      val1 = val2;           //更新时间参考点
-      tmpsize = finishsize;  //更新下载量
+      val1 = val2;           // 更新时间参考点
+      tmpsize = finishsize;  // 更新下载量
     }
   } while (!terminate && size && finishsize < filesize);
 

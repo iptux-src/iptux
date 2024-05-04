@@ -11,6 +11,7 @@
 #include "iptux-utils/utils.h"
 #include "iptux/DialogBase.h"
 #include "iptux/UiHelper.h"
+#include <netinet/in.h>
 
 using namespace std;
 
@@ -505,10 +506,8 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         break;
       case GroupInfoStyle::IP:
       default:
-        char ipstr[INET_ADDRSTRLEN];
         auto pal = this->getMembers()[0].get();
-        inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-        line2 = ipstr;
+        line2 = inAddrToString(pal->ipv4());
     }
 
     int unreadMsgCount = this->getUnreadMsgCount();
@@ -530,7 +529,6 @@ string GroupInfo::GetHintAsMarkup() const {
     return "";
   }
   auto pal = this->members[0];
-  char ipstr[INET_ADDRSTRLEN];
 
   ostringstream res;
   res << MarkupPrintf(_("Version: %s"), pal->getVersion().c_str());
@@ -550,11 +548,11 @@ string GroupInfo::GetHintAsMarkup() const {
   res << MarkupPrintf(_("Host: %s"), pal->getHost().c_str());
   res << "\n";
 
-  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+  string ipstr = inAddrToString(pal->ipv4());
   if (pal->segdes && *pal->segdes != '\0') {
-    res << MarkupPrintf(_("Address: %s(%s)"), pal->segdes, ipstr);
+    res << MarkupPrintf(_("Address: %s(%s)"), pal->segdes, ipstr.c_str());
   } else {
-    res << MarkupPrintf(_("Address: %s"), ipstr);
+    res << MarkupPrintf(_("Address: %s"), ipstr.c_str());
   }
   res << "\n";
 

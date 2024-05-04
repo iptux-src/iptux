@@ -17,6 +17,7 @@
 #ifndef IPTUX_UICORETHREAD_H
 #define IPTUX_UICORETHREAD_H
 
+#include <netinet/in.h>
 #include <queue>
 #include <sigc++/signal.h>
 
@@ -46,6 +47,9 @@ class UiCoreThread : public CoreThread {
 
   void ClearAllPalFromList() override;
   void UpdatePalToList(PalKey palKey) override;
+  void UpdatePalToList(in_addr ipv4) override {
+    UpdatePalToList(PalKey(ipv4, port()));
+  }
 
   void AttachPalToList(std::shared_ptr<PalInfo> pal) override;
   GroupInfo* GetPalRegularItem(const PalInfo* pal);
@@ -87,14 +91,14 @@ class UiCoreThread : public CoreThread {
   LogSystem* logSystem;
   std::queue<MsgPara> messages;
 
-  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  // 群组链表(成员不能被删除)
 
-  uint32_t pbn, prn;            //当前已使用的文件编号(共享/私有)
-  GSList* ecsList;              //文件链表(好友发过来)
+  uint32_t pbn, prn;            // 当前已使用的文件编号(共享/私有)
+  GSList* ecsList;              // 文件链表(好友发过来)
   GtkTextTagTable* tag_table_;  // tag table
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 
-  //内联成员函数
+  // 内联成员函数
  public:
   inline uint32_t& PbnQuote() { return pbn; }
 

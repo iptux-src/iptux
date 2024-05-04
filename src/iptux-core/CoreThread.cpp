@@ -84,13 +84,15 @@ void init_iptux_environment() {
 }  // namespace
 
 struct CoreThread::Impl {
+  uint16_t port;
+
   PPalInfo me;
 
   UdpDataService_U udp_data_service;
 
-  GSList* blacklist{nullptr};  //黑名单链表
+  GSList* blacklist{nullptr};  // 黑名单链表
   bool debugDontBroadcast{false};
-  vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+  vector<shared_ptr<PalInfo>> pallist;  // 好友链表(成员不能被删除)
 
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
   int lastTransTaskId{0};
@@ -140,9 +142,9 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
+  pImpl->port = programData->port();
   pImpl->udp_data_service = make_unique<UdpDataService>(*this);
-  pImpl->me = make_shared<PalInfo>();
-  pImpl->me->ipv4 = inAddrFromString("127.0.0.1");
+  pImpl->me = make_shared<PalInfo>("127.0.0.1", port());
   (*pImpl->me)
       .setUser(g_get_user_name())
       .setHost(g_get_host_name())
@@ -179,7 +181,7 @@ void CoreThread::start() {
 }
 
 void CoreThread::bind_iptux_port() {
-  int port = config->GetInt("port", IPTUX_DEFAULT_PORT);
+  uint16_t port = programData->port();
   struct sockaddr_in addr;
   tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   socket_enable_reuse(tcpSock);
@@ -299,6 +301,10 @@ void CoreThread::stop() {
   pImpl->notifyToAllFuture.wait();
 }
 
+uint16_t CoreThread::port() const {
+  return pImpl->port;
+}
+
 void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
@@ -325,9 +331,9 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
 void CoreThread::SendNotifyToAll(CoreThread* pcthrd) {
   Command cmd(*pcthrd);
   if (!pcthrd->pImpl->debugDontBroadcast) {
-    cmd.BroadCast(pcthrd->udpSock);
+    cmd.BroadCast(pcthrd->udpSock, pcthrd->port());
   }
-  cmd.DialUp(pcthrd->udpSock);
+  cmd.DialUp(pcthrd->udpSock, pcthrd->port());
 }
 
 /**
@@ -372,7 +378,7 @@ void CoreThread::ClearAllPalFromList() {
 
 shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
   for (auto palInfo : pImpl->pallist) {
-    if (ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
+    if (ipv4Equal(palInfo->ipv4(), palKey.GetIpv4())) {
       return palInfo;
     }
   }
@@ -380,7 +386,7 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
 }
 
 shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
-  return GetPal(PalKey(inAddrFromString(ipv4)));
+  return GetPal(PalKey(inAddrFromString(ipv4), port()));
 }
 
 /**
@@ -513,10 +519,10 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
         return false;
       }
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
-      close(sock);  //关闭网络套接口
+      close(sock);  // 关闭网络套接口
       /*/* 删除此图片 */
       if (chipData.GetDeleteFileAfterSent()) {
-        unlink(ptr);  //此文件已无用处
+        unlink(ptr);  // 此文件已无用处
       }
       return true;
     default:
@@ -541,11 +547,11 @@ void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
 
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
-  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
+  this->emitEvent(make_shared<NewMessageEvent>(std::move(para2)));
 }
 
 void CoreThread::InsertMessage(MsgPara&& para) {
-  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
+  this->emitEvent(make_shared<NewMessageEvent>(std::move(para)));
 }
 
 bool CoreThread::SendAskShared(PPalInfo pal) {
@@ -598,14 +604,14 @@ void CoreThread::SendDetectPacket(const string& ipv4) {
 }
 
 void CoreThread::SendDetectPacket(in_addr ipv4) {
-  Command(*this).SendDetectPacket(udpSock, ipv4);
+  Command(*this).SendDetectPacket(udpSock, ipv4, port());
 }
 
 void CoreThread::emitSomeoneExit(const PalKey& palKey) {
   if (!GetPal(palKey)) {
     return;
   }
-  DelPalFromList(palKey.GetIpv4());
+  DelPalFromList(palKey);
   emitEvent(make_shared<PalOfflineEvent>(palKey));
 }
 

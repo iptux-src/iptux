@@ -23,6 +23,7 @@
 
 #include <glib/gi18n.h>
 
+#include "iptux-core/CoreThread.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/CommandMode.h"
 #include "iptux-core/internal/RecvFile.h"
@@ -78,8 +79,7 @@ void UdpData::SomeoneLost() {
   auto g_progdt = coreThread.getProgramData();
 
   /* 创建好友数据 */
-  pal = new PalInfo;
-  pal->ipv4 = ipv4;
+  pal = new PalInfo(ipv4, coreThread.port());
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
@@ -142,7 +142,7 @@ void UdpData::SomeoneEntry() {
  * 好友退出.
  */
 void UdpData::SomeoneExit() {
-  coreThread.emitSomeoneExit(PalKey(ipv4));
+  coreThread.emitSomeoneExit(PalKey(ipv4, coreThread.port()));
 }
 
 /**
@@ -335,7 +335,7 @@ void UdpData::SomeoneSendIcon() {
   iconfile = RecvPalIcon();
   if (!iconfile.empty()) {
     pal->set_icon_file(iconfile);
-    coreThread.EmitIconUpdate(PalKey(ipv4));
+    coreThread.EmitIconUpdate(PalKey(ipv4, coreThread.port()));
   }
 }
 
@@ -429,8 +429,7 @@ void UdpData::SomeoneBcstmsg() {
  */
 shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto programData = coreThread.getProgramData();
-  auto pal = make_shared<PalInfo>();
-  pal->ipv4 = ipv4;
+  auto pal = make_shared<PalInfo>(ipv4, coreThread.port());
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
