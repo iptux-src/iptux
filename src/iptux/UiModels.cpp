@@ -504,6 +504,7 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
         break;
       case GroupInfoStyle::LAST_MESSAGE:
         line2 = last_message_;
+        break;
       case GroupInfoStyle::IP_PORT:
         line2 = stringFormat("%s:%d", inAddrToString(pal->ipv4()).c_str(),
                              pal->port());
