@@ -35,6 +35,7 @@ DataSettings::DataSettings(Application* app, GtkWidget* parent)
     : app(app), widset(NULL), mdlset(NULL) {
   InitSublayer();
   dialog_ = GTK_DIALOG(CreateMainDialog(parent));
+  g_object_ref_sink(G_OBJECT(dialog_));
 
   /* 创建相关数据设置标签 */
   GtkWidget* note = gtk_notebook_new();
@@ -481,6 +482,10 @@ GtkWidget* DataSettings::CreateNetwork() {
                            &mdlset);
 
   return box;
+}
+
+GtkWidget* DataSettings::GetWidget(const char* name) {
+  return GTK_WIDGET(g_datalist_get_data(&widset, name));
 }
 
 /**

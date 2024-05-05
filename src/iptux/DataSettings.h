@@ -30,6 +30,9 @@ class DataSettings {
 
   static void ResetDataEntry(Application* app, GtkWidget* parent);
 
+  // only for test
+  GtkWidget* GetWidget(const char* name);
+
  private:
   Application* app;
   GtkDialog* dialog_;
