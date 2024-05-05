@@ -1,5 +1,6 @@
 #include "iptux_crash_utils.h"
 
+#include <cstdint>
 #include <string>
 
 #include <cxxabi.h>
@@ -10,6 +11,8 @@
 #include <string.h>
 
 using namespace std;
+
+namespace iptux {
 
 #define MAX_DEPTH 99
 
@@ -52,8 +55,8 @@ static void segvHandler(int sig) {
       offset = (off_t)(trace[i]) - (off_t)(dlinfo.dli_fbase);
     }
 
-    fprintf(stderr, "%-3d %-40s %p %s + 0x%lx\n", i, fname, trace[i],
-            symname ? symname : "", offset);
+    fprintf(stderr, "%-3d %-40s %p %s + 0x%jx\n", i, fname, trace[i],
+            symname ? symname : "", (uintmax_t)offset);
     if (demangled) {
       free(demangled);
     }
@@ -66,3 +69,4 @@ void installCrashHandler() {
   signal(SIGABRT, segvHandler);
   signal(SIGTRAP, segvHandler);
 }
+}  // namespace iptux
