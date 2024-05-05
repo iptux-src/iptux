@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 cd "${MESON_SOURCE_ROOT}" || exit 1

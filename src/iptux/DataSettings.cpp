@@ -268,7 +268,8 @@ GtkWidget* DataSettings::CreateSystem() {
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, "hexpand", TRUE, "input-purpose",
                GTK_INPUT_PURPOSE_DIGITS, "max-length", 5, "tooltip-text",
-               _("Any port number between 1024 and 65535"), NULL);
+               _("Any port number between 1024 and 65535, default is 2425"),
+               NULL);
   g_datalist_set_data(&widset, "port-entry-widget", widget);
   gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
