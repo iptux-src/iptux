@@ -76,7 +76,7 @@ void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
     switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
       case GTK_RESPONSE_OK:
         if (dset.Save()) {
-          if (dset.need_restart) {
+          if (app->getProgramData()->need_restart()) {
             pop_warning(dialog,
                         _("The program needs to be restarted to take effect!"));
           }
@@ -85,13 +85,14 @@ void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
         break;
       case GTK_RESPONSE_APPLY:
         if (dset.Save()) {
-          if (dset.need_restart) {
+          if (app->getProgramData()->need_restart()) {
             pop_warning(dialog,
                         _("The program needs to be restarted to take effect!"));
           }
         }
         break;
       default:
+        done = true;
         break;
     }
   }
@@ -852,7 +853,6 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
   if (port_valid && port != g_progdt->port()) {
     if (!dryrun) {
       g_progdt->set_port(port);
-      need_restart = true;
     }
   }
 

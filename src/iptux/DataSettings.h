@@ -36,7 +36,6 @@ class DataSettings {
   GData* widset;  // 窗体集
   GData* mdlset;  // 数据model集
   IconModel* iconModel = 0;
-  bool need_restart = false;
 
   /**
    * @brief check all the fields.
