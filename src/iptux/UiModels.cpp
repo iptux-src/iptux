@@ -227,7 +227,7 @@ PalTreeModel* palTreeModelNew(PalTreeModelSortKey sort_key,
 void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key) {
   GtkTreeIterCompareFunc f = PalTreeModelSortKeyToCompareFunc(key);
   if (!f) {
-    LOG_WARN("unknown PalTreeModelSortKey: %d", key);
+    LOG_WARN("unknown PalTreeModelSortKey: %d", int(key));
     return;
   }
   gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), f, NULL,
