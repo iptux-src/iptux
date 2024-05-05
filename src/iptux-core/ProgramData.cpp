@@ -88,13 +88,19 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
   netseg = netSegments;
 }
 
-void ProgramData::set_port(uint16_t port) {
+void ProgramData::set_port(uint16_t port, bool is_init) {
+  if (port == port_)
+    return;
+
+  uint16_t old_port = port_;
   port_ = port;
   if (port_ < 1024 || port_ > 65535) {
     LOG_WARN("Invalid port number: %d, use default port: %d", port_,
              IPTUX_DEFAULT_PORT);
     port_ = IPTUX_DEFAULT_PORT;
   }
+  if (!is_init && old_port != port_)
+    need_restart_ = true;
 }
 
 /**
@@ -121,7 +127,7 @@ void ProgramData::ReadProgData() {
   path = config->GetString("archive_path", g_get_home_dir());
   sign = config->GetString("personal_sign");
 
-  set_port(config->GetInt("port", IPTUX_DEFAULT_PORT));
+  set_port(config->GetInt("port", IPTUX_DEFAULT_PORT), true);
   codeset = config->GetString("candidacy_encode", "gb18030,utf-16");
   encode = config->GetString("preference_encode", "utf-8");
   palicon = g_strdup(config->GetString("pal_icon", "icon-qq.png").c_str());
