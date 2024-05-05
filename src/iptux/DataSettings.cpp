@@ -13,6 +13,7 @@
 #include "DataSettings.h"
 
 #include <dirent.h>
+#include <sstream>
 
 #include <glib/gi18n.h>
 
