@@ -580,8 +580,7 @@ std::string stringDump(const std::string& str) {
     }
     oss << "|\n";
   }
-  oss << stringFormat("%08lx\n", str.size());
-  ;
+  oss << stringFormat("%08jx\n", (uintmax_t)str.size());
   return oss.str();
 }
 

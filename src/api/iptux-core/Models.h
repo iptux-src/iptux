@@ -155,7 +155,7 @@ using PPalInfo = std::shared_ptr<PalInfo>;
 /// const pointer to PalInfo
 using CPPalInfo = std::shared_ptr<const PalInfo>;
 
-enum class FileAttr : std::uint32_t { UNKNOWN, REGULAR, DIRECTORY };
+enum class FileAttr { UNKNOWN, REGULAR, DIRECTORY };
 
 constexpr bool FileAttrIsValid(FileAttr attr) {
   return attr == FileAttr::REGULAR || attr == FileAttr::DIRECTORY;
