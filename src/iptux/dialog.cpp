@@ -12,6 +12,7 @@
 #include "config.h"
 #include "dialog.h"
 
+#include "iptux-utils/utils.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 
@@ -19,6 +20,8 @@
 
 #include "iptux-utils/output.h"
 #include "iptux/UiHelper.h"
+
+using namespace std;
 
 namespace iptux {
 
@@ -52,7 +55,7 @@ bool pop_request_quit(GtkWindow* parent) {
 bool pop_request_shared_file(GtkWindow* parent, PalInfo* pal) {
   GtkWidget *dialog, *box;
   GtkWidget *label, *image;
-  char ipstr[INET_ADDRSTRLEN], *ptr;
+  char* ptr;
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(
@@ -71,11 +74,11 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo* pal) {
   image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
 
-  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+  string ipstr = inAddrToString(pal->ipv4());
   ptr = g_strdup_printf(_("Your pal (%s)[%s]\n"
                           "is requesting to get your shared resources,\n"
                           "Do you agree?"),
-                        pal->getName().c_str(), ipstr);
+                        pal->getName().c_str(), ipstr.c_str());
   label = gtk_label_new(ptr);
   g_free(ptr);
   gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
@@ -97,7 +100,7 @@ bool pop_request_shared_file(GtkWindow* parent, PalInfo* pal) {
 char* pop_obtain_shared_passwd(GtkWindow* parent, PalInfo* pal) {
   GtkWidget *dialog, *frame, *box;
   GtkWidget *image, *passwd;
-  char ipstr[INET_ADDRSTRLEN], *text;
+  char* text;
   gint result;
 
   dialog = gtk_dialog_new_with_buttons(_("Access Password"), parent,
@@ -120,8 +123,9 @@ char* pop_obtain_shared_passwd(GtkWindow* parent, PalInfo* pal) {
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
   image = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-  inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-  text = g_strdup_printf(_("(%s)[%s]Password:"), pal->getName().c_str(), ipstr);
+  string ipstr = inAddrToString(pal->ipv4());
+  text = g_strdup_printf(_("(%s)[%s]Password:"), pal->getName().c_str(),
+                         ipstr.c_str());
   frame = gtk_frame_new(text);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
   gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 0);
@@ -132,7 +136,7 @@ char* pop_obtain_shared_passwd(GtkWindow* parent, PalInfo* pal) {
   gtk_container_add(GTK_CONTAINER(frame), passwd);
 
   gtk_widget_show_all(dialog);
-  text = NULL;  //并无多大用处，主要用来避免编译警告
+  text = NULL;  // 并无多大用处，主要用来避免编译警告
 mark:
   switch (result = gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:
@@ -187,7 +191,7 @@ char* pop_password_settings(GtkWidget* parent) {
   gtk_box_pack_start(GTK_BOX(hbox), repeat, TRUE, TRUE, 0);
 
   gtk_widget_show_all(dialog);
-  text1 = text2 = NULL;  //并无多大用处，主要用来避免编译警告
+  text1 = text2 = NULL;  // 并无多大用处，主要用来避免编译警告
 mark:
   switch (result = gtk_dialog_run(GTK_DIALOG(dialog))) {
     case GTK_RESPONSE_OK:

@@ -29,7 +29,7 @@
 #include "iptux-core/Const.h"
 
 #define IPMSG_VERSION 0x001
-#define IPMSG_PORT 0x979
+#define IPMSG_PORT 2425
 
 /*  command  */
 #define IPMSG_NOOPERATION 0x00000000UL

@@ -264,8 +264,8 @@ void RevisePal::ApplyReviseData() {
     if (access(path, F_OK) != 0) {
       g_free(file);
       snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32,
-               g_get_user_cache_dir(), ntohl(pal->ipv4.s_addr));
-      pal->set_icon_file(stringFormat("%" PRIx32, ntohl(pal->ipv4.s_addr)));
+               g_get_user_cache_dir(), ntohl(pal->ipv4().s_addr));
+      pal->set_icon_file(stringFormat("%" PRIx32, ntohl(pal->ipv4().s_addr)));
       gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
       gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
       gtk_icon_theme_add_builtin_icon(pal->icon_file().c_str(), MAX_ICONSIZE,
@@ -287,7 +287,7 @@ void RevisePal::ApplyReviseData() {
   auto g_cthrd = app->getCoreThread();
   /* 更新好友信息 */
   g_cthrd->Lock();
-  g_cthrd->UpdatePalToList(pal->ipv4);
+  g_cthrd->UpdatePalToList(pal->ipv4());
   g_cthrd->Unlock();
 }
 

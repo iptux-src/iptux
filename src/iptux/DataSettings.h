@@ -21,15 +21,32 @@ namespace iptux {
 
 class DataSettings {
  public:
-  explicit DataSettings(Application* app);
+  explicit DataSettings(Application* app, GtkWidget* parent);
   ~DataSettings();
 
-  static void ResetDataEntry(Application* app, GtkWidget* parent) {
-    ResetDataEntry(app, parent, true);
-  }
-  static void ResetDataEntry(Application* app, GtkWidget* parent, bool run);
+  bool Save();
+
+  GtkDialog* dialog() { return dialog_; }
+
+  static void ResetDataEntry(Application* app, GtkWidget* parent);
+
+  // only for test
+  GtkWidget* GetWidget(const char* name);
 
  private:
+  Application* app;
+  GtkDialog* dialog_;
+  GData* widset;  // 窗体集
+  GData* mdlset;  // 数据model集
+  IconModel* iconModel = 0;
+
+  /**
+   * @brief check all the fields.
+   *
+   * @return std::string error info is check failed, otherwise empty string.
+   */
+  std::string Check();
+
   void InitSublayer();
   void ClearSublayer();
 
@@ -50,14 +67,8 @@ class DataSettings {
   GtkWidget* CreateArchiveChooser();
   GtkWidget* CreateFontChooser();
 
-  Application* app;
-  GData* widset;  //窗体集
-  GData* mdlset;  //数据model集
-  IconModel* iconModel = 0;
-
- private:
   void ObtainPersonalValue();
-  void ObtainSystemValue();
+  std::string ObtainSystemValue(bool dryrun = false);
   void ObtainNetworkValue();
 
   void WriteNetSegment(const char* filename, GSList* list);
@@ -65,7 +76,7 @@ class DataSettings {
 
   static gint IconfileGetItemPos(GtkTreeModel* model, const char* pathname);
 
-  //回调处理部分
+  // 回调处理部分
  private:
   static void AddNewIcon(GtkWidget* button, GData** widset);
   static void ChoosePhoto(GData** widset);

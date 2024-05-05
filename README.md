@@ -99,12 +99,9 @@ iptux -b 127.0.0.3 &
 
 ```
 meson setup build
-git ls-files *.cpp *.desktop.in *.ui *.metainfo.xml | grep -v Test | LC_ALL=C sort > po/POTFILES
-ninja -C build iptux-pot
-ninja -C build iptux-update-po
-for f in po/*.po; do echo -n "$f: "; msgfmt -v $f; done
+meson compile update-po -C build
 ```
 
-## Stargazers over time
+## Stats
 
-[![Stargazers over time](https://starchart.cc/iptux-src/iptux.svg)](https://starchart.cc/iptux-src/iptux)
+![Alt](https://repobeats.axiom.co/api/embed/8944a2744839c5ea58b0ea10f46a1d31c7fefa07.svg "Repobeats analytics image")

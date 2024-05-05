@@ -1472,7 +1472,7 @@ void MainWindow::PallistEntryChanged(GtkWidget* entry, MainWindow* self) {
   GtkWidget* treeview;
   GtkTreeModel* model;
   GtkTreeIter iter;
-  char ipstr[INET_ADDRSTRLEN], *file;
+  char* file;
   const gchar* text;
   auto widset = self->widset;
 
@@ -1488,10 +1488,11 @@ void MainWindow::PallistEntryChanged(GtkWidget* entry, MainWindow* self) {
 
   /* 将符合条件的好友加入好友清单 */
   for (auto pal : self->coreThread.GetPalList()) {
-    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
+    string ipstr = inAddrToString(pal->ipv4());
     /* Search friends case ignore is better. */
     if (*text == '\0' || strcasestr(pal->getName().c_str(), text) ||
-        strcasestr(pal->getGroup().c_str(), text) || strcasestr(ipstr, text) ||
+        strcasestr(pal->getGroup().c_str(), text) ||
+        strcasestr(ipstr.c_str(), text) ||
         strcasestr(pal->getUser().c_str(), text) ||
         strcasestr(pal->getHost().c_str(), text)) {
       file = iptux_erase_filename_suffix(pal->icon_file().c_str());
@@ -1501,7 +1502,7 @@ void MainWindow::PallistEntryChanged(GtkWidget* entry, MainWindow* self) {
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, pixbuf, 1,
                          pal->getName().c_str(), 2, pal->getGroup().c_str(), 3,
-                         ipstr, 4, pal->getUser().c_str(), 5,
+                         ipstr.c_str(), 4, pal->getUser().c_str(), 5,
                          pal->getHost().c_str(), 6, pal.get(), -1);
       if (pixbuf)
         g_object_unref(pixbuf);
@@ -1630,7 +1631,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());
-    auto ipv4 = event->getPalInfo()->ipv4;
+    auto ipv4 = event->getPalInfo()->ipv4();
     if (PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
     } else {
@@ -1641,7 +1642,7 @@ void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
 
   if (type == EventType::PAL_UPDATE) {
     auto event = dynamic_pointer_cast<const PalUpdateEvent>(_event);
-    auto ipv4 = event->getPalInfo()->ipv4;
+    auto ipv4 = event->getPalInfo()->ipv4();
     if (PaltreeContainItem(ipv4)) {
       UpdateItemToPaltree(ipv4);
     } else {
