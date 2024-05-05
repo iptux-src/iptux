@@ -24,11 +24,14 @@ class DataSettings {
   explicit DataSettings(Application* app, GtkWidget* parent);
   ~DataSettings();
 
-  void Save();
+  bool Save();
 
   GtkDialog* dialog() { return dialog_; }
 
   static void ResetDataEntry(Application* app, GtkWidget* parent);
+
+  // only for test
+  GtkWidget* GetWidget(const char* name);
 
  private:
   Application* app;
@@ -36,7 +39,13 @@ class DataSettings {
   GData* widset;  // 窗体集
   GData* mdlset;  // 数据model集
   IconModel* iconModel = 0;
-  bool need_restart = false;
+
+  /**
+   * @brief check all the fields.
+   *
+   * @return std::string error info is check failed, otherwise empty string.
+   */
+  std::string Check();
 
   void InitSublayer();
   void ClearSublayer();
@@ -59,7 +68,7 @@ class DataSettings {
   GtkWidget* CreateFontChooser();
 
   void ObtainPersonalValue();
-  void ObtainSystemValue();
+  std::string ObtainSystemValue(bool dryrun = false);
   void ObtainNetworkValue();
 
   void WriteNetSegment(const char* filename, GSList* list);

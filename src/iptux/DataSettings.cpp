@@ -13,6 +13,7 @@
 #include "DataSettings.h"
 
 #include <dirent.h>
+#include <sstream>
 
 #include <glib/gi18n.h>
 
@@ -34,6 +35,7 @@ DataSettings::DataSettings(Application* app, GtkWidget* parent)
     : app(app), widset(NULL), mdlset(NULL) {
   InitSublayer();
   dialog_ = GTK_DIALOG(CreateMainDialog(parent));
+  g_object_ref_sink(G_OBJECT(dialog_));
 
   /* 创建相关数据设置标签 */
   GtkWidget* note = gtk_notebook_new();
@@ -75,21 +77,24 @@ void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
   while (!done) {
     switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
       case GTK_RESPONSE_OK:
-        dset.Save();
-        if (dset.need_restart) {
-          pop_warning(dialog,
-                      _("The program needs to be restarted to take effect!"));
+        if (dset.Save()) {
+          if (app->getProgramData()->need_restart()) {
+            pop_warning(dialog,
+                        _("The program needs to be restarted to take effect!"));
+          }
+          done = true;
         }
-        done = true;
         break;
       case GTK_RESPONSE_APPLY:
-        dset.Save();
-        if (dset.need_restart) {
-          pop_warning(dialog,
-                      _("The program needs to be restarted to take effect!"));
+        if (dset.Save()) {
+          if (app->getProgramData()->need_restart()) {
+            pop_warning(dialog,
+                        _("The program needs to be restarted to take effect!"));
+          }
         }
         break;
       default:
+        done = true;
         break;
     }
   }
@@ -263,7 +268,8 @@ GtkWidget* DataSettings::CreateSystem() {
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, "hexpand", TRUE, "input-purpose",
                GTK_INPUT_PURPOSE_DIGITS, "max-length", 5, "tooltip-text",
-               _("Any port number between 1024 and 65535"), NULL);
+               _("Any port number between 1024 and 65535, default is 2425"),
+               NULL);
   g_datalist_set_data(&widset, "port-entry-widget", widget);
   gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
@@ -477,6 +483,10 @@ GtkWidget* DataSettings::CreateNetwork() {
                            &mdlset);
 
   return box;
+}
+
+GtkWidget* DataSettings::GetWidget(const char* name) {
+  return GTK_WIDGET(g_datalist_get_data(&widset, name));
 }
 
 /**
@@ -729,12 +739,23 @@ GtkWidget* DataSettings::CreateFontChooser() {
   return chooser;
 }
 
-void DataSettings::Save() {
+string DataSettings::Check() {
+  return ObtainSystemValue(true);
+}
+
+bool DataSettings::Save() {
+  string err_info = Check();
+  if (!err_info.empty()) {
+    pop_warning(GTK_WIDGET(dialog_), "%s", err_info.c_str());
+    return false;
+  }
+
   ObtainPersonalValue();
   ObtainSystemValue();
   ObtainNetworkValue();
   app->getProgramData()->WriteProgData();
   app->getCoreThread()->UpdateMyInfo();
+  return true;
 }
 
 /**
@@ -804,7 +825,7 @@ void DataSettings::ObtainPersonalValue() {
 /**
  * 获取与系统相关的数据.
  */
-void DataSettings::ObtainSystemValue() {
+string DataSettings::ObtainSystemValue(bool dryrun) {
   GtkWidget* widget;
   GdkPixbuf* pixbuf;
   GtkTreeModel* model;
@@ -816,12 +837,35 @@ void DataSettings::ObtainSystemValue() {
   auto g_cthrd = app->getCoreThread();
   auto g_progdt = g_cthrd->getProgramData();
 
+  ostringstream oss;
+
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "port-entry-widget"));
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
-  int port = stoi(text);
-  if (port != g_progdt->port()) {
-    g_progdt->set_port(port);
-    need_restart = true;
+  int port;
+  bool port_valid = false;
+  try {
+    port = stoi(text);
+    port_valid = true;
+  } catch (const invalid_argument& e) {
+    oss << _("Port must be a number between 1024 and 65535") << endl;
+  } catch (const out_of_range& e) {
+    oss << _("Port must be a number between 1024 and 65535") << endl;
+  }
+
+  if (port_valid && (port < 1024 || port > 65535)) {
+    oss << _("Port must be a number between 1024 and 65535") << endl;
+    port_valid = false;
+  }
+
+  if (port_valid && port != g_progdt->port()) {
+    if (!dryrun) {
+      g_progdt->set_port(port);
+    }
+  }
+
+  // only port need to check
+  if (dryrun) {
+    return oss.str();
   }
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "codeset-entry-widget"));
@@ -890,6 +934,7 @@ void DataSettings::ObtainSystemValue() {
   g_progdt->SetFlag(1, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   g_progdt->SetFlag(0, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  return oss.str();
 }
 
 /**

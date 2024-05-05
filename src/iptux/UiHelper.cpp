@@ -15,12 +15,19 @@ using namespace std;
 
 namespace iptux {
 
+static bool pop_disabled = false;
+
 /**
  * 打开URL.
  * @param url url
  */
 void iptux_open_url(const char* url) {
   int fd;
+
+  if (pop_disabled) {
+    LOG_INFO(_("Open URL: %s\n"), url);
+    return;
+  }
 
   if (fork() != 0)
     return;
@@ -130,6 +137,10 @@ GSList* selection_data_get_path(GtkSelectionData* data) {
   return filelist;
 }
 
+void pop_disable() {
+  pop_disabled = true;
+}
+
 /**
  * 弹出消息提示.
  * @param parent parent window
@@ -144,6 +155,13 @@ void pop_info(GtkWidget* parent, const gchar* format, ...) {
   va_start(ap, format);
   msg = g_strdup_vprintf(format, ap);
   va_end(ap);
+
+  if (pop_disabled) {
+    LOG_INFO("%s\n", msg);
+    g_free(msg);
+    return;
+  }
+
   dialog = gtk_message_dialog_new(GTK_WINDOW(parent), GTK_DIALOG_MODAL,
                                   GTK_MESSAGE_INFO, GTK_BUTTONS_OK, NULL);
   gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
@@ -167,6 +185,13 @@ void pop_warning(GtkWidget* parent, const gchar* format, ...) {
   va_start(ap, format);
   msg = g_strdup_vprintf(format, ap);
   va_end(ap);
+
+  if (pop_disabled) {
+    LOG_WARN("%s\n", msg);
+    g_free(msg);
+    return;
+  }
+
   dialog = gtk_message_dialog_new(GTK_WINDOW(parent), GTK_DIALOG_MODAL,
                                   GTK_MESSAGE_INFO, GTK_BUTTONS_OK, NULL);
   gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);

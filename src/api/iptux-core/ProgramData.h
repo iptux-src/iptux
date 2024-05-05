@@ -67,7 +67,9 @@ class ProgramData {
   int getSendMessageRetryInUs() const { return send_message_retry_in_us; }
 
   uint16_t port() const { return port_; }
-  void set_port(uint16_t port);
+  void set_port(uint16_t port, bool is_init = false);
+
+  bool need_restart() const { return need_restart_; }
 
   /**
    * @brief Set the Using Blacklist object
@@ -93,13 +95,14 @@ class ProgramData {
                                  // failed
 
  private:
-  uint16_t port_;
+  uint16_t port_ = 2425;
   std::vector<NetSegment> netseg;  // 需要通知登录的IP段
   std::shared_ptr<IptuxConfig> config;
   std::mutex mutex;  // 锁
   uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
   std::string passwd;
   std::vector<FileInfo> sharedFileInfos;
+  bool need_restart_ = false;
 
  private:
   void InitSublayer();
