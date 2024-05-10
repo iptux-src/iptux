@@ -69,6 +69,7 @@ class Application {
   void set_enable_app_indicator(bool enable) { enable_app_indicator_ = enable; }
 
  private:
+  void LoadCss();
   void onEvent(std::shared_ptr<const Event> event);
   void onConfigChanged();
   void updateItemToTransTree(const TransFileModel& para);

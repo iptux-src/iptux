@@ -154,7 +154,7 @@ void Application::onStartup(Application& self) {
       gtk_application_set_menubar(GTK_APPLICATION(self.app), self.menu());
     }
   }
-
+  self.LoadCss();
   self.window = new MainWindow(&self, *self.cthrd);
   self.eventAdaptor = new EventAdaptor(
       self.cthrd->signalEvent,
@@ -197,6 +197,21 @@ void Application::onStartup(Application& self) {
 #if SYSTEM_DARWIN
   install_darwin_icon();
 #endif
+}
+
+void Application::LoadCss() {
+  auto cssProvider = gtk_css_provider_new();
+  GError* error = nullptr;
+  gtk_css_provider_load_from_path(cssProvider, __CSS_PATH "/iptux.css", &error);
+  if (error) {
+    LOG_WARN("load css failed: %s", error->message);
+    g_error_free(error);
+    return;
+  }
+  gtk_style_context_add_provider_for_screen(
+      gdk_screen_get_default(), GTK_STYLE_PROVIDER(cssProvider),
+      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_object_unref(cssProvider);
 }
 
 void Application::onActivate(Application& self) {
