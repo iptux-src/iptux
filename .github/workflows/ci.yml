@@ -47,7 +47,7 @@ jobs:
   build-on-linux:
     strategy:
       matrix:
-        runs-on: [ubuntu-20.04]
+        runs-on: [ubuntu-20.04, ubuntu-22.04]
         compiler: [g++, clang++]
     runs-on: ${{ matrix.runs-on }}
     steps:
@@ -55,6 +55,7 @@ jobs:
       - name: apt install
         run: >-
           sudo apt update &&
+          sudo apt install libunwind-dev &&
           sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
       - name: meson
         run: |
