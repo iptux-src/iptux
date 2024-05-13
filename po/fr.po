@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-04 21:13-0700\n"
+"POT-Creation-Date: 2024-05-12 20:36-0700\n"
 "PO-Revision-Date: 2021-05-17 00:40+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/iptux/iptux/fr/>\n"
@@ -91,7 +91,7 @@ msgstr ""
 
 #: src/iptux-core/CoreThread.cpp:483 src/iptux-core/CoreThread.cpp:517
 #: src/iptux-core/internal/RecvFileData.cpp:142
-#: src/iptux-core/internal/RecvFileData.cpp:205
+#: src/iptux-core/internal/RecvFileData.cpp:204
 #, c-format
 msgid ""
 "Fatal Error!!\n"
@@ -147,29 +147,29 @@ msgid "receive"
 msgstr "réception"
 
 #: src/iptux-core/internal/RecvFileData.cpp:124
-#: src/iptux-core/internal/RecvFileData.cpp:254
+#: src/iptux-core/internal/RecvFileData.cpp:253
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:193
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: src/iptux-core/internal/RecvFileData.cpp:176
+#: src/iptux-core/internal/RecvFileData.cpp:175
 #, fuzzy, c-format
 msgid ""
-"Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr "Échec de la réception du fichier \"%s\" de %s !"
 
-#: src/iptux-core/internal/RecvFileData.cpp:181
+#: src/iptux-core/internal/RecvFileData.cpp:180
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
 msgstr "Le fichier \"%s\" de %s a été reçu avec succès !"
 
-#: src/iptux-core/internal/RecvFileData.cpp:321
+#: src/iptux-core/internal/RecvFileData.cpp:320
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
 msgstr "Échec de la réception du dossier \"%s\" de %s !"
 
-#: src/iptux-core/internal/RecvFileData.cpp:324
+#: src/iptux-core/internal/RecvFileData.cpp:323
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
 msgstr "Le dossier « %s » de %s a été reçu avec succès !"
@@ -205,17 +205,17 @@ msgstr "Le dossier « %s » a été envoyé avec succès à %s !"
 msgid "mysterious"
 msgstr "mystérieux"
 
-#: src/iptux-utils/utils.cpp:878
+#: src/iptux-utils/utils.cpp:877
 #, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:886
+#: src/iptux-utils/utils.cpp:885
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:893
+#: src/iptux-utils/utils.cpp:892
 #, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr ""
@@ -967,20 +967,26 @@ msgstr "Autres"
 msgid "Broadcast"
 msgstr "Diffuser"
 
-#: src/iptux/UiHelper.cpp:28
+#: src/iptux/UiHelper.cpp:26
 #, c-format
-msgid "Open URL: %s\n"
+msgid "Can't convert path to uri: %s, reason: %s"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:51
-msgid "Can't find any available web browser!\n"
-msgstr "Impossible de trouver un navigateur web disponible !\n"
+#: src/iptux/UiHelper.cpp:33
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr ""
 
-#: src/iptux/UiHelper.cpp:169
+#: src/iptux/UiHelper.cpp:54
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:174
 msgid "Information"
 msgstr "Informations"
 
-#: src/iptux/UiHelper.cpp:199
+#: src/iptux/UiHelper.cpp:204
 msgid "Warning"
 msgstr "Avertissement"
 
@@ -1364,6 +1370,9 @@ msgstr "iptux : Logiciel de partage pour réseau local\n"
 #, c-format
 msgid "option parsing failed: %s\n"
 msgstr ""
+
+#~ msgid "Can't find any available web browser!\n"
+#~ msgstr "Impossible de trouver un navigateur web disponible !\n"
 
 #~ msgid "chat;talk;im;message;ipmsg;feige;"
 #~ msgstr "discussion;conversation;im;message;ipmsg;feige;"

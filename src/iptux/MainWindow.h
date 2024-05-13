@@ -77,8 +77,8 @@ class MainWindow : public sigc::trackable {
 
   GroupInfo* currentGroupInfo = 0;
   GtkSortType sort_type_ = GTK_SORT_DESCENDING;
-  PalTreeModelSortKey sort_key_ = PalTreeModelSortKey::LAST_ACTIVITY;
-  GroupInfoStyle info_style_ = GroupInfoStyle::LAST_MESSAGE;
+  PalTreeModelSortKey sort_key_ = PalTreeModelSortKey::NICKNAME;
+  GroupInfoStyle info_style_ = GroupInfoStyle::IP;
 
  private:
   void setCurrentGroupInfo(GroupInfo* groupInfo);
