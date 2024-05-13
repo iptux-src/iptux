@@ -36,7 +36,7 @@ msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
 msgid "send/recv messages to other clients."
-msgstr ""
+msgstr "发送/接收消息到其他客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
 msgid "send/recv files to other clients."
@@ -975,11 +975,11 @@ msgstr ""
 msgid "Can't open URL: %s, reason: %s"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:174
+#: src/iptux/UiHelper.cpp:174 src/iptux/UiHelper.cpp:169
 msgid "Information"
 msgstr "資訊"
 
-#: src/iptux/UiHelper.cpp:204
+#: src/iptux/UiHelper.cpp:204 src/iptux/UiHelper.cpp:199
 msgid "Warning"
 msgstr "警告"
 
@@ -1367,8 +1367,14 @@ msgstr ""
 msgid "option parsing failed: %s\n"
 msgstr "打開目錄\"%s\"失敗，%s"
 
-#~ msgid "Can't find any available web browser!\n"
-#~ msgstr "未發現可用的瀏覽器！\n"
+#: src/iptux/UiHelper.cpp:51
+msgid "Can't find any available web browser!\n"
+msgstr "未發現可用的瀏覽器！\n"
+
+#: src/iptux/UiHelper.cpp:28
+#, c-format
+msgid "Open URL: %s\n"
+msgstr ""
 
 #, fuzzy
 #~ msgid "Close Chat"
