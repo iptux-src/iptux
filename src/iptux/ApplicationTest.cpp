@@ -11,9 +11,10 @@ void do_action(Application* app, const string& name) {
   g_action_activate(g_action_map_lookup_action(m, name.c_str()), NULL);
 }
 
-
 TEST(Application, Constructor) {
   Application* app = CreateApplication();
   do_action(app, "help.whats_new");
+  do_action(app, "tools.open_chat_log");
+  do_action(app, "tools.open_system_log");
   DestroyApplication(app);
 }

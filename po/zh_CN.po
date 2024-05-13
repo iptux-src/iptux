@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-04 21:13-0700\n"
-"PO-Revision-Date: 2021-05-03 15:52+0000\n"
+"POT-Creation-Date: 2024-05-09 19:38-0700\n"
+"PO-Revision-Date: 2024-05-06 00:45+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 5.5.3\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
@@ -29,27 +29,24 @@ msgid "LAN communication software"
 msgstr "局域网通信软件"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
-#, fuzzy
 msgid "iptux is an “IP Messenger” client. The features of iptux include:"
-msgstr "iptux 是一个 IP Messenger 客户端。"
+msgstr "iptux 是一个 IP Messenger 客户端。它包含如下功能："
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
 msgid "auto-detect other clients on the intranet."
 msgstr "自动检测局域网的其他客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
-#, fuzzy
 msgid "send/recv messages to other clients."
-msgstr "发送消息到其他客户端。"
+msgstr "发送/接收消息到其他客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
-#, fuzzy
 msgid "send/recv files to other clients."
-msgstr "发送文件到其它客户端。"
+msgstr "发送/接收文件到其它客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:22
 msgid "share your files to other cliens (with optional password protection)."
-msgstr ""
+msgstr "给其他客户端分享你的文件（支持密码保护）。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:24
 msgid ""
@@ -89,7 +86,7 @@ msgstr ""
 
 #: src/iptux-core/CoreThread.cpp:483 src/iptux-core/CoreThread.cpp:517
 #: src/iptux-core/internal/RecvFileData.cpp:142
-#: src/iptux-core/internal/RecvFileData.cpp:205
+#: src/iptux-core/internal/RecvFileData.cpp:204
 #, c-format
 msgid ""
 "Fatal Error!!\n"
@@ -144,29 +141,29 @@ msgid "receive"
 msgstr "接收"
 
 #: src/iptux-core/internal/RecvFileData.cpp:124
-#: src/iptux-core/internal/RecvFileData.cpp:254
+#: src/iptux-core/internal/RecvFileData.cpp:253
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:193
 msgid "Unknown"
 msgstr "未知"
 
-#: src/iptux-core/internal/RecvFileData.cpp:176
+#: src/iptux-core/internal/RecvFileData.cpp:175
 #, c-format
 msgid ""
-"Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
-msgstr "从 %2$s 接收文件\"%1$s\"失败！期望长度 %3$lld，收到 %4$lld"
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
+msgstr "从 %2$s 接收文件\"%1$s\"失败！期望长度 %3$jd，收到 %4$jd"
 
-#: src/iptux-core/internal/RecvFileData.cpp:181
+#: src/iptux-core/internal/RecvFileData.cpp:180
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
 msgstr "接收文件\"%s\"(来自%s)成功！"
 
-#: src/iptux-core/internal/RecvFileData.cpp:321
+#: src/iptux-core/internal/RecvFileData.cpp:320
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
 msgstr "接收文件夹\"%s\"(来自%s)失败！"
 
-#: src/iptux-core/internal/RecvFileData.cpp:324
+#: src/iptux-core/internal/RecvFileData.cpp:323
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
 msgstr "接收文件夹\"%s\"(来自%s)成功！"
@@ -202,17 +199,17 @@ msgstr "发送文件夹\"%s\"到%s失败！"
 msgid "mysterious"
 msgstr "神秘来客"
 
-#: src/iptux-utils/utils.cpp:878
+#: src/iptux-utils/utils.cpp:877
 #, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr "查看文件\"%s\"状态失败，%s"
 
-#: src/iptux-utils/utils.cpp:886
+#: src/iptux-utils/utils.cpp:885
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr "路径 %s 不是文件或者目录: st_mode(%x)"
 
-#: src/iptux-utils/utils.cpp:893
+#: src/iptux-utils/utils.cpp:892
 #, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr "打开文件夹\"%s\"失败，%s"
@@ -271,7 +268,7 @@ msgstr "网络"
 
 #: src/iptux/DataSettings.cpp:83 src/iptux/DataSettings.cpp:92
 msgid "The program needs to be restarted to take effect!"
-msgstr ""
+msgstr "程序需要重启来应用配置！"
 
 #: src/iptux/DataSettings.cpp:136
 msgid "Preferences"
@@ -327,11 +324,11 @@ msgstr "个性签名"
 
 #: src/iptux/DataSettings.cpp:264
 msgid "Port:"
-msgstr ""
+msgstr "端口："
 
 #: src/iptux/DataSettings.cpp:271
 msgid "Any port number between 1024 and 65535, default is 2425"
-msgstr ""
+msgstr "1024到65535之间的任何端口，缺省端口为2425"
 
 #: src/iptux/DataSettings.cpp:280
 msgid "Candidate network encodings:"
@@ -454,7 +451,7 @@ msgstr "选择字体"
 #: src/iptux/DataSettings.cpp:850 src/iptux/DataSettings.cpp:852
 #: src/iptux/DataSettings.cpp:856
 msgid "Port must be a number between 1024 and 65535"
-msgstr ""
+msgstr "端口必须是1024到65535之间的数字"
 
 #: src/iptux/DataSettings.cpp:988 src/iptux/DataSettings.cpp:1019
 #, c-format
@@ -946,7 +943,7 @@ msgstr "广播"
 #: src/iptux/UiHelper.cpp:28
 #, c-format
 msgid "Open URL: %s\n"
-msgstr ""
+msgstr "打开URL：%s\n"
 
 #: src/iptux/UiHelper.cpp:51
 msgid "Can't find any available web browser!\n"
@@ -1018,7 +1015,7 @@ msgstr "<错误>"
 
 #: src/iptux/UiModels.cpp:718
 msgid "[IMG]"
-msgstr ""
+msgstr "[IMG]"
 
 #: src/iptux/dialog.cpp:39
 msgid ""
@@ -1110,9 +1107,8 @@ msgid "A GTK based LAN messenger."
 msgstr "一个基于GTK的局域网通信工具。"
 
 #: src/iptux/resources/gtk/AppIndicator.ui:6
-#, fuzzy
 msgid "Open Iptux"
-msgstr "信使(Iptux)"
+msgstr "打开 Iptux"
 
 #: src/iptux/resources/gtk/AppIndicator.ui:12
 #: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:306
@@ -1161,9 +1157,8 @@ msgstr "按昵称"
 
 #: src/iptux/resources/gtk/MainWindow.ui:34 src/iptux/resources/gtk/menus.ui:39
 #: src/iptux/resources/gtk/menus.ui:184
-#, fuzzy
 msgid "By Username"
-msgstr "按昵称"
+msgstr "按用户名"
 
 #: src/iptux/resources/gtk/MainWindow.ui:39 src/iptux/resources/gtk/menus.ui:44
 #: src/iptux/resources/gtk/menus.ui:189
@@ -1172,14 +1167,13 @@ msgstr "按 IP"
 
 #: src/iptux/resources/gtk/MainWindow.ui:44 src/iptux/resources/gtk/menus.ui:49
 #: src/iptux/resources/gtk/menus.ui:194
-#, fuzzy
 msgid "By Host"
-msgstr "主机"
+msgstr "按主机"
 
 #: src/iptux/resources/gtk/MainWindow.ui:49 src/iptux/resources/gtk/menus.ui:54
 #: src/iptux/resources/gtk/menus.ui:199
 msgid "By Last Activity"
-msgstr ""
+msgstr "按最近联系时间"
 
 #: src/iptux/resources/gtk/MainWindow.ui:56 src/iptux/resources/gtk/menus.ui:61
 #: src/iptux/resources/gtk/menus.ui:206
@@ -1193,35 +1187,31 @@ msgstr "降序"
 
 #: src/iptux/resources/gtk/MainWindow.ui:68
 msgid "Info Style"
-msgstr ""
+msgstr "信息类型"
 
 #: src/iptux/resources/gtk/MainWindow.ui:71
-#, fuzzy
 msgid "IP"
-msgstr "IPv4"
+msgstr "IP"
 
 #: src/iptux/resources/gtk/MainWindow.ui:76
 msgid "IP:PORT"
-msgstr ""
+msgstr "IP:PORT"
 
 #: src/iptux/resources/gtk/MainWindow.ui:86
-#, fuzzy
 msgid "Username"
-msgstr "用户"
+msgstr "用户名"
 
 #: src/iptux/resources/gtk/MainWindow.ui:91
-#, fuzzy
 msgid "Version"
-msgstr "版本: %s"
+msgstr "版本"
 
 #: src/iptux/resources/gtk/MainWindow.ui:96
 msgid "Last Activity"
-msgstr ""
+msgstr "最近联系时间"
 
 #: src/iptux/resources/gtk/MainWindow.ui:101
-#, fuzzy
 msgid "Last Message"
-msgstr "空消息"
+msgstr "最后消息"
 
 #: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:162
 msgid "_File"

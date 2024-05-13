@@ -172,11 +172,10 @@ void RecvFileData::RecvRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    LOG_ERROR(
-        _("Failed to receive the file \"%s\" from %s! expect length %lld, "
-          "received %lld"),
-        file->filepath, file->fileown->getName().c_str(), file->filesize,
-        finishsize);
+    LOG_ERROR(_("Failed to receive the file \"%s\" from %s! expect length %jd, "
+                "received %jd"),
+              file->filepath, file->fileown->getName().c_str(),
+              (intmax_t)file->filesize, (intmax_t)finishsize);
   } else {
     LOG_INFO(_("Receive the file \"%s\" from %s successfully!"), file->filepath,
              file->fileown->getName().c_str());

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-04 21:13-0700\n"
+"POT-Creation-Date: 2024-05-09 19:38-0700\n"
 "PO-Revision-Date: 2024-01-08 13:06+0000\n"
 "Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/iptux/iptux/uk/"
@@ -91,7 +91,7 @@ msgstr ""
 
 #: src/iptux-core/CoreThread.cpp:483 src/iptux-core/CoreThread.cpp:517
 #: src/iptux-core/internal/RecvFileData.cpp:142
-#: src/iptux-core/internal/RecvFileData.cpp:205
+#: src/iptux-core/internal/RecvFileData.cpp:204
 #, c-format
 msgid ""
 "Fatal Error!!\n"
@@ -145,29 +145,29 @@ msgid "receive"
 msgstr "отримано"
 
 #: src/iptux-core/internal/RecvFileData.cpp:124
-#: src/iptux-core/internal/RecvFileData.cpp:254
+#: src/iptux-core/internal/RecvFileData.cpp:253
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:193
 msgid "Unknown"
 msgstr "Невідомо"
 
-#: src/iptux-core/internal/RecvFileData.cpp:176
-#, c-format
+#: src/iptux-core/internal/RecvFileData.cpp:175
+#, fuzzy, c-format
 msgid ""
-"Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr "Не вдалося отримати файл \"%s\" від %s! очікування%lld, отримано %lld"
 
-#: src/iptux-core/internal/RecvFileData.cpp:181
+#: src/iptux-core/internal/RecvFileData.cpp:180
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
 msgstr "Файл отримано \"%s\" від %s успішно!"
 
-#: src/iptux-core/internal/RecvFileData.cpp:321
+#: src/iptux-core/internal/RecvFileData.cpp:320
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
 msgstr "Не вдалося отримати каталог \"%s\" від %s!"
 
-#: src/iptux-core/internal/RecvFileData.cpp:324
+#: src/iptux-core/internal/RecvFileData.cpp:323
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
 msgstr "Каталог отримано\"%s\" від %s успішно!"
@@ -203,17 +203,17 @@ msgstr "Надіслано каталог \"%s\" до %s успішно!"
 msgid "mysterious"
 msgstr "таємничий"
 
-#: src/iptux-utils/utils.cpp:878
+#: src/iptux-utils/utils.cpp:877
 #, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr "cтатистика файлу \"%s\" помилка: %s"
 
-#: src/iptux-utils/utils.cpp:886
+#: src/iptux-utils/utils.cpp:885
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr "шлях %s не є файлом або каталогом: st_режим(%x)"
 
-#: src/iptux-utils/utils.cpp:893
+#: src/iptux-utils/utils.cpp:892
 #, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr "відкрити каталог \"%s\" не вдалося: %s"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.8.0-b2\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-04 21:13-0700\n"
+"POT-Creation-Date: 2024-05-09 19:38-0700\n"
 "PO-Revision-Date: 2021-05-10 08:34+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/iptux/"
@@ -83,7 +83,7 @@ msgstr ""
 
 #: src/iptux-core/CoreThread.cpp:483 src/iptux-core/CoreThread.cpp:517
 #: src/iptux-core/internal/RecvFileData.cpp:142
-#: src/iptux-core/internal/RecvFileData.cpp:205
+#: src/iptux-core/internal/RecvFileData.cpp:204
 #, fuzzy, c-format
 msgid ""
 "Fatal Error!!\n"
@@ -138,30 +138,30 @@ msgid "receive"
 msgstr "motta"
 
 #: src/iptux-core/internal/RecvFileData.cpp:124
-#: src/iptux-core/internal/RecvFileData.cpp:254
+#: src/iptux-core/internal/RecvFileData.cpp:253
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:193
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: src/iptux-core/internal/RecvFileData.cpp:176
-#, c-format
+#: src/iptux-core/internal/RecvFileData.cpp:175
+#, fuzzy, c-format
 msgid ""
-"Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr ""
 "Klarte ikke å motta filen «%s» fra %s. Forventet lengde %lld. Mottatt %lld."
 
-#: src/iptux-core/internal/RecvFileData.cpp:181
+#: src/iptux-core/internal/RecvFileData.cpp:180
 #, fuzzy, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
 msgstr "Mottok filen «%s» fra %s."
 
-#: src/iptux-core/internal/RecvFileData.cpp:321
+#: src/iptux-core/internal/RecvFileData.cpp:320
 #, fuzzy, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
 msgstr "Klarte ikke å motta mappen «%s» fra %s."
 
-#: src/iptux-core/internal/RecvFileData.cpp:324
+#: src/iptux-core/internal/RecvFileData.cpp:323
 #, fuzzy, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
 msgstr "Mottok mappen «%s» fra %s."
@@ -198,17 +198,17 @@ msgstr "Sendte mappen «%s» til %s."
 msgid "mysterious"
 msgstr "mystisk"
 
-#: src/iptux-utils/utils.cpp:878
+#: src/iptux-utils/utils.cpp:877
 #, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:886
+#: src/iptux-utils/utils.cpp:885
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:893
+#: src/iptux-utils/utils.cpp:892
 #, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr ""

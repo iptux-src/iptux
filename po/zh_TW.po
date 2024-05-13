@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-04 21:13-0700\n"
+"POT-Creation-Date: 2024-05-09 19:38-0700\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -85,7 +85,7 @@ msgstr ""
 
 #: src/iptux-core/CoreThread.cpp:483 src/iptux-core/CoreThread.cpp:517
 #: src/iptux-core/internal/RecvFileData.cpp:142
-#: src/iptux-core/internal/RecvFileData.cpp:205
+#: src/iptux-core/internal/RecvFileData.cpp:204
 #, c-format
 msgid ""
 "Fatal Error!!\n"
@@ -141,30 +141,30 @@ msgid "receive"
 msgstr "接收"
 
 #: src/iptux-core/internal/RecvFileData.cpp:124
-#: src/iptux-core/internal/RecvFileData.cpp:254
+#: src/iptux-core/internal/RecvFileData.cpp:253
 #: src/iptux-core/internal/SendFileData.cpp:108
 #: src/iptux-core/internal/SendFileData.cpp:193
 #, fuzzy
 msgid "Unknown"
 msgstr "未知"
 
-#: src/iptux-core/internal/RecvFileData.cpp:176
+#: src/iptux-core/internal/RecvFileData.cpp:175
 #, fuzzy, c-format
 msgid ""
-"Failed to receive the file \"%s\" from %s! expect length %lld, received %lld"
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr "接收檔案\"%s\"來自%s失敗！"
 
-#: src/iptux-core/internal/RecvFileData.cpp:181
+#: src/iptux-core/internal/RecvFileData.cpp:180
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
 msgstr "接收檔案\"%s\"來自%s成功！"
 
-#: src/iptux-core/internal/RecvFileData.cpp:321
+#: src/iptux-core/internal/RecvFileData.cpp:320
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
 msgstr "接收目錄\"%s\"來自%s失敗！"
 
-#: src/iptux-core/internal/RecvFileData.cpp:324
+#: src/iptux-core/internal/RecvFileData.cpp:323
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
 msgstr "接收目錄\"%s\"來自%s成功！"
@@ -200,17 +200,17 @@ msgstr "傳送目錄\"%s\"到%s失敗！"
 msgid "mysterious"
 msgstr "神秘訪客"
 
-#: src/iptux-utils/utils.cpp:878
+#: src/iptux-utils/utils.cpp:877
 #, fuzzy, c-format
 msgid "stat file \"%s\" failed: %s"
 msgstr "查看檔案\"%s\"狀態失敗，%s\n"
 
-#: src/iptux-utils/utils.cpp:886
+#: src/iptux-utils/utils.cpp:885
 #, c-format
 msgid "path %s is not file or directory: st_mode(%x)"
 msgstr ""
 
-#: src/iptux-utils/utils.cpp:893
+#: src/iptux-utils/utils.cpp:892
 #, fuzzy, c-format
 msgid "opendir on \"%s\" failed: %s"
 msgstr "打開目錄\"%s\"失敗，%s"
