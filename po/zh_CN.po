@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2024-05-12 20:36-0700\n"
-"PO-Revision-Date: 2024-05-06 00:45+0000\n"
+"PO-Revision-Date: 2024-05-13 03:47+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.5.4\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
@@ -943,17 +943,17 @@ msgstr "广播"
 #: src/iptux/UiHelper.cpp:26
 #, c-format
 msgid "Can't convert path to uri: %s, reason: %s"
-msgstr ""
+msgstr "转换路径到URI失败: %s, 原因: %s"
 
 #: src/iptux/UiHelper.cpp:33
 #, c-format
 msgid "Can't open path: %s, reason: %s"
-msgstr ""
+msgstr "无法打开路径: %s, 原因: %s"
 
 #: src/iptux/UiHelper.cpp:54
 #, c-format
 msgid "Can't open URL: %s, reason: %s"
-msgstr ""
+msgstr "无法打开URL: %s, 原因: %s"
 
 #: src/iptux/UiHelper.cpp:174
 msgid "Information"
