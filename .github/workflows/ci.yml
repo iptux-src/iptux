@@ -121,8 +121,8 @@ jobs:
           #  distro: ubuntu20.04
           - arch: armv7
             distro: ubuntu22.04
-          #- arch: armv6
-          #  distro: bookworm
+          - arch: armv7
+            distro: bookworm
 
     steps:
       - uses: actions/checkout@v2.1.0
