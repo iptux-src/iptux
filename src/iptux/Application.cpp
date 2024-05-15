@@ -1,7 +1,6 @@
 #include "config.h"
 #include "Application.h"
 
-#include "iptux-core/Event.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 #include <sys/stat.h>
