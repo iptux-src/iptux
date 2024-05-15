@@ -17,38 +17,43 @@ namespace iptux {
 
 static bool pop_disabled = false;
 
+void iptux_open_path(const char* path) {
+  g_return_if_fail(!!path);
+
+  GError* error = nullptr;
+  gchar* uri = g_filename_to_uri(path, nullptr, &error);
+  if (error) {
+    LOG_WARN(_("Can't convert path to uri: %s, reason: %s"), path,
+             error->message);
+    g_error_free(error);
+    return;
+  }
+  g_app_info_launch_default_for_uri(uri, nullptr, &error);
+  if (error) {
+    LOG_WARN(_("Can't open path: %s, reason: %s"), path, error->message);
+    g_error_free(error);
+  }
+  g_free(uri);
+}
+
 /**
  * 打开URL.
  * @param url url
  */
 void iptux_open_url(const char* url) {
-  int fd;
+  g_return_if_fail(!!url);
 
-  if (pop_disabled) {
-    LOG_INFO(_("Open URL: %s\n"), url);
+  if (url[0] == '/') {
+    iptux_open_path(url);
     return;
   }
 
-  if (fork() != 0)
-    return;
-
-  /* 关闭由iptux打开的所有可能的文件描述符 */
-  fd = 3;
-  while (fd < FD_SETSIZE) {
-    close(fd);
-    fd++;
+  GError* error = nullptr;
+  g_app_info_launch_default_for_uri(url, nullptr, &error);
+  if (error) {
+    LOG_WARN(_("Can't open URL: %s, reason: %s"), url, error->message);
+    g_error_free(error);
   }
-  /* 脱离终端控制 */
-  setsid();
-
-  /* 打开URL */
-  execlp("xdg-open", "xdg-open", url, NULL);
-  /* 测试系统中所有可能被安装的浏览器 */
-  execlp("firefox", "firefox", url, NULL);
-  execlp("opera", "opera", url, NULL);
-  execlp("konqueror", "konqueror", url, NULL);
-  execlp("open", "open", url, NULL);
-  LOG_WARN(_("Can't find any available web browser!\n"));
 }
 
 bool ValidateDragData(GtkSelectionData* data,

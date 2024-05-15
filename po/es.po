@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-09 19:38-0700\n"
-"PO-Revision-Date: 2024-04-19 16:07+0000\n"
+"POT-Creation-Date: 2024-05-12 22:10-0700\n"
+"PO-Revision-Date: 2024-05-11 08:00+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/iptux/iptux/es/"
 ">\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5-dev\n"
+"X-Generator: Weblate 5.5.4\n"
 "X-Launchpad-Export-Date: 2010-04-01 12:32+0000\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
@@ -151,25 +151,27 @@ msgid "Unknown"
 msgstr "desconocido"
 
 #: src/iptux-core/internal/RecvFileData.cpp:175
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
-msgstr "Fallo al recibir el archivo \"%s\" desde %s!"
+msgstr ""
+"¡Error al recibir el fichero \"%s\" desde %s y un tamaño de la descarga "
+"esperada %jd, y se ha recibido %jd ¡"
 
 #: src/iptux-core/internal/RecvFileData.cpp:180
 #, c-format
 msgid "Receive the file \"%s\" from %s successfully!"
-msgstr "Recibido correctamente el archivo \"%s\" desde %s !"
+msgstr "¡Recibido correctamente el archivo \"%s\" desde %s !"
 
 #: src/iptux-core/internal/RecvFileData.cpp:320
 #, c-format
 msgid "Failed to receive the directory \"%s\" from %s!"
-msgstr "Fallo al recibir el directorio \"%s\" desde %s!"
+msgstr "¡Fallo al recibir el directorio \"%s\" desde %s!"
 
 #: src/iptux-core/internal/RecvFileData.cpp:323
 #, c-format
 msgid "Receive the directory \"%s\" from %s successfully!"
-msgstr "Recibido correctamente el directorio \"%s\" desde %s !"
+msgstr "¡Recibido correctamente el directorio \"%s\" desde %s !"
 
 #: src/iptux-core/internal/SendFileData.cpp:101
 msgid "send"
@@ -965,21 +967,27 @@ msgstr "Otros"
 msgid "Broadcast"
 msgstr "Difusión"
 
-#: src/iptux/UiHelper.cpp:28
+#: src/iptux/UiHelper.cpp:26
 #, c-format
-msgid "Open URL: %s\n"
+msgid "Can't convert path to uri: %s, reason: %s"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:51
-msgid "Can't find any available web browser!\n"
-msgstr "No se puede encontrar ningún navegador web disponible!\n"
+#: src/iptux/UiHelper.cpp:33
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr ""
 
-#: src/iptux/UiHelper.cpp:169
+#: src/iptux/UiHelper.cpp:54
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:174
 #, fuzzy
 msgid "Information"
 msgstr "Información"
 
-#: src/iptux/UiHelper.cpp:199
+#: src/iptux/UiHelper.cpp:204
 msgid "Warning"
 msgstr "Aviso"
 
@@ -1367,6 +1375,9 @@ msgstr "iptux: Un software para compartir en LAN\n"
 #, fuzzy, c-format
 msgid "option parsing failed: %s\n"
 msgstr "Opendir() directorio \"%s\" fallo, %s"
+
+#~ msgid "Can't find any available web browser!\n"
+#~ msgstr "No se puede encontrar ningún navegador web disponible!\n"
 
 #, fuzzy
 #~ msgid "Close Chat"

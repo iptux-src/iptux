@@ -71,7 +71,6 @@ Application::Application(shared_ptr<IptuxConfig> config)
 
   transModel = transModelNew();
   menuBuilder = nullptr;
-  eventAdaptor = nullptr;
   logSystem = nullptr;
 
   app = gtk_application_new(application_id.c_str(), G_APPLICATION_FLAGS_NONE);
@@ -98,9 +97,6 @@ Application::~Application() {
     g_object_unref(menuBuilder);
   }
   transModelDelete(transModel);
-  if (eventAdaptor) {
-    delete eventAdaptor;
-  }
   if (logSystem) {
     delete logSystem;
   }
@@ -156,9 +152,6 @@ void Application::onStartup(Application& self) {
   }
   self.LoadCss();
   self.window = new MainWindow(&self, *self.cthrd);
-  self.eventAdaptor = new EventAdaptor(
-      self.cthrd->signalEvent,
-      [&](shared_ptr<const Event> event) { self.onEvent(event); });
 
   GActionEntry app_entries[] = {
       makeActionEntry("quit", G_ACTION_CALLBACK(onQuit)),
@@ -227,6 +220,7 @@ void Application::onActivate(Application& self) {
     exit(1);
   }
   iptux_init(self.logSystem);
+  g_idle_add(G_SOURCE_FUNC(Application::ProcessEvents), &self);
 }
 
 void Application::onQuit(void*, void*, Application& self) {
@@ -414,6 +408,25 @@ void Application::onOpenChat(GSimpleAction*,
     return;
   }
   DialogPeer::PeerDialogEntry(&self, groupInfo);
+}
+
+gboolean Application::ProcessEvents(gpointer data) {
+  auto self = static_cast<Application*>(data);
+  if (self->getCoreThread()->HasEvent()) {
+    auto start = chrono::high_resolution_clock::now();
+    auto e = self->getCoreThread()->PopEvent();
+    self->onEvent(e);
+    self->getMainWindow()->ProcessEvent(e);
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    LOG_INFO(
+        "type: %s, from: %s, time: %jdus", EventTypeToStr(e->getType()),
+        e->getSource().c_str(),
+        (intmax_t)chrono::duration_cast<chrono::microseconds>(elapsed).count());
+    g_idle_add(Application::ProcessEvents, data);
+  } else {
+    g_timeout_add(100, Application::ProcessEvents, data);  // 100ms
+  }
+  return G_SOURCE_REMOVE;
 }
 
 }  // namespace iptux

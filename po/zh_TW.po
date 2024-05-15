@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-09 19:38-0700\n"
+"POT-Creation-Date: 2024-05-12 22:10-0700\n"
 "PO-Revision-Date: 2010-03-26 00:21+0800\n"
 "Last-Translator: zhangjiejing <kzjeef@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
 msgid "send/recv messages to other clients."
-msgstr ""
+msgstr "发送/接收消息到其他客户端。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
 msgid "send/recv files to other clients."
@@ -960,20 +960,26 @@ msgstr "其他"
 msgid "Broadcast"
 msgstr "廣播"
 
-#: src/iptux/UiHelper.cpp:28
+#: src/iptux/UiHelper.cpp:26
 #, c-format
-msgid "Open URL: %s\n"
+msgid "Can't convert path to uri: %s, reason: %s"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:51
-msgid "Can't find any available web browser!\n"
-msgstr "未發現可用的瀏覽器！\n"
+#: src/iptux/UiHelper.cpp:33
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr ""
 
-#: src/iptux/UiHelper.cpp:169
+#: src/iptux/UiHelper.cpp:54
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:174
 msgid "Information"
 msgstr "資訊"
 
-#: src/iptux/UiHelper.cpp:199
+#: src/iptux/UiHelper.cpp:204
 msgid "Warning"
 msgstr "警告"
 
@@ -1360,6 +1366,9 @@ msgstr ""
 #, fuzzy, c-format
 msgid "option parsing failed: %s\n"
 msgstr "打開目錄\"%s\"失敗，%s"
+
+#~ msgid "Can't find any available web browser!\n"
+#~ msgstr "未發現可用的瀏覽器！\n"
 
 #, fuzzy
 #~ msgid "Close Chat"

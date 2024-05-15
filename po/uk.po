@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-09 19:38-0700\n"
+"POT-Creation-Date: 2024-05-12 22:10-0700\n"
 "PO-Revision-Date: 2024-01-08 13:06+0000\n"
 "Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/iptux/iptux/uk/"
@@ -945,20 +945,26 @@ msgstr "Інше"
 msgid "Broadcast"
 msgstr "Трансляція"
 
-#: src/iptux/UiHelper.cpp:28
+#: src/iptux/UiHelper.cpp:26
 #, c-format
-msgid "Open URL: %s\n"
+msgid "Can't convert path to uri: %s, reason: %s"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:51
-msgid "Can't find any available web browser!\n"
-msgstr "Не вдається знайти доступний веб-браузер!\n"
+#: src/iptux/UiHelper.cpp:33
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr ""
 
-#: src/iptux/UiHelper.cpp:169
+#: src/iptux/UiHelper.cpp:54
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:174
 msgid "Information"
 msgstr "Інформація"
 
-#: src/iptux/UiHelper.cpp:199
+#: src/iptux/UiHelper.cpp:204
 msgid "Warning"
 msgstr "УВАГА"
 
@@ -1337,6 +1343,9 @@ msgstr "-Програмне забезпечення для спільного �
 #, c-format
 msgid "option parsing failed: %s\n"
 msgstr "помилка аналізу параметра: %s\n"
+
+#~ msgid "Can't find any available web browser!\n"
+#~ msgstr "Не вдається знайти доступний веб-браузер!\n"
 
 #~ msgid "chat;talk;im;message;ipmsg;feige;"
 #~ msgstr "chat;talk;im;message;ipmsg;feige;"

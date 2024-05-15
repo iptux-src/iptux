@@ -4,9 +4,9 @@
 #include <gtk/gtk.h>
 #include <memory>
 
+#include "iptux-core/Event.h"
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
-#include "iptux/EventAdaptor.h"
 #include "iptux/NotificationService.h"
 #include "iptux/UiModels.h"
 
@@ -55,7 +55,6 @@ class Application {
   MainWindow* window = 0;
   ShareFile* shareFile = 0;
   TransWindow* transWindow = 0;
-  EventAdaptor* eventAdaptor = 0;
   LogSystem* logSystem = 0;
   NotificationService* notificationService = 0;
   GMenuModel* menu_ = 0;
@@ -67,12 +66,14 @@ class Application {
   void startup();
   void activate();
   void set_enable_app_indicator(bool enable) { enable_app_indicator_ = enable; }
+  void _ForTestProcessEvents() { ProcessEvents(this); }
 
  private:
   void LoadCss();
   void onEvent(std::shared_ptr<const Event> event);
   void onConfigChanged();
   void updateItemToTransTree(const TransFileModel& para);
+  static gboolean ProcessEvents(gpointer data);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
   static void onOpenMainWindow(void*, void*, Application& self);

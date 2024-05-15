@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux 0.8.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-05-09 19:38-0700\n"
+"POT-Creation-Date: 2024-05-12 22:10-0700\n"
 "PO-Revision-Date: 2023-03-19 11:37+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/iptux/iptux/"
@@ -947,20 +947,26 @@ msgstr "Outros"
 msgid "Broadcast"
 msgstr "Transmissão"
 
-#: src/iptux/UiHelper.cpp:28
+#: src/iptux/UiHelper.cpp:26
 #, c-format
-msgid "Open URL: %s\n"
+msgid "Can't convert path to uri: %s, reason: %s"
 msgstr ""
 
-#: src/iptux/UiHelper.cpp:51
-msgid "Can't find any available web browser!\n"
-msgstr "Nenhum navegador encontrado!\n"
+#: src/iptux/UiHelper.cpp:33
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr ""
 
-#: src/iptux/UiHelper.cpp:169
+#: src/iptux/UiHelper.cpp:54
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:174
 msgid "Information"
 msgstr "Informação"
 
-#: src/iptux/UiHelper.cpp:199
+#: src/iptux/UiHelper.cpp:204
 msgid "Warning"
 msgstr "Aviso"
 
@@ -1339,6 +1345,9 @@ msgstr "- Um software para compartilhamento via LAN"
 #, c-format
 msgid "option parsing failed: %s\n"
 msgstr "processamento da opção falhou: %s\n"
+
+#~ msgid "Can't find any available web browser!\n"
+#~ msgstr "Nenhum navegador encontrado!\n"
 
 #~ msgid "chat;talk;im;message;ipmsg;feige;"
 #~ msgstr "chat;talk;im;message;ipmsg;feige;lan;conversa;"

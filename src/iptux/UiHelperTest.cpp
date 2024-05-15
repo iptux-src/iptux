@@ -15,7 +15,7 @@ TEST(UiHelper, markupEscapeText) {
 }
 
 TEST(UiHelper, TimeToStr) {
-  setenv("TZ", "America/Vancouver", 1);
+  setenv("TZ", "PST8PDT,M3.2.0/2,M11.1.0/2", 1);
   tzset();
   ASSERT_EQ(TimeToStr_(1713583969, 1713583969), "20:32");
   ASSERT_EQ(TimeToStr_(1713583969 - 86400, 1713583969), "2024-04-18");

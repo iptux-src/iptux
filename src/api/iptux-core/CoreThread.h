@@ -110,6 +110,8 @@ class CoreThread {
    * @return std::shared_ptr<const Event>
    */
   std::shared_ptr<const Event> getLastEvent() const;
+  bool HasEvent() const;
+  std::shared_ptr<const Event> PopEvent();
 
   const std::string& GetAccessPublicLimit() const;
   void SetAccessPublicLimit(const std::string& val);
@@ -193,7 +195,6 @@ class CoreThread {
 
  private:
   void bind_iptux_port();
-  void processEvents();
 
  private:
   static void RecvUdpData(CoreThread* pcthrd);
