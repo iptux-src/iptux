@@ -4,9 +4,9 @@
 #include <gtk/gtk.h>
 #include <memory>
 
+#include "iptux-core/Event.h"
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
-#include "iptux/EventAdaptor.h"
 #include "iptux/NotificationService.h"
 #include "iptux/UiModels.h"
 
@@ -55,7 +55,6 @@ class Application {
   MainWindow* window = 0;
   ShareFile* shareFile = 0;
   TransWindow* transWindow = 0;
-  EventAdaptor* eventAdaptor = 0;
   LogSystem* logSystem = 0;
   NotificationService* notificationService = 0;
   GMenuModel* menu_ = 0;
@@ -72,6 +71,7 @@ class Application {
   void onEvent(std::shared_ptr<const Event> event);
   void onConfigChanged();
   void updateItemToTransTree(const TransFileModel& para);
+  static gboolean ProcessEvents(gpointer data);
   static void onAbout(void*, void*, Application& self);
   static void onActivate(Application& self);
   static void onOpenMainWindow(void*, void*, Application& self);
