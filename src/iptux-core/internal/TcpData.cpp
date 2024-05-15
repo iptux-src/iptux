@@ -143,15 +143,15 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
                g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()));
       break;
     case IPTUX_MSGPICOPT:
-      snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
+      snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%jx",
                g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()), count++,
-               time(NULL));
+               (uintmax_t)time(NULL));
       break;
     default:
       snprintf(path, MAX_PATHLEN,
-               "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
+               "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%jx",
                g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()), count++,
-               time(NULL));
+               (uintmax_t)time(NULL));
       break;
   }
 

@@ -17,7 +17,6 @@
 #include "iptux-core/Models.h"
 
 #include "iptux/Application.h"
-#include "iptux/EventAdaptor.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiModels.h"
 #include "iptux/WindowConfig.h"
@@ -54,12 +53,12 @@ class MainWindow : public sigc::trackable {
   PalTreeModelSortKey sort_key() const { return sort_key_; }
   GtkSortType sort_type() const { return sort_type_; }
   GroupInfoStyle info_style() const { return info_style_; }
+  void ProcessEvent(std::shared_ptr<const Event> event);
 
  private:
   Application* app;
   UiCoreThread& coreThread;
   GtkWidget* window;
-  EventAdaptor* eventAdaptor;
 
   std::shared_ptr<ProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
@@ -123,7 +122,6 @@ class MainWindow : public sigc::trackable {
                                GtkTreeIter* iter,
                                bool blinking);
   static void FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal);
-  void processEventInMainThread(std::shared_ptr<const Event> event);
 
  private:
   std::string getTitle() const;

@@ -71,10 +71,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/MainWindow.ui");
   gtk_builder_connect_signals(builder, nullptr);
-  eventAdaptor = new EventAdaptor(coreThread.signalEvent,
-                                  [&](shared_ptr<const Event> event) {
-                                    this->processEventInMainThread(event);
-                                  });
   coreThread.sigGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &MainWindow::onGroupInfoUpdated));
   CreateWindow();
@@ -1627,7 +1623,7 @@ void MainWindow::PanedDivideChanged(GtkWidget* paned,
   self->config->Save();
 }
 
-void MainWindow::processEventInMainThread(shared_ptr<const Event> _event) {
+void MainWindow::ProcessEvent(shared_ptr<const Event> _event) {
   EventType type = _event->getType();
   if (type == EventType::NEW_PAL_ONLINE) {
     auto event = (const NewPalOnlineEvent*)(_event.get());

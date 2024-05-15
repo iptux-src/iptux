@@ -9,17 +9,17 @@
 
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0</project_license>
-  <content_rating type="oars-1.0"/>
+  <content_rating type="oars-1.0" />
 
   <description>
     <p>
       iptux is an “IP Messenger” client. The features of iptux include:
     </p>
     <ul>
-    <li>auto-detect other clients on the intranet.</li>
-    <li>send/recv messages to other clients.</li>
-    <li>send/recv files to other clients.</li>
-    <li>share your files to other cliens (with optional password protection).</li>
+      <li>auto-detect other clients on the intranet.</li>
+      <li>send/recv messages to other clients.</li>
+      <li>send/recv files to other clients.</li>
+      <li>share your files to other cliens (with optional password protection).</li>
     </ul>
     <p>
       It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from China,
@@ -39,6 +39,14 @@
     <category>FileTransfer</category>
     <category>GTK</category>
   </categories>
+
+  <keywords>
+    <keyword>chat</keyword>
+    <keyword>im</keyword>
+    <keyword>file transfer</keyword>
+    <keyword>ipmsg</keyword>
+    <keyword>feige</keyword>
+  </keywords>
 
   <translation type="gettext">iptux</translation>
   <url type="homepage">https://github.com/iptux-src/iptux</url>

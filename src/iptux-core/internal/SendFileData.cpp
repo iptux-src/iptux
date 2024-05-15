@@ -201,12 +201,11 @@ void SendFileData::SendDirFiles() {
       } else
         dirname = ipmsg_get_filename_pal(dirt->d_name);
       /* 构造数据头并发送 */
-      snprintf(buf, MAX_SOCKLEN,
-               "0000:%s:%.9" PRIx64 ":%lx:%lx=%lx:%lx=%lx:", dirname,
-               S_ISREG(st.st_mode) ? st.st_size : 0,
+      snprintf(buf, MAX_SOCKLEN, "0000:%s:%.9jx:%lx:%lx=%jx:%lx=%jx:", dirname,
+               (uintmax_t)(S_ISREG(st.st_mode) ? st.st_size : 0),
                S_ISREG(st.st_mode) ? IPMSG_FILE_REGULAR : IPMSG_FILE_DIR,
-               IPMSG_FILE_MTIME, st.st_mtime, IPMSG_FILE_CREATETIME,
-               st.st_ctime);
+               IPMSG_FILE_MTIME, (uintmax_t)st.st_mtime, IPMSG_FILE_CREATETIME,
+               (uintmax_t)st.st_ctime);
       g_free(dirname);
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
@@ -240,9 +239,9 @@ void SendFileData::SendDirFiles() {
       dir = NULL;
       /* 构造向上转的数据头并发送 */
       snprintf(buf, MAX_SOCKLEN,
-               "0000:.:0:%lx:%lx=%lx:%lx=%lx:", IPMSG_FILE_RETPARENT,
-               IPMSG_FILE_MTIME, st.st_mtime, IPMSG_FILE_CREATETIME,
-               st.st_ctime);
+               "0000:.:0:%lx:%lx=%jx:%lx=%jx:", IPMSG_FILE_RETPARENT,
+               IPMSG_FILE_MTIME, (uintmax_t)st.st_mtime, IPMSG_FILE_CREATETIME,
+               (uintmax_t)st.st_ctime);
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
