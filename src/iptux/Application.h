@@ -66,6 +66,7 @@ class Application {
   void startup();
   void activate();
   void set_enable_app_indicator(bool enable) { enable_app_indicator_ = enable; }
+  void _ForTestProcessEvents() { ProcessEvents(this); }
 
  private:
   void onEvent(std::shared_ptr<const Event> event);
