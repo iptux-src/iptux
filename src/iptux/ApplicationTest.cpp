@@ -21,5 +21,6 @@ TEST(Application, Constructor) {
   PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   app->getCoreThread()->AttachPalToList(pal);
   app->_ForTestProcessEvents();
+  app->_ForTestProcessEvents();
   DestroyApplication(app);
 }

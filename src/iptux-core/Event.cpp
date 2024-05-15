@@ -35,32 +35,38 @@ EventType Event::getType() const {
   return type;
 }
 
+string Event::getSource() const {
+  return "NOT IMPLEMENTED";
+}
+
+string PalEvent::getSource() const {
+  return GetPalKey().ToString();
+}
+
 NewPalOnlineEvent::NewPalOnlineEvent(CPPalInfo palInfo)
-    : Event(EventType::NEW_PAL_ONLINE), palInfo(palInfo) {}
+    : PalEvent(palInfo->GetKey(), EventType::NEW_PAL_ONLINE),
+      palInfo(palInfo) {}
 
 CPPalInfo NewPalOnlineEvent::getPalInfo() const {
   return palInfo;
 }
 
 PalUpdateEvent::PalUpdateEvent(CPPalInfo palInfo)
-    : Event(EventType::PAL_UPDATE), palInfo(palInfo) {}
+    : PalEvent(palInfo->GetKey(), EventType::PAL_UPDATE), palInfo(palInfo) {}
 
 CPPalInfo PalUpdateEvent::getPalInfo() const {
   return palInfo;
 }
 
 NewMessageEvent::NewMessageEvent(MsgPara&& msgPara)
-    : Event(EventType::NEW_MESSAGE), msgPara(msgPara) {}
+    : PalEvent(msgPara.getPal()->GetKey(), EventType::NEW_MESSAGE),
+      msgPara(msgPara) {}
 
 const MsgPara& NewMessageEvent::getMsgPara() const {
   return msgPara;
 }
 
 PalOfflineEvent::PalOfflineEvent(PalKey palKey)
-    : Event(EventType::PAL_OFFLINE), palKey(std::move(palKey)) {}
-
-const PalKey& PalOfflineEvent::GetPalKey() const {
-  return palKey;
-}
+    : PalEvent(palKey, EventType::PAL_OFFLINE) {}
 
 }  // namespace iptux

@@ -30,12 +30,24 @@ class Event {
   virtual ~Event() = default;
 
   EventType getType() const;
+  virtual std::string getSource() const;
 
  private:
   EventType type;
 };
 
-class NewPalOnlineEvent : public Event {
+class PalEvent : public Event {
+ public:
+  explicit PalEvent(PalKey palKey, EventType type)
+      : Event(type), palKey(palKey) {}
+  const PalKey& GetPalKey() const { return palKey; }
+  std::string getSource() const override;
+
+ private:
+  PalKey palKey;
+};
+
+class NewPalOnlineEvent : public PalEvent {
  public:
   explicit NewPalOnlineEvent(CPPalInfo palInfo);
   CPPalInfo getPalInfo() const;
@@ -44,7 +56,7 @@ class NewPalOnlineEvent : public Event {
   CPPalInfo palInfo;
 };
 
-class PalUpdateEvent : public Event {
+class PalUpdateEvent : public PalEvent {
  public:
   explicit PalUpdateEvent(CPPalInfo palInfo);
   CPPalInfo getPalInfo() const;
@@ -53,7 +65,7 @@ class PalUpdateEvent : public Event {
   CPPalInfo palInfo;
 };
 
-class NewMessageEvent : public Event {
+class NewMessageEvent : public PalEvent {
  public:
   explicit NewMessageEvent(MsgPara&& msgPara);
   const MsgPara& getMsgPara() const;
@@ -62,43 +74,27 @@ class NewMessageEvent : public Event {
   MsgPara msgPara;
 };
 
-class PalOfflineEvent : public Event {
+class PalOfflineEvent : public PalEvent {
  public:
   explicit PalOfflineEvent(PalKey palKey);
-  const PalKey& GetPalKey() const;
-
- private:
-  PalKey palKey;
 };
 
-class IconUpdateEvent : public Event {
+class IconUpdateEvent : public PalEvent {
  public:
   explicit IconUpdateEvent(PalKey palKey)
-      : Event(EventType::ICON_UPDATE), palKey(palKey) {}
-  const PalKey& GetPalKey() const { return palKey; }
-
- private:
-  PalKey palKey;
+      : PalEvent(palKey, EventType::ICON_UPDATE) {}
 };
 
-class PasswordRequiredEvent : public Event {
+class PasswordRequiredEvent : public PalEvent {
  public:
   explicit PasswordRequiredEvent(PalKey palKey)
-      : Event(EventType::PASSWORD_REQUIRED), palKey(palKey) {}
-  const PalKey& GetPalKey() const { return palKey; }
-
- private:
-  PalKey palKey;
+      : PalEvent(palKey, EventType::PASSWORD_REQUIRED) {}
 };
 
-class PermissionRequiredEvent : public Event {
+class PermissionRequiredEvent : public PalEvent {
  public:
   explicit PermissionRequiredEvent(PalKey palKey)
-      : Event(EventType::PERMISSION_REQUIRED), palKey(palKey) {}
-  const PalKey& GetPalKey() const { return palKey; }
-
- private:
-  PalKey palKey;
+      : PalEvent(palKey, EventType::PERMISSION_REQUIRED) {}
 };
 
 class NewShareFileFromFriendEvent : public Event {
