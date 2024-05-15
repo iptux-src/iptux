@@ -105,32 +105,7 @@ struct CoreThread::Impl {
   future<void> udpFuture;
   future<void> tcpFuture;
   future<void> notifyToAllFuture;
-  future<void> processEventsFuture;
 };
-
-void CoreThread::processEvents() {
-  while (true) {
-    if (!started) {
-      return;
-    }
-
-    shared_ptr<const Event> event;
-
-    {
-      lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
-      if (!pImpl->waitingEvents.empty()) {
-        event = pImpl->waitingEvents.front();
-        pImpl->waitingEvents.pop_front();
-      }
-    }
-
-    if (!event) {
-      this_thread::sleep_for(10ms);
-    } else {
-      signalEvent.emit(event);
-    }
-  }
-}
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
@@ -174,8 +149,6 @@ void CoreThread::start() {
 
   pImpl->udpFuture = async([](CoreThread* ct) { RecvUdpData(ct); }, this);
   pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
-  pImpl->processEventsFuture =
-      async([](CoreThread* ct) { ct->processEvents(); }, this);
   pImpl->notifyToAllFuture =
       async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
 }
@@ -297,7 +270,6 @@ void CoreThread::stop() {
   ClearSublayer();
   pImpl->udpFuture.wait();
   pImpl->tcpFuture.wait();
-  pImpl->processEventsFuture.wait();
   pImpl->notifyToAllFuture.wait();
 }
 
@@ -455,6 +427,7 @@ void CoreThread::emitEvent(shared_ptr<const Event> event) {
   pImpl->waitingEvents.push_back(event);
   this->pImpl->eventCount++;
   this->pImpl->lastEvent = event;
+  signalEvent.emit(event);
 }
 
 /**
@@ -771,6 +744,18 @@ PPalInfo CoreThread::getMe() {
 
 string CoreThread::getUserIconPath() const {
   return stringFormat("%s%s", g_get_user_cache_dir(), ICON_PATH);
+}
+
+bool CoreThread::HasEvent() const {
+  lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
+  return !this->pImpl->waitingEvents.empty();
+}
+
+shared_ptr<const Event> CoreThread::PopEvent() {
+  lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
+  auto event = pImpl->waitingEvents.front();
+  pImpl->waitingEvents.pop_front();
+  return event;
 }
 
 }  // namespace iptux

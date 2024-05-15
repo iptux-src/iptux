@@ -52,6 +52,8 @@ TEST(CoreThread, GetPalList) {
   EXPECT_EQ(int(thread->GetPalList().size()), 1);
   EXPECT_EQ(thread->getEventCount(), eventCount + 1);
   EXPECT_EQ(thread->getLastEvent()->getType(), EventType::NEW_PAL_ONLINE);
+  EXPECT_TRUE(thread->HasEvent());
+  thread->PopEvent();
   delete thread;
 }
 
