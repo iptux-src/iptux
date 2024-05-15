@@ -403,8 +403,9 @@ gboolean Application::ProcessEvents(gpointer data) {
     self->onEvent(e);
     self->getMainWindow()->ProcessEvent(e);
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    LOG_INFO("process event, type: %d, time: %lldus", e->getType(),
-             chrono::duration_cast<std::chrono::microseconds>(elapsed).count());
+    LOG_INFO("process event, type: %d, time: %jdus", e->getType(),
+             (intmax_t)chrono::duration_cast<std::chrono::microseconds>(elapsed)
+                 .count());
     g_idle_add(Application::ProcessEvents, data);
   } else {
     g_timeout_add(100, Application::ProcessEvents, data);  // 100ms
