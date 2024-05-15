@@ -1,6 +1,7 @@
 #include "config.h"
 #include "Application.h"
 
+#include "iptux-core/Event.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 #include <sys/stat.h>
@@ -403,9 +404,9 @@ gboolean Application::ProcessEvents(gpointer data) {
     self->onEvent(e);
     self->getMainWindow()->ProcessEvent(e);
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    LOG_INFO("process event, type: %d, time: %jdus", e->getType(),
-             (intmax_t)chrono::duration_cast<std::chrono::microseconds>(elapsed)
-                 .count());
+    LOG_INFO(
+        "process event, type: %s, time: %jdus", EventTypeToStr(e->getType()),
+        (intmax_t)chrono::duration_cast<chrono::microseconds>(elapsed).count());
     g_idle_add(Application::ProcessEvents, data);
   } else {
     g_timeout_add(100, Application::ProcessEvents, data);  // 100ms

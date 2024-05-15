@@ -22,6 +22,8 @@ enum class EventType {
   CONFIG_CHANGED,
 };
 
+const char* EventTypeToStr(EventType type);
+
 class Event {
  public:
   explicit Event(EventType type);
