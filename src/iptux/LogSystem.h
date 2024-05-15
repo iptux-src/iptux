@@ -12,6 +12,7 @@
 #ifndef IPTUX_LOGSYSTEM_H
 #define IPTUX_LOGSYSTEM_H
 
+#include <glib.h>
 #include <memory>
 
 #include "iptux-core/Models.h"

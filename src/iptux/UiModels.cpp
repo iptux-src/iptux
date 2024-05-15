@@ -9,7 +9,9 @@
 #include "iptux-core/Models.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux/DialogBase.h"
 #include "iptux/UiHelper.h"
+#include <netinet/in.h>
 
 using namespace std;
 
@@ -125,7 +127,20 @@ gint paltreeCompareByNameFunc(GtkTreeModel* model,
 
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
-  result = strcmp(agrpinf->name.c_str(), bgrpinf->name.c_str());
+  result = strcmp(agrpinf->name().c_str(), bgrpinf->name().c_str());
+
+  return result;
+}
+
+gint paltreeCompareByUserNameFunc(GtkTreeModel* model,
+                                  GtkTreeIter* a,
+                                  GtkTreeIter* b) {
+  GroupInfo *agrpinf, *bgrpinf;
+  gint result;
+
+  gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
+  gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
+  result = strcmp(agrpinf->user_name().c_str(), bgrpinf->user_name().c_str());
 
   return result;
 }
@@ -157,6 +172,32 @@ gint paltreeCompareByIPFunc(GtkTreeModel* model,
   return 0;
 }
 
+gint paltreeCompareByHostFunc(GtkTreeModel* model,
+                              GtkTreeIter* a,
+                              GtkTreeIter* b) {
+  GroupInfo *agrpinf, *bgrpinf;
+
+  gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
+  gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
+  return strcmp(agrpinf->host().c_str(), bgrpinf->host().c_str());
+}
+
+gint paltreeCompareByLastActivityFunc(GtkTreeModel* model,
+                                      GtkTreeIter* a,
+                                      GtkTreeIter* b) {
+  GroupInfo *agrpinf, *bgrpinf;
+
+  gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
+  gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
+  if (agrpinf->last_activity() < bgrpinf->last_activity()) {
+    return -1;
+  } else if (agrpinf->last_activity() == bgrpinf->last_activity()) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
 /**
  * 好友树(paltree)底层数据结构.
  * 7,0 closed-expander,1 open-expander,2 info.,3 extras,4 style,5 color,6 data
@@ -164,48 +205,39 @@ gint paltreeCompareByIPFunc(GtkTreeModel* model,
  * @return paltree-model
  */
 PalTreeModel* palTreeModelNew() {
+  return palTreeModelNew(PalTreeModelSortKey::IP, GTK_SORT_ASCENDING);
+}
+
+PalTreeModel* palTreeModelNew(PalTreeModelSortKey sort_key,
+                              GtkSortType sort_type) {
   GtkTreeStore* model;
 
   model =
       gtk_tree_store_new(int(PalTreeModelColumn::N_COLUMNS), GDK_TYPE_PIXBUF,
                          GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
                          PANGO_TYPE_ATTR_LIST, GDK_TYPE_RGBA, G_TYPE_POINTER);
-  palTreeModelSetSortKey(GTK_TREE_MODEL(model), PalTreeModelSortKey::NICKNAME);
+  palTreeModelSetSortKey(GTK_TREE_MODEL(model), sort_key);
   gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
                                        GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
-                                       GTK_SORT_ASCENDING);
+                                       sort_type);
 
   return GTK_TREE_MODEL(model);
 }
 
 void palTreeModelSetSortKey(PalTreeModel* model, PalTreeModelSortKey key) {
-  switch (key) {
-    case PalTreeModelSortKey::NICKNAME:
-      gtk_tree_sortable_set_default_sort_func(
-          GTK_TREE_SORTABLE(model),
-          GtkTreeIterCompareFunc(paltreeCompareByNameFunc), NULL, NULL);
-      break;
-    case PalTreeModelSortKey::IP:
-      gtk_tree_sortable_set_default_sort_func(
-          GTK_TREE_SORTABLE(model),
-          GtkTreeIterCompareFunc(paltreeCompareByIPFunc), NULL, NULL);
-      break;
-    default:
-      LOG_WARN("unknown PalTreeModelSortKey: %d", key);
+  GtkTreeIterCompareFunc f = PalTreeModelSortKeyToCompareFunc(key);
+  if (!f) {
+    LOG_WARN("unknown PalTreeModelSortKey: %d", int(key));
+    return;
   }
+  gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(model), f, NULL,
+                                          NULL);
 }
 
-/**
- * 更新群组数据(grpinf)到数据集(model)指定位置(iter).
- * @param model model
- * @param iter iter
- * @param grpinf class GroupInfo
- */
-void groupInfo2PalTreeModel(GroupInfo* grpinf,
-                            PalTreeModel* model,
-                            GtkTreeIter* iter,
-                            const char* font) {
-  palTreeModelFillFromGroupInfo(model, iter, grpinf, font);
+GroupInfo* PalTreeModelGetGroupInfo(PalTreeModel* model, GtkTreeIter* iter) {
+  GroupInfo* pgrpinf;
+  gtk_tree_model_get(model, iter, PalTreeModelColumn::DATA, &pgrpinf, -1);
+  return pgrpinf;
 }
 
 static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
@@ -219,12 +251,13 @@ static const GdkRGBA color = {0.3216, 0.7216, 0.2196, 0.0};
 void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
                                    GtkTreeIter* iter,
                                    const GroupInfo* grpinf,
-                                   const char* font) {
+                                   GroupInfoStyle style,
+                                   const string& font) {
   GtkIconTheme* theme;
   GdkPixbuf *cpixbuf, *opixbuf = nullptr;
   PangoAttrList* attrs;
   PangoAttribute* attr;
-  gchar* extra;
+  string extra;
   PalInfo* pal;
   GError* error = nullptr;
 
@@ -232,7 +265,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   theme = gtk_icon_theme_get_default();
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
     pal = grpinf->getMembers()[0].get();
-    auto file = iptux_erase_filename_suffix(pal->iconfile);
+    auto file = iptux_erase_filename_suffix(pal->icon_file().c_str());
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
                                        GtkIconLookupFlags(0), &error);
     if (cpixbuf == nullptr) {
@@ -251,34 +284,15 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
                                        GtkIconLookupFlags(0), NULL);
   }
 
-  string info;
-  /* 创建主信息 */
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
-    char ipstr[INET_ADDRSTRLEN];
-    pal = grpinf->getMembers()[0].get();
-    inet_ntop(AF_INET, &pal->ipv4, ipstr, INET_ADDRSTRLEN);
-    int unreadMsgCount = grpinf->getUnreadMsgCount();
-    if (unreadMsgCount > 0) {
-      info = stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
-                          markupEscapeText(pal->getName()).c_str(),
-                          unreadMsgCount, markupEscapeText(ipstr).c_str());
-    } else {
-      info = stringFormat("%s\n%s", markupEscapeText(pal->getName()).c_str(),
-                          markupEscapeText(ipstr).c_str());
-    }
-  } else
-    info = markupEscapeText(grpinf->name);
-
   /* 创建扩展信息 */
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR)
-    extra = NULL;
-  else
-    extra = g_strdup_printf("(%d)", (int)(grpinf->getMembers().size()));
+  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) {
+    extra = stringFormat("(%d)", (int)(grpinf->getMembers().size()));
+  }
 
   /* 创建字体风格 */
   attrs = pango_attr_list_new();
   if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
-    auto dspt = pango_font_description_from_string(font);
+    auto dspt = pango_font_description_from_string(font.c_str());
     attr = pango_attr_font_desc_new(dspt);
     pango_attr_list_insert(attrs, attr);
     pango_font_description_free(dspt);
@@ -295,17 +309,63 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   gtk_tree_store_set(
       GTK_TREE_STORE(model), iter, PalTreeModelColumn ::CLOSED_EXPANDER,
       cpixbuf, PalTreeModelColumn ::OPEN_EXPANDER, opixbuf,
-      PalTreeModelColumn ::INFO, info.c_str(), PalTreeModelColumn ::EXTRAS,
-      extra, PalTreeModelColumn ::STYLE, attrs, PalTreeModelColumn ::COLOR,
-      &color, PalTreeModelColumn ::DATA, grpinf, -1);
+      PalTreeModelColumn ::INFO, grpinf->GetInfoAsMarkup(style).c_str(),
+      PalTreeModelColumn ::EXTRAS, extra.c_str(), PalTreeModelColumn ::STYLE,
+      attrs, PalTreeModelColumn ::COLOR, &color, PalTreeModelColumn ::DATA,
+      grpinf, -1);
 
   /* 释放资源 */
   if (cpixbuf)
     g_object_unref(cpixbuf);
   if (opixbuf)
     g_object_unref(opixbuf);
-  g_free(extra);
   pango_attr_list_unref(attrs);
+}
+
+static const char* group_info_style_names[] = {
+    [(int)GroupInfoStyle::IP] = "ip",
+    [(int)GroupInfoStyle::HOST] = "host",
+    [(int)GroupInfoStyle::USERNAME] = "username",
+    [(int)GroupInfoStyle::VERSION_NAME] = "version",
+    [(int)GroupInfoStyle::LAST_ACTIVITY] = "last_activity",
+    [(int)GroupInfoStyle::LAST_MESSAGE] = "last_message",
+    [(int)GroupInfoStyle::IP_PORT] = "ip_port",
+};
+
+GroupInfoStyle GroupInfoStyleFromStr(const std::string& s) {
+  for (int i = 0; i < (int)GroupInfoStyle::INVALID; ++i) {
+    if (s == group_info_style_names[i]) {
+      return (GroupInfoStyle)i;
+    }
+  }
+  return GroupInfoStyle::INVALID;
+}
+
+const char* GroupInfoStyleToStr(GroupInfoStyle style) {
+  if (style >= GroupInfoStyle::IP && style < GroupInfoStyle::INVALID) {
+    return group_info_style_names[(int)style];
+  }
+  return "";
+}
+
+static const char* gtk_sort_type_names[] = {
+    [GTK_SORT_ASCENDING] = "ascending",
+    [GTK_SORT_DESCENDING] = "descending",
+};
+
+GtkSortType GtkSortTypeFromStr(const std::string& s) {
+  for (int i = GTK_SORT_ASCENDING; i <= GTK_SORT_DESCENDING; ++i) {
+    if (s == gtk_sort_type_names[i]) {
+      return (GtkSortType)i;
+    }
+  }
+  return GTK_SORT_TYPE_INVALID;
+}
+const char* GtkSortTypeToStr(GtkSortType t) {
+  if (GTK_SORT_ASCENDING <= t && t <= GTK_SORT_DESCENDING) {
+    return gtk_sort_type_names[t];
+  }
+  return "";
 }
 
 // GroupInfo::GroupInfo()
@@ -331,27 +391,46 @@ bool GroupInfo::hasPal(PPalInfo pal) const {
   return hasPal(pal.get());
 }
 
+string GroupInfo::user_name() const {
+  if (getType() == GROUP_BELONG_TYPE_REGULAR) {
+    auto pal = this->getMembers()[0].get();
+    return pal->getUser();
+  }
+  return "";
+}
+
 GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
     : grpid(0),
       buffer(NULL),
-      dialog(NULL),
+      dialogBase(NULL),
       me(me),
       type(GROUP_BELONG_TYPE_REGULAR),
       logSystem(logSystem) {
   members.push_back(pal);
+  inputBuffer = gtk_text_buffer_new(NULL);
+  name_ = pal->getName();
+  host_ = pal->getHost();
 }
 
 GroupInfo::GroupInfo(iptux::GroupBelongType t,
                      const vector<PPalInfo>& pals,
                      CPPalInfo me,
+                     const string& name,
                      LogSystem* logSystem)
     : grpid(0),
       buffer(NULL),
-      dialog(NULL),
+      dialogBase(NULL),
       me(me),
       members(pals),
       type(t),
-      logSystem(logSystem) {}
+      logSystem(logSystem) {
+  inputBuffer = gtk_text_buffer_new(NULL);
+  name_ = name;
+}
+
+GtkWidget* GroupInfo::getDialog() const {
+  return dialogBase ? GTK_WIDGET(dialogBase->getWindow()) : nullptr;
+}
 
 bool GroupInfo::addPal(PPalInfo pal) {
   if (type == GROUP_BELONG_TYPE_REGULAR) {
@@ -401,6 +480,108 @@ void GroupInfo::readAllMsg() {
 int GroupInfo::getUnreadMsgCount() const {
   g_assert(allMsgCount >= readMsgCount);
   return allMsgCount - readMsgCount;
+}
+
+string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
+  string info;
+  /* 创建主信息 */
+  if (getType() == GROUP_BELONG_TYPE_REGULAR) {
+    string line2;
+    auto pal = this->getMembers()[0].get();
+
+    switch (style) {
+      case GroupInfoStyle::HOST:
+        line2 = this->host();
+        break;
+      case GroupInfoStyle::VERSION_NAME:
+        line2 = pal->getVersion();
+        break;
+      case GroupInfoStyle::USERNAME:
+        line2 = user_name();
+        break;
+      case GroupInfoStyle::LAST_ACTIVITY:
+        line2 = last_activity_ ? TimeToStr(last_activity_) : "";
+        break;
+      case GroupInfoStyle::LAST_MESSAGE:
+        line2 = last_message_;
+        break;
+      case GroupInfoStyle::IP_PORT:
+        line2 = stringFormat("%s:%d", inAddrToString(pal->ipv4()).c_str(),
+                             pal->port());
+        break;
+      case GroupInfoStyle::IP:
+      default:
+        auto pal = this->getMembers()[0].get();
+        line2 = inAddrToString(pal->ipv4());
+    }
+
+    int unreadMsgCount = this->getUnreadMsgCount();
+    if (unreadMsgCount > 0) {
+      return stringFormat("%s <span foreground=\"red\">(%d)</span>\n%s",
+                          markupEscapeText(pal->getName()).c_str(),
+                          unreadMsgCount, markupEscapeText(line2).c_str());
+    } else {
+      return stringFormat("%s\n%s", markupEscapeText(pal->getName()).c_str(),
+                          markupEscapeText(line2).c_str());
+    }
+  } else {
+    return markupEscapeText(this->name());
+  }
+}
+
+string GroupInfo::GetHintAsMarkup() const {
+  if (this->type != GROUP_BELONG_TYPE_REGULAR) {
+    return "";
+  }
+  auto pal = this->members[0];
+
+  ostringstream res;
+  res << MarkupPrintf(_("Version: %s"), pal->getVersion().c_str());
+  res << "\n";
+
+  if (!pal->getGroup().empty()) {
+    res << MarkupPrintf(_("Nickname: %s@%s"), pal->getName().c_str(),
+                        pal->getGroup().c_str());
+  } else {
+    res << MarkupPrintf(_("Nickname: %s"), pal->getName().c_str());
+  }
+  res << "\n";
+
+  res << MarkupPrintf(_("User: %s"), pal->getUser().c_str());
+  res << "\n";
+
+  res << MarkupPrintf(_("Host: %s"), pal->getHost().c_str());
+  res << "\n";
+
+  string ipstr = inAddrToString(pal->ipv4());
+  if (pal->segdes && *pal->segdes != '\0') {
+    res << MarkupPrintf(_("Address: %s(%s)"), pal->segdes, ipstr.c_str());
+  } else {
+    res << MarkupPrintf(_("Address: %s"), ipstr.c_str());
+  }
+  res << "\n";
+
+  if (!pal->isCompatible()) {
+    res << markupEscapeText(_("Compatibility: Microsoft"));
+  } else {
+    res << markupEscapeText(_("Compatibility: GNU/Linux"));
+  }
+  res << "\n";
+
+  res << MarkupPrintf(_("System coding: %s"), pal->getEncode().c_str());
+
+  if (pal->sign && pal->sign[0]) {
+    string signature1;
+    string signature2;
+    signature1 = markupEscapeText(_("Signature:"));
+    signature2 = markupEscapeText(pal->sign);
+    res << stringFormat(
+        "\n%s\n<span foreground=\"#00FF00\" "
+        "font_style=\"italic\" size=\"smaller\">%s</span>",
+        signature1.c_str(), signature2.c_str());
+  }
+
+  return res.str();
 }
 
 /**
@@ -514,6 +695,8 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
   GtkTextIter iter;
   const gchar* data;
 
+  time(&last_activity_);
+
   for (size_t i = 0; i < para.dtlist.size(); ++i) {
     const ChipData* chipData = &para.dtlist[i];
     data = chipData->data.c_str();
@@ -525,12 +708,14 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
         InsertStringToBuffer(buffer, data);
         gtk_text_buffer_get_end_iter(buffer, &iter);
         gtk_text_buffer_insert(buffer, &iter, "\n", -1);
+        last_message_ = StrFirstNonEmptyLine(chipData->data);
         if (logSystem) {
           logSystem->communicateLog(&para, "[STRING]%s", data);
         }
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
         InsertPixbufToBuffer(buffer, data);
+        last_message_ = _("[IMG]");
         if (logSystem) {
           logSystem->communicateLog(&para, "[PICTURE]%s", data);
         }
@@ -559,6 +744,47 @@ bool transModelIsFinished(TransModel* model) {
 
 IconModel* iconModelNew() {
   return gtk_list_store_new(2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+}
+
+const char* pal_tree_model_sort_key_names[] = {
+    [(int)PalTreeModelSortKey::NICKNAME] = "nickname",
+    [(int)PalTreeModelSortKey::USERNAME] = "username",
+    [(int)PalTreeModelSortKey::IP] = "ip",
+    [(int)PalTreeModelSortKey::HOST] = "host",
+    [(int)PalTreeModelSortKey::LAST_ACTIVITY] = "last_activity",
+};
+
+PalTreeModelSortKey PalTreeModelSortKeyFromStr(const std::string& s) {
+  for (int i = 0; i < (int)PalTreeModelSortKey::INVALID; ++i) {
+    if (s == pal_tree_model_sort_key_names[i]) {
+      return (PalTreeModelSortKey)i;
+    }
+  }
+  return PalTreeModelSortKey::INVALID;
+}
+
+const char* PalTreeModelSortKeyToStr(PalTreeModelSortKey k) {
+  if (PalTreeModelSortKey::NICKNAME <= k && k < PalTreeModelSortKey::INVALID) {
+    return pal_tree_model_sort_key_names[(int)k];
+  }
+  return "";
+}
+
+GtkTreeIterCompareFunc PalTreeModelSortKeyToCompareFunc(PalTreeModelSortKey k) {
+  switch (k) {
+    case PalTreeModelSortKey::NICKNAME:
+      return GtkTreeIterCompareFunc(paltreeCompareByNameFunc);
+    case PalTreeModelSortKey::USERNAME:
+      return GtkTreeIterCompareFunc(paltreeCompareByNameFunc);
+    case PalTreeModelSortKey::IP:
+      return GtkTreeIterCompareFunc(paltreeCompareByIPFunc);
+    case PalTreeModelSortKey::HOST:
+      return GtkTreeIterCompareFunc(paltreeCompareByHostFunc);
+    case PalTreeModelSortKey::LAST_ACTIVITY:
+      return GtkTreeIterCompareFunc(paltreeCompareByLastActivityFunc);
+    default:
+      return nullptr;
+  }
 }
 
 }  // namespace iptux

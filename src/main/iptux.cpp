@@ -21,15 +21,14 @@
 #include <string>
 
 #include <glib.h>
-#include <libintl.h>
-
 #include <glib/gi18n.h>
-#include <glog/logging.h>
+#include <libintl.h>
 
 #include "iptux/Application.h"
 
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux_crash_utils.h"
 
 using namespace std;
 using namespace iptux;
@@ -138,7 +137,7 @@ static void dealLog(const IptuxConfig& config) {
 }
 
 int main(int argc, char** argv) {
-  google::InstallFailureSignalHandler();
+  installCrashHandler();
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");

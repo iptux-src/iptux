@@ -9,6 +9,8 @@
 #include <glib/gstdio.h>
 #include <json/json.h>
 
+#include "iptux-utils/output.h"
+
 using namespace std;
 
 namespace iptux {
@@ -69,7 +71,12 @@ int IptuxConfig::GetInt(const string& key) const {
 }
 
 int IptuxConfig::GetInt(const string& key, int defaultValue) const {
-  return root.get(key, defaultValue).asInt();
+  try {
+    return root.get(key, defaultValue).asInt();
+  } catch (const Json::LogicError& e) {
+    LOG_WARN("get int value for key %s failed: %s", key.c_str(), e.what());
+    return defaultValue;
+  }
 }
 
 void IptuxConfig::SetInt(const string& key, int value) {
@@ -77,10 +84,16 @@ void IptuxConfig::SetInt(const string& key, int value) {
 }
 
 bool IptuxConfig::GetBool(const string& key) const {
-  return root.get(key, false).asBool();
+  return GetBool(key, false);
 }
+
 bool IptuxConfig::GetBool(const string& key, bool defaultValue) const {
-  return root.get(key, defaultValue).asBool();
+  try {
+    return root.get(key, defaultValue).asBool();
+  } catch (const Json::LogicError& e) {
+    LOG_WARN("get bool value for key %s failed: %s", key.c_str(), e.what());
+    return defaultValue;
+  }
 }
 void IptuxConfig::SetBool(const string& key, bool value) {
   root[key] = value;
@@ -92,7 +105,11 @@ string IptuxConfig::GetString(const string& key) const {
 
 string IptuxConfig::GetString(const string& key,
                               const string& defaultValue) const {
-  return root.get(key, defaultValue).asString();
+  Json::Value value = root[key];
+  if (!value.isString()) {
+    return defaultValue;
+  }
+  return value.asString();
 }
 
 void IptuxConfig::SetString(const string& key, const string& value) {

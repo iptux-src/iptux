@@ -1,14 +1,15 @@
 #include "gtest/gtest.h"
 
 #include "iptux-core/Models.h"
+#include "iptux-utils/TestHelper.h"
 #include "iptux-utils/utils.h"
 
 using namespace std;
 using namespace iptux;
 
 TEST(PalInfo, GetKey) {
-  PalInfo info;
-  ASSERT_EQ(info.GetKey().ToString(), "0.0.0.0:2425");
+  PalInfo info("127.0.0.1", 2425);
+  ASSERT_EQ(info.GetKey().ToString(), "127.0.0.1:2425");
 }
 
 TEST(PalKey, CopyConstructor) {
@@ -16,6 +17,11 @@ TEST(PalKey, CopyConstructor) {
   PalKey key2 = key1;
   ASSERT_EQ(key1.ToString(), "1.2.3.4:1234");
   ASSERT_EQ(key2.ToString(), "1.2.3.4:1234");
+}
+
+TEST(PalKey, GetIpv4String) {
+  PalKey key1(inAddrFromString("1.2.3.4"), 1234);
+  ASSERT_EQ(key1.GetIpv4String(), "1.2.3.4");
 }
 
 TEST(NetSegment, ContainIP) {
@@ -63,7 +69,7 @@ TEST(FileAttr, Convert) {
 }
 
 TEST(MsgPara, getSummary) {
-  PPalInfo pal = make_shared<PalInfo>();
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   MsgPara msg(pal);
   EXPECT_EQ(msg.getSummary(), "Empty Message");
   msg.dtlist.push_back(ChipData("foobar"));
@@ -73,4 +79,24 @@ TEST(MsgPara, getSummary) {
   msg.dtlist.clear();
   msg.dtlist.push_back(ChipData(MessageContentType::PICTURE, "foobar"));
   EXPECT_EQ(msg.getSummary(), "Received an image");
+}
+
+TEST(FileInfo, isExist) {
+  auto path1 = testDataPath("hexdumptest.dat");
+  FileInfo f;
+  f.filepath = g_strdup(path1.c_str());
+  ASSERT_TRUE(f.isExist());
+
+  auto path2 = testDataPath("hexdumptest-notexist.dat");
+  FileInfo f2;
+  f2.filepath = g_strdup(path2.c_str());
+  ASSERT_FALSE(f2.isExist());
+}
+
+TEST(FileInfo, ensureFilesizeFilled) {
+  auto path1 = testDataPath("hexdumptest.dat");
+  FileInfo f;
+  f.filepath = g_strdup(path1.c_str());
+  f.ensureFilesizeFilled();
+  ASSERT_EQ(f.filesize, 256);
 }

@@ -62,7 +62,7 @@ void DialogBase::ClearSublayerGeneral() {
   if (progdt->IsAutoCleanChatHistory()) {
     ClearHistoryTextView();
   }
-  grpinf->dialog = NULL;
+  grpinf->clearDialog();
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
   g_datalist_clear(&dtset);
@@ -254,9 +254,8 @@ GtkWidget* DialogBase::CreateInputArea() {
                                       GTK_SHADOW_ETCHED_IN);
   gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
 
-  widget = gtk_text_view_new();
+  widget = gtk_text_view_new_with_buffer(grpinf->getInputBuffer());
   inputTextviewWidget = GTK_TEXT_VIEW(widget);
-  inputBuffer = gtk_text_view_get_buffer(inputTextviewWidget);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
   gtk_drag_dest_add_uri_targets(widget);
   gtk_container_add(GTK_CONTAINER(sw), widget);
@@ -404,9 +403,7 @@ void DialogBase::FeedbackMsg(const gchar* msg) {
 
   ChipData chip(msg);
   para.dtlist.push_back(std::move(chip));
-
-  /* 交给某人处理吧 */
-  app->getCoreThread()->InsertMsgToGroupInfoItem(grpinf, &para);
+  grpinf->addMsgPara(para);
 }
 
 /**
@@ -574,7 +571,6 @@ void DialogBase::RemoveSelectedFromTree(GtkWidget* widget) {
  */
 gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent* event) {
   GtkWidget *menu, *menuitem;
-  GdkEventButton* event_button;
 
   menu = gtk_menu_new();
   menuitem = gtk_menu_item_new_with_label(_("Remove Selected"));
@@ -583,7 +579,6 @@ gint DialogBase::EnclosureTreePopup(DialogBase* self, GdkEvent* event) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
   if (event->type == GDK_BUTTON_PRESS) {
-    event_button = (GdkEventButton*)event;
     if (gdk_event_triggers_context_menu(event)) {
       gtk_widget_show(menuitem);
       gtk_menu_popup_at_pointer(GTK_MENU(menu), nullptr);
@@ -793,4 +788,9 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), progresstip.c_str());
   return TRUE;
 }
+
+GtkTextBuffer* DialogBase::getInputBuffer() {
+  return grpinf->getInputBuffer();
+}
+
 }  // namespace iptux

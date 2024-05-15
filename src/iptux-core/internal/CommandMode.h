@@ -9,6 +9,7 @@ class CommandMode {
  public:
   explicit CommandMode(int mode) : mode(mode) {}
   std::string toString() const;
+  int getMode() const { return mode; }
 
  private:
   int mode;

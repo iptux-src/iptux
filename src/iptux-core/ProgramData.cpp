@@ -3,9 +3,9 @@
 
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <unistd.h>
 
 #include "iptux-core/internal/ipmsg.h"
+#include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 
 using namespace std;
@@ -20,7 +20,6 @@ static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
 ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
     : palicon(NULL), font(NULL), config(config), flags(0) {
   gettimeofday(&timestamp, NULL);
-  pthread_mutex_init(&mutex, NULL);
   InitSublayer();
 }
 
@@ -30,8 +29,6 @@ ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
 ProgramData::~ProgramData() {
   g_free(palicon);
   g_free(font);
-
-  pthread_mutex_destroy(&mutex);
 }
 
 shared_ptr<IptuxConfig> ProgramData::getConfig() {
@@ -49,13 +46,14 @@ void ProgramData::InitSublayer() {
  * 写出程序数据.
  */
 void ProgramData::WriteProgData() {
-  gettimeofday(&timestamp, NULL);  //更新时间戳
+  gettimeofday(&timestamp, NULL);  // 更新时间戳
   config->SetString("nick_name", nickname);
   config->SetString("belong_group", mygroup);
   config->SetString("my_icon", myicon);
   config->SetString("archive_path", path);
   config->SetString("personal_sign", sign);
 
+  config->SetInt("port", port_);
   config->SetString("candidacy_encode", codeset);
   config->SetString("preference_encode", encode);
   config->SetString("pal_icon", palicon);
@@ -90,6 +88,21 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
   netseg = netSegments;
 }
 
+void ProgramData::set_port(uint16_t port, bool is_init) {
+  if (port == port_)
+    return;
+
+  uint16_t old_port = port_;
+  port_ = port;
+  if (port_ < 1024 || port_ > 65535) {
+    LOG_WARN("Invalid port number: %d, use default port: %d", port_,
+             IPTUX_DEFAULT_PORT);
+    port_ = IPTUX_DEFAULT_PORT;
+  }
+  if (!is_init && old_port != port_)
+    need_restart_ = true;
+}
+
 /**
  * 查询(ipv4)所在网段的描述串.
  * @param ipv4 ipv4
@@ -114,6 +127,7 @@ void ProgramData::ReadProgData() {
   path = config->GetString("archive_path", g_get_home_dir());
   sign = config->GetString("personal_sign");
 
+  set_port(config->GetInt("port", IPTUX_DEFAULT_PORT), true);
   codeset = config->GetString("candidacy_encode", "gb18030,utf-16");
   encode = config->GetString("preference_encode", "utf-8");
   palicon = g_strdup(config->GetString("pal_icon", "icon-qq.png").c_str());
@@ -165,12 +179,12 @@ void ProgramData::ReadProgData() {
  */
 void ProgramData::WriteNetSegment() {
   vector<Json::Value> jsons;
-
-  pthread_mutex_lock(&mutex);
-  for (size_t i = 0; i < netseg.size(); ++i) {
-    jsons.push_back(netseg[i].ToJsonValue());
+  {
+    lock_guard<std::mutex> l(mutex);
+    for (size_t i = 0; i < netseg.size(); ++i) {
+      jsons.push_back(netseg[i].ToJsonValue());
+    }
   }
-  pthread_mutex_unlock(&mutex);
   config->SetVector("scan_net_segment", jsons);
 }
 
@@ -186,11 +200,11 @@ void ProgramData::ReadNetSegment() {
 }
 
 void ProgramData::Lock() {
-  pthread_mutex_lock(&mutex);
+  mutex.lock();
 }
 
 void ProgramData::Unlock() {
-  pthread_mutex_unlock(&mutex);
+  mutex.unlock();
 }
 
 bool ProgramData::IsAutoOpenCharDialog() const {
@@ -256,7 +270,7 @@ void ProgramData::ClearShareFileInfos() {
 }
 
 void ProgramData::AddShareFileInfo(FileInfo fileInfo) {
-  sharedFileInfos.emplace_back(move(fileInfo));
+  sharedFileInfos.emplace_back(std::move(fileInfo));
 }
 
 }  // namespace iptux

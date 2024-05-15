@@ -21,6 +21,7 @@
 #include <glib/gi18n.h>
 
 #include "iptux-core/Exception.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/internal/TransAbstract.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
@@ -81,8 +82,8 @@ static bool commandSendTo(int sockfd,
                           const void* buf,
                           size_t len,
                           int flags,
-                          in_addr ipv4) {
-  return commandSendTo(sockfd, buf, len, flags, ipv4, IPTUX_DEFAULT_PORT);
+                          CPPalInfo pal) {
+  return commandSendTo(sockfd, buf, len, flags, pal->ipv4(), pal->port());
 }
 
 /**
@@ -100,7 +101,7 @@ Command::~Command() {}
  * 向局域网所有计算机广播上线信息.
  * @param sock udp socket
  */
-void Command::BroadCast(int sock) {
+void Command::BroadCast(int sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
@@ -110,7 +111,7 @@ void Command::BroadCast(int sock) {
   auto addrs = get_sys_broadcast_addr(sock);
   for (auto& addr : addrs) {
     in_addr ipv4 = inAddrFromString(addr);
-    commandSendTo(sock, buf, size, 0, ipv4);
+    commandSendTo(sock, buf, size, 0, ipv4, port);
     g_usleep(9999);
   }
 }
@@ -119,14 +120,14 @@ void Command::BroadCast(int sock) {
  * 向局域网某些计算机单独发送上线信息.
  * @param sock udp socket
  */
-void Command::DialUp(int sock) {
+void Command::DialUp(int sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
 
-  //与某些代码片段的获取网段描述相冲突，必须复制出来使用
+  // 与某些代码片段的获取网段描述相冲突，必须复制出来使用
   programData->Lock();
   vector<NetSegment> list = programData->getNetSegments();
   programData->Unlock();
@@ -134,7 +135,7 @@ void Command::DialUp(int sock) {
     uint64_t c = ns.Count();
     for (uint64_t j = 0; j < c; ++j) {
       auto ip = ns.NthIp(j);
-      commandSendTo(sock, buf, size, 0, inAddrFromString(ip));
+      commandSendTo(sock, buf, size, 0, inAddrFromString(ip), port);
       g_usleep(999);
     }
   }
@@ -152,7 +153,7 @@ void Command::SendAnsentry(int sock, CPPalInfo pal) {
                 programData->nickname.c_str());
   ConvertEncode(pal->getEncode());
   CreateIptuxExtra(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -163,7 +164,7 @@ void Command::SendAnsentry(int sock, CPPalInfo pal) {
 void Command::SendExit(int sock, CPPalInfo pal) {
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_BR_EXIT, NULL);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -177,7 +178,7 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
                 programData->nickname.c_str());
   ConvertEncode(pal->getEncode());
   CreateIptuxExtra(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -185,13 +186,13 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
  * @param sock udp socket
  * @param ipv4 ipv4 address
  */
-void Command::SendDetectPacket(int sock, in_addr ipv4) {
+void Command::SendDetectPacket(int sock, in_addr ipv4, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
-  commandSendTo(sock, buf, size, 0, ipv4);
+  commandSendTo(sock, buf, size, 0, ipv4, port);
 }
 
 /**
@@ -209,13 +210,13 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char* msg) {
     throw Exception(PAL_KEY_NOT_EXIST);
   }
 
-  pal2->rpacketn = packetno = packetn;  //此数据包需要检验回复
+  pal2->rpacketn = packetno = packetn;  // 此数据包需要检验回复
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_SENDMSG, msg);
   ConvertEncode(pal->getEncode());
 
   count = 0;
   do {
-    commandSendTo(sock, buf, size, 0, pal->ipv4);
+    commandSendTo(sock, buf, size, 0, pal);
     g_usleep(coreThread.getProgramData()->getSendMessageRetryInUs());
     count++;
   } while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
@@ -239,7 +240,7 @@ void Command::SendReply(int sock, CPPalInfo pal, uint32_t packetno) {
   CreateCommand(IPMSG_SENDCHECKOPT | IPMSG_RECVMSG, packetstr);
   ConvertEncode(pal->getEncode());
 
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 void Command::SendReply(int sock, const PalKey& palKey, uint32_t packetno) {
@@ -256,7 +257,7 @@ void Command::SendReply(int sock, const PalKey& palKey, uint32_t packetno) {
 void Command::SendGroupMsg(int sock, CPPalInfo pal, const char* msg) {
   CreateCommand(IPMSG_BROADCASTOPT | IPMSG_SENDMSG, msg);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -272,7 +273,7 @@ void Command::SendUnitMsg(int sock,
                           const char* msg) {
   CreateCommand(opttype | IPTUX_SENDMSG, msg);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -297,7 +298,7 @@ bool Command::SendAskData(int sock,
            offset);
   // IPMSG和Feiq的命令字段都是只有IPMSG_GETFILEDATA,使用(IPMSG_FILEATTACHOPT |
   // IPMSG_GETFILEDATA）
-  //会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
+  // 会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
   if (strstr(pal->getVersion().c_str(), iptuxstr))
     CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
   else
@@ -306,12 +307,12 @@ bool Command::SendAskData(int sock,
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr = pal->ipv4;
+  addr.sin_port = htons(pal->port());
+  addr.sin_addr = pal->ipv4();
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
-      (xwrite(sock, buf, size) == -1))
+      (xsend(sock, buf, size) == -1))
     return false;
 
   return true;
@@ -350,18 +351,18 @@ bool Command::SendAskFiles(int sock,
   struct sockaddr_in addr;
 
   snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno,
-           fileid);  //兼容LanQQ软件
+           fileid);  // 兼容LanQQ软件
   CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
   ConvertEncode(pal->getEncode());
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr = pal->ipv4;
+  addr.sin_port = htons(pal->port());
+  addr.sin_addr = pal->ipv4();
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
-      (xwrite(sock, buf, size) == -1))
+      (xsend(sock, buf, size) == -1))
     return false;
 
   return true;
@@ -380,7 +381,7 @@ void Command::SendAskShared(int sock,
                             const char* attach) {
   CreateCommand(opttype | IPTUX_ASKSHARED, attach);
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 void Command::SendAskShared(int sock,
@@ -404,7 +405,7 @@ void Command::SendFileInfo(int sock,
   CreateCommand(opttype | IPMSG_FILEATTACHOPT | IPMSG_SENDMSG, NULL);
   ConvertEncode(pal->getEncode());
   CreateIpmsgExtra(extra, pal->getEncode().c_str());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 void Command::SendFileInfo(int sock,
                            const PalKey& palKey,
@@ -423,7 +424,7 @@ void Command::SendMyIcon(int sock, CPPalInfo pal, istream& iss) {
   CreateCommand(IPTUX_SENDICON, NULL);
   ConvertEncode(pal->getEncode());
   CreateIconExtra(iss);
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -435,7 +436,7 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPTUX_SEND_SIGN, programData->sign.c_str());
   ConvertEncode(pal->getEncode());
-  commandSendTo(sock, buf, size, 0, pal->ipv4);
+  commandSendTo(sock, buf, size, 0, pal);
 }
 
 /**
@@ -459,12 +460,12 @@ void Command::SendSublayer(int sock,
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(IPTUX_DEFAULT_PORT);
-  addr.sin_addr = pal->ipv4;
+  addr.sin_port = htons(pal->port());
+  addr.sin_addr = pal->ipv4();
 
   if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
        (errno != EINTR)) ||
-      (xwrite(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1)) {
+      (xsend(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1)) {
     LOG_WARN("send tcp message failed");
     return;
   }
@@ -487,9 +488,9 @@ void Command::FeedbackError(CPPalInfo pal,
   para.btype = btype;
 
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
-  para.dtlist.push_back(move(chip));
+  para.dtlist.push_back(std::move(chip));
   /* 交给某人处理吧 */
-  coreThread.InsertMessage(move(para));
+  coreThread.InsertMessage(std::move(para));
 }
 
 /**
@@ -503,7 +504,7 @@ void Command::SendSublayerData(int sock, int fd) {
   do {
     if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
       break;
-    if ((len = xwrite(sock, buf, len)) <= 0)
+    if ((len = xsend(sock, buf, len)) <= 0)
       break;
   } while (1);
 }
@@ -640,11 +641,11 @@ FileInfo decodeFileInfo(char** extra) {
     throw Exception(INVALID_FILE_ATTR, stringFormat("decode failed: %s", s));
   }
 
-  //分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
+  // 分割，格式1(\a) 格式2(:\a) 格式3(\a:) 格式4(:\a:)
   *extra = strchr(*extra, '\a');
-  if (*extra)  //跳过'\a'字符
+  if (*extra)  // 跳过'\a'字符
     (*extra)++;
-  if (*extra && (**extra == ':'))  //跳过可能存在的':'字符
+  if (*extra && (**extra == ':'))  // 跳过可能存在的':'字符
     (*extra)++;
 
   return file;
@@ -669,10 +670,11 @@ vector<FileInfo> Command::decodeFileInfos(const string& s) {
 }
 
 string Command::encodeFileInfo(const FileInfo& fileInfo) {
-  auto name = ipmsg_get_filename_pal(fileInfo.filepath);  //获取面向好友的文件名
+  auto name =
+      ipmsg_get_filename_pal(fileInfo.filepath);  // 获取面向好友的文件名
   auto res = stringFormat(
-      "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a:", fileInfo.fileid,
-      name, fileInfo.filesize, fileInfo.filectime, fileInfo.fileattr);
+      "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a:", fileInfo.fileid, name,
+      fileInfo.filesize, fileInfo.filectime, (unsigned int)fileInfo.fileattr);
   g_free(name);
   return res;
 }

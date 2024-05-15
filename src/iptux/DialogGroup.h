@@ -16,7 +16,6 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/DialogBase.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -34,7 +33,6 @@ class DialogGroup : public DialogBase {
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
-  Application* app;
   GtkApplicationWindow* window;
   std::shared_ptr<IptuxConfig> config;
   GtkWidget* mainPaned;
@@ -47,6 +45,7 @@ class DialogGroup : public DialogBase {
   void SaveUILayout();
 
   GtkWindow* CreateMainWindow();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateMemberArea();
@@ -59,6 +58,7 @@ class DialogGroup : public DialogBase {
   bool SendTextMsg() override;
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
   void BroadcastTextMsg(const gchar* msg);
+  std::string GetTitle();
 
   static GtkWidget* CreatePopupMenu(GtkTreeModel* model);
   //回调处理部分
@@ -93,9 +93,6 @@ class DialogGroup : public DialogBase {
   }
   static void onAttachFolder(void*, void*, DialogGroup& self) {
     DialogBase::AttachFolder(&self);
-  }
-  static void onClose(void*, void*, DialogGroup& self) {
-    gtk_widget_destroy(GTK_WIDGET(self.window));
   }
   static void onSortType(GSimpleAction* action,
                          GVariant* value,

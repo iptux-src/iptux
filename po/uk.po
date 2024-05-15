@@ -1,0 +1,1395 @@
+# Russian translation for iptux
+# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# This file is distributed under the same license as the iptux package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: iptux\n"
+"Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
+"POT-Creation-Date: 2024-05-12 22:10-0700\n"
+"PO-Revision-Date: 2024-01-08 13:06+0000\n"
+"Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
+"Language-Team: Ukrainian <https://hosted.weblate.org/projects/iptux/iptux/uk/"
+">\n"
+"Language: ua\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.4-dev\n"
+"X-Launchpad-Export-Date: 2018-01-24 12:00+0000\n"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
+msgid "iptux"
+msgstr "iptux"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:7
+msgid "LAN communication software"
+msgstr "Програмне забезпечення для зв'язку по локальній мережі"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
+#, fuzzy
+msgid "iptux is an “IP Messenger” client. The features of iptux include:"
+msgstr "iptux — це клієнт «IP Messenger»."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
+msgid "auto-detect other clients on the intranet."
+msgstr "автоматично виявляти інших клієнтів в мережі."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
+#, fuzzy
+msgid "send/recv messages to other clients."
+msgstr "надсилати повідомлення іншим клієнтам."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
+#, fuzzy
+msgid "send/recv files to other clients."
+msgstr "надсилати файли іншим клієнтам."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:22
+msgid "share your files to other cliens (with optional password protection)."
+msgstr ""
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:24
+msgid ""
+"It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from "
+"China, and with the original “IP Messenger” clients from Japan, including "
+"g2ipmsg and xipmsg in Debian."
+msgstr ""
+"Він (імовірно) сумісний із 飞鸽传书 (Feige) та 飞秋 (FeiQ) із Китаю та з "
+"оригінальними клієнтами «IP Messenger» із Японії, включаючи g2ipmsg та "
+"xipmsg у Debian."
+
+#: src/iptux-core/CoreThread.cpp:194
+#, c-format
+msgid ""
+"Fatal Error!! Failed to create new socket!\n"
+"%s"
+msgstr ""
+"Помилка!! Не вдалося створити новий сокет!\n"
+"%s"
+
+#: src/iptux-core/CoreThread.cpp:210
+#, c-format
+msgid ""
+"Fatal Error!! Failed to bind the TCP port(%s:%d)!\n"
+"%s"
+msgstr ""
+"Помилка!! Не вдалося прив’язати порт TCP(%s:%d)!\n"
+"%s"
+
+#: src/iptux-core/CoreThread.cpp:223
+#, c-format
+msgid ""
+"Fatal Error!! Failed to bind the UDP port(%s:%d)!\n"
+"%s"
+msgstr ""
+"Помилка!! Не вдалося прив’язати порт UDP(%s:%d)!\n"
+"%s"
+
+#: src/iptux-core/CoreThread.cpp:483 src/iptux-core/CoreThread.cpp:517
+#: src/iptux-core/internal/RecvFileData.cpp:142
+#: src/iptux-core/internal/RecvFileData.cpp:204
+#, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to create new socket!\n"
+"%s"
+msgstr ""
+"Помилка!!\n"
+"Не вдалося створити новий сокет!\n"
+"%s"
+
+#: src/iptux-core/Models.cpp:175
+msgid "Empty Message"
+msgstr "Порожнє повідомлення"
+
+#: src/iptux-core/Models.cpp:253
+msgid "Received an image"
+msgstr "Отримав зображення"
+
+#: src/iptux-core/internal/AnalogFS.cpp:93
+#: src/iptux-core/internal/AnalogFS.cpp:98
+#, c-format
+msgid "Open() file \"%s\" failed, %s"
+msgstr "Відкрити() файл\"%s\"не вдалося %s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:117
+#, c-format
+msgid "Stat64() file \"%s\" failed, %s"
+msgstr "Stat64() файл\"%s\"не вдалося %s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:138
+#, c-format
+msgid "Mkdir() directory \"%s\" failed, %s"
+msgstr "Mkdir() директорію\"%s\"не вдалося %s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:164
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s"
+msgstr "Відкрити() директорію\"%s\"не вдалося %s"
+
+#: src/iptux-core/internal/Command.cpp:226
+msgid "Your pal didn't receive the packet. He or she is offline maybe."
+msgstr "Ваше повідомлення не отримано."
+
+#: src/iptux-core/internal/CommandMode.cpp:39
+#, c-format
+msgid "unknown command mode: %d"
+msgstr "невідома команда (режим) %d"
+
+#: src/iptux-core/internal/RecvFileData.cpp:117
+msgid "receive"
+msgstr "отримано"
+
+#: src/iptux-core/internal/RecvFileData.cpp:124
+#: src/iptux-core/internal/RecvFileData.cpp:253
+#: src/iptux-core/internal/SendFileData.cpp:108
+#: src/iptux-core/internal/SendFileData.cpp:193
+msgid "Unknown"
+msgstr "Невідомо"
+
+#: src/iptux-core/internal/RecvFileData.cpp:175
+#, fuzzy, c-format
+msgid ""
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
+msgstr "Не вдалося отримати файл \"%s\" від %s! очікування%lld, отримано %lld"
+
+#: src/iptux-core/internal/RecvFileData.cpp:180
+#, c-format
+msgid "Receive the file \"%s\" from %s successfully!"
+msgstr "Файл отримано \"%s\" від %s успішно!"
+
+#: src/iptux-core/internal/RecvFileData.cpp:320
+#, c-format
+msgid "Failed to receive the directory \"%s\" from %s!"
+msgstr "Не вдалося отримати каталог \"%s\" від %s!"
+
+#: src/iptux-core/internal/RecvFileData.cpp:323
+#, c-format
+msgid "Receive the directory \"%s\" from %s successfully!"
+msgstr "Каталог отримано\"%s\" від %s успішно!"
+
+#: src/iptux-core/internal/SendFileData.cpp:101
+msgid "send"
+msgstr "відправити"
+
+#: src/iptux-core/internal/SendFileData.cpp:137
+#, c-format
+msgid "Failed to send the file \"%s\" to %s!"
+msgstr "Не вдалося надіслати файл \"%s\" до %s!"
+
+#: src/iptux-core/internal/SendFileData.cpp:142
+#, c-format
+msgid "Send the file \"%s\" to %s successfully!"
+msgstr "Надіслати файл \"%s\" %s успішно!"
+
+#: src/iptux-core/internal/SendFileData.cpp:266
+#, c-format
+msgid "Failed to send the directory \"%s\" to %s!"
+msgstr "Не вдалося надіслати каталог \"%s\" до %s!"
+
+#: src/iptux-core/internal/SendFileData.cpp:271
+#, c-format
+msgid "Send the directory \"%s\" to %s successfully!"
+msgstr "Надіслано каталог \"%s\" до %s успішно!"
+
+#: src/iptux-core/internal/UdpData.cpp:92
+#: src/iptux-core/internal/UdpData.cpp:93
+#: src/iptux-core/internal/UdpData.cpp:443
+#: src/iptux-core/internal/UdpData.cpp:484
+msgid "mysterious"
+msgstr "таємничий"
+
+#: src/iptux-utils/utils.cpp:877
+#, c-format
+msgid "stat file \"%s\" failed: %s"
+msgstr "cтатистика файлу \"%s\" помилка: %s"
+
+#: src/iptux-utils/utils.cpp:885
+#, c-format
+msgid "path %s is not file or directory: st_mode(%x)"
+msgstr "шлях %s не є файлом або каталогом: st_режим(%x)"
+
+#: src/iptux-utils/utils.cpp:892
+#, c-format
+msgid "opendir on \"%s\" failed: %s"
+msgstr "відкрити каталог \"%s\" не вдалося: %s"
+
+#: src/iptux/AboutDialog.cpp:39
+msgid "TRANSLATOR NAME"
+msgstr "Перекладачі з weblate.org️"
+
+#: src/iptux/AboutDialog.cpp:53
+msgid "Thanks to"
+msgstr "Завдяки"
+
+#: src/iptux/AppIndicator.cpp:40 src/iptux/MainWindow.cpp:494
+#: src/iptux/MainWindow.cpp:496
+msgid "Iptux"
+msgstr "Iptux"
+
+#: src/iptux/Application.cpp:54
+msgid "Loading the process successfully!"
+msgstr "Успішне завантаження!"
+
+#: src/iptux/Application.cpp:280
+#, c-format
+msgid "New Message from %s"
+msgstr "Нове повідомлення від %s"
+
+#: src/iptux/Application.cpp:293
+#, c-format
+msgid "New File from %s"
+msgstr "Новий файл від %s"
+
+#: src/iptux/Application.cpp:302
+msgid "Receiving File Finished"
+msgstr "Отримання файлу завершено"
+
+#: src/iptux/Application.cpp:306
+msgid "file info no longer exist"
+msgstr "інформація про файл більше не існує"
+
+#: src/iptux/Darwin.cpp:16
+#, c-format
+msgid "Couldn’t load icon: %s"
+msgstr "Не вдалося завантажити значок: %s"
+
+#: src/iptux/DataSettings.cpp:46
+msgid "Personal"
+msgstr "Особисті"
+
+#: src/iptux/DataSettings.cpp:48
+msgid "System"
+msgstr "Система"
+
+#: src/iptux/DataSettings.cpp:50
+msgid "Network"
+msgstr "Мережа"
+
+#: src/iptux/DataSettings.cpp:83 src/iptux/DataSettings.cpp:92
+msgid "The program needs to be restarted to take effect!"
+msgstr ""
+
+#: src/iptux/DataSettings.cpp:136
+msgid "Preferences"
+msgstr "⚙️"
+
+#: src/iptux/DataSettings.cpp:136 src/iptux/RevisePal.cpp:109
+#: src/iptux/dialog.cpp:107 src/iptux/dialog.cpp:170
+msgid "_OK"
+msgstr "_ОК"
+
+#: src/iptux/DataSettings.cpp:137
+msgid "_Apply"
+msgstr "_Застосувати"
+
+#: src/iptux/DataSettings.cpp:137 src/iptux/DataSettings.cpp:1317
+#: src/iptux/DataSettings.cpp:1364 src/iptux/DialogBase.cpp:342
+#: src/iptux/RevisePal.cpp:110 src/iptux/ShareFile.cpp:419
+#: src/iptux/callback.cpp:87 src/iptux/dialog.cpp:171 src/iptux/dialog.cpp:230
+msgid "_Cancel"
+msgstr "_Відміна"
+
+#: src/iptux/DataSettings.cpp:162
+msgid "Your _nickname:"
+msgstr "Ваш _псевдонім:"
+
+#: src/iptux/DataSettings.cpp:169
+msgid "Please input your nickname!"
+msgstr "Будь ласка, введіть свій псевдонім!"
+
+#: src/iptux/DataSettings.cpp:175
+msgid "Your _group name:"
+msgstr "Назва _групи:"
+
+#: src/iptux/DataSettings.cpp:182
+msgid "Please input your group name!"
+msgstr "Будь ласка, введіть назву групи!"
+
+#: src/iptux/DataSettings.cpp:188
+msgid "Your _face picture:"
+msgstr "Оберіть _зображення:"
+
+#: src/iptux/DataSettings.cpp:206
+msgid "_Save files to: "
+msgstr "_Зберегти файл в: "
+
+#: src/iptux/DataSettings.cpp:219
+msgid "Photo"
+msgstr "Фото"
+
+#: src/iptux/DataSettings.cpp:231
+msgid "Signature"
+msgstr "Підпис"
+
+#: src/iptux/DataSettings.cpp:264
+msgid "Port:"
+msgstr ""
+
+#: src/iptux/DataSettings.cpp:271
+msgid "Any port number between 1024 and 65535, default is 2425"
+msgstr ""
+
+#: src/iptux/DataSettings.cpp:280
+msgid "Candidate network encodings:"
+msgstr "Система кодування мережі:"
+
+#: src/iptux/DataSettings.cpp:287
+msgid "Candidate network encodings, separated by \",\""
+msgstr "Додаткові кодування мережі, розділені \",\""
+
+#: src/iptux/DataSettings.cpp:294
+msgid "Preferred network encoding:"
+msgstr "Бажане мережеве кодування:"
+
+#: src/iptux/DataSettings.cpp:301
+msgid ""
+"Preference network coding (You should be aware of what you are doing if you "
+"want to modify it.)"
+msgstr ""
+"Кодування мережі (ви маєте знати, що ви робите, якщо хочете його змінити.)"
+
+#: src/iptux/DataSettings.cpp:309
+msgid "Pal's default face picture:"
+msgstr "Зображення за замовчуванням:"
+
+#: src/iptux/DataSettings.cpp:327
+msgid "Panel font:"
+msgstr "Шрифт панелі:"
+
+#: src/iptux/DataSettings.cpp:339
+msgid "Automatically open the chat dialog"
+msgstr "Автоматично відкривати діалогове вікно чату"
+
+#: src/iptux/DataSettings.cpp:347
+msgid "Automatically hide the panel after login"
+msgstr "Автоматично приховати панель після входу"
+
+#: src/iptux/DataSettings.cpp:355
+msgid "Automatically open the File Transmission Management"
+msgstr "Автоматично відкривати керування передачею файлів"
+
+#: src/iptux/DataSettings.cpp:363
+msgid "Use the 'Enter' key to send message"
+msgstr "Використовувати клавішу «Enter», щоб надіслати повідомлення"
+
+#: src/iptux/DataSettings.cpp:371
+msgid "Automatically clean up the chat history"
+msgstr "Автоматично очищати історію чату"
+
+#: src/iptux/DataSettings.cpp:378
+msgid "Save the chat history"
+msgstr "Зберігати історію чату"
+
+#: src/iptux/DataSettings.cpp:386
+msgid "Use the Blacklist (NOT recommended)"
+msgstr "Використовувати чорний список (НЕ рекомендовано)"
+
+#: src/iptux/DataSettings.cpp:394
+msgid "Filter the request of sharing files"
+msgstr "Фільтр на обмін файлами"
+
+#: src/iptux/DataSettings.cpp:417
+msgid "From:"
+msgstr "Від:"
+
+#: src/iptux/DataSettings.cpp:423
+msgid "Beginning of the IP(v4) section"
+msgstr "Початок розділу IP(v4)"
+
+#: src/iptux/DataSettings.cpp:427
+msgid "To:"
+msgstr "До:"
+
+#: src/iptux/DataSettings.cpp:433
+msgid "End of the IP(v4) section"
+msgstr "Кінець розділу IP(v4)"
+
+#: src/iptux/DataSettings.cpp:441
+msgid "Add"
+msgstr "Додати"
+
+#: src/iptux/DataSettings.cpp:446
+msgid "Delete"
+msgstr "Видалити"
+
+#: src/iptux/DataSettings.cpp:453
+msgid "Added IP(v4) Section:"
+msgstr "Доданий IP(v4 Розділ):"
+
+#: src/iptux/DataSettings.cpp:472
+msgid "Import"
+msgstr "Імпорт"
+
+#: src/iptux/DataSettings.cpp:476
+msgid "Export"
+msgstr "Експорт"
+
+#: src/iptux/DataSettings.cpp:480 src/iptux/TransWindow.cpp:171
+msgid "Clear"
+msgstr "Очистити"
+
+#: src/iptux/DataSettings.cpp:685
+msgid "From"
+msgstr "Від"
+
+#: src/iptux/DataSettings.cpp:692
+msgid "To"
+msgstr "До"
+
+#: src/iptux/DataSettings.cpp:699
+msgid "Description"
+msgstr "Опис"
+
+#: src/iptux/DataSettings.cpp:715
+msgid "Please select download folder"
+msgstr "Оберіть папку для завантаження"
+
+#: src/iptux/DataSettings.cpp:737
+msgid "Select Font"
+msgstr "Оберіть Шрифт"
+
+#: src/iptux/DataSettings.cpp:850 src/iptux/DataSettings.cpp:852
+#: src/iptux/DataSettings.cpp:856
+msgid "Port must be a number between 1024 and 65535"
+msgstr ""
+
+#: src/iptux/DataSettings.cpp:988 src/iptux/DataSettings.cpp:1019
+#, c-format
+msgid ""
+"Fopen() file \"%s\" failed!\n"
+"%s"
+msgstr ""
+"Не вдалося() відкрити \"%s\" файл!\n"
+"%s"
+
+#: src/iptux/DataSettings.cpp:1119 src/iptux/RevisePal.cpp:419
+msgid "Please select a face picture"
+msgstr "Виберіть зображення"
+
+#: src/iptux/DataSettings.cpp:1141
+msgid "Please select a personal photo"
+msgstr "Виберіть особисте фото"
+
+#: src/iptux/DataSettings.cpp:1210 src/iptux/DataSettings.cpp:1217
+#: src/iptux/DetectPal.cpp:75
+#, c-format
+msgid ""
+"\n"
+"Illegal IP(v4) address: %s!"
+msgstr ""
+"\n"
+"Заборонена адреса IP(v4): %s!"
+
+#: src/iptux/DataSettings.cpp:1315
+msgid "Please select a file to import data"
+msgstr "Виберіть файл для імпорту даних"
+
+#: src/iptux/DataSettings.cpp:1316 src/iptux/DialogBase.cpp:341
+#: src/iptux/ShareFile.cpp:418 src/iptux/callback.cpp:86
+msgid "_Open"
+msgstr "_Відкрити"
+
+#: src/iptux/DataSettings.cpp:1363
+msgid "Save data to file"
+msgstr "Зберегти дані у файл"
+
+#: src/iptux/DataSettings.cpp:1364 src/iptux/dialog.cpp:231
+msgid "_Save"
+msgstr "_Зберегти"
+
+#: src/iptux/DetectPal.cpp:70
+#, c-format
+msgid "The notification has been sent to %s."
+msgstr "Сповіщення надіслано %s."
+
+#: src/iptux/DialogBase.cpp:217
+#, c-format
+msgid "%s To Send."
+msgstr "%s Надіслати."
+
+#: src/iptux/DialogBase.cpp:271
+msgid "Close"
+msgstr "Закрити"
+
+#: src/iptux/DialogBase.cpp:275 src/iptux/DialogGroup.cpp:374
+msgid "Send"
+msgstr "Відправити"
+
+#: src/iptux/DialogBase.cpp:290
+msgid "Chat History"
+msgstr "Історія чату"
+
+#: src/iptux/DialogBase.cpp:333
+msgid "Choose enclosure files"
+msgstr "Виберіть вкладені файли"
+
+#: src/iptux/DialogBase.cpp:336
+msgid "Choose enclosure folders"
+msgstr "Виберіть вкладені папки"
+
+#: src/iptux/DialogBase.cpp:576
+msgid "Remove Selected"
+msgstr "Видалити вибране"
+
+#: src/iptux/DialogBase.cpp:631
+msgid "File to send."
+msgstr "Файл для надсилання."
+
+#: src/iptux/DialogBase.cpp:636
+msgid "Sending progress."
+msgstr "Хід надсилання."
+
+#: src/iptux/DialogBase.cpp:639
+msgid "Dirs"
+msgstr "Каталог"
+
+#: src/iptux/DialogBase.cpp:642
+msgid "Files"
+msgstr "Файли"
+
+#: src/iptux/DialogBase.cpp:645 src/iptux/DialogPeer.cpp:597
+msgid "Detail"
+msgstr "Подробиці"
+
+#: src/iptux/DialogBase.cpp:695
+msgid "PeerName"
+msgstr "Ім'я піра"
+
+#: src/iptux/DialogBase.cpp:702 src/iptux/DialogPeer.cpp:748
+msgid "Name"
+msgstr "Ім'я"
+
+#: src/iptux/DialogBase.cpp:708 src/iptux/DialogPeer.cpp:684
+#: src/iptux/DialogPeer.cpp:754 src/iptux/ShareFile.cpp:280
+#: src/iptux/TransWindow.cpp:271
+msgid "Size"
+msgstr "Розмір"
+
+#: src/iptux/DialogBase.cpp:714
+msgid "Path"
+msgstr "Шлях"
+
+#: src/iptux/DialogBase.cpp:775
+msgid "Sending Progress."
+msgstr "Хід надсилання."
+
+#: src/iptux/DialogBase.cpp:778
+#, c-format
+msgid "%s of %s Sent."
+msgstr "Відправлено %s від %s."
+
+#: src/iptux/DialogBase.cpp:785 src/iptux/DialogPeer.cpp:867
+msgid "Mission Completed!"
+msgstr "Місія завершена!"
+
+#: src/iptux/DialogGroup.cpp:284
+msgid "Member"
+msgstr "Учасники"
+
+#: src/iptux/DialogGroup.cpp:381
+msgid "Pals"
+msgstr "Друзі"
+
+#: src/iptux/DialogGroup.cpp:479
+msgid "Select All"
+msgstr "Обрати все"
+
+#: src/iptux/DialogGroup.cpp:484
+msgid "Reverse Select"
+msgstr "Відмінити вибір"
+
+#: src/iptux/DialogGroup.cpp:489
+msgid "Clear Up"
+msgstr "Прибрати"
+
+#: src/iptux/DialogGroup.cpp:727
+#, c-format
+msgid "Talk with the group %s"
+msgstr "Спілкування в групі %s"
+
+#: src/iptux/DialogPeer.cpp:133
+#, c-format
+msgid "Talk with %s(%s) IP:%s"
+msgstr "Розмова з %s(%s) IP:%s"
+
+#: src/iptux/DialogPeer.cpp:305
+msgid "Info."
+msgstr "Информація."
+
+#: src/iptux/DialogPeer.cpp:337
+#, c-format
+msgid "Version: %s\n"
+msgstr "Версія: %s\n"
+
+#: src/iptux/DialogPeer.cpp:339
+#, c-format
+msgid "Nickname: %s@%s\n"
+msgstr "Псевдонім: %s@%s\n"
+
+#: src/iptux/DialogPeer.cpp:342
+#, c-format
+msgid "Nickname: %s\n"
+msgstr "Псевдонім: %s\n"
+
+#: src/iptux/DialogPeer.cpp:344
+#, c-format
+msgid "User: %s\n"
+msgstr "Користувач: %s\n"
+
+#: src/iptux/DialogPeer.cpp:345
+#, c-format
+msgid "Host: %s\n"
+msgstr "Хост: %s\n"
+
+#: src/iptux/DialogPeer.cpp:348
+#, c-format
+msgid "Address: %s(%s)\n"
+msgstr "Адреса: %s(%s)\n"
+
+#: src/iptux/DialogPeer.cpp:350
+#, c-format
+msgid "Address: %s\n"
+msgstr "Адреса: %s\n"
+
+#: src/iptux/DialogPeer.cpp:353
+msgid "Compatibility: Microsoft\n"
+msgstr "OS: Microsoft\n"
+
+#: src/iptux/DialogPeer.cpp:355
+msgid "Compatibility: GNU/Linux\n"
+msgstr "OS: GNU/Linux\n"
+
+#: src/iptux/DialogPeer.cpp:357
+#, c-format
+msgid "System coding: %s\n"
+msgstr "Система кодування: %s\n"
+
+#: src/iptux/DialogPeer.cpp:362
+msgid "Signature:\n"
+msgstr "Підпис:\n"
+
+#: src/iptux/DialogPeer.cpp:369
+msgid ""
+"\n"
+"Photo:\n"
+msgstr ""
+"\n"
+"Фото:\n"
+
+#: src/iptux/DialogPeer.cpp:505
+msgid "Please select a picture to insert the buffer"
+msgstr "Виберіть зображення, щоб вставити в буфер"
+
+#: src/iptux/DialogPeer.cpp:534
+msgid "Enclosure."
+msgstr "Вкладення."
+
+#: src/iptux/DialogPeer.cpp:579
+msgid "Files to be received"
+msgstr "Файли для отримання"
+
+#: src/iptux/DialogPeer.cpp:583
+msgid "Receiving progress."
+msgstr "Хід отримання."
+
+#: src/iptux/DialogPeer.cpp:586
+msgid "Accept"
+msgstr "Приняти"
+
+#: src/iptux/DialogPeer.cpp:592 src/iptux/dialog.cpp:63
+#: src/iptux/resources/gtk/menus.ui:342
+msgid "Refuse"
+msgstr "Відмінити"
+
+#: src/iptux/DialogPeer.cpp:628
+msgid "File received."
+msgstr "Файл отримано."
+
+#: src/iptux/DialogPeer.cpp:671 src/iptux/DialogPeer.cpp:742
+msgid "Source"
+msgstr "Джерело"
+
+#: src/iptux/DialogPeer.cpp:678
+msgid "SaveAs"
+msgstr "Зберегти як"
+
+#: src/iptux/DialogPeer.cpp:850 src/iptux/DialogPeer.cpp:916
+msgid "Receiving Progress."
+msgstr "Хід отримання."
+
+#: src/iptux/DialogPeer.cpp:853 src/iptux/DialogPeer.cpp:919
+#, c-format
+msgid "%s to Receive."
+msgstr "%s для отримання."
+
+#: src/iptux/DialogPeer.cpp:857 src/iptux/DialogPeer.cpp:923
+#, c-format
+msgid "%s Of %s Received."
+msgstr "%s Данні %s Отримано."
+
+#: src/iptux/LogSystem.cpp:71
+#, c-format
+msgid "Recevied-From: Nickname:%s User:%s Host:%s"
+msgstr "Отримано від: Псевдонім:%s Користувачr:%s Host:%s"
+
+#: src/iptux/LogSystem.cpp:76
+#, c-format
+msgid "Send-To: Nickname:%s User:%s Host:%s"
+msgstr "Надіслати: Псевдонім:%s Користувач:%s Host:%s"
+
+#: src/iptux/LogSystem.cpp:80
+msgid "Send-Broadcast"
+msgstr "Широкомовна відправка"
+
+#: src/iptux/LogSystem.cpp:99
+#, c-format
+msgid "User:%s Host:%s"
+msgstr "Користувач:%s Host:%s"
+
+#: src/iptux/MainWindow.cpp:559
+msgid "Pals Online: 0"
+msgstr "Друзі онлайн: 0"
+
+#: src/iptux/MainWindow.cpp:644
+msgid "Search Pals"
+msgstr "Пошук друзів"
+
+#: src/iptux/MainWindow.cpp:758
+msgid "Nickname"
+msgstr "Псевдонім"
+
+#: src/iptux/MainWindow.cpp:769
+msgid "Group"
+msgstr "Група"
+
+#: src/iptux/MainWindow.cpp:775 src/iptux/TransWindow.cpp:258
+msgid "IPv4"
+msgstr "IPv4"
+
+#: src/iptux/MainWindow.cpp:781
+msgid "User"
+msgstr "Користувач"
+
+#: src/iptux/MainWindow.cpp:787 src/iptux/resources/gtk/MainWindow.ui:81
+msgid "Host"
+msgstr "Хост"
+
+#: src/iptux/MainWindow.cpp:926
+#, c-format
+msgid "Pals Online: %d"
+msgstr "Друзі онлайн: %d"
+
+#: src/iptux/RevisePal.cpp:109
+msgid "Change Pal's Information"
+msgstr "Змінити інформацію"
+
+#: src/iptux/RevisePal.cpp:134
+msgid "Pal's nickname:"
+msgstr "Псевдонім:"
+
+#: src/iptux/RevisePal.cpp:140
+msgid "Please input pal's new nickname!"
+msgstr "Будь ласка, введіть новий псевдонім друга!"
+
+#: src/iptux/RevisePal.cpp:146
+msgid "Pal's group name:"
+msgstr "Назва групи:"
+
+#: src/iptux/RevisePal.cpp:152
+msgid "Please input pal's new group name!"
+msgstr "Будь ласка, введіть нову назву групи!"
+
+#: src/iptux/RevisePal.cpp:158
+msgid "System coding:"
+msgstr "Система кодування:"
+
+#: src/iptux/RevisePal.cpp:164
+msgid "Be SURE to know what you are doing!"
+msgstr "ВИ МАЄТЕ БУТИ ВПЕВНЕНИМИ,що ви робите!"
+
+#: src/iptux/RevisePal.cpp:170
+msgid "Pal's face picture:"
+msgstr "Оберіть зображення:"
+
+#: src/iptux/RevisePal.cpp:184
+msgid "Be compatible with iptux's protocol (DANGEROUS)"
+msgstr "Сумісність із протоколом iptux (НЕБЕЗПЕЧНО)"
+
+#: src/iptux/ShareFile.cpp:104
+msgid "Shared Files Management"
+msgstr "Керування спільними файлами"
+
+#: src/iptux/ShareFile.cpp:105
+msgid "OK"
+msgstr "ОК"
+
+#: src/iptux/ShareFile.cpp:106
+msgid "Apply"
+msgstr "Застосувати"
+
+#: src/iptux/ShareFile.cpp:107
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/iptux/ShareFile.cpp:160
+msgid "Add Files"
+msgstr "Додати файли"
+
+#: src/iptux/ShareFile.cpp:163
+msgid "Add Folders"
+msgstr "Додати папки"
+
+#: src/iptux/ShareFile.cpp:166
+msgid "Delete Resources"
+msgstr "Видалити ресурси"
+
+#: src/iptux/ShareFile.cpp:169
+msgid "Clear Password"
+msgstr "Очистити пароль"
+
+#: src/iptux/ShareFile.cpp:172
+msgid "Set Password"
+msgstr "Встановити пароль"
+
+#: src/iptux/ShareFile.cpp:229 src/iptux/ShareFile.cpp:373
+msgid "regular"
+msgstr "регулярно"
+
+#: src/iptux/ShareFile.cpp:233 src/iptux/ShareFile.cpp:377
+msgid "directory"
+msgstr "каталог"
+
+#: src/iptux/ShareFile.cpp:237 src/iptux/ShareFile.cpp:381
+msgid "unknown"
+msgstr "невідомий"
+
+#: src/iptux/ShareFile.cpp:270
+msgid "File"
+msgstr "Файл"
+
+#: src/iptux/ShareFile.cpp:286
+msgid "Type"
+msgstr "Тип"
+
+#: src/iptux/ShareFile.cpp:411
+msgid "Choose the files to share"
+msgstr "Оберіть файли для спільного використання"
+
+#: src/iptux/ShareFile.cpp:414
+msgid "Choose the folders to share"
+msgstr "Оберіть папки для спільного використання"
+
+#: src/iptux/TransWindow.cpp:86
+msgid "Files Transmission Management"
+msgstr "Керування передачею файлів"
+
+#: src/iptux/TransWindow.cpp:241
+msgid "State"
+msgstr "Стан"
+
+#: src/iptux/TransWindow.cpp:247
+msgid "Task"
+msgstr "Завдання"
+
+#: src/iptux/TransWindow.cpp:253
+msgid "Peer"
+msgstr "Пір"
+
+#: src/iptux/TransWindow.cpp:265
+msgid "Filename"
+msgstr "Ім'я файлу"
+
+#: src/iptux/TransWindow.cpp:277
+msgid "Completed"
+msgstr "Виконано"
+
+#: src/iptux/TransWindow.cpp:284
+msgid "Progress"
+msgstr "Прогрес"
+
+#: src/iptux/TransWindow.cpp:291
+msgid "Cost"
+msgstr "Вартість"
+
+#: src/iptux/TransWindow.cpp:297
+msgid "Remaining"
+msgstr "Залишилося"
+
+#: src/iptux/TransWindow.cpp:303
+msgid "Rate"
+msgstr "Швидкість"
+
+#: src/iptux/TransWindow.cpp:331
+msgid "The path you want to open not exist!"
+msgstr "Шлях, який ви хочете відкрити, не існує!"
+
+#: src/iptux/TransWindow.cpp:405
+msgid "The file you want to open not exist!"
+msgstr "Файл, який ви хочете відкрити, не існує!"
+
+#: src/iptux/TransWindow.cpp:406
+msgid "iptux Error"
+msgstr "iptux Помилка"
+
+#: src/iptux/UiCoreThread.cpp:254 src/iptux/UiCoreThread.cpp:278
+#: src/iptux/UiCoreThread.cpp:377 src/iptux/UiCoreThread.cpp:399
+msgid "Others"
+msgstr "Інше"
+
+#: src/iptux/UiCoreThread.cpp:419
+msgid "Broadcast"
+msgstr "Трансляція"
+
+#: src/iptux/UiHelper.cpp:26
+#, c-format
+msgid "Can't convert path to uri: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:33
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:54
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr ""
+
+#: src/iptux/UiHelper.cpp:174
+msgid "Information"
+msgstr "Інформація"
+
+#: src/iptux/UiHelper.cpp:204
+msgid "Warning"
+msgstr "УВАГА"
+
+#: src/iptux/UiModels.cpp:539
+#, c-format
+msgid "Version: %s"
+msgstr "Версія: %s"
+
+#: src/iptux/UiModels.cpp:543
+#, c-format
+msgid "Nickname: %s@%s"
+msgstr "Псевдонім: %s@%s"
+
+#: src/iptux/UiModels.cpp:546
+#, c-format
+msgid "Nickname: %s"
+msgstr "Псевдонім: %s"
+
+#: src/iptux/UiModels.cpp:550
+#, c-format
+msgid "User: %s"
+msgstr "Користувач: %s"
+
+#: src/iptux/UiModels.cpp:553
+#, c-format
+msgid "Host: %s"
+msgstr "Хост: %s"
+
+#: src/iptux/UiModels.cpp:558
+#, c-format
+msgid "Address: %s(%s)"
+msgstr "Адреса: %s(%s)"
+
+#: src/iptux/UiModels.cpp:560
+#, c-format
+msgid "Address: %s"
+msgstr "Адреса: %s"
+
+#: src/iptux/UiModels.cpp:565
+msgid "Compatibility: Microsoft"
+msgstr "OS: Microsoft"
+
+#: src/iptux/UiModels.cpp:567
+msgid "Compatibility: GNU/Linux"
+msgstr "OS: GNU/Linux"
+
+#: src/iptux/UiModels.cpp:571
+#, c-format
+msgid "System coding: %s"
+msgstr "Система кодування: %s"
+
+#: src/iptux/UiModels.cpp:576
+msgid "Signature:"
+msgstr "Підпис:"
+
+#: src/iptux/UiModels.cpp:657
+msgid "<ERROR>"
+msgstr "<ПОМИЛКА>"
+
+#: src/iptux/UiModels.cpp:718
+msgid "[IMG]"
+msgstr ""
+
+#: src/iptux/dialog.cpp:39
+msgid ""
+"File transfer has not been completed.\n"
+"Are you sure to cancel and quit?"
+msgstr ""
+"Передавання файлу не завершено.\n"
+"Ви впевнені, що хочете скасувати та вийти?"
+
+#: src/iptux/dialog.cpp:42
+msgid "Confirm Exit"
+msgstr "Підтвердити вихід"
+
+#: src/iptux/dialog.cpp:62 src/iptux/resources/gtk/MainWindow.ui:12
+#: src/iptux/resources/gtk/menus.ui:98 src/iptux/resources/gtk/menus.ui:243
+msgid "Request Shared Resources"
+msgstr "Запит на спільні ресурси"
+
+#: src/iptux/dialog.cpp:62
+msgid "Agree"
+msgstr "Погодитись"
+
+#: src/iptux/dialog.cpp:78
+#, c-format
+msgid ""
+"Your pal (%s)[%s]\n"
+"is requesting to get your shared resources,\n"
+"Do you agree?"
+msgstr ""
+"Ваш друг (%s)[%s]\n"
+"просить доступ до спільних ресурсів,\n"
+"Ви згодні?"
+
+#: src/iptux/dialog.cpp:106
+msgid "Access Password"
+msgstr "Пароль доступу"
+
+#: src/iptux/dialog.cpp:113
+msgid "Please input the password for the shared files behind"
+msgstr "Будь ласка, введіть пароль для доступу до спільних файлів"
+
+#: src/iptux/dialog.cpp:127
+#, c-format
+msgid "(%s)[%s]Password:"
+msgstr "(%s)[%s]Пароль:"
+
+#: src/iptux/dialog.cpp:146 src/iptux/dialog.cpp:207
+msgid ""
+"\n"
+"Empty Password!"
+msgstr ""
+"\n"
+"Порожній пароль!"
+
+#: src/iptux/dialog.cpp:170
+msgid "Enter a New Password"
+msgstr "Введіть новий пароль"
+
+#: src/iptux/dialog.cpp:178
+msgid "Password: "
+msgstr "Пароль: "
+
+#: src/iptux/dialog.cpp:187
+msgid "Repeat: "
+msgstr "Повторити: "
+
+#: src/iptux/dialog.cpp:202
+msgid ""
+"\n"
+"Password Mismatched!"
+msgstr ""
+"\n"
+"Пароль не збігається!"
+
+#: src/iptux/dialog.cpp:229
+msgid "Please select a folder to save files."
+msgstr "Оберіть папку для збереження файлів."
+
+#: src/iptux/resources/gtk/AboutDialog.ui:11
+msgid ""
+"Copyright © 2008–2009, Jally\n"
+"Copyright © 2013–2015,2017–2021, LI Daobing"
+msgstr ""
+"Авторське право © 2008–2009, Jally\n"
+"Авторське право © 2013–2015, 2017–2021, LI Daobing"
+
+#: src/iptux/resources/gtk/AboutDialog.ui:13
+msgid "A GTK based LAN messenger."
+msgstr "Месенджер локальної мережі на основі GTK."
+
+#: src/iptux/resources/gtk/AppIndicator.ui:6
+#, fuzzy
+msgid "Open Iptux"
+msgstr "Iptux"
+
+#: src/iptux/resources/gtk/AppIndicator.ui:12
+#: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:306
+msgid "_Preferences"
+msgstr "_Налаштування"
+
+#: src/iptux/resources/gtk/AppIndicator.ui:16
+#: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:310
+msgid "_Quit"
+msgstr "_Вихід"
+
+#: src/iptux/resources/gtk/DetectPal.ui:7
+msgid "Detect pal"
+msgstr "Пошук друга"
+
+#: src/iptux/resources/gtk/DetectPal.ui:15
+msgid "Detect"
+msgstr "Виявити"
+
+#: src/iptux/resources/gtk/DetectPal.ui:61
+msgid "Please input an IP address (IPv4 only):"
+msgstr "Введіть IP-адресу (лише IPv4):"
+
+#: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:109
+#: src/iptux/resources/gtk/menus.ui:254
+msgid "Send Message"
+msgstr "Відправити повідомлення"
+
+#: src/iptux/resources/gtk/MainWindow.ui:16
+msgid "Change Info"
+msgstr "Змінити інформацію"
+
+#: src/iptux/resources/gtk/MainWindow.ui:20
+msgid "Delete Pal"
+msgstr "Видалити друга"
+
+#: src/iptux/resources/gtk/MainWindow.ui:26 src/iptux/resources/gtk/menus.ui:31
+#: src/iptux/resources/gtk/menus.ui:176
+msgid "Sort"
+msgstr "Сортувати"
+
+#: src/iptux/resources/gtk/MainWindow.ui:29 src/iptux/resources/gtk/menus.ui:34
+#: src/iptux/resources/gtk/menus.ui:179
+msgid "By Nickname"
+msgstr "За псевдонім"
+
+#: src/iptux/resources/gtk/MainWindow.ui:34 src/iptux/resources/gtk/menus.ui:39
+#: src/iptux/resources/gtk/menus.ui:184
+#, fuzzy
+msgid "By Username"
+msgstr "За псевдонім"
+
+#: src/iptux/resources/gtk/MainWindow.ui:39 src/iptux/resources/gtk/menus.ui:44
+#: src/iptux/resources/gtk/menus.ui:189
+msgid "By IP"
+msgstr "За IP"
+
+#: src/iptux/resources/gtk/MainWindow.ui:44 src/iptux/resources/gtk/menus.ui:49
+#: src/iptux/resources/gtk/menus.ui:194
+#, fuzzy
+msgid "By Host"
+msgstr "Хост"
+
+#: src/iptux/resources/gtk/MainWindow.ui:49 src/iptux/resources/gtk/menus.ui:54
+#: src/iptux/resources/gtk/menus.ui:199
+msgid "By Last Activity"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:56 src/iptux/resources/gtk/menus.ui:61
+#: src/iptux/resources/gtk/menus.ui:206
+msgid "Ascending"
+msgstr "За зростанням"
+
+#: src/iptux/resources/gtk/MainWindow.ui:61 src/iptux/resources/gtk/menus.ui:66
+#: src/iptux/resources/gtk/menus.ui:211
+msgid "Descending"
+msgstr "За зменшенням"
+
+#: src/iptux/resources/gtk/MainWindow.ui:68
+msgid "Info Style"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:71
+#, fuzzy
+msgid "IP"
+msgstr "IPv4"
+
+#: src/iptux/resources/gtk/MainWindow.ui:76
+msgid "IP:PORT"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:86
+#, fuzzy
+msgid "Username"
+msgstr "Користувач"
+
+#: src/iptux/resources/gtk/MainWindow.ui:91
+#, fuzzy
+msgid "Version"
+msgstr "Версія: %s"
+
+#: src/iptux/resources/gtk/MainWindow.ui:96
+msgid "Last Activity"
+msgstr ""
+
+#: src/iptux/resources/gtk/MainWindow.ui:101
+#, fuzzy
+msgid "Last Message"
+msgstr "Порожнє повідомлення"
+
+#: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:162
+msgid "_File"
+msgstr "_Файл"
+
+#: src/iptux/resources/gtk/menus.ui:19 src/iptux/resources/gtk/menus.ui:164
+msgid "_Detect"
+msgstr "_Виявити"
+
+#: src/iptux/resources/gtk/menus.ui:23 src/iptux/resources/gtk/menus.ui:168
+msgid "_Find"
+msgstr "_Знайти"
+
+#: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:173
+msgid "_View"
+msgstr "_Порядок сортування"
+
+#: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:218
+msgid "_Refresh"
+msgstr "_Оновити"
+
+#: src/iptux/resources/gtk/menus.ui:80 src/iptux/resources/gtk/menus.ui:225
+msgid "_Chat"
+msgstr "_Чат"
+
+#: src/iptux/resources/gtk/menus.ui:83 src/iptux/resources/gtk/menus.ui:228
+msgid "Insert Picture"
+msgstr "Вставити зображення"
+
+#: src/iptux/resources/gtk/menus.ui:88 src/iptux/resources/gtk/menus.ui:233
+msgid "Attach File"
+msgstr "Прикріпити файл"
+
+#: src/iptux/resources/gtk/menus.ui:92 src/iptux/resources/gtk/menus.ui:237
+msgid "Attach Folder"
+msgstr "Прикріпити папку"
+
+#: src/iptux/resources/gtk/menus.ui:102 src/iptux/resources/gtk/menus.ui:247
+msgid "Clear Chat History"
+msgstr "Очистити історію чату"
+
+#: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:260
+msgid "_Window"
+msgstr "_Журнали та керування"
+
+#: src/iptux/resources/gtk/menus.ui:118 src/iptux/resources/gtk/menus.ui:263
+msgid "_Transmission"
+msgstr "_Передача файлів"
+
+#: src/iptux/resources/gtk/menus.ui:122 src/iptux/resources/gtk/menus.ui:267
+msgid "_Shared Management"
+msgstr "_Спільне керування"
+
+#: src/iptux/resources/gtk/menus.ui:126 src/iptux/resources/gtk/menus.ui:271
+msgid "_Chat Log"
+msgstr "_Журнал чату"
+
+#: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:275
+msgid "_System Log"
+msgstr "_Системний журнал"
+
+#: src/iptux/resources/gtk/menus.ui:136 src/iptux/resources/gtk/menus.ui:281
+msgid "Close Window"
+msgstr "Закрите вікно"
+
+#: src/iptux/resources/gtk/menus.ui:142 src/iptux/resources/gtk/menus.ui:287
+msgid "_Help"
+msgstr "_Допомога"
+
+#: src/iptux/resources/gtk/menus.ui:145 src/iptux/resources/gtk/menus.ui:290
+msgid "_About"
+msgstr "_Про програму"
+
+#: src/iptux/resources/gtk/menus.ui:149 src/iptux/resources/gtk/menus.ui:294
+msgid "Report Bug"
+msgstr "Повідомити про помилку"
+
+#: src/iptux/resources/gtk/menus.ui:153 src/iptux/resources/gtk/menus.ui:298
+msgid "What's New"
+msgstr "Що нового"
+
+#: src/iptux/resources/gtk/menus.ui:318
+msgid "Open This File"
+msgstr "Відкрити цей файл"
+
+#: src/iptux/resources/gtk/menus.ui:322
+msgid "Open Containing Folder"
+msgstr "Відкрити вміст папки"
+
+#: src/iptux/resources/gtk/menus.ui:326
+msgid "Terminate Task"
+msgstr "Завершити завдання"
+
+#: src/iptux/resources/gtk/menus.ui:330
+msgid "Terminate All"
+msgstr "Припинити все"
+
+#: src/iptux/resources/gtk/menus.ui:334
+msgid "Clear Tasklist"
+msgstr "Очистити список завдань"
+
+#: src/iptux/resources/gtk/menus.ui:346
+msgid "Refuse All"
+msgstr "Відмінити всі"
+
+#: src/main/iptux.cpp:149
+msgid "- A software for sharing in LAN"
+msgstr "-Програмне забезпечення для спільного використання в локальній мережі"
+
+#: src/main/iptux.cpp:152
+#, c-format
+msgid "option parsing failed: %s\n"
+msgstr "помилка аналізу параметра: %s\n"
+
+#~ msgid "Can't find any available web browser!\n"
+#~ msgstr "Не вдається знайти доступний веб-браузер!\n"
+
+#~ msgid "chat;talk;im;message;ipmsg;feige;"
+#~ msgstr "chat;talk;im;message;ipmsg;feige;"
+
+#~ msgid "It can:"
+#~ msgstr "Це може:"
+
+#~ msgid "Close Chat"
+#~ msgstr "Закрыть чат"
+
+#~ msgid "Sound"
+#~ msgstr "Звук"
+
+#~ msgid "Activate the sound support"
+#~ msgstr "Включение поддержки звука"
+
+#~ msgid "Volume Control: "
+#~ msgstr "Регулятор громкости "
+
+#~ msgid "Sound Event"
+#~ msgstr "Звуковые оповещения"
+
+#~ msgid "Test"
+#~ msgstr "Проверка"
+
+#~ msgid "Stop"
+#~ msgstr "Стоп"
+
+#, fuzzy
+#~ msgid "iptux-icon"
+#~ msgstr "IPTux"
+
+#~ msgid "Please input an IP address (IPv4 only)!"
+#~ msgstr "Введите IP-адрес (только IPv4)!"
+
+#, fuzzy
+#~ msgid ""
+#~ "Fatal Error!!\n"
+#~ "Failed to bind the TCP/UDP port(%d)!\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Ошибка!!!\n"
+#~ "Не удалось создать новый сокет!\n"
+#~ "%s"
+
+#~ msgid "More About Iptux"
+#~ msgstr "Узнать больше о IPTux"

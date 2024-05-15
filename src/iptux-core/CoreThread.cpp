@@ -9,7 +9,6 @@
 #include <mutex>
 #include <thread>
 
-#include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <glog/logging.h>
@@ -22,6 +21,7 @@
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpData.h"
+#include "iptux-core/internal/UdpDataService.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
@@ -84,10 +84,15 @@ void init_iptux_environment() {
 }  // namespace
 
 struct CoreThread::Impl {
+  uint16_t port;
+
   PPalInfo me;
-  GSList* blacklist{nullptr};  //黑名单链表
+
+  UdpDataService_U udp_data_service;
+
+  GSList* blacklist{nullptr};  // 黑名单链表
   bool debugDontBroadcast{false};
-  vector<shared_ptr<PalInfo>> pallist;  //好友链表(成员不能被删除)
+  vector<shared_ptr<PalInfo>> pallist;  // 好友链表(成员不能被删除)
 
   map<uint32_t, shared_ptr<FileInfo>> privateFiles;
   int lastTransTaskId{0};
@@ -100,32 +105,7 @@ struct CoreThread::Impl {
   future<void> udpFuture;
   future<void> tcpFuture;
   future<void> notifyToAllFuture;
-  future<void> processEventsFuture;
 };
-
-void CoreThread::processEvents() {
-  while (true) {
-    if (!started) {
-      return;
-    }
-
-    shared_ptr<const Event> event;
-
-    {
-      lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
-      if (!pImpl->waitingEvents.empty()) {
-        event = pImpl->waitingEvents.front();
-        pImpl->waitingEvents.pop_front();
-      }
-    }
-
-    if (!event) {
-      this_thread::sleep_for(10ms);
-    } else {
-      signalEvent.emit(event);
-    }
-  }
-}
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
@@ -134,12 +114,12 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       udpSock(-1),
       started(false),
       pImpl(std::make_unique<Impl>()) {
-  pthread_mutex_init(&mutex, NULL);
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
-  pImpl->me = make_shared<PalInfo>();
-  pImpl->me->ipv4 = inAddrFromString("127.0.0.1");
+  pImpl->port = programData->port();
+  pImpl->udp_data_service = make_unique<UdpDataService>(*this);
+  pImpl->me = make_shared<PalInfo>("127.0.0.1", port());
   (*pImpl->me)
       .setUser(g_get_user_name())
       .setHost(g_get_host_name())
@@ -169,14 +149,12 @@ void CoreThread::start() {
 
   pImpl->udpFuture = async([](CoreThread* ct) { RecvUdpData(ct); }, this);
   pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
-  pImpl->processEventsFuture =
-      async([](CoreThread* ct) { ct->processEvents(); }, this);
   pImpl->notifyToAllFuture =
       async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
 }
 
 void CoreThread::bind_iptux_port() {
-  int port = config->GetInt("port", IPTUX_DEFAULT_PORT);
+  uint16_t port = programData->port();
   struct sockaddr_in addr;
   tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   socket_enable_reuse(tcpSock);
@@ -252,7 +230,7 @@ void CoreThread::RecvUdpData(CoreThread* self) {
     if (size != MAX_UDPLEN)
       buf[size] = '\0';
     auto port = ntohs(addr.sin_port);
-    UdpData::UdpDataEntry(*self, addr.sin_addr, port, buf, size);
+    self->pImpl->udp_data_service->process(addr.sin_addr, port, buf, size);
   }
 }
 
@@ -292,8 +270,11 @@ void CoreThread::stop() {
   ClearSublayer();
   pImpl->udpFuture.wait();
   pImpl->tcpFuture.wait();
-  pImpl->processEventsFuture.wait();
   pImpl->notifyToAllFuture.wait();
+}
+
+uint16_t CoreThread::port() const {
+  return pImpl->port;
 }
 
 void CoreThread::ClearSublayer() {
@@ -322,9 +303,9 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
 void CoreThread::SendNotifyToAll(CoreThread* pcthrd) {
   Command cmd(*pcthrd);
   if (!pcthrd->pImpl->debugDontBroadcast) {
-    cmd.BroadCast(pcthrd->udpSock);
+    cmd.BroadCast(pcthrd->udpSock, pcthrd->port());
   }
-  cmd.DialUp(pcthrd->udpSock);
+  cmd.DialUp(pcthrd->udpSock, pcthrd->port());
 }
 
 /**
@@ -341,11 +322,11 @@ bool CoreThread::IsBlocked(in_addr ipv4) const {
 }
 
 void CoreThread::Lock() const {
-  pthread_mutex_lock(&mutex);
+  mutex.lock();
 }
 
 void CoreThread::Unlock() const {
-  pthread_mutex_unlock(&mutex);
+  mutex.unlock();
 }
 
 /**
@@ -369,7 +350,7 @@ void CoreThread::ClearAllPalFromList() {
 
 shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
   for (auto palInfo : pImpl->pallist) {
-    if (ipv4Equal(palInfo->ipv4, palKey.GetIpv4())) {
+    if (ipv4Equal(palInfo->ipv4(), palKey.GetIpv4())) {
       return palInfo;
     }
   }
@@ -377,7 +358,7 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
 }
 
 shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {
-  return GetPal(PalKey(inAddrFromString(ipv4)));
+  return GetPal(PalKey(inAddrFromString(ipv4), port()));
 }
 
 /**
@@ -393,6 +374,7 @@ void CoreThread::DelPalFromList(PalKey palKey) {
   if (!(pal = GetPal(palKey)))
     return;
   pal->setOnline(false);
+  emitEvent(make_shared<const PalOfflineEvent>(palKey));
 }
 
 /**
@@ -445,6 +427,7 @@ void CoreThread::emitEvent(shared_ptr<const Event> event) {
   pImpl->waitingEvents.push_back(event);
   this->pImpl->eventCount++;
   this->pImpl->lastEvent = event;
+  signalEvent.emit(event);
 }
 
 /**
@@ -509,10 +492,10 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
         return false;
       }
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
-      close(sock);  //关闭网络套接口
+      close(sock);  // 关闭网络套接口
       /*/* 删除此图片 */
       if (chipData.GetDeleteFileAfterSent()) {
-        unlink(ptr);  //此文件已无用处
+        unlink(ptr);  // 此文件已无用处
       }
       return true;
     default:
@@ -537,11 +520,11 @@ void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
 
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
-  this->emitEvent(make_shared<NewMessageEvent>(move(para2)));
+  this->emitEvent(make_shared<NewMessageEvent>(std::move(para2)));
 }
 
 void CoreThread::InsertMessage(MsgPara&& para) {
-  this->emitEvent(make_shared<NewMessageEvent>(move(para)));
+  this->emitEvent(make_shared<NewMessageEvent>(std::move(para)));
 }
 
 bool CoreThread::SendAskShared(PPalInfo pal) {
@@ -594,14 +577,14 @@ void CoreThread::SendDetectPacket(const string& ipv4) {
 }
 
 void CoreThread::SendDetectPacket(in_addr ipv4) {
-  Command(*this).SendDetectPacket(udpSock, ipv4);
+  Command(*this).SendDetectPacket(udpSock, ipv4, port());
 }
 
 void CoreThread::emitSomeoneExit(const PalKey& palKey) {
   if (!GetPal(palKey)) {
     return;
   }
-  DelPalFromList(palKey.GetIpv4());
+  DelPalFromList(palKey);
   emitEvent(make_shared<PalOfflineEvent>(palKey));
 }
 
@@ -636,6 +619,8 @@ bool CoreThread::DelPrivateFile(uint32_t id) {
 PFileInfo CoreThread::GetPrivateFileById(uint32_t id) {
   if (id < MAX_SHAREDFILE) {
     FileInfo* f = programData->GetShareFileInfo(id);
+    if (!f)
+      return PFileInfo();
     return make_shared<FileInfo>(*f);
   }
 
@@ -759,6 +744,18 @@ PPalInfo CoreThread::getMe() {
 
 string CoreThread::getUserIconPath() const {
   return stringFormat("%s%s", g_get_user_cache_dir(), ICON_PATH);
+}
+
+bool CoreThread::HasEvent() const {
+  lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
+  return !this->pImpl->waitingEvents.empty();
+}
+
+shared_ptr<const Event> CoreThread::PopEvent() {
+  lock_guard<std::mutex> l(pImpl->waitingEventsMutex);
+  auto event = pImpl->waitingEvents.front();
+  pImpl->waitingEvents.pop_front();
+  return event;
 }
 
 }  // namespace iptux

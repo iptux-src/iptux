@@ -37,7 +37,6 @@ class DialogPeer : public DialogBase {
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
-  Application* app;
   GtkTreeView* fileToReceiveTree = 0;
 
  private:
@@ -47,6 +46,7 @@ class DialogPeer : public DialogBase {
   void init();
 
   GtkWindow* CreateMainWindow();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateInfoArea();
@@ -66,6 +66,7 @@ class DialogPeer : public DialogBase {
   void FeedbackMsg(const std::vector<ChipData>& dtlist);
   MsgPara* PackageMsg(const std::vector<ChipData>& dtlist);
   void refreshSendAction();
+  std::string GetTitle();
 
   //回调处理部分
  private:
@@ -92,9 +93,6 @@ class DialogPeer : public DialogBase {
   static void onRequestSharedResources(void*, void*, DialogPeer& self);
   static void onSendMessage(void*, void*, DialogPeer& self) {
     DialogBase::SendMessage(&self);
-  }
-  static void onClose(void*, void*, DialogPeer& self) {
-    gtk_widget_destroy(GTK_WIDGET(self.window));
   }
   void onGroupInfoUpdated(GroupInfo* groupInfo);
   static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {

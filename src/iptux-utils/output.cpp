@@ -58,7 +58,7 @@ static string nowAsString() {
   localtime_r(&tv.tv_sec, &timeinfo);
 
   strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
-  return stringFormat("%s.%03ld", buffer, (tv.tv_usec / 1000));
+  return stringFormat("%s.%03d", buffer, int(tv.tv_usec / 1000));
 }
 
 string pretty_fname(const string& fname) {

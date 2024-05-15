@@ -1,24 +1,23 @@
+#include "Application.h"
 #include "gtest/gtest.h"
 
-#include "iptux-core/TestHelper.h"
 #include "iptux/DialogGroup.h"
+#include "iptux/TestHelper.h"
 
 using namespace std;
 using namespace iptux;
 
 TEST(DialogGroup, Constructor) {
-  gtk_init(nullptr, nullptr);
-  auto config = newTestIptuxConfig();
-  Application app(config);
-  app.startup();
-  app.activate();
+  Application* app = CreateApplication();
 
-  auto pal = make_shared<PalInfo>();
-  pal->iconfile = g_strdup("pig");
+  auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
+  pal->set_icon_file("pig");
 
   GroupInfo groupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>({pal}),
-                      app.getMe(), nullptr);
+                      app->getMe(), "groupname", nullptr);
 
-  DialogGroup* dialog = DialogGroup::GroupDialogEntry(&app, &groupInfo);
+  DialogGroup* dialog = DialogGroup::GroupDialogEntry(app, &groupInfo);
   delete dialog;
+
+  DestroyApplication(app);
 }

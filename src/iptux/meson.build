@@ -14,7 +14,6 @@ sources = files([
     'DialogBase.cpp',
     'DialogGroup.cpp',
     'DialogPeer.cpp',
-    'EventAdaptor.cpp',
     'GioNotificationService.cpp',
     'LogSystem.cpp',
     'MainWindow.cpp',
@@ -25,16 +24,33 @@ sources = files([
     'UiCoreThread.cpp',
     'UiHelper.cpp',
     'UiModels.cpp',
-    'UiProgramData.cpp',
     'WindowConfig.cpp',
 ])
+dependencies = [gtk_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep]
+
+appindicator_dep = dependency('ayatana-appindicator3-0.1', required: get_option('appindicator'))
+if appindicator_dep.found()
+    sources += ['AppIndicator.cpp']
+    dependencies += [appindicator_dep]
+else
+    sources += ['AppIndicatorDummy.cpp']
+endif
 
 glib_compile_resources = find_program('glib-compile-resources')
+
+ui_files = [
+    'resources/gtk/AboutDialog.ui',
+    'resources/gtk/AppIndicator.ui',
+    'resources/gtk/MainWindow.ui',
+    'resources/gtk/HeaderBar.ui',
+    'resources/gtk/DetectPal.ui',
+    'resources/gtk/menus.ui',
+]
 
 iptux_resource_h = custom_target('iptux_resource_h',
   output : 'IptuxResource.h',
   input : 'resources/iptux.gresource.xml',
-  depend_files: ['resources/gtk/menus.ui', 'resources/gtk/main.ui'],
+  depend_files: ui_files,
   command : [glib_compile_resources,
     '--generate-header',
     '--manual-register',
@@ -44,7 +60,7 @@ iptux_resource_h = custom_target('iptux_resource_h',
 iptux_resource_cpp = custom_target('iptux_resource_cpp',
   output : 'IptuxResource.cpp',
   input : 'resources/iptux.gresource.xml',
-  depend_files: ['resources/gtk/menus.ui', 'resources/gtk/main.ui'],
+  depend_files: ui_files,
   command : [glib_compile_resources,
     '--generate-source',
     '--manual-register',
@@ -63,7 +79,6 @@ iptux_resource_cpp = custom_target('iptux_resource_cpp',
 sources += [iptux_resource_cpp, iptux_resource_h]
 inc = include_directories('..', '../api')
 
-dependencies = [gtk_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep]
 
 if host_machine.system() == 'darwin'
     gtk_mac_integration_dep = dependency('gtk-mac-integration-gtk3')
@@ -97,14 +112,12 @@ test_sources = files([
     'UiCoreThreadTest.cpp',
     'UiHelperTest.cpp',
     'UiModelsTest.cpp',
-    'UiProgramDataTest.cpp',
 ])
+test_sources += [iptux_resource_h]
 libiptux_test = executable('libiptux_test',
     test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, thread_dep, sigc_dep],
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('iptux ui unit test', libiptux_test)
-
-
+test('iptux ui unit test', libiptux_test, is_parallel : false)

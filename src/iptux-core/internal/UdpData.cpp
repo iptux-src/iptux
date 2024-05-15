@@ -15,6 +15,7 @@
 
 #include <cinttypes>
 #include <functional>
+#include <string>
 #include <thread>
 
 #include <fcntl.h>
@@ -22,6 +23,7 @@
 
 #include <glib/gi18n.h>
 
+#include "iptux-core/CoreThread.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/CommandMode.h"
 #include "iptux-core/internal/RecvFile.h"
@@ -39,110 +41,31 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-UdpData::UdpData(CoreThread& coreThread)
-    : coreThread(coreThread), ipv4({0}), size(0), encode(NULL) {}
+UdpData::UdpData(CoreThread& coreThread,
+                 in_addr ipv4,
+                 const char buf_[],
+                 size_t size_)
+    : coreThread(coreThread),
+      ipv4(ipv4),
+      size(size_ < MAX_UDPLEN ? size_ : MAX_UDPLEN),
+      encode(NULL) {
+  memcpy(buf, buf_, size);
+  if (size != MAX_UDPLEN) {
+    buf[size] = '\0';
+  }
+}
+
+UdpData::UdpData(const string& buf_, const string& ipv4String)
+    : coreThread(*(CoreThread*)NULL), size(buf_.size()), encode(nullptr) {
+  this->ipv4 = inAddrFromString(ipv4String);
+  memcpy(buf, &buf_[0], buf_.size());
+}
 
 /**
  * 类析构函数.
  */
 UdpData::~UdpData() {
   g_free(encode);
-}
-
-/**
- * UDP数据解析入口.
- * @param ipv4 ipv4
- * @param buf[] 数据缓冲区
- * @param size 数据有效长度
- */
-unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
-                                          in_addr ipv4,
-                                          int port,
-                                          const char buf[],
-                                          size_t size) {
-  return UdpDataEntry(coreThread, ipv4, port, buf, size, true);
-}
-
-unique_ptr<UdpData> UdpData::UdpDataEntry(CoreThread& coreThread,
-                                          in_addr ipv4,
-                                          int port,
-                                          const char buf[],
-                                          size_t size,
-                                          bool run) {
-  if (Log::IsDebugEnabled()) {
-    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
-              inAddrToString(ipv4).c_str(), port, size,
-              stringDumpAsCString(string(buf, size)).c_str());
-  } else {
-    LOG_INFO("received udp message from %s:%d, size %zu",
-             inAddrToString(ipv4).c_str(), port, size);
-  }
-  auto udata = make_unique<UdpData>(coreThread);
-
-  udata->ipv4 = ipv4;
-  udata->size = size < MAX_UDPLEN ? size : MAX_UDPLEN;
-  memcpy(udata->buf, buf, size);
-  if (size != MAX_UDPLEN)
-    udata->buf[size] = '\0';
-  if (run) {
-    udata->DispatchUdpData();
-  }
-  return udata;
-}
-
-/**
- * 分派UDP数据到相应的函数去进行处理.
- */
-void UdpData::DispatchUdpData() {
-  uint32_t commandno;
-
-  /* 如果开启了黑名单处理功能，且此地址正好被列入了黑名单 */
-  /* 嘿嘿，那就不要怪偶心狠手辣了 */
-  if (coreThread.IsBlocked(ipv4)) {
-    LOG_INFO("address is blocked: %s", inAddrToString(ipv4).c_str());
-    return;
-  }
-
-  /* 决定消息去向 */
-  commandno = iptux_get_dec_number(buf, ':', 4);
-  auto commandMode = GET_MODE(commandno);
-  LOG_INFO("command NO.: [0x%x] %s", commandno,
-           CommandMode(commandMode).toString().c_str());
-  switch (commandMode) {
-    case IPMSG_BR_ENTRY:
-      SomeoneEntry();
-      break;
-    case IPMSG_BR_EXIT:
-      SomeoneExit();
-      break;
-    case IPMSG_ANSENTRY:
-      SomeoneAnsEntry();
-      break;
-    case IPMSG_BR_ABSENCE:
-      SomeoneAbsence();
-      break;
-    case IPMSG_SENDMSG:
-      SomeoneSendmsg();
-      break;
-    case IPMSG_RECVMSG:
-      SomeoneRecvmsg();
-      break;
-    case IPTUX_ASKSHARED:
-      SomeoneAskShared();
-      break;
-    case IPTUX_SENDICON:
-      SomeoneSendIcon();
-      break;
-    case IPTUX_SEND_SIGN:
-      SomeoneSendSign();
-      break;
-    case IPTUX_SENDMSG:
-      SomeoneBcstmsg();
-      break;
-    default:
-      LOG_WARN("unknown command mode: 0x%lx", commandMode);
-      break;
-  }
 }
 
 /**
@@ -156,8 +79,7 @@ void UdpData::SomeoneLost() {
   auto g_progdt = coreThread.getProgramData();
 
   /* 创建好友数据 */
-  pal = new PalInfo;
-  pal->ipv4 = ipv4;
+  pal = new PalInfo(ipv4, coreThread.port());
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
@@ -168,10 +90,10 @@ void UdpData::SomeoneLost() {
       .setHost(host ? host : "???")
       .setEncode(encode ? encode : "utf-8")
       .setName(_("mysterious"))
-      .setGroup(_("mysterious"));
+      .setGroup(_("mysterious"))
+      .set_icon_file(g_progdt->palicon);
   pal->photo = NULL;
   pal->sign = NULL;
-  pal->iconfile = g_strdup(g_progdt->palicon);
   pal->setOnline(true);
   pal->packetn = 0;
   pal->rpacketn = 0;
@@ -220,7 +142,7 @@ void UdpData::SomeoneEntry() {
  * 好友退出.
  */
 void UdpData::SomeoneExit() {
-  coreThread.emitSomeoneExit(PalKey(ipv4));
+  coreThread.emitSomeoneExit(PalKey(ipv4, coreThread.port()));
 }
 
 /**
@@ -270,7 +192,7 @@ void UdpData::SomeoneAbsence() {
   auto g_progdt = coreThread.getProgramData();
 
   /* 若好友不兼容iptux协议，则需转码 */
-  pal = coreThread.GetPal(ipv4);  //利用好友链表只增不减的特性，无须加锁
+  pal = coreThread.GetPal(ipv4);  // 利用好友链表只增不减的特性，无须加锁
   ptr = iptux_skip_string(buf, size, 3);
   if (!ptr || *ptr == '\0') {
     if (pal) {
@@ -361,7 +283,7 @@ void UdpData::SomeoneRecvmsg() {
   if ((pal = coreThread.GetPal(ipv4))) {
     packetno = iptux_get_dec_number(buf, ':', 5);
     if (packetno == pal->rpacketn)
-      pal->rpacketn = 0;  //标记此包编号已经被回复
+      pal->rpacketn = 0;  // 标记此包编号已经被回复
   } else {
     LOG_WARN("message from unknown pal: %s", inAddrToString(ipv4).c_str());
   }
@@ -403,17 +325,17 @@ void UdpData::SomeoneAskShared() {
  */
 void UdpData::SomeoneSendIcon() {
   PPalInfo pal;
-  char* iconfile;
+  string iconfile;
 
   if (!(pal = coreThread.GetPal(ipv4)) || pal->isChanged()) {
     return;
   }
 
   /* 接收并更新数据 */
-  if ((iconfile = RecvPalIcon())) {
-    g_free(pal->iconfile);
-    pal->iconfile = iconfile;
-    coreThread.EmitIconUpdate(PalKey(ipv4));
+  iconfile = RecvPalIcon();
+  if (!iconfile.empty()) {
+    pal->set_icon_file(iconfile);
+    coreThread.EmitIconUpdate(PalKey(ipv4, coreThread.port()));
   }
 }
 
@@ -507,8 +429,7 @@ void UdpData::SomeoneBcstmsg() {
  */
 shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto programData = coreThread.getProgramData();
-  auto pal = make_shared<PalInfo>();
-  pal->ipv4 = ipv4;
+  auto pal = make_shared<PalInfo>(ipv4, coreThread.port());
   pal->segdes = g_strdup(programData->FindNetSegDescription(ipv4).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
@@ -526,8 +447,7 @@ shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   pal->setGroup(GetPalGroup());
   pal->photo = NULL;
   pal->sign = NULL;
-  if (!(pal->iconfile = GetPalIcon()))
-    pal->iconfile = g_strdup(programData->palicon);
+  pal->set_icon_file(GetPalIcon(), programData->palicon);
   auto localEncode = GetPalEncode();
   if (localEncode) {
     pal->setEncode(localEncode);
@@ -566,9 +486,7 @@ void UdpData::UpdatePalInfo(PalInfo* pal) {
       pal->setName(name);
     }
     pal->setGroup(GetPalGroup());
-    g_free(pal->iconfile);
-    if (!(pal->iconfile = GetPalIcon()))
-      pal->iconfile = g_strdup(g_progdt->palicon);
+    pal->set_icon_file(GetPalIcon(), g_progdt->palicon);
     pal->setCompatible(false);
     auto localEncode = GetPalEncode();
     if (localEncode) {
@@ -598,10 +516,10 @@ void UdpData::InsertMessage(PPalInfo pal,
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, msg);
-  para.dtlist.push_back(move(chip));
+  para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
-  coreThread.InsertMessage(move(para));
+  coreThread.InsertMessage(std::move(para));
 }
 
 void UdpData::ConvertEncode(const char* enc) {
@@ -669,16 +587,15 @@ string UdpData::GetPalGroup() {
  * 获取好友头像图标.
  * @return 头像
  */
-char* UdpData::GetPalIcon() {
-  char path[MAX_PATHLEN];
+string UdpData::GetPalIcon() {
   const char* ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 2)) && *ptr != '\0') {
-    snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", ptr);
-    if (access(path, F_OK) == 0)
-      return g_strdup(ptr);
+    string res = stringFormat(__PIXMAPS_PATH "/icon/%s", ptr);
+    if (access(res.c_str(), F_OK) == 0)
+      return ptr;
   }
-  return NULL;
+  return "";
 }
 
 /**
@@ -697,30 +614,27 @@ char* UdpData::GetPalEncode() {
  * 接收好友头像数据.
  * @return 头像文件名
  */
-char* UdpData::RecvPalIcon() {
-  char path[MAX_PATHLEN];
-  char* iconfile;
+string UdpData::RecvPalIcon() {
   size_t len;
   int fd;
 
   /* 若无头像数据则返回null */
   if ((len = strlen(buf) + 1) >= size)
-    return NULL;
+    return "";
 
   auto hash = sha256(buf + len, size - len);
 
   /* 将头像数据刷入磁盘 */
-  snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s.png", g_get_user_cache_dir(),
-           hash.c_str());
+  auto path = stringFormat("%s" ICON_PATH "/%s.png", g_get_user_cache_dir(),
+                           hash.c_str());
   Helper::prepareDir(path);
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
-    LOG_ERROR("write icon to path failed: %s", path);
-    return NULL;
+  if ((fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+    LOG_ERROR("write icon to path failed: %s", path.c_str());
+    return "";
   }
   xwrite(fd, buf + len, size - len);
   close(fd);
-  iconfile = g_strdup(hash.c_str());
-  return iconfile;
+  return hash;
 }
 
 /**
@@ -780,6 +694,18 @@ void UdpData::ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal) {
   } else {
     SendFile::SendSharedInfoEntry(coreThread, pal);
   }
+}
+
+uint32_t UdpData::getCommandNo() const {
+  return iptux_get_dec_number(buf, ':', 4);
+}
+
+string UdpData::getIpv4String() const {
+  return inAddrToString(ipv4);
+}
+
+CommandMode UdpData::getCommandMode() const {
+  return CommandMode(GET_MODE(getCommandNo()));
 }
 
 }  // namespace iptux

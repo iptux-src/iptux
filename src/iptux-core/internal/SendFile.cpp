@@ -15,11 +15,9 @@
 #include <cinttypes>
 #include <cstring>
 #include <memory>
-
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "iptux-core/internal/AnalogFS.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/SendFileData.h"
 #include "iptux-utils/output.h"
@@ -94,12 +92,10 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
     LOG_INFO("Pal not exist: %s", inAddrToString(addr.sin_addr).c_str());
     return;
   }
-
-  /* 发送文件数据 */
-  //        /**
-  //         *文件信息可能被删除或修改，必须单独复制一份.
-  //         */
-  //        file->fileown = pal;
+  if (!file->fileown) {
+    // for public shared file, there need one owner
+    file->fileown = coreThread->getMe();
+  }
   SendFile(coreThread).ThreadSendFile(sock, file);
 }
 
@@ -112,7 +108,6 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
 void SendFile::SendFileInfo(PPalInfo pal,
                             uint32_t opttype,
                             vector<FileInfo>& fileInfos) {
-  AnalogFS afs;
   Command cmd(*coreThread);
   char buf[MAX_UDPLEN];
   size_t len;
@@ -126,15 +121,15 @@ void SendFile::SendFileInfo(PPalInfo pal,
   /* 将文件信息写入缓冲区 */
   for (FileInfo& fileInfo : fileInfos) {
     auto file = &fileInfo;
-    if (access(file->filepath, F_OK) == -1) {
+    if (!fileInfo.isExist()) {
       continue;
     }
+    fileInfo.ensureFilesizeFilled();
     name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
     file->packetn = cmd.Packetn();
     snprintf(ptr, MAX_UDPLEN - len,
-             "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%" PRIx32 ":\a",
-             file->fileid, name, file->filesize, file->filectime,
-             file->fileattr);
+             "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a", file->fileid, name,
+             file->filesize, file->filectime, (unsigned int)file->fileattr);
     g_free(name);
     len += strlen(ptr);
     ptr = buf + len;
@@ -153,24 +148,16 @@ void SendFile::SendFileInfo(PPalInfo pal,
 void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals,
                             uint32_t opttype,
                             const std::vector<FileInfo*>& files) {
-  AnalogFS afs;
   Command cmd(*coreThread);
-  char buf[MAX_UDPLEN];
-  size_t len;
-  char* ptr;
 
   for (auto pal : pals) {
-    /* 初始化 */
-    len = 0;
-    ptr = buf;
-    buf[0] = '\0';
     vector<string> buffer;
     for (auto file : files) {
       if (!(file->fileown->GetKey() == pal->GetKey()))
         continue;
-      if (access(file->filepath, F_OK) == -1)
+      if (!file->isExist())
         continue;
-      file->filesize = afs.ftwsize(file->filepath);  //不得不计算文件长度了
+      file->ensureFilesizeFilled();
       file->packetn = cmd.Packetn();
 
       buffer.push_back(Command::encodeFileInfo(*file));

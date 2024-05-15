@@ -14,6 +14,7 @@
 
 #include <arpa/inet.h>
 #include <memory>
+#include <netinet/in.h>
 #include <string>
 
 #include <json/json.h>
@@ -54,12 +55,12 @@ typedef enum {
 
 class PalKey {
  public:
-  PalKey(in_addr ipv4);
   PalKey(in_addr ipv4, int port);
 
   bool operator==(const PalKey& rhs) const;
 
   in_addr GetIpv4() const { return ipv4; }
+  std::string GetIpv4String() const;
   int GetPort() const { return port; }
   std::string ToString() const;
 
@@ -78,10 +79,11 @@ class PalKey {
  */
 class PalInfo {
  public:
-  PalInfo();
+  PalInfo(const std::string& ipv4, uint16_t port);
+  PalInfo(in_addr ipv4, uint16_t port);
   ~PalInfo();
 
-  PalKey GetKey() const { return ipv4; }
+  PalKey GetKey() const { return PalKey(ipv4(), port_); }
 
   PalInfo& setName(const std::string& name);
   const std::string& getName() const { return name; }
@@ -101,13 +103,26 @@ class PalInfo {
   PalInfo& setGroup(const std::string& group);
   const std::string& getGroup() const { return group; }
 
-  std::string toString() const;
+  const std::string& icon_file() const { return icon_file_; }
+  PalInfo& set_icon_file(const std::string& icon_file) {
+    icon_file_ = icon_file;
+    return *this;
+  }
+  PalInfo& set_icon_file(const std::string& icon_file, const std::string& def) {
+    if (icon_file.empty())
+      icon_file_ = def;
+    else
+      icon_file_ = icon_file;
+    return *this;
+  }
 
-  in_addr ipv4;       ///< 好友IP
+  std::string toString() const;
+  in_addr ipv4() const { return ipv4_; }
+  uint16_t port() const { return port_; }
+
   char* segdes;       ///< 所在网段描述
   char* photo;        ///< 形象照片
   char* sign;         ///< 个性签名
-  char* iconfile;     ///< 好友头像 *
   uint32_t packetn;   ///< 已接受最大的包编号
   uint32_t rpacketn;  ///< 需要接受检查的包编号
 
@@ -122,6 +137,9 @@ class PalInfo {
   PalInfo& setInBlacklistl(bool value);
 
  private:
+  in_addr ipv4_;           ///< 好友IP
+  uint16_t port_;          ///< 好友端口
+  std::string icon_file_;  ///< 好友头像 *
   std::string user;
   std::string name;
   std::string host;
@@ -137,7 +155,7 @@ using PPalInfo = std::shared_ptr<PalInfo>;
 /// const pointer to PalInfo
 using CPPalInfo = std::shared_ptr<const PalInfo>;
 
-enum class FileAttr : std::uint32_t { UNKNOWN, REGULAR, DIRECTORY };
+enum class FileAttr { UNKNOWN, REGULAR, DIRECTORY };
 
 constexpr bool FileAttrIsValid(FileAttr attr) {
   return attr == FileAttr::REGULAR || attr == FileAttr::DIRECTORY;
@@ -155,6 +173,8 @@ class FileInfo {
   FileInfo& operator=(const FileInfo& fileInfo);
 
   bool operator==(const FileInfo& rhs) const;
+  bool isExist() const;
+  void ensureFilesizeFilled();
 
   uint32_t fileid;       ///< 唯一标识
   uint32_t packetn;      ///< 包编号

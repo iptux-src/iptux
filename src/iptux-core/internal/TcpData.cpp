@@ -70,8 +70,8 @@ void TcpData::DispatchTcpData() {
   }
 
   /* 分派消息 */
-  size = len;  //设置缓冲区数据的有效长度
-  commandno = iptux_get_dec_number(buf, ':', 4);  //获取命令字
+  size = len;  // 设置缓冲区数据的有效长度
+  commandno = iptux_get_dec_number(buf, ':', 4);  // 获取命令字
   LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s",
            inAddrToString(addr.sin_addr).c_str(), commandno,
            CommandMode(GET_MODE(commandno)).toString().c_str());
@@ -140,24 +140,29 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
   switch (GET_OPT(cmdopt)) {
     case IPTUX_PHOTOPICOPT:
       snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/%" PRIx32,
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4));
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()));
       break;
     case IPTUX_MSGPICOPT:
-      snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++,
-               time(NULL));
+      snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%jx",
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()), count++,
+               (uintmax_t)time(NULL));
       break;
     default:
       snprintf(path, MAX_PATHLEN,
-               "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%lx",
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4), count++,
-               time(NULL));
+               "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%jx",
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()), count++,
+               (uintmax_t)time(NULL));
       break;
   }
 
+  LOG_INFO("recv sublayer data from %s, save to %s",
+           inAddrToString(pal->ipv4()).c_str(), path);
+
   /* 终于可以接收数据了^_^ */
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+    LOG_ERROR("open file %s failed: %s", path, strerror(errno));
     return;
+  }
   RecvSublayerData(fd, strlen(buf) + 1);
   close(fd);
 
@@ -201,7 +206,7 @@ void TcpData::RecvPhotoPic(PalInfo* pal, const char* path) {
   g_free(pal->photo);
   pal->photo = g_strdup(path);
   coreThread->Lock();
-  coreThread->UpdatePalToList(pal->ipv4);
+  coreThread->UpdatePalToList(pal->GetKey());
   coreThread->Unlock();
 }
 
@@ -220,7 +225,7 @@ void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
   para.dtlist.push_back(chip);
 
   /* 交给某人处理吧 */
-  coreThread->InsertMessage(move(para));
+  coreThread->InsertMessage(std::move(para));
 }
 
 }  // namespace iptux

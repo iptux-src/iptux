@@ -3,30 +3,25 @@
 #include "iptux-core/TestHelper.h"
 #include "iptux/Application.h"
 #include "iptux/RevisePal.h"
+#include "iptux/TestHelper.h"
 
 using namespace std;
 using namespace iptux;
 
 TEST(RevisePal, Constructor) {
-  gtk_init(nullptr, nullptr);
-  auto config = newTestIptuxConfig();
-  Application app(config);
-  app.startup();
-  app.activate();
+  Application* app = CreateApplication();
 
-  PalInfo palInfo;
+  PalInfo palInfo("127.0.0.1", 2425);
 
-  RevisePal pal(&app, nullptr, &palInfo);
+  RevisePal pal(app, nullptr, &palInfo);
+  DestroyApplication(app);
 }
 
 TEST(RevisePal, ReviseEntryDo) {
-  gtk_init(nullptr, nullptr);
-  auto config = newTestIptuxConfig();
-  Application app(config);
-  app.startup();
-  app.activate();
+  Application* app = CreateApplication();
 
-  PalInfo palInfo;
+  PalInfo palInfo("127.0.0.1", 2425);
 
-  RevisePal::ReviseEntryDo(&app, nullptr, &palInfo, false);
+  RevisePal::ReviseEntryDo(app, nullptr, &palInfo, false);
+  DestroyApplication(app);
 }

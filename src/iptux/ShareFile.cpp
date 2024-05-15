@@ -335,7 +335,7 @@ void ApplySharedData(ShareFile* self) {
   } else {
     g_cthrd->SetAccessPublicLimit(passwd);
   }
-  g_cthrd->getUiProgramData()->WriteProgData();
+  g_cthrd->getProgramData()->WriteProgData();
 }
 
 /**

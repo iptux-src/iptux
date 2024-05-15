@@ -17,6 +17,7 @@
 #ifndef IPTUX_UICORETHREAD_H
 #define IPTUX_UICORETHREAD_H
 
+#include <netinet/in.h>
 #include <queue>
 #include <sigc++/signal.h>
 
@@ -24,7 +25,6 @@
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/UiModels.h"
-#include "iptux/UiProgramData.h"
 
 namespace iptux {
 
@@ -40,16 +40,16 @@ class LogSystem;
  */
 class UiCoreThread : public CoreThread {
  public:
-  UiCoreThread(Application* app, std::shared_ptr<UiProgramData> data);
+  UiCoreThread(Application* app, std::shared_ptr<ProgramData> data);
   ~UiCoreThread() override;
 
-  std::shared_ptr<UiProgramData> getUiProgramData();
-
-  void InsertMsgToGroupInfoItem(GroupInfo* grpinf, MsgPara* para);
+  std::shared_ptr<ProgramData> getProgramData() { return programData; }
 
   void ClearAllPalFromList() override;
-  void DelPalFromList(PalKey palKey) override;
   void UpdatePalToList(PalKey palKey) override;
+  void UpdatePalToList(in_addr ipv4) override {
+    UpdatePalToList(PalKey(ipv4, port()));
+  }
 
   void AttachPalToList(std::shared_ptr<PalInfo> pal) override;
   GroupInfo* GetPalRegularItem(const PalInfo* pal);
@@ -63,16 +63,17 @@ class UiCoreThread : public CoreThread {
 
   LogSystem* getLogSystem() { return logSystem; }
 
+  GtkTextTagTable* tag_table() { return tag_table_; }
+
+  int unread_msg_count() const;
+
  public:
-  sigc::signal<void(GroupInfo*)> signalGroupInfoUpdated;
+  sigc::signal<void(GroupInfo*)> sigGroupInfoUpdated;
+  sigc::signal<void(int)> sigUnreadMsgCountUpdated;
 
  private:
   void InitSublayer();
   void ClearSublayer() override;
-
-  void InsertHeaderToBuffer(GtkTextBuffer* buffer, MsgPara* para);
-  void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* string);
-  void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path);
 
   GroupInfo* GetPalPrevGroupItem(PalInfo* pal);
   GroupInfo* AttachPalRegularItem(PPalInfo pal);
@@ -82,19 +83,22 @@ class UiCoreThread : public CoreThread {
   static void DelPalFromGroupInfoItem(GroupInfo* grpinf, PalInfo* pal);
   static void AttachPalToGroupInfoItem(GroupInfo* grpinf, PPalInfo pal);
   void onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount);
+  GtkTextTagTable* CreateTagTable();
+  void CheckIconTheme();
 
  private:
-  std::shared_ptr<UiProgramData> programData;
+  std::shared_ptr<ProgramData> programData;
   LogSystem* logSystem;
   std::queue<MsgPara> messages;
 
-  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  //群组链表(成员不能被删除)
+  GSList *groupInfos, *sgmlist, *grplist, *brdlist;  // 群组链表(成员不能被删除)
 
-  uint32_t pbn, prn;  //当前已使用的文件编号(共享/私有)
-  GSList* ecsList;    //文件链表(好友发过来)
+  uint32_t pbn, prn;            // 当前已使用的文件编号(共享/私有)
+  GSList* ecsList;              // 文件链表(好友发过来)
+  GtkTextTagTable* tag_table_;  // tag table
   //        GSList *rcvdList;               //文件链表(好友发过来已接收)
 
-  //内联成员函数
+  // 内联成员函数
  public:
   inline uint32_t& PbnQuote() { return pbn; }
 

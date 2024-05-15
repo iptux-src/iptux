@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "editorconfig.editorconfig",
+        "ms-vscode.cpptools",
+        "eamodio.gitlens",
+        "mesonbuild.mesonbuild"
+    ]
+}

@@ -2,7 +2,9 @@
 #define IPTUX_CORETHREAD_H
 
 #include <atomic>
+#include <cstdint>
 #include <memory>
+#include <netinet/in.h>
 #include <vector>
 
 #include <sigc++/signal.h>
@@ -27,6 +29,7 @@ class CoreThread {
   PPalInfo getMe();
 
   int getUdpSock() const;
+  uint16_t port() const;
 
   std::shared_ptr<ProgramData> getProgramData();
   bool BlacklistContainItem(in_addr ipv4) const;
@@ -55,11 +58,19 @@ class CoreThread {
 
   CPPalInfo GetPal(PalKey palKey) const;
   PPalInfo GetPal(PalKey palKey);
+  CPPalInfo GetPal(in_addr ipv4) const { return GetPal(PalKey(ipv4, port())); }
+  PPalInfo GetPal(in_addr ipv4) { return GetPal(PalKey(ipv4, port())); }
   CPPalInfo GetPal(const std::string& ipv4) const;
   PPalInfo GetPal(const std::string& ipv4);
 
   virtual void DelPalFromList(PalKey palKey);
+  virtual void DelPalFromList(in_addr palKey) {
+    DelPalFromList(PalKey(palKey, port()));
+  }
   virtual void UpdatePalToList(PalKey palKey);
+  virtual void UpdatePalToList(in_addr palKey) {
+    UpdatePalToList(PalKey(palKey, port()));
+  }
 
   virtual void AttachPalToList(PPalInfo pal);
 
@@ -99,6 +110,8 @@ class CoreThread {
    * @return std::shared_ptr<const Event>
    */
   std::shared_ptr<const Event> getLastEvent() const;
+  bool HasEvent() const;
+  std::shared_ptr<const Event> PopEvent();
 
   const std::string& GetAccessPublicLimit() const;
   void SetAccessPublicLimit(const std::string& val);
@@ -172,7 +185,7 @@ class CoreThread {
   std::shared_ptr<IptuxConfig> config;
   int tcpSock;
   int udpSock;
-  mutable pthread_mutex_t mutex;  //锁
+  mutable std::mutex mutex;  // 锁
 
  private:
   std::atomic_bool started;
@@ -182,7 +195,6 @@ class CoreThread {
 
  private:
   void bind_iptux_port();
-  void processEvents();
 
  private:
   static void RecvUdpData(CoreThread* pcthrd);

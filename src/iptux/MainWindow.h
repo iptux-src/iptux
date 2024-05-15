@@ -17,10 +17,8 @@
 #include "iptux-core/Models.h"
 
 #include "iptux/Application.h"
-#include "iptux/EventAdaptor.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiModels.h"
-#include "iptux/UiProgramData.h"
 #include "iptux/WindowConfig.h"
 
 namespace iptux {
@@ -38,9 +36,7 @@ class MainWindow : public sigc::trackable {
   ~MainWindow();
 
   GtkWidget* getWindow();
-
-  void CreateWindow();
-  void AlterWindowMode();
+  void Show();
 
   bool PaltreeContainItem(in_addr ipv4);
   void UpdateItemToPaltree(in_addr ipv4);
@@ -48,39 +44,53 @@ class MainWindow : public sigc::trackable {
   void DelItemFromPaltree(in_addr ipv4);
   void ClearAllItemFromPaltree();
 
-  std::shared_ptr<UiProgramData> GetProgramData() { return progdt; }
+  std::shared_ptr<ProgramData> GetProgramData() { return progdt; }
 
   std::shared_ptr<IptuxConfig> getConfig() { return config; }
 
   Application* getApp() { return app; }
 
+  PalTreeModelSortKey sort_key() const { return sort_key_; }
+  GtkSortType sort_type() const { return sort_type_; }
+  GroupInfoStyle info_style() const { return info_style_; }
+  void ProcessEvent(std::shared_ptr<const Event> event);
+
  private:
   Application* app;
   UiCoreThread& coreThread;
   GtkWidget* window;
-  EventAdaptor* eventAdaptor;
 
-  std::shared_ptr<UiProgramData> progdt;
+  std::shared_ptr<ProgramData> progdt;
   std::shared_ptr<IptuxConfig> config;
 
-  GData* widset;         //窗体集
-  GData* mdlset;         //数据model集
-  GList* tmdllist;       // model链表，用于构建model循环结构
-  GtkAccelGroup* accel;  //快捷键集组
-  guint timerid;         // UI更新定时器ID
+  GData* widset;  // 窗体集
+  GData* mdlset;  // 数据model集
+  PalTreeModel* regular_model = 0;
+
+  GList* tmdllist;  // model链表，用于构建model循环结构
+  guint timerid;    // UI更新定时器ID
+  struct tm info_refresh_tm;
   WindowConfig windowConfig;
   GtkBuilder* builder;
   GtkMenu* palPopupMenu;
 
   GroupInfo* currentGroupInfo = 0;
+  GtkSortType sort_type_ = GTK_SORT_DESCENDING;
+  PalTreeModelSortKey sort_key_ = PalTreeModelSortKey::NICKNAME;
+  GroupInfoStyle info_style_ = GroupInfoStyle::IP;
 
  private:
   void setCurrentGroupInfo(GroupInfo* groupInfo);
 
   void InitSublayer();
+  void LoadConfig();
+  void SaveConfig();
   void ClearSublayer();
 
+  void CreateWindow();
   GtkWidget* CreateMainWindow();
+  void CreateActions();
+  void CreateTitle();
   GtkWidget* CreateAllArea();
 
   GtkWidget* CreateToolBar();
@@ -91,6 +101,11 @@ class MainWindow : public sigc::trackable {
   GtkWidget* CreatePaltreeTree(GtkTreeModel* model);
   GtkWidget* CreatePallistTree(GtkTreeModel* model);
 
+  /**
+   * @brief refresh pal list, used when change view options.
+   */
+  void RefreshPalList();
+  void RefreshPalListRegular();
   bool GroupGetPrevPaltreeItem(GtkTreeModel* model,
                                GtkTreeIter* iter,
                                GroupInfo* grpinf);
@@ -107,9 +122,9 @@ class MainWindow : public sigc::trackable {
                                GtkTreeIter* iter,
                                bool blinking);
   static void FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal);
-  void processEventInMainThread(std::shared_ptr<const Event> event);
 
  private:
+  std::string getTitle() const;
   static gboolean UpdateUI(MainWindow* mwin);
   static void GoPrevTreeModel(MainWindow* mwin);
   static void GoNextTreeModel(MainWindow* mwin);
@@ -176,6 +191,9 @@ class MainWindow : public sigc::trackable {
   static void onSortBy(GSimpleAction* action,
                        GVariant* value,
                        MainWindow& self);
+  static void onInfoStyle(GSimpleAction* action,
+                          GVariant* value,
+                          MainWindow& self);
   static gboolean onNewPalOnlineEvent(gpointer data);
   void onGroupInfoUpdated(GroupInfo* groupInfo);
 };

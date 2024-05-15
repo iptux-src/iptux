@@ -33,6 +33,8 @@ string CommandMode::toString() const {
       return "SENDMSG";
     case IPMSG_GETFILEDATA:
       return "GETFILEDATA";
+    case IPTUX_SENDSUBLAYER:
+      return "SEND_SUBLAYER";
     default:
       return stringFormat(_("unknown command mode: %d"), mode);
   }
