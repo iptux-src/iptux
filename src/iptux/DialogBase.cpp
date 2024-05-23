@@ -202,10 +202,10 @@ void DialogBase::AttachEnclosure(const GSList* list) {
     /* 转到下一个文件节点 */
     tlist = g_slist_next(tlist);
   }
-  //计算待发送文件总计大小
+  // 计算待发送文件总计大小
   totalsendsize = 0;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {  //遍历待发送model
+    do {  // 遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
       totalsendsize += file->filesize;
     } while (gtk_tree_model_iter_next(model, &iter));
@@ -261,6 +261,8 @@ GtkWidget* DialogBase::CreateInputArea() {
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_signal_connect_swapped(widget, "drag-data-received",
                            G_CALLBACK(DragDataReceived), this);
+  g_signal_connect_swapped(widget, "paste-clipboard",
+                           G_CALLBACK(DialogBase::OnPasteClipboard), this);
   g_datalist_set_data(&widset, "input-textview-widget", widget);
 
   /* 功能按钮 */
@@ -487,7 +489,7 @@ void DialogBase::DragDataReceived(DialogBase* dlgpr,
     return;
   }
 
-  list = selection_data_get_path(data);  //获取所有文件
+  list = selection_data_get_path(data);  // 获取所有文件
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -601,7 +603,7 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
   auto dlg = self;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  //从中心结点删除
+  // 从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   list = gtk_tree_selection_get_selected_rows(TreeSel, NULL);
   if (!list)
@@ -615,9 +617,9 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
     list = g_list_next(list);
   }
   g_list_free(list);
-  //从列表中删除
+  // 从列表中删除
   RemoveSelectedFromTree(GTK_WIDGET(widget));
-  //重新计算待发送文件大小
+  // 重新计算待发送文件大小
   dlg->UpdateFileSendUI(dlg);
 }
 
@@ -659,7 +661,7 @@ GtkWidget* DialogBase::CreateFileSendArea() {
   g_datalist_set_data_full(&mdlset, "enclosure-model", model,
                            GDestroyNotify(g_object_unref));
   g_datalist_set_data(&widset, "file-send-treeview-widget", treeview);
-  //保存this指针，在后面消息响应函数中用到
+  // 保存this指针，在后面消息响应函数中用到
   g_object_set_data(G_OBJECT(treeview), "dialog", this);
   gtk_container_add(GTK_CONTAINER(sw), treeview);
   gtk_box_pack_end(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
@@ -757,7 +759,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   sentsize = 0;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {  //遍历待发送model
+    do {  // 遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
       if (file->finishedsize == file->filesize) {
         gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
@@ -791,6 +793,30 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
 
 GtkTextBuffer* DialogBase::getInputBuffer() {
   return grpinf->getInputBuffer();
+}
+
+void DialogBase::OnPasteClipboard(DialogBase* self, GtkTextView* textview) {
+  GtkClipboard* clipboard;
+  GtkTextBuffer* buffer;
+  GtkTextIter iter;
+
+  clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  buffer = gtk_text_view_get_buffer(textview);
+  gtk_text_buffer_get_iter_at_mark(buffer, &iter,
+                                   gtk_text_buffer_get_insert(buffer));
+  if (gtk_clipboard_wait_is_text_available(clipboard)) {
+    gchar* text = gtk_clipboard_wait_for_text(clipboard);
+    if (text) {
+      gtk_text_buffer_insert(buffer, &iter, text, -1);
+      g_free(text);
+    }
+  } else if (gtk_clipboard_wait_is_image_available(clipboard)) {
+    GdkPixbuf* pixbuf = gtk_clipboard_wait_for_image(clipboard);
+    if (pixbuf) {
+      gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
+      g_object_unref(pixbuf);
+    }
+  }
 }
 
 }  // namespace iptux

@@ -81,6 +81,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   static gint EnclosureTreePopup(DialogBase* self, GdkEvent* event);
   static gboolean UpdateFileSendUI(DialogBase* dlggrp);
   static void RemoveSelectedEnclosure(DialogBase* self);
+  static void OnPasteClipboard(DialogBase* self, GtkTextView* textview);
 
  protected:
   Application* app;
@@ -91,12 +92,12 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
   GtkListStore* fileSendModel = 0;
 
-  GData* widset;            //窗体集
-  GData* mdlset;            //数据model集
-  GData* dtset;             //通用数据集
-  GroupInfo* grpinf;        //群组信息
-  int64_t totalsendsize;    //总计待发送大小(包括已发送)
-  struct timeval lasktime;  //上一次更新UI的时间
+  GData* widset;            // 窗体集
+  GData* mdlset;            // 数据model集
+  GData* dtset;             // 通用数据集
+  GroupInfo* grpinf;        // 群组信息
+  int64_t totalsendsize;    // 总计待发送大小(包括已发送)
+  struct timeval lasktime;  // 上一次更新UI的时间
   guint timersend;          // 发送文件界面更新计时器ID
 };
 
