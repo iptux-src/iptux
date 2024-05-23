@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "gtest/gtest.h"
 
+#include "iptux-utils/TestHelper.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/TestHelper.h"
 #include "iptux/UiCoreThread.h"
@@ -25,6 +26,17 @@ TEST(DialogPeer, Constructor) {
   auto clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   gtk_clipboard_set_text(clipboard, "hello world", -1);
   do_action(dlgpr, "paste");
+
+  GError* error = NULL;
+  auto pixbuf =
+      gdk_pixbuf_new_from_file(testDataPath("iptux.png").c_str(), &error);
+  if (error != nullptr) {
+    ASSERT_TRUE(false) << error->message;
+    g_error_free(error);
+  }
+  gtk_clipboard_set_image(clipboard, pixbuf);
+  do_action(dlgpr, "paste");
+  g_object_unref(pixbuf);
 
   DestroyApplication(app);
 }
