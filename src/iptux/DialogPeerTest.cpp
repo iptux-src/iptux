@@ -21,7 +21,6 @@ TEST(DialogPeer, Constructor) {
 
   GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
   DialogPeer* dlgpr = new DialogPeer(app, grpinf);
-  do_action(dlgpr, "paste");
 
   auto clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   gtk_clipboard_set_text(clipboard, "hello world", -1);
