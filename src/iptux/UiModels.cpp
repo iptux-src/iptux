@@ -17,6 +17,8 @@ using namespace std;
 
 namespace iptux {
 
+const char* const kObjectKeyImagePath = "image-path";
+
 /**
  * 文件传输树(trans-tree)底层数据结构.
  * 14,0 status,1 task,2 peer,3 ip,4 filename,5 filelength,6 finishlength,7
@@ -678,7 +680,7 @@ static void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path) {
   gtk_text_buffer_get_end_iter(buffer, &iter);
   GtkTextChildAnchor* anchor =
       gtk_text_buffer_create_child_anchor(buffer, &iter);
-  g_object_set_data_full(G_OBJECT(anchor), "image-path", g_strdup(path),
+  g_object_set_data_full(G_OBJECT(anchor), kObjectKeyImagePath, g_strdup(path),
                          GDestroyNotify(g_free));
   gtk_text_buffer_insert_child_anchor(buffer, &iter, anchor);
 }

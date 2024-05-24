@@ -10,6 +10,8 @@
 
 namespace iptux {
 
+extern const char* const kObjectKeyImagePath;
+
 typedef void (*GActionCallback)(GSimpleAction* action,
                                 GVariant* parameter,
                                 gpointer user_data);

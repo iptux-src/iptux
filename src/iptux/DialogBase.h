@@ -82,9 +82,9 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   static gboolean UpdateFileSendUI(DialogBase* dlggrp);
   static void RemoveSelectedEnclosure(DialogBase* self);
   static void OnPasteClipboard(DialogBase* self, GtkTextView* textview);
-  static gboolean OnChatHistoryButtonPress(DialogBase* self,
-                                           GdkEventButton event,
-                                           GtkTextView* textview);
+  static gboolean OnImageButtonPress(DialogBase* self,
+                                     GdkEventButton event,
+                                     GtkEventBox* eventbox);
   static void OnChatHistoryInsertChildAnchor(DialogBase* self,
                                              const GtkTextIter* location,
                                              GtkTextChildAnchor* anchor,
