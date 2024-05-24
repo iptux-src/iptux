@@ -849,7 +849,7 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   const char* path =
       (const char*)g_object_get_data(G_OBJECT(anchor), kObjectKeyImagePath);
   if (!path) {
-    LOG_WARN("No image path found in anchor.");
+    LOG_ERROR("No image path found in anchor.");
     return;
   }
 
@@ -887,7 +887,7 @@ void DialogBase::OnSaveImage(GtkImage* image) {
       _("_Save"), GTK_RESPONSE_ACCEPT, NULL);
   gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
                                                  TRUE);
-  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
+  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.bmp");
 
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
