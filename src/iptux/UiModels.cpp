@@ -624,6 +624,8 @@ static void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* s) {
   }
   g_match_info_free(matchinfo);
   gtk_text_buffer_insert(buffer, &iter, string + urlendp, -1);
+  gtk_text_buffer_get_end_iter(buffer, &iter);
+  gtk_text_buffer_insert(buffer, &iter, "\n", -1);
 }
 
 /**
@@ -633,7 +635,8 @@ static void InsertStringToBuffer(GtkTextBuffer* buffer, const gchar* s) {
  */
 static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
                                  const MsgPara* para,
-                                 CPPalInfo me) {
+                                 CPPalInfo me,
+                                 time_t now) {
   GtkTextIter iter;
   gchar* header;
 
@@ -642,21 +645,22 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
    */
   switch (para->stype) {
     case MessageSourceType::PAL:
-      header = getformattime(FALSE, "%s", para->getPal()->getName().c_str());
+      header =
+          getformattime2(now, FALSE, "%s", para->getPal()->getName().c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "pal-color", NULL);
       g_free(header);
       break;
     case MessageSourceType::SELF:
-      header = getformattime(FALSE, "%s", me->getName().c_str());
+      header = getformattime2(now, FALSE, "%s", me->getName().c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "me-color", NULL);
       g_free(header);
       break;
     case MessageSourceType::ERROR:
-      header = getformattime(FALSE, "%s", _("<ERROR>"));
+      header = getformattime2(now, FALSE, "%s", _("<ERROR>"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "error-color", NULL);
@@ -665,6 +669,8 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
     default:
       break;
   }
+  gtk_text_buffer_get_end_iter(buffer, &iter);
+  gtk_text_buffer_insert(buffer, &iter, "\n", -1);
 }
 
 /**
@@ -685,7 +691,11 @@ static void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path) {
 }
 
 void GroupInfo::addMsgPara(const MsgPara& para) {
-  GtkTextIter iter;
+  time_t now = time(NULL);
+  _addMsgPara(para, now);
+}
+
+void GroupInfo::_addMsgPara(const MsgPara& para, time_t now) {
   const gchar* data;
 
   time(&last_activity_);
@@ -695,18 +705,15 @@ void GroupInfo::addMsgPara(const MsgPara& para) {
     data = chipData->data.c_str();
     switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
-        InsertHeaderToBuffer(buffer, &para, me);
-        gtk_text_buffer_get_end_iter(buffer, &iter);
-        gtk_text_buffer_insert(buffer, &iter, "\n", -1);
+        InsertHeaderToBuffer(buffer, &para, me, now);
         InsertStringToBuffer(buffer, data);
-        gtk_text_buffer_get_end_iter(buffer, &iter);
-        gtk_text_buffer_insert(buffer, &iter, "\n", -1);
         last_message_ = StrFirstNonEmptyLine(chipData->data);
         if (logSystem) {
           logSystem->communicateLog(&para, "[STRING]%s", data);
         }
         break;
       case MESSAGE_CONTENT_TYPE_PICTURE:
+        InsertHeaderToBuffer(buffer, &para, me, now);
         InsertPixbufToBuffer(buffer, data);
         last_message_ = _("[IMG]");
         if (logSystem) {

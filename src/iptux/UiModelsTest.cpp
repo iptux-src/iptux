@@ -101,14 +101,19 @@ TEST(GroupInfo, addMsgPara) {
   MsgPara msg(cpal);
   msg.dtlist.push_back(ChipData("helloworld"));
 
-  gi.addMsgPara(msg);
-  ASSERT_EQ(igtk_text_get_all_text(gi.buffer).substr(10),
-            " palname:\nhelloworld\n");
+  time_t now = 1716533706;
+  setenv("TZ", "GMT", 1);
+  tzset();
+
+  gi._addMsgPara(msg, now);
+  ASSERT_EQ(igtk_text_get_all_text(gi.buffer),
+            "(06:55:06) palname:\nhelloworld\n");
 
   msg = MsgPara(cpal);
   msg.dtlist.push_back(
       ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
-  gi.addMsgPara(msg);
-  ASSERT_EQ(igtk_text_get_all_text(gi.buffer).substr(10),
-            " palname:\nhelloworld\n\xEF\xBF\xBC\n");
+  gi._addMsgPara(msg, now + 1);
+  ASSERT_EQ(
+      igtk_text_get_all_text(gi.buffer),
+      "(06:55:06) palname:\nhelloworld\n(06:55:07) palname:\n\xEF\xBF\xBC\n");
 }
