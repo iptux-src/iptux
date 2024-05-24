@@ -833,9 +833,8 @@ gboolean DialogBase::OnImageButtonPress(DialogBase*,
   GtkWidget* menu = gtk_menu_new();
   GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-  // g_signal_connect(
-  //     menu_item, "activate", G_CALLBACK(save_image),
-  //     g_object_ref_sink(gtk_image_get_pixbuf(GTK_IMAGE(image))));
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnSaveImage), image);
   gtk_widget_show_all(menu);
 
   gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)&event);
@@ -854,12 +853,16 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   }
 
   GtkWidget* event_box = gtk_event_box_new();
+  gtk_widget_set_focus_on_click(event_box, TRUE);
 
   GtkImage* image = igtk_image_new_with_size(path, 300, 300);
   if (!image) {
     LOG_ERROR("Failed to create image widget.");
     return;
   }
+  g_object_set_data_full(G_OBJECT(image), kObjectKeyImagePath, g_strdup(path),
+                         g_free);
+
   gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(image));
   g_signal_connect_swapped(event_box, "button-press-event",
                            G_CALLBACK(DialogBase::OnImageButtonPress), self);
@@ -867,6 +870,43 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   gtk_text_view_add_child_at_anchor(self->chat_history_widget, event_box,
                                     anchor);
   gtk_widget_show_all(event_box);
+}
+
+void DialogBase::OnSaveImage(GtkImage* image) {
+  const char* path =
+      (const char*)g_object_get_data(G_OBJECT(image), kObjectKeyImagePath);
+  if (!path) {
+    LOG_ERROR("No image path found in image widget.");
+    return;
+  }
+
+  GtkWidget* dialog = gtk_file_chooser_dialog_new(
+      _("Save Image"), GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(image))),
+      GTK_FILE_CHOOSER_ACTION_SAVE, _("_Cancel"), GTK_RESPONSE_CANCEL,
+      _("_Save"), GTK_RESPONSE_ACCEPT, NULL);
+  gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+                                                 TRUE);
+  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
+
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+    char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+
+    GError* error = NULL;
+    GFile* source = g_file_new_for_path(path);
+    GFile* destination = g_file_new_for_path(save_path);
+    gboolean success = g_file_copy(source, destination, G_FILE_COPY_OVERWRITE,
+                                   NULL, NULL, NULL, &error);
+    if (!success) {
+      LOG_ERROR("Failed to save image: %s", error->message);
+      g_error_free(error);
+    }
+
+    g_object_unref(source);
+    g_object_unref(destination);
+    g_free(save_path);
+  }
+
+  gtk_widget_destroy(dialog);
 }
 
 }  // namespace iptux
