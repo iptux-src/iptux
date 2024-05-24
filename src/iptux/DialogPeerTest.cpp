@@ -21,6 +21,7 @@ TEST(DialogPeer, Constructor) {
   app->getCoreThread()->AttachPalToList(pal);
 
   GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
+  grpinf->buffer = gtk_text_buffer_new(NULL);
   DialogPeer* dlgpr = new DialogPeer(app, grpinf);
 
   auto clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
@@ -38,7 +39,6 @@ TEST(DialogPeer, Constructor) {
   do_action(dlgpr, "paste");
   g_object_unref(pixbuf);
 
-  grpinf->buffer = gtk_text_buffer_new(NULL);
   MsgPara msg(pal);
   msg.dtlist.push_back(ChipData("helloworld"));
 
