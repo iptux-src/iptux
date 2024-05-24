@@ -87,6 +87,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   Application* app;
   std::shared_ptr<ProgramData> progdt;
 
+  GtkTextView* chat_history_widget = 0;
   GtkTreeView* fileSendTree = 0;
   GtkTextView* inputTextviewWidget = 0;
 

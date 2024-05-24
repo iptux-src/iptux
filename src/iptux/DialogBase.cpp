@@ -72,14 +72,12 @@ void DialogBase::ClearSublayerGeneral() {
  * 清空聊天历史记录.
  */
 void DialogBase::ClearHistoryTextView() {
-  GtkWidget* widget;
   GtkTextBuffer* buffer;
   GtkTextTagTable* table;
   GtkTextIter start, end;
   GSList *taglist, *tlist;
 
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-textview-widget"));
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+  buffer = gtk_text_view_get_buffer(chat_history_widget);
   table = gtk_text_buffer_get_tag_table(buffer);
 
   /* 清除用于局部标记的GtkTextTag */
@@ -105,17 +103,14 @@ void DialogBase::ClearHistoryTextView() {
  * 滚动聊天历史记录区.
  */
 void DialogBase::ScrollHistoryTextview() {
-  GtkWidget* widget;
   GtkTextBuffer* buffer;
   GtkTextIter end;
   GtkTextMark* mark;
 
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-textview-widget"));
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+  buffer = gtk_text_view_get_buffer(chat_history_widget);
   gtk_text_buffer_get_end_iter(buffer, &end);
   mark = gtk_text_buffer_create_mark(buffer, NULL, &end, FALSE);
-  gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(widget), mark, 0.0, TRUE, 0.0,
-                               0.0);
+  gtk_text_view_scroll_to_mark(chat_history_widget, mark, 0.0, TRUE, 0.0, 0.0);
   gtk_text_buffer_delete_mark(buffer, mark);
 }
 
@@ -287,7 +282,6 @@ GtkWidget* DialogBase::CreateInputArea() {
  */
 GtkWidget* DialogBase::CreateHistoryArea() {
   GtkWidget *frame, *sw;
-  GtkWidget* widget;
 
   frame = gtk_frame_new(_("Chat History"));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
@@ -298,20 +292,20 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                                       GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(frame), sw);
 
-  widget = gtk_text_view_new_with_buffer(grpinf->buffer);
-  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
-  gtk_container_add(GTK_CONTAINER(sw), widget);
-  g_signal_connect(widget, "key-press-event",
+  chat_history_widget =
+      GTK_TEXT_VIEW(gtk_text_view_new_with_buffer(grpinf->buffer));
+  gtk_text_view_set_cursor_visible(chat_history_widget, FALSE);
+  gtk_text_view_set_editable(chat_history_widget, FALSE);
+  gtk_text_view_set_wrap_mode(chat_history_widget, GTK_WRAP_WORD);
+  gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(chat_history_widget));
+  g_signal_connect(chat_history_widget, "key-press-event",
                    G_CALLBACK(textview_key_press_event), NULL);
-  g_signal_connect(widget, "event-after", G_CALLBACK(textview_event_after),
-                   NULL);
-  g_signal_connect(widget, "motion-notify-event",
+  g_signal_connect(chat_history_widget, "event-after",
+                   G_CALLBACK(textview_event_after), NULL);
+  g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
-  g_signal_connect(widget, "visibility-notify-event",
+  g_signal_connect(chat_history_widget, "visibility-notify-event",
                    G_CALLBACK(textview_visibility_notify_event), NULL);
-  g_datalist_set_data(&widset, "history-textview-widget", widget);
 
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
