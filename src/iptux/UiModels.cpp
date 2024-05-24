@@ -667,8 +667,6 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
   }
 }
 
-#define OCCUPY_OBJECT 0x01
-
 /**
  * 插入图片到TextBuffer.
  * @param buffer text-buffer
