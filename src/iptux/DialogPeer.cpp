@@ -427,10 +427,16 @@ bool DialogPeer::SendTextMsg() {
       /* 保存图片 */
       chipmsg = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
                                 g_get_user_config_dir(), count++);
-      gdk_pixbuf_save(pixbuf, chipmsg, "bmp", NULL, NULL);
-      /* 新建一个碎片数据(图片)，并加入数据链表 */
-      ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
-      dtlist.push_back(std::move(chip));
+      GError* error = nullptr;
+      gdk_pixbuf_save(pixbuf, chipmsg, "png", &error, NULL);
+      if (error) {
+        LOG_ERROR("failed to save image: %s", error->message);
+        g_error_free(error);
+      } else {
+        /* 新建一个碎片数据(图片)，并加入数据链表 */
+        ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
+        dtlist.push_back(std::move(chip));
+      }
     }
   } while (gtk_text_iter_forward_find_char(
       &iter, GtkTextCharPredicate(giter_compare_foreach),
