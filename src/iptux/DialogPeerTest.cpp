@@ -38,5 +38,16 @@ TEST(DialogPeer, Constructor) {
   do_action(dlgpr, "paste");
   g_object_unref(pixbuf);
 
+  grpinf->buffer = gtk_text_buffer_new(NULL);
+  MsgPara msg(pal);
+  msg.dtlist.push_back(ChipData("helloworld"));
+
+  grpinf->addMsgPara(msg);
+
+  msg = MsgPara(pal);
+  msg.dtlist.push_back(
+      ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
+  grpinf->addMsgPara(msg);
+
   DestroyApplication(app);
 }
