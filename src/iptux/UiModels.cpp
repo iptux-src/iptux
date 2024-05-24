@@ -668,27 +668,19 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
 #define OCCUPY_OBJECT 0x01
 
 /**
- * 插入图片到TextBuffer(非UI线程安全).
+ * 插入图片到TextBuffer.
  * @param buffer text-buffer
  * @param path 图片路径
  */
 static void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path) {
-  GtkTextIter start, end;
-  GdkPixbuf* pixbuf;
+  GtkTextIter iter;
 
-  if ((pixbuf = gdk_pixbuf_new_from_file(path, NULL))) {
-    gtk_text_buffer_get_start_iter(buffer, &start);
-    if (gtk_text_iter_get_char(&start) == OCCUPY_OBJECT ||
-        gtk_text_iter_forward_find_char(
-            &start, GtkTextCharPredicate(giter_compare_foreach),
-            GUINT_TO_POINTER(OCCUPY_OBJECT), NULL)) {
-      end = start;
-      gtk_text_iter_forward_char(&end);
-      gtk_text_buffer_delete(buffer, &start, &end);
-    }
-    gtk_text_buffer_insert_pixbuf(buffer, &start, pixbuf);
-    g_object_unref(pixbuf);
-  }
+  gtk_text_buffer_get_end_iter(buffer, &iter);
+  GtkTextChildAnchor* anchor =
+      gtk_text_buffer_create_child_anchor(buffer, &iter);
+  g_object_set_data_full(G_OBJECT(anchor), "image-path", g_strdup(path),
+                         GDestroyNotify(g_free));
+  gtk_text_buffer_insert_child_anchor(buffer, &iter, anchor);
 }
 
 void GroupInfo::addMsgPara(const MsgPara& para) {

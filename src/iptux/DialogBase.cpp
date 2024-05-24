@@ -306,6 +306,12 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                    G_CALLBACK(textview_motion_notify_event), NULL);
   g_signal_connect(chat_history_widget, "visibility-notify-event",
                    G_CALLBACK(textview_visibility_notify_event), NULL);
+  g_signal_connect_swapped(chat_history_widget, "button-press-event",
+                           G_CALLBACK(DialogBase::OnChatHistoryButtonPress),
+                           this);
+  g_signal_connect_swapped(
+      grpinf->buffer, "insert-child-anchor",
+      G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor), this);
 
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
@@ -811,6 +817,60 @@ void DialogBase::OnPasteClipboard(DialogBase* self, GtkTextView* textview) {
       g_object_unref(pixbuf);
     }
   }
+}
+
+gboolean DialogBase::OnChatHistoryButtonPress(DialogBase*,
+                                              GdkEventButton event,
+                                              GtkTextView* textview) {
+  if (event.type != GDK_BUTTON_PRESS || event.button != 3) {
+    return FALSE;
+  }
+
+  GtkTextIter iter;
+  GtkTextChildAnchor* anchor;
+  GtkWidget* image;
+  gint x, y;
+
+  gtk_text_view_window_to_buffer_coords(textview, GTK_TEXT_WINDOW_WIDGET,
+                                        (int)event.x, (int)event.y, &x, &y);
+  gtk_text_view_get_iter_at_location(textview, &iter, x, y);
+  anchor = gtk_text_iter_get_child_anchor(&iter);
+  if (anchor == NULL) {
+    return FALSE;
+  }
+  GList* widgets = gtk_text_child_anchor_get_widgets(anchor);
+  for (GList* l = widgets; l != NULL; l = l->next) {
+    image = GTK_WIDGET(l->data);
+    if (GTK_IS_IMAGE(image)) {
+      // Create context menu
+      GtkWidget* menu = gtk_menu_new();
+      GtkWidget* menu_item = gtk_menu_item_new_with_label("Save Image");
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+      // g_signal_connect(
+      //     menu_item, "activate", G_CALLBACK(save_image),
+      //     g_object_ref_sink(gtk_image_get_pixbuf(GTK_IMAGE(image))));
+      gtk_widget_show_all(menu);
+
+      gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)&event);
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
+                                                const GtkTextIter*,
+                                                GtkTextChildAnchor* anchor,
+                                                GtkTextBuffer*) {
+  const char* path =
+      (const char*)g_object_get_data(G_OBJECT(anchor), "image-path");
+  if (!path) {
+    LOG_WARN("No image path found in anchor.");
+    return;
+  }
+  GtkWidget* image = gtk_image_new_from_file(path);
+  gtk_text_view_add_child_at_anchor(self->chat_history_widget, image, anchor);
+  gtk_widget_show(image);
 }
 
 }  // namespace iptux
