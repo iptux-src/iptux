@@ -307,9 +307,10 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                    G_CALLBACK(textview_motion_notify_event), NULL);
   g_signal_connect(chat_history_widget, "visibility-notify-event",
                    G_CALLBACK(textview_visibility_notify_event), NULL);
-  g_signal_connect_swapped(
-      grpinf->buffer, "insert-child-anchor",
-      G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor), this);
+  g_signal_connect_data(grpinf->buffer, "insert-child-anchor",
+                        G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
+                        this, NULL,
+                        (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
 
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();

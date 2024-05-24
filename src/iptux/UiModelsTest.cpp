@@ -110,5 +110,5 @@ TEST(GroupInfo, addMsgPara) {
       ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
   gi.addMsgPara(msg);
   ASSERT_EQ(igtk_text_get_all_text(gi.buffer).substr(10),
-            " palname:\nhelloworld\n\xEF\xBF\xBC");
+            " palname:\nhelloworld\n\xEF\xBF\xBC\n");
 }

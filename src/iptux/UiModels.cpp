@@ -676,11 +676,12 @@ static void InsertPixbufToBuffer(GtkTextBuffer* buffer, const gchar* path) {
   GtkTextIter iter;
 
   gtk_text_buffer_get_end_iter(buffer, &iter);
-  GtkTextChildAnchor* anchor =
-      gtk_text_buffer_create_child_anchor(buffer, &iter);
+  GtkTextChildAnchor* anchor = gtk_text_child_anchor_new();
   g_object_set_data_full(G_OBJECT(anchor), kObjectKeyImagePath, g_strdup(path),
                          GDestroyNotify(g_free));
   gtk_text_buffer_insert_child_anchor(buffer, &iter, anchor);
+  gtk_text_buffer_get_end_iter(buffer, &iter);
+  gtk_text_buffer_insert(buffer, &iter, "\n", -1);
 }
 
 void GroupInfo::addMsgPara(const MsgPara& para) {
