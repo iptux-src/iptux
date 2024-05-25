@@ -10,6 +10,8 @@
 
 namespace iptux {
 
+extern const char* const kObjectKeyImagePath;
+
 typedef void (*GActionCallback)(GSimpleAction* action,
                                 GVariant* parameter,
                                 gpointer user_data);
@@ -81,6 +83,7 @@ class GroupInfo {
   bool hasPal(PPalInfo pal) const;
 
   void addMsgPara(const MsgPara& msg);
+  void _addMsgPara(const MsgPara& msg, time_t t);
   void readAllMsg();
   int getUnreadMsgCount() const;
   std::string GetInfoAsMarkup(GroupInfoStyle style) const;

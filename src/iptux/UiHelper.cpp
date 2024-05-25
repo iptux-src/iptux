@@ -363,4 +363,17 @@ string StrFirstNonEmptyLine(const string& s) {
   return s.substr(pos, pos2 - pos);
 }
 
+GtkImage* igtk_image_new_with_size(const char* filename,
+                                   int width,
+                                   int height) {
+  GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+  if (!pixbuf) {
+    LOG_ERROR("Error loading image.");
+    return NULL;
+  }
+
+  pixbuf_shrink_scale_1(&pixbuf, width, height);
+  return GTK_IMAGE(gtk_image_new_from_pixbuf(pixbuf));
+}
+
 }  // namespace iptux

@@ -21,6 +21,7 @@ TEST(DialogPeer, Constructor) {
   app->getCoreThread()->AttachPalToList(pal);
 
   GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
+  grpinf->buffer = gtk_text_buffer_new(NULL);
   DialogPeer* dlgpr = new DialogPeer(app, grpinf);
 
   auto clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
@@ -37,6 +38,16 @@ TEST(DialogPeer, Constructor) {
   gtk_clipboard_set_image(clipboard, pixbuf);
   do_action(dlgpr, "paste");
   g_object_unref(pixbuf);
+
+  MsgPara msg(pal);
+  msg.dtlist.push_back(ChipData("helloworld"));
+
+  grpinf->addMsgPara(msg);
+
+  msg = MsgPara(pal);
+  msg.dtlist.push_back(
+      ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
+  grpinf->addMsgPara(msg);
 
   DestroyApplication(app);
 }

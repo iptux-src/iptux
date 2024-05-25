@@ -47,7 +47,9 @@ char* convert_encode(const char* string,
                      const char* fromcode);
 std::string assert_filename_inexist(const char* path);
 std::string dupPath(const std::string& fname, int idx);
-char* getformattime(gboolean date, const char* format, ...);
+char* getformattime(gboolean date, const char* format, ...) G_GNUC_PRINTF(2, 3);
+char* getformattime2(time_t now, gboolean date, const char* format, ...)
+    G_GNUC_PRINTF(3, 4);
 
 gboolean giter_compare_foreach(gunichar src, gunichar dst);
 
