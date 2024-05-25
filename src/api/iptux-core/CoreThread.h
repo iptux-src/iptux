@@ -4,9 +4,9 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
-#include <netinet/in.h>
 #include <vector>
 
+#include <gio/gio.h>
 #include <sigc++/signal.h>
 
 #include "iptux-core/Event.h"
@@ -32,14 +32,14 @@ class CoreThread {
   uint16_t port() const;
 
   std::shared_ptr<ProgramData> getProgramData();
-  bool BlacklistContainItem(in_addr ipv4) const;
+  bool BlacklistContainItem(uint32_t ipv4) const;
 
   /**
    * @brief add ipaddress to block list
    *
    * @param ipv4 the ip address
    */
-  void AddBlockIp(in_addr ipv4);
+  void AddBlockIp(uint32_t ipv4);
 
   /**
    * @brief whether the ipv4 address is blocked?
@@ -48,7 +48,7 @@ class CoreThread {
    * @return true if blocked
    * @return false if not blocked
    */
-  bool IsBlocked(in_addr ipv4) const;
+  bool IsBlocked(uint32_t ipv4) const;
 
   void Lock() const;
   void Unlock() const;
@@ -58,17 +58,17 @@ class CoreThread {
 
   CPPalInfo GetPal(PalKey palKey) const;
   PPalInfo GetPal(PalKey palKey);
-  CPPalInfo GetPal(in_addr ipv4) const { return GetPal(PalKey(ipv4, port())); }
-  PPalInfo GetPal(in_addr ipv4) { return GetPal(PalKey(ipv4, port())); }
+  CPPalInfo GetPal(uint32_t ipv4) const { return GetPal(PalKey(ipv4, port())); }
+  PPalInfo GetPal(uint32_t ipv4) { return GetPal(PalKey(ipv4, port())); }
   CPPalInfo GetPal(const std::string& ipv4) const;
   PPalInfo GetPal(const std::string& ipv4);
 
   virtual void DelPalFromList(PalKey palKey);
-  virtual void DelPalFromList(in_addr palKey) {
+  virtual void DelPalFromList(uint32_t palKey) {
     DelPalFromList(PalKey(palKey, port()));
   }
   virtual void UpdatePalToList(PalKey palKey);
-  virtual void UpdatePalToList(in_addr palKey) {
+  virtual void UpdatePalToList(uint32_t palKey) {
     UpdatePalToList(PalKey(palKey, port()));
   }
 
@@ -138,7 +138,7 @@ class CoreThread {
                                  const std::string& password);
 
   void SendDetectPacket(const std::string& ipv4);
-  void SendDetectPacket(in_addr ipv4);
+  void SendDetectPacket(uint32_t ipv4);
   void SendExit(PPalInfo pal);
   void SendMyIcon(PPalInfo pal, std::istream& iss);
   void SendSharedFiles(PPalInfo pal);
@@ -183,8 +183,8 @@ class CoreThread {
  protected:
   std::shared_ptr<ProgramData> programData;
   std::shared_ptr<IptuxConfig> config;
-  int tcpSock;
-  int udpSock;
+  GSocket* tcpSock;
+  GSocket* udpSock;
   mutable std::mutex mutex;  // 锁
 
  private:

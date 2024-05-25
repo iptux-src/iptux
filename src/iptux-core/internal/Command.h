@@ -37,7 +37,7 @@ class Command {
   void SendAnsentry(int sock, CPPalInfo pal);
   void SendExit(int sock, CPPalInfo pal);
   void SendAbsence(int sock, CPPalInfo pal);
-  void SendDetectPacket(int sock, in_addr ipv4, uint16_t port);
+  void SendDetectPacket(int sock, uint32_t ipv4, uint16_t port);
   void SendMessage(int sock, CPPalInfo pal, const char* msg);
   void SendReply(int sock, CPPalInfo pal, uint32_t packetno);
   void SendReply(int sock, const PalKey& pal, uint32_t packetno);
