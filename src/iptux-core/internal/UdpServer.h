@@ -6,9 +6,16 @@
 
 namespace iptux {
 
-class UdpDataService {
+enum class UdpServerStatus {
+  INITED,
+  RUNNING,
+  STOPPED,
+  START_FAILED,
+};
+
+class UdpServer {
  public:
-  explicit UdpDataService(CoreThread& coreThread);
+  explicit UdpServer(CoreThread& coreThread);
 
   std::unique_ptr<UdpData> process(in_addr ipv4,
                                    int port,
@@ -23,11 +30,17 @@ class UdpDataService {
 
   void process(UdpData& udpData);
 
+  bool start();
+  bool stop();
+
  private:
   CoreThread& core_thread_;
+  std::string bind_ip;
+  int bind_port;
+  UdpServerStatus status = UdpServerStatus::INITED;
 };
 
-using UdpDataService_U = std::unique_ptr<UdpDataService>;
+using UdpServer_U = std::unique_ptr<UdpServer>;
 
 }  // namespace iptux
 

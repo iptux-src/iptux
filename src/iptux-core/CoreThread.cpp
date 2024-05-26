@@ -20,8 +20,7 @@
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
-#include "iptux-core/internal/UdpData.h"
-#include "iptux-core/internal/UdpDataService.h"
+#include "iptux-core/internal/UdpServer.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
@@ -88,7 +87,7 @@ struct CoreThread::Impl {
 
   PPalInfo me;
 
-  UdpDataService_U udp_data_service;
+  UdpServer_U udp_server;
 
   GSList* blacklist{nullptr};  // 黑名单链表
   bool debugDontBroadcast{false};
@@ -118,7 +117,7 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
     pImpl->debugDontBroadcast = true;
   }
   pImpl->port = programData->port();
-  pImpl->udp_data_service = make_unique<UdpDataService>(*this);
+  pImpl->udp_server = make_unique<UdpServer>(*this);
   pImpl->me = make_shared<PalInfo>("127.0.0.1", port());
   (*pImpl->me)
       .setUser(g_get_user_name())
@@ -151,6 +150,8 @@ void CoreThread::start() {
   pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
   pImpl->notifyToAllFuture =
       async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
+
+  pImpl->udp_server->start();
 }
 
 void CoreThread::bind_iptux_port() {
@@ -230,7 +231,7 @@ void CoreThread::RecvUdpData(CoreThread* self) {
     if (size != MAX_UDPLEN)
       buf[size] = '\0';
     auto port = ntohs(addr.sin_port);
-    self->pImpl->udp_data_service->process(addr.sin_addr, port, buf, size);
+    self->pImpl->udp_server->process(addr.sin_addr, port, buf, size);
   }
 }
 
