@@ -13,6 +13,7 @@
 #include "config.h"
 #include "DialogPeer.h"
 
+#include "UiModels.h"
 #include <cinttypes>
 
 #include <sys/socket.h>
@@ -52,6 +53,7 @@ DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
       sigc::mem_fun(*this, &DialogPeer::onNewFileReceived));
   app->getCoreThread()->sigGroupInfoUpdated.connect(
       sigc::mem_fun(*this, &DialogPeer::onGroupInfoUpdated));
+  init();
 }
 
 /**
@@ -73,9 +75,7 @@ void DialogPeer::PeerDialogEntry(Application* app, GroupInfo* grpinf) {
   if (grpinf->getDialog())
     return;
 
-  DialogPeer* dlgpr;
-  dlgpr = new DialogPeer(app, grpinf);
-  dlgpr->init();
+  new DialogPeer(app, grpinf);
 }
 
 void DialogPeer::init() {
@@ -97,6 +97,7 @@ void DialogPeer::init() {
       makeActionEntry("request_shared_resources",
                       G_ACTION_CALLBACK(onRequestSharedResources)),
       makeActionEntry("send_message", G_ACTION_CALLBACK(onSendMessage)),
+      makeActionEntry("paste", G_ACTION_CALLBACK(onPaste)),
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
@@ -265,7 +266,7 @@ GtkWidget* DialogPeer::CreateAllArea() {
   gtk_box_pack_start(GTK_BOX(box), hpaned, TRUE, TRUE, 0);
   g_signal_connect(hpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
-  /*/* 加入聊天历史记录&输入区域 */
+  /* 加入聊天历史记录&输入区域 */
   vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
                     (gpointer) "historyinput-paned-divide");
@@ -426,10 +427,16 @@ bool DialogPeer::SendTextMsg() {
       /* 保存图片 */
       chipmsg = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
                                 g_get_user_config_dir(), count++);
-      gdk_pixbuf_save(pixbuf, chipmsg, "bmp", NULL, NULL);
-      /* 新建一个碎片数据(图片)，并加入数据链表 */
-      ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
-      dtlist.push_back(std::move(chip));
+      GError* error = nullptr;
+      gdk_pixbuf_save(pixbuf, chipmsg, "png", &error, NULL);
+      if (error) {
+        LOG_ERROR("failed to save image: %s", error->message);
+        g_error_free(error);
+      } else {
+        /* 新建一个碎片数据(图片)，并加入数据链表 */
+        ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
+        dtlist.push_back(std::move(chip));
+      }
     }
   } while (gtk_text_iter_forward_find_char(
       &iter, GtkTextCharPredicate(giter_compare_foreach),
@@ -490,6 +497,11 @@ MsgPara* DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
 void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
   auto g_cthrd = self.app->getCoreThread();
   g_cthrd->SendAskShared(self.grpinf->getMembers()[0]);
+}
+
+void DialogPeer::onPaste(void*, void*, DialogPeer* self) {
+  GtkTextView* textview = GTK_TEXT_VIEW(self->inputTextviewWidget);
+  DialogBase::OnPasteClipboard(self, textview);
 }
 
 void DialogPeer::insertPicture() {

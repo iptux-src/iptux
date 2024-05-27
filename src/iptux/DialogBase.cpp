@@ -14,6 +14,7 @@
 #include "config.h"
 #include "DialogBase.h"
 
+#include "UiModels.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 #include <sys/stat.h>
@@ -72,14 +73,12 @@ void DialogBase::ClearSublayerGeneral() {
  * 清空聊天历史记录.
  */
 void DialogBase::ClearHistoryTextView() {
-  GtkWidget* widget;
   GtkTextBuffer* buffer;
   GtkTextTagTable* table;
   GtkTextIter start, end;
   GSList *taglist, *tlist;
 
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-textview-widget"));
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+  buffer = gtk_text_view_get_buffer(chat_history_widget);
   table = gtk_text_buffer_get_tag_table(buffer);
 
   /* 清除用于局部标记的GtkTextTag */
@@ -105,17 +104,14 @@ void DialogBase::ClearHistoryTextView() {
  * 滚动聊天历史记录区.
  */
 void DialogBase::ScrollHistoryTextview() {
-  GtkWidget* widget;
   GtkTextBuffer* buffer;
   GtkTextIter end;
   GtkTextMark* mark;
 
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-textview-widget"));
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+  buffer = gtk_text_view_get_buffer(chat_history_widget);
   gtk_text_buffer_get_end_iter(buffer, &end);
   mark = gtk_text_buffer_create_mark(buffer, NULL, &end, FALSE);
-  gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(widget), mark, 0.0, TRUE, 0.0,
-                               0.0);
+  gtk_text_view_scroll_to_mark(chat_history_widget, mark, 0.0, TRUE, 0.0, 0.0);
   gtk_text_buffer_delete_mark(buffer, mark);
 }
 
@@ -202,10 +198,10 @@ void DialogBase::AttachEnclosure(const GSList* list) {
     /* 转到下一个文件节点 */
     tlist = g_slist_next(tlist);
   }
-  //计算待发送文件总计大小
+  // 计算待发送文件总计大小
   totalsendsize = 0;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {  //遍历待发送model
+    do {  // 遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
       totalsendsize += file->filesize;
     } while (gtk_tree_model_iter_next(model, &iter));
@@ -261,6 +257,8 @@ GtkWidget* DialogBase::CreateInputArea() {
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_signal_connect_swapped(widget, "drag-data-received",
                            G_CALLBACK(DragDataReceived), this);
+  g_signal_connect_swapped(widget, "paste-clipboard",
+                           G_CALLBACK(DialogBase::OnPasteClipboard), this);
   g_datalist_set_data(&widset, "input-textview-widget", widget);
 
   /* 功能按钮 */
@@ -285,7 +283,6 @@ GtkWidget* DialogBase::CreateInputArea() {
  */
 GtkWidget* DialogBase::CreateHistoryArea() {
   GtkWidget *frame, *sw;
-  GtkWidget* widget;
 
   frame = gtk_frame_new(_("Chat History"));
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
@@ -296,20 +293,24 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                                       GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(frame), sw);
 
-  widget = gtk_text_view_new_with_buffer(grpinf->buffer);
-  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
-  gtk_container_add(GTK_CONTAINER(sw), widget);
-  g_signal_connect(widget, "key-press-event",
+  chat_history_widget =
+      GTK_TEXT_VIEW(gtk_text_view_new_with_buffer(grpinf->buffer));
+  gtk_text_view_set_cursor_visible(chat_history_widget, FALSE);
+  gtk_text_view_set_editable(chat_history_widget, FALSE);
+  gtk_text_view_set_wrap_mode(chat_history_widget, GTK_WRAP_WORD);
+  gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(chat_history_widget));
+  g_signal_connect(chat_history_widget, "key-press-event",
                    G_CALLBACK(textview_key_press_event), NULL);
-  g_signal_connect(widget, "event-after", G_CALLBACK(textview_event_after),
-                   NULL);
-  g_signal_connect(widget, "motion-notify-event",
+  g_signal_connect(chat_history_widget, "event-after",
+                   G_CALLBACK(textview_event_after), NULL);
+  g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
-  g_signal_connect(widget, "visibility-notify-event",
+  g_signal_connect(chat_history_widget, "visibility-notify-event",
                    G_CALLBACK(textview_visibility_notify_event), NULL);
-  g_datalist_set_data(&widset, "history-textview-widget", widget);
+  g_signal_connect_data(grpinf->buffer, "insert-child-anchor",
+                        G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
+                        this, NULL,
+                        (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
 
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
@@ -487,7 +488,7 @@ void DialogBase::DragDataReceived(DialogBase* dlgpr,
     return;
   }
 
-  list = selection_data_get_path(data);  //获取所有文件
+  list = selection_data_get_path(data);  // 获取所有文件
   dlgpr->AttachEnclosure(list);
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
@@ -601,7 +602,7 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
   auto dlg = self;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
-  //从中心结点删除
+  // 从中心结点删除
   TreeSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   list = gtk_tree_selection_get_selected_rows(TreeSel, NULL);
   if (!list)
@@ -615,9 +616,9 @@ void DialogBase::RemoveSelectedEnclosure(DialogBase* self) {
     list = g_list_next(list);
   }
   g_list_free(list);
-  //从列表中删除
+  // 从列表中删除
   RemoveSelectedFromTree(GTK_WIDGET(widget));
-  //重新计算待发送文件大小
+  // 重新计算待发送文件大小
   dlg->UpdateFileSendUI(dlg);
 }
 
@@ -659,7 +660,7 @@ GtkWidget* DialogBase::CreateFileSendArea() {
   g_datalist_set_data_full(&mdlset, "enclosure-model", model,
                            GDestroyNotify(g_object_unref));
   g_datalist_set_data(&widset, "file-send-treeview-widget", treeview);
-  //保存this指针，在后面消息响应函数中用到
+  // 保存this指针，在后面消息响应函数中用到
   g_object_set_data(G_OBJECT(treeview), "dialog", this);
   gtk_container_add(GTK_CONTAINER(sw), treeview);
   gtk_box_pack_end(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
@@ -757,7 +758,7 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   sentsize = 0;
   if (gtk_tree_model_get_iter_first(model, &iter)) {
-    do {  //遍历待发送model
+    do {  // 遍历待发送model
       gtk_tree_model_get(model, &iter, 4, &file, -1);
       if (file->finishedsize == file->filesize) {
         gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, "tip-finish", -1);
@@ -791,6 +792,122 @@ gboolean DialogBase::UpdateFileSendUI(DialogBase* dlggrp) {
 
 GtkTextBuffer* DialogBase::getInputBuffer() {
   return grpinf->getInputBuffer();
+}
+
+void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
+  GtkClipboard* clipboard;
+  GtkTextBuffer* buffer;
+  GtkTextIter iter;
+
+  clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  buffer = gtk_text_view_get_buffer(textview);
+  gtk_text_buffer_get_iter_at_mark(buffer, &iter,
+                                   gtk_text_buffer_get_insert(buffer));
+  if (gtk_clipboard_wait_is_text_available(clipboard)) {
+    gchar* text = gtk_clipboard_wait_for_text(clipboard);
+    if (text) {
+      gtk_text_buffer_insert(buffer, &iter, text, -1);
+      g_free(text);
+    }
+  } else if (gtk_clipboard_wait_is_image_available(clipboard)) {
+    GdkPixbuf* pixbuf = gtk_clipboard_wait_for_image(clipboard);
+    if (pixbuf) {
+      gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
+      g_object_unref(pixbuf);
+    }
+  }
+}
+
+gboolean DialogBase::OnImageButtonPress(DialogBase*,
+                                        GdkEventButton event,
+                                        GtkEventBox* event_box) {
+  if (event.type != GDK_BUTTON_PRESS || event.button != 3) {
+    return FALSE;
+  }
+
+  GtkWidget* image = gtk_bin_get_child(GTK_BIN(event_box));
+  if (!GTK_IS_IMAGE(image)) {
+    LOG_ERROR("image not found in event box.");
+    return FALSE;
+  }
+
+  GtkWidget* menu = gtk_menu_new();
+  GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnSaveImage), image);
+  gtk_widget_show_all(menu);
+
+  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)&event);
+  return TRUE;
+}
+
+void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
+                                                const GtkTextIter*,
+                                                GtkTextChildAnchor* anchor,
+                                                GtkTextBuffer*) {
+  const char* path =
+      (const char*)g_object_get_data(G_OBJECT(anchor), kObjectKeyImagePath);
+  if (!path) {
+    LOG_ERROR("No image path found in anchor.");
+    return;
+  }
+
+  GtkWidget* event_box = gtk_event_box_new();
+  gtk_widget_set_focus_on_click(event_box, TRUE);
+
+  GtkImage* image = igtk_image_new_with_size(path, 300, 300);
+  if (!image) {
+    LOG_ERROR("Failed to create image widget.");
+    return;
+  }
+  g_object_set_data_full(G_OBJECT(image), kObjectKeyImagePath, g_strdup(path),
+                         g_free);
+
+  gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(image));
+  g_signal_connect_swapped(event_box, "button-press-event",
+                           G_CALLBACK(DialogBase::OnImageButtonPress), self);
+
+  gtk_text_view_add_child_at_anchor(self->chat_history_widget, event_box,
+                                    anchor);
+  gtk_widget_show_all(event_box);
+}
+
+void DialogBase::OnSaveImage(GtkImage* image) {
+  const char* path =
+      (const char*)g_object_get_data(G_OBJECT(image), kObjectKeyImagePath);
+  if (!path) {
+    LOG_ERROR("No image path found in image widget.");
+    return;
+  }
+
+  GtkWidget* dialog = gtk_file_chooser_dialog_new(
+      _("Save Image"), GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(image))),
+      GTK_FILE_CHOOSER_ACTION_SAVE, _("_Cancel"), GTK_RESPONSE_CANCEL,
+      _("_Save"), GTK_RESPONSE_ACCEPT, NULL);
+  gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+                                                 TRUE);
+  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
+
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+    char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+
+    GError* error = NULL;
+    GFile* source = g_file_new_for_path(path);
+    GFile* destination = g_file_new_for_path(save_path);
+    gboolean success = g_file_copy(source, destination, G_FILE_COPY_OVERWRITE,
+                                   NULL, NULL, NULL, &error);
+    if (!success) {
+      LOG_ERROR("Failed to save image: %s", error->message);
+      g_error_free(error);
+    }
+
+    g_object_unref(source);
+    g_object_unref(destination);
+    g_free(save_path);
+  }
+
+  gtk_widget_destroy(dialog);
 }
 
 }  // namespace iptux

@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "iptux-utils/TestHelper.h"
 #include "iptux/UiHelper.h"
 #include <cstdlib>
 #include <ctime>
@@ -42,4 +43,23 @@ TEST(UiHelper, StrFirstNonEmptyLine) {
   ASSERT_EQ(StrFirstNonEmptyLine("\n b"), "b");
   ASSERT_EQ(StrFirstNonEmptyLine("\n b"), "b");
   ASSERT_EQ(StrFirstNonEmptyLine(" \n b\n"), "b");
+}
+
+TEST(UiHelper, igtk_image_new_with_size) {
+  auto image =
+      igtk_image_new_with_size(testDataPath("iptux.png").c_str(), 100, 100);
+  ASSERT_NE(image, nullptr);
+  auto pixbuf = gtk_image_get_pixbuf(image);
+  ASSERT_EQ(gdk_pixbuf_get_width(pixbuf), 48);
+  ASSERT_EQ(gdk_pixbuf_get_height(pixbuf), 48);
+  g_object_unref(pixbuf);
+  g_object_unref(image);
+
+  image = igtk_image_new_with_size(testDataPath("iptux.png").c_str(), 20, 30);
+  ASSERT_NE(image, nullptr);
+  pixbuf = gtk_image_get_pixbuf(image);
+  ASSERT_EQ(gdk_pixbuf_get_width(pixbuf), 20);
+  ASSERT_EQ(gdk_pixbuf_get_height(pixbuf), 20);
+  g_object_unref(pixbuf);
+  g_object_unref(image);
 }
