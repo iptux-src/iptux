@@ -17,7 +17,7 @@ TEST(UdpDataService, process) {
 
 TEST(UdpDataService, SomeoneEntry) {
   auto core = newCoreThread();
-  auto service = std::make_unique<UdpDataService>(*core.get());
+  auto service = make_unique<UdpDataService>(*core.get());
   const char* data = "iptux 0.8.0:1:lidaobing:lidaobing.lan:257:lidaobing";
   service->process(inAddrFromString("127.0.0.1"), 1234, data, strlen(data),
                    true);
