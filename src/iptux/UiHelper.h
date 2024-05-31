@@ -29,6 +29,16 @@ void widget_enable_dnd_uri(GtkWidget* widget);
 GSList* selection_data_get_path(GtkSelectionData* data);
 
 /**
+ * @brief create GtkImage with width and height
+ *
+ * @param filename image file name
+ * @param width max width, -1 for no limit
+ * @param height max height, -1 for no limit
+ * @return GtkImage* null if failed
+ */
+GtkImage* igtk_image_new_with_size(const char* filename, int width, int height);
+
+/**
  * @brief only used for test, after call this, pop_info, pop_warning,
  * and iptux_open_url will only print log
  */

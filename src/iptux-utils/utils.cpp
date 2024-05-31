@@ -186,6 +186,27 @@ char* getformattime(gboolean date, const char* format, ...) {
   return ptr;
 }
 
+char* getformattime2(time_t tt, gboolean date, const char* format, ...) {
+  char buf[MAX_BUFLEN], *msg, *ptr;
+  va_list ap;
+
+  va_start(ap, format);
+  msg = g_strdup_vprintf(format, ap);
+  va_end(ap);
+
+  struct tm tm;
+  localtime_r(&tt, &tm);
+  if (date)
+    strftime(buf, MAX_BUFLEN, "%c", &tm);
+  else
+    strftime(buf, MAX_BUFLEN, "%X", &tm);
+
+  ptr = g_strdup_printf("(%s) %s:", buf, msg);
+  g_free(msg);
+
+  return ptr;
+}
+
 /**
  * 对GtkTextBuffer的迭代器(GtkTextIter)所指的字符进行比较.
  * @param src 源字符
