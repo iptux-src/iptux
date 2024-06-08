@@ -188,7 +188,7 @@ jobs:
           meson --version
           meson setup build -Dsanitize-address=true
         env:
-          CXX: clang++
+          CXX: g++
       - name: build
         run: ninja -v -C build
       - name: install
