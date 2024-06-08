@@ -18,3 +18,10 @@ option(
   value: 'auto',
   description: 'enable app indicator support',
 )
+
+option(
+  'santinize-address',
+  type: 'boolean',
+  value: 'false',
+  description: 'enable -fsanitize=address compile/link flag',
+)
