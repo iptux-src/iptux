@@ -6,6 +6,11 @@ add_global_arguments('-Werror=format', language : 'cpp')
 add_project_arguments(
   '-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_36',
   language: 'cpp')
+if get_option('sanitize-address')
+  add_project_arguments('-fsanitize=address', language: 'cpp')
+  add_project_link_arguments('-fsanitize=address', language: 'cpp')
+endif
+
 so_version = '0.9.1'
 subdir('src')
 subdir('share')

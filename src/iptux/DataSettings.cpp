@@ -794,23 +794,24 @@ void DataSettings::ObtainPersonalValue() {
     snprintf(path, MAX_PATHLEN, "%d", active);
     gtk_tree_model_get_iter_from_string(model, &iter, path);
     gtk_tree_model_get(model, &iter, 1, &file, -1);
-    if (strcmp(g_progdt->myicon.c_str(), file) != 0) {
-      snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
-      if (access(path, F_OK) != 0) {
-        g_free(file);
-        g_progdt->myicon = "my-icon";
-        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon",
-                 g_get_user_config_dir());
-        gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
-        gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-        gtk_icon_theme_add_builtin_icon(g_progdt->myicon.c_str(), MAX_ICONSIZE,
-                                        pixbuf);
-        g_object_unref(pixbuf);
-      } else {
-        g_progdt->myicon = file;
+    if (file) {
+      if (strcmp(g_progdt->myicon.c_str(), file) != 0) {
+        snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
+        if (access(path, F_OK) != 0) {
+          g_progdt->myicon = "my-icon";
+          snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon",
+                   g_get_user_config_dir());
+          gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
+          gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
+          gtk_icon_theme_add_builtin_icon(g_progdt->myicon.c_str(),
+                                          MAX_ICONSIZE, pixbuf);
+          g_object_unref(pixbuf);
+        } else {
+          g_progdt->myicon = file;
+        }
       }
-    } else
       g_free(file);
+    }
   }
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "archive-chooser-widget"));
