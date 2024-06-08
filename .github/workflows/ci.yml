@@ -173,3 +173,27 @@ jobs:
       #   # ${PWD}/artifacts on the host.
       #   run: |
       #     ls -al "${PWD}/artifacts"
+
+  build-santize-address:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: apt install
+        run: >-
+          sudo apt update &&
+          sudo apt install libunwind-dev &&
+          sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
+      - name: meson
+        run: |
+          meson --version
+          meson setup build -Dantize-address=true
+        env:
+          CXX: clang++
+      - name: build
+        run: ninja -v -C build
+      - name: install
+        run: sudo meson install -C build
+      - name: test
+        run: |
+          xvfb-run -a meson test -C build --verbose --no-stdsplit
+        continue-on-error: true
