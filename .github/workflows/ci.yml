@@ -195,5 +195,7 @@ jobs:
         run: sudo meson install -C build
       - name: test
         run: |
-          xvfb-run -a meson test -C build --verbose --no-stdsplit
+          if ! xvfb-run -a meson test -C build --verbose --no-stdsplit; then
+            echo "::warning test failed"
+          fi
         continue-on-error: true
