@@ -186,7 +186,7 @@ jobs:
       - name: meson
         run: |
           meson --version
-          meson setup build -Dantize-address=true
+          meson setup build -Dsanitize-address=true
         env:
           CXX: clang++
       - name: build

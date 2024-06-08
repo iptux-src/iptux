@@ -20,7 +20,7 @@ option(
 )
 
 option(
-  'santinize-address',
+  'sanitize-address',
   type: 'boolean',
   value: 'false',
   description: 'enable -fsanitize=address compile/link flag',

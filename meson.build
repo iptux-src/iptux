@@ -3,7 +3,7 @@ project('iptux', 'cpp',
     version: '0.9.1',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
 add_global_arguments('-Werror=format', language : 'cpp')
-if get_option('santinize-address')
+if get_option('sanitize-address')
   add_project_arguments('-fsanitize=address', language: 'cpp')
   add_project_link_arguments('-fsanitize=address', language: 'cpp')
 endif
