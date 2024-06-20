@@ -836,9 +836,14 @@ gboolean DialogBase::OnImageButtonPress(DialogBase*,
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
   g_signal_connect_swapped(menu_item, "activate",
                            G_CALLBACK(DialogBase::OnSaveImage), image);
+  menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnCopyImage), image);
   gtk_widget_show_all(menu);
 
   gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)&event);
+  g_signal_connect(menu, "hide", G_CALLBACK(gtk_widget_destroy), menu);
   return TRUE;
 }
 
@@ -908,6 +913,17 @@ void DialogBase::OnSaveImage(GtkImage* image) {
   }
 
   gtk_widget_destroy(dialog);
+}
+
+void DialogBase::OnCopyImage(GtkImage* image) {
+  GdkPixbuf* pixbuf = gtk_image_get_pixbuf(image);
+  if (!pixbuf) {
+    LOG_ERROR("Failed to create pixbuf from image.");
+    return;
+  }
+
+  GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  gtk_clipboard_set_image(clipboard, pixbuf);
 }
 
 }  // namespace iptux
