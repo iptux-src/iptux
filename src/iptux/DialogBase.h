@@ -90,6 +90,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
                                              GtkTextChildAnchor* anchor,
                                              GtkTextBuffer* buffer);
   static void OnSaveImage(GtkImage* self);
+  static void OnCopyImage(GtkImage* self);
 
  protected:
   Application* app;
