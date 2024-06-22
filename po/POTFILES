@@ -32,7 +32,6 @@ src/iptux/DetectPal.cpp
 src/iptux/DialogBase.cpp
 src/iptux/DialogGroup.cpp
 src/iptux/DialogPeer.cpp
-src/iptux/EventAdaptor.cpp
 src/iptux/GioNotificationService.cpp
 src/iptux/LogSystem.cpp
 src/iptux/MainWindow.cpp
