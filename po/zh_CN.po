@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2024-06-21 21:54-0700\n"
-"PO-Revision-Date: 2024-05-13 03:47+0000\n"
+"PO-Revision-Date: 2024-06-22 05:15+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "iptux/iptux/zh_Hans/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.5.4\n"
+"X-Generator: Weblate 5.6-rc\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
@@ -586,11 +586,11 @@ msgstr "任务完成！"
 
 #: src/iptux/DialogBase.cpp:835 src/iptux/DialogBase.cpp:890
 msgid "Save Image"
-msgstr ""
+msgstr "保存图片"
 
 #: src/iptux/DialogBase.cpp:839
 msgid "Copy Image"
-msgstr ""
+msgstr "拷贝图片"
 
 #: src/iptux/DialogGroup.cpp:284
 msgid "Member"
