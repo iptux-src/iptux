@@ -819,9 +819,9 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
 }
 
 gboolean DialogBase::OnImageButtonPress(DialogBase*,
-                                        GdkEventButton event,
+                                        GdkEventButton* event,
                                         GtkEventBox* event_box) {
-  if (event.type != GDK_BUTTON_PRESS || event.button != 3) {
+  if (event->type != GDK_BUTTON_PRESS || event->button != 3) {
     return FALSE;
   }
 
@@ -842,8 +842,8 @@ gboolean DialogBase::OnImageButtonPress(DialogBase*,
                            G_CALLBACK(DialogBase::OnCopyImage), image);
   gtk_widget_show_all(menu);
 
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)&event);
-  g_signal_connect(menu, "hide", G_CALLBACK(gtk_widget_destroy), menu);
+  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)event);
+  // g_signal_connect(menu, "hide", G_CALLBACK(gtk_widget_destroy), menu);
   return TRUE;
 }
 
