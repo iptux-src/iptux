@@ -37,6 +37,7 @@ GSList* selection_data_get_path(GtkSelectionData* data);
  * @return GtkImage* null if failed
  */
 GtkImage* igtk_image_new_with_size(const char* filename, int width, int height);
+std::string igtk_text_buffer_get_text(GtkTextBuffer* buffer);
 
 /**
  * @brief only used for test, after call this, pop_info, pop_warning,

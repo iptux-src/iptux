@@ -501,7 +501,7 @@ void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
 
 void DialogPeer::onPaste(void*, void*, DialogPeer* self) {
   GtkTextView* textview = GTK_TEXT_VIEW(self->inputTextviewWidget);
-  DialogBase::OnPasteClipboard(self, textview);
+  g_signal_emit_by_name(textview, "paste-clipboard");
 }
 
 void DialogPeer::insertPicture() {

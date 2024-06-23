@@ -376,4 +376,13 @@ GtkImage* igtk_image_new_with_size(const char* filename,
   return GTK_IMAGE(gtk_image_new_from_pixbuf(pixbuf));
 }
 
+string igtk_text_buffer_get_text(GtkTextBuffer* buffer) {
+  GtkTextIter start, end;
+  gtk_text_buffer_get_bounds(buffer, &start, &end);
+  char* res1 = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+  string res(res1);
+  g_free(res1);
+  return res;
+}
+
 }  // namespace iptux

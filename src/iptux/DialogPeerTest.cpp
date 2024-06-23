@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "UiHelper.h"
 #include "gtest/gtest.h"
 
 #include "iptux-utils/TestHelper.h"
@@ -23,10 +24,12 @@ TEST(DialogPeer, Constructor) {
   GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
   grpinf->buffer = gtk_text_buffer_new(NULL);
   DialogPeer* dlgpr = new DialogPeer(app, grpinf);
+  ASSERT_EQ(igtk_text_buffer_get_text(grpinf->getInputBuffer()), "");
 
   auto clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   gtk_clipboard_set_text(clipboard, "hello world", -1);
   do_action(dlgpr, "paste");
+  ASSERT_EQ(igtk_text_buffer_get_text(grpinf->getInputBuffer()), "hello world");
 
   GError* error = NULL;
   auto pixbuf =
