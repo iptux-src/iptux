@@ -812,7 +812,25 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
   }
 }
 
-gboolean DialogBase::OnImageButtonPress(DialogBase*,
+void DialogBase::afterWindowCreated() {
+  g_return_if_fail(!m_imagePopupMenu);
+
+  m_imagePopupMenu = GTK_MENU(gtk_menu_new());
+
+  GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnSaveImage), this);
+
+  menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnCopyImage), this);
+
+  gtk_menu_attach_to_widget(m_imagePopupMenu, GTK_WIDGET(getWindow()), NULL);
+}
+
+gboolean DialogBase::OnImageButtonPress(DialogBase* self,
                                         GdkEventButton* event,
                                         GtkEventBox* event_box) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) {
@@ -824,20 +842,10 @@ gboolean DialogBase::OnImageButtonPress(DialogBase*,
     LOG_ERROR("image not found in event box.");
     return FALSE;
   }
+  self->m_activeImage = GTK_IMAGE(image);
 
-  GtkWidget* menu = gtk_menu_new();
-  GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnSaveImage), image);
-  menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnCopyImage), image);
-  gtk_widget_show_all(menu);
-
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)event);
-  // g_signal_connect(menu, "hide", G_CALLBACK(gtk_widget_destroy), menu);
+  gtk_widget_show_all(GTK_WIDGET(self->m_imagePopupMenu));
+  gtk_menu_popup_at_pointer(self->m_imagePopupMenu, (GdkEvent*)event);
   return TRUE;
 }
 
@@ -872,7 +880,10 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   gtk_widget_show_all(event_box);
 }
 
-void DialogBase::OnSaveImage(GtkImage* image) {
+void DialogBase::OnSaveImage(DialogBase* self) {
+  GtkImage* image = self->m_activeImage;
+  g_return_if_fail(!!image);
+
   const char* path =
       (const char*)g_object_get_data(G_OBJECT(image), kObjectKeyImagePath);
   if (!path) {
@@ -909,7 +920,10 @@ void DialogBase::OnSaveImage(GtkImage* image) {
   gtk_widget_destroy(dialog);
 }
 
-void DialogBase::OnCopyImage(GtkImage* image) {
+void DialogBase::OnCopyImage(DialogBase* self) {
+  GtkImage* image = self->m_activeImage;
+  g_return_if_fail(!!image);
+
   GdkPixbuf* pixbuf = gtk_image_get_pixbuf(image);
   if (!pixbuf) {
     LOG_ERROR("Failed to create pixbuf from image.");

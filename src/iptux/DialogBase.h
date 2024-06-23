@@ -35,6 +35,8 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   void InitSublayerGeneral();
   void ClearSublayerGeneral();
 
+  void afterWindowCreated();
+
   void ScrollHistoryTextview();
   virtual void OnNewMessageComing();
   void NotifyUser();
@@ -89,8 +91,8 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
                                              const GtkTextIter* location,
                                              GtkTextChildAnchor* anchor,
                                              GtkTextBuffer* buffer);
-  static void OnSaveImage(GtkImage* self);
-  static void OnCopyImage(GtkImage* self);
+  static void OnSaveImage(DialogBase* self);
+  static void OnCopyImage(DialogBase* self);
 
  protected:
   Application* app;
@@ -109,6 +111,10 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   int64_t totalsendsize;    // 总计待发送大小(包括已发送)
   struct timeval lasktime;  // 上一次更新UI的时间
   guint timersend;          // 发送文件界面更新计时器ID
+
+ private:
+  GtkMenu* m_imagePopupMenu = 0;
+  GtkImage* m_activeImage = 0;
 };
 
 }  // namespace iptux

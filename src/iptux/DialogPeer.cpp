@@ -235,6 +235,7 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
+  afterWindowCreated();
   return GTK_WINDOW(window);
 }
 
