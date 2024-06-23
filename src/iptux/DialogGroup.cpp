@@ -221,6 +221,7 @@ GtkWindow* DialogGroup::CreateMainWindow() {
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
+  afterWindowCreated();
   return GTK_WINDOW(window);
 }
 
