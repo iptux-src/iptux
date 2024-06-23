@@ -1,10 +1,10 @@
-Version 0.9.2
+Version 0.9.3
 ~~~~~~~~~~~~~
 Released: 2024-06-22
 
 Features:
-  * [#593, #595, #601] support paste image into chatbox, support copy/save image
-    in chat history.
+  * [#593, #595, #601, #604] support paste image into chatbox, support copy/save
+    image in chat history.
   * [#586] add keywords to metainfo and desktop file.
 
 Bugfixes:

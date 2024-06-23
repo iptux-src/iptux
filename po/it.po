@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iptux\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
-"POT-Creation-Date: 2024-06-21 21:54-0700\n"
+"POT-Creation-Date: 2024-06-22 19:01-0700\n"
 "PO-Revision-Date: 2021-05-17 00:40+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/iptux/iptux/it/"
@@ -291,7 +291,7 @@ msgstr "Applica"
 
 #: src/iptux/DataSettings.cpp:137 src/iptux/DataSettings.cpp:1318
 #: src/iptux/DataSettings.cpp:1365 src/iptux/DialogBase.cpp:343
-#: src/iptux/DialogBase.cpp:891 src/iptux/RevisePal.cpp:110
+#: src/iptux/DialogBase.cpp:896 src/iptux/RevisePal.cpp:110
 #: src/iptux/ShareFile.cpp:419 src/iptux/callback.cpp:87
 #: src/iptux/dialog.cpp:171 src/iptux/dialog.cpp:230
 #, fuzzy
@@ -510,7 +510,7 @@ msgstr ""
 msgid "Save data to file"
 msgstr "Salva i dati nel file"
 
-#: src/iptux/DataSettings.cpp:1365 src/iptux/DialogBase.cpp:892
+#: src/iptux/DataSettings.cpp:1365 src/iptux/DialogBase.cpp:897
 #: src/iptux/dialog.cpp:231
 #, fuzzy
 msgid "_Save"
@@ -530,7 +530,7 @@ msgstr ""
 msgid "Close"
 msgstr "Chiudi"
 
-#: src/iptux/DialogBase.cpp:273 src/iptux/DialogGroup.cpp:374
+#: src/iptux/DialogBase.cpp:273 src/iptux/DialogGroup.cpp:375
 msgid "Send"
 msgstr "Invia"
 
@@ -571,7 +571,7 @@ msgstr ""
 msgid "Files"
 msgstr "File"
 
-#: src/iptux/DialogBase.cpp:646 src/iptux/DialogPeer.cpp:609
+#: src/iptux/DialogBase.cpp:646 src/iptux/DialogPeer.cpp:610
 msgid "Detail"
 msgstr ""
 
@@ -580,12 +580,12 @@ msgstr ""
 msgid "PeerName"
 msgstr "Nome"
 
-#: src/iptux/DialogBase.cpp:703 src/iptux/DialogPeer.cpp:760
+#: src/iptux/DialogBase.cpp:703 src/iptux/DialogPeer.cpp:761
 msgid "Name"
 msgstr "Nome"
 
-#: src/iptux/DialogBase.cpp:709 src/iptux/DialogPeer.cpp:696
-#: src/iptux/DialogPeer.cpp:766 src/iptux/ShareFile.cpp:280
+#: src/iptux/DialogBase.cpp:709 src/iptux/DialogPeer.cpp:697
+#: src/iptux/DialogPeer.cpp:767 src/iptux/ShareFile.cpp:280
 #: src/iptux/TransWindow.cpp:271
 msgid "Size"
 msgstr "Dimensione"
@@ -604,39 +604,39 @@ msgstr "Avanzamento Ricezione."
 msgid "%s of %s Sent."
 msgstr "%s di %s Ricevuti."
 
-#: src/iptux/DialogBase.cpp:786 src/iptux/DialogPeer.cpp:879
+#: src/iptux/DialogBase.cpp:786 src/iptux/DialogPeer.cpp:880
 msgid "Mission Completed!"
 msgstr "Missione Completata!"
 
-#: src/iptux/DialogBase.cpp:835 src/iptux/DialogBase.cpp:890
+#: src/iptux/DialogBase.cpp:820 src/iptux/DialogBase.cpp:895
 msgid "Save Image"
 msgstr ""
 
-#: src/iptux/DialogBase.cpp:839
+#: src/iptux/DialogBase.cpp:825
 msgid "Copy Image"
 msgstr ""
 
-#: src/iptux/DialogGroup.cpp:284
+#: src/iptux/DialogGroup.cpp:285
 msgid "Member"
 msgstr "Membro"
 
-#: src/iptux/DialogGroup.cpp:381
+#: src/iptux/DialogGroup.cpp:382
 msgid "Pals"
 msgstr "Conoscenti"
 
-#: src/iptux/DialogGroup.cpp:479
+#: src/iptux/DialogGroup.cpp:480
 msgid "Select All"
 msgstr "Seleziona tutto"
 
-#: src/iptux/DialogGroup.cpp:484
+#: src/iptux/DialogGroup.cpp:485
 msgid "Reverse Select"
 msgstr "Inverti la selezione"
 
-#: src/iptux/DialogGroup.cpp:489
+#: src/iptux/DialogGroup.cpp:490
 msgid "Clear Up"
 msgstr "Cancella"
 
-#: src/iptux/DialogGroup.cpp:727
+#: src/iptux/DialogGroup.cpp:728
 #, c-format
 msgid "Talk with the group %s"
 msgstr "Conversazione con il gruppo %s"
@@ -646,63 +646,63 @@ msgstr "Conversazione con il gruppo %s"
 msgid "Talk with %s(%s) IP:%s"
 msgstr "Conversazione con %s(%s) IP:%s"
 
-#: src/iptux/DialogPeer.cpp:306
+#: src/iptux/DialogPeer.cpp:307
 msgid "Info."
 msgstr "Informazioni"
 
-#: src/iptux/DialogPeer.cpp:338
+#: src/iptux/DialogPeer.cpp:339
 #, c-format
 msgid "Version: %s\n"
 msgstr "Versione: %s\n"
 
-#: src/iptux/DialogPeer.cpp:340
+#: src/iptux/DialogPeer.cpp:341
 #, c-format
 msgid "Nickname: %s@%s\n"
 msgstr "Nickname: %s@%s\n"
 
-#: src/iptux/DialogPeer.cpp:343
+#: src/iptux/DialogPeer.cpp:344
 #, c-format
 msgid "Nickname: %s\n"
 msgstr "Nickname: %s\n"
 
-#: src/iptux/DialogPeer.cpp:345
+#: src/iptux/DialogPeer.cpp:346
 #, c-format
 msgid "User: %s\n"
 msgstr "Utente: %s\n"
 
-#: src/iptux/DialogPeer.cpp:346
+#: src/iptux/DialogPeer.cpp:347
 #, c-format
 msgid "Host: %s\n"
 msgstr "Host: %s\n"
 
-#: src/iptux/DialogPeer.cpp:349
+#: src/iptux/DialogPeer.cpp:350
 #, c-format
 msgid "Address: %s(%s)\n"
 msgstr "Indirizzo: %s(%s)\n"
 
-#: src/iptux/DialogPeer.cpp:351
+#: src/iptux/DialogPeer.cpp:352
 #, c-format
 msgid "Address: %s\n"
 msgstr "Indirizzo: %s\n"
 
-#: src/iptux/DialogPeer.cpp:354
+#: src/iptux/DialogPeer.cpp:355
 msgid "Compatibility: Microsoft\n"
 msgstr "Compatibilità: Microsoft\n"
 
-#: src/iptux/DialogPeer.cpp:356
+#: src/iptux/DialogPeer.cpp:357
 msgid "Compatibility: GNU/Linux\n"
 msgstr "Compatibilità: GNU/Linux\n"
 
-#: src/iptux/DialogPeer.cpp:358
+#: src/iptux/DialogPeer.cpp:359
 #, c-format
 msgid "System coding: %s\n"
 msgstr "Sistema di codifica: %s\n"
 
-#: src/iptux/DialogPeer.cpp:363
+#: src/iptux/DialogPeer.cpp:364
 msgid "Signature:\n"
 msgstr "Firma:\n"
 
-#: src/iptux/DialogPeer.cpp:370
+#: src/iptux/DialogPeer.cpp:371
 msgid ""
 "\n"
 "Photo:\n"
@@ -710,54 +710,54 @@ msgstr ""
 "\n"
 "Foto:\n"
 
-#: src/iptux/DialogPeer.cpp:517
+#: src/iptux/DialogPeer.cpp:518
 msgid "Please select a picture to insert the buffer"
 msgstr "Per favore, seleziona un'immagine da inserire nel buffer"
 
-#: src/iptux/DialogPeer.cpp:546
+#: src/iptux/DialogPeer.cpp:547
 msgid "Enclosure."
 msgstr "Allegato."
 
-#: src/iptux/DialogPeer.cpp:591
+#: src/iptux/DialogPeer.cpp:592
 #, fuzzy
 msgid "Files to be received"
 msgstr "File da ricevere."
 
-#: src/iptux/DialogPeer.cpp:595
+#: src/iptux/DialogPeer.cpp:596
 msgid "Receiving progress."
 msgstr "Avanzamento ricezione."
 
-#: src/iptux/DialogPeer.cpp:598
+#: src/iptux/DialogPeer.cpp:599
 msgid "Accept"
 msgstr "Accetto"
 
-#: src/iptux/DialogPeer.cpp:604 src/iptux/dialog.cpp:63
+#: src/iptux/DialogPeer.cpp:605 src/iptux/dialog.cpp:63
 #: src/iptux/resources/gtk/menus.ui:342
 msgid "Refuse"
 msgstr "Rifiuto"
 
-#: src/iptux/DialogPeer.cpp:640
+#: src/iptux/DialogPeer.cpp:641
 msgid "File received."
 msgstr "File ricevuto."
 
-#: src/iptux/DialogPeer.cpp:683 src/iptux/DialogPeer.cpp:754
+#: src/iptux/DialogPeer.cpp:684 src/iptux/DialogPeer.cpp:755
 msgid "Source"
 msgstr "Sorgente"
 
-#: src/iptux/DialogPeer.cpp:690
+#: src/iptux/DialogPeer.cpp:691
 msgid "SaveAs"
 msgstr "Salva come"
 
-#: src/iptux/DialogPeer.cpp:862 src/iptux/DialogPeer.cpp:928
+#: src/iptux/DialogPeer.cpp:863 src/iptux/DialogPeer.cpp:929
 msgid "Receiving Progress."
 msgstr "Avanzamento Ricezione."
 
-#: src/iptux/DialogPeer.cpp:865 src/iptux/DialogPeer.cpp:931
+#: src/iptux/DialogPeer.cpp:866 src/iptux/DialogPeer.cpp:932
 #, c-format
 msgid "%s to Receive."
 msgstr "%s da Ricevere."
 
-#: src/iptux/DialogPeer.cpp:869 src/iptux/DialogPeer.cpp:935
+#: src/iptux/DialogPeer.cpp:870 src/iptux/DialogPeer.cpp:936
 #, c-format
 msgid "%s Of %s Received."
 msgstr "%s di %s Ricevuti."
