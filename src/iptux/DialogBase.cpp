@@ -803,13 +803,7 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
   buffer = gtk_text_view_get_buffer(textview);
   gtk_text_buffer_get_iter_at_mark(buffer, &iter,
                                    gtk_text_buffer_get_insert(buffer));
-  if (gtk_clipboard_wait_is_text_available(clipboard)) {
-    gchar* text = gtk_clipboard_wait_for_text(clipboard);
-    if (text) {
-      gtk_text_buffer_insert(buffer, &iter, text, -1);
-      g_free(text);
-    }
-  } else if (gtk_clipboard_wait_is_image_available(clipboard)) {
+  if (gtk_clipboard_wait_is_image_available(clipboard)) {
     GdkPixbuf* pixbuf = gtk_clipboard_wait_for_image(clipboard);
     if (pixbuf) {
       gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
