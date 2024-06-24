@@ -1,3 +1,4 @@
+#include "UiHelper.h"
 #include "gtest/gtest.h"
 
 #include "iptux/Application.h"
@@ -13,6 +14,7 @@ void do_action(Application* app, const string& name) {
 }
 
 TEST(Application, Constructor) {
+  _ForTestToggleOpenUrl(false);
   Application* app = CreateApplication();
   do_action(app, "help.whats_new");
   do_action(app, "tools.open_chat_log");
