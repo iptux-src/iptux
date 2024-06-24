@@ -1,6 +1,7 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
+#include "iptux-core/Models.h"
 #include <atomic>
 #include <cstdint>
 #include <memory>
@@ -128,6 +129,7 @@ class CoreThread {
   bool SendMessage(CPPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(const MsgPara& msgPara);
   void AsyncSendMsgPara(MsgPara&& msgPara);
+  void AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara);
   void SendUnitMessage(const PalKey& palKey,
                        uint32_t opttype,
                        const std::string& message);
