@@ -1,6 +1,7 @@
 #include "config.h"
 #include "UiHelper.h"
 
+#include <atomic>
 #include <cerrno>
 #include <cstring>
 #include <ctime>
