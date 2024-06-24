@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "iptux-utils/TestHelper.h"
+#include <clocale>
 #include <memory>
 #include <vector>
 
@@ -89,6 +90,7 @@ static string igtk_text_get_all_text(GtkTextBuffer* buffer) {
 }
 
 TEST(GroupInfo, addMsgPara) {
+  setlocale(LC_ALL, "C");
   PalInfo pal("127.0.0.1", 2425);
   pal.setVersion("1_iptux");
   pal.setName("palname");
