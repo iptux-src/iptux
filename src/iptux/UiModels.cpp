@@ -475,7 +475,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
   static uint32_t count = 0;
   GtkTextIter start;
   GdkPixbuf* pixbuf;
-  char buf[6];
+  char buf[7];
   gchar* chipmsg;
   std::vector<ChipData> dtlist;
 
@@ -505,8 +505,8 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
         dtlist.push_back(std::move(chip));
       }
     } else {
-      g_unichar_to_utf8(c, buf);
-      oss << buf;
+      int size = g_unichar_to_utf8(c, buf);
+      oss.write(buf, size);
     }
     gtk_text_iter_forward_char(&start);
   }

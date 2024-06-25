@@ -131,4 +131,12 @@ TEST(GroupInfo, genMsgParaFromInput) {
 
   auto para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 0);
+
+  GtkTextIter end;
+  gtk_text_buffer_get_end_iter(gi.getInputBuffer(), &end);
+  gtk_text_buffer_insert(gi.getInputBuffer(), &end, "helloworld", -1);
+  para = gi.genMsgParaFromInput();
+  ASSERT_EQ(para->dtlist.size(), 1);
+  ASSERT_EQ(para->dtlist[0].type, MessageContentType::STRING);
+  ASSERT_EQ(para->dtlist[0].data, "helloworld");
 }
