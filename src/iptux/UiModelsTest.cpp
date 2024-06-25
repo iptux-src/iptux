@@ -119,3 +119,16 @@ TEST(GroupInfo, addMsgPara) {
       igtk_text_get_all_text(gi.buffer),
       "(06:55:06) palname:\nhelloworld\n(06:55:07) palname:\n\xEF\xBF\xBC\n");
 }
+
+TEST(GroupInfo, genMsgParaFromInput) {
+  PalInfo pal("127.0.0.1", 2425);
+  pal.setVersion("1_iptux");
+  pal.setName("palname");
+  PalInfo me("127.0.0.2", 2425);
+  PPalInfo cpal = make_shared<PalInfo>(pal);
+  CPPalInfo cme = make_shared<PalInfo>(me);
+  GroupInfo gi(cpal, cme, nullptr);
+
+  auto para = gi.genMsgParaFromInput();
+  ASSERT_EQ(para->dtlist.size(), 0);
+}

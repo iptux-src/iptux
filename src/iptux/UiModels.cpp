@@ -486,7 +486,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
     if (!c)
       break;
     if (ig_unichar_is_atomic(c)) {
-      if (oss) {
+      if (!oss.str().empty()) {
         ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
         dtlist.push_back(std::move(chip));
         oss.str("");
@@ -510,7 +510,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
     }
     gtk_text_iter_forward_char(&start);
   }
-  if (oss) {
+  if (!oss.str().empty()) {
     ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
     dtlist.push_back(std::move(chip));
   }
