@@ -1,5 +1,6 @@
 #include "config.h"
 #include "iptux-core/CoreThread.h"
+#include "Const.h"
 
 #include <deque>
 #include <fstream>
@@ -110,8 +111,8 @@ struct CoreThread::Impl {
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
       config(data->getConfig()),
-      tcpSock(-1),
-      udpSock(-1),
+      tcpSock(0),
+      udpSock(0),
       started(false),
       pImpl(std::make_unique<Impl>()) {
   if (config->GetBool("debug_dont_broadcast")) {
@@ -158,7 +159,23 @@ void CoreThread::bind_iptux_port() {
   struct sockaddr_in addr;
   tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   socket_enable_reuse(tcpSock);
-  udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+  GError* error = nullptr;
+  udpSock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_DATAGRAM,
+                         G_SOCKET_PROTOCOL_UDP, &error);
+  if (error) {
+    LOG_ERROR("create udp socket failed: %s", error->message);
+    g_clear_error(&error);
+    throw Exception(SOCKET_CREATE_FAILED);
+  }
+
+  tcpSock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                         G_SOCKET_PROTOCOL_TCP, &error);
+  if (error) {
+    LOG_ERROR("create tcp socket failed: %s", error->message);
+    g_clear_error(&error);
+    throw Exception(SOCKET_CREATE_FAILED);
+  }
   socket_enable_reuse(udpSock);
   socket_enable_broadcast(udpSock);
   if ((tcpSock == -1) || (udpSock == -1)) {
@@ -210,7 +227,6 @@ void CoreThread::RecvUdpData(CoreThread* self) {
   struct sockaddr_in addr;
   socklen_t len;
   char buf[MAX_UDPLEN];
-  ssize_t size;
 
   while (self->started) {
     struct pollfd pfd = {self->udpSock, POLLIN, 0};
@@ -224,9 +240,20 @@ void CoreThread::RecvUdpData(CoreThread* self) {
     }
     CHECK(ret == 1);
     len = sizeof(addr);
-    if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
-                         (struct sockaddr*)&addr, &len)) == -1)
+
+    GError* error = nullptr;
+    gssize size =
+        g_socket_receive_from(self->udpSock, buf, MAX_UDPLEN, nullptr, &error);
+    if (size < 0) {
+      LOG_ERROR("recvfrom udp socket failed: %s", error->message);
+      g_clear_error(&error);
       continue;
+    }
+
+    if (size == 0) {
+      continue;
+    }
+
     if (size != MAX_UDPLEN)
       buf[size] = '\0';
     auto port = ntohs(addr.sin_port);
