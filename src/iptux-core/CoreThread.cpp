@@ -503,18 +503,18 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
   }
 }
 
-bool CoreThread::SendMsgPara(const MsgPara& para) {
-  for (int i = 0; i < int(para.dtlist.size()); ++i) {
-    if (!SendMessage(para.getPal(), para.dtlist[i])) {
-      LOG_ERROR("send message failed: %s", para.dtlist[i].ToString().c_str());
+bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para) {
+  for (int i = 0; i < int(para->dtlist.size()); ++i) {
+    if (!SendMessage(para->getPal(), para->dtlist[i])) {
+      LOG_ERROR("send message failed: %s", para->dtlist[i].ToString().c_str());
       return false;
     }
   }
   return true;
 }
 
-void CoreThread::AsyncSendMsgPara(MsgPara&& para) {
-  thread t(&CoreThread::SendMsgPara, this, para);
+void CoreThread::AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara) {
+  thread t(&CoreThread::SendMsgPara, this, msgPara);
   t.detach();
 }
 

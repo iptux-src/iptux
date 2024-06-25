@@ -465,6 +465,16 @@ void GroupInfo::newFileReceived() {
   this->signalNewFileReceived.emit(this);
 }
 
+bool GroupInfo::isInputEmpty() const {
+  GtkTextIter start, end;
+  gtk_text_buffer_get_bounds(inputBuffer, &start, &end);
+  return gtk_text_iter_equal(&start, &end);
+}
+
+void GroupInfo::clearInputBuffer() {
+  gtk_text_buffer_set_text(inputBuffer, "", 0);
+}
+
 void GroupInfo::addMsgCount(int i) {
   int oldCount = getUnreadMsgCount();
   allMsgCount += i;

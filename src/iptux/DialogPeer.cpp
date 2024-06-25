@@ -414,7 +414,7 @@ void DialogPeer::FeedbackMsg(shared_ptr<MsgPara> msgPara) {
 
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
-  para.dtlist = dtlist;
+  para.dtlist = msgPara->dtlist;
 
   grpinf->addMsgPara(para);
 }
