@@ -51,7 +51,7 @@ char* getformattime(gboolean date, const char* format, ...) G_GNUC_PRINTF(2, 3);
 char* getformattime2(time_t now, gboolean date, const char* format, ...)
     G_GNUC_PRINTF(3, 4);
 
-gboolean giter_compare_foreach(gunichar src, gunichar dst);
+gboolean ig_unichar_is_atomic(gunichar ch);
 
 char* numeric_to_size(int64_t numeric);
 char* numeric_to_rate(uint32_t numeric);
