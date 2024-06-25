@@ -32,9 +32,6 @@
 #include "iptux/callback.h"
 #include "iptux/dialog.h"
 
-#define ATOM_OBJECT 0xFFFC
-#define OCCUPY_OBJECT 0x01
-
 using namespace std;
 
 namespace iptux {

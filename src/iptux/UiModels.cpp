@@ -471,6 +471,57 @@ bool GroupInfo::isInputEmpty() const {
   return gtk_text_iter_equal(&start, &end);
 }
 
+shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
+  static uint32_t count = 0;
+  GtkTextIter start;
+  GdkPixbuf* pixbuf;
+  char buf[6];
+  gchar* chipmsg;
+  std::vector<ChipData> dtlist;
+
+  gtk_text_buffer_get_start_iter(inputBuffer, &start);
+  ostringstream oss;
+  while (1) {
+    gunichar c = gtk_text_iter_get_char(&start);
+    if (!c)
+      break;
+    if (ig_unichar_is_atomic(c)) {
+      if (oss) {
+        ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
+        dtlist.push_back(std::move(chip));
+        oss.str("");
+      }
+      pixbuf = gtk_text_iter_get_pixbuf(&start);
+      chipmsg = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
+                                g_get_user_config_dir(), count++);
+      GError* error = nullptr;
+      gdk_pixbuf_save(pixbuf, chipmsg, "png", &error, NULL);
+      if (error) {
+        LOG_ERROR("failed to save image: %s", error->message);
+        g_error_free(error);
+      } else {
+        /* 新建一个碎片数据(图片)，并加入数据链表 */
+        ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
+        dtlist.push_back(std::move(chip));
+      }
+    } else {
+      g_unichar_to_utf8(c, buf);
+      oss << buf;
+    }
+    gtk_text_iter_forward_char(&start);
+  }
+  if (oss) {
+    ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
+    dtlist.push_back(std::move(chip));
+  }
+
+  auto para = make_shared<MsgPara>(this->getMembers()[0]);
+  para->stype = MessageSourceType::SELF;
+  para->btype = type;
+  para->dtlist = dtlist;
+  return para;
+}
+
 void GroupInfo::clearInputBuffer() {
   gtk_text_buffer_set_text(inputBuffer, "", 0);
 }
