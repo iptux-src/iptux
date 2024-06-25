@@ -129,14 +129,36 @@ TEST(GroupInfo, genMsgParaFromInput) {
   CPPalInfo cme = make_shared<PalInfo>(me);
   GroupInfo gi(cpal, cme, nullptr);
 
+  GtkTextBuffer* buffer = gi.getInputBuffer();
+
   auto para = gi.genMsgParaFromInput();
-  ASSERT_EQ(para->dtlist.size(), 0);
+  ASSERT_EQ(para->dtlist.size(), 0u);
 
   GtkTextIter end;
-  gtk_text_buffer_get_end_iter(gi.getInputBuffer(), &end);
-  gtk_text_buffer_insert(gi.getInputBuffer(), &end, "helloworld", -1);
+  gtk_text_buffer_get_end_iter(buffer, &end);
+  gtk_text_buffer_insert(buffer, &end, "hello", -1);
   para = gi.genMsgParaFromInput();
-  ASSERT_EQ(para->dtlist.size(), 1);
+  ASSERT_EQ(para->dtlist.size(), 1u);
   ASSERT_EQ(para->dtlist[0].type, MessageContentType::STRING);
-  ASSERT_EQ(para->dtlist[0].data, "helloworld");
+  ASSERT_EQ(para->dtlist[0].data, "hello");
+
+  GError* error = NULL;
+  auto pixbuf =
+      gdk_pixbuf_new_from_file(testDataPath("iptux.png").c_str(), &error);
+  if (error != nullptr) {
+    ASSERT_TRUE(false) << error->message;
+    g_error_free(error);
+  }
+  gtk_text_buffer_get_end_iter(buffer, &end);
+  gtk_text_buffer_insert_pixbuf(buffer, &end, pixbuf);
+  para = gi.genMsgParaFromInput();
+  ASSERT_EQ(para->dtlist.size(), 2u);
+  ASSERT_EQ(para->dtlist[1].type, MessageContentType::PICTURE);
+
+  gtk_text_buffer_get_end_iter(buffer, &end);
+  gtk_text_buffer_insert(buffer, &end, "world", -1);
+  para = gi.genMsgParaFromInput();
+  ASSERT_EQ(para->dtlist.size(), 3u);
+  ASSERT_EQ(para->dtlist[2].type, MessageContentType::STRING);
+  ASSERT_EQ(para->dtlist[2].data, "world");
 }
