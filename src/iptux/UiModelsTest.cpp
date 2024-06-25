@@ -131,6 +131,8 @@ TEST(GroupInfo, genMsgParaFromInput) {
 
   GtkTextBuffer* buffer = gi.getInputBuffer();
 
+  ASSERT_TRUE(gi.isInputEmpty());
+
   auto para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 0u);
 
@@ -161,4 +163,7 @@ TEST(GroupInfo, genMsgParaFromInput) {
   ASSERT_EQ(para->dtlist.size(), 3u);
   ASSERT_EQ(para->dtlist[2].type, MessageContentType::STRING);
   ASSERT_EQ(para->dtlist[2].data, "world");
+  ASSERT_FALSE(gi.isInputEmpty());
+  gi.clearInputBuffer();
+  ASSERT_TRUE(gi.isInputEmpty());
 }
