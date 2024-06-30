@@ -38,7 +38,7 @@ if config_debug.enabled()
 elif config_debug.disabled()
   config_debug_val = 0
 else
-  config_debug = get_option('debug').to_int()
+  config_debug_val = get_option('debug').to_int()
 endif
 conf_data.set('CONFIG_DEBUG', config_debug_val)
 
