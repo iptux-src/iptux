@@ -30,6 +30,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
   virtual GtkWindow* getWindow() = 0;
   void ClearHistoryTextView();
+  GtkEventBox* chatHistoryGetImageEventBox(int idx);
 
  protected:
   void InitSublayerGeneral();

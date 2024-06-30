@@ -115,6 +115,25 @@ void DialogBase::ScrollHistoryTextview() {
   gtk_text_buffer_delete_mark(buffer, mark);
 }
 
+typedef struct _GetImageCbkCtx {
+  int idx;
+  GtkEventBox* res;
+} GetImageCbkCtx;
+
+static void GetImageCbk(GtkWidget* widget, GetImageCbkCtx* ctx) {
+  if (GTK_IS_EVENT_BOX(widget) && ctx->idx-- == 0) {
+    ctx->res = GTK_EVENT_BOX(widget);
+  }
+}
+
+GtkEventBox* DialogBase::chatHistoryGetImageEventBox(int idx) {
+  GetImageCbkCtx ctx = {idx, nullptr};
+
+  gtk_container_foreach(GTK_CONTAINER(chat_history_widget),
+                        (GtkCallback)GetImageCbk, &ctx);
+  return ctx.res;
+}
+
 /**
  * 窗口打开情况下，新消息来到以后的接口
  */
