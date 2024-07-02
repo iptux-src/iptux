@@ -39,16 +39,10 @@ GSList* selection_data_get_path(GtkSelectionData* data);
 GtkImage* igtk_image_new_with_size(const char* filename, int width, int height);
 std::string igtk_text_buffer_get_text(GtkTextBuffer* buffer);
 
-/**
- * @brief only used for test, after call this, pop_info, pop_warning,
- * and iptux_open_url will only print log
- */
-void pop_disable();
 void pop_info(GtkWidget* parent, const gchar* format, ...) G_GNUC_PRINTF(2, 3);
 void pop_warning(GtkWidget* parent, const gchar* format, ...)
     G_GNUC_PRINTF(2, 3);
 void iptux_open_url(const char* url);
-void _ForTestToggleOpenUrl(bool enable);
 
 std::string ipv4_get_lan_name(in_addr ipv4);
 
@@ -106,6 +100,15 @@ std::string TimeToStr(time_t t);
 
 /* only used for test */
 std::string TimeToStr_(time_t t, time_t now);
+
+#if CONFIG_DEBUG
+/**
+ * @brief only used for test, after call this, pop_info, pop_warning,
+ * and iptux_open_url will only print log
+ */
+void pop_disable();
+void _ForTestToggleOpenUrl(bool enable);
+#endif
 
 }  // namespace iptux
 #endif  // IPTUX_UIHELPER_H
