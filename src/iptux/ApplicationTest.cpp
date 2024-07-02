@@ -1,3 +1,4 @@
+#include "TestConfig.h"
 #include "UiHelper.h"
 #include "gtest/gtest.h"
 
@@ -13,6 +14,7 @@ void do_action(Application* app, const string& name) {
   g_action_activate(g_action_map_lookup_action(m, name.c_str()), NULL);
 }
 
+#if CONFIG_DEBUG
 TEST(Application, Constructor) {
   _ForTestToggleOpenUrl(false);
   Application* app = CreateApplication();
@@ -26,3 +28,4 @@ TEST(Application, Constructor) {
   app->_ForTestProcessEvents();
   DestroyApplication(app);
 }
+#endif

@@ -1,6 +1,7 @@
 #ifndef IPTUX_TEST_CONFIG_H
 #define IPTUX_TEST_CONFIG_H
 
+#include "config.h"
 #mesondefine CURRENT_SOURCE_PATH
 
 #endif  // IPTUX_TEST_CONFIG_H
