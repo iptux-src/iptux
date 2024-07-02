@@ -837,14 +837,12 @@ void DialogBase::afterWindowCreated() {
   m_imagePopupMenu = GTK_MENU(gtk_menu_new());
 
   GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menu_item), "win.save_image");
   gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnSaveImage), this);
 
   menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menu_item), "win.copy_image");
   gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnCopyImage), this);
 
   gtk_menu_attach_to_widget(m_imagePopupMenu, GTK_WIDGET(getWindow()), NULL);
 }
@@ -899,7 +897,7 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   gtk_widget_show_all(event_box);
 }
 
-void DialogBase::OnSaveImage(DialogBase* self) {
+void DialogBase::onSaveImage(void*, void*, DialogBase* self) {
   GtkImage* image = self->m_activeImage;
   g_return_if_fail(!!image);
 
@@ -939,7 +937,7 @@ void DialogBase::OnSaveImage(DialogBase* self) {
   gtk_widget_destroy(dialog);
 }
 
-void DialogBase::OnCopyImage(DialogBase* self) {
+void DialogBase::onCopyImage(void*, void*, DialogBase* self) {
   GtkImage* image = self->m_activeImage;
   g_return_if_fail(!!image);
 

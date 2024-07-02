@@ -96,6 +96,8 @@ void DialogPeer::init() {
                       G_ACTION_CALLBACK(onRequestSharedResources)),
       makeActionEntry("send_message", G_ACTION_CALLBACK(onSendMessage)),
       makeActionEntry("paste", G_ACTION_CALLBACK(onPaste)),
+      makeActionEntry("save_image", G_ACTION_CALLBACK(onSaveImage)),
+      makeActionEntry("copy_image", G_ACTION_CALLBACK(onCopyImage)),
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
