@@ -38,6 +38,7 @@ GSList* selection_data_get_path(GtkSelectionData* data);
  */
 GtkImage* igtk_image_new_with_size(const char* filename, int width, int height);
 std::string igtk_text_buffer_get_text(GtkTextBuffer* buffer);
+gint igtk_dialog_run(GtkDialog* dialog);
 
 void pop_info(GtkWidget* parent, const gchar* format, ...) G_GNUC_PRINTF(2, 3);
 void pop_warning(GtkWidget* parent, const gchar* format, ...)
@@ -108,6 +109,7 @@ std::string TimeToStr_(time_t t, time_t now);
  */
 void pop_disable();
 void _ForTestToggleOpenUrl(bool enable);
+void setIgtkDialogRunReturnVal(gint val);
 #endif
 
 }  // namespace iptux

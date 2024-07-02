@@ -918,7 +918,7 @@ void DialogBase::OnSaveImage(DialogBase* self) {
                                                  TRUE);
   gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
 
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+  if (igtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
     GError* error = NULL;
