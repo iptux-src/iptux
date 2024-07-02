@@ -52,5 +52,11 @@ TEST(DialogPeer, Constructor) {
       ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
   grpinf->addMsgPara(msg);
 
+  GtkEventBox* eb = dlgpr->chatHistoryGetImageEventBox(0);
+  ASSERT_NE(eb, nullptr);
+  GtkImage* image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(eb)));
+  ASSERT_NE(image, nullptr);
+  gtk_widget_grab_focus(GTK_WIDGET(eb));
+
   DestroyApplication(app);
 }

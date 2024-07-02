@@ -1,3 +1,4 @@
+#include "TestConfig.h"
 #include "UiHelper.h"
 #include "gtest/gtest.h"
 
@@ -15,6 +16,7 @@ TEST(DataSettings, Constructor) {
   DestroyApplication(app);
 }
 
+#if CONFIG_DEBUG
 TEST(DataSettings, Constructor2) {
   pop_disable();
   Application* app = CreateApplication();
@@ -23,3 +25,4 @@ TEST(DataSettings, Constructor2) {
   gtk_entry_set_text(port_entry, "abc");
   ASSERT_FALSE(ds.Save());
 }
+#endif

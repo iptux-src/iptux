@@ -32,6 +32,16 @@ else
   conf_data.set('SYSTEM_DARWIN', 0)
 endif
 
+config_debug = get_option('config-debug')
+if config_debug.enabled()
+  config_debug_val = 1
+elif config_debug.disabled()
+  config_debug_val = 0
+else
+  config_debug_val = get_option('debug').to_int()
+endif
+conf_data.set('CONFIG_DEBUG', config_debug_val)
+
 configure_file(
   input: 'config.h.in',
   output: 'config.h',

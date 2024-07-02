@@ -16,8 +16,17 @@ using namespace std;
 
 namespace iptux {
 
-static atomic_bool open_url_enabled(true);
+#if CONFIG_DEBUG
 static bool pop_disabled = false;
+static atomic_bool open_url_enabled(true);
+static gint igtk_dialog_run_return_val = 0;
+#else
+enum {
+  igtk_dialog_run_return_val = 0,
+  pop_disabled = 0,
+  open_url_enabled = 1,
+};
+#endif
 
 void iptux_open_path(const char* path) {
   g_return_if_fail(!!path);
@@ -40,10 +49,6 @@ void iptux_open_path(const char* path) {
     g_error_free(error);
   }
   g_free(uri);
-}
-
-void _ForTestToggleOpenUrl(bool enable) {
-  open_url_enabled = enable;
 }
 
 /**
@@ -154,10 +159,6 @@ GSList* selection_data_get_path(GtkSelectionData* data) {
   g_strfreev(uris);
 
   return filelist;
-}
-
-void pop_disable() {
-  pop_disabled = true;
 }
 
 /**
@@ -398,5 +399,25 @@ string igtk_text_buffer_get_text(GtkTextBuffer* buffer) {
   g_free(res1);
   return res;
 }
+
+gint igtk_dialog_run(GtkDialog* dialog) {
+  if (igtk_dialog_run_return_val) {
+    return igtk_dialog_run_return_val;
+  }
+  return gtk_dialog_run(dialog);
+}
+
+#if CONFIG_DEBUG
+void pop_disable() {
+  pop_disabled = true;
+}
+void _ForTestToggleOpenUrl(bool enable) {
+  open_url_enabled = enable;
+}
+
+void setIgtkDialogRunReturnVal(gint val) {
+  igtk_dialog_run_return_val = val;
+}
+#endif
 
 }  // namespace iptux

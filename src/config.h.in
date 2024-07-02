@@ -19,6 +19,7 @@
 #define PHOTO_PATH "/iptux/photo"
 
 #mesondefine SYSTEM_DARWIN
+#mesondefine CONFIG_DEBUG
 
 #if defined(__APPLE__) || defined(__CYGWIN__)
 #define O_LARGEFILE 0
