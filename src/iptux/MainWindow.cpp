@@ -1671,7 +1671,7 @@ void MainWindow::ProcessEvent(shared_ptr<const Event> _event) {
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
         grpinf = coreThread.GetPalRegularItem(para.getPal().get());
-        if (coreThread.getProgramData()->IsAutoOpenCharDialog()) {
+        if (coreThread.getProgramData()->IsAutoOpenChatDialog()) {
           if (!(grpinf->getDialog())) {
             DialogPeer::PeerDialogEntry(this->app, grpinf);
           } else {

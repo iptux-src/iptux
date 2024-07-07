@@ -7,16 +7,6 @@
 using namespace iptux;
 using namespace std;
 
-TEST(Utils, FLAG_SET) {
-  uint8_t a = 1;
-  FLAG_SET(a, 0, false);
-  EXPECT_EQ(a, 0);
-
-  a = 1;
-  FLAG_SET(a, 1, true);
-  EXPECT_EQ(a, 3);
-}
-
 TEST(Utils, numeric_to_size) {
   EXPECT_STREQ(numeric_to_size(0), "0B");
   EXPECT_STREQ(numeric_to_size(1), "1B");

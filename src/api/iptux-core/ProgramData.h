@@ -52,7 +52,12 @@ class ProgramData {
   void Lock();
   void Unlock();
 
-  bool IsAutoOpenCharDialog() const;
+  const std::string& GetPasswd() const { return passwd; }
+  void SetPasswd(const std::string& val) { passwd = val; }
+  int getSendMessageRetryInUs() const { return send_message_retry_in_us; }
+
+  uint16_t port() const { return port_; }
+  bool IsAutoOpenChatDialog() const;
   bool IsAutoHidePanelAfterLogin() const;
   bool IsAutoOpenFileTrans() const;
   bool IsEnterSendMessage() const;
@@ -60,14 +65,15 @@ class ProgramData {
   bool IsSaveChatHistory() const;
   bool IsUsingBlacklist() const;
   bool IsFilterFileShareRequest() const;
-  void SetFlag(int idx, bool flag);
-
-  const std::string& GetPasswd() const { return passwd; }
-  void SetPasswd(const std::string& val) { passwd = val; }
-  int getSendMessageRetryInUs() const { return send_message_retry_in_us; }
-
-  uint16_t port() const { return port_; }
   void set_port(uint16_t port, bool is_init = false);
+  void setOpenChat(bool value) { open_chat = value; }
+  void setHideStartup(bool value) { hide_startup = value; }
+  void setOpenTransmission(bool value) { open_transmission = value; }
+  void setUseEnterKey(bool value) { use_enter_key = value; }
+  void setClearupHistory(bool value) { clearup_history = value; }
+  void setRecordLog(bool value) { record_log = value; }
+  void setOpenBlacklist(bool value) { open_blacklist = value; }
+  void setProofShared(bool value) { proof_shared = value; }
 
   bool need_restart() const { return need_restart_; }
 
@@ -99,10 +105,17 @@ class ProgramData {
   std::vector<NetSegment> netseg;  // 需要通知登录的IP段
   std::shared_ptr<IptuxConfig> config;
   std::mutex mutex;  // 锁
-  uint8_t flags;  // 6 图标,5 传输:4 enter:3 历史:2 日志:1 黑名单:0 共享
   std::string passwd;
   std::vector<FileInfo> sharedFileInfos;
-  bool need_restart_ = false;
+  uint8_t open_chat : 1;
+  uint8_t hide_startup : 1;
+  uint8_t open_transmission : 1;
+  uint8_t use_enter_key : 1;
+  uint8_t clearup_history : 1;
+  uint8_t record_log : 1;
+  uint8_t open_blacklist : 1;
+  uint8_t proof_shared : 1;
+  uint8_t need_restart_ : 1;
 
  private:
   void InitSublayer();

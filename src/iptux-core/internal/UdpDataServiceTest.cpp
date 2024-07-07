@@ -37,8 +37,9 @@ TEST(UdpDataService, CreatePalInfo) {
     ASSERT_EQ(pal->toString(),
               "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux "
               "0.8.0-b1,user=lidaobing,host=LIs-MacBook-Pro.local,"
-              "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-"
-              "8,packetn=0,rpacketn=0,flags=2)");
+              "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,"
+              "encode=utf-8,packetn=0,rpacketn=0,compatible=0,online=1,"
+              "changed=0,in_blacklist=0)");
   }
   {
     const char* data =
@@ -53,6 +54,7 @@ TEST(UdpDataService, CreatePalInfo) {
               "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux "
               "0.8.0-b1,user=中��,host=LIs-MacBook-Pro.local,"
               "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-"
-              "8,packetn=0,rpacketn=0,flags=2)");
+              "8,packetn=0,rpacketn=0,compatible=0,online=1,changed=0,in_"
+              "blacklist=0)");
   }
 }
