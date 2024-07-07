@@ -532,18 +532,6 @@ char* ipmsg_get_pathname_full(const char* path, const char* name) {
   return g_strdup(filename);
 }
 
-void FLAG_SET(uint8_t& num, int bit) {
-  ((num) |= (1 << (bit)));
-}
-
-void FLAG_SET(uint8_t& num, int bit, bool value) {
-  if (value) {
-    ((num) |= (1 << (bit)));
-  } else {
-    ((num) &= (~(1 << (bit))));
-  }
-}
-
 std::string inAddrToString(in_addr inAddr) {
   char res[INET_ADDRSTRLEN];
   inet_ntop(AF_INET, &inAddr.s_addr, res, INET_ADDRSTRLEN);

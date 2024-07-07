@@ -25,11 +25,6 @@ namespace iptux {
    1000000.0f)
 #define percent(num1, num2) (100.0f * (num1) / (num2))
 
-#define FLAG_ISSET(num, bit) ((num) & (1 << (bit)))
-void FLAG_SET(uint8_t& num, int bit);
-void FLAG_SET(uint8_t& num, int bit, bool value);
-#define FLAG_CLR(num, bit) ((num) &= (~(1 << (bit))))
-
 #define URL_REGEX                                          \
   "(http|ftp|https|sftp):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+" \
   "([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?"
