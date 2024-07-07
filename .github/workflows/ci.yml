@@ -72,12 +72,13 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
 
   codecov:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: apt install
         run: >-
           sudo apt update &&
+          sudo apt install libunwind-dev &&
           sudo apt install -y lcov ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
       - name: meson
         run: meson setup -D b_coverage=true build

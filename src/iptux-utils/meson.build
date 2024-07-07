@@ -36,4 +36,9 @@ libiptux_utils_test = executable('libiptux_utils_test',
     link_with: [libiptux_utils, libgtest, libiptux_utils_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('iptux utils unit test', libiptux_utils_test)
+
+if meson.version().version_compare('>=0.55')
+  test('utils', libiptux_utils_test, protocol: 'gtest')
+else
+  test('utils', libiptux_utils_test)
+endif
