@@ -120,4 +120,4 @@ libiptux_test = executable('libiptux_test',
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('iptux ui unit test', libiptux_test, is_parallel : false)
+test('gui', libiptux_test, is_parallel : false, protocol: 'gtest')
