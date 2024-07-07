@@ -4,6 +4,6 @@ i18n.gettext(meson.project_name(),
         '--package-version=' + meson.project_version(),
         '--msgid-bugs-address=https://github.com/iptux-src/iptux/issues/new',
         '--from-code=utf-8',
-        '--directory=' + meson.source_root()
+        '--directory=' + meson.project_source_root()
     ]
 )
