@@ -23,7 +23,7 @@ metainfo_i18n = i18n.merge_file(
   input: metainfo_with_relinfo,
   output: 'io.github.iptux_src.iptux.metainfo.xml',
   type: 'xml',
-  po_dir: meson.project_source_root() / 'po',
+  po_dir: meson.source_root() / 'po',
   install: true,
   install_dir: get_option('datadir') / 'metainfo',
 )

@@ -90,7 +90,8 @@ libiptux_core_test = executable('libiptux_core_test',
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('core', libiptux_core_test,
-  is_parallel : false,
-  protocol: 'gtest',
-  )
+if meson.version().version_compare('>=0.55')
+  test('core', libiptux_core_test, is_parallel : false, protocol: 'gtest')
+else
+  test('core', libiptux_core_test, is_parallel : false)
+endif

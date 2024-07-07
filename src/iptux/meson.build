@@ -120,4 +120,9 @@ libiptux_test = executable('libiptux_test',
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('gui', libiptux_test, is_parallel : false, protocol: 'gtest')
+
+if meson.version().version_compare('>=0.55')
+    test('gui', libiptux_test, is_parallel : false, protocol: 'gtest')
+else
+    test('gui', libiptux_test, is_parallel : false)
+endif
