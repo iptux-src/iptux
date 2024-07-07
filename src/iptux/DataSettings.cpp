@@ -553,7 +553,7 @@ void DataSettings::SetSystemValue() {
   gtk_font_chooser_set_font(GTK_FONT_CHOOSER(widget), g_progdt->font);
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                               g_progdt->IsAutoOpenCharDialog());
+                               g_progdt->IsAutoOpenChatDialog());
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsAutoHidePanelAfterLogin());
@@ -919,22 +919,30 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
       g_strdup(gtk_font_chooser_get_font(GTK_FONT_CHOOSER(widget)));
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
-  g_progdt->SetFlag(7, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setOpenChat(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
-  g_progdt->SetFlag(6, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setHideStartup(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget =
       GTK_WIDGET(g_datalist_get_data(&widset, "transmission-check-widget"));
-  g_progdt->SetFlag(5, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setOpenTransmission(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "enterkey-check-widget"));
-  g_progdt->SetFlag(4, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setUseEnterKey(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-check-widget"));
-  g_progdt->SetFlag(3, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setClearupHistory(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "log-check-widget"));
-  g_progdt->SetFlag(2, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setRecordLog(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "blacklist-check-widget"));
-  g_progdt->SetFlag(1, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setOpenBlacklist(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
-  g_progdt->SetFlag(0, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  g_progdt->setProofShared(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   return oss.str();
 }
 
