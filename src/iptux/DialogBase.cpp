@@ -305,8 +305,6 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                    G_CALLBACK(textview_event_after), NULL);
   g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
-  g_signal_connect(chat_history_widget, "visibility-notify-event",
-                   G_CALLBACK(textview_visibility_notify_event), NULL);
   g_signal_connect_data(grpinf->buffer, "insert-child-anchor",
                         G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
                         this, NULL,
