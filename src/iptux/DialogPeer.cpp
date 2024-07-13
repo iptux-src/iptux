@@ -317,7 +317,7 @@ GtkWidget* DialogPeer::CreateInfoArea() {
   widget = gtk_text_view_new_with_buffer(buffer);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_NONE);
+  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD_CHAR);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "info-textview-widget", widget);
 

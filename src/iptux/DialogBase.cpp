@@ -252,7 +252,7 @@ GtkWidget* DialogBase::CreateInputArea() {
 
   widget = gtk_text_view_new_with_buffer(grpinf->getInputBuffer());
   inputTextviewWidget = GTK_TEXT_VIEW(widget);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
+  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD_CHAR);
   gtk_drag_dest_add_uri_targets(widget);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_signal_connect_swapped(widget, "drag-data-received",
@@ -297,7 +297,7 @@ GtkWidget* DialogBase::CreateHistoryArea() {
       GTK_TEXT_VIEW(gtk_text_view_new_with_buffer(grpinf->buffer));
   gtk_text_view_set_cursor_visible(chat_history_widget, FALSE);
   gtk_text_view_set_editable(chat_history_widget, FALSE);
-  gtk_text_view_set_wrap_mode(chat_history_widget, GTK_WRAP_WORD);
+  gtk_text_view_set_wrap_mode(chat_history_widget, GTK_WRAP_WORD_CHAR);
   gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(chat_history_widget));
   g_signal_connect(chat_history_widget, "key-press-event",
                    G_CALLBACK(textview_key_press_event), NULL);
