@@ -134,7 +134,7 @@ class PalInfo {
   PalInfo& setCompatible(bool value);
   PalInfo& setOnline(bool value);
   PalInfo& setChanged(bool value);
-  PalInfo& setInBlacklistl(bool value);
+  PalInfo& setInBlacklist(bool value);
 
  private:
   in_addr ipv4_;           ///< 好友IP
@@ -146,7 +146,10 @@ class PalInfo {
   std::string version;  ///< 版本串 *
   std::string encode;   ///< 好友编码 *
   std::string group;    ///< 所在群组
-  uint8_t flags;        ///< 3 黑名单:2 更改:1 在线:0 兼容
+  uint8_t compatible : 1;
+  uint8_t online : 1;
+  uint8_t changed : 1;
+  uint8_t in_blacklist : 1;
 };
 
 /// pointer to PalInfo

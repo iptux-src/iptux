@@ -690,7 +690,6 @@ GtkWidget* MainWindow::CreatePaltreeTree(GtkTreeModel* model) {
   g_object_set_data(G_OBJECT(view), "info-column", column);
   /* 展开器区域 */
   cell = gtk_cell_renderer_pixbuf_new();
-  g_object_set(cell, "follow-state", TRUE, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(
       GTK_TREE_VIEW_COLUMN(column), cell, "pixbuf",
@@ -753,7 +752,6 @@ GtkWidget* MainWindow::CreatePallistTree(GtkTreeModel* model) {
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_column_set_title(column, _("Nickname"));
   cell = gtk_cell_renderer_pixbuf_new();
-  g_object_set(cell, "follow-state", TRUE, NULL);
   gtk_tree_view_column_pack_start(column, cell, FALSE);
   gtk_tree_view_column_set_attributes(column, cell, "pixbuf", 0, NULL);
   cell = gtk_cell_renderer_text_new();
@@ -1671,7 +1669,7 @@ void MainWindow::ProcessEvent(shared_ptr<const Event> _event) {
     switch (para.btype) {
       case GROUP_BELONG_TYPE_REGULAR:
         grpinf = coreThread.GetPalRegularItem(para.getPal().get());
-        if (coreThread.getProgramData()->IsAutoOpenCharDialog()) {
+        if (coreThread.getProgramData()->IsAutoOpenChatDialog()) {
           if (!(grpinf->getDialog())) {
             DialogPeer::PeerDialogEntry(this->app, grpinf);
           } else {

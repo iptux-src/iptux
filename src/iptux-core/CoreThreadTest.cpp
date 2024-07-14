@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "iptux-core/Models.h"
 #include <fstream>
 #include <mutex>
 #include <thread>
@@ -95,8 +96,8 @@ TEST(CoreThread, SendMsgPara) {
   PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->AttachPalToList(pal);
   ChipData chipData("hello world");
-  MsgPara para(pal);
-  para.dtlist.push_back(std::move(chipData));
+  auto para = make_shared<MsgPara>(pal);
+  para->dtlist.push_back(std::move(chipData));
   EXPECT_TRUE(thread->SendMsgPara(para));
   delete thread;
 }

@@ -1,3 +1,15 @@
+Version 0.9.3
+~~~~~~~~~~~~~
+Released: 2024-06-22
+
+Features:
+  * [#593, #595, #601, #604] support paste image into chatbox, support copy/save
+    image in chat history.
+  * [#586] add keywords to metainfo and desktop file.
+
+Bugfixes:
+ * [#584] fix compile failed under armhf.
+
 Version 0.9.1
 ~~~~~~~~~~~~~
 Released: 2024-05-12

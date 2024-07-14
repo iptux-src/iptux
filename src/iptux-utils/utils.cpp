@@ -207,14 +207,8 @@ char* getformattime2(time_t tt, gboolean date, const char* format, ...) {
   return ptr;
 }
 
-/**
- * 对GtkTextBuffer的迭代器(GtkTextIter)所指的字符进行比较.
- * @param src 源字符
- * @param dst 目标字符
- * @return Gtk+库
- */
-gboolean giter_compare_foreach(gunichar src, gunichar dst) {
-  return (src == dst);
+gboolean ig_unichar_is_atomic(gunichar ch) {
+  return ch == 0xFFFC;
 }
 
 /**
@@ -536,18 +530,6 @@ char* ipmsg_get_pathname_full(const char* path, const char* name) {
   strcat(filename, "/");
   strcat(filename, name);
   return g_strdup(filename);
-}
-
-void FLAG_SET(uint8_t& num, int bit) {
-  ((num) |= (1 << (bit)));
-}
-
-void FLAG_SET(uint8_t& num, int bit, bool value) {
-  if (value) {
-    ((num) |= (1 << (bit)));
-  } else {
-    ((num) &= (~(1 << (bit))));
-  }
 }
 
 std::string inAddrToString(in_addr inAddr) {

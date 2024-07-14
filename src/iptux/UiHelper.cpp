@@ -1,6 +1,7 @@
 #include "config.h"
 #include "UiHelper.h"
 
+#include <atomic>
 #include <cerrno>
 #include <cstring>
 #include <ctime>
@@ -15,6 +16,7 @@ using namespace std;
 
 namespace iptux {
 
+static atomic_bool open_url_enabled(true);
 static bool pop_disabled = false;
 
 void iptux_open_path(const char* path) {
@@ -28,12 +30,20 @@ void iptux_open_path(const char* path) {
     g_error_free(error);
     return;
   }
-  g_app_info_launch_default_for_uri(uri, nullptr, &error);
+  if (!open_url_enabled) {
+    LOG_INFO("iptux_open_path %s", path);
+  } else {
+    g_app_info_launch_default_for_uri(uri, nullptr, &error);
+  }
   if (error) {
     LOG_WARN(_("Can't open path: %s, reason: %s"), path, error->message);
     g_error_free(error);
   }
   g_free(uri);
+}
+
+void _ForTestToggleOpenUrl(bool enable) {
+  open_url_enabled = enable;
 }
 
 /**
@@ -49,7 +59,11 @@ void iptux_open_url(const char* url) {
   }
 
   GError* error = nullptr;
-  g_app_info_launch_default_for_uri(url, nullptr, &error);
+  if (!open_url_enabled) {
+    LOG_INFO("iptux_open_url %s", url);
+  } else {
+    g_app_info_launch_default_for_uri(url, nullptr, &error);
+  }
   if (error) {
     LOG_WARN(_("Can't open URL: %s, reason: %s"), url, error->message);
     g_error_free(error);
@@ -374,6 +388,15 @@ GtkImage* igtk_image_new_with_size(const char* filename,
 
   pixbuf_shrink_scale_1(&pixbuf, width, height);
   return GTK_IMAGE(gtk_image_new_from_pixbuf(pixbuf));
+}
+
+string igtk_text_buffer_get_text(GtkTextBuffer* buffer) {
+  GtkTextIter start, end;
+  gtk_text_buffer_get_bounds(buffer, &start, &end);
+  char* res1 = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+  string res(res1);
+  g_free(res1);
+  return res;
 }
 
 }  // namespace iptux

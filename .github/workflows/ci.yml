@@ -72,12 +72,16 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
 
   codecov:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    permissions:
+      checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
       - name: apt install
         run: >-
           sudo apt update &&
+          sudo apt install libunwind-dev &&
           sudo apt install -y lcov ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
       - name: meson
         run: meson setup -D b_coverage=true build
@@ -97,12 +101,17 @@ jobs:
           lcov --list coverage.info; #debug info
       # https://docs.codecov.com/docs/quick-start
       - name: "Upload coverage reports to Codecov"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           fail_ci_if_error: true # optional (default = false)
           verbose: false # optional (default = false)
+      - name: "Publish Test Results"
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: build/meson-logs/testlog.junit.xml
 
   build_job:
     # The host should always be linux

@@ -14,6 +14,7 @@
 #include "DialogPeer.h"
 
 #include "UiModels.h"
+#include "iptux-core/Models.h"
 #include <cinttypes>
 
 #include <sys/socket.h>
@@ -30,9 +31,6 @@
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 #include "iptux/dialog.h"
-
-#define ATOM_OBJECT 0xFFFC
-#define OCCUPY_OBJECT 0x01
 
 using namespace std;
 
@@ -235,6 +233,7 @@ GtkWindow* DialogPeer::CreateMainWindow() {
   MainWindowSignalSetup(GTK_WINDOW(window));
   g_signal_connect_swapped(GTK_WIDGET(window), "show",
                            G_CALLBACK(ShowDialogPeer), this);
+  afterWindowCreated();
   return GTK_WINDOW(window);
 }
 
@@ -318,7 +317,7 @@ GtkWidget* DialogPeer::CreateInfoArea() {
   widget = gtk_text_view_new_with_buffer(buffer);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_NONE);
+  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD_CHAR);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "info-textview-widget", widget);
 
@@ -389,72 +388,16 @@ void DialogPeer::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
  * @return 是否发送数据
  */
 bool DialogPeer::SendTextMsg() {
-  static uint32_t count = 0;
-  GtkTextBuffer* buffer;
-  GtkTextIter start, end, piter, iter;
-  GdkPixbuf* pixbuf;
-  char buf[MAX_UDPLEN];
-  gchar *chipmsg, *ptr;
-  size_t len;
-  MsgPara* para;
-  std::vector<ChipData> dtlist;
-
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));  // 为下一次任务做准备
-  buffer = getInputBuffer();
-  gtk_text_buffer_get_bounds(buffer, &start, &end);
-  if (gtk_text_iter_equal(&start, &end))
+  if (grpinf->isInputEmpty()) {
     return false;
-
-  /* 一些初始化工作 */
-  buf[0] = '\0';  // 缓冲区数据为空
-  ptr = buf;
-  len = 0;
-  /* 获取数据 */
-  piter = iter = start;  // 让指针指向缓冲区开始位置
-  do {
-    /**
-     * @note 由于gtk_text_iter_forward_find_char()会跳过当前字符，
-     * 所以必须先考察第一个字符是否为图片.
-     */
-    if ((pixbuf = gtk_text_iter_get_pixbuf(&iter))) {
-      /* 读取图片之前的字符数据，并写入缓冲区 */
-      chipmsg = gtk_text_buffer_get_text(buffer, &piter, &iter, FALSE);
-      snprintf(ptr, MAX_UDPLEN - len, "%s%c", chipmsg, OCCUPY_OBJECT);
-      len += strlen(ptr);
-      ptr = buf + len;
-      g_free(chipmsg);
-      piter = iter;  // 移动 piter 到新位置
-      /* 保存图片 */
-      chipmsg = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
-                                g_get_user_config_dir(), count++);
-      GError* error = nullptr;
-      gdk_pixbuf_save(pixbuf, chipmsg, "png", &error, NULL);
-      if (error) {
-        LOG_ERROR("failed to save image: %s", error->message);
-        g_error_free(error);
-      } else {
-        /* 新建一个碎片数据(图片)，并加入数据链表 */
-        ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
-        dtlist.push_back(std::move(chip));
-      }
-    }
-  } while (gtk_text_iter_forward_find_char(
-      &iter, GtkTextCharPredicate(giter_compare_foreach),
-      GUINT_TO_POINTER(ATOM_OBJECT), &end));
-  /* 读取余下的字符数据，并写入缓冲区 */
-  chipmsg = gtk_text_buffer_get_text(buffer, &piter, &end, FALSE);
-  snprintf(ptr, MAX_UDPLEN - len, "%s", chipmsg);
-  g_free(chipmsg);
-  /* 新建一个碎片数据(字符串)，并加入数据链表 */
-  ChipData chip(buf);
-  // TODO: 保证字符串先被发送？
-  dtlist.push_back(std::move(chip));
+  }
+  shared_ptr<MsgPara> para = grpinf->genMsgParaFromInput();
+  grpinf->clearInputBuffer();
 
   /* 清空缓冲区并发送数据 */
-  gtk_text_buffer_delete(buffer, &start, &end);
-  FeedbackMsg(dtlist);
-  para = PackageMsg(dtlist);
-  app->getCoreThread()->AsyncSendMsgPara(std::move(*para));
+  FeedbackMsg(para);
+  app->getCoreThread()->AsyncSendMsgPara(para);
   return true;
 }
 
@@ -463,12 +406,12 @@ bool DialogPeer::SendTextMsg() {
  * @param dtlist 数据链表
  * @note 请不要修改链表(dtlist)中的数据
  */
-void DialogPeer::FeedbackMsg(const std::vector<ChipData>& dtlist) {
+void DialogPeer::FeedbackMsg(shared_ptr<MsgPara> msgPara) {
   MsgPara para(grpinf->getMembers()[0]);
 
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
-  para.dtlist = dtlist;
+  para.dtlist = msgPara->dtlist;
 
   grpinf->addMsgPara(para);
 }
@@ -501,7 +444,7 @@ void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
 
 void DialogPeer::onPaste(void*, void*, DialogPeer* self) {
   GtkTextView* textview = GTK_TEXT_VIEW(self->inputTextviewWidget);
-  DialogBase::OnPasteClipboard(self, textview);
+  g_signal_emit_by_name(textview, "paste-clipboard");
 }
 
 void DialogPeer::insertPicture() {

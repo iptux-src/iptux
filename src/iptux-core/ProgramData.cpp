@@ -18,7 +18,7 @@ static const char* CONFIG_SHARED_FILE_LIST = "shared_file_list";
  * 类构造函数.
  */
 ProgramData::ProgramData(shared_ptr<IptuxConfig> config)
-    : palicon(NULL), font(NULL), config(config), flags(0) {
+    : palicon(NULL), font(NULL), config(config), need_restart_(0) {
   gettimeofday(&timestamp, NULL);
   InitSublayer();
 }
@@ -59,14 +59,14 @@ void ProgramData::WriteProgData() {
   config->SetString("pal_icon", palicon);
   config->SetString("panel_font", font);
 
-  config->SetBool("open_chat", FLAG_ISSET(flags, 7));
-  config->SetBool("hide_startup", FLAG_ISSET(flags, 6));
-  config->SetBool("open_transmission", FLAG_ISSET(flags, 5));
-  config->SetBool("use_enter_key", FLAG_ISSET(flags, 4));
-  config->SetBool("clearup_history", FLAG_ISSET(flags, 3));
-  config->SetBool("record_log", FLAG_ISSET(flags, 2));
-  config->SetBool("open_blacklist", FLAG_ISSET(flags, 1));
-  config->SetBool("proof_shared", FLAG_ISSET(flags, 0));
+  config->SetBool("open_chat", open_chat);
+  config->SetBool("hide_startup", hide_startup);
+  config->SetBool("open_transmission", open_transmission);
+  config->SetBool("use_enter_key", use_enter_key);
+  config->SetBool("clearup_history", clearup_history);
+  config->SetBool("record_log", record_log);
+  config->SetBool("open_blacklist", open_blacklist);
+  config->SetBool("proof_shared", proof_shared);
 
   config->SetString("access_shared_limit", passwd);
   config->SetInt("send_message_retry_in_us", send_message_retry_in_us);
@@ -133,14 +133,14 @@ void ProgramData::ReadProgData() {
   palicon = g_strdup(config->GetString("pal_icon", "icon-qq.png").c_str());
   font = g_strdup(config->GetString("panel_font", "Sans Serif 10").c_str());
 
-  FLAG_SET(flags, 7, config->GetBool("open_chat"));
-  FLAG_SET(flags, 6, config->GetBool("hide_startup"));
-  FLAG_SET(flags, 5, config->GetBool("open_transmission"));
-  FLAG_SET(flags, 4, config->GetBool("use_enter_key"));
-  FLAG_SET(flags, 3, config->GetBool("clearup_history"));
-  FLAG_SET(flags, 2, config->GetBool("record_log", true));
-  FLAG_SET(flags, 1, config->GetBool("open_blacklist"));
-  FLAG_SET(flags, 0, config->GetBool("proof_shared"));
+  open_chat = config->GetBool("open_chat");
+  hide_startup = config->GetBool("hide_startup");
+  open_transmission = config->GetBool("open_transmission");
+  use_enter_key = config->GetBool("use_enter_key");
+  clearup_history = config->GetBool("clearup_history");
+  record_log = config->GetBool("record_log", true);
+  open_blacklist = config->GetBool("open_blacklist");
+  proof_shared = config->GetBool("proof_shared");
 
   passwd = config->GetString("access_shared_limit");
   send_message_retry_in_us =
@@ -207,43 +207,35 @@ void ProgramData::Unlock() {
   mutex.unlock();
 }
 
-bool ProgramData::IsAutoOpenCharDialog() const {
-  return FLAG_ISSET(flags, 7);
+bool ProgramData::IsAutoOpenChatDialog() const {
+  return open_chat;
 }
 
 bool ProgramData::IsAutoHidePanelAfterLogin() const {
-  return FLAG_ISSET(flags, 6);
+  return hide_startup;
 }
 
 bool ProgramData::IsAutoOpenFileTrans() const {
-  return FLAG_ISSET(flags, 5);
+  return open_transmission;
 }
 bool ProgramData::IsEnterSendMessage() const {
-  return FLAG_ISSET(flags, 4);
+  return use_enter_key;
 }
 bool ProgramData::IsAutoCleanChatHistory() const {
-  return FLAG_ISSET(flags, 3);
+  return clearup_history;
 }
 bool ProgramData::IsSaveChatHistory() const {
-  return FLAG_ISSET(flags, 2);
+  return record_log;
 }
 bool ProgramData::IsUsingBlacklist() const {
-  return FLAG_ISSET(flags, 1);
+  return open_blacklist;
 }
 bool ProgramData::IsFilterFileShareRequest() const {
-  return FLAG_ISSET(flags, 0);
-}
-
-void ProgramData::SetFlag(int idx, bool flag) {
-  if (flag) {
-    FLAG_SET(flags, idx);
-  } else {
-    FLAG_CLR(flags, idx);
-  }
+  return proof_shared;
 }
 
 ProgramData& ProgramData::SetUsingBlacklist(bool value) {
-  SetFlag(1, value);
+  open_blacklist = value;
   return *this;
 }
 

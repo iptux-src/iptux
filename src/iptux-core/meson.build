@@ -54,8 +54,8 @@ else
         description: 'Communicate and Share File in LAN',
         name: 'iptux-core',
         version: so_version,
-        requires: ['jsoncpp >= 1.0', 'glib-2.0 >= 2.35', 'sigc++-2.0'],
-        requires_private: ['libglog', 'gflags'],
+        requires: [jsoncpp_dep, glib_dep, sigc_dep, thread_dep],
+        requires_private: [glog_dep, gflags_dep],
         libraries: [libiptux_core, glog_dep],
     )
 endif
@@ -90,4 +90,8 @@ libiptux_core_test = executable('libiptux_core_test',
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
-test('iptux core unit test', libiptux_core_test, is_parallel : false)
+if meson.version().version_compare('>=0.55')
+  test('core', libiptux_core_test, is_parallel : false, protocol: 'gtest')
+else
+  test('core', libiptux_core_test, is_parallel : false)
+endif

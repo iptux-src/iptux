@@ -252,7 +252,7 @@ GtkWidget* DialogBase::CreateInputArea() {
 
   widget = gtk_text_view_new_with_buffer(grpinf->getInputBuffer());
   inputTextviewWidget = GTK_TEXT_VIEW(widget);
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD);
+  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD_CHAR);
   gtk_drag_dest_add_uri_targets(widget);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_signal_connect_swapped(widget, "drag-data-received",
@@ -297,7 +297,7 @@ GtkWidget* DialogBase::CreateHistoryArea() {
       GTK_TEXT_VIEW(gtk_text_view_new_with_buffer(grpinf->buffer));
   gtk_text_view_set_cursor_visible(chat_history_widget, FALSE);
   gtk_text_view_set_editable(chat_history_widget, FALSE);
-  gtk_text_view_set_wrap_mode(chat_history_widget, GTK_WRAP_WORD);
+  gtk_text_view_set_wrap_mode(chat_history_widget, GTK_WRAP_WORD_CHAR);
   gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(chat_history_widget));
   g_signal_connect(chat_history_widget, "key-press-event",
                    G_CALLBACK(textview_key_press_event), NULL);
@@ -305,8 +305,6 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                    G_CALLBACK(textview_event_after), NULL);
   g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
-  g_signal_connect(chat_history_widget, "visibility-notify-event",
-                   G_CALLBACK(textview_visibility_notify_event), NULL);
   g_signal_connect_data(grpinf->buffer, "insert-child-anchor",
                         G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
                         this, NULL,
@@ -803,13 +801,7 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
   buffer = gtk_text_view_get_buffer(textview);
   gtk_text_buffer_get_iter_at_mark(buffer, &iter,
                                    gtk_text_buffer_get_insert(buffer));
-  if (gtk_clipboard_wait_is_text_available(clipboard)) {
-    gchar* text = gtk_clipboard_wait_for_text(clipboard);
-    if (text) {
-      gtk_text_buffer_insert(buffer, &iter, text, -1);
-      g_free(text);
-    }
-  } else if (gtk_clipboard_wait_is_image_available(clipboard)) {
+  if (gtk_clipboard_wait_is_image_available(clipboard)) {
     GdkPixbuf* pixbuf = gtk_clipboard_wait_for_image(clipboard);
     if (pixbuf) {
       gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
@@ -818,10 +810,28 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
   }
 }
 
-gboolean DialogBase::OnImageButtonPress(DialogBase*,
-                                        GdkEventButton event,
+void DialogBase::afterWindowCreated() {
+  g_return_if_fail(!m_imagePopupMenu);
+
+  m_imagePopupMenu = GTK_MENU(gtk_menu_new());
+
+  GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnSaveImage), this);
+
+  menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
+  g_signal_connect_swapped(menu_item, "activate",
+                           G_CALLBACK(DialogBase::OnCopyImage), this);
+
+  gtk_menu_attach_to_widget(m_imagePopupMenu, GTK_WIDGET(getWindow()), NULL);
+}
+
+gboolean DialogBase::OnImageButtonPress(DialogBase* self,
+                                        GdkEventButton* event,
                                         GtkEventBox* event_box) {
-  if (event.type != GDK_BUTTON_PRESS || event.button != 3) {
+  if (event->type != GDK_BUTTON_PRESS || event->button != 3) {
     return FALSE;
   }
 
@@ -830,20 +840,10 @@ gboolean DialogBase::OnImageButtonPress(DialogBase*,
     LOG_ERROR("image not found in event box.");
     return FALSE;
   }
+  self->m_activeImage = GTK_IMAGE(image);
 
-  GtkWidget* menu = gtk_menu_new();
-  GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnSaveImage), image);
-  menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnCopyImage), image);
-  gtk_widget_show_all(menu);
-
-  gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)&event);
-  g_signal_connect(menu, "hide", G_CALLBACK(gtk_widget_destroy), menu);
+  gtk_widget_show_all(GTK_WIDGET(self->m_imagePopupMenu));
+  gtk_menu_popup_at_pointer(self->m_imagePopupMenu, (GdkEvent*)event);
   return TRUE;
 }
 
@@ -878,7 +878,10 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   gtk_widget_show_all(event_box);
 }
 
-void DialogBase::OnSaveImage(GtkImage* image) {
+void DialogBase::OnSaveImage(DialogBase* self) {
+  GtkImage* image = self->m_activeImage;
+  g_return_if_fail(!!image);
+
   const char* path =
       (const char*)g_object_get_data(G_OBJECT(image), kObjectKeyImagePath);
   if (!path) {
@@ -915,7 +918,10 @@ void DialogBase::OnSaveImage(GtkImage* image) {
   gtk_widget_destroy(dialog);
 }
 
-void DialogBase::OnCopyImage(GtkImage* image) {
+void DialogBase::OnCopyImage(DialogBase* self) {
+  GtkImage* image = self->m_activeImage;
+  g_return_if_fail(!!image);
+
   GdkPixbuf* pixbuf = gtk_image_get_pixbuf(image);
   if (!pixbuf) {
     LOG_ERROR("Failed to create pixbuf from image.");

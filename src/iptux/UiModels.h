@@ -91,6 +91,9 @@ class GroupInfo {
   void newFileReceived();
 
   GtkTextBuffer* getInputBuffer() const { return inputBuffer; }
+  bool isInputEmpty() const;
+  std::shared_ptr<MsgPara> genMsgParaFromInput() const;
+  void clearInputBuffer();
 
   void setDialogBase(DialogBase* dialogBase) { this->dialogBase = dialogBase; }
   GtkWidget* getDialog() const;
