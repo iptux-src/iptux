@@ -73,6 +73,9 @@ jobs:
 
   codecov:
     runs-on: ubuntu-22.04
+    permissions:
+      checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
       - name: apt install
@@ -98,12 +101,17 @@ jobs:
           lcov --list coverage.info; #debug info
       # https://docs.codecov.com/docs/quick-start
       - name: "Upload coverage reports to Codecov"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           fail_ci_if_error: true # optional (default = false)
           verbose: false # optional (default = false)
+      - name: "Publish Test Results"
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: build/meson-logs/testlog.junit.xml
 
   build_job:
     # The host should always be linux
