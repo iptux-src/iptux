@@ -23,9 +23,9 @@ void processNewMessageEvent(shared_ptr<CoreThread> ct,
   LOG(INFO) << "New Message Event: " << endl;
   LOG(INFO) << "  From: " << para.getPal()->GetKey().ToString() << endl;
   for (auto& chip : para.dtlist) {
-    LOG(INFO) << "  Message: " << chip.ToString() << endl;
+    LOG(INFO) << "  Message: " << chip->ToString() << endl;
     ostringstream oss;
-    oss << "your message has " << chip.data.size() << " bytes.";
+    oss << "your message has " << chip->data.size() << " bytes.";
     ct->SendMessage(para.getPal(), oss.str());
   }
 }

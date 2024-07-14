@@ -221,8 +221,7 @@ void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
   /* 构建消息封装包 */
   para.stype = MessageSourceType::PAL;
   para.btype = GROUP_BELONG_TYPE_REGULAR;
-  ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, path);
-  para.dtlist.push_back(chip);
+  para.dtlist.push_back(ChipData::newImgMsg(path, false));
 
   /* 交给某人处理吧 */
   coreThread->InsertMessage(std::move(para));
