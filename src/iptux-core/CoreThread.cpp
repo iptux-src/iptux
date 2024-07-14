@@ -1,6 +1,5 @@
 #include "config.h"
 #include "iptux-core/CoreThread.h"
-
 #include <deque>
 #include <fstream>
 #include <functional>
@@ -8,14 +7,13 @@
 #include <memory>
 #include <mutex>
 #include <thread>
-
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <glog/logging.h>
 #include <poll.h>
 #include <sys/stat.h>
-
 #include "iptux-core/Exception.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
@@ -477,7 +475,9 @@ bool CoreThread::SendMessage(CPPalInfo palInfo, const string& message) {
   return true;
 }
 
-bool CoreThread::SendMessage(CPPalInfo pal, shared_ptr<ChipData> chipData) {
+bool CoreThread::SendMessage(CPPalInfo pal,
+                             enum GroupMsgOption option,
+                             shared_ptr<ChipData> chipData) {
   switch (chipData->type) {
     case MessageContentType::STRING:
       /* 文本类型 */
@@ -500,8 +500,14 @@ bool CoreThread::SendMessage(CPPalInfo pal, shared_ptr<ChipData> chipData) {
 }
 
 bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para) {
+  return SendMsgPara(para->getPal(), IPTUX_REGULAROPT, para);
+}
+
+bool CoreThread::SendMsgPara(CPPalInfo pal,
+                             enum GroupMsgOption option,
+                             shared_ptr<MsgPara> para) {
   for (int i = 0; i < int(para->dtlist.size()); ++i) {
-    if (!SendMessage(para->getPal(), para->dtlist[i])) {
+    if (!SendMessage(pal, para->dtlist[i])) {
       LOG_ERROR("send message failed: %s", para->dtlist[i]->ToString().c_str());
       return false;
     }
@@ -703,6 +709,13 @@ void CoreThread::SendUnitMessage(const PalKey& palKey,
                                  uint32_t opttype,
                                  const string& message) {
   Command(*this).SendUnitMsg(udpSock, GetPal(palKey), opttype, message.c_str());
+}
+
+void CoreThread::SendUnitMessage(const PalKey& palKey,
+                                 enum GroupMsgOption opttype,
+                                 std::shared_ptr<MsgPara> msgPara) {
+  auto pal = ((const CoreThread*)this)->GetPal(palKey);
+  SendMsgPara(pal, msgPara);
 }
 
 void CoreThread::SendGroupMessage(const PalKey& palKey,

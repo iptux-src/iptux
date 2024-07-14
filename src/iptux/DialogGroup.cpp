@@ -11,12 +11,10 @@
 //
 #include "config.h"
 #include "DialogGroup.h"
-
-#include "iptux-core/Models.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
-
 #include "iptux-core/Const.h"
+#include "iptux-core/Models.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/DialogPeer.h"
@@ -431,7 +429,7 @@ void DialogGroup::broadcastTextMsg(shared_ptr<MsgPara> para) {
   GtkTreeModel* model;
   GtkTreeIter iter;
   gboolean active;
-  uint32_t opttype;
+  enum GroupMsgOption opttype;
   PalInfo* pal;
 
   /* 考察是否有成员 */
