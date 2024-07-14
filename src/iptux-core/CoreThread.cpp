@@ -477,12 +477,11 @@ bool CoreThread::SendMessage(CPPalInfo palInfo, const string& message) {
   return true;
 }
 
-bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
-  auto ptr = chipData.data.c_str();
-  switch (chipData.type) {
+bool CoreThread::SendMessage(CPPalInfo pal, shared_ptr<ChipData> chipData) {
+  switch (chipData->type) {
     case MessageContentType::STRING:
       /* 文本类型 */
-      return SendMessage(pal, chipData.data);
+      return SendMessage(pal, chipData->data);
     case MESSAGE_CONTENT_TYPE_PICTURE:
       /* 图片类型 */
       int sock;
@@ -491,12 +490,9 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
                   strerror(errno));
         return false;
       }
-      Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
+      Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT,
+                                  chipData->data.c_str());
       close(sock);  // 关闭网络套接口
-      /*/* 删除此图片 */
-      if (chipData.GetDeleteFileAfterSent()) {
-        unlink(ptr);  // 此文件已无用处
-      }
       return true;
     default:
       g_assert_not_reached();
@@ -506,7 +502,7 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
 bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para) {
   for (int i = 0; i < int(para->dtlist.size()); ++i) {
     if (!SendMessage(para->getPal(), para->dtlist[i])) {
-      LOG_ERROR("send message failed: %s", para->dtlist[i].ToString().c_str());
+      LOG_ERROR("send message failed: %s", para->dtlist[i]->ToString().c_str());
       return false;
     }
   }

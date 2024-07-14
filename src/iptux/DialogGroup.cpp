@@ -12,6 +12,7 @@
 #include "config.h"
 #include "DialogGroup.h"
 
+#include "iptux-core/Models.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
 
@@ -425,7 +426,7 @@ void DialogGroup::BroadcastEnclosureMsg(const vector<FileInfo*>& files) {
  * 向选中的好友广播文本消息.
  * @param msg 文本消息
  */
-void DialogGroup::BroadcastTextMsg(const gchar* msg) {
+void DialogGroup::broadcastTextMsg(shared_ptr<MsgPara> para) {
   GtkWidget* widget;
   GtkTreeModel* model;
   GtkTreeIter iter;
@@ -459,9 +460,9 @@ void DialogGroup::BroadcastTextMsg(const gchar* msg) {
             opttype = IPTUX_REGULAROPT;
             break;
         }
-        app->getCoreThread()->SendUnitMessage(pal->GetKey(), opttype, msg);
+        app->getCoreThread()->SendUnitMessage(pal->GetKey(), opttype, para);
       } else {
-        app->getCoreThread()->SendGroupMessage(pal->GetKey(), msg);
+        app->getCoreThread()->SendGroupMessage(pal->GetKey(), para);
       }
     }
   } while (gtk_tree_model_iter_next(model, &iter));
@@ -597,30 +598,16 @@ void DialogGroup::MembertreeItemActivated(GtkWidget* treeview,
 }
 
 bool DialogGroup::SendTextMsg() {
-  GtkWidget* textview;
-  GtkTextBuffer* buffer;
-  GtkTextIter start, end;
-  gchar* msg;
-
-  /* 考察缓冲区内是否存在数据 */
-  textview = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
-  gtk_widget_grab_focus(textview);  // 为下一次任务做准备
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
-  gtk_text_buffer_get_bounds(buffer, &start, &end);
-  if (gtk_text_iter_equal(&start, &end))
+  gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));  // 为下一次任务做准备
+  if (grpinf->isInputEmpty()) {
     return false;
+  }
 
-  /* 获取数据并发送 */
-  msg = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
-  gtk_text_buffer_delete(buffer, &start, &end);
-  FeedbackMsg(msg);
-  BroadcastTextMsg(msg);
+  shared_ptr<MsgPara> msgpara = grpinf->genMsgParaFromInput();
+  grpinf->clearInputBuffer();
 
-  MsgPara msgpara(this->app->getMe());
-  msgpara.stype = MessageSourceType::SELF;
-  app->getLogSystem()->communicateLog(&msgpara, "[STRING]%s", msg);
-  g_free(msg);
-
+  FeedbackMsg(msgpara);
+  broadcastTextMsg(msgpara);
   return true;
 }
 

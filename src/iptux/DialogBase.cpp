@@ -391,17 +391,13 @@ bool DialogBase::SendEnclosureMsg() {
   return true;
 }
 
-/**
- * 回馈消息.
- * @param msg 消息
- */
-void DialogBase::FeedbackMsg(const gchar* msg) {
-  MsgPara para(this->app->getMe());
+void DialogBase::FeedbackMsg(shared_ptr<MsgPara> msgPara) {
+  MsgPara para(grpinf->getMembers()[0]);
+
   para.stype = MessageSourceType::SELF;
   para.btype = grpinf->getType();
+  para.dtlist = msgPara->dtlist;
 
-  ChipData chip(msg);
-  para.dtlist.push_back(std::move(chip));
   grpinf->addMsgPara(para);
 }
 

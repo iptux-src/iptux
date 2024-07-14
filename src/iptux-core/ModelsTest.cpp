@@ -50,13 +50,14 @@ TEST(NetSegment, ContainIP) {
 }
 
 TEST(ChipData, ToString) {
-  EXPECT_EQ(ChipData("").ToString(), "ChipData(MessageContentType::STRING, )");
+  EXPECT_EQ(ChipData::newTxtMsg("")->ToString(),
+            "ChipData(MessageContentType::STRING, )");
 }
 
 TEST(ChipData, getSummary) {
-  EXPECT_EQ(ChipData("").getSummary(), "");
-  EXPECT_EQ(ChipData("foobar").getSummary(), "foobar");
-  EXPECT_EQ(ChipData(MessageContentType::PICTURE, "foobar").getSummary(),
+  EXPECT_EQ(ChipData::newTxtMsg("")->getSummary(), "");
+  EXPECT_EQ(ChipData::newTxtMsg("foobar")->getSummary(), "foobar");
+  EXPECT_EQ(ChipData::newImgMsg("foobar", false)->getSummary(),
             "Received an image");
 }
 
@@ -72,12 +73,12 @@ TEST(MsgPara, getSummary) {
   auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   MsgPara msg(pal);
   EXPECT_EQ(msg.getSummary(), "Empty Message");
-  msg.dtlist.push_back(ChipData("foobar"));
+  msg.dtlist.push_back(ChipData::newTxtMsg("foobar"));
   EXPECT_EQ(msg.getSummary(), "foobar");
-  msg.dtlist.push_back(ChipData("foobar2"));
+  msg.dtlist.push_back(ChipData::newTxtMsg("foobar2"));
   EXPECT_EQ(msg.getSummary(), "foobar");
   msg.dtlist.clear();
-  msg.dtlist.push_back(ChipData(MessageContentType::PICTURE, "foobar"));
+  msg.dtlist.push_back(ChipData::newImgMsg("foobar", false));
   EXPECT_EQ(msg.getSummary(), "Received an image");
 }
 

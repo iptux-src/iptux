@@ -57,11 +57,11 @@ class DialogGroup : public DialogBase {
 
   bool SendTextMsg() override;
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
-  void BroadcastTextMsg(const gchar* msg);
+  void broadcastTextMsg(std::shared_ptr<MsgPara> para);
   std::string GetTitle();
 
   static GtkWidget* CreatePopupMenu(GtkTreeModel* model);
-  //回调处理部分
+  // 回调处理部分
  private:
   static void onUIChanged(DialogGroup& self);
   static gint MemberTreeCompareByNameFunc(GtkTreeModel* model,

@@ -171,14 +171,30 @@ string MsgPara::getSummary() const {
   if (this->dtlist.empty()) {
     return _("Empty Message");
   }
-  return this->dtlist[0].getSummary();
+  return this->dtlist[0]->getSummary();
+}
+
+shared_ptr<ChipData> ChipData::newTxtMsg(const std::string& text) {
+  return shared_ptr<ChipData>(new ChipData(text));
+}
+
+shared_ptr<ChipData> ChipData::newImgMsg(const std::string& text,
+                                         bool deleteFileAfterSent) {
+  auto res =
+      shared_ptr<ChipData>(new ChipData(MessageContentType::PICTURE, text));
+  res->deleteFileAfterSent = deleteFileAfterSent;
+  return res;
 }
 
 ChipData::ChipData(const string& data)
     : type(MessageContentType::STRING), data(data) {}
 ChipData::ChipData(MessageContentType type, const string& data)
     : type(type), data(data) {}
-ChipData::~ChipData() {}
+ChipData::~ChipData() {
+  if (type == MessageContentType::PICTURE && deleteFileAfterSent) {
+    g_unlink(data.c_str());
+  }
+}
 
 NetSegment::NetSegment() {}
 
