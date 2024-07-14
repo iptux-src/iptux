@@ -115,6 +115,25 @@ void DialogBase::ScrollHistoryTextview() {
   gtk_text_buffer_delete_mark(buffer, mark);
 }
 
+typedef struct _GetImageCbkCtx {
+  int idx;
+  GtkEventBox* res;
+} GetImageCbkCtx;
+
+static void GetImageCbk(GtkWidget* widget, GetImageCbkCtx* ctx) {
+  if (GTK_IS_EVENT_BOX(widget) && ctx->idx-- == 0) {
+    ctx->res = GTK_EVENT_BOX(widget);
+  }
+}
+
+GtkEventBox* DialogBase::chatHistoryGetImageEventBox(int idx) {
+  GetImageCbkCtx ctx = {idx, nullptr};
+
+  gtk_container_foreach(GTK_CONTAINER(chat_history_widget),
+                        (GtkCallback)GetImageCbk, &ctx);
+  return ctx.res;
+}
+
 /**
  * 窗口打开情况下，新消息来到以后的接口
  */
@@ -816,14 +835,12 @@ void DialogBase::afterWindowCreated() {
   m_imagePopupMenu = GTK_MENU(gtk_menu_new());
 
   GtkWidget* menu_item = gtk_menu_item_new_with_label(_("Save Image"));
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menu_item), "win.save_image");
   gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnSaveImage), this);
 
   menu_item = gtk_menu_item_new_with_label(_("Copy Image"));
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(menu_item), "win.copy_image");
   gtk_menu_shell_append(GTK_MENU_SHELL(m_imagePopupMenu), menu_item);
-  g_signal_connect_swapped(menu_item, "activate",
-                           G_CALLBACK(DialogBase::OnCopyImage), this);
 
   gtk_menu_attach_to_widget(m_imagePopupMenu, GTK_WIDGET(getWindow()), NULL);
 }
@@ -878,7 +895,7 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
   gtk_widget_show_all(event_box);
 }
 
-void DialogBase::OnSaveImage(DialogBase* self) {
+void DialogBase::onSaveImage(void*, void*, DialogBase* self) {
   GtkImage* image = self->m_activeImage;
   g_return_if_fail(!!image);
 
@@ -897,7 +914,7 @@ void DialogBase::OnSaveImage(DialogBase* self) {
                                                  TRUE);
   gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
 
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+  if (igtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
     char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
     GError* error = NULL;
@@ -918,7 +935,7 @@ void DialogBase::OnSaveImage(DialogBase* self) {
   gtk_widget_destroy(dialog);
 }
 
-void DialogBase::OnCopyImage(DialogBase* self) {
+void DialogBase::onCopyImage(void*, void*, DialogBase* self) {
   GtkImage* image = self->m_activeImage;
   g_return_if_fail(!!image);
 

@@ -25,3 +25,10 @@ option(
   value: false,
   description: 'enable -fsanitize=address compile/link flag',
 )
+
+option(
+  'config-debug',
+  type: 'feature',
+  value: 'auto',
+  description: 'enable CONFIG_DEBUG, some unittests need this flag',
+)
