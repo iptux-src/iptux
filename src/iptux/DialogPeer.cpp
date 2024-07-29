@@ -437,9 +437,9 @@ MsgPara* DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
  * 请求获取此好友的共享文件.
  * @param grpinf 好友群组信息
  */
-void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer& self) {
-  auto g_cthrd = self.app->getCoreThread();
-  g_cthrd->SendAskShared(self.grpinf->getMembers()[0]);
+void DialogPeer::onRequestSharedResources(void*, void*, DialogPeer* self) {
+  auto g_cthrd = self->app->getCoreThread();
+  g_cthrd->SendAskShared(self->grpinf->getMembers()[0]);
 }
 
 void DialogPeer::onPaste(void*, void*, DialogPeer* self) {
@@ -839,7 +839,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer* dlgpr) {
  *@param dlgpr 对话框类
  *
  */
-bool DialogPeer::UpdataEnclosureRcvUI(DialogPeer* dlgpr) {
+int DialogPeer::UpdataEnclosureRcvUI(DialogPeer* dlgpr) {
   GtkTreeModel* model;
   GtkWidget *pbar, *button;
   float progress = 0.0;
@@ -981,12 +981,13 @@ GSList* DialogPeer::GetSelPal() {
  *从接收文件的TreeView删除选定行（待接收和已接收都用此函数）.
  * @param widget TreeView
  */
-void DialogPeer::onRefuse(void*, void*, DialogPeer& self) {
+void DialogPeer::onRefuse(void*, void*, DialogPeer* self_) {
   GtkTreeModel* model;
   GtkTreeSelection* TreeSel;
   GtkTreeIter iter;
   FileInfo* file;
   GList* list;
+  DialogPeer& self = *self_;
 
   GtkWidget* widget = self.fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
@@ -1009,18 +1010,18 @@ void DialogPeer::onRefuse(void*, void*, DialogPeer& self) {
   self.ShowInfoEnclosure(&self);
 }
 
-void DialogPeer::onRefuseAll(void*, void*, DialogPeer& self) {
+void DialogPeer::onRefuseAll(void*, void*, DialogPeer* self) {
   GtkTreeModel* model;
   GtkTreeIter iter;
   FileInfo* file;
 
-  GtkWidget* widget = self.fileToReceiveTreeviewWidget;
+  GtkWidget* widget = self->fileToReceiveTreeviewWidget;
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(widget));
 
   if (gtk_tree_model_get_iter_first(model, &iter)) {
     do {
       gtk_tree_model_get(model, &iter, 5, &file, -1);
-      self.app->getCoreThread()->PopItemFromEnclosureList(file);
+      self->app->getCoreThread()->PopItemFromEnclosureList(file);
     } while (gtk_tree_model_iter_next(model, &iter));
   }
   gtk_list_store_clear(GTK_LIST_STORE(model));

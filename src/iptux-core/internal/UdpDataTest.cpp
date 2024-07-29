@@ -8,5 +8,5 @@ using namespace std;
 using namespace iptux;
 
 TEST(UdpData, getCommandNo) {
-  ASSERT_EQ(UdpData("", "127.0.0.1").getCommandNo(), 0);
+  ASSERT_EQ(UdpData("", "127.0.0.1").getCommandNo(), 0U);
 }

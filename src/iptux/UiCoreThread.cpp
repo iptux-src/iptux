@@ -555,8 +555,9 @@ void UiCoreThread::CheckIconTheme() {
     snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
              g_get_user_config_dir(), programData->myicon.c_str());
     if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-      gtk_icon_theme_add_builtin_icon(programData->myicon.c_str(), MAX_ICONSIZE,
-                                      pixbuf);
+      // gtk_icon_theme_add_builtin_icon(programData->myicon.c_str(),
+      // MAX_ICONSIZE,
+      //                                 pixbuf);
       g_object_unref(pixbuf);
     }
   }
@@ -567,8 +568,8 @@ void UiCoreThread::CheckIconTheme() {
     snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
              g_get_user_config_dir(), programData->palicon);
     if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-      gtk_icon_theme_add_builtin_icon(programData->palicon, MAX_ICONSIZE,
-                                      pixbuf);
+      // gtk_icon_theme_add_builtin_icon(programData->palicon, MAX_ICONSIZE,
+      //                                 pixbuf);
       g_object_unref(pixbuf);
     }
   }

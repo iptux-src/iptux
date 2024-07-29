@@ -146,6 +146,11 @@ void SendFileData::SendRegularFile() {
   }
 }
 
+static void closedir_as_gfunc(gpointer data, gpointer user_data) {
+  (void)user_data;
+  closedir((DIR*)data);
+}
+
 /**
  * 发送目录文件.
  */
@@ -260,7 +265,7 @@ end:
     if (dir)
       closedir(dir);
     /* 关闭堆栈中所有的目录流，并清空堆栈 */
-    g_queue_foreach(&dirstack, GFunc(closedir), NULL);
+    g_queue_foreach(&dirstack, closedir_as_gfunc, NULL);
     g_queue_clear(&dirstack);
     LOG_INFO(_("Failed to send the directory \"%s\" to %s!"), file->filepath,
              file->fileown->getName().c_str());

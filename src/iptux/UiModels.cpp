@@ -123,7 +123,8 @@ void transModelLoadFromTransFileModels(
  */
 gint paltreeCompareByNameFunc(GtkTreeModel* model,
                               GtkTreeIter* a,
-                              GtkTreeIter* b) {
+                              GtkTreeIter* b,
+                              void*) {
   GroupInfo *agrpinf, *bgrpinf;
   gint result;
 
@@ -136,7 +137,8 @@ gint paltreeCompareByNameFunc(GtkTreeModel* model,
 
 gint paltreeCompareByUserNameFunc(GtkTreeModel* model,
                                   GtkTreeIter* a,
-                                  GtkTreeIter* b) {
+                                  GtkTreeIter* b,
+                                  void*) {
   GroupInfo *agrpinf, *bgrpinf;
   gint result;
 
@@ -156,7 +158,8 @@ gint paltreeCompareByUserNameFunc(GtkTreeModel* model,
  */
 gint paltreeCompareByIPFunc(GtkTreeModel* model,
                             GtkTreeIter* a,
-                            GtkTreeIter* b) {
+                            GtkTreeIter* b,
+                            void*) {
   GroupInfo *agrpinf, *bgrpinf;
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
@@ -176,7 +179,8 @@ gint paltreeCompareByIPFunc(GtkTreeModel* model,
 
 gint paltreeCompareByHostFunc(GtkTreeModel* model,
                               GtkTreeIter* a,
-                              GtkTreeIter* b) {
+                              GtkTreeIter* b,
+                              void*) {
   GroupInfo *agrpinf, *bgrpinf;
 
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
@@ -186,7 +190,8 @@ gint paltreeCompareByHostFunc(GtkTreeModel* model,
 
 gint paltreeCompareByLastActivityFunc(GtkTreeModel* model,
                                       GtkTreeIter* a,
-                                      GtkTreeIter* b) {
+                                      GtkTreeIter* b,
+                                      void*) {
   GroupInfo *agrpinf, *bgrpinf;
 
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);

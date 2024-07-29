@@ -66,7 +66,7 @@ class DialogGroup : public DialogBase {
   static void onUIChanged(DialogGroup& self);
   static gint MemberTreeCompareByNameFunc(GtkTreeModel* model,
                                           GtkTreeIter* a,
-                                          GtkTreeIter* b);
+                                          GtkTreeIter* b, void*);
   static gint MemberTreeCompareByIPFunc(GtkTreeModel* model,
                                         GtkTreeIter* a,
                                         GtkTreeIter* b);
@@ -85,23 +85,23 @@ class DialogGroup : public DialogBase {
                                       GtkTreeViewColumn* column,
                                       DialogGroup* self);
   static void SendMessage(DialogGroup* dlggrp);
-  static void onClearChatHistory(void*, void*, DialogGroup& self) {
-    self.ClearHistoryTextView();
+  static void onClearChatHistory(void*, void*, DialogGroup* self) {
+    self->ClearHistoryTextView();
   }
-  static void onAttachFile(void*, void*, DialogGroup& self) {
-    DialogBase::AttachRegular(&self);
+  static void onAttachFile(void*, void*, DialogGroup* self) {
+    DialogBase::AttachRegular(self);
   }
-  static void onAttachFolder(void*, void*, DialogGroup& self) {
-    DialogBase::AttachFolder(&self);
+  static void onAttachFolder(void*, void*, DialogGroup* self) {
+    DialogBase::AttachFolder(self);
   }
   static void onSortType(GSimpleAction* action,
                          GVariant* value,
-                         DialogGroup& self);
+                         DialogGroup* self);
   static void onSortBy(GSimpleAction* action,
                        GVariant* value,
-                       DialogGroup& self);
-  static void onSendMessage(void*, void*, DialogGroup& self) {
-    DialogBase::SendMessage(&self);
+                       DialogGroup* self);
+  static void onSendMessage(void*, void*, DialogGroup* self) {
+    DialogBase::SendMessage(self);
   }
 };
 

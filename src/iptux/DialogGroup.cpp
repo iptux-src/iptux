@@ -504,7 +504,7 @@ GtkWidget* DialogGroup::CreatePopupMenu(GtkTreeModel* model) {
  */
 gint DialogGroup::MemberTreeCompareByNameFunc(GtkTreeModel* model,
                                               GtkTreeIter* a,
-                                              GtkTreeIter* b) {
+                                              GtkTreeIter* b, void*) {
   PalInfo *apal, *bpal;
   gint result;
 
@@ -674,7 +674,7 @@ void DialogGroup::onUIChanged(DialogGroup& self) {
 
 void DialogGroup::onSortBy(GSimpleAction* action,
                            GVariant* value,
-                           DialogGroup& self) {
+                           DialogGroup* self) {
   string sortBy = g_variant_get_string(value, nullptr);
 
   PalTreeModelSortKey key;
@@ -689,14 +689,14 @@ void DialogGroup::onSortBy(GSimpleAction* action,
   }
 
   auto model =
-      GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "member-model"));
+      GTK_TREE_MODEL(g_datalist_get_data(&self->mdlset, "member-model"));
   palTreeModelSetSortKey(model, key);
   g_simple_action_set_state(action, value);
 }
 
 void DialogGroup::onSortType(GSimpleAction* action,
                              GVariant* value,
-                             DialogGroup& self) {
+                             DialogGroup* self) {
   string sortType = g_variant_get_string(value, nullptr);
 
   GtkSortType type;
@@ -711,7 +711,7 @@ void DialogGroup::onSortType(GSimpleAction* action,
   }
 
   auto model =
-      GTK_TREE_MODEL(g_datalist_get_data(&self.mdlset, "member-model"));
+      GTK_TREE_MODEL(g_datalist_get_data(&self->mdlset, "member-model"));
   gtk_tree_sortable_set_sort_column_id(
       GTK_TREE_SORTABLE(model), GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, type);
   g_simple_action_set_state(action, value);

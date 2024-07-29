@@ -178,22 +178,22 @@ class MainWindow : public sigc::trackable {
   static void PanedDivideChanged(GtkWidget* paned,
                                  GParamSpec* pspec,
                                  MainWindow* self);
-  static void onRefresh(void*, void*, MainWindow& self);
-  static void onDetect(void*, void*, MainWindow& self);
-  static void onFind(void*, void*, MainWindow& self);
-  static void onPalSendMessage(void*, void*, MainWindow& self);
-  static void onPalRequestSharedResources(void*, void*, MainWindow& self);
-  static void onPalChangeInfo(void*, void*, MainWindow& self);
-  static void onDeletePal(void*, void*, MainWindow& self);
+  static void onRefresh(void*, void*, MainWindow* self);
+  static void onDetect(void*, void*, MainWindow* self);
+  static void onFind(void*, void*, MainWindow* self);
+  static void onPalSendMessage(void*, void*, MainWindow* self);
+  static void onPalRequestSharedResources(void*, void*, MainWindow* self);
+  static void onPalChangeInfo(void*, void*, MainWindow* self);
+  static void onDeletePal(void*, void*, MainWindow* self);
   static void onSortType(GSimpleAction* action,
                          GVariant* value,
-                         MainWindow& self);
+                         MainWindow* self);
   static void onSortBy(GSimpleAction* action,
                        GVariant* value,
-                       MainWindow& self);
+                       MainWindow* self);
   static void onInfoStyle(GSimpleAction* action,
                           GVariant* value,
-                          MainWindow& self);
+                          MainWindow* self);
   static gboolean onNewPalOnlineEvent(gpointer data);
   void onGroupInfoUpdated(GroupInfo* groupInfo);
 };

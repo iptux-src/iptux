@@ -994,26 +994,25 @@ void MainWindow::GoNextTreeModel(MainWindow* mwin) {
  * 更新好友树.
  * @param mwin 主窗口类
  */
-void MainWindow::onRefresh(void*, void*, MainWindow& self) {
-  auto mwin = &self;
-
-  self.coreThread.Lock();
-  mwin->ClearAllItemFromPaltree();
-  self.coreThread.ClearAllPalFromList();
-  self.coreThread.Unlock();
+void MainWindow::onRefresh(void*, void*, MainWindow* self) {
+  self->coreThread.Lock();
+  self->ClearAllItemFromPaltree();
+  self->coreThread.ClearAllPalFromList();
+  self->coreThread.Unlock();
   thread([](CoreThread* thread) { CoreThread::SendNotifyToAll(thread); },
-         &self.coreThread)
+         &self->coreThread)
       .detach();
 }
 
-void MainWindow::onDetect(void*, void*, MainWindow& self) {
-  DetectPal pal(self.app, GTK_WINDOW(self.window));
+void MainWindow::onDetect(void*, void*, MainWindow* self) {
+  DetectPal pal(self->app, GTK_WINDOW(self->window));
   pal.run();
 }
 
 void MainWindow::onSortBy(GSimpleAction* action,
                           GVariant* value,
-                          MainWindow& self) {
+                          MainWindow* self_) {
+  MainWindow& self = *self_;
   string sortBy = g_variant_get_string(value, nullptr);
 
   PalTreeModelSortKey key = PalTreeModelSortKeyFromStr(sortBy);
@@ -1046,7 +1045,8 @@ void MainWindow::onSortBy(GSimpleAction* action,
 
 void MainWindow::onSortType(GSimpleAction* action,
                             GVariant* value,
-                            MainWindow& self) {
+                            MainWindow* self_) {
+  MainWindow& self = *self_;
   string sortType = g_variant_get_string(value, nullptr);
   GtkSortType sort_type = GtkSortTypeFromStr(sortType);
 
@@ -1087,7 +1087,7 @@ void MainWindow::onSortType(GSimpleAction* action,
 
 void MainWindow::onInfoStyle(GSimpleAction* action,
                              GVariant* value,
-                             MainWindow& self) {
+                             MainWindow* self) {
   string s = g_variant_get_string(value, nullptr);
 
   GroupInfoStyle style = GroupInfoStyleFromStr(s);
@@ -1096,10 +1096,10 @@ void MainWindow::onInfoStyle(GSimpleAction* action,
     return;
   }
 
-  self.info_style_ = style;
-  self.RefreshPalList();
+  self->info_style_ = style;
+  self->RefreshPalList();
   g_simple_action_set_state(action, value);
-  self.SaveConfig();
+  self->SaveConfig();
 }
 
 /**
@@ -1348,8 +1348,7 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget* treeview,
                                                 "session-class");
   list = selection_data_get_path(data);  // 获取所有文件
   session->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
   //        session->ShowEnclosure();
 }
 
@@ -1357,22 +1356,22 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget* treeview,
  * 显示好友清单区域.
  * @param widset widget set
  */
-void MainWindow::onFind(void*, void*, MainWindow& self) {
+void MainWindow::onFind(void*, void*, MainWindow* self) {
   GtkWidget* widget;
 
-  widget = GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-box-widget"));
+  widget = GTK_WIDGET(g_datalist_get_data(&self->widset, "pallist-box-widget"));
   gtk_widget_show(widget);
   widget =
-      GTK_WIDGET(g_datalist_get_data(&self.widset, "pallist-entry-widget"));
+      GTK_WIDGET(g_datalist_get_data(&self->widset, "pallist-entry-widget"));
   gtk_widget_grab_focus(widget);
-  PallistEntryChanged(widget, &self);
+  PallistEntryChanged(widget, self);
 }
 
-void MainWindow::onDeletePal(void*, void*, MainWindow& self) {
-  GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
+void MainWindow::onDeletePal(void*, void*, MainWindow* self) {
+  GroupInfo* groupInfo = CHECK_NOTNULL(self->currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      self.DeletePalItem(groupInfo);
+      self->DeletePalItem(groupInfo);
       break;
     default:
       CHECK(false);
@@ -1380,11 +1379,11 @@ void MainWindow::onDeletePal(void*, void*, MainWindow& self) {
   }
 }
 
-void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
-  GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
+void MainWindow::onPalChangeInfo(void*, void*, MainWindow* self) {
+  GroupInfo* groupInfo = CHECK_NOTNULL(self->currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      RevisePal::ReviseEntry(self.app, GTK_WINDOW(self.window),
+      RevisePal::ReviseEntry(self->app, GTK_WINDOW(self->window),
                              groupInfo->getMembers()[0].get());
       break;
     default:
@@ -1393,31 +1392,31 @@ void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
   }
 }
 
-void MainWindow::onPalSendMessage(void*, void*, MainWindow& self) {
-  GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
+void MainWindow::onPalSendMessage(void*, void*, MainWindow* self) {
+  GroupInfo* groupInfo = CHECK_NOTNULL(self->currentGroupInfo);
   if (groupInfo->getDialog()) {
     gtk_window_present(GTK_WINDOW(groupInfo->getDialog()));
     return;
   }
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      DialogPeer::PeerDialogEntry(self.app, groupInfo);
+      DialogPeer::PeerDialogEntry(self->app, groupInfo);
       break;
     case GROUP_BELONG_TYPE_SEGMENT:
     case GROUP_BELONG_TYPE_GROUP:
     case GROUP_BELONG_TYPE_BROADCAST:
-      DialogGroup::GroupDialogEntry(self.app, groupInfo);
+      DialogGroup::GroupDialogEntry(self->app, groupInfo);
       break;
     default:
       CHECK(false);
       break;
   }
 }
-void MainWindow::onPalRequestSharedResources(void*, void*, MainWindow& self) {
-  GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
+void MainWindow::onPalRequestSharedResources(void*, void*, MainWindow* self) {
+  GroupInfo* groupInfo = CHECK_NOTNULL(self->currentGroupInfo);
   switch (groupInfo->getType()) {
     case GROUP_BELONG_TYPE_REGULAR:
-      self.coreThread.SendAskShared(groupInfo->getMembers()[0]);
+      self->coreThread.SendAskShared(groupInfo->getMembers()[0]);
       break;
     default:
       CHECK(false);
@@ -1586,8 +1585,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget* treeview,
                                                 "session-class");
   list = selection_data_get_path(data);  // 获取所有文件
   session->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
   //        session->ShowEnclosure();
 }
 

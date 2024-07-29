@@ -73,22 +73,22 @@ class Application {
   void onConfigChanged();
   void updateItemToTransTree(const TransFileModel& para);
   static gboolean ProcessEvents(gpointer data);
-  static void onAbout(void*, void*, Application& self);
-  static void onActivate(Application& self);
-  static void onOpenMainWindow(void*, void*, Application& self);
-  static void onPreferences(void*, void*, Application& self);
-  static void onQuit(void*, void*, Application& self);
-  static void onStartup(Application& self);
-  static void onToolsSharedManagement(void*, void*, Application& self);
-  static void onToolsTransmission(void*, void*, Application& self);
-  static void onOpenChatLog(void*, void*, Application& self);
-  static void onOpenSystemLog(void*, void*, Application& self);
-  static void onTransModelClear(void*, void*, Application& self);
+  static void onAbout(void*, void*, Application* self);
+  static void onActivate(Application* self);
+  static void onOpenMainWindow(void*, void*, Application* self);
+  static void onPreferences(void*, void*, Application* self);
+  static void onQuit(void*, void*, Application* self);
+  static void onStartup(Application* self);
+  static void onToolsSharedManagement(void*, void*, Application* self);
+  static void onToolsTransmission(void*, void*, Application* self);
+  static void onOpenChatLog(void*, void*, Application* self);
+  static void onOpenSystemLog(void*, void*, Application* self);
+  static void onTransModelClear(void*, void*, Application* self);
   static void onOpenChat(GSimpleAction* action,
                          GVariant* value,
-                         Application& self);
-  static void onWindowClose(void*, void*, Application& self);
-  static gboolean onTransWindowDelete(Application& self);
+                         Application* self);
+  static void onWindowClose(void*, void*, Application* self);
+  static gboolean onTransWindowDelete(Application* self);
 };
 
 }  // namespace iptux

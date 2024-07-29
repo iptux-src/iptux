@@ -268,8 +268,8 @@ void RevisePal::ApplyReviseData() {
       pal->set_icon_file(stringFormat("%" PRIx32, ntohl(pal->ipv4().s_addr)));
       gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
       gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-      gtk_icon_theme_add_builtin_icon(pal->icon_file().c_str(), MAX_ICONSIZE,
-                                      pixbuf);
+      // gtk_icon_theme_add_builtin_icon(pal->icon_file().c_str(), MAX_ICONSIZE,
+      //                                 pixbuf);
       g_object_unref(pixbuf);
     } else {
       pal->set_icon_file(file);

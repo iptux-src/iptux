@@ -57,7 +57,8 @@ static void ClearPassword(ShareFile* self);
 static void SetPassword(ShareFile* self);
 static gint FileTreeCompareFunc(GtkTreeModel* model,
                                 GtkTreeIter* a,
-                                GtkTreeIter* b);
+                                GtkTreeIter* b,
+                                void*);
 
 ShareFilePrivate* getPriv(ShareFile* window) {
   return (ShareFilePrivate*)g_object_get_data(G_OBJECT(window), IPTUX_PRIVATE);
@@ -446,8 +447,7 @@ void AddRegular(ShareFile* sfile) {
 
   list = PickSharedFile(sfile, FileAttr::REGULAR);
   AttachSharedFiles(sfile, list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
 }
 
 /**
@@ -459,8 +459,7 @@ void AddFolder(ShareFile* sfile) {
 
   list = PickSharedFile(sfile, FileAttr::DIRECTORY);
   AttachSharedFiles(sfile, list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
 }
 
 /**
@@ -544,8 +543,7 @@ void DragDataReceived(ShareFile* sfile,
 
   list = selection_data_get_path(data);
   AttachSharedFiles(sfile, list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
 
   gtk_drag_finish(context, TRUE, FALSE, time);
 }
@@ -557,7 +555,10 @@ void DragDataReceived(ShareFile* sfile,
  * @param b Another GtkTreeIter in model
  * @return 比较值
  */
-gint FileTreeCompareFunc(GtkTreeModel* model, GtkTreeIter* a, GtkTreeIter* b) {
+gint FileTreeCompareFunc(GtkTreeModel* model,
+                         GtkTreeIter* a,
+                         GtkTreeIter* b,
+                         void*) {
   gchar *afilepath, *bfilepath;
   FileAttr afileattr, bfileattr;
   gint result;

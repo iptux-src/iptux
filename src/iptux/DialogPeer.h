@@ -74,34 +74,34 @@ class DialogPeer : public DialogBase {
   static void onRecvTreeSelectionChanged(DialogPeer& self, GtkTreeSelection*);
   static void onAcceptButtonClicked(DialogPeer* self);
   static void ShowInfoEnclosure(DialogPeer* dlgpr);
-  static bool UpdataEnclosureRcvUI(DialogPeer* dlgpr);
+  static int UpdataEnclosureRcvUI(DialogPeer* dlgpr);
   static gint RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self);
-  static void onRefuse(void*, void*, DialogPeer& self);
-  static void onRefuseAll(void*, void*, DialogPeer& self);
+  static void onRefuse(void*, void*, DialogPeer* self);
+  static void onRefuseAll(void*, void*, DialogPeer* self);
   void onNewFileReceived(GroupInfo*);
-  static void onClearChatHistory(void*, void*, DialogPeer& self) {
-    self.ClearHistoryTextView();
+  static void onClearChatHistory(void*, void*, DialogPeer* self) {
+    self->ClearHistoryTextView();
   }
-  static void onInsertPicture(void*, void*, DialogPeer& self) {
-    self.insertPicture();
+  static void onInsertPicture(void*, void*, DialogPeer* self) {
+    self->insertPicture();
   }
-  static void onAttachFile(void*, void*, DialogPeer& self) {
-    DialogBase::AttachRegular(&self);
+  static void onAttachFile(void*, void*, DialogPeer* self) {
+    DialogBase::AttachRegular(self);
   }
-  static void onAttachFolder(void*, void*, DialogPeer& self) {
-    DialogBase::AttachFolder(&self);
+  static void onAttachFolder(void*, void*, DialogPeer* self) {
+    DialogBase::AttachFolder(self);
   }
-  static void onRequestSharedResources(void*, void*, DialogPeer& self);
+  static void onRequestSharedResources(void*, void*, DialogPeer* self);
   static void onPaste(void*, void*, DialogPeer* self);
-  static void onSendMessage(void*, void*, DialogPeer& self) {
-    DialogBase::SendMessage(&self);
+  static void onSendMessage(void*, void*, DialogPeer* self) {
+    DialogBase::SendMessage(self);
   }
   void onGroupInfoUpdated(GroupInfo* groupInfo);
-  static void onInputBufferChanged(GtkTextBuffer*, DialogPeer& self) {
-    self.refreshSendAction();
+  static void onInputBufferChanged(GtkTextBuffer*, DialogPeer* self) {
+    self->refreshSendAction();
   }
-  static void onSendFileModelChanged(DialogPeer& self) {
-    self.refreshSendAction();
+  static void onSendFileModelChanged(DialogPeer* self) {
+    self->refreshSendAction();
   }
 
  protected:

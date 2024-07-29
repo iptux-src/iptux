@@ -2,14 +2,20 @@ project('iptux', 'cpp',
     license: 'GPL2+',
     version: '0.9.3',
     meson_version: '>=0.53',
-    default_options: ['warning_level=3', 'cpp_std=c++14'])
-add_global_arguments('-Werror=format', language : 'cpp')
+    default_options: ['warning_level=2', 'cpp_std=c++14'])
+add_global_arguments(['-Werror=format', '-Werror'], language : 'cpp')
 if get_option('sanitize-address')
   add_project_arguments('-fsanitize=address', language: 'cpp')
   add_project_link_arguments('-fsanitize=address', language: 'cpp')
 endif
 
 so_version = '0.9.3'
+
+glib_dep = dependency('glib-2.0', version: '>=2.36')
+add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_36', language: 'cpp')
+
+
+
 subdir('src')
 subdir('share')
 subdir('po')

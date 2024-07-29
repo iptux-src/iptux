@@ -1,4 +1,3 @@
-glib_dep = dependency('glib-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 glog_dep = dependency('libglog')
 gflags_dep = dependency('gflags')

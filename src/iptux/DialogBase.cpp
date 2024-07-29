@@ -415,8 +415,7 @@ void DialogBase::AttachRegular(DialogBase* dlgpr) {
   if (!(list = dlgpr->PickEnclosure(FileAttr::REGULAR)))
     return;
   dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
 }
 
 /**
@@ -429,8 +428,7 @@ void DialogBase::AttachFolder(DialogBase* dlgpr) {
   if (!(list = dlgpr->PickEnclosure(FileAttr::DIRECTORY)))
     return;
   dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
 }
 
 /**
@@ -488,8 +486,7 @@ void DialogBase::DragDataReceived(DialogBase* dlgpr,
 
   list = selection_data_get_path(data);  // 获取所有文件
   dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  g_slist_free_full(list, g_free);
   gtk_drag_finish(context, TRUE, FALSE, time);
 }
 

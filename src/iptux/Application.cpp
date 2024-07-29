@@ -109,14 +109,15 @@ int Application::run(int argc, char** argv) {
 }
 
 void Application::startup() {
-  Application::onStartup(*this);
+  Application::onStartup(this);
 }
 
 void Application::activate() {
-  Application::onActivate(*this);
+  Application::onActivate(this);
 }
 
-void Application::onStartup(Application& self) {
+void Application::onStartup(Application* self_) {
+  Application& self = *self_;
   init_theme(&self);
   iptux_register_resource();
   self.menuBuilder =
@@ -192,7 +193,8 @@ void Application::onStartup(Application& self) {
 #endif
 }
 
-void Application::onActivate(Application& self) {
+void Application::onActivate(Application* self_) {
+  Application& self = *self_;
   if (self.started) {
     return;
   }
@@ -208,57 +210,57 @@ void Application::onActivate(Application& self) {
   g_idle_add(G_SOURCE_FUNC(Application::ProcessEvents), &self);
 }
 
-void Application::onQuit(void*, void*, Application& self) {
-  if (!transModelIsFinished(self.transModel)) {
-    if (!pop_request_quit(GTK_WINDOW(self.window->getWindow()))) {
+void Application::onQuit(void*, void*, Application* self) {
+  if (!transModelIsFinished(self->transModel)) {
+    if (!pop_request_quit(GTK_WINDOW(self->window->getWindow()))) {
       return;
     }
   }
-  g_application_quit(G_APPLICATION(self.app));
+  g_application_quit(G_APPLICATION(self->app));
 }
 
-void Application::onPreferences(void*, void*, Application& self) {
-  DataSettings::ResetDataEntry(&self, GTK_WIDGET(self.window->getWindow()));
+void Application::onPreferences(void*, void*, Application* self) {
+  DataSettings::ResetDataEntry(self, GTK_WIDGET(self->window->getWindow()));
 }
 
-void Application::onOpenMainWindow(void*, void*, Application& self) {
-  self.getMainWindow()->Show();
+void Application::onOpenMainWindow(void*, void*, Application* self) {
+  self->getMainWindow()->Show();
 }
 
-void Application::onToolsTransmission(void*, void*, Application& self) {
-  self.openTransWindow();
+void Application::onToolsTransmission(void*, void*, Application* self) {
+  self->openTransWindow();
 }
 
-void Application::onToolsSharedManagement(void*, void*, Application& self) {
-  if (!self.shareFile) {
-    self.shareFile = shareFileNew(&self);
+void Application::onToolsSharedManagement(void*, void*, Application* self) {
+  if (!self->shareFile) {
+    self->shareFile = shareFileNew(self);
   }
-  shareFileRun(self.shareFile, GTK_WINDOW(self.window->getWindow()));
+  shareFileRun(self->shareFile, GTK_WINDOW(self->window->getWindow()));
 }
 
-void Application::onOpenChatLog(void*, void*, Application& self) {
-  auto path = self.getCoreThread()->getLogSystem()->getChatLogPath();
+void Application::onOpenChatLog(void*, void*, Application* self) {
+  auto path = self->getCoreThread()->getLogSystem()->getChatLogPath();
   iptux_open_url(path.c_str());
 }
 
-void Application::onOpenSystemLog(void*, void*, Application& self) {
-  auto path = self.getCoreThread()->getLogSystem()->getSystemLogPath();
+void Application::onOpenSystemLog(void*, void*, Application* self) {
+  auto path = self->getCoreThread()->getLogSystem()->getSystemLogPath();
   iptux_open_url(path.c_str());
 }
 
-void Application::onTransModelClear(void*, void*, Application& self) {
-  self.getCoreThread()->clearFinishedTransTasks();
+void Application::onTransModelClear(void*, void*, Application* self) {
+  self->getCoreThread()->clearFinishedTransTasks();
 }
 
-void Application::onWindowClose(void*, void*, Application& self) {
-  auto window = gtk_application_get_active_window(self.app);
+void Application::onWindowClose(void*, void*, Application* self) {
+  auto window = gtk_application_get_active_window(self->app);
   if (window) {
     gtk_window_close(window);
   }
 }
 
-void Application::onAbout(void*, void*, Application& self) {
-  aboutDialogEntry(GTK_WINDOW(self.window->getWindow()));
+void Application::onAbout(void*, void*, Application* self) {
+  aboutDialogEntry(GTK_WINDOW(self->window->getWindow()));
 }
 
 void Application::refreshTransTasks() {
@@ -357,8 +359,8 @@ void Application::openTransWindow() {
   gtk_window_present(GTK_WINDOW(transWindow));
 }
 
-gboolean Application::onTransWindowDelete(iptux::Application& self) {
-  self.transWindow = nullptr;
+gboolean Application::onTransWindowDelete(iptux::Application* self) {
+  self->transWindow = nullptr;
   return FALSE;
 }
 
@@ -378,7 +380,8 @@ void Application::updateItemToTransTree(const TransFileModel& para) {
 
 void Application::onOpenChat(GSimpleAction*,
                              GVariant* value,
-                             Application& self) {
+                             Application* self_) {
+  Application& self = *self_;
   string ipv4 = g_variant_get_string(value, nullptr);
   auto pal = self.cthrd->GetPal(ipv4);
   if (!pal) {

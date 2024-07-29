@@ -85,7 +85,7 @@ class DataSettings {
 
   static gint NetworkTreeCompareFunc(GtkTreeModel* model,
                                      GtkTreeIter* a,
-                                     GtkTreeIter* b);
+                                     GtkTreeIter* b, void*);
   static void ClickAddIpseg(GData** widset);
   static void ClickDelIpseg(GData** widset);
   static void CellEditText(GtkCellRendererText* renderer,
