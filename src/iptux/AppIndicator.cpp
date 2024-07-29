@@ -35,7 +35,8 @@ IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   priv->indicator = app_indicator_new("io.github.iptux_src.iptux", "iptux-icon",
                                       APP_INDICATOR_CATEGORY_COMMUNICATIONS);
   app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
-  app_indicator_set_attention_icon(priv->indicator, "iptux-attention");
+  app_indicator_set_attention_icon_full(priv->indicator, "iptux-attention",
+                                        "iptux");
 
   app_indicator_set_title(priv->indicator, _("Iptux"));
 

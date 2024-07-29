@@ -3,7 +3,11 @@ project('iptux', 'cpp',
     version: '0.9.3',
     meson_version: '>=0.53',
     default_options: ['warning_level=2', 'cpp_std=c++14'])
-add_global_arguments(['-Werror=format', '-Werror'], language : 'cpp')
+add_global_arguments([
+  '-Werror=format',
+  '-Werror',
+  '-Wno-c99-designator',
+  ], language : 'cpp')
 if get_option('sanitize-address')
   add_project_arguments('-fsanitize=address', language: 'cpp')
   add_project_link_arguments('-fsanitize=address', language: 'cpp')
