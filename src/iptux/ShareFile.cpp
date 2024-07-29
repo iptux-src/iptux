@@ -322,7 +322,7 @@ void ApplySharedData(ShareFile* self) {
       if (::stat(filepath, &st) == 0) {
         file.filectime = st.st_ctime;
       }
-      g_cthrd->getProgramData()->AddShareFileInfo(move(file));
+      g_cthrd->getProgramData()->AddShareFileInfo(std::move(file));
     } while (gtk_tree_model_iter_next(model, &iter));
   }
   g_cthrd->Unlock();
