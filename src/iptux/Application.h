@@ -40,6 +40,9 @@ class Application {
   PPalInfo getMe();
   GMenuModel* menu() { return menu_; }
 
+  GtkWidget* getPreferenceDialog() { return preference_dialog_; }
+  void setPreferenceDialog(GtkWidget* dialog) { preference_dialog_ = dialog; }
+
  private:
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<ProgramData> data;
@@ -58,6 +61,7 @@ class Application {
   LogSystem* logSystem = 0;
   NotificationService* notificationService = 0;
   GMenuModel* menu_ = 0;
+  GtkWidget* preference_dialog_ = 0;
   bool use_header_bar_ = false;
   bool started{false};
 
