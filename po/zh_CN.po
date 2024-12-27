@@ -9,16 +9,16 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2024-12-26 19:09-0800\n"
-"PO-Revision-Date: 2024-06-22 05:15+0000\n"
+"PO-Revision-Date: 2024-12-27 03:13+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
-"iptux/iptux/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
+"projects/iptux/iptux/zh_Hans/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.6-rc\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
@@ -391,7 +391,7 @@ msgstr "过滤好友对共享文件的请求"
 
 #: src/iptux/DataSettings.cpp:401
 msgid "Hide the taskbar when the main window is minimized"
-msgstr ""
+msgstr "主窗口最小化后隐藏任务栏"
 
 #: src/iptux/DataSettings.cpp:425
 msgid "From:"
