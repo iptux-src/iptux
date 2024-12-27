@@ -237,6 +237,14 @@ bool ProgramData::IsFilterFileShareRequest() const {
   return proof_shared;
 }
 
+bool ProgramData::isHideTaskbarWhenMainWindowIconified() const {
+#if HAVE_APPINDICATOR
+  return hide_taskbar_when_main_window_iconified_;
+#else
+  return false;
+#endif
+}
+
 ProgramData& ProgramData::SetUsingBlacklist(bool value) {
   open_blacklist = value;
   return *this;

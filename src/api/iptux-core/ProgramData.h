@@ -52,9 +52,7 @@ class ProgramData {
   bool IsSaveChatHistory() const;
   bool IsUsingBlacklist() const;
   bool IsFilterFileShareRequest() const;
-  bool isHideTaskbarWhenMainWindowIconified() const {
-    return hide_taskbar_when_main_window_iconified_;
-  }
+  bool isHideTaskbarWhenMainWindowIconified() const;
   void set_port(uint16_t port, bool is_init = false);
   void setOpenChat(bool value) { open_chat = value; }
   void setHideStartup(bool value) { hide_startup = value; }

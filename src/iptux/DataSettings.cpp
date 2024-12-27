@@ -395,11 +395,13 @@ GtkWidget* DataSettings::CreateSystem() {
   gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "shared-check-widget", widget);
 
+#if HAVE_APPINDICATOR
   row++;
   widget = gtk_check_button_new_with_label(
       _("Hide the taskbar when the main window is minimized"));
   gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "taskbar-check-widget", widget);
+#endif
 
   return GTK_WIDGET(box);
 }
@@ -582,10 +584,12 @@ void DataSettings::SetSystemValue() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsFilterFileShareRequest());
+#if HAVE_APPINDICATOR
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "taskbar-check-widget"));
   gtk_toggle_button_set_active(
       GTK_TOGGLE_BUTTON(widget),
       g_progdt->isHideTaskbarWhenMainWindowIconified());
+#endif
 }
 
 /**
@@ -949,9 +953,11 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   progdt->setProofShared(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+#if HAVE_APPINDICATOR
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "taskbar-check-widget"));
   progdt->setHideTaskbarWhenMainWindowIconified(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+#endif
   return oss.str();
 }
 
