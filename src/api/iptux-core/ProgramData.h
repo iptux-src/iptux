@@ -1,6 +1,7 @@
 #ifndef IPTUX_PROGRAMDATACORE_H
 #define IPTUX_PROGRAMDATACORE_H
 
+#include <cstdint>
 #include <memory>
 #include <mutex>
 
@@ -9,20 +10,6 @@
 
 namespace iptux {
 
-/* flags
-// 消息(:7);当有消息时自动打开聊天窗口
-// 图标(:6);程序启动后只显示托盘图标而不显示面板
-// 传输(:5);当有文件传输时自动打开文件传输窗口
-// enter(:4);使用Enter键发送消息
-// 历史(:3);关闭好友对话框后自动清空聊天历史
-// 日志(:2);开启日志记录功能
-// 黑名单(:1);不允许删除的好友再出现
-// 共享(:0);好友请求本人的共享文件时需要得到确认
-*//* sndfgs
-// 传输(:2);文件传输完成后需要播放提示音
-// 消息(:1);有消息到来后需要播放提示音
-// 声音(:0);是否需要提示音
-*/
 class ProgramData {
  public:
   explicit ProgramData(std::shared_ptr<IptuxConfig> config);
@@ -65,6 +52,9 @@ class ProgramData {
   bool IsSaveChatHistory() const;
   bool IsUsingBlacklist() const;
   bool IsFilterFileShareRequest() const;
+  bool isHideTaskbarWhenMainWindowIconified() const {
+    return hide_taskbar_when_main_window_iconified_;
+  }
   void set_port(uint16_t port, bool is_init = false);
   void setOpenChat(bool value) { open_chat = value; }
   void setHideStartup(bool value) { hide_startup = value; }
@@ -74,6 +64,9 @@ class ProgramData {
   void setRecordLog(bool value) { record_log = value; }
   void setOpenBlacklist(bool value) { open_blacklist = value; }
   void setProofShared(bool value) { proof_shared = value; }
+  void setHideTaskbarWhenMainWindowIconified(bool value) {
+    hide_taskbar_when_main_window_iconified_ = value;
+  }
 
   bool need_restart() const { return need_restart_; }
 
@@ -115,6 +108,7 @@ class ProgramData {
   uint8_t record_log : 1;
   uint8_t open_blacklist : 1;
   uint8_t proof_shared : 1;
+  uint8_t hide_taskbar_when_main_window_iconified_ : 1;
   uint8_t need_restart_ : 1;
 
  private:

@@ -395,6 +395,12 @@ GtkWidget* DataSettings::CreateSystem() {
   gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "shared-check-widget", widget);
 
+  row++;
+  widget = gtk_check_button_new_with_label(
+      _("Hide the taskbar when the main window is minimized"));
+  gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
+  g_datalist_set_data(&widset, "taskbar-check-widget", widget);
+
   return GTK_WIDGET(box);
 }
 
@@ -576,6 +582,10 @@ void DataSettings::SetSystemValue() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
                                g_progdt->IsFilterFileShareRequest());
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "taskbar-check-widget"));
+  gtk_toggle_button_set_active(
+      GTK_TOGGLE_BUTTON(widget),
+      g_progdt->isHideTaskbarWhenMainWindowIconified());
 }
 
 /**
@@ -836,7 +846,7 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
   gint active;
 
   auto g_cthrd = app->getCoreThread();
-  auto g_progdt = g_cthrd->getProgramData();
+  auto progdt = g_cthrd->getProgramData();
 
   ostringstream oss;
 
@@ -858,9 +868,9 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
     port_valid = false;
   }
 
-  if (port_valid && port != g_progdt->port()) {
+  if (port_valid && port != progdt->port()) {
     if (!dryrun) {
-      g_progdt->set_port(port);
+      progdt->set_port(port);
     }
   }
 
@@ -873,7 +883,7 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
   g_strstrip(text);
   if (*text != '\0') {
-    g_progdt->codeset = text;
+    progdt->codeset = text;
   } else
     g_free(text);
 
@@ -881,7 +891,7 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
   text = gtk_editable_get_chars(GTK_EDITABLE(widget), 0, -1);
   g_strstrip(text);
   if (*text != '\0') {
-    g_progdt->encode = text;
+    progdt->encode = text;
   } else
     g_free(text);
 
@@ -892,56 +902,55 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
     snprintf(path, MAX_PATHLEN, "%d", active);
     gtk_tree_model_get_iter_from_string(model, &iter, path);
     gtk_tree_model_get(model, &iter, 1, &file, -1);
-    if (strcmp(g_progdt->palicon, file) != 0) {
+    if (strcmp(progdt->palicon, file) != 0) {
       snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
       if (access(path, F_OK) != 0) {
         g_free(file);
-        g_free(g_progdt->palicon);
-        g_progdt->palicon = g_strdup("pal-icon");
+        g_free(progdt->palicon);
+        progdt->palicon = g_strdup("pal-icon");
         snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/pal-icon",
                  g_get_user_config_dir());
         gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
         gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-        gtk_icon_theme_add_builtin_icon(g_progdt->palicon, MAX_ICONSIZE,
-                                        pixbuf);
+        gtk_icon_theme_add_builtin_icon(progdt->palicon, MAX_ICONSIZE, pixbuf);
         g_object_unref(pixbuf);
       } else {
-        g_free(g_progdt->palicon);
-        g_progdt->palicon = file;
+        g_free(progdt->palicon);
+        progdt->palicon = file;
       }
     } else
       g_free(file);
   }
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "font-chooser-widget"));
-  g_free(g_progdt->font);
-  g_progdt->font =
-      g_strdup(gtk_font_chooser_get_font(GTK_FONT_CHOOSER(widget)));
+  g_free(progdt->font);
+  progdt->font = g_strdup(gtk_font_chooser_get_font(GTK_FONT_CHOOSER(widget)));
 
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "chat-check-widget"));
-  g_progdt->setOpenChat(
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  progdt->setOpenChat(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "statusicon-check-widget"));
-  g_progdt->setHideStartup(
+  progdt->setHideStartup(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget =
       GTK_WIDGET(g_datalist_get_data(&widset, "transmission-check-widget"));
-  g_progdt->setOpenTransmission(
+  progdt->setOpenTransmission(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "enterkey-check-widget"));
-  g_progdt->setUseEnterKey(
+  progdt->setUseEnterKey(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "history-check-widget"));
-  g_progdt->setClearupHistory(
+  progdt->setClearupHistory(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "log-check-widget"));
-  g_progdt->setRecordLog(
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  progdt->setRecordLog(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "blacklist-check-widget"));
-  g_progdt->setOpenBlacklist(
+  progdt->setOpenBlacklist(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "shared-check-widget"));
-  g_progdt->setProofShared(
+  progdt->setProofShared(
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "taskbar-check-widget"));
+  progdt->setHideTaskbarWhenMainWindowIconified(
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
   return oss.str();
 }

@@ -34,7 +34,7 @@ class Application {
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
   LogSystem* getLogSystem() { return logSystem; }
   bool getHideTaskbarForMainWinMin() const {
-    return hide_taskbar_for_main_win_min_;
+    return data->isHideTaskbarWhenMainWindowIconified();
   }
   std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
@@ -49,7 +49,6 @@ class Application {
   std::shared_ptr<UiCoreThread> cthrd;
   std::shared_ptr<IptuxAppIndicator> app_indicator;
   bool enable_app_indicator_ = true;
-  bool hide_taskbar_for_main_win_min_ = true;
 
   GtkApplication* app;
   GtkBuilder* menuBuilder;
