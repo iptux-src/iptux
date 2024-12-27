@@ -68,8 +68,14 @@ DataSettings::~DataSettings() {
  * @param parent 父窗口指针
  */
 void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
+  if (app->getPreferenceDialog()) {
+    gtk_window_present(GTK_WINDOW(app->getPreferenceDialog()));
+    return;
+  }
+
   DataSettings dset(app, parent);
   GtkWidget* dialog = GTK_WIDGET(dset.dialog());
+  app->setPreferenceDialog(dialog);
 
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
@@ -98,6 +104,7 @@ void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
         break;
     }
   }
+  app->setPreferenceDialog(NULL);
 }
 
 /**
