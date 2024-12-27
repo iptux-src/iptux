@@ -28,7 +28,6 @@ sources = files([
 ])
 dependencies = [gtk_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep]
 
-appindicator_dep = dependency('ayatana-appindicator3-0.1', required: get_option('appindicator'))
 if appindicator_dep.found()
     sources += ['AppIndicator.cpp']
     dependencies += [appindicator_dep]
