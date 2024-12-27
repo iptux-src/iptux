@@ -12,7 +12,7 @@
 #include "config.h"
 #include "MainWindow.h"
 
-#include <cinttypes>
+#include "Application.h"
 #include <ctime>
 #include <glib/gi18n.h>
 #include <glog/logging.h>
@@ -22,12 +22,10 @@
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux/DataSettings.h"
 #include "iptux/DetectPal.h"
 #include "iptux/DialogGroup.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/RevisePal.h"
-#include "iptux/ShareFile.h"
 #include "iptux/UiHelper.h"
 #include "iptux/UiModels.h"
 #include "iptux/callback.h"
@@ -50,6 +48,23 @@ static const char* config_names[] = {
     [CFG_SORT_TYPE] = "mwin_sort_type",
     [CFG_INFO_STYLE] = "mwin_info_style",
 };
+
+static void main_window_on_state_event(GtkWidget* self,
+                                       GdkEvent* event,
+                                       gpointer user_data) {
+  GdkWindowState event_state = event->window_state.new_window_state;
+  MainWindow* mwin = (MainWindow*)user_data;
+  Application* app = mwin->getApp();
+
+  if (!app->getHideTaskbarForMainWinMin())
+    return;
+
+  if (event_state & GDK_WINDOW_STATE_ICONIFIED) {
+    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(self), TRUE);
+  } else {
+    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(self), FALSE);
+  }
+}
 
 /**
  * 类构造函数.
@@ -482,6 +497,8 @@ GtkWidget* MainWindow::CreateMainWindow() {
                    this);
   g_signal_connect(window, "delete-event",
                    G_CALLBACK(gtk_window_iconify_on_delete), nullptr);
+  g_signal_connect(window, "window-state-event",
+                   G_CALLBACK(main_window_on_state_event), this);
   return window;
 }
 
