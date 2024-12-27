@@ -33,9 +33,6 @@ class Application {
   MainWindow* getMainWindow() { return window; }
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
   LogSystem* getLogSystem() { return logSystem; }
-  bool getHideTaskbarForMainWinMin() const {
-    return data->isHideTaskbarWhenMainWindowIconified();
-  }
   std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   bool use_header_bar() { return use_header_bar_; }
