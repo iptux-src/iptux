@@ -247,6 +247,21 @@ void DialogPeer::CreateTitle() {
   }
 }
 
+static GtkWidget* createMainPanel(GData* dtset) {
+  GtkWidget* vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  g_object_set_data(G_OBJECT(vpaned), "position-name",
+                    (gpointer) "historyinput-paned-divide");
+  gint position =
+      GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide"));
+  gtk_paned_set_position(GTK_PANED(vpaned), position);
+  g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
+                   &dtset);
+  gtk_paned_pack1(GTK_PANED(vpaned), DialogPeer::CreateHistoryArea(), TRUE,
+                  TRUE);
+  gtk_paned_pack2(GTK_PANED(vpaned), DialogPeer::CreateInputArea(), FALSE,
+                  FALSE);
+}
+
 /**
  * 创建所有区域.
  * @return 主窗体
