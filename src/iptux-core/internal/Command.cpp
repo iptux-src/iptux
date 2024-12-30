@@ -222,7 +222,7 @@ void Command::SendMessage(int sock, CPPalInfo pal, const char* msg) {
   } while (pal->rpacketn == packetno && count < MAX_RETRYTIMES);
   if (pal->rpacketn == packetno) {
     FeedbackError(
-        pal, GROUP_BELONG_TYPE_REGULAR,
+        pal, IPTUX_GROUP_BELONG_REGULAR,
         _("Your pal didn't receive the packet. He or she is offline maybe."));
   }
 }
@@ -481,13 +481,13 @@ void Command::SendSublayer(int sock,
  * @param error 错误串
  */
 void Command::FeedbackError(CPPalInfo pal,
-                            GroupBelongType btype,
+                            IptuxGroupBelongType btype,
                             const char* error) {
   MsgPara para(coreThread.GetPal(pal->GetKey()));
   para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_ERROR;
   para.btype = btype;
 
-  ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
+  ChipData chip(IPTUX_MSG_CONTENT_STRING, error);
   para.dtlist.push_back(std::move(chip));
   /* 交给某人处理吧 */
   coreThread.InsertMessage(std::move(para));

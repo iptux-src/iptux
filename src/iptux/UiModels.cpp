@@ -160,8 +160,8 @@ gint paltreeCompareByIPFunc(GtkTreeModel* model,
   GroupInfo *agrpinf, *bgrpinf;
   gtk_tree_model_get(model, a, PalTreeModelColumn::DATA, &agrpinf, -1);
   gtk_tree_model_get(model, b, PalTreeModelColumn::DATA, &bgrpinf, -1);
-  if (agrpinf->getType() == GROUP_BELONG_TYPE_REGULAR &&
-      bgrpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
+  if (agrpinf->getType() == IPTUX_GROUP_BELONG_REGULAR &&
+      bgrpinf->getType() == IPTUX_GROUP_BELONG_REGULAR) {
     if (agrpinf->grpid < bgrpinf->grpid) {
       return -1;
     }
@@ -265,7 +265,7 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
 
   /* 创建图标 */
   theme = gtk_icon_theme_get_default();
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() == IPTUX_GROUP_BELONG_REGULAR) {
     pal = grpinf->getMembers()[0].get();
     auto file = iptux_erase_filename_suffix(pal->icon_file().c_str());
     cpixbuf = gtk_icon_theme_load_icon(theme, file, MAX_ICONSIZE,
@@ -287,13 +287,13 @@ void palTreeModelFillFromGroupInfo(GtkTreeModel* model,
   }
 
   /* 创建扩展信息 */
-  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() != IPTUX_GROUP_BELONG_REGULAR) {
     extra = stringFormat("(%d)", (int)(grpinf->getMembers().size()));
   }
 
   /* 创建字体风格 */
   attrs = pango_attr_list_new();
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() == IPTUX_GROUP_BELONG_REGULAR) {
     auto dspt = pango_font_description_from_string(font.c_str());
     attr = pango_attr_font_desc_new(dspt);
     pango_attr_list_insert(attrs, attr);
@@ -394,7 +394,7 @@ bool GroupInfo::hasPal(PPalInfo pal) const {
 }
 
 string GroupInfo::user_name() const {
-  if (getType() == GROUP_BELONG_TYPE_REGULAR) {
+  if (getType() == IPTUX_GROUP_BELONG_REGULAR) {
     auto pal = this->getMembers()[0].get();
     return pal->getUser();
   }
@@ -406,7 +406,7 @@ GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
       buffer(NULL),
       dialogBase(NULL),
       me(me),
-      type(GROUP_BELONG_TYPE_REGULAR),
+      type(IPTUX_GROUP_BELONG_REGULAR),
       logSystem(logSystem) {
   members.push_back(pal);
   inputBuffer = gtk_text_buffer_new(NULL);
@@ -414,7 +414,7 @@ GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
   host_ = pal->getHost();
 }
 
-GroupInfo::GroupInfo(iptux::GroupBelongType t,
+GroupInfo::GroupInfo(iptux::IptuxGroupBelongType t,
                      const vector<PPalInfo>& pals,
                      CPPalInfo me,
                      const string& name,
@@ -435,7 +435,7 @@ GtkWidget* GroupInfo::getDialog() const {
 }
 
 bool GroupInfo::addPal(PPalInfo pal) {
-  if (type == GROUP_BELONG_TYPE_REGULAR) {
+  if (type == IPTUX_GROUP_BELONG_REGULAR) {
     LOG_WARN("should not call addPal on GROUP_BELONG_TYPE_REGULAR");
     return false;
   }
@@ -447,7 +447,7 @@ bool GroupInfo::addPal(PPalInfo pal) {
 }
 
 bool GroupInfo::delPal(PalInfo* pal) {
-  if (type == GROUP_BELONG_TYPE_REGULAR) {
+  if (type == IPTUX_GROUP_BELONG_REGULAR) {
     LOG_WARN("should not call delPal on GROUP_BELONG_TYPE_REGULAR");
     return false;
   }
@@ -487,7 +487,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
       break;
     if (ig_unichar_is_atomic(c)) {
       if (!oss.str().empty()) {
-        ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
+        ChipData chip(IPTUX_MSG_CONTENT_STRING, oss.str());
         dtlist.push_back(std::move(chip));
         oss.str("");
       }
@@ -501,7 +501,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
         g_error_free(error);
       } else {
         /* 新建一个碎片数据(图片)，并加入数据链表 */
-        ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
+        ChipData chip(IPTUX_MSG_CONTENT_PICTURE, chipmsg);
         dtlist.push_back(std::move(chip));
       }
     } else {
@@ -511,7 +511,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
     gtk_text_iter_forward_char(&start);
   }
   if (!oss.str().empty()) {
-    ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
+    ChipData chip(IPTUX_MSG_CONTENT_STRING, oss.str());
     dtlist.push_back(std::move(chip));
   }
 
@@ -548,7 +548,7 @@ int GroupInfo::getUnreadMsgCount() const {
 string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
   string info;
   /* 创建主信息 */
-  if (getType() == GROUP_BELONG_TYPE_REGULAR) {
+  if (getType() == IPTUX_GROUP_BELONG_REGULAR) {
     string line2;
     auto pal = this->getMembers()[0].get();
 
@@ -593,7 +593,7 @@ string GroupInfo::GetInfoAsMarkup(GroupInfoStyle style) const {
 }
 
 string GroupInfo::GetHintAsMarkup() const {
-  if (this->type != GROUP_BELONG_TYPE_REGULAR) {
+  if (this->type != IPTUX_GROUP_BELONG_REGULAR) {
     return "";
   }
   auto pal = this->members[0];
@@ -765,7 +765,7 @@ void GroupInfo::_addMsgPara(const MsgPara& para, time_t now) {
     const ChipData* chipData = &para.dtlist[i];
     data = chipData->data.c_str();
     switch (chipData->type) {
-      case MESSAGE_CONTENT_TYPE_STRING:
+      case IPTUX_MSG_CONTENT_STRING:
         InsertHeaderToBuffer(buffer, &para, me, now);
         InsertStringToBuffer(buffer, data);
         last_message_ = StrFirstNonEmptyLine(chipData->data);
@@ -773,7 +773,7 @@ void GroupInfo::_addMsgPara(const MsgPara& para, time_t now) {
           logSystem->communicateLog(&para, "[STRING]%s", data);
         }
         break;
-      case MESSAGE_CONTENT_TYPE_PICTURE:
+      case IPTUX_MSG_CONTENT_PICTURE:
         InsertHeaderToBuffer(buffer, &para, me, now);
         InsertPixbufToBuffer(buffer, data);
         last_message_ = _("[IMG]");

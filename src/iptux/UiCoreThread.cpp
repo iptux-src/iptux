@@ -377,8 +377,8 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
     name = _("Others");
   }
 
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>(), getMe(),
-                         name, logSystem);
+  grpinf = new GroupInfo(IPTUX_GROUP_BELONG_SEGMENT, vector<PPalInfo>(),
+                         getMe(), name, logSystem);
   grpinf->grpid = g_quark_from_static_string(name.c_str());
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
@@ -398,7 +398,7 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   if (name.empty()) {
     name = _("Others");
   }
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>(), getMe(),
+  grpinf = new GroupInfo(IPTUX_GROUP_BELONG_GROUP, vector<PPalInfo>(), getMe(),
                          name, logSystem);
   grpinf->buffer = gtk_text_buffer_new(tag_table_);
   grpinf->clearDialog();
@@ -418,7 +418,7 @@ GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
 
   name = g_strdup(_("Broadcast"));
 
-  grpinf = new GroupInfo(GROUP_BELONG_TYPE_BROADCAST, vector<PPalInfo>(),
+  grpinf = new GroupInfo(IPTUX_GROUP_BELONG_BROADCAST, vector<PPalInfo>(),
                          getMe(), name, logSystem);
   grpinf->grpid = g_quark_from_static_string(name);
   grpinf->buffer = gtk_text_buffer_new(tag_table_);

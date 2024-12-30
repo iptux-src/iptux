@@ -253,7 +253,7 @@ void UdpData::SomeoneSendmsg() {
   /* 插入消息&在消息队列中注册 */
   text = ipmsg_get_attach(buf, ':', 5);
   if (text && *text != '\0') {
-    InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
+    InsertMessage(pal, IPTUX_GROUP_BELONG_REGULAR, text);
   }
   g_free(text);
 
@@ -406,17 +406,17 @@ void UdpData::SomeoneBcstmsg() {
     /* 插入消息 */
     switch (GET_OPT(commandno)) {
       case IPTUX_BROADCASTOPT:
-        InsertMessage(pal, GROUP_BELONG_TYPE_BROADCAST, text);
+        InsertMessage(pal, IPTUX_GROUP_BELONG_BROADCAST, text);
         break;
       case IPTUX_GROUPOPT:
-        InsertMessage(pal, GROUP_BELONG_TYPE_GROUP, text);
+        InsertMessage(pal, IPTUX_GROUP_BELONG_GROUP, text);
         break;
       case IPTUX_SEGMENTOPT:
-        InsertMessage(pal, GROUP_BELONG_TYPE_SEGMENT, text);
+        InsertMessage(pal, IPTUX_GROUP_BELONG_SEGMENT, text);
         break;
       case IPTUX_REGULAROPT:
       default:
-        InsertMessage(pal, GROUP_BELONG_TYPE_REGULAR, text);
+        InsertMessage(pal, IPTUX_GROUP_BELONG_REGULAR, text);
         break;
     }
   }
@@ -508,14 +508,14 @@ void UdpData::UpdatePalInfo(PalInfo* pal) {
  * @param msg 消息
  */
 void UdpData::InsertMessage(PPalInfo pal,
-                            GroupBelongType btype,
+                            IptuxGroupBelongType btype,
                             const char* msg) {
   MsgPara para(coreThread.GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
   para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_PAL;
   para.btype = btype;
-  ChipData chip(MESSAGE_CONTENT_TYPE_STRING, msg);
+  ChipData chip(IPTUX_MSG_CONTENT_STRING, msg);
   para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */

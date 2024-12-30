@@ -1175,7 +1175,7 @@ gboolean MainWindow::PaltreeQueryTooltip(GtkWidget* treeview,
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_path_free(path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR)
+  if (grpinf->getType() != IPTUX_GROUP_BELONG_REGULAR)
     return FALSE;
 
   gtk_tooltip_set_markup(tooltip, grpinf->GetHintAsMarkup().c_str());
@@ -1209,12 +1209,12 @@ void MainWindow::onPaltreeItemActivated(GtkWidget* treeview,
 
   /* 根据需求建立对应的对话框 */
   switch (grpinf->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
+    case IPTUX_GROUP_BELONG_REGULAR:
       DialogPeer::PeerDialogEntry(self->app, grpinf);
       break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-    case GROUP_BELONG_TYPE_GROUP:
-    case GROUP_BELONG_TYPE_BROADCAST:
+    case IPTUX_GROUP_BELONG_SEGMENT:
+    case IPTUX_GROUP_BELONG_GROUP:
+    case IPTUX_GROUP_BELONG_BROADCAST:
       DialogGroup::GroupDialogEntry(self->app, grpinf);
     default:
       break;
@@ -1279,7 +1279,7 @@ gboolean MainWindow::PaltreeChangeStatus(GtkWidget* treeview,
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, 6, &grpinf, -1);
-  if (grpinf->getType() == GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() == IPTUX_GROUP_BELONG_REGULAR) {
     gtk_tree_path_free(path);
     return FALSE;
   }
@@ -1346,12 +1346,12 @@ void MainWindow::PaltreeDragDataReceived(GtkWidget* treeview,
   /* 如果好友群组对话框尚未创建，则先创建对话框 */
   if (!(grpinf->getDialog())) {
     switch (grpinf->getType()) {
-      case GROUP_BELONG_TYPE_REGULAR:
+      case IPTUX_GROUP_BELONG_REGULAR:
         DialogPeer::PeerDialogEntry(self->app, grpinf);
         break;
-      case GROUP_BELONG_TYPE_SEGMENT:
-      case GROUP_BELONG_TYPE_GROUP:
-      case GROUP_BELONG_TYPE_BROADCAST:
+      case IPTUX_GROUP_BELONG_SEGMENT:
+      case IPTUX_GROUP_BELONG_GROUP:
+      case IPTUX_GROUP_BELONG_BROADCAST:
         DialogGroup::GroupDialogEntry(self->app, grpinf);
       default:
         break;
@@ -1386,7 +1386,7 @@ void MainWindow::onFind(void*, void*, MainWindow& self) {
 void MainWindow::onDeletePal(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
+    case IPTUX_GROUP_BELONG_REGULAR:
       self.DeletePalItem(groupInfo);
       break;
     default:
@@ -1398,7 +1398,7 @@ void MainWindow::onDeletePal(void*, void*, MainWindow& self) {
 void MainWindow::onPalChangeInfo(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
+    case IPTUX_GROUP_BELONG_REGULAR:
       RevisePal::ReviseEntry(self.app, GTK_WINDOW(self.window),
                              groupInfo->getMembers()[0].get());
       break;
@@ -1415,12 +1415,12 @@ void MainWindow::onPalSendMessage(void*, void*, MainWindow& self) {
     return;
   }
   switch (groupInfo->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
+    case IPTUX_GROUP_BELONG_REGULAR:
       DialogPeer::PeerDialogEntry(self.app, groupInfo);
       break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-    case GROUP_BELONG_TYPE_GROUP:
-    case GROUP_BELONG_TYPE_BROADCAST:
+    case IPTUX_GROUP_BELONG_SEGMENT:
+    case IPTUX_GROUP_BELONG_GROUP:
+    case IPTUX_GROUP_BELONG_BROADCAST:
       DialogGroup::GroupDialogEntry(self.app, groupInfo);
       break;
     default:
@@ -1431,7 +1431,7 @@ void MainWindow::onPalSendMessage(void*, void*, MainWindow& self) {
 void MainWindow::onPalRequestSharedResources(void*, void*, MainWindow& self) {
   GroupInfo* groupInfo = CHECK_NOTNULL(self.currentGroupInfo);
   switch (groupInfo->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
+    case IPTUX_GROUP_BELONG_REGULAR:
       self.coreThread.SendAskShared(groupInfo->getMembers()[0]);
       break;
     default:
@@ -1682,7 +1682,7 @@ void MainWindow::ProcessEvent(shared_ptr<const Event> _event) {
 
     /* 获取群组信息 */
     switch (para.btype) {
-      case GROUP_BELONG_TYPE_REGULAR:
+      case IPTUX_GROUP_BELONG_REGULAR:
         grpinf = coreThread.GetPalRegularItem(para.getPal().get());
         if (coreThread.getProgramData()->IsAutoOpenChatDialog()) {
           if (!(grpinf->getDialog())) {
@@ -1692,13 +1692,13 @@ void MainWindow::ProcessEvent(shared_ptr<const Event> _event) {
           }
         }
         break;
-      case GROUP_BELONG_TYPE_SEGMENT:
+      case IPTUX_GROUP_BELONG_SEGMENT:
         grpinf = coreThread.GetPalSegmentItem(para.getPal().get());
         break;
-      case GROUP_BELONG_TYPE_GROUP:
+      case IPTUX_GROUP_BELONG_GROUP:
         grpinf = coreThread.GetPalGroupItem(para.getPal().get());
         break;
-      case GROUP_BELONG_TYPE_BROADCAST:
+      case IPTUX_GROUP_BELONG_BROADCAST:
         grpinf = coreThread.GetPalBroadcastItem(para.getPal().get());
         break;
       default:
@@ -1757,14 +1757,14 @@ void MainWindow::ProcessEvent(shared_ptr<const Event> _event) {
 void MainWindow::setCurrentGroupInfo(GroupInfo* groupInfo) {
   this->currentGroupInfo = CHECK_NOTNULL(groupInfo);
   switch (currentGroupInfo->getType()) {
-    case GROUP_BELONG_TYPE_REGULAR:
+    case IPTUX_GROUP_BELONG_REGULAR:
       g_action_map_enable_actions(G_ACTION_MAP(window), "pal.send_message",
                                   "pal.request_shared_resources",
                                   "pal.change_info", "pal.delete_pal", nullptr);
       break;
-    case GROUP_BELONG_TYPE_SEGMENT:
-    case GROUP_BELONG_TYPE_GROUP:
-    case GROUP_BELONG_TYPE_BROADCAST:
+    case IPTUX_GROUP_BELONG_SEGMENT:
+    case IPTUX_GROUP_BELONG_GROUP:
+    case IPTUX_GROUP_BELONG_BROADCAST:
       g_action_map_enable_actions(G_ACTION_MAP(window), "pal.send_message",
                                   nullptr);
       g_action_map_disable_actions(

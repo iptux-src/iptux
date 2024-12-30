@@ -55,7 +55,7 @@ TEST(GroupInfo, GetInfoAsMarkup) {
 
   vector<PPalInfo> pals;
   pals.push_back(cpal);
-  GroupInfo gi2(GROUP_BELONG_TYPE_SEGMENT, pals, cme, "group_name", nullptr);
+  GroupInfo gi2(IPTUX_GROUP_BELONG_SEGMENT, pals, cme, "group_name", nullptr);
   ASSERT_EQ(gi2.GetInfoAsMarkup(GroupInfoStyle::IP), "group_name");
 }
 
@@ -112,8 +112,8 @@ TEST(GroupInfo, addMsgPara) {
             "(06:55:06) palname:\nhelloworld\n");
 
   msg = MsgPara(cpal);
-  msg.dtlist.push_back(
-      ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
+  msg.dtlist.push_back(ChipData(IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE,
+                                testDataPath("iptux.png")));
   gi._addMsgPara(msg, now + 1);
   ASSERT_EQ(
       igtk_text_get_all_text(gi.buffer),
@@ -141,7 +141,8 @@ TEST(GroupInfo, genMsgParaFromInput) {
   gtk_text_buffer_insert(buffer, &end, "hello", -1);
   para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 1u);
-  ASSERT_EQ(para->dtlist[0].type, MessageContentType::STRING);
+  ASSERT_EQ(para->dtlist[0].type,
+            IptuxMsgContentType::IPTUX_MSG_CONTENT_STRING);
   ASSERT_EQ(para->dtlist[0].data, "hello");
 
   GError* error = NULL;
@@ -155,13 +156,15 @@ TEST(GroupInfo, genMsgParaFromInput) {
   gtk_text_buffer_insert_pixbuf(buffer, &end, pixbuf);
   para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 2u);
-  ASSERT_EQ(para->dtlist[1].type, MessageContentType::PICTURE);
+  ASSERT_EQ(para->dtlist[1].type,
+            IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE);
 
   gtk_text_buffer_get_end_iter(buffer, &end);
   gtk_text_buffer_insert(buffer, &end, "world", -1);
   para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 3u);
-  ASSERT_EQ(para->dtlist[2].type, MessageContentType::STRING);
+  ASSERT_EQ(para->dtlist[2].type,
+            IptuxMsgContentType::IPTUX_MSG_CONTENT_STRING);
   ASSERT_EQ(para->dtlist[2].data, "world");
   ASSERT_FALSE(gi.isInputEmpty());
   gi.clearInputBuffer();

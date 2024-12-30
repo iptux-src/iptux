@@ -689,7 +689,7 @@ GtkWidget* DialogBase::CreateFileSendTree(GtkTreeModel* model) {
   gtk_tree_view_column_set_resizable(column, TRUE);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
 
-  if (grpinf->getType() != GROUP_BELONG_TYPE_REGULAR) {
+  if (grpinf->getType() != IPTUX_GROUP_BELONG_REGULAR) {
     cell = gtk_cell_renderer_text_new();
     column = gtk_tree_view_column_new_with_attributes(_("PeerName"), cell,
                                                       "text", 5, NULL);

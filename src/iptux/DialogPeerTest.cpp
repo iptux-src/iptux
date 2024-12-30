@@ -2,6 +2,7 @@
 #include "UiHelper.h"
 #include "gtest/gtest.h"
 
+#include "iptux-core/Models.h"
 #include "iptux-utils/TestHelper.h"
 #include "iptux/DialogPeer.h"
 #include "iptux/TestHelper.h"
@@ -49,7 +50,7 @@ TEST(DialogPeer, Constructor) {
 
   msg = MsgPara(pal);
   msg.dtlist.push_back(
-      ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
+      ChipData(IPTUX_MSG_CONTENT_PICTURE, testDataPath("iptux.png")));
   grpinf->addMsgPara(msg);
 
   DestroyApplication(app);

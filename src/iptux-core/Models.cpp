@@ -162,7 +162,7 @@ void FileInfo::ensureFilesizeFilled() {
 
 MsgPara::MsgPara(CPPalInfo pal)
     : stype(IptuxMsgSrcType::IPTUX_MSG_SRC_PAL),
-      btype(GROUP_BELONG_TYPE_REGULAR),
+      btype(IPTUX_GROUP_BELONG_REGULAR),
       pal(pal) {}
 
 MsgPara::~MsgPara() {}
@@ -175,8 +175,8 @@ string MsgPara::getSummary() const {
 }
 
 ChipData::ChipData(const string& data)
-    : type(MessageContentType::STRING), data(data) {}
-ChipData::ChipData(MessageContentType type, const string& data)
+    : type(IptuxMsgContentType::IPTUX_MSG_CONTENT_STRING), data(data) {}
+ChipData::ChipData(IptuxMsgContentType type, const string& data)
     : type(type), data(data) {}
 ChipData::~ChipData() {}
 
@@ -227,10 +227,10 @@ string ChipData::ToString() const {
   ostringstream oss;
   oss << "ChipData(";
   switch (type) {
-    case MessageContentType::STRING:
+    case IptuxMsgContentType::IPTUX_MSG_CONTENT_STRING:
       oss << "MessageContentType::STRING";
       break;
-    case MessageContentType::PICTURE:
+    case IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE:
       oss << "MessageContentType::PICTURE";
       break;
     default:
@@ -244,9 +244,9 @@ string ChipData::ToString() const {
 
 string ChipData::getSummary() const {
   switch (type) {
-    case MessageContentType::STRING:
+    case IptuxMsgContentType::IPTUX_MSG_CONTENT_STRING:
       return data;
-    case MessageContentType::PICTURE:
+    case IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE:
       return _("Received an image");
     default:
       g_assert_not_reached();

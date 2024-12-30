@@ -480,10 +480,10 @@ bool CoreThread::SendMessage(CPPalInfo palInfo, const string& message) {
 bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
   auto ptr = chipData.data.c_str();
   switch (chipData.type) {
-    case MessageContentType::STRING:
+    case IptuxMsgContentType::IPTUX_MSG_CONTENT_STRING:
       /* 文本类型 */
       return SendMessage(pal, chipData.data);
-    case MESSAGE_CONTENT_TYPE_PICTURE:
+    case IPTUX_MSG_CONTENT_PICTURE:
       /* 图片类型 */
       int sock;
       if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {

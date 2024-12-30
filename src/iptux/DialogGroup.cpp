@@ -51,7 +51,7 @@ DialogGroup::~DialogGroup() {
 DialogGroup* DialogGroup::GroupDialogEntry(Application* app,
                                            GroupInfo* grpinf) {
   CHECK_NOTNULL(grpinf);
-  CHECK_NE(grpinf->getType(), GROUP_BELONG_TYPE_REGULAR);
+  CHECK_NE(grpinf->getType(), IPTUX_GROUP_BELONG_REGULAR);
   DialogGroup* dlggrp;
   GtkWidget *window, *widget;
 
@@ -445,16 +445,16 @@ void DialogGroup::BroadcastTextMsg(const gchar* msg) {
     if (active) {
       if (pal->isCompatible()) {
         switch (grpinf->getType()) {
-          case GROUP_BELONG_TYPE_BROADCAST:
+          case IPTUX_GROUP_BELONG_BROADCAST:
             opttype = IPTUX_BROADCASTOPT;
             break;
-          case GROUP_BELONG_TYPE_GROUP:
+          case IPTUX_GROUP_BELONG_GROUP:
             opttype = IPTUX_GROUPOPT;
             break;
-          case GROUP_BELONG_TYPE_SEGMENT:
+          case IPTUX_GROUP_BELONG_SEGMENT:
             opttype = IPTUX_SEGMENTOPT;
             break;
-          case GROUP_BELONG_TYPE_REGULAR:
+          case IPTUX_GROUP_BELONG_REGULAR:
           default:
             opttype = IPTUX_REGULAROPT;
             break;

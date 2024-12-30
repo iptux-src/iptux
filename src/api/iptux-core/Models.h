@@ -19,40 +19,34 @@
 
 #include <json/json.h>
 
+/**
+ * 消息来源类型.
+ */
 enum IptuxMsgSrcType {
   IPTUX_MSG_SRC_PAL,   ///< 好友
   IPTUX_MSG_SRC_SELF,  ///< 自身
   IPTUX_MSG_SRC_ERROR  ///< 错误
 };
 
-namespace iptux {
-
-/**
- * 消息来源类型.
- */
-
 /**
  * 消息内容类型.
  */
-enum class MessageContentType {
-  STRING,  ///< 字符串
-  PICTURE  ///< 图片
+enum IptuxMsgContentType {
+  IPTUX_MSG_CONTENT_STRING,  ///< 字符串
+  IPTUX_MSG_CONTENT_PICTURE  ///< 图片
 };
-
-static const MessageContentType MESSAGE_CONTENT_TYPE_STRING =
-    MessageContentType::STRING;
-static const MessageContentType MESSAGE_CONTENT_TYPE_PICTURE =
-    MessageContentType::PICTURE;
 
 /**
  * 群组所属类型
  */
-typedef enum {
-  GROUP_BELONG_TYPE_REGULAR,   ///< 常规
-  GROUP_BELONG_TYPE_SEGMENT,   ///< 分段
-  GROUP_BELONG_TYPE_GROUP,     ///< 分组
-  GROUP_BELONG_TYPE_BROADCAST  ///< 广播
-} GroupBelongType;
+typedef enum IptuxGroupBelongType {
+  IPTUX_GROUP_BELONG_REGULAR,   ///< 常规
+  IPTUX_GROUP_BELONG_SEGMENT,   ///< 分段
+  IPTUX_GROUP_BELONG_GROUP,     ///< 分组
+  IPTUX_GROUP_BELONG_BROADCAST  ///< 广播
+} IptuxGroupBelongType;
+
+namespace iptux {
 
 class PalKey {
  public:
@@ -199,13 +193,13 @@ using PFileInfo = std::shared_ptr<FileInfo>;
 class ChipData {
  public:
   explicit ChipData(const std::string& data);
-  ChipData(MessageContentType type, const std::string& data);
+  ChipData(IptuxMsgContentType type, const std::string& data);
   ~ChipData();
 
   std::string ToString() const;
   std::string getSummary() const;
 
-  MessageContentType type;  ///< 消息内容类型
+  IptuxMsgContentType type;  ///< 消息内容类型
   std::string data;         ///< 数据串 *
 
   void SetDeleteFileAfterSent(bool val) { deleteFileAfterSent = val; }
@@ -228,7 +222,7 @@ class MsgPara {
   CPPalInfo getPal() const { return pal; }
 
   IptuxMsgSrcType stype;         ///< 来源类型
-  GroupBelongType btype;         ///< 所属类型
+  IptuxGroupBelongType btype;    ///< 所属类型
   std::vector<ChipData> dtlist;  ///< 数据链表 *
  private:
   CPPalInfo pal;  ///< 好友数据信息(来自好友*)

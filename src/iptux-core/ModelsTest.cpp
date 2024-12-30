@@ -56,7 +56,8 @@ TEST(ChipData, ToString) {
 TEST(ChipData, getSummary) {
   EXPECT_EQ(ChipData("").getSummary(), "");
   EXPECT_EQ(ChipData("foobar").getSummary(), "foobar");
-  EXPECT_EQ(ChipData(MessageContentType::PICTURE, "foobar").getSummary(),
+  EXPECT_EQ(ChipData(IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE, "foobar")
+                .getSummary(),
             "Received an image");
 }
 
@@ -77,7 +78,8 @@ TEST(MsgPara, getSummary) {
   msg.dtlist.push_back(ChipData("foobar2"));
   EXPECT_EQ(msg.getSummary(), "foobar");
   msg.dtlist.clear();
-  msg.dtlist.push_back(ChipData(MessageContentType::PICTURE, "foobar"));
+  msg.dtlist.push_back(
+      ChipData(IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE, "foobar"));
   EXPECT_EQ(msg.getSummary(), "Received an image");
 }
 

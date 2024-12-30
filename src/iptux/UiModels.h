@@ -60,7 +60,7 @@ const char* GtkSortTypeToStr(GtkSortType t);
 class GroupInfo {
  public:
   GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem);
-  GroupInfo(GroupBelongType type,
+  GroupInfo(IptuxGroupBelongType type,
             const std::vector<PPalInfo>& pals,
             CPPalInfo me,
             const std::string& name,
@@ -68,7 +68,7 @@ class GroupInfo {
   ~GroupInfo();
 
   const std::vector<PPalInfo>& getMembers() const { return members; }
-  GroupBelongType getType() const { return type; }
+  IptuxGroupBelongType getType() const { return type; }
 
   /** return true if successful added, noop for regular group */
   bool addPal(PPalInfo pal);
@@ -124,7 +124,7 @@ class GroupInfo {
  private:
   CPPalInfo me;
   std::vector<PPalInfo> members;
-  GroupBelongType type;  ///< 群组类型
+  IptuxGroupBelongType type;  ///< 群组类型
   LogSystem* logSystem;
   int allMsgCount = 0;  /* all received message count */
   int readMsgCount = 0; /* already read message count */

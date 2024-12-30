@@ -204,7 +204,8 @@ TEST(CoreThread, FullCase) {
   thread1->SendAskShared(pal2InThread1);
 
   // send picture
-  ChipData chipData(MessageContentType::PICTURE, testDataPath("iptux.png"));
+  ChipData chipData(IptuxMsgContentType::IPTUX_MSG_CONTENT_PICTURE,
+                    testDataPath("iptux.png"));
   chipData.SetDeleteFileAfterSent(false);
   thread1->SendMessage(pal2InThread1, chipData);
   // WARNING: does not work as expected, the message will be sent from

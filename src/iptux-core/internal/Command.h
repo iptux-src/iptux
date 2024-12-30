@@ -89,7 +89,9 @@ class Command {
   static std::vector<FileInfo> decodeFileInfos(const std::string& s);
 
  private:
-  void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
+  void FeedbackError(CPPalInfo pal,
+                     IptuxGroupBelongType btype,
+                     const char* error);
   void SendSublayerData(int sock, int fd);
   void ConvertEncode(const std::string& encode);
   void CreateCommand(uint32_t command, const char* attach);

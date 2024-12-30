@@ -220,8 +220,8 @@ void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
 
   /* 构建消息封装包 */
   para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_PAL;
-  para.btype = GROUP_BELONG_TYPE_REGULAR;
-  ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, path);
+  para.btype = IPTUX_GROUP_BELONG_REGULAR;
+  ChipData chip(IPTUX_MSG_CONTENT_PICTURE, path);
   para.dtlist.push_back(chip);
 
   /* 交给某人处理吧 */

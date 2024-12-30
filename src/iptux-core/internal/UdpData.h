@@ -53,7 +53,7 @@ class UdpData {
  private:
   void UpdatePalInfo(PalInfo* pal);
 
-  void InsertMessage(PPalInfo pal, GroupBelongType btype, const char* msg);
+  void InsertMessage(PPalInfo pal, IptuxGroupBelongType btype, const char* msg);
   void ConvertEncode(const std::string& enc);
   void ConvertEncode(const char* enc);
   std::string GetPalGroup();
