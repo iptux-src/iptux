@@ -54,6 +54,7 @@ configure_file(
 )
 
 subdir('api')
+subdir('ccore')
 subdir('iptux-utils')
 subdir('iptux-core')
 subdir('iptux')
