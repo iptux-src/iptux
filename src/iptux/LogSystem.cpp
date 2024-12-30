@@ -67,11 +67,11 @@ void LogSystem::communicateLogv(const MsgPara* msgpara,
 
   auto pal = msgpara->getPal();
 
-  if (msgpara->stype == MessageSourceType::PAL)
+  if (msgpara->stype == IptuxMsgSrcType::IPTUX_MSG_SRC_PAL)
     ptr = getformattime(TRUE, _("Recevied-From: Nickname:%s User:%s Host:%s"),
                         pal->getName().c_str(), pal->getUser().c_str(),
                         pal->getHost().c_str());
-  else if (msgpara->stype == MessageSourceType::SELF) {
+  else if (msgpara->stype == IptuxMsgSrcType::IPTUX_MSG_SRC_SELF) {
     if (msgpara->getPal())
       ptr = getformattime(TRUE, _("Send-To: Nickname:%s User:%s Host:%s"),
                           pal->getName().c_str(), pal->getUser().c_str(),

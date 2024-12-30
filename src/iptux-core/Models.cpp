@@ -161,7 +161,7 @@ void FileInfo::ensureFilesizeFilled() {
 }
 
 MsgPara::MsgPara(CPPalInfo pal)
-    : stype(MessageSourceType::PAL),
+    : stype(IptuxMsgSrcType::IPTUX_MSG_SRC_PAL),
       btype(GROUP_BELONG_TYPE_REGULAR),
       pal(pal) {}
 

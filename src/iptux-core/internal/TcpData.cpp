@@ -219,7 +219,7 @@ void TcpData::RecvMsgPic(PalInfo* pal, const char* path) {
   MsgPara para(coreThread->GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
-  para.stype = MessageSourceType::PAL;
+  para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_PAL;
   para.btype = GROUP_BELONG_TYPE_REGULAR;
   ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, path);
   para.dtlist.push_back(chip);

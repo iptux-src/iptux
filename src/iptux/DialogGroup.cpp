@@ -617,7 +617,7 @@ bool DialogGroup::SendTextMsg() {
   BroadcastTextMsg(msg);
 
   MsgPara msgpara(this->app->getMe());
-  msgpara.stype = MessageSourceType::SELF;
+  msgpara.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_SELF;
   app->getLogSystem()->communicateLog(&msgpara, "[STRING]%s", msg);
   g_free(msg);
 

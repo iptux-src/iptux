@@ -397,7 +397,7 @@ bool DialogBase::SendEnclosureMsg() {
  */
 void DialogBase::FeedbackMsg(const gchar* msg) {
   MsgPara para(this->app->getMe());
-  para.stype = MessageSourceType::SELF;
+  para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_SELF;
   para.btype = grpinf->getType();
 
   ChipData chip(msg);

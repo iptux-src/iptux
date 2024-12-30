@@ -516,7 +516,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
   }
 
   auto para = make_shared<MsgPara>(this->getMembers()[0]);
-  para->stype = MessageSourceType::SELF;
+  para->stype = IptuxMsgSrcType::IPTUX_MSG_SRC_SELF;
   para->btype = type;
   para->dtlist = dtlist;
   return para;
@@ -705,7 +705,7 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
    * @note (para->pal)可能为null.
    */
   switch (para->stype) {
-    case MessageSourceType::PAL:
+    case IptuxMsgSrcType::IPTUX_MSG_SRC_PAL:
       header =
           getformattime2(now, FALSE, "%s", para->getPal()->getName().c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
@@ -713,14 +713,14 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
                                                "pal-color", NULL);
       g_free(header);
       break;
-    case MessageSourceType::SELF:
+    case IptuxMsgSrcType::IPTUX_MSG_SRC_SELF:
       header = getformattime2(now, FALSE, "%s", me->getName().c_str());
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,
                                                "me-color", NULL);
       g_free(header);
       break;
-    case MessageSourceType::ERROR:
+    case IptuxMsgSrcType::IPTUX_MSG_SRC_ERROR:
       header = getformattime2(now, FALSE, "%s", _("<ERROR>"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,

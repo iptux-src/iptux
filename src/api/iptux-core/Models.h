@@ -19,16 +19,17 @@
 
 #include <json/json.h>
 
+enum IptuxMsgSrcType {
+  IPTUX_MSG_SRC_PAL,   ///< 好友
+  IPTUX_MSG_SRC_SELF,  ///< 自身
+  IPTUX_MSG_SRC_ERROR  ///< 错误
+};
+
 namespace iptux {
 
 /**
  * 消息来源类型.
  */
-enum class MessageSourceType {
-  PAL,   ///< 好友
-  SELF,  ///< 自身
-  ERROR  ///< 错误
-};
 
 /**
  * 消息内容类型.
@@ -226,7 +227,7 @@ class MsgPara {
 
   CPPalInfo getPal() const { return pal; }
 
-  MessageSourceType stype;       ///< 来源类型
+  IptuxMsgSrcType stype;         ///< 来源类型
   GroupBelongType btype;         ///< 所属类型
   std::vector<ChipData> dtlist;  ///< 数据链表 *
  private:

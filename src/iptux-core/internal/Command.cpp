@@ -484,7 +484,7 @@ void Command::FeedbackError(CPPalInfo pal,
                             GroupBelongType btype,
                             const char* error) {
   MsgPara para(coreThread.GetPal(pal->GetKey()));
-  para.stype = MessageSourceType::ERROR;
+  para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_ERROR;
   para.btype = btype;
 
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);

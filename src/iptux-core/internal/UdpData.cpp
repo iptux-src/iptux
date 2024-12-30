@@ -513,7 +513,7 @@ void UdpData::InsertMessage(PPalInfo pal,
   MsgPara para(coreThread.GetPal(pal->GetKey()));
 
   /* 构建消息封装包 */
-  para.stype = MessageSourceType::PAL;
+  para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_PAL;
   para.btype = btype;
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, msg);
   para.dtlist.push_back(std::move(chip));

@@ -409,7 +409,7 @@ bool DialogPeer::SendTextMsg() {
 void DialogPeer::FeedbackMsg(shared_ptr<MsgPara> msgPara) {
   MsgPara para(grpinf->getMembers()[0]);
 
-  para.stype = MessageSourceType::SELF;
+  para.stype = IptuxMsgSrcType::IPTUX_MSG_SRC_SELF;
   para.btype = grpinf->getType();
   para.dtlist = msgPara->dtlist;
 
@@ -426,7 +426,7 @@ MsgPara* DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
   auto g_cthrd = app->getCoreThread();
 
   para = new MsgPara(grpinf->getMembers()[0]);
-  para->stype = MessageSourceType::SELF;
+  para->stype = IptuxMsgSrcType::IPTUX_MSG_SRC_SELF;
   para->btype = grpinf->getType();
   para->dtlist = dtlist;
 
