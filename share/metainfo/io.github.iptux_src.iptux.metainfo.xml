@@ -10,7 +10,9 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0</project_license>
   <content_rating type="oars-1.0" />
-
+  <developer id="io.github.iptux_src">
+    <name>The iptux team</name>
+  </developer>
   <description>
     <p>
       iptux is an “IP Messenger” client. The features of iptux include:

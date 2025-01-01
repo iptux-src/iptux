@@ -53,6 +53,6 @@ modules:
     sources:
       - type: git
         url: https://github.com/iptux-src/iptux.git
-        commit: 8e49691df85e1de2b25b6dc98049062cfffa1fde
+        commit: 44c65ef65fd5021be2dd63fe64044ee2e15c58e9
     config-opts:
       - --buildtype=release
