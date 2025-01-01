@@ -51,8 +51,7 @@ modules:
   - name: iptux
     buildsystem: meson
     sources:
-      - type: git
-        url: https://github.com/iptux-src/iptux.git
-        tag: v0.9.3
+      - type: dir
+        path: ../iptux
     config-opts:
       - --buildtype=release
