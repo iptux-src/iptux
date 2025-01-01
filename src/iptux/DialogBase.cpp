@@ -14,6 +14,7 @@
 #include "config.h"
 #include "DialogBase.h"
 
+#include "UiCoreThread.h"
 #include "UiModels.h"
 #include <glib/gi18n.h>
 #include <glog/logging.h>
@@ -21,13 +22,16 @@
 
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
-#include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
 #include "iptux/callback.h"
 
 using namespace std;
 
 namespace iptux {
+
+enum {
+  InputAreaMinHeight = 50,
+};
 
 DialogBase::DialogBase(Application* app, GroupInfo* grp)
     : app(app),
@@ -238,6 +242,7 @@ GtkWidget* DialogBase::CreateInputArea() {
   GtkWidget *widget, *window;
 
   frame = gtk_frame_new(NULL);
+  gtk_widget_set_size_request(frame, -1, InputAreaMinHeight);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(frame), box);
