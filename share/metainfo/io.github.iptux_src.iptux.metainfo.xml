@@ -5,12 +5,14 @@
 
   <name>iptux</name>
   <summary>LAN communication software</summary>
-  <icon type="stock">iptux-icon</icon>
+  <icon type="stock">io.github.iptux_src.iptux</icon>
 
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0</project_license>
   <content_rating type="oars-1.0" />
-
+  <developer id="io.github.iptux_src">
+    <name>The iptux team</name>
+  </developer>
   <description>
     <p>
       iptux is an “IP Messenger” client. The features of iptux include:
@@ -27,6 +29,16 @@
       xipmsg in Debian.
     </p>
   </description>
+  <screenshots>
+    <screenshot type="default">
+      <caption>The Iptux main window.</caption>
+      <image type="source" width="316" height="514">https://raw.githubusercontent.com/wiki/iptux-src/iptux/screenshots/screenshot-main-1.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The Iptux chat window.</caption>
+      <image type="source" width="746" height="694">https://raw.githubusercontent.com/wiki/iptux-src/iptux/screenshots/screenshot-chat-1.png</image>
+    </screenshot>
+  </screenshots>
 
   <provides>
     <binary>iptux</binary>
