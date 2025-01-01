@@ -57,7 +57,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   bool SendEnclosureMsg();
   virtual bool SendTextMsg() = 0;
   /* TODO: Group SendTextMsg need add Picture */
-  void FeedbackMsg(const gchar* msg);
+  void FeedbackMsg(std::shared_ptr<MsgPara> msgPara);
   virtual void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) = 0;
 
   // 回调部分

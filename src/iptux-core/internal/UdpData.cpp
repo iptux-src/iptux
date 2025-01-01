@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/CommandMode.h"
 #include "iptux-core/internal/RecvFile.h"
@@ -515,7 +516,7 @@ void UdpData::InsertMessage(PPalInfo pal,
   /* 构建消息封装包 */
   para.stype = MessageSourceType::PAL;
   para.btype = btype;
-  ChipData chip(MESSAGE_CONTENT_TYPE_STRING, msg);
+  auto chip = ChipData::newTxtMsg(msg);
   para.dtlist.push_back(std::move(chip));
 
   /* 交给某人处理吧 */
