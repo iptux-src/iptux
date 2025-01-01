@@ -27,6 +27,16 @@
       xipmsg in Debian.
     </p>
   </description>
+  <screenshots>
+    <screenshot type="default">
+      <caption>The Iptux main window.</caption>
+      <image type="source" width="316" height="514">https://raw.githubusercontent.com/wiki/iptux-src/iptux/screenshots/screenshot-main-1.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The Iptux chat window.</caption>
+      <image type="source" width="746" height="694">https://raw.githubusercontent.com/wiki/iptux-src/iptux/screenshots/screenshot-chat-1.png</image>
+    </screenshot>
+  </screenshots>
 
   <provides>
     <binary>iptux</binary>
