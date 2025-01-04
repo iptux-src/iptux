@@ -12,10 +12,10 @@
 
 ### Linux
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/iptux)
-
-* for Ubuntu 14.04, please check 0.6.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-6
-* for Ubuntu 16.04, please check 0.7.x branch: https://github.com/iptux-src/iptux/tree/iptux-0-7
+<p align="center">
+  <a href="https://snapcraft.io/iptux"><img src="https://snapcraft.io/static/images/badges/en/snap-store-white.svg" height="64" alt="Get it from the Snap Store"></a>
+  <a href="https://flathub.org/apps/io.github.iptux_src.iptux"><img src="https://flathub.org/api/badge?svg&locale=en&light" height="64" alt="Get it on Flathub"></a>
+</p>
 
 ### Mac OS X
 
