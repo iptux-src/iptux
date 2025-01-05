@@ -1,0 +1,1352 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the iptux package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: iptux 0.9.3\n"
+"Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
+"POT-Creation-Date: 2024-12-26 19:09-0800\n"
+"PO-Revision-Date: 2025-01-04 04:02+0000\n"
+"Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
+"Language-Team: Tamil <https://hosted.weblate.org/projects/iptux/iptux/ta/>\n"
+"Language: ta\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.10-dev\n"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
+msgid "iptux"
+msgstr "ஐபிடக்ச்"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:7
+msgid "LAN communication software"
+msgstr "லேன் தொடர்பு மென்பொருள்"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:15
+msgid "iptux is an “IP Messenger” client. The features of iptux include:"
+msgstr ""
+"ஐபிடக்ச் ஒரு “ஐபி மெசஞ்சர்” கிளையன்ட். IPTUX இன் நற்பொருத்தங்கள் பின்வருமாறு:"
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:19
+msgid "auto-detect other clients on the intranet."
+msgstr "இன்ட்ராநெட்டில் மற்ற வாடிக்கையாளர்களை தானாக கண்டறியவும்."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:20
+msgid "send/recv messages to other clients."
+msgstr "மற்ற வாடிக்கையாளர்களுக்கு செய்திகளை அனுப்பவும்/மறுபரிசீலனை செய்யவும்."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:21
+msgid "send/recv files to other clients."
+msgstr "பிற வாடிக்கையாளர்களுக்கு கோப்புகளை அனுப்பவும்/RECV."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:22
+msgid "share your files to other cliens (with optional password protection)."
+msgstr ""
+"உங்கள் கோப்புகளை பிற கிளியன்களுக்குப் பகிரவும் (விருப்ப கடவுச்சொல் பாதுகாப்புடன்)."
+
+#: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:24
+msgid ""
+"It is (supposedly) compatible with 飞鸽传书 (Feige) and 飞秋 (FeiQ) from "
+"China, and with the original “IP Messenger” clients from Japan, including "
+"g2ipmsg and xipmsg in Debian."
+msgstr ""
+"இது சீனாவிலிருந்து 飞鸽传书 (ஃபைச்) மற்றும் 飞秋 (FEIQ) உடன் இணக்கமானது, மேலும் "
+"சப்பானில் இருந்து அசல் “ஐபி மெசஞ்சர்” வாடிக்கையாளர்களுடன், டெபியனில் G2IPMSG மற்றும் "
+"XIPMSG உட்பட."
+
+#: src/iptux-core/CoreThread.cpp:167
+#, c-format
+msgid ""
+"Fatal Error!! Failed to create new socket!\n"
+"%s"
+msgstr ""
+"அபாயகரமான பிழை !! புதிய சாக்கெட்டை உருவாக்குவதில் தோல்வி!\n"
+" %s"
+
+#: src/iptux-core/CoreThread.cpp:183
+#, c-format
+msgid ""
+"Fatal Error!! Failed to bind the TCP port(%s:%d)!\n"
+"%s"
+msgstr ""
+"அபாயகரமான பிழை !! TCP போர்ட்டை பிணைக்கத் தவறிவிட்டது (%s:%d)!\n"
+" %s"
+
+#: src/iptux-core/CoreThread.cpp:196
+#, c-format
+msgid ""
+"Fatal Error!! Failed to bind the UDP port(%s:%d)!\n"
+"%s"
+msgstr ""
+"அபாயகரமான பிழை !! யுடிபி போர்ட்டை பிணைப்பதில் தோல்வி (%s:%d)!\n"
+" %s"
+
+#: src/iptux-core/CoreThread.cpp:456 src/iptux-core/CoreThread.cpp:490
+#: src/iptux-core/internal/RecvFileData.cpp:142
+#: src/iptux-core/internal/RecvFileData.cpp:204
+#, c-format
+msgid ""
+"Fatal Error!!\n"
+"Failed to create new socket!\n"
+"%s"
+msgstr ""
+"அபாயகரமான பிழை !!\n"
+" புதிய சாக்கெட்டை உருவாக்குவதில் தோல்வி!\n"
+" %s"
+
+#: src/iptux-core/Models.cpp:172
+msgid "Empty Message"
+msgstr "வெற்று செய்தி"
+
+#: src/iptux-core/Models.cpp:250
+msgid "Received an image"
+msgstr "ஒரு படத்தைப் பெற்றது"
+
+#: src/iptux-core/internal/AnalogFS.cpp:93
+#: src/iptux-core/internal/AnalogFS.cpp:98
+#, c-format
+msgid "Open() file \"%s\" failed, %s"
+msgstr "திறந்த () கோப்பு \" %s\" தோல்வியுற்றது, %s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:117
+#, c-format
+msgid "Stat64() file \"%s\" failed, %s"
+msgstr "STAT64 () கோப்பு \" %s\" தோல்வியுற்றது, %s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:138
+#, c-format
+msgid "Mkdir() directory \"%s\" failed, %s"
+msgstr "Mkdir () அடைவு \" %s\" தோல்வியுற்றது, %s"
+
+#: src/iptux-core/internal/AnalogFS.cpp:164
+#, c-format
+msgid "Opendir() directory \"%s\" failed, %s"
+msgstr "Opeendir () அடைவு \" %s\" தோல்வியுற்றது, %s"
+
+#: src/iptux-core/internal/Command.cpp:226
+msgid "Your pal didn't receive the packet. He or she is offline maybe."
+msgstr ""
+"உங்கள் பால் பாக்கெட்டைப் பெறவில்லை. அவன் அல்லது அவள் ஆஃப்லைனில் இருக்கலாம்."
+
+#: src/iptux-core/internal/CommandMode.cpp:39
+#, c-format
+msgid "unknown command mode: %d"
+msgstr "அறியப்படாத கட்டளை பயன்முறை: %d"
+
+#: src/iptux-core/internal/RecvFileData.cpp:117
+msgid "receive"
+msgstr "பெறுங்கள்"
+
+#: src/iptux-core/internal/RecvFileData.cpp:124
+#: src/iptux-core/internal/RecvFileData.cpp:253
+#: src/iptux-core/internal/SendFileData.cpp:108
+#: src/iptux-core/internal/SendFileData.cpp:193
+msgid "Unknown"
+msgstr "தெரியவில்லை"
+
+#: src/iptux-core/internal/RecvFileData.cpp:175
+#, c-format, fuzzy
+msgid ""
+"Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
+msgstr ""
+"%s இலிருந்து \" %s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %JD ஐப் "
+"பெற்றார்"
+
+#: src/iptux-core/internal/RecvFileData.cpp:180
+#, c-format
+msgid "Receive the file \"%s\" from %s successfully!"
+msgstr "%s இலிருந்து \" %s\" கோப்பை வெற்றிகரமாகப் பெறுங்கள்!"
+
+#: src/iptux-core/internal/RecvFileData.cpp:320
+#, c-format
+msgid "Failed to receive the directory \"%s\" from %s!"
+msgstr "%s இலிருந்து \" %s\" கோப்பகத்தைப் பெறுவதில் தோல்வி!"
+
+#: src/iptux-core/internal/RecvFileData.cpp:323
+#, c-format
+msgid "Receive the directory \"%s\" from %s successfully!"
+msgstr "%s இலிருந்து \" %s\" கோப்பகத்தை வெற்றிகரமாகப் பெறுங்கள்!"
+
+#: src/iptux-core/internal/SendFileData.cpp:101
+msgid "send"
+msgstr "அனுப்பு"
+
+#: src/iptux-core/internal/SendFileData.cpp:137
+#, c-format
+msgid "Failed to send the file \"%s\" to %s!"
+msgstr "\" %s\" கோப்பை %s க்கு அனுப்பத் தவறிவிட்டது!"
+
+#: src/iptux-core/internal/SendFileData.cpp:142
+#, c-format
+msgid "Send the file \"%s\" to %s successfully!"
+msgstr "\" %s\" கோப்பை %s க்கு வெற்றிகரமாக அனுப்புங்கள்!"
+
+#: src/iptux-core/internal/SendFileData.cpp:265
+#, c-format
+msgid "Failed to send the directory \"%s\" to %s!"
+msgstr "\" %s\" கோப்பகத்தை %s க்கு அனுப்பத் தவறிவிட்டது!"
+
+#: src/iptux-core/internal/SendFileData.cpp:270
+#, c-format
+msgid "Send the directory \"%s\" to %s successfully!"
+msgstr "\" %s\" கோப்பகத்தை %s க்கு வெற்றிகரமாக அனுப்புங்கள்!"
+
+#: src/iptux-core/internal/UdpData.cpp:92
+#: src/iptux-core/internal/UdpData.cpp:93
+#: src/iptux-core/internal/UdpData.cpp:443
+#: src/iptux-core/internal/UdpData.cpp:484
+msgid "mysterious"
+msgstr "மர்மமான"
+
+#: src/iptux-utils/utils.cpp:880
+#, c-format
+msgid "stat file \"%s\" failed: %s"
+msgstr "STAT கோப்பு \" %s\" தோல்வியுற்றது: %s"
+
+#: src/iptux-utils/utils.cpp:888
+#, c-format
+msgid "path %s is not file or directory: st_mode(%x)"
+msgstr "பாதை %s கோப்பு அல்லது அடைவு அல்ல: ST_MODE ( %x)"
+
+#: src/iptux-utils/utils.cpp:895
+#, c-format
+msgid "opendir on \"%s\" failed: %s"
+msgstr "\" %s\" இல் Opendir தோல்வியுற்றது: %s"
+
+#: src/iptux/AboutDialog.cpp:39
+msgid "TRANSLATOR NAME"
+msgstr "மொழிபெயர்ப்பாளரின் பெயர்"
+
+#: src/iptux/AboutDialog.cpp:53
+msgid "Thanks to"
+msgstr "நன்றி"
+
+#: src/iptux/AppIndicator.cpp:40 src/iptux/MainWindow.cpp:505
+#: src/iptux/MainWindow.cpp:507
+msgid "Iptux"
+msgstr "ஐபிடக்ச்"
+
+#: src/iptux/Application.cpp:54
+msgid "Loading the process successfully!"
+msgstr "செயல்முறையை வெற்றிகரமாக ஏற்றுகிறது!"
+
+#: src/iptux/Application.cpp:274
+#, c-format
+msgid "New Message from %s"
+msgstr "%s இலிருந்து புதிய செய்தி"
+
+#: src/iptux/Application.cpp:287
+#, c-format
+msgid "New File from %s"
+msgstr "%s இலிருந்து புதிய கோப்பு"
+
+#: src/iptux/Application.cpp:296
+msgid "Receiving File Finished"
+msgstr "பெறும் கோப்பு முடிந்தது"
+
+#: src/iptux/Application.cpp:300
+msgid "file info no longer exist"
+msgstr "கோப்பு செய்தி இனி இல்லை"
+
+#: src/iptux/Darwin.cpp:16
+#, c-format, fuzzy
+msgid "Couldn’t load icon: %s"
+msgstr "ஐகான்களை ஏற்ற முடியவில்லை"
+
+#: src/iptux/DataSettings.cpp:46
+msgid "Personal"
+msgstr "தனிப்பட்ட"
+
+#: src/iptux/DataSettings.cpp:48
+msgid "System"
+msgstr "மண்டலம்"
+
+#: src/iptux/DataSettings.cpp:50
+msgid "Network"
+msgstr "பிணையம்"
+
+#: src/iptux/DataSettings.cpp:83 src/iptux/DataSettings.cpp:92
+msgid "The program needs to be restarted to take effect!"
+msgstr "நடைமுறைக்கு வர நிரலை மறுதொடக்கம் செய்ய வேண்டும்!"
+
+#: src/iptux/DataSettings.cpp:136
+msgid "Preferences"
+msgstr "விருப்பத்தேர்வுகள்"
+
+#: src/iptux/DataSettings.cpp:136 src/iptux/RevisePal.cpp:109
+#: src/iptux/dialog.cpp:107 src/iptux/dialog.cpp:170
+msgid "_OK"
+msgstr "_Ok"
+
+#: src/iptux/DataSettings.cpp:137
+msgid "_Apply"
+msgstr "_Aplay"
+
+#: src/iptux/DataSettings.cpp:137 src/iptux/DataSettings.cpp:1341
+#: src/iptux/DataSettings.cpp:1388 src/iptux/DialogBase.cpp:341
+#: src/iptux/DialogBase.cpp:894 src/iptux/RevisePal.cpp:110
+#: src/iptux/ShareFile.cpp:419 src/iptux/callback.cpp:87
+#: src/iptux/dialog.cpp:171 src/iptux/dialog.cpp:230
+msgid "_Cancel"
+msgstr "_CANCEL"
+
+#: src/iptux/DataSettings.cpp:162
+msgid "Your _nickname:"
+msgstr "உங்கள் _நிக் பெயர்:"
+
+#: src/iptux/DataSettings.cpp:169
+msgid "Please input your nickname!"
+msgstr "உங்கள் புனைப்பெயரை உள்ளிடவும்!"
+
+#: src/iptux/DataSettings.cpp:175
+msgid "Your _group name:"
+msgstr "உங்கள் _ குழு பெயர்:"
+
+#: src/iptux/DataSettings.cpp:182
+msgid "Please input your group name!"
+msgstr "உங்கள் குழு பெயரை உள்ளிடவும்!"
+
+#: src/iptux/DataSettings.cpp:188
+msgid "Your _face picture:"
+msgstr "உங்கள் _ ஃபேச் படம்:"
+
+#: src/iptux/DataSettings.cpp:206
+msgid "_Save files to: "
+msgstr "_சேவ் கோப்புகள்: "
+
+#: src/iptux/DataSettings.cpp:219
+msgid "Photo"
+msgstr "புகைப்படம்"
+
+#: src/iptux/DataSettings.cpp:231
+msgid "Signature"
+msgstr "கையொப்பம்"
+
+#: src/iptux/DataSettings.cpp:264
+msgid "Port:"
+msgstr "போர்ட்:"
+
+#: src/iptux/DataSettings.cpp:271
+msgid "Any port number between 1024 and 65535, default is 2425"
+msgstr "1024 முதல் 65535 வரை எந்த துறைமுகம் எண்ணும், இயல்புநிலை 2425 ஆகும்"
+
+#: src/iptux/DataSettings.cpp:280
+msgid "Candidate network encodings:"
+msgstr "வேட்பாளர் பிணையம் குறியாக்கங்கள்:"
+
+#: src/iptux/DataSettings.cpp:287
+msgid "Candidate network encodings, separated by \",\""
+msgstr "வேட்பாளர் பிணையம் குறியாக்கங்கள், \",\""
+
+#: src/iptux/DataSettings.cpp:294
+msgid "Preferred network encoding:"
+msgstr "விருப்பமான பிணைய குறியாக்கம்:"
+
+#: src/iptux/DataSettings.cpp:301
+msgid ""
+"Preference network coding (You should be aware of what you are doing if you "
+"want to modify it.)"
+msgstr ""
+"முன்னுரிமை பிணையம் குறியீட்டு முறை (நீங்கள் அதை மாற்ற விரும்பினால் நீங்கள் என்ன செய்கிறீர்கள் "
+"என்பதை நீங்கள் அறிந்திருக்க வேண்டும்.)"
+
+#: src/iptux/DataSettings.cpp:309
+msgid "Pal's default face picture:"
+msgstr "PAN இன் இயல்புநிலை முகம் படம்:"
+
+#: src/iptux/DataSettings.cpp:327
+msgid "Panel font:"
+msgstr "குழு எழுத்துரு:"
+
+#: src/iptux/DataSettings.cpp:339
+msgid "Automatically open the chat dialog"
+msgstr "அரட்டை உரையாடலை தானாகத் திறக்கவும்"
+
+#: src/iptux/DataSettings.cpp:347
+msgid "Automatically hide the panel after login"
+msgstr "உள்நுழைந்த பிறகு தானாக பேனலை மறைக்கவும்"
+
+#: src/iptux/DataSettings.cpp:355
+msgid "Automatically open the File Transmission Management"
+msgstr "கோப்பு பரிமாற்ற நிர்வாகத்தை தானாகத் திறக்கவும்"
+
+#: src/iptux/DataSettings.cpp:363
+msgid "Use the 'Enter' key to send message"
+msgstr "செய்தியை அனுப்ப 'Enter' விசையைப் பயன்படுத்தவும்"
+
+#: src/iptux/DataSettings.cpp:371
+msgid "Automatically clean up the chat history"
+msgstr "அரட்டை வரலாற்றை தானாக தூய்மை செய்யுங்கள்"
+
+#: src/iptux/DataSettings.cpp:378
+msgid "Save the chat history"
+msgstr "அரட்டை வரலாற்றைக் காப்பாற்றுங்கள்"
+
+#: src/iptux/DataSettings.cpp:386
+msgid "Use the Blacklist (NOT recommended)"
+msgstr "தடுப்புப்பட்டியலைப் பயன்படுத்தவும் (பரிந்துரைக்கப்படவில்லை)"
+
+#: src/iptux/DataSettings.cpp:394
+msgid "Filter the request of sharing files"
+msgstr "கோப்புகளைப் பகிர்வதற்கான கோரிக்கையை வடிகட்டவும்"
+
+#: src/iptux/DataSettings.cpp:401
+msgid "Hide the taskbar when the main window is minimized"
+msgstr "முதன்மையான சாளரம் குறைக்கப்படும்போது பணிப்பட்டியை மறைக்கவும்"
+
+#: src/iptux/DataSettings.cpp:425
+msgid "From:"
+msgstr "இருந்து:"
+
+#: src/iptux/DataSettings.cpp:431
+msgid "Beginning of the IP(v4) section"
+msgstr "ஐபி (வி 4) பிரிவின் துவக்கம்"
+
+#: src/iptux/DataSettings.cpp:435
+msgid "To:"
+msgstr "இதற்கு:"
+
+#: src/iptux/DataSettings.cpp:441
+msgid "End of the IP(v4) section"
+msgstr "IPv4 இன் முடிவு) பிரிவு"
+
+#: src/iptux/DataSettings.cpp:449
+msgid "Add"
+msgstr "கூட்டு"
+
+#: src/iptux/DataSettings.cpp:454
+msgid "Delete"
+msgstr "நீக்கு"
+
+#: src/iptux/DataSettings.cpp:461
+msgid "Added IP(v4) Section:"
+msgstr "ஐபி (வி 4) பிரிவு சேர்க்கப்பட்டது:"
+
+#: src/iptux/DataSettings.cpp:480
+msgid "Import"
+msgstr "இறக்குமதி"
+
+#: src/iptux/DataSettings.cpp:484
+msgid "Export"
+msgstr "ஏற்றுமதி"
+
+#: src/iptux/DataSettings.cpp:488 src/iptux/TransWindow.cpp:171
+msgid "Clear"
+msgstr "தெளிவான"
+
+#: src/iptux/DataSettings.cpp:699
+msgid "From"
+msgstr "இருந்து"
+
+#: src/iptux/DataSettings.cpp:706
+msgid "To"
+msgstr "பெறுநர்"
+
+#: src/iptux/DataSettings.cpp:713
+msgid "Description"
+msgstr "விவரம்"
+
+#: src/iptux/DataSettings.cpp:729
+msgid "Please select download folder"
+msgstr "பதிவிறக்க கோப்புறையைத் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DataSettings.cpp:751
+msgid "Select Font"
+msgstr "எழுத்துருவைத் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DataSettings.cpp:865 src/iptux/DataSettings.cpp:867
+#: src/iptux/DataSettings.cpp:871
+msgid "Port must be a number between 1024 and 65535"
+msgstr "துறைமுகம் 1024 முதல் 65535 வரை இருக்க வேண்டும்"
+
+#: src/iptux/DataSettings.cpp:1012 src/iptux/DataSettings.cpp:1043
+#, c-format
+msgid ""
+"Fopen() file \"%s\" failed!\n"
+"%s"
+msgstr ""
+"Fopen () கோப்பு \"%s\" தோல்வியுற்றது!\n"
+" %s"
+
+#: src/iptux/DataSettings.cpp:1143 src/iptux/RevisePal.cpp:419
+msgid "Please select a face picture"
+msgstr "முகம் படத்தைத் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DataSettings.cpp:1165
+msgid "Please select a personal photo"
+msgstr "தனிப்பட்ட புகைப்படத்தைத் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DataSettings.cpp:1234 src/iptux/DataSettings.cpp:1241
+#: src/iptux/DetectPal.cpp:75
+#, c-format, fuzzy
+msgid ""
+"\n"
+"Illegal IP(v4) address: %s!"
+msgstr ""
+"\n"
+"சட்டவிரோத ஐபிவி 4) முகவரி!"
+
+#: src/iptux/DataSettings.cpp:1339
+msgid "Please select a file to import data"
+msgstr "தரவை இறக்குமதி செய்ய ஒரு கோப்பைத் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DataSettings.cpp:1340 src/iptux/DialogBase.cpp:340
+#: src/iptux/ShareFile.cpp:418 src/iptux/callback.cpp:86
+msgid "_Open"
+msgstr "_OPEN"
+
+#: src/iptux/DataSettings.cpp:1387
+msgid "Save data to file"
+msgstr "தரவை கோப்பில் சேமிக்கவும்"
+
+#: src/iptux/DataSettings.cpp:1388 src/iptux/DialogBase.cpp:895
+#: src/iptux/dialog.cpp:231
+msgid "_Save"
+msgstr "_சேவ்"
+
+#: src/iptux/DetectPal.cpp:70
+#, c-format
+msgid "The notification has been sent to %s."
+msgstr "அறிவிப்பு %s க்கு அனுப்பப்பட்டுள்ளது."
+
+#: src/iptux/DialogBase.cpp:213
+#, c-format
+msgid "%s To Send."
+msgstr "அனுப்ப %s."
+
+#: src/iptux/DialogBase.cpp:269
+msgid "Close"
+msgstr "மூடு"
+
+#: src/iptux/DialogBase.cpp:273 src/iptux/DialogGroup.cpp:375
+msgid "Send"
+msgstr "அனுப்பு"
+
+#: src/iptux/DialogBase.cpp:287
+msgid "Chat History"
+msgstr "அரட்டை வரலாறு"
+
+#: src/iptux/DialogBase.cpp:332
+msgid "Choose enclosure files"
+msgstr "அடைப்பு கோப்புகளைத் தேர்வுசெய்க"
+
+#: src/iptux/DialogBase.cpp:335
+msgid "Choose enclosure folders"
+msgstr "அடைப்பு கோப்புறைகளைத் தேர்வுசெய்க"
+
+#: src/iptux/DialogBase.cpp:575
+msgid "Remove Selected"
+msgstr "தேர்ந்தெடுக்கப்பட்டதை அகற்று"
+
+#: src/iptux/DialogBase.cpp:630
+msgid "File to send."
+msgstr "அனுப்ப கோப்பு."
+
+#: src/iptux/DialogBase.cpp:635
+msgid "Sending progress."
+msgstr "முன்னேற்றம் அனுப்புகிறது."
+
+#: src/iptux/DialogBase.cpp:638
+msgid "Dirs"
+msgstr "Dirs"
+
+#: src/iptux/DialogBase.cpp:641
+msgid "Files"
+msgstr "கோப்புகள்"
+
+#: src/iptux/DialogBase.cpp:644 src/iptux/DialogPeer.cpp:552
+msgid "Detail"
+msgstr "விவரம்"
+
+#: src/iptux/DialogBase.cpp:694
+msgid "PeerName"
+msgstr "Peername"
+
+#: src/iptux/DialogBase.cpp:701 src/iptux/DialogPeer.cpp:703
+msgid "Name"
+msgstr "பெயர்"
+
+#: src/iptux/DialogBase.cpp:707 src/iptux/DialogPeer.cpp:639
+#: src/iptux/DialogPeer.cpp:709 src/iptux/ShareFile.cpp:280
+#: src/iptux/TransWindow.cpp:271
+msgid "Size"
+msgstr "அளவு"
+
+#: src/iptux/DialogBase.cpp:713
+msgid "Path"
+msgstr "பாதை"
+
+#: src/iptux/DialogBase.cpp:774
+msgid "Sending Progress."
+msgstr "முன்னேற்றம் அனுப்புகிறது."
+
+#: src/iptux/DialogBase.cpp:777
+#, c-format
+msgid "%s of %s Sent."
+msgstr "%s அனுப்பப்பட்ட %s."
+
+#: src/iptux/DialogBase.cpp:784 src/iptux/DialogPeer.cpp:822
+msgid "Mission Completed!"
+msgstr "பணி முடிந்தது!"
+
+#: src/iptux/DialogBase.cpp:818 src/iptux/DialogBase.cpp:893
+msgid "Save Image"
+msgstr "படத்தை சேமிக்கவும்"
+
+#: src/iptux/DialogBase.cpp:823
+msgid "Copy Image"
+msgstr "படத்தை நகலெடுக்கவும்"
+
+#: src/iptux/DialogGroup.cpp:285
+msgid "Member"
+msgstr "உறுப்பினர்"
+
+#: src/iptux/DialogGroup.cpp:382
+msgid "Pals"
+msgstr "பால்ச்"
+
+#: src/iptux/DialogGroup.cpp:480
+msgid "Select All"
+msgstr "அனைத்தையும் தெரிவுசெய்"
+
+#: src/iptux/DialogGroup.cpp:485
+msgid "Reverse Select"
+msgstr "தலைகீழ் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DialogGroup.cpp:490
+msgid "Clear Up"
+msgstr "அழிக்கவும்"
+
+#: src/iptux/DialogGroup.cpp:728
+#, c-format
+msgid "Talk with the group %s"
+msgstr "%s குழுவுடன் பேசுங்கள்"
+
+#: src/iptux/DialogPeer.cpp:132
+#, c-format
+msgid "Talk with %s(%s) IP:%s"
+msgstr "%s (%s) ip உடன் பேசுங்கள்:%s"
+
+#: src/iptux/DialogPeer.cpp:305
+msgid "Info."
+msgstr "செய்தி."
+
+#: src/iptux/DialogPeer.cpp:337
+#, c-format
+msgid "Version: %s\n"
+msgstr "பதிப்பு: %s\n"
+
+#: src/iptux/DialogPeer.cpp:339
+#, c-format
+msgid "Nickname: %s@%s\n"
+msgstr "புனைப்பெயர்: %s@ %s\n"
+
+#: src/iptux/DialogPeer.cpp:342
+#, c-format
+msgid "Nickname: %s\n"
+msgstr "புனைப்பெயர்: %s\n"
+
+#: src/iptux/DialogPeer.cpp:344
+#, c-format
+msgid "User: %s\n"
+msgstr "பயனர்: %s\n"
+
+#: src/iptux/DialogPeer.cpp:345
+#, c-format
+msgid "Host: %s\n"
+msgstr "ஓச்ட்: %s\n"
+
+#: src/iptux/DialogPeer.cpp:348
+#, c-format
+msgid "Address: %s(%s)\n"
+msgstr "முகவரி: %s ( %s)\n"
+
+#: src/iptux/DialogPeer.cpp:350
+#, c-format
+msgid "Address: %s\n"
+msgstr "முகவரி: %s\n"
+
+#: src/iptux/DialogPeer.cpp:353
+msgid "Compatibility: Microsoft\n"
+msgstr "பொருந்தக்கூடிய தன்மை: மைக்ரோசாப்ட்\n"
+
+#: src/iptux/DialogPeer.cpp:355
+msgid "Compatibility: GNU/Linux\n"
+msgstr "பொருந்தக்கூடிய தன்மை: குனு/லினக்ச்\n"
+
+#: src/iptux/DialogPeer.cpp:357
+#, c-format
+msgid "System coding: %s\n"
+msgstr "கணினி குறியீட்டு முறை: %s\n"
+
+#: src/iptux/DialogPeer.cpp:362
+msgid "Signature:\n"
+msgstr "கையொப்பம்:\n"
+
+#: src/iptux/DialogPeer.cpp:369
+msgid ""
+"\n"
+"Photo:\n"
+msgstr ""
+"\n"
+"புகைப்படம்:\n"
+
+#: src/iptux/DialogPeer.cpp:460
+msgid "Please select a picture to insert the buffer"
+msgstr "இடையகத்தை செருக ஒரு படத்தைத் தேர்ந்தெடுக்கவும்"
+
+#: src/iptux/DialogPeer.cpp:489
+msgid "Enclosure."
+msgstr "அடைப்பு."
+
+#: src/iptux/DialogPeer.cpp:534
+msgid "Files to be received"
+msgstr "பெற வேண்டிய கோப்புகள்"
+
+#: src/iptux/DialogPeer.cpp:538
+msgid "Receiving progress."
+msgstr "முன்னேற்றத்தைப் பெறுகிறது."
+
+#: src/iptux/DialogPeer.cpp:541
+msgid "Accept"
+msgstr "ஏற்றுக்கொள்"
+
+#: src/iptux/DialogPeer.cpp:547 src/iptux/dialog.cpp:63
+#: src/iptux/resources/gtk/menus.ui:342
+msgid "Refuse"
+msgstr "மறுக்கவும்"
+
+#: src/iptux/DialogPeer.cpp:583
+msgid "File received."
+msgstr "கோப்பு பெறப்பட்டது."
+
+#: src/iptux/DialogPeer.cpp:626 src/iptux/DialogPeer.cpp:697
+msgid "Source"
+msgstr "மூலம்"
+
+#: src/iptux/DialogPeer.cpp:633
+msgid "SaveAs"
+msgstr "சேவியாச்"
+
+#: src/iptux/DialogPeer.cpp:805 src/iptux/DialogPeer.cpp:871
+msgid "Receiving Progress."
+msgstr "முன்னேற்றத்தைப் பெறுகிறது."
+
+#: src/iptux/DialogPeer.cpp:808 src/iptux/DialogPeer.cpp:874
+#, c-format
+msgid "%s to Receive."
+msgstr "பெற %s."
+
+#: src/iptux/DialogPeer.cpp:812 src/iptux/DialogPeer.cpp:878
+#, c-format
+msgid "%s Of %s Received."
+msgstr "%s பெறப்பட்ட %s."
+
+#: src/iptux/LogSystem.cpp:71
+#, c-format, fuzzy
+msgid "Recevied-From: Nickname:%s User:%s Host:%s"
+msgstr "பெறப்பட்டது: புனைப்பெயர்:%s பயனர்:%ஓச்டாக:%s"
+
+#: src/iptux/LogSystem.cpp:76
+#, c-format
+msgid "Send-To: Nickname:%s User:%s Host:%s"
+msgstr "அனுப்பு: புனைப்பெயர்:%s பயனர்:%s ஓச்ட்:%s"
+
+#: src/iptux/LogSystem.cpp:80
+msgid "Send-Broadcast"
+msgstr "அனுப்பு-ஒளிபரப்பு"
+
+#: src/iptux/LogSystem.cpp:99
+#, c-format
+msgid "User:%s Host:%s"
+msgstr "பயனர்:%s ஓச்ட்:%s"
+
+#: src/iptux/MainWindow.cpp:570
+msgid "Pals Online: 0"
+msgstr "PALS ஆன்லைன்: 0"
+
+#: src/iptux/MainWindow.cpp:655
+msgid "Search Pals"
+msgstr "நண்பர்களைத் தேடுங்கள்"
+
+#: src/iptux/MainWindow.cpp:768
+msgid "Nickname"
+msgstr "புனைப்பெயர்"
+
+#: src/iptux/MainWindow.cpp:778
+msgid "Group"
+msgstr "குழு"
+
+#: src/iptux/MainWindow.cpp:784 src/iptux/TransWindow.cpp:258
+msgid "IPv4"
+msgstr "Iprsh"
+
+#: src/iptux/MainWindow.cpp:790
+msgid "User"
+msgstr "பயனர்"
+
+#: src/iptux/MainWindow.cpp:796 src/iptux/resources/gtk/MainWindow.ui:81
+msgid "Host"
+msgstr "விருந்தோம்பி"
+
+#: src/iptux/MainWindow.cpp:935
+#, c-format
+msgid "Pals Online: %d"
+msgstr "PALS ஆன்லைனில்: %d"
+
+#: src/iptux/RevisePal.cpp:109
+msgid "Change Pal's Information"
+msgstr "பால் இன் தகவல்களை மாற்றவும்"
+
+#: src/iptux/RevisePal.cpp:134
+msgid "Pal's nickname:"
+msgstr "நண்பரின் புனைப்பெயர்:"
+
+#: src/iptux/RevisePal.cpp:140
+msgid "Please input pal's new nickname!"
+msgstr "நண்பரின் புதிய புனைப்பெயரை உள்ளிடவும்!"
+
+#: src/iptux/RevisePal.cpp:146
+msgid "Pal's group name:"
+msgstr "PAN இன் குழு பெயர்:"
+
+#: src/iptux/RevisePal.cpp:152
+msgid "Please input pal's new group name!"
+msgstr "நண்பரின் புதிய குழு பெயரை உள்ளிடவும்!"
+
+#: src/iptux/RevisePal.cpp:158
+msgid "System coding:"
+msgstr "கணினி குறியீட்டு முறை:"
+
+#: src/iptux/RevisePal.cpp:164
+msgid "Be SURE to know what you are doing!"
+msgstr "நீங்கள் என்ன செய்கிறீர்கள் என்பதை அறிந்து கொள்ளுங்கள்!"
+
+#: src/iptux/RevisePal.cpp:170
+msgid "Pal's face picture:"
+msgstr "நண்பரின் முகம் படம்:"
+
+#: src/iptux/RevisePal.cpp:184
+msgid "Be compatible with iptux's protocol (DANGEROUS)"
+msgstr "ஐபிடக்சின் நெறிமுறையுடன் (ஆபத்தானது) இணக்கமாக இருங்கள்"
+
+#: src/iptux/ShareFile.cpp:104
+msgid "Shared Files Management"
+msgstr "பகிரப்பட்ட கோப்புகள் மேலாண்மை"
+
+#: src/iptux/ShareFile.cpp:105
+msgid "OK"
+msgstr "சரி"
+
+#: src/iptux/ShareFile.cpp:106
+msgid "Apply"
+msgstr "இடு"
+
+#: src/iptux/ShareFile.cpp:107
+msgid "Cancel"
+msgstr "ரத்துசெய்"
+
+#: src/iptux/ShareFile.cpp:160
+msgid "Add Files"
+msgstr "கோப்புகளைச் சேர்"
+
+#: src/iptux/ShareFile.cpp:163
+msgid "Add Folders"
+msgstr "கோப்புறைகளைச் சேர்க்கவும்"
+
+#: src/iptux/ShareFile.cpp:166
+msgid "Delete Resources"
+msgstr "வளங்களை நீக்கு"
+
+#: src/iptux/ShareFile.cpp:169
+msgid "Clear Password"
+msgstr "கடவுச்சொல்லை அழிக்கவும்"
+
+#: src/iptux/ShareFile.cpp:172
+msgid "Set Password"
+msgstr "கடவுச்சொல்லை அமைக்கவும்"
+
+#: src/iptux/ShareFile.cpp:229 src/iptux/ShareFile.cpp:373
+msgid "regular"
+msgstr "வழக்கமான"
+
+#: src/iptux/ShareFile.cpp:233 src/iptux/ShareFile.cpp:377
+msgid "directory"
+msgstr "அடைவு"
+
+#: src/iptux/ShareFile.cpp:237 src/iptux/ShareFile.cpp:381
+msgid "unknown"
+msgstr "தெரியவில்லை"
+
+#: src/iptux/ShareFile.cpp:270
+msgid "File"
+msgstr "கோப்பு"
+
+#: src/iptux/ShareFile.cpp:286
+msgid "Type"
+msgstr "வகை"
+
+#: src/iptux/ShareFile.cpp:411
+msgid "Choose the files to share"
+msgstr "பகிர கோப்புகளைத் தேர்வுசெய்க"
+
+#: src/iptux/ShareFile.cpp:414
+msgid "Choose the folders to share"
+msgstr "பகிர்ந்து கொள்ள கோப்புறைகளைத் தேர்வுசெய்க"
+
+#: src/iptux/TransWindow.cpp:86
+msgid "Files Transmission Management"
+msgstr "கோப்புகள் பரிமாற்ற மேலாண்மை"
+
+#: src/iptux/TransWindow.cpp:241
+msgid "State"
+msgstr "மாநிலம்"
+
+#: src/iptux/TransWindow.cpp:247
+msgid "Task"
+msgstr "பணி"
+
+#: src/iptux/TransWindow.cpp:253
+msgid "Peer"
+msgstr "ஒப்பி"
+
+#: src/iptux/TransWindow.cpp:265
+msgid "Filename"
+msgstr "கோப்புப்பெயர்"
+
+#: src/iptux/TransWindow.cpp:277
+msgid "Completed"
+msgstr "முடிந்தது"
+
+#: src/iptux/TransWindow.cpp:284
+msgid "Progress"
+msgstr "முன்னேற்றம்"
+
+#: src/iptux/TransWindow.cpp:291
+msgid "Cost"
+msgstr "செலவு"
+
+#: src/iptux/TransWindow.cpp:297
+msgid "Remaining"
+msgstr "மீதமுள்ள"
+
+#: src/iptux/TransWindow.cpp:303
+msgid "Rate"
+msgstr "விகிதம்"
+
+#: src/iptux/TransWindow.cpp:331
+msgid "The path you want to open not exist!"
+msgstr "நீங்கள் திறக்க விரும்பும் பாதை இல்லை!"
+
+#: src/iptux/TransWindow.cpp:405
+msgid "The file you want to open not exist!"
+msgstr "நீங்கள் திறக்க விரும்பும் கோப்பு இல்லை!"
+
+#: src/iptux/TransWindow.cpp:406
+msgid "iptux Error"
+msgstr "ஐபிடக்ச் பிழை"
+
+#: src/iptux/UiCoreThread.cpp:254 src/iptux/UiCoreThread.cpp:278
+#: src/iptux/UiCoreThread.cpp:377 src/iptux/UiCoreThread.cpp:399
+msgid "Others"
+msgstr "மற்றவர்கள்"
+
+#: src/iptux/UiCoreThread.cpp:419
+msgid "Broadcast"
+msgstr "ஒளிபரப்பு"
+
+#: src/iptux/UiHelper.cpp:28
+#, c-format
+msgid "Can't convert path to uri: %s, reason: %s"
+msgstr "யூரி ஆக பாதையை மாற்ற முடியாது: %s, காரணம்: %s"
+
+#: src/iptux/UiHelper.cpp:39
+#, c-format
+msgid "Can't open path: %s, reason: %s"
+msgstr "பாதையைத் திறக்க முடியாது: %s, காரணம்: %s"
+
+#: src/iptux/UiHelper.cpp:68
+#, c-format
+msgid "Can't open URL: %s, reason: %s"
+msgstr "முகவரி ஐ திறக்க முடியாது: %s, காரணம்: %s"
+
+#: src/iptux/UiHelper.cpp:188
+msgid "Information"
+msgstr "தகவல்"
+
+#: src/iptux/UiHelper.cpp:218
+msgid "Warning"
+msgstr "எச்சரிக்கை"
+
+#: src/iptux/UiModels.cpp:602
+#, c-format
+msgid "Version: %s"
+msgstr "பதிப்பு: %s"
+
+#: src/iptux/UiModels.cpp:606
+#, c-format
+msgid "Nickname: %s@%s"
+msgstr "புனைப்பெயர்: %s@ %s"
+
+#: src/iptux/UiModels.cpp:609
+#, c-format
+msgid "Nickname: %s"
+msgstr "புனைப்பெயர்: %s"
+
+#: src/iptux/UiModels.cpp:613
+#, c-format
+msgid "User: %s"
+msgstr "பயனர்: %s"
+
+#: src/iptux/UiModels.cpp:616
+#, c-format
+msgid "Host: %s"
+msgstr "ஓச்ட்: %s"
+
+#: src/iptux/UiModels.cpp:621
+#, c-format
+msgid "Address: %s(%s)"
+msgstr "முகவரி: %s ( %s)"
+
+#: src/iptux/UiModels.cpp:623
+#, c-format
+msgid "Address: %s"
+msgstr "முகவரி: %s"
+
+#: src/iptux/UiModels.cpp:628
+msgid "Compatibility: Microsoft"
+msgstr "பொருந்தக்கூடிய தன்மை: மைக்ரோசாப்ட்"
+
+#: src/iptux/UiModels.cpp:630
+msgid "Compatibility: GNU/Linux"
+msgstr "பொருந்தக்கூடிய தன்மை: குனு/லினக்ச்"
+
+#: src/iptux/UiModels.cpp:634
+#, c-format
+msgid "System coding: %s"
+msgstr "கணினி குறியீட்டு முறை: %s"
+
+#: src/iptux/UiModels.cpp:639
+msgid "Signature:"
+msgstr "கையொப்பம்:"
+
+#: src/iptux/UiModels.cpp:724
+msgid "<ERROR>"
+msgstr "<பிழை>"
+
+#: src/iptux/UiModels.cpp:779
+msgid "[IMG]"
+msgstr "[IMG]"
+
+#: src/iptux/dialog.cpp:39
+msgid ""
+"File transfer has not been completed.\n"
+"Are you sure to cancel and quit?"
+msgstr ""
+"கோப்பு பரிமாற்றம் முடிக்கப்படவில்லை.\n"
+" ரத்து செய்து வெளியேறுவது உறுதி?"
+
+#: src/iptux/dialog.cpp:42
+msgid "Confirm Exit"
+msgstr "வெளியேறுவதை உறுதிப்படுத்தவும்"
+
+#: src/iptux/dialog.cpp:62 src/iptux/resources/gtk/MainWindow.ui:12
+#: src/iptux/resources/gtk/menus.ui:98 src/iptux/resources/gtk/menus.ui:243
+msgid "Request Shared Resources"
+msgstr "பகிரப்பட்ட ஆதாரங்களைக் கோருங்கள்"
+
+#: src/iptux/dialog.cpp:62
+msgid "Agree"
+msgstr "ஒப்புக்கொள்கிறேன்"
+
+#: src/iptux/dialog.cpp:78
+#, c-format
+msgid ""
+"Your pal (%s)[%s]\n"
+"is requesting to get your shared resources,\n"
+"Do you agree?"
+msgstr ""
+"உங்கள் பால் (%s) [%s]\n"
+" நீங்கள் பகிரப்பட்ட வளங்களைப் பெறுமாறு கேட்டுக்கொள்கிறார்,\n"
+" நீங்கள் ஒப்புக்கொள்கிறீர்களா?"
+
+#: src/iptux/dialog.cpp:106
+msgid "Access Password"
+msgstr "கடவுச்சொல்லை அணுகவும்"
+
+#: src/iptux/dialog.cpp:113
+msgid "Please input the password for the shared files behind"
+msgstr "பின்னால் பகிரப்பட்ட கோப்புகளுக்கான கடவுச்சொல்லை உள்ளிடவும்"
+
+#: src/iptux/dialog.cpp:127
+#, c-format
+msgid "(%s)[%s]Password:"
+msgstr "(%s) [%s] கடவுச்சொல்:"
+
+#: src/iptux/dialog.cpp:146 src/iptux/dialog.cpp:207
+msgid ""
+"\n"
+"Empty Password!"
+msgstr ""
+"\n"
+"வெற்று கடவுச்சொல்!"
+
+#: src/iptux/dialog.cpp:170
+msgid "Enter a New Password"
+msgstr "புதிய கடவுச்சொல்லை உள்ளிடவும்"
+
+#: src/iptux/dialog.cpp:178
+msgid "Password: "
+msgstr "கடவுச்சொல்: "
+
+#: src/iptux/dialog.cpp:187
+msgid "Repeat: "
+msgstr "மீண்டும்: "
+
+#: src/iptux/dialog.cpp:202
+msgid ""
+"\n"
+"Password Mismatched!"
+msgstr ""
+"\n"
+"கடவுச்சொல் பொருந்தவில்லை!"
+
+#: src/iptux/dialog.cpp:229
+msgid "Please select a folder to save files."
+msgstr "கோப்புகளைச் சேமிக்க ஒரு கோப்புறையைத் தேர்ந்தெடுக்கவும்."
+
+#: src/iptux/resources/gtk/AboutDialog.ui:11
+msgid ""
+"Copyright © 2008–2009, Jally\n"
+"Copyright © 2013–2015,2017–2021, LI Daobing"
+msgstr ""
+"பதிப்புரிமை © 2008-2009, சாலி\n"
+" பதிப்புரிமை © 2013–2015,2017–2021, லி டாபிங்"
+
+#: src/iptux/resources/gtk/AboutDialog.ui:13
+msgid "A GTK based LAN messenger."
+msgstr "ஒரு சி.டி.கே அடிப்படையிலான லேன் மெசஞ்சர்."
+
+#: src/iptux/resources/gtk/AppIndicator.ui:6
+msgid "Open Iptux"
+msgstr "ஐபிடக்ச் திறக்கவும்"
+
+#: src/iptux/resources/gtk/AppIndicator.ui:12
+#: src/iptux/resources/gtk/menus.ui:6 src/iptux/resources/gtk/menus.ui:306
+msgid "_Preferences"
+msgstr "_ முனைகள்"
+
+#: src/iptux/resources/gtk/AppIndicator.ui:16
+#: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:310
+msgid "_Quit"
+msgstr "_Quit"
+
+#: src/iptux/resources/gtk/DetectPal.ui:7
+msgid "Detect pal"
+msgstr "நண்பரைக் கண்டறியவும்"
+
+#: src/iptux/resources/gtk/DetectPal.ui:15
+msgid "Detect"
+msgstr "கண்டறியவும்"
+
+#: src/iptux/resources/gtk/DetectPal.ui:61
+msgid "Please input an IP address (IPv4 only):"
+msgstr "தயவுசெய்து ஒரு ஐபி முகவரியை உள்ளிடவும் (ஐபிவி 4 மட்டும்):"
+
+#: src/iptux/resources/gtk/MainWindow.ui:8 src/iptux/resources/gtk/menus.ui:109
+#: src/iptux/resources/gtk/menus.ui:254
+msgid "Send Message"
+msgstr "செய்தி அனுப்பவும்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:16
+msgid "Change Info"
+msgstr "தகவலை மாற்றவும்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:20
+msgid "Delete Pal"
+msgstr "நண்பரை நீக்கு"
+
+#: src/iptux/resources/gtk/MainWindow.ui:26 src/iptux/resources/gtk/menus.ui:31
+#: src/iptux/resources/gtk/menus.ui:176
+msgid "Sort"
+msgstr "வரிசைப்படுத்து"
+
+#: src/iptux/resources/gtk/MainWindow.ui:29 src/iptux/resources/gtk/menus.ui:34
+#: src/iptux/resources/gtk/menus.ui:179
+msgid "By Nickname"
+msgstr "மூலம் புனைப்பெயர்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:34 src/iptux/resources/gtk/menus.ui:39
+#: src/iptux/resources/gtk/menus.ui:184
+msgid "By Username"
+msgstr "பயனர்பெயர் மூலம்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:39 src/iptux/resources/gtk/menus.ui:44
+#: src/iptux/resources/gtk/menus.ui:189
+msgid "By IP"
+msgstr "ஐபி மூலம்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:44 src/iptux/resources/gtk/menus.ui:49
+#: src/iptux/resources/gtk/menus.ui:194
+msgid "By Host"
+msgstr "வழங்கியவர்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:49 src/iptux/resources/gtk/menus.ui:54
+#: src/iptux/resources/gtk/menus.ui:199
+msgid "By Last Activity"
+msgstr "கடைசி செயல்பாட்டின் மூலம்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:56 src/iptux/resources/gtk/menus.ui:61
+#: src/iptux/resources/gtk/menus.ui:206
+msgid "Ascending"
+msgstr "ஏறுதல்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:61 src/iptux/resources/gtk/menus.ui:66
+#: src/iptux/resources/gtk/menus.ui:211
+msgid "Descending"
+msgstr "இறங்கு"
+
+#: src/iptux/resources/gtk/MainWindow.ui:68
+msgid "Info Style"
+msgstr "செய்தி நடை"
+
+#: src/iptux/resources/gtk/MainWindow.ui:71
+msgid "IP"
+msgstr "ஐபி"
+
+#: src/iptux/resources/gtk/MainWindow.ui:76
+msgid "IP:PORT"
+msgstr "ஐபி: துறைமுகம்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:86
+msgid "Username"
+msgstr "பயனர்பெயர்"
+
+#: src/iptux/resources/gtk/MainWindow.ui:91
+msgid "Version"
+msgstr "பதிப்பு"
+
+#: src/iptux/resources/gtk/MainWindow.ui:96
+msgid "Last Activity"
+msgstr "கடைசி செயல்பாடு"
+
+#: src/iptux/resources/gtk/MainWindow.ui:101
+msgid "Last Message"
+msgstr "கடைசி செய்தி"
+
+#: src/iptux/resources/gtk/menus.ui:17 src/iptux/resources/gtk/menus.ui:162
+msgid "_File"
+msgstr "கோப்பு (_F)"
+
+#: src/iptux/resources/gtk/menus.ui:19 src/iptux/resources/gtk/menus.ui:164
+msgid "_Detect"
+msgstr "_ டிடெக்ட்"
+
+#: src/iptux/resources/gtk/menus.ui:23 src/iptux/resources/gtk/menus.ui:168
+msgid "_Find"
+msgstr "_ ஃபைண்ட்"
+
+#: src/iptux/resources/gtk/menus.ui:28 src/iptux/resources/gtk/menus.ui:173
+msgid "_View"
+msgstr "காட்சி (_V)"
+
+#: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:218
+msgid "_Refresh"
+msgstr "_Refresh"
+
+#: src/iptux/resources/gtk/menus.ui:80 src/iptux/resources/gtk/menus.ui:225
+msgid "_Chat"
+msgstr "_சாட்"
+
+#: src/iptux/resources/gtk/menus.ui:83 src/iptux/resources/gtk/menus.ui:228
+msgid "Insert Picture"
+msgstr "படத்தைச் செருகவும்"
+
+#: src/iptux/resources/gtk/menus.ui:88 src/iptux/resources/gtk/menus.ui:233
+msgid "Attach File"
+msgstr "கோப்பை இணைக்கவும்"
+
+#: src/iptux/resources/gtk/menus.ui:92 src/iptux/resources/gtk/menus.ui:237
+msgid "Attach Folder"
+msgstr "கோப்புறையை இணைக்கவும்"
+
+#: src/iptux/resources/gtk/menus.ui:102 src/iptux/resources/gtk/menus.ui:247
+msgid "Clear Chat History"
+msgstr "அரட்டை வரலாற்றை அழிக்கவும்"
+
+#: src/iptux/resources/gtk/menus.ui:115 src/iptux/resources/gtk/menus.ui:260
+msgid "_Window"
+msgstr "_ சாளரம்"
+
+#: src/iptux/resources/gtk/menus.ui:118 src/iptux/resources/gtk/menus.ui:263
+msgid "_Transmission"
+msgstr "_பரவும் முறை"
+
+#: src/iptux/resources/gtk/menus.ui:122 src/iptux/resources/gtk/menus.ui:267
+msgid "_Shared Management"
+msgstr "_ சேர் மேனேச்மென்ட்"
+
+#: src/iptux/resources/gtk/menus.ui:126 src/iptux/resources/gtk/menus.ui:271
+msgid "_Chat Log"
+msgstr "_சாட் பதிவு"
+
+#: src/iptux/resources/gtk/menus.ui:130 src/iptux/resources/gtk/menus.ui:275
+msgid "_System Log"
+msgstr "_ சிச்டம் பதிவு"
+
+#: src/iptux/resources/gtk/menus.ui:136 src/iptux/resources/gtk/menus.ui:281
+msgid "Close Window"
+msgstr "சாளரத்தை மூடு"
+
+#: src/iptux/resources/gtk/menus.ui:142 src/iptux/resources/gtk/menus.ui:287
+msgid "_Help"
+msgstr "உதவி (_H)"
+
+#: src/iptux/resources/gtk/menus.ui:145 src/iptux/resources/gtk/menus.ui:290
+msgid "_About"
+msgstr "_About"
+
+#: src/iptux/resources/gtk/menus.ui:149 src/iptux/resources/gtk/menus.ui:294
+msgid "Report Bug"
+msgstr "பிழையைப் புகாரளிக்கவும்"
+
+#: src/iptux/resources/gtk/menus.ui:153 src/iptux/resources/gtk/menus.ui:298
+msgid "What's New"
+msgstr "புதியது என்ன"
+
+#: src/iptux/resources/gtk/menus.ui:318
+msgid "Open This File"
+msgstr "இந்த கோப்பைத் திறக்கவும்"
+
+#: src/iptux/resources/gtk/menus.ui:322
+msgid "Open Containing Folder"
+msgstr "கோப்புறை கொண்ட திறந்த"
+
+#: src/iptux/resources/gtk/menus.ui:326
+msgid "Terminate Task"
+msgstr "பணியை நிறுத்துங்கள்"
+
+#: src/iptux/resources/gtk/menus.ui:330
+msgid "Terminate All"
+msgstr "அனைத்தையும் நிறுத்தவும்"
+
+#: src/iptux/resources/gtk/menus.ui:334
+msgid "Clear Tasklist"
+msgstr "தெளிவான பணிப்பட்டியல்"
+
+#: src/iptux/resources/gtk/menus.ui:346
+msgid "Refuse All"
+msgstr "அனைத்தையும் மறுக்கவும்"
+
+#: src/main/iptux.cpp:149
+msgid "- A software for sharing in LAN"
+msgstr "- LAN இல் பகிர்வதற்கான மென்பொருள்"
+
+#: src/main/iptux.cpp:152
+#, c-format
+msgid "option parsing failed: %s\n"
+msgstr "விருப்பம் பாகுபடுத்தல் தோல்வியுற்றது: %s\n"
