@@ -29,6 +29,10 @@
       xipmsg in Debian.
     </p>
   </description>
+  <branding>
+    <color type="primary" scheme_preference="light">#376ea5</color>
+    <color type="primary" scheme_preference="dark">#376ea5</color>
+  </branding>
   <screenshots>
     <screenshot type="default">
       <caption>The Iptux main window.</caption>
