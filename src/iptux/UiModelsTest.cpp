@@ -101,7 +101,7 @@ TEST(GroupInfo, addMsgPara) {
   gi.buffer = gtk_text_buffer_new(nullptr);
 
   MsgPara msg(cpal);
-  msg.dtlist.push_back(ChipData("helloworld"));
+  msg.dtlist.push_back(ChipData::newTxtMsg("helloworld"));
 
   time_t now = 1716533706;
   setenv("TZ", "GMT", 1);
@@ -112,8 +112,7 @@ TEST(GroupInfo, addMsgPara) {
             "(06:55:06) palname:\nhelloworld\n");
 
   msg = MsgPara(cpal);
-  msg.dtlist.push_back(
-      ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
+  msg.dtlist.push_back(ChipData::newImgMsg(testDataPath("iptux.png"), false));
   gi._addMsgPara(msg, now + 1);
   ASSERT_EQ(
       igtk_text_get_all_text(gi.buffer),
@@ -141,8 +140,8 @@ TEST(GroupInfo, genMsgParaFromInput) {
   gtk_text_buffer_insert(buffer, &end, "hello", -1);
   para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 1u);
-  ASSERT_EQ(para->dtlist[0].type, MessageContentType::STRING);
-  ASSERT_EQ(para->dtlist[0].data, "hello");
+  ASSERT_EQ(para->dtlist[0]->type, MessageContentType::STRING);
+  ASSERT_EQ(para->dtlist[0]->data, "hello");
 
   GError* error = NULL;
   auto pixbuf =
@@ -155,14 +154,14 @@ TEST(GroupInfo, genMsgParaFromInput) {
   gtk_text_buffer_insert_pixbuf(buffer, &end, pixbuf);
   para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 2u);
-  ASSERT_EQ(para->dtlist[1].type, MessageContentType::PICTURE);
+  ASSERT_EQ(para->dtlist[1]->type, MessageContentType::PICTURE);
 
   gtk_text_buffer_get_end_iter(buffer, &end);
   gtk_text_buffer_insert(buffer, &end, "world", -1);
   para = gi.genMsgParaFromInput();
   ASSERT_EQ(para->dtlist.size(), 3u);
-  ASSERT_EQ(para->dtlist[2].type, MessageContentType::STRING);
-  ASSERT_EQ(para->dtlist[2].data, "world");
+  ASSERT_EQ(para->dtlist[2]->type, MessageContentType::STRING);
+  ASSERT_EQ(para->dtlist[2]->data, "world");
   ASSERT_FALSE(gi.isInputEmpty());
   gi.clearInputBuffer();
   ASSERT_TRUE(gi.isInputEmpty());

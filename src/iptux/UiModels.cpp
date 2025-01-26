@@ -478,7 +478,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
   GdkPixbuf* pixbuf;
   char buf[7];
   gchar* chipmsg;
-  std::vector<ChipData> dtlist;
+  std::vector<shared_ptr<ChipData>> dtlist;
 
   gtk_text_buffer_get_start_iter(inputBuffer, &start);
   ostringstream oss;
@@ -488,8 +488,8 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
       break;
     if (ig_unichar_is_atomic(c)) {
       if (!oss.str().empty()) {
-        ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
-        dtlist.push_back(std::move(chip));
+        auto chip = ChipData::newTxtMsg(oss.str());
+        dtlist.push_back(chip);
         oss.str("");
       }
       pixbuf = gtk_text_iter_get_pixbuf(&start);
@@ -502,7 +502,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
         g_error_free(error);
       } else {
         /* 新建一个碎片数据(图片)，并加入数据链表 */
-        ChipData chip(MESSAGE_CONTENT_TYPE_PICTURE, chipmsg);
+        auto chip = ChipData::newImgMsg(chipmsg, false);
         dtlist.push_back(std::move(chip));
       }
     } else {
@@ -512,7 +512,7 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
     gtk_text_iter_forward_char(&start);
   }
   if (!oss.str().empty()) {
-    ChipData chip(MESSAGE_CONTENT_TYPE_STRING, oss.str());
+    auto chip = ChipData::newTxtMsg(oss.str());
     dtlist.push_back(std::move(chip));
   }
 
@@ -763,7 +763,7 @@ void GroupInfo::_addMsgPara(const MsgPara& para, time_t now) {
   time(&last_activity_);
 
   for (size_t i = 0; i < para.dtlist.size(); ++i) {
-    const ChipData* chipData = &para.dtlist[i];
+    auto chipData = para.dtlist[i];
     data = chipData->data.c_str();
     switch (chipData->type) {
       case MESSAGE_CONTENT_TYPE_STRING:
