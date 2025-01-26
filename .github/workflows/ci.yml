@@ -94,14 +94,14 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
       - name: lcov
         run: |
-          lcov --directory . --capture --output-file coverage.info; # capture coverage info
+          lcov --ignore-errors mismatch --directory . --capture --output-file coverage.info; # capture coverage info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info; # filter out system
           lcov --remove coverage.info '*Test*' --output-file coverage.info; # filter out system
           lcov --remove coverage.info '*gtest*' --output-file coverage.info; # filter out system
           lcov --list coverage.info; #debug info
       # https://docs.codecov.com/docs/quick-start
       - name: "Upload coverage reports to Codecov"
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
