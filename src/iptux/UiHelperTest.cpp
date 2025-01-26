@@ -45,21 +45,32 @@ TEST(UiHelper, StrFirstNonEmptyLine) {
   ASSERT_EQ(StrFirstNonEmptyLine(" \n b\n"), "b");
 }
 
-TEST(UiHelper, igtk_image_new_with_size) {
-  auto image =
-      igtk_image_new_with_size(testDataPath("iptux.png").c_str(), 100, 100);
-  ASSERT_NE(image, nullptr);
-  auto pixbuf = gtk_image_get_pixbuf(image);
-  ASSERT_EQ(gdk_pixbuf_get_width(pixbuf), 48);
-  ASSERT_EQ(gdk_pixbuf_get_height(pixbuf), 48);
-  g_object_unref(pixbuf);
-  g_object_unref(image);
+struct a {
+  int width;
+  int height;
+  int res_width;
+  int res_height;
+};
 
-  image = igtk_image_new_with_size(testDataPath("iptux.png").c_str(), 20, 30);
-  ASSERT_NE(image, nullptr);
-  pixbuf = gtk_image_get_pixbuf(image);
-  ASSERT_EQ(gdk_pixbuf_get_width(pixbuf), 20);
-  ASSERT_EQ(gdk_pixbuf_get_height(pixbuf), 20);
-  g_object_unref(pixbuf);
-  g_object_unref(image);
+TEST(UiHelper, igtk_image_new_with_size) {
+  struct a cases[] = {
+      {100, 100, 48, 48},
+      {20, 30, 20, 20},
+      {50, 40, 40, 40},
+  };
+  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
+    struct a* tc = &cases[i];
+    GtkImage* image = igtk_image_new_with_size(
+        testDataPath("iptux.png").c_str(), tc->width, tc->height);
+    ASSERT_NE(image, nullptr);
+    g_object_ref_sink(image);
+    GdkPixbuf* pixbuf = gtk_image_get_pixbuf(image);
+    if (tc->res_width) {
+      ASSERT_EQ(gdk_pixbuf_get_width(pixbuf), tc->res_width);
+    }
+    if (tc->res_height) {
+      ASSERT_EQ(gdk_pixbuf_get_height(pixbuf), tc->res_height);
+    }
+    g_object_unref(image);
+  }
 }
