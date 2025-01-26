@@ -73,6 +73,7 @@ class Application {
   void _ForTestProcessEvents() { ProcessEvents(this); }
 
  private:
+  void LoadCss();
   void onEvent(std::shared_ptr<const Event> event);
   void onConfigChanged();
   void updateItemToTransTree(const TransFileModel& para);

@@ -549,7 +549,7 @@ void UiCoreThread::CheckIconTheme() {
   char pathbuf[MAX_PATHLEN];
   GdkPixbuf* pixbuf;
 
-  snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s",
+  snprintf(pathbuf, MAX_PATHLEN, IPTUX_PIXMAPS_PATH "/icon/%s",
            programData->myicon.c_str());
   if (access(pathbuf, F_OK) != 0) {
     snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
@@ -561,7 +561,7 @@ void UiCoreThread::CheckIconTheme() {
     }
   }
 
-  snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s",
+  snprintf(pathbuf, MAX_PATHLEN, IPTUX_PIXMAPS_PATH "/icon/%s",
            programData->palicon);
   if (access(pathbuf, F_OK) != 0) {
     snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",

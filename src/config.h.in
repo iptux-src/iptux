@@ -7,10 +7,9 @@
 #mesondefine GETTEXT_PACKAGE
 #define IPTUX_RESOURCE "/io/github/iptux_src/iptux/"
 
-#define __PIXMAPS_PATH "@SHARE_IPTUX_DIR@/pixmaps"
-#define __LOCALE_PATH "@SHARE_DIR@/locale"
-#define __SOUND_PATH "@SHARE_IPTUX_DIR@/sound"
-#define __UI_PATH "@SHARE_IPTUX_DIR@/ui"
+#define IPTUX_PIXMAPS_PATH "@SHARE_IPTUX_DIR@/pixmaps"
+#define IPTUX_CSS_PATH "@SHARE_IPTUX_DIR@/css"
+#define IPTUX_LOCALE_PATH "@SHARE_DIR@/locale"
 
 #define IPTUX_PATH "/iptux"
 #define LOG_PATH "/iptux/log"
