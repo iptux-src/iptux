@@ -47,7 +47,7 @@ jobs:
   build-on-linux:
     strategy:
       matrix:
-        runs-on: [ubuntu-20.04, ubuntu-22.04]
+        runs-on: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
         compiler: [g++, clang++]
     runs-on: ${{ matrix.runs-on }}
     steps:
@@ -72,7 +72,7 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
 
   codecov:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       checks: write
       pull-requests: write
