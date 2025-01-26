@@ -377,7 +377,8 @@ const char* GtkSortTypeToStr(GtkSortType t) {
 //       buffer(NULL),
 //       dialog(NULL) {}
 GroupInfo::~GroupInfo() {
-  g_object_unref(buffer);
+  if (buffer)
+    g_object_unref(buffer);
 }
 
 bool GroupInfo::hasPal(PalInfo* pal) const {
