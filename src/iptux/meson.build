@@ -116,7 +116,9 @@ test_sources += [iptux_resource_h]
 libiptux_test = executable('libiptux_test',
     test_sources,
     dependencies: [gtk_dep, jsoncpp_dep, thread_dep, sigc_dep],
+    cpp_args: ['-fno-lto'], # https://github.com/iptux-src/iptux/issues/651
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
+    link_args: ['-fno-lto'],
     include_directories: [inc, gtest_inc]
 )
 
