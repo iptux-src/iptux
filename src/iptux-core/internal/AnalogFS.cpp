@@ -126,7 +126,7 @@ int AnalogFS::stat(const char* fn, struct ::stat* st) {
  * @param mode as in mkdir()
  * @return 成功与否
  */
-int AnalogFS::mkdir(const char* dir, mode_t mode) {
+int AnalogFS::makeDir(const char* dir, mode_t mode) {
   char tpath[MAX_PATHLEN];
   int result;
 

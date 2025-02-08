@@ -214,7 +214,7 @@ void RecvFileData::RecvDirFiles() {
   }
   /* 转到文件存档目录 */
   g_free(ipmsg_get_filename_me(file->filepath, &pathname));
-  afs.mkdir(pathname, 0777);
+  afs.makeDir(pathname, 0777);
   afs.chdir(pathname);
   g_free(pathname);
 
@@ -267,7 +267,7 @@ void RecvFileData::RecvDirFiles() {
         }
         continue;
       case IPMSG_FILE_DIR:
-        afs.mkdir(dirname, 0777);
+        afs.makeDir(dirname, 0777);
         afs.chdir(dirname);
         if (len)
           memmove(buf, buf + headsize, len);
