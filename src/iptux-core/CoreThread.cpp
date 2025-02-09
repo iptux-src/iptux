@@ -493,10 +493,6 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
       }
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  // 关闭网络套接口
-      /*/* 删除此图片 */
-      if (chipData.GetDeleteFileAfterSent()) {
-        unlink(ptr);  // 此文件已无用处
-      }
       return true;
     default:
       g_assert_not_reached();

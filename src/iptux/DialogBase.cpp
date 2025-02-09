@@ -332,8 +332,10 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                         G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
                         this, NULL,
                         (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
-  iptux_dlg_refresh_anchors(this, grpinf->buffer,
-                            DialogBase::OnChatHistoryInsertChildAnchor);
+  if (grpinf->buffer) {
+    iptux_dlg_refresh_anchors(this, grpinf->buffer,
+                              DialogBase::OnChatHistoryInsertChildAnchor);
+  }
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
 

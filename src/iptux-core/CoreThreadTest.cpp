@@ -205,7 +205,6 @@ TEST(CoreThread, FullCase) {
 
   // send picture
   ChipData chipData(MessageContentType::PICTURE, testDataPath("iptux.png"));
-  chipData.SetDeleteFileAfterSent(false);
   thread1->SendMessage(pal2InThread1, chipData);
   // WARNING: does not work as expected, the message will be sent from
   // 127.0.0.2(expect 127.0.0.1) while(thread2Events.size() != 2) {
