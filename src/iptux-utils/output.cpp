@@ -12,13 +12,14 @@
 #include "config.h"
 #include "output.h"
 
+#include <pthread.h>
 #include <sstream>
 #include <string>
-#include <thread>
 
 #include <sys/time.h>
 
 #include "iptux-utils/utils.h"
+#include <unistd.h>
 
 using namespace std;
 
@@ -28,24 +29,24 @@ static LogLevel _level = LogLevel::WARN;
 
 static string getThreadName() {
   ostringstream oss;
-  oss << this_thread::get_id();
+  oss << pthread_self();
   return oss.str();
 }
 
-static const char* logLevelAsString(GLogLevelFlags logLevel) {
+static char logLevelAsChar(GLogLevelFlags logLevel) {
   switch (logLevel) {
     case G_LOG_LEVEL_DEBUG:
-      return "DEBUG";
+      return 'D';
     case G_LOG_LEVEL_INFO:
-      return "INFO ";
+      return 'I';
     case G_LOG_LEVEL_MESSAGE:
-      return "MESSA";
+      return 'M';
     case G_LOG_LEVEL_WARNING:
-      return "WARN ";
+      return 'W';
     case G_LOG_LEVEL_ERROR:
-      return "ERROR";
+      return 'E';
     default:
-      return "UNKNO";
+      return 'U';
   }
 }
 
@@ -57,16 +58,16 @@ static string nowAsString() {
 
   localtime_r(&tv.tv_sec, &timeinfo);
 
-  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
+  strftime(buffer, sizeof(buffer), "%H:%M:%S", &timeinfo);
   return stringFormat("%s.%03d", buffer, int(tv.tv_usec / 1000));
 }
 
 string pretty_fname(const string& fname) {
-  size_t pos = fname.rfind("/src/");
+  size_t pos = fname.rfind("/");
   if (pos == string::npos) {
     return fname;
   } else {
-    return fname.substr(pos + 5);
+    return fname.substr(pos + 1);
   }
 }
 
@@ -83,8 +84,8 @@ void DoLog(const char* fname,
   va_start(ap, format);
   gchar* msg = g_strdup_vprintf(format, ap);
   va_end(ap);
-  fprintf(stderr, "[%s][iptux-%s][%s]%s:%d:%s:%s\n", nowAsString().c_str(),
-          getThreadName().c_str(), logLevelAsString(level),
+  fprintf(stderr, "[%s][%s][%c]%s:%d:%s:%s\n", nowAsString().c_str(),
+          getThreadName().c_str(), logLevelAsChar(level),
           pretty_fname(fname).c_str(), line, func, msg);
   g_free(msg);
 }
