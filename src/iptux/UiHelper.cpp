@@ -382,7 +382,7 @@ GtkImage* igtk_image_new_with_size(const char* filename,
                                    int height) {
   GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
   if (!pixbuf) {
-    LOG_ERROR("Error loading image.");
+    LOG_ERROR("Error loading image: %s.", filename);
     return NULL;
   }
 

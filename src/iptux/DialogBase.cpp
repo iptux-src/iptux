@@ -277,6 +277,29 @@ GtkWidget* DialogBase::CreateInputArea() {
   return frame;
 }
 
+typedef void (*text_anchor_cb)(DialogBase* self,
+                               const GtkTextIter* location,
+                               GtkTextChildAnchor* anchor,
+                               GtkTextBuffer* buffer);
+
+static void iptux_dlg_refresh_anchors(DialogBase* dialog,
+                                      GtkTextBuffer* buffer,
+                                      text_anchor_cb cb) {
+  GtkTextIter start, end;
+  gtk_text_buffer_get_bounds(buffer, &start, &end);
+
+  GtkTextIter iter = start;
+  while (!gtk_text_iter_equal(&iter, &end)) {
+    GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
+
+    if (anchor) {
+      cb(dialog, NULL, anchor, buffer);
+    }
+
+    gtk_text_iter_forward_char(&iter);
+  }
+}
+
 /**
  * 创建聊天历史记录区域.
  * @return 主窗体.
@@ -309,7 +332,8 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                         G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
                         this, NULL,
                         (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
-
+  iptux_dlg_refresh_anchors(this, grpinf->buffer,
+                            DialogBase::OnChatHistoryInsertChildAnchor);
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
 
