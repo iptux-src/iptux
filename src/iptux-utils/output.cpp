@@ -32,20 +32,20 @@ static string getThreadName() {
   return oss.str();
 }
 
-static const char* logLevelAsString(GLogLevelFlags logLevel) {
+static char logLevelAsChar(GLogLevelFlags logLevel) {
   switch (logLevel) {
     case G_LOG_LEVEL_DEBUG:
-      return "DEBUG";
+      return 'D';
     case G_LOG_LEVEL_INFO:
-      return "INFO ";
+      return 'I';
     case G_LOG_LEVEL_MESSAGE:
-      return "MESSA";
+      return 'M';
     case G_LOG_LEVEL_WARNING:
-      return "WARN ";
+      return 'W';
     case G_LOG_LEVEL_ERROR:
-      return "ERROR";
+      return 'E';
     default:
-      return "UNKNO";
+      return 'U';
   }
 }
 
@@ -83,8 +83,8 @@ void DoLog(const char* fname,
   va_start(ap, format);
   gchar* msg = g_strdup_vprintf(format, ap);
   va_end(ap);
-  fprintf(stderr, "[%s][iptux-%s][%s]%s:%d:%s:%s\n", nowAsString().c_str(),
-          getThreadName().c_str(), logLevelAsString(level),
+  fprintf(stderr, "[%s][iptux-%s][%c]%s:%d:%s:%s\n", nowAsString().c_str(),
+          getThreadName().c_str(), logLevelAsChar(level),
           pretty_fname(fname).c_str(), line, func, msg);
   g_free(msg);
 }
