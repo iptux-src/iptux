@@ -122,7 +122,7 @@ void TcpData::RequestData(FileAttr fileattr) {
  * @param cmdopt 命令字选项
  */
 void TcpData::RecvSublayer(uint32_t cmdopt) {
-  static uint32_t count = 0;
+  static int count = 0;
   char path[MAX_PATHLEN];
   struct sockaddr_in addr;
   socklen_t len;
@@ -143,15 +143,14 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
                g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()));
       break;
     case IPTUX_MSGPICOPT:
-      snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%" PRIx32 "-%jx",
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()), count++,
-               (uintmax_t)time(NULL));
+      snprintf(path, MAX_PATHLEN, "%s" PIC_PATH "/%" PRIx32 "-%d-%jx",
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()),
+               g_atomic_int_add(&count, 1), (uintmax_t)time(NULL));
       break;
     default:
-      snprintf(path, MAX_PATHLEN,
-               "%s" IPTUX_PATH "/%" PRIx32 "-%" PRIx32 "-%jx",
-               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()), count++,
-               (uintmax_t)time(NULL));
+      snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH "/%" PRIx32 "-%d-%jx",
+               g_get_user_cache_dir(), inAddrToUint32(pal->ipv4()),
+               g_atomic_int_add(&count, 1), (uintmax_t)time(NULL));
       break;
   }
 
@@ -163,7 +162,11 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
     LOG_ERROR("open file %s failed: %s", path, strerror(errno));
     return;
   }
-  RecvSublayerData(fd, strlen(buf) + 1);
+  if (!RecvSublayerData(fd, strlen(buf) + 1)) {
+    LOG_WARN("recv data failed");
+    close(fd);
+    return;
+  }
   close(fd);
 
   /* 分派数据 */
@@ -184,16 +187,26 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
  * @param fd file descriptor
  * @param len 缓冲区无效数据长度
  */
-void TcpData::RecvSublayerData(int fd, size_t len) {
+bool TcpData::RecvSublayerData(int fd, size_t len) {
   ssize_t ssize;
 
   if (size != len)
     xwrite(fd, buf + len, size - len);
   do {
-    if ((ssize = xread(sock, buf, MAX_SOCKLEN)) <= 0)
-      break;
-    if ((ssize = xwrite(fd, buf, ssize)) <= 0)
-      break;
+    ssize = xread(sock, buf, MAX_SOCKLEN);
+    if (ssize == 0) {
+      return true;
+    } else if (ssize < 0) {
+      LOG_WARN("read from TCP failed, sock=%d: [%d]%s", sock, errno,
+               strerror(errno));
+      return false;
+    }
+
+    if ((ssize = xwrite(fd, buf, ssize)) <= 0) {
+      LOG_WARN("write to file failed, fd=%d: [%d]%s", fd, errno,
+               strerror(errno));
+      return false;
+    }
   } while (1);
 }
 
