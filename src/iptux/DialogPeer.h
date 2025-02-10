@@ -13,11 +13,11 @@
 #ifndef IPTUX_DIALOGPEER_H
 #define IPTUX_DIALOGPEER_H
 
+#include <memory>
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"
 #include "iptux/DialogBase.h"
-#include <memory>
 
 namespace iptux {
 
@@ -64,8 +64,7 @@ class DialogPeer : public DialogBase {
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
 
   bool SendTextMsg() override;
-  void FeedbackMsg(std::shared_ptr<MsgPara> msgPara);
-  MsgPara* PackageMsg(const std::vector<ChipData>& dtlist);
+  MsgPara* PackageMsg(const std::vector<std::shared_ptr<ChipData>>& dtlist);
   void refreshSendAction();
   std::string GetTitle();
 

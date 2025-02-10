@@ -5,7 +5,9 @@ IncludeCategories:
   - Regex:           '^"config\.h"'
     Priority:        -1
   # The main header for a source file automatically gets category 0
-  - Regex:           '.*'
+  - Regex:           '^<[^.]*>'
     Priority:        1
-  - Regex:           '^<.*\.h>'
+  - Regex:           '^<.*>'
     Priority:        2
+  - Regex:           '.*'
+    Priority:        3

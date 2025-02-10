@@ -1,16 +1,15 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
-#include "iptux-core/Models.h"
 #include <atomic>
 #include <cstdint>
 #include <memory>
-#include <netinet/in.h>
 #include <vector>
-
+#include <netinet/in.h>
 #include <sigc++/signal.h>
-
+#include "iptux-core/Const.h"
 #include "iptux-core/Event.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/TransFileModel.h"
 
@@ -126,13 +125,22 @@ class CoreThread {
    * @return false if send failed
    */
   bool SendMessage(CPPalInfo pal, const std::string& message);
-  bool SendMessage(CPPalInfo pal, const ChipData& chipData);
+  bool SendMessage(CPPalInfo pal,
+                   enum GroupMsgOption opttype,
+                   std::shared_ptr<ChipData> chipData);
   bool SendMsgPara(std::shared_ptr<MsgPara> msgPara);
+  bool SendMsgPara(CPPalInfo pal,
+                   enum GroupMsgOption opttype,
+                   std::shared_ptr<MsgPara> msgPara);
   void AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara);
   void SendUnitMessage(const PalKey& palKey,
                        uint32_t opttype,
                        const std::string& message);
+  void SendUnitMessage(const PalKey& palKey,
+                       enum GroupMsgOption opttype,
+                       std::shared_ptr<MsgPara> msgPara);
   void SendGroupMessage(const PalKey& palKey, const std::string& message);
+  void SendGroupMessage(const PalKey& palKey, std::shared_ptr<MsgPara> msgPara);
 
   bool SendAskShared(PPalInfo pal);
   bool SendAskSharedWithPassword(const PalKey& palKey,

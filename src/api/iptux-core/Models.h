@@ -197,8 +197,15 @@ using PFileInfo = std::shared_ptr<FileInfo>;
  */
 class ChipData {
  public:
+  static std::shared_ptr<ChipData> newTxtMsg(const std::string& text);
+  static std::shared_ptr<ChipData> newImgMsg(const std::string& picPath,
+                                             bool deleteFileAfterSent = true);
+
+ private:
   explicit ChipData(const std::string& data);
   ChipData(MessageContentType type, const std::string& data);
+
+ public:
   ~ChipData();
 
   std::string ToString() const;
@@ -226,9 +233,9 @@ class MsgPara {
 
   CPPalInfo getPal() const { return pal; }
 
-  MessageSourceType stype;       ///< 来源类型
-  GroupBelongType btype;         ///< 所属类型
-  std::vector<ChipData> dtlist;  ///< 数据链表 *
+  MessageSourceType stype;                        ///< 来源类型
+  GroupBelongType btype;                          ///< 所属类型
+  std::vector<std::shared_ptr<ChipData>> dtlist;  ///< 数据链表 *
  private:
   CPPalInfo pal;  ///< 好友数据信息(来自好友*)
 };

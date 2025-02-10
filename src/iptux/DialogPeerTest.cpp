@@ -43,13 +43,12 @@ TEST(DialogPeer, Constructor) {
   g_object_unref(pixbuf);
 
   MsgPara msg(pal);
-  msg.dtlist.push_back(ChipData("helloworld"));
+  msg.dtlist.push_back(ChipData::newTxtMsg("helloworld"));
 
   grpinf->addMsgPara(msg);
 
   msg = MsgPara(pal);
-  msg.dtlist.push_back(
-      ChipData(MessageContentType::PICTURE, testDataPath("iptux.png")));
+  msg.dtlist.push_back(ChipData::newImgMsg(testDataPath("iptux.png"), false));
   grpinf->addMsgPara(msg);
 
   DestroyApplication(app);

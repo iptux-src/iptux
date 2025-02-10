@@ -402,26 +402,11 @@ bool DialogPeer::SendTextMsg() {
 }
 
 /**
- * 回馈消息.
- * @param dtlist 数据链表
- * @note 请不要修改链表(dtlist)中的数据
- */
-void DialogPeer::FeedbackMsg(shared_ptr<MsgPara> msgPara) {
-  MsgPara para(grpinf->getMembers()[0]);
-
-  para.stype = MessageSourceType::SELF;
-  para.btype = grpinf->getType();
-  para.dtlist = msgPara->dtlist;
-
-  grpinf->addMsgPara(para);
-}
-
-/**
  * 封装消息.
  * @param dtlist 数据链表
  * @return 消息封装包
  */
-MsgPara* DialogPeer::PackageMsg(const std::vector<ChipData>& dtlist) {
+MsgPara* DialogPeer::PackageMsg(const vector<shared_ptr<ChipData>>& dtlist) {
   MsgPara* para;
   auto g_cthrd = app->getCoreThread();
 

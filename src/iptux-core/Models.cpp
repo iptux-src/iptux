@@ -26,6 +26,8 @@ using namespace std;
 
 namespace iptux {
 
+// MARK: PalInfo
+
 PalInfo::PalInfo(in_addr ipv4, uint16_t port)
     : segdes(NULL), photo(NULL), sign(NULL), packetn(0), rpacketn(0) {
   this->ipv4_ = ipv4;
@@ -120,6 +122,8 @@ string PalInfo::toString() const {
       int(rpacketn), compatible, online, changed, in_blacklist);
 }
 
+// MARK: FileInfo
+
 FileInfo::FileInfo()
     : fileid(0),
       packetn(0),
@@ -160,6 +164,17 @@ void FileInfo::ensureFilesizeFilled() {
   filesize = afs.ftwsize(filepath);
 }
 
+bool FileInfo::operator==(const FileInfo& rhs) const {
+  const FileInfo& lhs = *this;
+  return lhs.fileid == rhs.fileid && lhs.packetn == rhs.packetn &&
+         lhs.fileattr == rhs.fileattr && lhs.filesize == rhs.filesize &&
+         lhs.finishedsize == rhs.finishedsize &&
+         lhs.filectime == rhs.filectime && lhs.filemtime == rhs.filemtime &&
+         lhs.filenum == rhs.filenum;
+}
+
+// MARK: MsgPara
+
 MsgPara::MsgPara(CPPalInfo pal)
     : stype(MessageSourceType::PAL),
       btype(GROUP_BELONG_TYPE_REGULAR),
@@ -171,14 +186,65 @@ string MsgPara::getSummary() const {
   if (this->dtlist.empty()) {
     return _("Empty Message");
   }
-  return this->dtlist[0].getSummary();
+  return this->dtlist[0]->getSummary();
+}
+
+// MARK: ChipData
+
+shared_ptr<ChipData> ChipData::newTxtMsg(const std::string& text) {
+  return shared_ptr<ChipData>(new ChipData(text));
+}
+
+shared_ptr<ChipData> ChipData::newImgMsg(const std::string& text,
+                                         bool deleteFileAfterSent) {
+  auto res =
+      shared_ptr<ChipData>(new ChipData(MessageContentType::PICTURE, text));
+  res->deleteFileAfterSent = deleteFileAfterSent;
+  return res;
 }
 
 ChipData::ChipData(const string& data)
     : type(MessageContentType::STRING), data(data) {}
 ChipData::ChipData(MessageContentType type, const string& data)
     : type(type), data(data) {}
-ChipData::~ChipData() {}
+ChipData::~ChipData() {
+  if (type == MessageContentType::PICTURE && deleteFileAfterSent) {
+    g_unlink(data.c_str());
+  }
+}
+
+string ChipData::ToString() const {
+  ostringstream oss;
+  oss << "ChipData(";
+  switch (type) {
+    case MessageContentType::STRING:
+      oss << "MessageContentType::STRING";
+      break;
+    case MessageContentType::PICTURE:
+      oss << "MessageContentType::PICTURE";
+      break;
+    default:
+      g_assert_not_reached();
+  }
+  oss << ", ";
+  oss << data;
+  oss << ")";
+  return oss.str();
+}
+
+string ChipData::getSummary() const {
+  switch (type) {
+    case MessageContentType::STRING:
+      return data;
+    case MessageContentType::PICTURE:
+      return _("Received an image");
+    default:
+      g_assert_not_reached();
+  }
+  return "";
+}
+
+// MARK: NetSegment
 
 NetSegment::NetSegment() {}
 
@@ -223,36 +289,7 @@ NetSegment NetSegment::fromJsonValue(Json::Value& value) {
   return res;
 }
 
-string ChipData::ToString() const {
-  ostringstream oss;
-  oss << "ChipData(";
-  switch (type) {
-    case MessageContentType::STRING:
-      oss << "MessageContentType::STRING";
-      break;
-    case MessageContentType::PICTURE:
-      oss << "MessageContentType::PICTURE";
-      break;
-    default:
-      g_assert_not_reached();
-  }
-  oss << ", ";
-  oss << data;
-  oss << ")";
-  return oss.str();
-}
-
-string ChipData::getSummary() const {
-  switch (type) {
-    case MessageContentType::STRING:
-      return data;
-    case MessageContentType::PICTURE:
-      return _("Received an image");
-    default:
-      g_assert_not_reached();
-  }
-  return "";
-}
+// MARK: PalKey
 
 PalKey::PalKey(in_addr ipv4, int port) : ipv4(ipv4), port(port) {}
 
@@ -266,15 +303,6 @@ bool PalKey::operator==(const PalKey& rhs) const {
 
 string PalKey::ToString() const {
   return stringFormat("%s:%d", inAddrToString(ipv4).c_str(), port);
-}
-
-bool FileInfo::operator==(const FileInfo& rhs) const {
-  const FileInfo& lhs = *this;
-  return lhs.fileid == rhs.fileid && lhs.packetn == rhs.packetn &&
-         lhs.fileattr == rhs.fileattr && lhs.filesize == rhs.filesize &&
-         lhs.finishedsize == rhs.finishedsize &&
-         lhs.filectime == rhs.filectime && lhs.filemtime == rhs.filemtime &&
-         lhs.filenum == rhs.filenum;
 }
 
 }  // namespace iptux

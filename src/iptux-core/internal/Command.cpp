@@ -487,7 +487,7 @@ void Command::FeedbackError(CPPalInfo pal,
   para.stype = MessageSourceType::ERROR;
   para.btype = btype;
 
-  ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
+  auto chip = ChipData::newTxtMsg(error);
   para.dtlist.push_back(std::move(chip));
   /* 交给某人处理吧 */
   coreThread.InsertMessage(std::move(para));
