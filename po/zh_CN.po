@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2024-12-26 19:09-0800\n"
-"PO-Revision-Date: 2024-12-27 03:13+0000\n"
+"PO-Revision-Date: 2025-02-10 00:01+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/iptux/iptux/zh_Hans/>\n"
@@ -148,7 +148,7 @@ msgid "Unknown"
 msgstr "未知"
 
 #: src/iptux-core/internal/RecvFileData.cpp:175
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr "从 %2$s 接收文件\"%1$s\"失败！期望长度 %3$jd，收到 %4$jd"
