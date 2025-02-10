@@ -1,6 +1,8 @@
 #include "config.h"
 #include "iptux-core/CoreThread.h"
 
+#include "Const.h"
+#include <cstdio>
 #include <deque>
 #include <fstream>
 #include <functional>
@@ -44,22 +46,25 @@ void init_iptux_environment() {
 
   env = g_get_user_cache_dir();
   if (access(env, F_OK) != 0)
-    g_mkdir(env, 0777);
+    g_mkdir(env, 0755);
   snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" PIC_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
+  snprintf(path, MAX_PATHLEN, "%s" SENT_IMAGE_PATH, env);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0755);
 
   env = g_get_user_config_dir();
   if (access(env, F_OK) != 0)

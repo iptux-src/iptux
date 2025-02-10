@@ -493,8 +493,8 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
         oss.str("");
       }
       pixbuf = gtk_text_iter_get_pixbuf(&start);
-      chipmsg = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
-                                g_get_user_config_dir(), count++);
+      chipmsg = g_strdup_printf("%s" SENT_IMAGE_PATH "/%d.png",
+                                g_get_user_cache_dir(), count++);
       GError* error = nullptr;
       gdk_pixbuf_save(pixbuf, chipmsg, "png", &error, NULL);
       if (error) {
