@@ -105,9 +105,17 @@ class GroupInfo {
   time_t last_activity() const { return last_activity_; }
   const std::string& last_message() const { return last_message_; }
 
+  void initBuffer(GtkTextTagTable* tag_table);
+
  public:
   sigc::signal<void(GroupInfo*, int, int)> signalUnreadMsgCountUpdated;
   sigc::signal<void(GroupInfo*)> signalNewFileReceived;
+
+ private:
+  static void OnBufferInsertChildAnchor(GroupInfo* self,
+                                        const GtkTextIter* location,
+                                        GtkTextChildAnchor* anchor,
+                                        GtkTextBuffer* buffer);
 
  public:
   GQuark grpid;           ///< 唯一标识

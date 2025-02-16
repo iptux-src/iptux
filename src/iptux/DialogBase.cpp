@@ -45,6 +45,8 @@ DialogBase::~DialogBase() {
   if (timersend > 0)
     g_source_remove(timersend);
   ClearSublayerGeneral();
+  if (grpinf)
+    grpinf->clearDialog();
 }
 
 /**
@@ -63,7 +65,6 @@ void DialogBase::ClearSublayerGeneral() {
   if (progdt->IsAutoCleanChatHistory()) {
     ClearHistoryTextView();
   }
-  grpinf->clearDialog();
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
   g_datalist_clear(&dtset);
@@ -328,10 +329,6 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                    G_CALLBACK(textview_event_after), NULL);
   g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
-  g_signal_connect_data(grpinf->buffer, "insert-child-anchor",
-                        G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
-                        this, NULL,
-                        (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
   if (grpinf->buffer) {
     iptux_dlg_refresh_anchors(this, grpinf->buffer,
                               DialogBase::OnChatHistoryInsertChildAnchor);
@@ -873,8 +870,7 @@ gboolean DialogBase::OnImageButtonPress(DialogBase* self,
   return TRUE;
 }
 
-void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
-                                                const GtkTextIter*,
+void DialogBase::onChatHistoryInsertChildAnchor(const GtkTextIter*,
                                                 GtkTextChildAnchor* anchor,
                                                 GtkTextBuffer*) {
   const char* path =
@@ -897,9 +893,9 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
 
   gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(image));
   g_signal_connect_swapped(event_box, "button-press-event",
-                           G_CALLBACK(DialogBase::OnImageButtonPress), self);
+                           G_CALLBACK(DialogBase::OnImageButtonPress), this);
 
-  gtk_text_view_add_child_at_anchor(self->chat_history_widget, event_box,
+  gtk_text_view_add_child_at_anchor(this->chat_history_widget, event_box,
                                     anchor);
   gtk_widget_show_all(event_box);
 }

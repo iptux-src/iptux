@@ -98,7 +98,7 @@ TEST(GroupInfo, addMsgPara) {
   PPalInfo cpal = make_shared<PalInfo>(pal);
   CPPalInfo cme = make_shared<PalInfo>(me);
   GroupInfo gi(cpal, cme, nullptr);
-  gi.buffer = gtk_text_buffer_new(nullptr);
+  gi.initBuffer(NULL);
 
   MsgPara msg(cpal);
   msg.dtlist.push_back(ChipData("helloworld"));

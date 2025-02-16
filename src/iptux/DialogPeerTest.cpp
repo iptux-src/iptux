@@ -22,7 +22,7 @@ TEST(DialogPeer, Constructor) {
   app->getCoreThread()->AttachPalToList(pal);
 
   GroupInfo* grpinf = app->getCoreThread()->GetPalRegularItem(pal.get());
-  grpinf->buffer = gtk_text_buffer_new(NULL);
+  grpinf->initBuffer(NULL);
   DialogPeer* dlgpr = new DialogPeer(app, grpinf);
   ASSERT_EQ(igtk_text_buffer_get_text(grpinf->getInputBuffer()), "");
 
