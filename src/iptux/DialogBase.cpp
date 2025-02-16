@@ -284,8 +284,7 @@ typedef void (*text_anchor_cb)(DialogBase* self,
                                GtkTextBuffer* buffer);
 
 static void iptux_dlg_refresh_anchors(DialogBase* dialog,
-                                      GtkTextBuffer* buffer,
-                                      text_anchor_cb cb) {
+                                      GtkTextBuffer* buffer) {
   GtkTextIter start, end;
   gtk_text_buffer_get_bounds(buffer, &start, &end);
 
@@ -294,7 +293,7 @@ static void iptux_dlg_refresh_anchors(DialogBase* dialog,
     GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
 
     if (anchor) {
-      cb(dialog, NULL, anchor, buffer);
+      dialog->onChatHistoryInsertChildAnchor(anchor);
     }
 
     gtk_text_iter_forward_char(&iter);
@@ -330,8 +329,7 @@ GtkWidget* DialogBase::CreateHistoryArea() {
   g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
   if (grpinf->buffer) {
-    iptux_dlg_refresh_anchors(this, grpinf->buffer,
-                              DialogBase::OnChatHistoryInsertChildAnchor);
+    iptux_dlg_refresh_anchors(this, grpinf->buffer);
   }
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
@@ -870,9 +868,7 @@ gboolean DialogBase::OnImageButtonPress(DialogBase* self,
   return TRUE;
 }
 
-void DialogBase::onChatHistoryInsertChildAnchor(const GtkTextIter*,
-                                                GtkTextChildAnchor* anchor,
-                                                GtkTextBuffer*) {
+void DialogBase::onChatHistoryInsertChildAnchor(GtkTextChildAnchor* anchor) {
   const char* path =
       (const char*)g_object_get_data(G_OBJECT(anchor), kObjectKeyImagePath);
   if (!path) {

@@ -30,9 +30,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
   virtual GtkWindow* getWindow() = 0;
   void ClearHistoryTextView();
-  void onChatHistoryInsertChildAnchor(const GtkTextIter* location,
-                                      GtkTextChildAnchor* anchor,
-                                      GtkTextBuffer* buffer);
+  void onChatHistoryInsertChildAnchor(GtkTextChildAnchor* anchor);
 
  protected:
   void InitSublayerGeneral();

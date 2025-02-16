@@ -658,13 +658,13 @@ void GroupInfo::initBuffer(GtkTextTagTable* tag_table) {
 }
 
 void GroupInfo::OnBufferInsertChildAnchor(GroupInfo* self,
-                                          const GtkTextIter* location,
+                                          const GtkTextIter*,
                                           GtkTextChildAnchor* anchor,
-                                          GtkTextBuffer* buffer) {
+                                          GtkTextBuffer*) {
   if (!self->dialogBase)
     return;
 
-  self->dialogBase->onChatHistoryInsertChildAnchor(location, anchor, buffer);
+  self->dialogBase->onChatHistoryInsertChildAnchor(anchor);
 }
 
 /**
