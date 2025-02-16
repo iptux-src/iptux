@@ -45,6 +45,8 @@ DialogBase::~DialogBase() {
   if (timersend > 0)
     g_source_remove(timersend);
   ClearSublayerGeneral();
+  if (grpinf)
+    grpinf->clearDialog();
 }
 
 /**
@@ -63,7 +65,6 @@ void DialogBase::ClearSublayerGeneral() {
   if (progdt->IsAutoCleanChatHistory()) {
     ClearHistoryTextView();
   }
-  grpinf->clearDialog();
   g_datalist_clear(&widset);
   g_datalist_clear(&mdlset);
   g_datalist_clear(&dtset);
@@ -277,6 +278,23 @@ GtkWidget* DialogBase::CreateInputArea() {
   return frame;
 }
 
+static void iptux_dlg_refresh_anchors(DialogBase* dialog,
+                                      GtkTextBuffer* buffer) {
+  GtkTextIter start, end;
+  gtk_text_buffer_get_bounds(buffer, &start, &end);
+
+  GtkTextIter iter = start;
+  while (!gtk_text_iter_equal(&iter, &end)) {
+    GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
+
+    if (anchor) {
+      dialog->onChatHistoryInsertChildAnchor(anchor);
+    }
+
+    gtk_text_iter_forward_char(&iter);
+  }
+}
+
 /**
  * 创建聊天历史记录区域.
  * @return 主窗体.
@@ -305,11 +323,9 @@ GtkWidget* DialogBase::CreateHistoryArea() {
                    G_CALLBACK(textview_event_after), NULL);
   g_signal_connect(chat_history_widget, "motion-notify-event",
                    G_CALLBACK(textview_motion_notify_event), NULL);
-  g_signal_connect_data(grpinf->buffer, "insert-child-anchor",
-                        G_CALLBACK(DialogBase::OnChatHistoryInsertChildAnchor),
-                        this, NULL,
-                        (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
-
+  if (grpinf->buffer) {
+    iptux_dlg_refresh_anchors(this, grpinf->buffer);
+  }
   /* 滚动消息到最末位置 */
   ScrollHistoryTextview();
 
@@ -847,10 +863,7 @@ gboolean DialogBase::OnImageButtonPress(DialogBase* self,
   return TRUE;
 }
 
-void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
-                                                const GtkTextIter*,
-                                                GtkTextChildAnchor* anchor,
-                                                GtkTextBuffer*) {
+void DialogBase::onChatHistoryInsertChildAnchor(GtkTextChildAnchor* anchor) {
   const char* path =
       (const char*)g_object_get_data(G_OBJECT(anchor), kObjectKeyImagePath);
   if (!path) {
@@ -871,9 +884,9 @@ void DialogBase::OnChatHistoryInsertChildAnchor(DialogBase* self,
 
   gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(image));
   g_signal_connect_swapped(event_box, "button-press-event",
-                           G_CALLBACK(DialogBase::OnImageButtonPress), self);
+                           G_CALLBACK(DialogBase::OnImageButtonPress), this);
 
-  gtk_text_view_add_child_at_anchor(self->chat_history_widget, event_box,
+  gtk_text_view_add_child_at_anchor(this->chat_history_widget, event_box,
                                     anchor);
   gtk_widget_show_all(event_box);
 }

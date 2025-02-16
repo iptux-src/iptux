@@ -473,7 +473,7 @@ bool GroupInfo::isInputEmpty() const {
 }
 
 shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
-  static uint32_t count = 0;
+  static unsigned int count = 0;
   GtkTextIter start;
   GdkPixbuf* pixbuf;
   char buf[7];
@@ -493,8 +493,9 @@ shared_ptr<MsgPara> GroupInfo::genMsgParaFromInput() const {
         oss.str("");
       }
       pixbuf = gtk_text_iter_get_pixbuf(&start);
-      chipmsg = g_strdup_printf("%s" IPTUX_PATH "/%" PRIx32,
-                                g_get_user_config_dir(), count++);
+      chipmsg =
+          g_strdup_printf("%s" SENT_IMAGE_PATH "/%d.png",
+                          g_get_user_cache_dir(), g_atomic_int_add(&count, 1));
       GError* error = nullptr;
       gdk_pixbuf_save(pixbuf, chipmsg, "png", &error, NULL);
       if (error) {
@@ -646,6 +647,24 @@ string GroupInfo::GetHintAsMarkup() const {
   }
 
   return res.str();
+}
+
+void GroupInfo::initBuffer(GtkTextTagTable* tag_table) {
+  this->buffer = gtk_text_buffer_new(tag_table);
+  g_signal_connect_data(this->buffer, "insert-child-anchor",
+                        G_CALLBACK(GroupInfo::OnBufferInsertChildAnchor), this,
+                        NULL,
+                        (GConnectFlags)(G_CONNECT_AFTER | G_CONNECT_SWAPPED));
+}
+
+void GroupInfo::OnBufferInsertChildAnchor(GroupInfo* self,
+                                          const GtkTextIter*,
+                                          GtkTextChildAnchor* anchor,
+                                          GtkTextBuffer*) {
+  if (!self->dialogBase)
+    return;
+
+  self->dialogBase->onChatHistoryInsertChildAnchor(anchor);
 }
 
 /**

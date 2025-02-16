@@ -1,6 +1,8 @@
 #include "config.h"
 #include "iptux-core/CoreThread.h"
 
+#include "Const.h"
+#include <cstdio>
 #include <deque>
 #include <fstream>
 #include <functional>
@@ -44,22 +46,25 @@ void init_iptux_environment() {
 
   env = g_get_user_cache_dir();
   if (access(env, F_OK) != 0)
-    g_mkdir(env, 0777);
+    g_mkdir(env, 0755);
   snprintf(path, MAX_PATHLEN, "%s" IPTUX_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" PIC_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
   snprintf(path, MAX_PATHLEN, "%s" LOG_PATH, env);
   if (access(path, F_OK) != 0)
-    g_mkdir(path, 0777);
+    g_mkdir(path, 0755);
+  snprintf(path, MAX_PATHLEN, "%s" SENT_IMAGE_PATH, env);
+  if (access(path, F_OK) != 0)
+    g_mkdir(path, 0755);
 
   env = g_get_user_config_dir();
   if (access(env, F_OK) != 0)
@@ -493,10 +498,6 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
       }
       Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  // 关闭网络套接口
-      /*/* 删除此图片 */
-      if (chipData.GetDeleteFileAfterSent()) {
-        unlink(ptr);  // 此文件已无用处
-      }
       return true;
     default:
       g_assert_not_reached();

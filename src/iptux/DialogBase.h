@@ -30,6 +30,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
   virtual GtkWindow* getWindow() = 0;
   void ClearHistoryTextView();
+  void onChatHistoryInsertChildAnchor(GtkTextChildAnchor* anchor);
 
  protected:
   void InitSublayerGeneral();
@@ -87,10 +88,6 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   static gboolean OnImageButtonPress(DialogBase* self,
                                      GdkEventButton* event,
                                      GtkEventBox* eventbox);
-  static void OnChatHistoryInsertChildAnchor(DialogBase* self,
-                                             const GtkTextIter* location,
-                                             GtkTextChildAnchor* anchor,
-                                             GtkTextBuffer* buffer);
   static void OnSaveImage(DialogBase* self);
   static void OnCopyImage(DialogBase* self);
 

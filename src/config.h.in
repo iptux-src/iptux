@@ -17,6 +17,7 @@
 #define PIC_PATH "/iptux/pic"
 #define ICON_PATH "/iptux/icon"
 #define PHOTO_PATH "/iptux/photo"
+#define SENT_IMAGE_PATH "/iptux/sent-image"
 
 #mesondefine SYSTEM_DARWIN
 #mesondefine HAVE_APPINDICATOR

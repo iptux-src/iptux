@@ -355,7 +355,7 @@ GroupInfo* UiCoreThread::AttachPalRegularItem(PPalInfo pal) {
 
   grpinf = new GroupInfo(pal, getMe(), logSystem);
   grpinf->grpid = inAddrToUint32(pal->ipv4());
-  grpinf->buffer = gtk_text_buffer_new(tag_table_);
+  grpinf->initBuffer(tag_table_);
   grpinf->clearDialog();
   grpinf->signalUnreadMsgCountUpdated.connect(
       sigc::mem_fun(*this, &UiCoreThread::onGroupInfoMsgCountUpdate));
@@ -380,7 +380,7 @@ GroupInfo* UiCoreThread::AttachPalSegmentItem(PPalInfo pal) {
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_SEGMENT, vector<PPalInfo>(), getMe(),
                          name, logSystem);
   grpinf->grpid = g_quark_from_static_string(name.c_str());
-  grpinf->buffer = gtk_text_buffer_new(tag_table_);
+  grpinf->initBuffer(tag_table_);
   grpinf->clearDialog();
   sgmlist = g_slist_append(sgmlist, grpinf);
 
@@ -400,7 +400,7 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   }
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>(), getMe(),
                          name, logSystem);
-  grpinf->buffer = gtk_text_buffer_new(tag_table_);
+  grpinf->initBuffer(tag_table_);
   grpinf->clearDialog();
   grplist = g_slist_append(grplist, grpinf);
 
@@ -421,7 +421,7 @@ GroupInfo* UiCoreThread::AttachPalBroadcastItem(PPalInfo) {
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_BROADCAST, vector<PPalInfo>(),
                          getMe(), name, logSystem);
   grpinf->grpid = g_quark_from_static_string(name);
-  grpinf->buffer = gtk_text_buffer_new(tag_table_);
+  grpinf->initBuffer(tag_table_);
   grpinf->clearDialog();
   brdlist = g_slist_append(brdlist, grpinf);
 

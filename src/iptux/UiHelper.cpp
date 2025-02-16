@@ -380,9 +380,13 @@ string StrFirstNonEmptyLine(const string& s) {
 GtkImage* igtk_image_new_with_size(const char* filename,
                                    int width,
                                    int height) {
-  GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+  GError* error = NULL;
+
+  GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(filename, &error);
   if (!pixbuf) {
-    LOG_ERROR("Error loading image.");
+    LOG_ERROR("Error loading image '%s': [%d]%s", filename, error->code,
+              error->message);
+    g_error_free(error);
     return NULL;
   }
 
