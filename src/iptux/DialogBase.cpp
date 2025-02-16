@@ -278,11 +278,6 @@ GtkWidget* DialogBase::CreateInputArea() {
   return frame;
 }
 
-typedef void (*text_anchor_cb)(DialogBase* self,
-                               const GtkTextIter* location,
-                               GtkTextChildAnchor* anchor,
-                               GtkTextBuffer* buffer);
-
 static void iptux_dlg_refresh_anchors(DialogBase* dialog,
                                       GtkTextBuffer* buffer) {
   GtkTextIter start, end;
