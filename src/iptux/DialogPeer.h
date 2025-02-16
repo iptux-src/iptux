@@ -34,7 +34,7 @@ class DialogPeer : public DialogBase {
   void ClearAllPalData() override;
   GSList* GetSelPal() override;
   static void ShowDialogPeer(DialogPeer* dlgpr);
-  void insertPicture();
+  void insertImage();
   GtkWindow* getWindow() override { return GTK_WINDOW(window); }
 
  private:
@@ -62,6 +62,7 @@ class DialogPeer : public DialogBase {
   void refreshTitle();
   void FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal);
   void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) override;
+  void populateInputPopup(GtkMenu* popup) override;
 
   bool SendTextMsg() override;
   void FeedbackMsg(std::shared_ptr<MsgPara> msgPara);
@@ -82,8 +83,11 @@ class DialogPeer : public DialogBase {
   static void onClearChatHistory(void*, void*, DialogPeer& self) {
     self.ClearHistoryTextView();
   }
-  static void onInsertPicture(void*, void*, DialogPeer& self) {
-    self.insertPicture();
+  static void onInsertImage(void*, void*, DialogPeer& self) {
+    self.insertImage();
+  }
+  static void onInsertImageFromPopup(DialogPeer* self, GtkMenuItem*) {
+    self->insertImage();
   }
   static void onAttachFile(void*, void*, DialogPeer& self) {
     DialogBase::AttachRegular(&self);

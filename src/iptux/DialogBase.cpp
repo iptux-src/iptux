@@ -260,6 +260,8 @@ GtkWidget* DialogBase::CreateInputArea() {
                            G_CALLBACK(DragDataReceived), this);
   g_signal_connect_swapped(widget, "paste-clipboard",
                            G_CALLBACK(DialogBase::OnPasteClipboard), this);
+  g_signal_connect_swapped(widget, "populate-popup",
+                           G_CALLBACK(DialogBase::onInputPopulatePopup), this);
   g_datalist_set_data(&widset, "input-textview-widget", widget);
 
   /* 功能按钮 */
@@ -824,6 +826,15 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
       g_object_unref(pixbuf);
     }
   }
+}
+
+void DialogBase::onInputPopulatePopup(DialogBase* self,
+                                      GtkWidget* popup,
+                                      GtkTextView* textview) {
+  if (!GTK_IS_MENU(popup))
+    return;
+
+  self->populateInputPopup(GTK_MENU(popup));
 }
 
 void DialogBase::afterWindowCreated() {

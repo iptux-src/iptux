@@ -91,7 +91,7 @@ void DialogPeer::init() {
                       G_ACTION_CALLBACK(onClearChatHistory)),
       makeActionEntry("refuse", G_ACTION_CALLBACK(onRefuse)),
       makeActionEntry("refuse_all", G_ACTION_CALLBACK(onRefuseAll)),
-      makeActionEntry("insert_picture", G_ACTION_CALLBACK(onInsertPicture)),
+      makeActionEntry("insert_image", G_ACTION_CALLBACK(onInsertImage)),
       makeActionEntry("request_shared_resources",
                       G_ACTION_CALLBACK(onRequestSharedResources)),
       makeActionEntry("send_message", G_ACTION_CALLBACK(onSendMessage)),
@@ -447,7 +447,7 @@ void DialogPeer::onPaste(void*, void*, DialogPeer* self) {
   g_signal_emit_by_name(textview, "paste-clipboard");
 }
 
-void DialogPeer::insertPicture() {
+void DialogPeer::insertImage() {
   GtkWidget* widget;
   GtkTextBuffer* buffer;
   GtkTextIter iter;
@@ -476,6 +476,19 @@ void DialogPeer::insertPicture() {
   gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
   gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
   g_object_unref(pixbuf);
+}
+
+void DialogPeer::populateInputPopup(GtkMenu* popup) {
+  GtkWidget* menuitem = gtk_separator_menu_item_new();
+  gtk_widget_show(menuitem);
+  gtk_menu_shell_append(GTK_MENU_SHELL(popup), menuitem);
+
+  menuitem = gtk_menu_item_new_with_label(_("Insert Image"));
+  g_signal_connect_swapped(menuitem, "activate",
+                           G_CALLBACK(DialogPeer::onInsertImageFromPopup),
+                           this);
+  gtk_widget_show(menuitem);
+  gtk_menu_shell_append(GTK_MENU_SHELL(popup), menuitem);
 }
 
 /**
