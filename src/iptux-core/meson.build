@@ -47,13 +47,14 @@ else
         link_with: [libiptux_utils],
         include_directories: inc,
         install: true,
-        version: so_version,
+        version: meson.project_version(),
+        soversion: so_version,
     )
     pkg = import('pkgconfig')
     pkg.generate(
         description: 'Communicate and Share File in LAN',
         name: 'iptux-core',
-        version: so_version,
+        version: meson.project_version(),
         requires: [jsoncpp_dep, glib_dep, sigc_dep, thread_dep],
         requires_private: [glog_dep, gflags_dep],
         libraries: [libiptux_core, glog_dep],

@@ -9,7 +9,7 @@ if get_option('sanitize-address')
   add_project_link_arguments('-fsanitize=address', language: 'cpp')
 endif
 
-so_version = '0.9.3'
+so_version = 1
 subdir('src')
 subdir('share')
 subdir('po')
