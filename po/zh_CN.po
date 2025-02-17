@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.6.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2025-02-17 13:35-0800\n"
-"PO-Revision-Date: 2025-02-10 00:01+0000\n"
+"PO-Revision-Date: 2025-02-17 21:46+0000\n"
 "Last-Translator: LI Daobing <lidaobing@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/iptux/iptux/zh_Hans/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.10-dev\n"
+"X-Generator: Weblate 5.10.1-dev\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
@@ -59,11 +59,11 @@ msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:38
 msgid "The Iptux main window."
-msgstr ""
+msgstr "Iptux 主窗口。"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:42
 msgid "The Iptux chat window."
-msgstr ""
+msgstr "Iptux 聊天窗口。"
 
 #: src/iptux-core/CoreThread.cpp:172
 #, c-format
@@ -704,9 +704,8 @@ msgstr "请选择插入缓冲区的图片"
 
 #: src/iptux/DialogPeer.cpp:486 src/iptux/resources/gtk/menus.ui:83
 #: src/iptux/resources/gtk/menus.ui:228
-#, fuzzy
 msgid "Insert Image"
-msgstr "保存图片"
+msgstr "插入图片"
 
 #: src/iptux/DialogPeer.cpp:502
 msgid "Enclosure."
