@@ -80,8 +80,8 @@
       <attribute name='label' translatable='yes'>_Chat</attribute>
       <section>
         <item>
-          <attribute name='label' translatable='yes'>Insert Picture</attribute>
-          <attribute name='action'>win.insert_picture</attribute>
+          <attribute name='label' translatable='yes'>Insert Image</attribute>
+          <attribute name='action'>win.insert_image</attribute>
           <attribute name='icon'>insert-image-symbolic</attribute>
         </item>
         <item>
@@ -225,8 +225,8 @@
         <attribute name='label' translatable='yes'>_Chat</attribute>
         <section>
           <item>
-            <attribute name='label' translatable='yes'>Insert Picture</attribute>
-            <attribute name='action'>win.insert_picture</attribute>
+            <attribute name='label' translatable='yes'>Insert Image</attribute>
+            <attribute name='action'>win.insert_image</attribute>
             <attribute name='icon'>insert-image-symbolic</attribute>
           </item>
           <item>
