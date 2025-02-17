@@ -43,7 +43,6 @@ parts:
     organize:
       snap/iptux/current/usr: usr
     stage-packages:
-      - libgflags2.2
       - libjsoncpp25
       - libsigc++-2.0-0v5
       - libayatana-appindicator3-1

@@ -1,6 +1,5 @@
 gtk_dep = dependency('gtk+-3.0', version: '>=3.22')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
-gflags_dep = dependency('gflags')
 sigc_dep = dependency('sigc++-2.0')
 
 sources = files([
@@ -25,7 +24,7 @@ sources = files([
     'UiModels.cpp',
     'WindowConfig.cpp',
 ])
-dependencies = [gtk_dep, jsoncpp_dep, gflags_dep, sigc_dep]
+dependencies = [gtk_dep, jsoncpp_dep, sigc_dep]
 
 if appindicator_dep.found()
     sources += ['AppIndicator.cpp']
