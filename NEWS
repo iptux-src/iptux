@@ -1,3 +1,22 @@
+Version 0.9.4
+~~~~~~~~~~~~~
+Released: 2025-02-17
+
+Features:
+  * [#667] Add insert image for the popup menu of the chat input area.
+  * [#664, #666] port snapcraft from core20 to core24.
+  * [#665] introduce soversion for iptux-core library.
+  * [#657] improve log
+  * [#625] support flatpak
+  * [#642] add a new option to hide taskbar when main window iconified.
+
+Bugfixes:
+  * [#658] after close dialog and reopen, the image no longer exists.
+  * [#656] fix iptux stackoverflow when receiving directory.
+  * [#645] check exist preference dialog before open a new one.
+  * [#628] fix wrap mode of chat dialog.
+  * [#614] no extra \U0001 when sending image.
+
 Version 0.9.3
 ~~~~~~~~~~~~~
 Released: 2024-06-22
