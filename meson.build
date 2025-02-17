@@ -1,6 +1,6 @@
 project('iptux', 'cpp',
     license: 'GPL2+',
-    version: '0.9.3',
+    version: '0.9.4',
     meson_version: '>=0.53',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
 add_global_arguments('-Werror=format', language : 'cpp')
