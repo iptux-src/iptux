@@ -16,7 +16,6 @@
 
 #include "UiModels.h"
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 #include <sys/stat.h>
 
 #include "iptux-utils/output.h"
@@ -352,7 +351,7 @@ GSList* DialogBase::PickEnclosure(FileAttr fileattr) {
     action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
     title = _("Choose enclosure folders");
   } else {
-    CHECK(false);
+    g_assert(false);
   }
   dialog = gtk_file_chooser_dialog_new(title, GTK_WINDOW(getWindow()), action,
                                        _("_Open"), GTK_RESPONSE_ACCEPT,

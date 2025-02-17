@@ -2,7 +2,6 @@
 #include "Application.h"
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 #include <sys/stat.h>
 
 #include "iptux-core/Exception.h"
@@ -310,8 +309,8 @@ void Application::onEvent(shared_ptr<const Event> _event) {
   }
   if (type == EventType::SEND_FILE_STARTED ||
       type == EventType::RECV_FILE_STARTED) {
-    auto event =
-        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto event = dynamic_cast<const AbstractTaskIdEvent*>(_event.get());
+    g_assert(event);
     auto taskId = event->GetTaskId();
     auto para = cthrd->GetTransTaskStat(taskId);
     if (!para.get()) {
@@ -328,8 +327,8 @@ void Application::onEvent(shared_ptr<const Event> _event) {
 
   if (type == EventType::SEND_FILE_FINISHED ||
       type == EventType::RECV_FILE_FINISHED) {
-    auto event =
-        CHECK_NOTNULL(dynamic_cast<const AbstractTaskIdEvent*>(_event.get()));
+    auto event = dynamic_cast<const AbstractTaskIdEvent*>(_event.get());
+    g_assert(event);
     auto taskId = event->GetTaskId();
     auto para = cthrd->GetTransTaskStat(taskId);
     this->updateItemToTransTree(*para);

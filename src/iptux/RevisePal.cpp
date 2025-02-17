@@ -15,7 +15,6 @@
 #include <cinttypes>
 #include <dirent.h>
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
@@ -29,11 +28,7 @@ namespace iptux {
  * @param pl
  */
 RevisePal::RevisePal(Application* app, GtkWindow* parent, PalInfo* pl)
-    : widset(NULL),
-      mdlset(NULL),
-      app(CHECK_NOTNULL(app)),
-      parent(parent),
-      pal(CHECK_NOTNULL(pl)) {
+    : widset(NULL), mdlset(NULL), app(app), parent(parent), pal(pl) {
   InitSublayer();
 }
 

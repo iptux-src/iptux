@@ -1,6 +1,5 @@
 glib_dep = dependency('glib-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
-glog_dep = dependency('libglog')
 gflags_dep = dependency('gflags')
 sigc_dep = dependency('sigc++-2.0')
 
@@ -36,14 +35,14 @@ thread_dep = dependency('threads')
 if get_option('static-link')
     libiptux_core = static_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, jsoncpp_dep, gflags_dep, sigc_dep, thread_dep],
         link_with: [libiptux_utils],
         include_directories: inc,
     )
 else
     libiptux_core = shared_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, jsoncpp_dep, glog_dep, gflags_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, jsoncpp_dep, gflags_dep, sigc_dep, thread_dep],
         link_with: [libiptux_utils],
         include_directories: inc,
         install: true,
@@ -56,8 +55,8 @@ else
         name: 'iptux-core',
         version: meson.project_version(),
         requires: [jsoncpp_dep, glib_dep, sigc_dep, thread_dep],
-        requires_private: [glog_dep, gflags_dep],
-        libraries: [libiptux_core, glog_dep],
+        requires_private: [gflags_dep],
+        libraries: [libiptux_core],
     )
 endif
 
@@ -67,7 +66,7 @@ core_test_helper_sources = files([
 ])
 libiptux_core_test_helper = static_library('iptux-test-helper',
     core_test_helper_sources,
-    dependencies: [glib_dep, jsoncpp_dep, sigc_dep, glog_dep],
+    dependencies: [glib_dep, jsoncpp_dep, sigc_dep],
     link_with: [libiptux_core, libiptux_utils_test_helper],
     include_directories: inc
 )

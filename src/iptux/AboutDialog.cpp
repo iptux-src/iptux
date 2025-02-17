@@ -12,7 +12,6 @@
 #include "AboutDialog.h"
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 #include <string>
 
 #include "iptux/UiHelper.h"
@@ -63,10 +62,11 @@ AboutDialog* aboutDialogNew() {
   auto builder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/AboutDialog.ui");
   gtk_builder_connect_signals(builder, nullptr);
-  auto aboutDialog = GTK_ABOUT_DIALOG(
-      CHECK_NOTNULL(gtk_builder_get_object(builder, "about_dialog")));
+  auto aboutDialog =
+      GTK_ABOUT_DIALOG(gtk_builder_get_object(builder, "about_dialog"));
   g_object_unref(builder);
-
+  if (!aboutDialog)
+    return nullptr;
   CreateAboutDialog(aboutDialog);
   return aboutDialog;
 }

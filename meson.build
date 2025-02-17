@@ -29,7 +29,6 @@ if meson.version().version_compare('>=0.57')
     'glib-2.0': glib_dep,
     'gtk+-3.0': gtk_dep,
     'jsoncpp': jsoncpp_dep,
-    'libglog': glog_dep,
     'gflags': gflags_dep,
     'sigc++-2.0': sigc_dep,
     }

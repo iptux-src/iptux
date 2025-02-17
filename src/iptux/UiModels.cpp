@@ -1,16 +1,15 @@
 #include "config.h"
 #include "UiModels.h"
 
-#include <cstring>
-#include <glib/gi18n.h>
-#include <glog/logging.h>
-
 #include "iptux-core/Const.h"
 #include "iptux-core/Models.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/DialogBase.h"
 #include "iptux/UiHelper.h"
+#include <cstring>
+#include <glib/gi18n.h>
+#include <inttypes.h>
 #include <netinet/in.h>
 
 using namespace std;

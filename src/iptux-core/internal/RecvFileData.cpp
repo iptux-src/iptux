@@ -15,7 +15,6 @@
 #include <memory>
 
 #include <fcntl.h>
-#include <glog/logging.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -55,7 +54,7 @@ RecvFileData::~RecvFileData() {}
  * 接收文件数据入口.
  */
 void RecvFileData::RecvFileDataEntry() {
-  CHECK(GetTaskId() > 0);
+  g_assert(GetTaskId() > 0);
 
   CreateUIPara();
   coreThread->emitEvent(make_shared<RecvFileStartedEvent>(GetTaskId()));

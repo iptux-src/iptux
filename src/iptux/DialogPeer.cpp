@@ -22,7 +22,6 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
@@ -41,7 +40,7 @@ namespace iptux {
  * @param grp 好友群组信息
  */
 DialogPeer::DialogPeer(Application* app, GroupInfo* grp)
-    : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
+    : DialogBase(app, grp),
       config(app->getConfig()),
       torcvsize(0),
       rcvdsize(0),

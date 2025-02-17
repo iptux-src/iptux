@@ -21,7 +21,7 @@ namespace iptux {
 
 class DialogGroup : public DialogBase {
  public:
-  DialogGroup(Application* app, GroupInfo* grp);
+  DialogGroup(Application* app, GroupInfo* grp) __attribute__((nonnull));
   virtual ~DialogGroup();
 
   static DialogGroup* GroupDialogEntry(Application* app, GroupInfo* grpinf);
