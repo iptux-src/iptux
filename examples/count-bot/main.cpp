@@ -1,11 +1,10 @@
 #include <cstdio>
 #include <iostream>
-#include <string>
-
-#include <unistd.h>
-
 #include <iptux-core/CoreThread.h>
 #include <iptux-core/Exception.h>
+#include <sstream>
+#include <string>
+#include <unistd.h>
 
 using namespace std;
 using namespace iptux;
