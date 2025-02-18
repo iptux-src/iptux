@@ -11,6 +11,7 @@
 #include <glib/gi18n.h>
 #include <inttypes.h>
 #include <netinet/in.h>
+#include <sstream>
 
 using namespace std;
 
