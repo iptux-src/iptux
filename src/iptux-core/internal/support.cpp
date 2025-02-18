@@ -26,40 +26,29 @@ using namespace std;
 
 namespace iptux {
 
+static void socket_enable(GSocket* sock, const char* optname, int opt) {
+  GError* error = NULL;
+  if (!g_socket_set_option(sock, SOL_SOCKET, opt, TRUE, &error)) {
+    LOG_WARN("g_socket_set_option for %d, %s failed: %s", g_socket_get_fd(sock),
+             optname, error->message);
+    g_error_free(error);
+  }
+}
+
 /**
  * 让套接口支持广播.
  * @param sock socket
  */
-void socket_enable_broadcast(int sock) {
-  socklen_t len;
-  int optval;
-
-  optval = 1;
-  len = sizeof(optval);
-  if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, len) != 0) {
-    LOG_WARN("setsockopt for SO_BROADCAST failed: %s", strerror(errno));
-  }
+void socket_enable_broadcast(GSocket* sock) {
+  socket_enable(sock, "SO_BROADCAST", SO_BROADCAST);
 }
 
 /**
  * 让套接口监听端口可重用.
  * @param sock socket
  */
-void socket_enable_reuse(int sock) {
-  socklen_t len;
-  int optval;
-
-  optval = 1;
-  len = sizeof(optval);
-#ifndef __CYGWIN__
-  if (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, len) != 0) {
-    LOG_WARN("setsockopt for SO_REUSEPORT failed: %s", strerror(errno));
-  }
-#else
-  if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len) != 0) {
-    LOG_WARN("setsockopt for SO_REUSEADDR failed: %s", strerror(errno));
-  }
-#endif
+void socket_enable_reuse(GSocket* sock) {
+  socket_enable(sock, "SO_REUSEPORT", SO_REUSEPORT);
 }
 
 /**
@@ -69,7 +58,7 @@ void socket_enable_reuse(int sock) {
  * @note 链表数据不是指针而是实际的IP
  */
 vector<string> get_sys_broadcast_addr(int sock) {
-  const uint8_t amount = 5;  //支持5个IP地址
+  const uint8_t amount = 5;  // 支持5个IP地址
   uint8_t count, sum;
   struct ifconf ifc;
   struct ifreq* ifr;
