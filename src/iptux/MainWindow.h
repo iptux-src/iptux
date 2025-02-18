@@ -80,7 +80,7 @@ class MainWindow : public sigc::trackable {
   GroupInfoStyle info_style_ = GroupInfoStyle::IP;
 
  private:
-  void setCurrentGroupInfo(GroupInfo* groupInfo);
+  void setCurrentGroupInfo(GroupInfo* groupInfo) __attribute__((nonnull));
 
   void InitSublayer();
   void LoadConfig();

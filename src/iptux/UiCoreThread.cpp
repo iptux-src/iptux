@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"

@@ -14,10 +14,10 @@
 
 #include <fcntl.h>
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
+#include <unistd.h>
 
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER "-------------------------------------"
@@ -28,7 +28,7 @@ namespace iptux {
 
 LogSystem::LogSystem(shared_ptr<const ProgramData> programData)
     : programData(programData), fdc(-1), fds(-1) {
-  CHECK_NOTNULL(programData.get());
+  g_assert(programData.get());
   InitSublayer();
 }
 

@@ -13,7 +13,6 @@
 #include "DialogGroup.h"
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
@@ -32,8 +31,7 @@ namespace iptux {
  * @param grp 群组信息
  */
 DialogGroup::DialogGroup(Application* app, GroupInfo* grp)
-    : DialogBase(CHECK_NOTNULL(app), CHECK_NOTNULL(grp)),
-      config(app->getConfig()) {
+    : DialogBase(app, grp), config(app->getConfig()) {
   InitSublayerSpecify();
 }
 
@@ -50,8 +48,7 @@ DialogGroup::~DialogGroup() {
  */
 DialogGroup* DialogGroup::GroupDialogEntry(Application* app,
                                            GroupInfo* grpinf) {
-  CHECK_NOTNULL(grpinf);
-  CHECK_NE(grpinf->getType(), GROUP_BELONG_TYPE_REGULAR);
+  g_assert(grpinf->getType() != GROUP_BELONG_TYPE_REGULAR);
   DialogGroup* dlggrp;
   GtkWidget *window, *widget;
 

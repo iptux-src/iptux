@@ -24,7 +24,6 @@
 #include <unistd.h>
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/internal/AnalogFS.h"
 
@@ -56,7 +55,7 @@ SendFileData::~SendFileData() {}
  * 发送文件数据入口.
  */
 void SendFileData::SendFileDataEntry() {
-  CHECK(GetTaskId() > 0);
+  g_assert(GetTaskId() > 0);
   CreateUIPara();
   coreThread->emitEvent(make_shared<SendFileStartedEvent>(GetTaskId()));
 
@@ -69,7 +68,7 @@ void SendFileData::SendFileDataEntry() {
       SendDirFiles();
       break;
     default:
-      CHECK(false);
+      g_assert(false);
       break;
   }
   UpdateUIParaToOver();

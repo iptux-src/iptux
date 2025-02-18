@@ -13,7 +13,6 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <glog/logging.h>
 #include <poll.h>
 #include <sys/stat.h>
 
@@ -28,6 +27,7 @@
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include <unistd.h>
 
 using namespace std;
 using namespace std::placeholders;
@@ -227,7 +227,7 @@ void CoreThread::RecvUdpData(CoreThread* self) {
     if (ret == 0) {
       continue;
     }
-    CHECK(ret == 1);
+    g_assert(ret == 1);
     len = sizeof(addr);
     if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
                          (struct sockaddr*)&addr, &len)) == -1)
@@ -257,7 +257,7 @@ void CoreThread::RecvTcpData(CoreThread* pcthrd) {
     if (ret == 0) {
       continue;
     }
-    CHECK(ret == 1);
+    g_assert(ret == 1);
     if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1)
       continue;
     thread([](CoreThread* coreThread,
@@ -607,9 +607,9 @@ void CoreThread::SetAccessPublicLimit(const string& val) {
 }
 
 void CoreThread::AddPrivateFile(PFileInfo file) {
-  CHECK(file);
-  CHECK(file->fileid >= MAX_SHAREDFILE);
-  CHECK(pImpl->privateFiles.count(file->fileid) == 0);
+  g_assert(file);
+  g_assert(file->fileid >= MAX_SHAREDFILE);
+  g_assert(pImpl->privateFiles.count(file->fileid) == 0);
   pImpl->privateFiles[file->fileid] = file;
 }
 

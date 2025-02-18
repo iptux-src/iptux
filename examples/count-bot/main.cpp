@@ -1,12 +1,10 @@
 #include <cstdio>
 #include <iostream>
-#include <string>
-
-#include <unistd.h>
-
-#include <glog/logging.h>
 #include <iptux-core/CoreThread.h>
 #include <iptux-core/Exception.h>
+#include <sstream>
+#include <string>
+#include <unistd.h>
 
 using namespace std;
 using namespace iptux;
@@ -20,10 +18,10 @@ void usage(const char* progname) {
 void processNewMessageEvent(shared_ptr<CoreThread> ct,
                             const NewMessageEvent* event) {
   auto para = event->getMsgPara();
-  LOG(INFO) << "New Message Event: " << endl;
-  LOG(INFO) << "  From: " << para.getPal()->GetKey().ToString() << endl;
+  cout << "New Message Event: " << endl;
+  cout << "  From: " << para.getPal()->GetKey().ToString() << endl;
   for (auto& chip : para.dtlist) {
-    LOG(INFO) << "  Message: " << chip.ToString() << endl;
+    cout << "  Message: " << chip.ToString() << endl;
     ostringstream oss;
     oss << "your message has " << chip.data.size() << " bytes.";
     ct->SendMessage(para.getPal(), oss.str());

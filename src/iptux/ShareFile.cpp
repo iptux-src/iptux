@@ -13,7 +13,6 @@
 #include "ShareFile.h"
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 #include <sys/stat.h>
 
 #include "iptux-utils/utils.h"
@@ -404,7 +403,7 @@ GSList* PickSharedFile(ShareFile* self, FileAttr fileattr) {
   const char* title;
   GSList* list;
 
-  CHECK(FileAttrIsValid(fileattr));
+  g_assert(FileAttrIsValid(fileattr));
 
   if (fileattr == FileAttr::REGULAR) {
     action = GTK_FILE_CHOOSER_ACTION_OPEN;

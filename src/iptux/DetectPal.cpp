@@ -13,7 +13,6 @@
 #include "DetectPal.h"
 
 #include <glib/gi18n.h>
-#include <glog/logging.h>
 
 #include "iptux-core/Exception.h"
 #include "iptux/UiCoreThread.h"
@@ -38,13 +37,11 @@ DetectPal::DetectPal(Application* app, GtkWindow* window) : app(app) {
   auto builder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/DetectPal.ui");
 
-  g_set_object(&detectPalDialog,
-               CHECK_NOTNULL(GTK_DIALOG(
-                   gtk_builder_get_object(builder, "detect_pal_dialog"))));
+  g_set_object(&detectPalDialog, GTK_DIALOG(gtk_builder_get_object(
+                                     builder, "detect_pal_dialog")));
   gtk_window_set_transient_for(GTK_WINDOW(this->detectPalDialog), window);
-  g_set_object(&detectPalIpv4Entry,
-               CHECK_NOTNULL(GTK_ENTRY(
-                   gtk_builder_get_object(builder, "detect_pal_ipv4_entry"))));
+  g_set_object(&detectPalIpv4Entry, GTK_ENTRY(gtk_builder_get_object(
+                                        builder, "detect_pal_ipv4_entry")));
   g_signal_connect(detectPalIpv4Entry, "insert-text",
                    G_CALLBACK(entry_insert_numeric), nullptr);
   g_signal_connect(detectPalIpv4Entry, "key-release-event",
