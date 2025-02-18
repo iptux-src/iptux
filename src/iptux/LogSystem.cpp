@@ -17,6 +17,7 @@
 
 #include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
+#include <unistd.h>
 
 #define LOG_START_HEADER "====================================="
 #define LOG_END_HEADER "-------------------------------------"

@@ -27,6 +27,7 @@
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include <unistd.h>
 
 using namespace std;
 using namespace std::placeholders;
