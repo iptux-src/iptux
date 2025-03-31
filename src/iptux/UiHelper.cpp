@@ -329,6 +329,7 @@ GActionEntry makeStateActionEntry(const string& name,
 
 gboolean gtk_window_iconify_on_delete(GtkWindow* window) {
   gtk_window_iconify(window);
+  gtk_widget_hide(GTK_WIDGET(window));
   return TRUE;
 }
 
