@@ -591,7 +591,7 @@ string UdpData::GetPalIcon() {
   const char* ptr;
 
   if ((ptr = iptux_skip_string(buf, size, 2)) && *ptr != '\0') {
-    string res = stringFormat(__PIXMAPS_PATH "/icon/%s", ptr);
+    string res = stringFormat(IPTUX_PIXMAPS_PATH "/icon/%s", ptr);
     if (access(res.c_str(), F_OK) == 0)
       return ptr;
   }
