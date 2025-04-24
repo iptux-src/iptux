@@ -399,6 +399,7 @@ GroupInfo* UiCoreThread::AttachPalGroupItem(PPalInfo pal) {
   }
   grpinf = new GroupInfo(GROUP_BELONG_TYPE_GROUP, vector<PPalInfo>(), getMe(),
                          name, logSystem);
+  grpinf->grpid = g_quark_from_string(name.c_str());
   grpinf->initBuffer(tag_table_);
   grpinf->clearDialog();
   grplist = g_slist_append(grplist, grpinf);
