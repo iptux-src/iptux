@@ -15,7 +15,6 @@
 
 #include "UiModels.h"
 #include "iptux-core/Models.h"
-#include <cinttypes>
 
 #include <sys/socket.h>
 #include <unistd.h>
@@ -34,6 +33,10 @@
 using namespace std;
 
 namespace iptux {
+
+enum {
+  InfoAreaMinWidth = 100,
+};
 
 /**
  * 类构造函数.
@@ -243,6 +246,21 @@ void DialogPeer::CreateTitle() {
   }
 }
 
+static GtkWidget* createMainPanel(GData* dtset) {
+  GtkWidget* vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  g_object_set_data(G_OBJECT(vpaned), "position-name",
+                    (gpointer) "historyinput-paned-divide");
+  gint position =
+      GPOINTER_TO_INT(g_datalist_get_data(&dtset, "historyinput-paned-divide"));
+  gtk_paned_set_position(GTK_PANED(vpaned), position);
+  g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
+                   &dtset);
+  gtk_paned_pack1(GTK_PANED(vpaned), DialogPeer::CreateHistoryArea(), TRUE,
+                  TRUE);
+  gtk_paned_pack2(GTK_PANED(vpaned), DialogPeer::CreateInputArea(), FALSE,
+                  FALSE);
+}
+
 /**
  * 创建所有区域.
  * @return 主窗体
@@ -275,15 +293,16 @@ GtkWidget* DialogPeer::CreateAllArea() {
   g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
   gtk_paned_pack1(GTK_PANED(vpaned), CreateHistoryArea(), TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpaned), CreateInputArea(), FALSE, TRUE);
+  gtk_paned_pack2(GTK_PANED(vpaned), CreateInputArea(), FALSE, FALSE);
   /* 加入好友信息&附件区域 */
   vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_widget_set_size_request(vpaned, InfoAreaMinWidth, -1);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
                     (gpointer) "infoenclosure-paned-divide");
   position = GPOINTER_TO_INT(
       g_datalist_get_data(&dtset, "infoenclosure-paned-divide"));
   gtk_paned_set_position(GTK_PANED(vpaned), position);
-  gtk_paned_pack2(GTK_PANED(hpaned), vpaned, FALSE, TRUE);
+  gtk_paned_pack2(GTK_PANED(hpaned), vpaned, FALSE, FALSE);
   g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
   gtk_paned_pack1(GTK_PANED(vpaned), CreateInfoArea(), TRUE, TRUE);
@@ -297,30 +316,29 @@ GtkWidget* DialogPeer::CreateAllArea() {
  * @return 主窗体
  */
 GtkWidget* DialogPeer::CreateInfoArea() {
-  GtkWidget *frame, *sw;
+  GtkWidget* sw;
   GtkWidget* widget;
   GtkTextBuffer* buffer;
 
-  frame = gtk_frame_new(_("Info."));
-  g_datalist_set_data(&widset, "info-frame", frame);
-  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_IN);
   sw = gtk_scrolled_window_new(NULL, NULL);
+  g_datalist_set_data(&widset, "info-frame", sw);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
                                  GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
                                       GTK_SHADOW_ETCHED_IN);
-  gtk_container_add(GTK_CONTAINER(frame), sw);
 
   buffer = gtk_text_buffer_new(app->getCoreThread()->tag_table());
   FillPalInfoToBuffer(buffer, grpinf->getMembers()[0].get());
   widget = gtk_text_view_new_with_buffer(buffer);
+  g_object_set(widget, "left-margin", 10, "right-margin", 10, "top-margin", 10,
+               "bottom-margin", 10, NULL);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(widget), FALSE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(widget), FALSE);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(widget), GTK_WRAP_WORD_CHAR);
   gtk_container_add(GTK_CONTAINER(sw), widget);
   g_datalist_set_data(&widset, "info-textview-widget", widget);
 
-  return frame;
+  return sw;
 }
 
 /**
