@@ -517,11 +517,13 @@ void DialogBase::DragDataReceived(DialogBase* dlgpr,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean DialogBase::WindowConfigureEvent(GtkWidget*,
+gboolean DialogBase::WindowConfigureEvent(GtkWidget* window,
                                           GdkEventConfigure* event,
                                           GData** dtset) {
-  g_datalist_set_data(dtset, "window-width", GINT_TO_POINTER(event->width));
-  g_datalist_set_data(dtset, "window-height", GINT_TO_POINTER(event->height));
+  int width, height;
+  gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+  g_datalist_set_data(dtset, "window-width", GINT_TO_POINTER(width));
+  g_datalist_set_data(dtset, "window-height", GINT_TO_POINTER(height));
 
   return FALSE;
 }

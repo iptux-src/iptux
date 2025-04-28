@@ -1616,11 +1616,13 @@ void MainWindow::PallistDragDataReceived(GtkWidget* treeview,
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean MainWindow::MWinConfigureEvent(GtkWidget*,
+gboolean MainWindow::MWinConfigureEvent(GtkWidget* window,
                                         GdkEventConfigure* event,
                                         MainWindow* self) {
-  self->windowConfig.SetWidth(event->width)
-      .SetHeight(event->height)
+  int width, height;
+  gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+  self->windowConfig.SetWidth(width)
+      .SetHeight(height)
       .SaveToConfig(self->config);
   return FALSE;
 }
