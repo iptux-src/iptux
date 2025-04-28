@@ -80,7 +80,7 @@ Application::Application(shared_ptr<IptuxConfig> config)
   notificationService = new TerminalNotifierNoticationService();
 #else
   notificationService = new GioNotificationService();
-  use_header_bar_ = true;
+  // use_header_bar_ = true;
   // GError* error = nullptr;
   // if(!g_application_register(G_APPLICATION(app), nullptr, &error)) {
   //   LOG_WARN("g_application_register failed: %s-%d-%s",

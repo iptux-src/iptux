@@ -274,8 +274,8 @@ GtkWidget* DialogPeer::CreateAllArea() {
   gtk_paned_pack1(GTK_PANED(hpaned), vpaned, TRUE, TRUE);
   g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
-  gtk_paned_pack1(GTK_PANED(vpaned), CreateHistoryArea(), TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpaned), CreateInputArea(), FALSE, TRUE);
+  gtk_paned_pack1(GTK_PANED(vpaned), CreateHistoryArea(), FALSE, TRUE);
+  gtk_paned_pack2(GTK_PANED(vpaned), CreateInputArea(), TRUE, TRUE);
   /* 加入好友信息&附件区域 */
   vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
   g_object_set_data(G_OBJECT(vpaned), "position-name",
@@ -286,8 +286,8 @@ GtkWidget* DialogPeer::CreateAllArea() {
   gtk_paned_pack2(GTK_PANED(hpaned), vpaned, FALSE, TRUE);
   g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
-  gtk_paned_pack1(GTK_PANED(vpaned), CreateInfoArea(), TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpaned), CreateFileArea(), FALSE, TRUE);
+  gtk_paned_pack1(GTK_PANED(vpaned), CreateInfoArea(), FALSE, TRUE);
+  gtk_paned_pack2(GTK_PANED(vpaned), CreateFileArea(), TRUE, TRUE);
 
   return box;
 }
@@ -510,8 +510,8 @@ GtkWidget* DialogPeer::CreateFileArea() {
   g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
   gtk_container_add(GTK_CONTAINER(frame), vpaned);
-  gtk_paned_pack1(GTK_PANED(vpaned), CreateFileReceiveArea(), TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpaned), CreateFileSendArea(), FALSE, TRUE);
+  gtk_paned_pack1(GTK_PANED(vpaned), CreateFileReceiveArea(), FALSE, TRUE);
+  gtk_paned_pack2(GTK_PANED(vpaned), CreateFileSendArea(), TRUE, TRUE);
   return frame;
 }
 
@@ -531,7 +531,7 @@ GtkWidget* DialogPeer::CreateFileReceiveArea() {
   gtk_paned_set_position(GTK_PANED(vpaned), position);
   g_signal_connect(vpaned, "notify::position", G_CALLBACK(PanedDivideChanged),
                    &dtset);
-  gtk_paned_pack1(GTK_PANED(vpaned), CreateFileToReceiveArea(), TRUE, FALSE);
+  gtk_paned_pack1(GTK_PANED(vpaned), CreateFileToReceiveArea(), FALSE, FALSE);
   gtk_paned_pack2(GTK_PANED(vpaned), CreateFileReceivedArea(), TRUE, FALSE);
   return vpaned;
 }
