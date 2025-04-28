@@ -97,10 +97,10 @@ class PermissionRequiredEvent : public PalEvent {
       : PalEvent(palKey, EventType::PERMISSION_REQUIRED) {}
 };
 
-class NewShareFileFromFriendEvent : public Event {
+class NewShareFileFromFriendEvent : public PalEvent {
  public:
-  explicit NewShareFileFromFriendEvent(FileInfo fileInfo)
-      : Event(EventType::NEW_SHARE_FILE_FROM_FRIEND), fileInfo(fileInfo) {}
+  explicit NewShareFileFromFriendEvent(PalKey palKey, FileInfo fileInfo)
+      : PalEvent(palKey, EventType::NEW_SHARE_FILE_FROM_FRIEND), fileInfo(fileInfo) {}
   const FileInfo& GetFileInfo() const { return fileInfo; }
 
  private:
