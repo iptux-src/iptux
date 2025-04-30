@@ -50,7 +50,7 @@ void RecvFile::RecvEntry(CoreThread* coreThread,
   for (auto fileInfo : fileInfos) {
     fileInfo.packetn = packetno;
     fileInfo.fileown = pal;
-    coreThread->emitEvent(make_shared<NewShareFileFromFriendEvent>(fileInfo));
+    coreThread->emitEvent(make_shared<NewShareFileFromFriendEvent>(pal->GetKey(), fileInfo));
   }
 }
 

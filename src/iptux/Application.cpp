@@ -286,8 +286,11 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     auto title = stringFormat(_("New File from %s"),
                               event->GetFileInfo().fileown->getName().c_str());
     auto summary = event->GetFileInfo().filepath;
+    auto action = stringFormat(
+        "app.open-chat::%s",
+        event->GetPalKey().GetIpv4String().c_str());
     notificationService->sendNotification(
-        G_APPLICATION(app), "iptux-new-file", title, summary, "",
+        G_APPLICATION(app), "iptux-new-file", title, summary, action,
         G_NOTIFICATION_PRIORITY_NORMAL, nullptr);
   }
   if (type == EventType::RECV_FILE_FINISHED) {
