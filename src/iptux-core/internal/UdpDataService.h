@@ -10,12 +10,12 @@ class UdpDataService {
  public:
   explicit UdpDataService(CoreThread& coreThread);
 
-  std::unique_ptr<UdpData> process(in_addr ipv4,
+  std::unique_ptr<UdpData> process(uint32_t ipv4,
                                    int port,
                                    const char buf[],
                                    size_t size);
 
-  std::unique_ptr<UdpData> process(in_addr ipv4,
+  std::unique_ptr<UdpData> process(uint32_t ipv4,
                                    int port,
                                    const char buf[],
                                    size_t size,
