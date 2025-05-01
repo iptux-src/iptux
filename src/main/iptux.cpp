@@ -139,7 +139,7 @@ static void dealLog(const IptuxConfig& config) {
 int main(int argc, char** argv) {
   installCrashHandler();
   setlocale(LC_ALL, "");
-  bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
+  bindtextdomain(GETTEXT_PACKAGE, IPTUX_LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
   textdomain(GETTEXT_PACKAGE);
 
