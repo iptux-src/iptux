@@ -158,7 +158,7 @@ msgstr "தெரியவில்லை"
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr ""
-"%s இலிருந்து \"%s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %jd ஐப் "
+"%s இலிருந்து \"%s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %jd ஐ எதிர்பார்க்கலாம், %jd ஐப் "
 "பெற்றார்"
 
 #: src/iptux-core/internal/RecvFileData.cpp:180
