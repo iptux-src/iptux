@@ -158,7 +158,7 @@ msgstr "தெரியவில்லை"
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr ""
-"%s இலிருந்து \" %s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %JD ஐப் "
+"%s இலிருந்து \"%s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %j ஐப் "
 "பெற்றார்"
 
 #: src/iptux-core/internal/RecvFileData.cpp:180
@@ -260,7 +260,7 @@ msgstr "கோப்பு செய்தி இனி இல்லை"
 #: src/iptux/Darwin.cpp:16
 #, c-format
 msgid "Couldn’t load icon: %s"
-msgstr "ஐகான்களை ஏற்ற முடியவில்லை"
+msgstr "ஐகான்களை ஏற்ற முடியவில்லை: %s"
 
 #: src/iptux/DataSettings.cpp:46
 msgid "Personal"
@@ -493,7 +493,7 @@ msgid ""
 "Illegal IP(v4) address: %s!"
 msgstr ""
 "\n"
-"சட்டவிரோத ஐபிவி 4) முகவரி!"
+"சட்டவிரோத ஐபிவி 4) முகவரி: %s!"
 
 #: src/iptux/DataSettings.cpp:1346
 msgid "Please select a file to import data"
@@ -759,7 +759,7 @@ msgstr "%s பெறப்பட்ட %s."
 #: src/iptux/LogSystem.cpp:71
 #, c-format
 msgid "Recevied-From: Nickname:%s User:%s Host:%s"
-msgstr "பெறப்பட்டது: புனைப்பெயர்:%s பயனர்:%ஓச்டாக:%s"
+msgstr "பெறப்பட்டது: புனைப்பெயர்:%s பயனர்:%s ஓச்டாக:%s"
 
 #: src/iptux/LogSystem.cpp:76
 #, c-format
