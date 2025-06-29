@@ -158,7 +158,7 @@ msgstr "தெரியவில்லை"
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr ""
-"%s இலிருந்து \"%s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %j ஐப் "
+"%s இலிருந்து \"%s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %jd ஐப் "
 "பெற்றார்"
 
 #: src/iptux-core/internal/RecvFileData.cpp:180
@@ -557,7 +557,7 @@ msgstr "முன்னேற்றம் அனுப்புகிறது."
 
 #: src/iptux/DialogBase.cpp:656
 msgid "Dirs"
-msgstr "Dirs"
+msgstr "கோப்புறைகள்"
 
 #: src/iptux/DialogBase.cpp:659
 msgid "Files"
@@ -1153,7 +1153,7 @@ msgstr "_ முனைகள்"
 #: src/iptux/resources/gtk/AppIndicator.ui:16
 #: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:310
 msgid "_Quit"
-msgstr "_Quit"
+msgstr "வெளியேறு"
 
 #: src/iptux/resources/gtk/DetectPal.ui:7
 msgid "Detect pal"
@@ -1266,7 +1266,7 @@ msgstr "காட்சி (_V)"
 
 #: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:218
 msgid "_Refresh"
-msgstr "_Refresh"
+msgstr "புதுப்பி"
 
 #: src/iptux/resources/gtk/menus.ui:80 src/iptux/resources/gtk/menus.ui:225
 msgid "_Chat"
@@ -1314,7 +1314,7 @@ msgstr "உதவி (_H)"
 
 #: src/iptux/resources/gtk/menus.ui:145 src/iptux/resources/gtk/menus.ui:290
 msgid "_About"
-msgstr "_About"
+msgstr "பற்றி"
 
 #: src/iptux/resources/gtk/menus.ui:149 src/iptux/resources/gtk/menus.ui:294
 msgid "Report Bug"
