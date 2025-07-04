@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iptux 0.9.3\n"
 "Report-Msgid-Bugs-To: https://github.com/iptux-src/iptux/issues/new\n"
 "POT-Creation-Date: 2025-02-17 13:35-0800\n"
-"PO-Revision-Date: 2025-01-04 04:02+0000\n"
+"PO-Revision-Date: 2025-06-30 05:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/iptux/iptux/ta/>\n"
 "Language: ta\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10-dev\n"
+"X-Generator: Weblate 5.13-dev\n"
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:6
 msgid "iptux"
@@ -58,11 +58,11 @@ msgstr ""
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:38
 msgid "The Iptux main window."
-msgstr ""
+msgstr "ஐபிடக்ச் முதன்மையான சாளரம்."
 
 #: share/metainfo/io.github.iptux_src.iptux.metainfo.xml:42
 msgid "The Iptux chat window."
-msgstr ""
+msgstr "ஐபிடக்ச் அரட்டை சாளரம்."
 
 #: src/iptux-core/CoreThread.cpp:172
 #, c-format
@@ -154,11 +154,11 @@ msgid "Unknown"
 msgstr "தெரியவில்லை"
 
 #: src/iptux-core/internal/RecvFileData.cpp:175
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to receive the file \"%s\" from %s! expect length %jd, received %jd"
 msgstr ""
-"%s இலிருந்து \" %s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %JD ஐ எதிர்பார்க்கலாம், %JD ஐப் "
+"%s இலிருந்து \"%s\" கோப்பைப் பெறுவதில் தோல்வி! நீளம் %jd ஐ எதிர்பார்க்கலாம், %jd ஐப் "
 "பெற்றார்"
 
 #: src/iptux-core/internal/RecvFileData.cpp:180
@@ -258,9 +258,9 @@ msgid "file info no longer exist"
 msgstr "கோப்பு செய்தி இனி இல்லை"
 
 #: src/iptux/Darwin.cpp:16
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn’t load icon: %s"
-msgstr "ஐகான்களை ஏற்ற முடியவில்லை"
+msgstr "ஐகான்களை ஏற்ற முடியவில்லை: %s"
 
 #: src/iptux/DataSettings.cpp:46
 msgid "Personal"
@@ -487,13 +487,13 @@ msgstr "தனிப்பட்ட புகைப்படத்தைத் �
 
 #: src/iptux/DataSettings.cpp:1241 src/iptux/DataSettings.cpp:1248
 #: src/iptux/DetectPal.cpp:75
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Illegal IP(v4) address: %s!"
 msgstr ""
 "\n"
-"சட்டவிரோத ஐபிவி 4) முகவரி!"
+"சட்டவிரோத ஐபிவி 4) முகவரி: %s!"
 
 #: src/iptux/DataSettings.cpp:1346
 msgid "Please select a file to import data"
@@ -557,7 +557,7 @@ msgstr "முன்னேற்றம் அனுப்புகிறது."
 
 #: src/iptux/DialogBase.cpp:656
 msgid "Dirs"
-msgstr "Dirs"
+msgstr "கோப்புறைகள்"
 
 #: src/iptux/DialogBase.cpp:659
 msgid "Files"
@@ -706,9 +706,8 @@ msgstr "இடையகத்தை செருக ஒரு படத்தை
 
 #: src/iptux/DialogPeer.cpp:486 src/iptux/resources/gtk/menus.ui:83
 #: src/iptux/resources/gtk/menus.ui:228
-#, fuzzy
 msgid "Insert Image"
-msgstr "படத்தை சேமிக்கவும்"
+msgstr "படத்தைச் செருகவும்"
 
 #: src/iptux/DialogPeer.cpp:502
 msgid "Enclosure."
@@ -758,9 +757,9 @@ msgid "%s Of %s Received."
 msgstr "%s பெறப்பட்ட %s."
 
 #: src/iptux/LogSystem.cpp:71
-#, fuzzy, c-format
+#, c-format
 msgid "Recevied-From: Nickname:%s User:%s Host:%s"
-msgstr "பெறப்பட்டது: புனைப்பெயர்:%s பயனர்:%ஓச்டாக:%s"
+msgstr "பெறப்பட்டது: புனைப்பெயர்:%s பயனர்:%s ஓச்டாக:%s"
 
 #: src/iptux/LogSystem.cpp:76
 #, c-format
@@ -1154,7 +1153,7 @@ msgstr "_ முனைகள்"
 #: src/iptux/resources/gtk/AppIndicator.ui:16
 #: src/iptux/resources/gtk/menus.ui:10 src/iptux/resources/gtk/menus.ui:310
 msgid "_Quit"
-msgstr "_Quit"
+msgstr "வெளியேறு"
 
 #: src/iptux/resources/gtk/DetectPal.ui:7
 msgid "Detect pal"
@@ -1267,7 +1266,7 @@ msgstr "காட்சி (_V)"
 
 #: src/iptux/resources/gtk/menus.ui:73 src/iptux/resources/gtk/menus.ui:218
 msgid "_Refresh"
-msgstr "_Refresh"
+msgstr "புதுப்பி"
 
 #: src/iptux/resources/gtk/menus.ui:80 src/iptux/resources/gtk/menus.ui:225
 msgid "_Chat"
@@ -1315,7 +1314,7 @@ msgstr "உதவி (_H)"
 
 #: src/iptux/resources/gtk/menus.ui:145 src/iptux/resources/gtk/menus.ui:290
 msgid "_About"
-msgstr "_About"
+msgstr "பற்றி"
 
 #: src/iptux/resources/gtk/menus.ui:149 src/iptux/resources/gtk/menus.ui:294
 msgid "Report Bug"
