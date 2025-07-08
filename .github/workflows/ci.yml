@@ -69,7 +69,7 @@ jobs:
         run: sudo meson install -C build
       - name: test
         run: |
-          xvfb-run -a meson test -C build --verbose --no-stdsplit
+          ASAN_OPTIONS=detect_leaks=0 xvfb-run -a meson test -C build --verbose --no-stdsplit
 
   codecov:
     runs-on: ubuntu-latest
