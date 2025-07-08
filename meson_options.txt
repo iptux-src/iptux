@@ -25,3 +25,10 @@ option(
   value: false,
   description: 'enable -fsanitize=address compile/link flag',
 )
+
+option(
+  'sanitize-undefined',
+  type: 'boolean',
+  value: false,
+  description: 'enable -fsanitize=undefined compile/link flag',
+)

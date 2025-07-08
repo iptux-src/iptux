@@ -116,13 +116,13 @@ void Application::activate() {
 }
 
 void Application::onStartup(Application& self) {
+  self.data = make_shared<ProgramData>(self.config);
+  self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   init_theme(&self);
   iptux_register_resource();
   self.menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
-  self.data = make_shared<ProgramData>(self.config);
   self.logSystem = new LogSystem(self.data);
-  self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   if (self.enable_app_indicator_) {
     self.app_indicator = make_shared<IptuxAppIndicator>(&self);
   }
