@@ -32,7 +32,7 @@ jobs:
         run: >-
           brew install --display-times ${{ env.MAC_PKGS }}
       - name: meson
-        run: meson setup build
+        run: meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
       - name: build
         run: meson compile -C build
       - name: install
@@ -60,7 +60,7 @@ jobs:
       - name: meson
         run: |
           meson --version
-          meson setup build
+          meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
         env:
           CXX: ${{ matrix.compiler }}
       - name: build
