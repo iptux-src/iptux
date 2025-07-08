@@ -12,9 +12,9 @@
 #ifndef IPTUX_UTILS_H
 #define IPTUX_UTILS_H
 
+#include <cstdint>
 #include <glib.h>
 #include <memory>
-#include <netinet/in.h>
 #include <string>
 
 namespace iptux {
@@ -66,13 +66,12 @@ char* ipmsg_get_filename_me(const char* pathname, char** path);
 char* iptux_erase_filename_suffix(const char* filename);
 char* ipmsg_get_pathname_full(const char* path, const char* name);
 
-bool ipv4Equal(const in_addr& ip1, const in_addr& ip2);
-int ipv4Compare(const in_addr& ip1, const in_addr& ip2);
+bool ipv4Equal(uint32_t ip1, uint32_t ip2);
+int ipv4Compare(uint32_t ip1, uint32_t ip2);
 
-std::string inAddrToString(in_addr ipv4);
-in_addr inAddrFromString(const std::string& s);
-uint32_t inAddrToUint32(in_addr ipv4);
-in_addr inAddrFromUint32(uint32_t value);
+std::string inAddrToString(uint32_t ipv4);
+uint32_t inAddrFromString(const std::string& s);
+uint32_t inAddrToUint32(uint32_t ipv4);
 
 template <typename... Args>
 std::string stringFormat(const char* format, ...) G_GNUC_PRINTF(1, 2);
