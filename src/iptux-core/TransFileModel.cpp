@@ -108,6 +108,9 @@ std::string TransFileModel::getFinishedLengthText() const {
 }
 
 double TransFileModel::getProgress() const {
+  if (fileLength <= 0) {
+    return 0.0;  // Avoid division by zero
+  }
   return percent(finishedLength, fileLength);
 }
 

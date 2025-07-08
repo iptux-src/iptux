@@ -8,6 +8,10 @@ if get_option('sanitize-address')
   add_project_arguments('-fsanitize=address', language: 'cpp')
   add_project_link_arguments('-fsanitize=address', language: 'cpp')
 endif
+if get_option('sanitize-undefined')
+  add_project_arguments('-fsanitize=undefined', language: 'cpp')
+  add_project_link_arguments('-fsanitize=undefined', language: 'cpp')
+endif
 
 so_version = 1
 subdir('src')
