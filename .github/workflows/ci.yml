@@ -59,7 +59,7 @@ jobs:
           sudo apt install libunwind-dev &&
           sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
       - name: Install package on Ubuntu 24.04 only
-        if: startsWith(runner.image, 'ubuntu-24.04')
+        if: contains(['ubuntu-24.04', 'ubuntu-latest'], runner.os)
         run: sudo apt install -y ${{ env.UB2404_PKGS }}
       - name: meson
         run: |
