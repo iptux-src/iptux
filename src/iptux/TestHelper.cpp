@@ -11,6 +11,7 @@ Application* CreateApplication() {
   gtk_init(nullptr, nullptr);
   auto config = newTestIptuxConfig();
   Application* app = new Application(config);
+  app->set_enable_app_indicator(false);
   app->startup();
   // g_application_register(G_APPLICATION(app->getApp()), nullptr, nullptr);
   // auto i = g_application_get_is_registered(G_APPLICATION(app->getApp()));
