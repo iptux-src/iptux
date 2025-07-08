@@ -10,7 +10,8 @@ env:
   DEB_PKGS: >-
     g++ meson appstream gettext libgtk-3-dev libglib2.0-dev
     libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
-  DEB_TEST_PKGS: xvfb libclang-rt-dev
+  DEB_TEST_PKGS: xvfb
+  UB2404_PKGS: libclang-rt-dev
   MAC_PKGS: >-
     meson appstream gettext gtk+3 jsoncpp gtk-mac-integration libsigc++@2
 
@@ -57,6 +58,9 @@ jobs:
           sudo apt update &&
           sudo apt install libunwind-dev &&
           sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
+      - name: Install package on Ubuntu 24.04 only
+        if: startsWith(runner.image, 'ubuntu-24.04')
+        run: sudo apt install -y ${{ env.UB2404_PKGS }}
       - name: meson
         run: |
           meson --version
