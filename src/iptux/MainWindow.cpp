@@ -389,7 +389,7 @@ void MainWindow::LoadConfig() {
 
   GtkSortType sort_type;
   if (GtkSortTypeFromStr(this->config->GetString(config_names[CFG_SORT_TYPE]),
-                         &sort_type)) {
+                         sort_type)) {
     this->sort_type_ = sort_type;
   }
 
@@ -1064,7 +1064,7 @@ void MainWindow::onSortType(GSimpleAction* action,
   string sortType = g_variant_get_string(value, nullptr);
   GtkSortType sort_type;
 
-  if (!GtkSortTypeFromStr(sortType, &sort_type)) {
+  if (!GtkSortTypeFromStr(sortType, sort_type)) {
     LOG_WARN("unknown sort type: %s", sortType.c_str());
     return;
   }

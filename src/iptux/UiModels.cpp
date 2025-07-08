@@ -355,10 +355,10 @@ static const char* gtk_sort_type_names[] = {
     [GTK_SORT_DESCENDING] = "descending",
 };
 
-bool GtkSortTypeFromStr(const std::string& s, GtkSortType* outType) {
+bool GtkSortTypeFromStr(const std::string& s, GtkSortType& outType) {
   for (int i = GTK_SORT_ASCENDING; i <= GTK_SORT_DESCENDING; ++i) {
     if (s == gtk_sort_type_names[i]) {
-      *outType = (GtkSortType)i;
+      outType = (GtkSortType)i;
       return true;
     }
   }

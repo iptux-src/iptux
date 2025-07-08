@@ -53,7 +53,7 @@ enum class GroupInfoStyle {
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
 const char* GroupInfoStyleToStr(GroupInfoStyle style);
 
-bool GtkSortTypeFromStr(const std::string& s, GtkSortType* outType);
+bool GtkSortTypeFromStr(const std::string& s, GtkSortType& outType);
 const char* GtkSortTypeToStr(GtkSortType t);
 
 class GroupInfo {
