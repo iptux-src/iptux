@@ -11,8 +11,6 @@ env:
     g++ meson appstream gettext libgtk-3-dev libglib2.0-dev
     libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
   DEB_TEST_PKGS: xvfb
-  UB2204_PKGS: libclang-dev
-  UB2404_PKGS: libclang-rt-dev
   MAC_PKGS: >-
     meson appstream gettext gtk+3 jsoncpp gtk-mac-integration libsigc++@2
 
@@ -59,19 +57,14 @@ jobs:
           sudo apt update && \
           sudo apt install libunwind-dev && \
           sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
-          version=$(lsb_release -rs)
-          if [ "$version" = "22.04" ]; then
-            sudo apt install -y ${{ env.UB2204_PKGS }}
-          elif [ "$version" = "24.04" ]; then
-            sudo apt install -y ${{ env.UB2404_PKGS }}
-          fi
+          lsb_release -a
       - name: meson
         run: |
           meson --version
-          if [ "${{ matrix.compiler }}" = "clang++" ] && [ "${{ matrix.runs-on }}" = "ubuntu-22.04" ]; then
+          if [ "${{ matrix.compiler }}" = "clang++" ]; then
             meson setup build
           else
-            meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
+            meson setup -Db_sanitize=address,undefined build
           fi
         env:
           CXX: ${{ matrix.compiler }}
