@@ -95,7 +95,7 @@ void ProgramData::set_port(uint16_t port, bool is_init) {
 
   uint16_t old_port = port_;
   port_ = port;
-  if (port_ < 1024 || port_ > 65535) {
+  if (port_ < 1024) {
     LOG_WARN("Invalid port number: %d, use default port: %d", port_,
              IPTUX_DEFAULT_PORT);
     port_ = IPTUX_DEFAULT_PORT;

@@ -2,14 +2,14 @@ project('iptux', 'cpp',
     license: 'GPL2+',
     version: '0.9.4',
     meson_version: '>=0.53',
-    default_options: ['warning_level=3', 'cpp_std=c++14'])
+    default_options: ['warning_level=2', 'cpp_std=c++17'])
 
 # Ubuntu 22.04
 add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_70', language : 'cpp')
 
 
 add_project_arguments('-Werror', language : 'cpp')
-add_project_arguments('-Wno-cast-function-type-mismatch', language : 'cpp')
+add_project_arguments('-Wno-cast-function-type-mismatch', '-Wno-cast-function-type', language : 'cpp')
 
 so_version = 1
 subdir('src')
