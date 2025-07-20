@@ -120,7 +120,7 @@ jobs:
 
   build_job:
     # The host should always be linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     # Run steps on a matrix of 3 arch/distro combinations
@@ -128,19 +128,19 @@ jobs:
       matrix:
         include:
           - arch: aarch64
-            distro: ubuntu22.04
+            distro: ubuntu24.04
           - arch: ppc64le
-            distro: ubuntu22.04
-          #- arch: s390x
-          #  distro: ubuntu20.04
+            distro: ubuntu24.04
+          - arch: s390x
+            distro: ubuntu24.04
           - arch: armv7
-            distro: ubuntu22.04
+            distro: ubuntu24.04
           #- arch: armv7
           #  distro: bookworm
 
     steps:
-      - uses: actions/checkout@v2.1.0
-      - uses: uraimo/run-on-arch-action@v2
+      - uses: actions/checkout@v4
+      - uses: uraimo/run-on-arch-action@v3
         name: Build artifact
         id: build
         with:
