@@ -334,6 +334,10 @@ void Application::onEvent(shared_ptr<const Event> _event) {
     g_assert(event);
     auto taskId = event->GetTaskId();
     auto para = cthrd->GetTransTaskStat(taskId);
+    if (!para) {
+      LOG_WARN("got task id %d, but no info in CoreThread", taskId);
+      return;
+    }
     this->updateItemToTransTree(*para);
     return;
   }
