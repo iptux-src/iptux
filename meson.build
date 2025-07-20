@@ -4,14 +4,6 @@ project('iptux', 'cpp',
     meson_version: '>=0.53',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
 add_global_arguments('-Werror=format', language : 'cpp')
-if get_option('sanitize-address')
-  add_project_arguments('-fsanitize=address', language: 'cpp')
-  add_project_link_arguments('-fsanitize=address', language: 'cpp')
-endif
-if get_option('sanitize-undefined')
-  add_project_arguments('-fsanitize=undefined', language: 'cpp')
-  add_project_link_arguments('-fsanitize=undefined', language: 'cpp')
-endif
 
 so_version = 1
 subdir('src')
@@ -55,6 +47,5 @@ if meson.version().version_compare('>=0.57')
     'dev': get_option('dev'),
     'static-link': get_option('static-link'),
     'appindicator': appindicator_dep.found(),
-    'sanitize-address': get_option('sanitize-address'),
     }, section: 'Options:')
 endif

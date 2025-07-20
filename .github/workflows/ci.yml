@@ -32,7 +32,7 @@ jobs:
         run: >-
           brew install --display-times ${{ env.MAC_PKGS }}
       - name: meson
-        run: meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
+        run: meson setup -Db_sanitize=address,undefined build
       - name: build
         run: meson compile -C build
       - name: install
@@ -53,14 +53,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: apt install
-        run: >-
-          sudo apt update &&
-          sudo apt install libunwind-dev &&
+        run: |
+          sudo apt update && \
+          sudo apt install libunwind-dev && \
           sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
+          lsb_release -a
       - name: meson
         run: |
           meson --version
-          meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
+          if [ "${{ matrix.compiler }}" = "clang++" ]; then
+            meson setup build
+          else
+            meson setup -Db_sanitize=address,undefined build
+          fi
         env:
           CXX: ${{ matrix.compiler }}
       - name: build
@@ -182,29 +187,3 @@ jobs:
       #   # ${PWD}/artifacts on the host.
       #   run: |
       #     ls -al "${PWD}/artifacts"
-
-  build-santize-address:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: apt install
-        run: >-
-          sudo apt update &&
-          sudo apt install libunwind-dev &&
-          sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
-      - name: meson
-        run: |
-          meson --version
-          meson setup build -Dsanitize-address=true
-        env:
-          CXX: g++
-      - name: build
-        run: ninja -v -C build
-      - name: install
-        run: sudo meson install -C build
-      - name: test
-        run: |
-          if ! xvfb-run -a meson test -C build --verbose --no-stdsplit; then
-            echo "::warning title=test-failed::test failed"
-          fi
-        continue-on-error: true
