@@ -667,11 +667,12 @@ void UdpData::RecvPalFile() {
   ptr = iptux_skip_string(buf, size, 1);
   /* 只有当此为共享文件信息或文件信息不为空才需要接收 */
   if ((commandno & IPTUX_SHAREDOPT) || (ptr && *ptr != '\0')) {
+    string data = ptr;
     thread(
         [](CoreThread* coreThread, PPalInfo pal, string data, int packetno) {
           RecvFile::RecvEntry(coreThread, pal, data, packetno);
         },
-        &coreThread, coreThread.GetPal(ipv4), ptr, packetno)
+        &coreThread, coreThread.GetPal(ipv4), data, packetno)
         .detach();
   }
 }
