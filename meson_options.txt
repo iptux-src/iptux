@@ -18,17 +18,3 @@ option(
   value: 'auto',
   description: 'enable app indicator support',
 )
-
-option(
-  'sanitize-address',
-  type: 'boolean',
-  value: false,
-  description: 'enable -fsanitize=address compile/link flag',
-)
-
-option(
-  'sanitize-undefined',
-  type: 'boolean',
-  value: false,
-  description: 'enable -fsanitize=undefined compile/link flag',
-)
