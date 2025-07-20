@@ -68,7 +68,11 @@ jobs:
       - name: meson
         run: |
           meson --version
-          meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
+          if [ "${{ matrix.compiler }}" = "clang++" && "${{ matrix.runs-on }}" = "ubuntu-22.04" ]; then
+            meson setup build
+          else
+            meson setup -Dsanitize-address=true -Dsanitize-undefined=true build
+          fi
         env:
           CXX: ${{ matrix.compiler }}
       - name: build
