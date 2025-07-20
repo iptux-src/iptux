@@ -820,12 +820,10 @@ void DataSettings::ObtainPersonalValue() {
         snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
         if (access(path, F_OK) != 0) {
           g_progdt->myicon = "my-icon";
-          snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon",
+          snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/my-icon.png",
                    g_get_user_config_dir());
           gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
           gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-          gtk_icon_theme_add_builtin_icon(g_progdt->myicon.c_str(),
-                                          MAX_ICONSIZE, pixbuf);
           g_object_unref(pixbuf);
         } else {
           g_progdt->myicon = file;
@@ -919,11 +917,10 @@ string DataSettings::ObtainSystemValue(bool dryrun) {
         g_free(file);
         g_free(progdt->palicon);
         progdt->palicon = g_strdup("pal-icon");
-        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/pal-icon",
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/pal-icon.png",
                  g_get_user_config_dir());
         gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
         gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-        gtk_icon_theme_add_builtin_icon(progdt->palicon, MAX_ICONSIZE, pixbuf);
         g_object_unref(pixbuf);
       } else {
         g_free(progdt->palicon);

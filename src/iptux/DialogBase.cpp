@@ -518,7 +518,7 @@ void DialogBase::DragDataReceived(DialogBase* dlgpr,
  * @return Gtk+库所需
  */
 gboolean DialogBase::WindowConfigureEvent(GtkWidget* window,
-                                          GdkEventConfigure* event,
+                                          GdkEventConfigure*,
                                           GData** dtset) {
   int width, height;
   gtk_window_get_size(GTK_WINDOW(window), &width, &height);
@@ -831,7 +831,7 @@ void DialogBase::OnPasteClipboard(DialogBase*, GtkTextView* textview) {
 
 void DialogBase::onInputPopulatePopup(DialogBase* self,
                                       GtkWidget* popup,
-                                      GtkTextView* textview) {
+                                      GtkTextView*) {
   if (!GTK_IS_MENU(popup))
     return;
 

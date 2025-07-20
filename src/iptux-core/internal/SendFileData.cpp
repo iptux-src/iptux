@@ -145,12 +145,19 @@ void SendFileData::SendRegularFile() {
   }
 }
 
+static void _dirstack_free(gpointer data, gpointer) {
+  DIR* dir = (DIR*)data;
+  if (dir) {
+    closedir(dir);
+  }
+}
+
 /**
  * 发送目录文件.
  */
 void SendFileData::SendDirFiles() {
   AnalogFS afs;
-  GQueue dirstack = G_QUEUE_INIT;
+  GQueue dirstack = G_QUEUE_INIT;  // @see DIR
   struct stat st;
   struct dirent *dirt, vdirt;
   DIR* dir;
@@ -259,7 +266,7 @@ end:
     if (dir)
       closedir(dir);
     /* 关闭堆栈中所有的目录流，并清空堆栈 */
-    g_queue_foreach(&dirstack, GFunc(closedir), NULL);
+    g_queue_foreach(&dirstack, _dirstack_free, NULL);
     g_queue_clear(&dirstack);
     LOG_INFO(_("Failed to send the directory \"%s\" to %s!"), file->filepath,
              file->fileown->getName().c_str());
