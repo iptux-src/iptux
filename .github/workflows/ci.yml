@@ -59,12 +59,12 @@ jobs:
           sudo apt update &&
           sudo apt install libunwind-dev &&
           sudo apt install -y ${{ env.DEB_PKGS }} ${{ env.DEB_TEST_PKGS }}
-      - name: Install package on Ubuntu 22.04 only
-        if: matrix.runs-on == 'ubuntu-22.04'
-        run: sudo apt install -y ${{ env.UB2204_PKGS }}
-      - name: Install package on Ubuntu 24.04 only
-        if: matrix.runs-on == 'ubuntu-24.04' || matrix.runs-on == 'ubuntu-latest'
-        run: sudo apt install -y ${{ env.UB2404_PKGS }}
+          version=$(lsb_release -rs)
+          if [ "$version" = "22.04" ]; then
+            sudo apt install -y ${{ env.UB2204_PKGS }}
+          elif [ "$version" = "24.04" ]; then
+            sudo apt install -y ${{ env.UB2404_PKGS }}
+          fi
       - name: meson
         run: |
           meson --version
