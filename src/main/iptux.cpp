@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
   textdomain(GETTEXT_PACKAGE);
 
   GError* error = NULL;
-  GOptionContext* context;
+  g_autoptr(GOptionContext) context;
 
   context = g_option_context_new(_("- A software for sharing in LAN"));
   g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
