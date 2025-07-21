@@ -465,9 +465,9 @@ void UdpData::UpdatePalInfo(PalInfo* pal) {
 
   g_free(pal->segdes);
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(ipv4).c_str());
-  auto version = iptux_get_section_string(buf, ':', 0);
-  auto user = iptux_get_section_string(buf, ':', 2);
-  auto host = iptux_get_section_string(buf, ':', 3);
+  g_autofree gchar* version = iptux_get_section_string(buf, ':', 0);
+  g_autofree gchar* user = iptux_get_section_string(buf, ':', 2);
+  g_autofree gchar* host = iptux_get_section_string(buf, ':', 3);
   (*pal)
       .setVersion(version ? version : "?")
       .setUser(user ? user : "???")

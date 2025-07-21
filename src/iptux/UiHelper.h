@@ -59,14 +59,14 @@ void g_action_map_disable_actions(GActionMap* map,
                                   const char* action_name,
                                   ...) G_GNUC_NULL_TERMINATED;
 
-GActionEntry makeActionEntry(const std::string& name, GActionCallback f);
-GActionEntry makeParamActionEntry(const std::string& name,
+GActionEntry makeActionEntry(const char* name, GActionCallback f);
+GActionEntry makeParamActionEntry(const char* name,
                                   GActionCallback f,
-                                  const std::string& paramType);
-GActionEntry makeStateActionEntry(const std::string& name,
+                                  const char* paramType);
+GActionEntry makeStateActionEntry(const char* name,
                                   GActionCallback f,
-                                  const std::string& paramType,
-                                  const std::string& state);
+                                  const char* paramType,
+                                  const char* state);
 
 std::string StrFirstNonEmptyLine(const std::string& s);
 

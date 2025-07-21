@@ -299,32 +299,21 @@ const GRegex* getUrlRegex() {
   return res;
 }
 
-GActionEntry makeActionEntry(const string& name, GActionCallback f) {
-  return GActionEntry(
-      {g_strdup(name.c_str()), f, nullptr, nullptr, nullptr, {0, 0, 0}});
+GActionEntry makeActionEntry(const char* name, GActionCallback f) {
+  return GActionEntry({name, f, nullptr, nullptr, nullptr, {0, 0, 0}});
 }
 
-GActionEntry makeParamActionEntry(const string& name,
+GActionEntry makeParamActionEntry(const char* name,
                                   GActionCallback f,
-                                  const string& paramType) {
-  return GActionEntry({g_strdup(name.c_str()),
-                       f,
-                       g_strdup(paramType.c_str()),
-                       nullptr,
-                       nullptr,
-                       {0, 0, 0}});
+                                  const char* paramType) {
+  return GActionEntry({name, f, paramType, nullptr, nullptr, {0, 0, 0}});
 }
 
-GActionEntry makeStateActionEntry(const string& name,
+GActionEntry makeStateActionEntry(const char* name,
                                   GActionCallback f,
-                                  const string& paramType,
-                                  const string& state) {
-  return GActionEntry({g_strdup(name.c_str()),
-                       nullptr,
-                       g_strdup(paramType.c_str()),
-                       g_strdup(state.c_str()),
-                       f,
-                       {0, 0, 0}});
+                                  const char* paramType,
+                                  const char* state) {
+  return GActionEntry({name, nullptr, paramType, state, f, {0, 0, 0}});
 }
 
 gboolean gtk_window_iconify_on_delete(GtkWindow* window) {

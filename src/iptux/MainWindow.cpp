@@ -93,6 +93,8 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
  */
 MainWindow::~MainWindow() {
   ClearSublayer();
+  if (window)
+    gtk_widget_destroy(window);
 }
 
 GtkWidget* MainWindow::getWindow() {
