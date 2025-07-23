@@ -4,17 +4,17 @@
     <section>
       <item>
         <attribute name="label" translatable="yes">Open Iptux</attribute>
-        <attribute name="action">app.open_main_window</attribute>
+        <attribute name="action">indicator.open_main_window</attribute>
       </item>
     </section>
     <section>
       <item>
         <attribute name="label" translatable="yes">_Preferences</attribute>
-        <attribute name="action">app.preferences</attribute>
+        <attribute name="action">indicator.preferences</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">_Quit</attribute>
-        <attribute name="action">app.quit</attribute>
+        <attribute name="action">indicator.quit</attribute>
       </item>
     </section>
   </menu>

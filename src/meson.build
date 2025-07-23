@@ -32,7 +32,9 @@ else
   conf_data.set('SYSTEM_DARWIN', 0)
 endif
 
-appindicator_dep = dependency('ayatana-appindicator3-0.1', required: get_option('appindicator'))
+appindicator_dep = dependency('ayatana-appindicator-glib',
+  'ayatana-appindicator3-0.1',
+  required: get_option('appindicator'))
 if appindicator_dep.found()
   conf_data.set('HAVE_APPINDICATOR', 1)
 else

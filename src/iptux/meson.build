@@ -27,8 +27,12 @@ sources = files([
 dependencies = [gtk_dep, jsoncpp_dep, sigc_dep]
 
 if appindicator_dep.found()
-    sources += ['AppIndicator.cpp']
     dependencies += [appindicator_dep]
+    if appindicator_dep.name() == 'ayatana-appindicator-glib'
+        sources += ['AppIndicatorGlib.cpp']
+    else
+        sources += ['AppIndicatorGtk3.cpp']
+    endif
 else
     sources += ['AppIndicatorDummy.cpp']
 endif

@@ -1,7 +1,7 @@
 project('iptux', 'cpp',
     license: 'GPL2+',
     version: '0.9.4',
-    meson_version: '>=0.53',
+    meson_version: '>=0.61.2',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
 add_global_arguments('-Werror=format', language : 'cpp')
 
@@ -33,7 +33,7 @@ if meson.version().version_compare('>=0.57')
   endif
 
   if host_machine.system() == 'linux'
-    summary_deps += {'ayatana-appindicator3-0.1': appindicator_dep}
+    summary_deps += {appindicator_dep.name(): appindicator_dep}
   endif
 
   summary_deps += {
