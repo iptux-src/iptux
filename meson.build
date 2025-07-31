@@ -14,6 +14,9 @@ endif
 if (cc.has_argument('-Wno-cast-function-type'))
   add_project_arguments('-Wno-cast-function-type', language : 'cpp')
 endif
+if (cc.has_argument('-Wno-c99-designator'))
+  add_project_arguments('-Wno-c99-designator', language : 'cpp')
+endif
 if host_machine.system() == 'darwin' and get_option('werror')
   add_project_arguments('-U_LIBCPP_ENABLE_ASSERTIONS', language: 'cpp')
 endif
