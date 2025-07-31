@@ -60,7 +60,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
   /* TODO: Group SendTextMsg need add Picture */
   void FeedbackMsg(const gchar* msg);
   virtual void BroadcastEnclosureMsg(const std::vector<FileInfo*>& files) = 0;
-  virtual void populateInputPopup(GtkMenu* popup){};
+  virtual void populateInputPopup(GtkMenu*) {};
 
   // 回调部分
   static void DialogDestory(DialogBase*);

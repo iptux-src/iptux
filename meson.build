@@ -2,8 +2,24 @@ project('iptux', 'cpp',
     license: 'GPL2+',
     version: '0.9.4',
     meson_version: '>=0.53',
-    default_options: ['warning_level=3', 'cpp_std=c++14'])
-add_global_arguments('-Werror=format', language : 'cpp')
+    default_options: ['warning_level=2', 'cpp_std=c++17', 'werror=true'])
+
+# Ubuntu 22.04
+add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_70', language : 'cpp')
+
+cc = meson.get_compiler('cpp')
+if (cc.has_argument('-Wno-cast-function-type-mismatch'))
+  add_project_arguments('-Wno-cast-function-type-mismatch', language : 'cpp')
+endif
+if (cc.has_argument('-Wno-cast-function-type'))
+  add_project_arguments('-Wno-cast-function-type', language : 'cpp')
+endif
+if (cc.has_argument('-Wno-c99-designator'))
+  add_project_arguments('-Wno-c99-designator', language : 'cpp')
+endif
+if host_machine.system() == 'darwin' and get_option('werror')
+  add_project_arguments('-U_LIBCPP_ENABLE_ASSERTIONS', language: 'cpp')
+endif
 
 so_version = 1
 subdir('src')
@@ -44,6 +60,7 @@ if meson.version().version_compare('>=0.57')
   summary(summary_deps, section: 'Dependencies:')
 
   summary({
+
     'dev': get_option('dev'),
     'static-link': get_option('static-link'),
     'appindicator': appindicator_dep.found(),

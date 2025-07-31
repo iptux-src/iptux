@@ -552,13 +552,8 @@ void UiCoreThread::CheckIconTheme() {
   snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s",
            programData->myicon.c_str());
   if (access(pathbuf, F_OK) != 0) {
-    snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
+    snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s.png",
              g_get_user_config_dir(), programData->myicon.c_str());
-    if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-      gtk_icon_theme_add_builtin_icon(programData->myicon.c_str(), MAX_ICONSIZE,
-                                      pixbuf);
-      g_object_unref(pixbuf);
-    }
   }
 
   snprintf(pathbuf, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s",
@@ -567,8 +562,6 @@ void UiCoreThread::CheckIconTheme() {
     snprintf(pathbuf, MAX_PATHLEN, "%s" ICON_PATH "/%s",
              g_get_user_config_dir(), programData->palicon);
     if ((pixbuf = gdk_pixbuf_new_from_file(pathbuf, NULL))) {
-      gtk_icon_theme_add_builtin_icon(programData->palicon, MAX_ICONSIZE,
-                                      pixbuf);
       g_object_unref(pixbuf);
     }
   }
