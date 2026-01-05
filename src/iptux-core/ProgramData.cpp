@@ -92,14 +92,8 @@ bool ProgramData::initPrivateKey() {
   }
 
 #if HAVE_ENCRYPTION
-  auto keypair = generate_rsa_keypair(4096);
-  if (keypair.first.empty() || keypair.second.empty()) {
-    LOG_ERROR("Generate RSA keypair failed");
-    return false;
-  }
-  public_key = keypair.first;
-  private_key = keypair.second;
-  return true;
+  private_key = Encrypt::genRsaPrivPem(4096);
+  return !private_key.empty();
 #else
   return false;
 #endif

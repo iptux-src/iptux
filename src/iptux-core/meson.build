@@ -27,6 +27,12 @@ core_sources += files([
     'internal/UdpDataService.cpp',
 ])
 
+if encryption_dep.found()
+  core_sources += files([
+      'internal/EncryptGnutls.cpp',
+  ])
+endif
+
 inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
@@ -34,14 +40,14 @@ thread_dep = dependency('threads')
 if get_option('static-link')
     libiptux_core = static_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep, encryption_dep],
         link_with: [libiptux_utils],
         include_directories: inc,
     )
 else
     libiptux_core = shared_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep, encryption_dep],
         link_with: [libiptux_utils],
         include_directories: inc,
         install: true,
@@ -53,7 +59,7 @@ else
         description: 'Communicate and Share File in LAN',
         name: 'iptux-core',
         version: meson.project_version(),
-        requires: [jsoncpp_dep, glib_dep, sigc_dep, thread_dep],
+        requires: [jsoncpp_dep, glib_dep, sigc_dep, thread_dep, encryption_dep],
         libraries: [libiptux_core],
     )
 endif

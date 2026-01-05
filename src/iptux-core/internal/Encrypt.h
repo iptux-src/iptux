@@ -1,5 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 #pragma once
 
 #include <string>
 
-std::pair<std::string, std::string> generate_rsa_keypair(int bits);
+namespace iptux {
+
+class Encrypt {
+ public:
+  static std::string genRsaPrivPem(int bits);
+};
+
+}  // namespace iptux
