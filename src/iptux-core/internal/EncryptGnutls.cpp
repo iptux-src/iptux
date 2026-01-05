@@ -13,6 +13,11 @@ std::string Encrypt::genRsaPrivPem(int bits) {
   int ret;
   gnutls_datum_t out = {NULL, 0};
 
+  if (bits < 512) {
+    LOG_WARN("Invalid RSA key bits: %d", bits);
+    return "";
+  }
+
   gnutls_global_init();
 
   gnutls_x509_privkey_t privkey;
