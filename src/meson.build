@@ -39,6 +39,13 @@ else
   conf_data.set('HAVE_APPINDICATOR', 0)
 endif
 
+encryption_dep = dependency('gnutls', required: get_option('encryption'))
+if encryption_dep.found()
+  conf_data.set('HAVE_ENCRYPTION', 1)
+else
+  conf_data.set('HAVE_ENCRYPTION', 0)
+endif
+
 configure_file(
   input: 'config.h.in',
   output: 'config.h',

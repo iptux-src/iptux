@@ -25,3 +25,10 @@ option(
   value: false,
   description: 'enable -fsanitize=address compile/link flag',
 )
+
+option(
+  'encryption',
+  type: 'feature',
+  value: 'auto',
+  description: 'enable message encryption support',
+)

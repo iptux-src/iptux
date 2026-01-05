@@ -23,6 +23,8 @@ class ProgramData {
   /** Sync ProgramData to ConfigFile */
   void WriteProgData();
 
+  bool initPrivateKey();
+
   const std::vector<NetSegment>& getNetSegments() const;
   void setNetSegments(std::vector<NetSegment>&& netSegments);
 
@@ -82,10 +84,12 @@ class ProgramData {
   std::string path;      // 存档路径 *
   std::string sign;      // 个性签名 *
 
-  std::string codeset;  // 候选编码 *
-  std::string encode;   // 默认通信编码 *
-  char* palicon;        // 默认头像 *
-  char* font;           // 面板字体 *
+  std::string codeset;      // 候选编码 *
+  std::string encode;       // 默认通信编码 *
+  std::string public_key;   // Public key for encryption *
+  std::string private_key;  // Private key for encryption *
+  char* palicon;            // 默认头像 *
+  char* font;               // 面板字体 *
 
   struct timeval timestamp;      // 程序数据时间戳
   int send_message_retry_in_us;  // sleep time(in microsecond) when send message
