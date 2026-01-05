@@ -55,6 +55,7 @@ class ProgramData {
   bool IsUsingBlacklist() const;
   bool IsFilterFileShareRequest() const;
   bool isHideTaskbarWhenMainWindowIconified() const;
+  bool isEncryptMsg() const { return encrypt_msg; }
   void set_port(uint16_t port, bool is_init = false);
   void setOpenChat(bool value) { open_chat = value; }
   void setHideStartup(bool value) { hide_startup = value; }
@@ -112,6 +113,7 @@ class ProgramData {
   uint8_t proof_shared : 1;
   uint8_t hide_taskbar_when_main_window_iconified_ : 1;
   uint8_t need_restart_ : 1;
+  uint8_t encrypt_msg : 1;
 
  private:
   void InitSublayer();

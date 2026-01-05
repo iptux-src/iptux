@@ -83,6 +83,7 @@ void ProgramData::WriteProgData() {
   config->SetStringList(CONFIG_SHARED_FILE_LIST, sharedFileList);
   config->SetString("public_key", public_key);
   config->SetString("private_key", private_key);
+  config->SetBool("encrypt_msg", encrypt_msg);
   config->Save();
 }
 
@@ -149,6 +150,7 @@ void ProgramData::ReadProgData() {
   set_port(config->GetInt("port", IPTUX_DEFAULT_PORT), true);
   codeset = config->GetString("candidacy_encode", "gb18030,utf-16");
   encode = config->GetString("preference_encode", "utf-8");
+  encrypt_msg = config->GetBool("encrypt_msg", true);
   public_key = config->GetString("public_key");
   private_key = config->GetString("private_key");
   palicon = g_strdup(config->GetString("pal_icon", "icon-qq.png").c_str());
