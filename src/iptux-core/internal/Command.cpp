@@ -97,14 +97,24 @@ Command::Command(CoreThread& coreThread)
  */
 Command::~Command() {}
 
+static uint32_t getEntryCmd(const CoreThread& ct, bool dialup) {
+  uint32_t cmd = IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY;
+  if (dialup) {
+    cmd |= IPMSG_DIALUPOPT;
+  }
+  if (ct.supportEncryption()) {
+    cmd |= IPMSG_ENCRYPTOPT;
+  }
+  return cmd;
+}
+
 /**
  * 向局域网所有计算机广播上线信息.
  * @param sock udp socket
  */
 void Command::BroadCast(int sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
-  CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                programData->nickname.c_str());
+  CreateCommand(getEntryCmd(coreThread, false), programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
 
@@ -122,8 +132,7 @@ void Command::BroadCast(int sock, uint16_t port) {
  */
 void Command::DialUp(int sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
-  CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                programData->nickname.c_str());
+  CreateCommand(getEntryCmd(coreThread, true), programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
 
@@ -188,8 +197,7 @@ void Command::SendAbsence(int sock, CPPalInfo pal) {
  */
 void Command::SendDetectPacket(int sock, in_addr ipv4, uint16_t port) {
   auto programData = coreThread.getProgramData();
-  CreateCommand(IPMSG_DIALUPOPT | IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
-                programData->nickname.c_str());
+  CreateCommand(getEntryCmd(coreThread, true), programData->nickname.c_str());
   ConvertEncode(programData->encode);
   CreateIptuxExtra(programData->encode);
   commandSendTo(sock, buf, size, 0, ipv4, port);
