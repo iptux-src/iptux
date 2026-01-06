@@ -88,13 +88,18 @@ void ProgramData::WriteProgData() {
 }
 
 bool ProgramData::initPrivateKey() {
+  bool res;
+
   if (!private_key.empty()) {
     return true;
   }
 
 #if HAVE_ENCRYPTION
   private_key = Encrypt::genRsaPrivPem(4096);
-  return !private_key.empty();
+  res = !private_key.empty();
+  if (res)
+    this->WriteProgData();
+  return res;
 #else
   return false;
 #endif
