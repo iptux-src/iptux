@@ -27,6 +27,13 @@ option(
 )
 
 option(
+  'sanitize-undefined',
+  type: 'boolean',
+  value: false,
+  description: 'enable -fsanitize=undefined compile/link flag',
+)
+
+option(
   'encryption',
   type: 'feature',
   value: 'auto',

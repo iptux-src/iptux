@@ -25,7 +25,6 @@ namespace iptux {
 class UdpData {
  public:
   UdpData(CoreThread& coreThread, in_addr ipv4, const char buf[], size_t size);
-  UdpData(const std::string& buf, const std::string& ipv4String);
   ~UdpData();
 
   in_addr getIpv4() const { return ipv4; }

@@ -53,8 +53,7 @@ enum class GroupInfoStyle {
 GroupInfoStyle GroupInfoStyleFromStr(const std::string& s);
 const char* GroupInfoStyleToStr(GroupInfoStyle style);
 
-const GtkSortType GTK_SORT_TYPE_INVALID = (GtkSortType)-1;
-GtkSortType GtkSortTypeFromStr(const std::string& s);
+bool GtkSortTypeFromStr(const std::string& s, GtkSortType& outType);
 const char* GtkSortTypeToStr(GtkSortType t);
 
 class GroupInfo {
