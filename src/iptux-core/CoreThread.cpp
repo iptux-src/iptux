@@ -768,4 +768,8 @@ shared_ptr<const Event> CoreThread::PopEvent() {
   return event;
 }
 
+bool CoreThread::supportEncryption() const {
+  return pImpl->encrypt_msg;
+}
+
 }  // namespace iptux

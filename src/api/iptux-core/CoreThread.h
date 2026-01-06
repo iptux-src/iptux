@@ -170,6 +170,7 @@ class CoreThread {
 
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
+  bool supportEncryption() const;
 
  public:
   sigc::signal<void(std::shared_ptr<const Event>)> signalEvent;
