@@ -1617,7 +1617,7 @@ void MainWindow::PallistDragDataReceived(GtkWidget* treeview,
  * @return Gtk+库所需
  */
 gboolean MainWindow::MWinConfigureEvent(GtkWidget* window,
-                                        GdkEventConfigure* event,
+                                        GdkEventConfigure*,
                                         MainWindow* self) {
   int width, height;
   gtk_window_get_size(GTK_WINDOW(window), &width, &height);

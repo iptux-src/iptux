@@ -42,7 +42,7 @@ void TerminalNotifierNoticationService::sendNotification(
     LOG_WARN("g_spawn_sync failed: %s-%d-%s", g_quark_to_string(error->domain),
              error->code, error->message);
   }
-  if (!g_spawn_check_exit_status(exit_status, &error)) {
+  if (!g_spawn_check_wait_status(exit_status, &error)) {
     LOG_WARN("g_spawn_sync failed: %s-%d-%s", g_quark_to_string(error->domain),
              error->code, error->message);
   }
