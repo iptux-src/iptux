@@ -12,9 +12,8 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
-#include <arpa/inet.h>
+#include <cstdint>
 #include <memory>
-#include <netinet/in.h>
 #include <string>
 
 #include <json/json.h>
@@ -55,17 +54,17 @@ typedef enum {
 
 class PalKey {
  public:
-  PalKey(in_addr ipv4, int port);
+  PalKey(uint32_t ipv4, int port);
 
   bool operator==(const PalKey& rhs) const;
 
-  in_addr GetIpv4() const { return ipv4; }
+  uint32_t GetIpv4() const { return ipv4; }
   std::string GetIpv4String() const;
   int GetPort() const { return port; }
   std::string ToString() const;
 
  private:
-  in_addr ipv4;
+  uint32_t ipv4;
   int port;
 };
 
@@ -80,7 +79,7 @@ class PalKey {
 class PalInfo {
  public:
   PalInfo(const std::string& ipv4, uint16_t port);
-  PalInfo(in_addr ipv4, uint16_t port);
+  PalInfo(uint32_t ipv4, uint16_t port);
   ~PalInfo();
 
   PalKey GetKey() const { return PalKey(ipv4(), port_); }
@@ -117,7 +116,7 @@ class PalInfo {
   }
 
   std::string toString() const;
-  in_addr ipv4() const { return ipv4_; }
+  uint32_t ipv4() const { return ipv4_; }
   uint16_t port() const { return port_; }
 
   char* segdes;       ///< 所在网段描述
@@ -137,7 +136,7 @@ class PalInfo {
   PalInfo& setInBlacklist(bool value);
 
  private:
-  in_addr ipv4_;           ///< 好友IP
+  uint32_t ipv4_;          ///< 好友IP
   uint16_t port_;          ///< 好友端口
   std::string icon_file_;  ///< 好友头像 *
   std::string user;
@@ -236,7 +235,7 @@ class NetSegment {
   NetSegment();
   ~NetSegment();
 
-  bool ContainIP(in_addr ipv4) const;
+  bool ContainIP(uint32_t ipv4) const;
   /**
    * @brief return the ip count in this segment
    *
