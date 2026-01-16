@@ -101,6 +101,8 @@ Application::~Application() {
   }
   delete window;
   delete notificationService;
+  if (this->process_events_source_id)
+    g_source_remove(this->process_events_source_id);
 }
 
 int Application::run(int argc, char** argv) {
@@ -204,7 +206,8 @@ void Application::onActivate(Application& self) {
     exit(1);
   }
   iptux_init(self.logSystem);
-  g_idle_add(G_SOURCE_FUNC(Application::ProcessEvents), &self);
+  self.process_events_source_id =
+      g_idle_add(G_SOURCE_FUNC(Application::ProcessEvents), &self);
 }
 
 void Application::onQuit(void*, void*, Application& self) {
@@ -413,9 +416,11 @@ gboolean Application::ProcessEvents(gpointer data) {
         "type: %s, from: %s, time: %jdus", EventTypeToStr(e->getType()),
         e->getSource().c_str(),
         (intmax_t)chrono::duration_cast<chrono::microseconds>(elapsed).count());
-    g_idle_add(Application::ProcessEvents, data);
+    self->process_events_source_id =
+        g_idle_add(Application::ProcessEvents, data);
   } else {
-    g_timeout_add(100, Application::ProcessEvents, data);  // 100ms
+    self->process_events_source_id =
+        g_timeout_add(100, Application::ProcessEvents, data);  // 100ms
   }
   return G_SOURCE_REMOVE;
 }

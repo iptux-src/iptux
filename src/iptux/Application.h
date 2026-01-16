@@ -64,6 +64,7 @@ class Application {
   GtkWidget* preference_dialog_ = 0;
   bool use_header_bar_ = false;
   bool started{false};
+  guint process_events_source_id{0};
 
  public:
   // for test
