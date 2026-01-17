@@ -72,8 +72,8 @@ gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
                          (struct sockaddr*)&peer, &peer_len);
 
     if (n > 0) {
-      LOG_INFO("Received %zd bytes: %s\n", n, buf);
       buf[n] = '\0';
+      LOG_INFO("Received %zd bytes: %s\n", n, buf);
       if (!udpThread->ops->on_new_msg(udpThread, peer.sin_addr,
                                       ntohs(peer.sin_port), buf, n)) {
         LOG_WARN("udpThreadCb on_new_msg failed");
