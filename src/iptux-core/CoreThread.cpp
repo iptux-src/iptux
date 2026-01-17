@@ -99,6 +99,8 @@ gboolean udpThreadAttachUdp(UdpThread* udpThread) {
 
 gboolean udpThreadClose0(gpointer data) {
   UdpThread* udpThread = static_cast<UdpThread*>(data);
+
+  LOG_DEBUG("Quitting UDP thread loop");
   g_main_loop_quit(udpThread->loop);
   return FALSE;
 }
