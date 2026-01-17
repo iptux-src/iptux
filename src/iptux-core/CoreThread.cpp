@@ -79,7 +79,7 @@ gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
         LOG_WARN("udpThreadCb on_new_msg failed");
       }
     } else {
-      LOG_ERROR("recvfrom failed: [%d]%s", errno, strerror(errno));
+      LOG_ERROR("recvfrom failed: [%d] %s", errno, strerror(errno));
     }
   }
 
