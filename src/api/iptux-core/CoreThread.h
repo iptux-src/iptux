@@ -198,9 +198,12 @@ class CoreThread {
   void bind_iptux_port();
 
  private:
-  static void RecvUdpData(CoreThread* pcthrd);
   static void RecvTcpData(CoreThread* pcthrd);
+
+ public:
   struct Impl;
+
+ private:
   std::unique_ptr<Impl> pImpl;
 };
 

@@ -21,7 +21,6 @@
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
-#include "iptux-core/internal/UdpData.h"
 #include "iptux-core/internal/UdpDataService.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
@@ -33,6 +32,98 @@ using namespace std;
 using namespace std::placeholders;
 
 namespace iptux {
+
+// MARK: UDP Thread
+
+struct UdpThread;
+struct UdpThreadOps {
+  bool (*on_new_msg)(UdpThread* udpThread,
+                     in_addr ipv4,
+                     uint16_t port,
+                     const char* msg,
+                     size_t size);
+};
+
+struct UdpThread {
+  void* data;
+  int fd;
+  const UdpThreadOps* ops;
+
+  GMainLoop* loop;
+  GMainContext* ctx;
+  GIOChannel* channel;
+  guint id;
+};
+
+gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
+  UdpThread* udpThread = static_cast<UdpThread*>(data);
+
+  if (condition & (G_IO_HUP | G_IO_ERR)) {
+    g_print("Socket closed or error\n");
+    return FALSE;  // remove source
+  }
+
+  if (condition & G_IO_IN) {
+    char buf[MAX_UDPLEN];
+    struct sockaddr_in peer;
+    socklen_t peer_len = sizeof(peer);
+
+    ssize_t n = recvfrom(udpThread->fd, buf, sizeof(buf) - 1, 0,
+                         (struct sockaddr*)&peer, &peer_len);
+
+    if (n > 0) {
+      LOG_INFO("Received %zd bytes: %s\n", n, buf);
+      buf[n] = '\0';
+      if (!udpThread->ops->on_new_msg(udpThread, peer.sin_addr,
+                                      ntohs(peer.sin_port), buf, n)) {
+        LOG_WARN("udpThreadCb on_new_msg failed");
+      }
+    } else {
+      LOG_ERROR("recvfrom failed: [%d]%s", errno, strerror(errno));
+    }
+  }
+
+  return TRUE;  // keep watching
+}
+
+gboolean udpThreadAttachUdp(UdpThread* udpThread) {
+  udpThread->channel = g_io_channel_unix_new(udpThread->fd);
+  g_io_channel_set_encoding(udpThread->channel, NULL, NULL);
+  g_io_channel_set_buffered(udpThread->channel, FALSE);
+
+  udpThread->id = g_io_add_watch(udpThread->channel,
+                                 (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP),
+                                 udpThreadCb, udpThread);
+  return TRUE;
+}
+
+gboolean udpThreadClose0(gpointer data) {
+  UdpThread* udpThread = static_cast<UdpThread*>(data);
+  g_main_loop_quit(udpThread->loop);
+  return FALSE;
+}
+
+void udpThreadClose(UdpThread* udpThread) {
+  g_main_context_invoke(udpThread->ctx, udpThreadClose0, udpThread);
+}
+
+void udpThreadRun(UdpThread* udpThread) {
+  udpThread->ctx = g_main_context_new();
+  g_main_context_push_thread_default(udpThread->ctx);
+
+  udpThread->loop = g_main_loop_new(udpThread->ctx, FALSE);
+  if (!udpThreadAttachUdp(udpThread)) {
+    LOG_ERROR("udpThreadAttachUdp failed");
+    return;
+  }
+  LOG_INFO("UDP thread start");
+  g_main_loop_run(udpThread->loop);
+  g_main_context_pop_thread_default(udpThread->ctx);
+  g_main_loop_unref(udpThread->loop);
+  g_main_context_unref(udpThread->ctx);
+  udpThread->loop = nullptr;
+  udpThread->ctx = nullptr;
+}
 
 namespace {
 /**
@@ -88,6 +179,7 @@ void init_iptux_environment() {
 
 }  // namespace
 
+// MARK: CoreThread
 struct CoreThread::Impl {
   uint16_t port;
 
@@ -110,6 +202,8 @@ struct CoreThread::Impl {
   future<void> udpFuture;
   future<void> tcpFuture;
   future<void> notifyToAllFuture;
+
+  UdpThread* udpThread{nullptr};
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -141,6 +235,20 @@ CoreThread::~CoreThread() {
   g_slist_free(pImpl->blacklist);
 }
 
+bool udpThreadOpsOnNewMsg(UdpThread* udpThread,
+                          in_addr ipv4,
+                          uint16_t port,
+                          const char* msg,
+                          size_t size) {
+  CoreThread::Impl* self = static_cast<CoreThread::Impl*>(udpThread->data);
+  self->udp_data_service->process(ipv4, port, msg, size);
+  return true;
+}
+
+static const UdpThreadOps udpThreadOps = {
+    .on_new_msg = udpThreadOpsOnNewMsg,
+};
+
 /**
  * 程序核心入口，主要任务服务将在此开启.
  */
@@ -152,7 +260,12 @@ void CoreThread::start() {
   init_iptux_environment();
   bind_iptux_port();
 
-  pImpl->udpFuture = async([](CoreThread* ct) { RecvUdpData(ct); }, this);
+  pImpl->udpThread = new UdpThread();
+  pImpl->udpThread->fd = udpSock;
+  pImpl->udpThread->ops = &udpThreadOps;
+  pImpl->udpThread->data = pImpl.get();
+
+  pImpl->udpFuture = async(std::launch::async, udpThreadRun, pImpl->udpThread);
   pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
   pImpl->notifyToAllFuture =
       async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
@@ -208,38 +321,6 @@ void CoreThread::bind_iptux_port() {
 }
 
 /**
- * 监听UDP服务端口.
- * @param pcthrd 核心类
- */
-void CoreThread::RecvUdpData(CoreThread* self) {
-  struct sockaddr_in addr;
-  socklen_t len;
-  char buf[MAX_UDPLEN];
-  ssize_t size;
-
-  while (self->started) {
-    struct pollfd pfd = {self->udpSock, POLLIN, 0};
-    int ret = poll(&pfd, 1, 10);
-    if (ret == -1) {
-      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
-      return;
-    }
-    if (ret == 0) {
-      continue;
-    }
-    g_assert(ret == 1);
-    len = sizeof(addr);
-    if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
-                         (struct sockaddr*)&addr, &len)) == -1)
-      continue;
-    if (size != MAX_UDPLEN)
-      buf[size] = '\0';
-    auto port = ntohs(addr.sin_port);
-    self->pImpl->udp_data_service->process(addr.sin_addr, port, buf, size);
-  }
-}
-
-/**
  * 监听TCP服务端口.
  * @param pcthrd 核心类
  */
@@ -251,7 +332,7 @@ void CoreThread::RecvTcpData(CoreThread* pcthrd) {
     struct pollfd pfd = {pcthrd->tcpSock, POLLIN, 0};
     int ret = poll(&pfd, 1, 10);
     if (ret == -1) {
-      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
+      LOG_ERROR("poll tcp socket failed: %s", strerror(errno));
       return;
     }
     if (ret == 0) {
@@ -273,6 +354,7 @@ void CoreThread::stop() {
   }
   started = false;
   ClearSublayer();
+  udpThreadClose(pImpl->udpThread);
   pImpl->udpFuture.wait();
   pImpl->tcpFuture.wait();
   pImpl->notifyToAllFuture.wait();
