@@ -88,12 +88,25 @@ gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
 
 gboolean udpThreadAttachUdp(UdpThread* udpThread) {
   udpThread->channel = g_io_channel_unix_new(udpThread->fd);
+  if (!udpThread->channel) {
+    LOG_ERROR("Failed to create GIOChannel for UDP socket");
+    return FALSE;
+  }
+
   g_io_channel_set_encoding(udpThread->channel, NULL, NULL);
   g_io_channel_set_buffered(udpThread->channel, FALSE);
 
-  udpThread->id = g_io_add_watch(udpThread->channel,
-                                 (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP),
-                                 udpThreadCb, udpThread);
+  udpThread->id = g_io_add_watch(
+      udpThread->channel,
+      (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP),
+      udpThreadCb,
+      udpThread);
+  if (udpThread->id == 0) {
+    LOG_ERROR("g_io_add_watch failed, unable to attach UDP socket to main loop");
+    g_io_channel_unref(udpThread->channel);
+    udpThread->channel = NULL;
+    return FALSE;
+  }
   return TRUE;
 }
 
