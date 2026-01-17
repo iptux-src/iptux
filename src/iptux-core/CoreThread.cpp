@@ -59,7 +59,7 @@ gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
   UdpThread* udpThread = static_cast<UdpThread*>(data);
 
   if (condition & (G_IO_HUP | G_IO_ERR)) {
-    g_print("Socket closed or error\n");
+    LOG_ERROR("UDP socket closed or error in udpThreadCb (condition=0x%x)", condition);
     return FALSE;  // remove source
   }
 
