@@ -310,6 +310,7 @@ struct CoreThread::Impl {
   PPalInfo me;
 
   UdpDataService_U udp_data_service;
+  uint8_t encrypt_msg : 1;
 
   GSList* blacklist{nullptr};  // 黑名单链表
   bool debugDontBroadcast{false};
@@ -360,6 +361,14 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       .setGroup(programData->mygroup)
       .setEncode("utf-8")
       .setCompatible(true);
+
+  if (programData->isEncryptMsg()) {
+    if (!programData->initPrivateKey()) {
+      LOG_ERROR("CoreThread: Failed to initialize encryption keys.");
+    } else {
+      pImpl->encrypt_msg = true;
+    }
+  }
 }
 
 CoreThread::~CoreThread() {
@@ -1005,6 +1014,10 @@ shared_ptr<const Event> CoreThread::PopEvent() {
 
 enum CoreThreadErr CoreThread::getLastErr() const {
   return pImpl->lastErr;
+}
+
+bool CoreThread::supportEncryption() const {
+  return pImpl->encrypt_msg;
 }
 
 }  // namespace iptux

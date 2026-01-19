@@ -182,6 +182,7 @@ class CoreThread {
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
   enum CoreThreadErr getLastErr() const;
+  bool supportEncryption() const;
 
  public:
   sigc::signal<void(std::shared_ptr<const Event>)> signalEvent;

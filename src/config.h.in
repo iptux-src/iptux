@@ -21,6 +21,7 @@
 
 #mesondefine SYSTEM_DARWIN
 #mesondefine HAVE_APPINDICATOR
+#mesondefine HAVE_ENCRYPTION
 
 #if defined(__APPLE__) || defined(__CYGWIN__)
 #define O_LARGEFILE 0
