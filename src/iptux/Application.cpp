@@ -199,10 +199,11 @@ void Application::onActivate(Application& self) {
   }
   self.started = true;
 
-  try {
-    self.cthrd->start();
-  } catch (const Exception& e) {
-    pop_warning(self.window->getWindow(), "%s", e.what());
+  if (!self.cthrd->start()) {
+    enum CoreThreadErr err = self.cthrd->getLastErr();
+    pop_warning(self.window->getWindow(),
+                _("Start core thread failed: [%d] %s"), err,
+                coreThreadErrToStr(err));
     exit(1);
   }
   iptux_init(self.logSystem);

@@ -2,6 +2,7 @@
 #include "iptux-core/CoreThread.h"
 
 #include "Const.h"
+#include <cassert>
 #include <cstdio>
 #include <deque>
 #include <fstream>
@@ -21,7 +22,6 @@
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-core/internal/TcpData.h"
-#include "iptux-core/internal/UdpData.h"
 #include "iptux-core/internal/UdpDataService.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-core/internal/support.h"
@@ -33,6 +33,221 @@ using namespace std;
 using namespace std::placeholders;
 
 namespace iptux {
+
+// MARK: enum CoreThreadErr
+
+const char* coreThreadErrToStr(enum CoreThreadErr err) {
+  switch (err) {
+    case CORE_THREAD_ERR_NONE:
+      return "No error";
+    case CORE_THREAD_ERR_STARTED_TWICE:
+      return "Core thread started twice";
+    case CORE_THREAD_ERR_SOCKET_CREATE_FAILED:
+      return _("Socket create failed");
+    case CORE_THREAD_ERR_UDP_BIND_FAILED:
+      return _("UDP bind failed");
+    case CORE_THREAD_ERR_UDP_THREAD_START_FAILED:
+      return _("UDP thread start failed");
+    case CORE_THREAD_ERR_TCP_BIND_FAILED:
+      return _("TCP bind failed");
+    default:
+      return _("Unknown error");
+  }
+}
+
+// MARK: UDP Thread
+
+struct UdpThread;
+struct UdpThreadOps {
+  bool (*on_new_msg)(UdpThread* udpThread,
+                     in_addr ipv4,
+                     uint16_t port,
+                     const char* msg,
+                     size_t size);
+  void (*on_init_failed)(UdpThread* udpThread);
+};
+
+enum UdpThreadState {
+  UDP_THREAD_STATE_INIT = 0,
+  UDP_THREAD_STATE_RUNNING,
+  UDP_THREAD_STATE_CLOSING,
+  UDP_THREAD_STATE_CLOSED
+};
+
+struct UdpThread {
+  // config
+  void* data = nullptr;
+  int fd = -1;
+  const UdpThreadOps* ops = nullptr;
+  // runtime
+  atomic<enum UdpThreadState> state = UDP_THREAD_STATE_INIT;
+  GMainLoop* loop = nullptr;
+  GThread* thread = nullptr;
+  GMainContext* ctx = nullptr;
+  GIOChannel* channel = nullptr;
+  guint id = 0;
+
+  UdpThread() = default;
+  ~UdpThread();
+};
+
+void udpThreadStop(UdpThread* udpThread);
+UdpThread::~UdpThread() {
+  if (state != UDP_THREAD_STATE_CLOSED && state != UDP_THREAD_STATE_INIT) {
+    udpThreadStop(this);
+  }
+  assert(state == UDP_THREAD_STATE_CLOSED);
+  assert(thread == nullptr);
+  if (loop) {
+    g_main_loop_unref(loop);
+    loop = nullptr;
+  }
+  if (ctx) {
+    g_main_context_unref(ctx);
+    ctx = nullptr;
+  }
+  if (channel) {
+    g_io_channel_unref(channel);
+    channel = nullptr;
+  }
+}
+
+gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
+  UdpThread* udpThread = static_cast<UdpThread*>(data);
+
+  if (condition & (G_IO_HUP | G_IO_ERR)) {
+    LOG_ERROR("UDP socket closed or error in udpThreadCb (condition=0x%x)", condition);
+    return FALSE;  // remove source
+  }
+
+  if (condition & G_IO_IN) {
+    char buf[MAX_UDPLEN];
+    struct sockaddr_in peer;
+    socklen_t peer_len = sizeof(peer);
+
+    ssize_t n = recvfrom(udpThread->fd, buf, sizeof(buf) - 1, 0,
+                         (struct sockaddr*)&peer, &peer_len);
+
+    if (n > 0) {
+      buf[n] = '\0';
+      LOG_INFO("Received %zd bytes: %s\n", n, buf);
+      if (!udpThread->ops->on_new_msg(udpThread, peer.sin_addr,
+                                      ntohs(peer.sin_port), buf, n)) {
+        LOG_WARN("udpThreadCb on_new_msg failed");
+      }
+    } else {
+      LOG_ERROR("recvfrom failed: [%d] %s", errno, strerror(errno));
+    }
+  }
+
+  return TRUE;  // keep watching
+}
+
+gboolean udpThreadAttachUdp(UdpThread* udpThread) {
+  udpThread->channel = g_io_channel_unix_new(udpThread->fd);
+  if (!udpThread->channel) {
+    LOG_ERROR("Failed to create GIOChannel for UDP socket");
+    return FALSE;
+  }
+
+  g_io_channel_set_encoding(udpThread->channel, NULL, NULL);
+  g_io_channel_set_buffered(udpThread->channel, FALSE);
+
+  GSource* src = g_io_create_watch(
+      udpThread->channel, (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP));
+  g_source_set_callback(src, (GSourceFunc)udpThreadCb, udpThread, NULL);
+  udpThread->id = g_source_attach(src, udpThread->ctx);
+  g_source_unref(src);
+
+  if (udpThread->id == 0) {
+    LOG_ERROR("g_io_add_watch failed, unable to attach UDP socket to main loop");
+    g_io_channel_unref(udpThread->channel);
+    udpThread->channel = nullptr;
+    return FALSE;
+  }
+  return TRUE;
+}
+
+gboolean udpThreadStop0(gpointer data) {
+  UdpThread* udpThread = static_cast<UdpThread*>(data);
+
+  LOG_DEBUG("Quitting UDP thread loop");
+  g_main_loop_quit(udpThread->loop);
+  return FALSE;
+}
+
+void udpThreadStop(UdpThread* udpThread) {
+  if (udpThread->state == UDP_THREAD_STATE_CLOSED) {
+    LOG_WARN("UDP thread already closed");
+    return;
+  }
+  if (udpThread->state == UDP_THREAD_STATE_INIT) {
+    LOG_WARN("UDP thread not started");
+    return;
+  }
+  if (udpThread->state == UDP_THREAD_STATE_RUNNING) {
+    g_main_context_invoke(udpThread->ctx, udpThreadStop0, udpThread);
+  }
+  (void)g_thread_join(udpThread->thread);
+  udpThread->thread = nullptr;
+  udpThread->state = UDP_THREAD_STATE_CLOSED;
+  LOG_INFO("UDP thread stopped");
+}
+
+static bool udpThreadRun0(UdpThread* udpThread) {
+  if (!g_main_context_acquire(udpThread->ctx)) {
+    LOG_ERROR("g_main_context_acquire failed");
+    return false;
+  }
+  g_main_context_push_thread_default(udpThread->ctx);
+
+  udpThread->loop = g_main_loop_new(udpThread->ctx, FALSE);
+  if (!udpThreadAttachUdp(udpThread)) {
+    LOG_ERROR("udpThreadAttachUdp failed");
+    return false;
+  }
+  return true;
+}
+
+static gpointer udpThreadRun(gpointer data) {
+  UdpThread* udpThread = static_cast<UdpThread*>(data);
+
+  if (!udpThreadRun0(udpThread)) {
+    LOG_ERROR("Failed to init UDP thread");
+    udpThread->state = UDP_THREAD_STATE_CLOSING;
+    if (udpThread->ops->on_init_failed) {
+      udpThread->ops->on_init_failed(udpThread);
+    }
+    return NULL;
+  }
+
+  LOG_INFO("UDP thread start");
+  g_main_loop_run(udpThread->loop);
+  g_main_context_pop_thread_default(udpThread->ctx);
+  g_main_loop_unref(udpThread->loop);
+  g_main_context_unref(udpThread->ctx);
+  udpThread->loop = nullptr;
+  udpThread->ctx = nullptr;
+  udpThread->state = UDP_THREAD_STATE_CLOSING;
+  return NULL;
+}
+
+gboolean udpThreadStart(UdpThread* udpThread) {
+  if (udpThread->state != UDP_THREAD_STATE_INIT) {
+    LOG_WARN("UDP thread already started");
+    return FALSE;
+  }
+
+  udpThread->ctx = g_main_context_new();
+  udpThread->thread = g_thread_new("udpThread", udpThreadRun, udpThread);
+  udpThread->state = UDP_THREAD_STATE_RUNNING;
+  if (!udpThread->thread) {
+    LOG_ERROR("Failed to create UDP thread");
+    udpThread->state = UDP_THREAD_STATE_CLOSED;
+    return FALSE;
+  }
+  return TRUE;
+}
 
 namespace {
 /**
@@ -88,6 +303,7 @@ void init_iptux_environment() {
 
 }  // namespace
 
+// MARK: CoreThread
 struct CoreThread::Impl {
   uint16_t port;
 
@@ -107,10 +323,22 @@ struct CoreThread::Impl {
   deque<shared_ptr<const Event>> waitingEvents;
   std::mutex waitingEventsMutex;
 
-  future<void> udpFuture;
   future<void> tcpFuture;
   future<void> notifyToAllFuture;
+
+  UdpThread* udpThread{nullptr};
+  enum CoreThreadErr lastErr;
+
+  Impl() = default;
+  ~Impl();
 };
+
+CoreThread::Impl::~Impl() {
+  if (udpThread) {
+    delete udpThread;
+    udpThread = nullptr;
+  }
+}
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
@@ -141,24 +369,66 @@ CoreThread::~CoreThread() {
   g_slist_free(pImpl->blacklist);
 }
 
+bool udpThreadOpsOnNewMsg(UdpThread* udpThread,
+                          in_addr ipv4,
+                          uint16_t port,
+                          const char* msg,
+                          size_t size) {
+  CoreThread::Impl* self = static_cast<CoreThread::Impl*>(udpThread->data);
+
+  try {
+    self->udp_data_service->process(ipv4, port, msg, size);
+  } catch (const std::exception& e) {
+    LOG_ERROR("Exception in UDP message processing: %s", e.what());
+    return false;
+  } catch (...) {
+    LOG_ERROR("Unknown exception in UDP message processing");
+    return false;
+  }
+  return true;
+}
+
+void udpThreadOpsOnInitFailed(UdpThread* udpThread) {
+  CoreThread::Impl* self = static_cast<CoreThread::Impl*>(udpThread->data);
+  self->lastErr = CORE_THREAD_ERR_UDP_THREAD_START_FAILED;
+  // TODO: notify core thread
+}
+
+static const UdpThreadOps udpThreadOps = {
+    .on_new_msg = udpThreadOpsOnNewMsg,
+    .on_init_failed = udpThreadOpsOnInitFailed,
+};
+
 /**
  * 程序核心入口，主要任务服务将在此开启.
  */
-void CoreThread::start() {
+bool CoreThread::start() noexcept {
   if (started) {
-    throw "CoreThread already started, can't start twice";
+    pImpl->lastErr = CORE_THREAD_ERR_STARTED_TWICE;
+    return false;
   }
   started = true;
   init_iptux_environment();
-  bind_iptux_port();
+  if (!bind_iptux_port())
+    return false;
 
-  pImpl->udpFuture = async([](CoreThread* ct) { RecvUdpData(ct); }, this);
+  pImpl->udpThread = new UdpThread();
+  pImpl->udpThread->fd = udpSock;
+  pImpl->udpThread->ops = &udpThreadOps;
+  pImpl->udpThread->data = pImpl.get();
+  if (!udpThreadStart(pImpl->udpThread)) {
+    pImpl->lastErr = CORE_THREAD_ERR_UDP_THREAD_START_FAILED;
+    LOG_ERROR("Failed to start UDP thread");
+    return false;
+  }
+
   pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
   pImpl->notifyToAllFuture =
       async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
+  return true;
 }
 
-void CoreThread::bind_iptux_port() {
+bool CoreThread::bind_iptux_port() noexcept {
   uint16_t port = programData->port();
   struct sockaddr_in addr;
   tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -171,7 +441,8 @@ void CoreThread::bind_iptux_port() {
     const char* errmsg = g_strdup_printf(
         _("Fatal Error!! Failed to create new socket!\n%s"), strerror(ec));
     LOG_WARN("%s", errmsg);
-    throw Exception(SOCKET_CREATE_FAILED, errmsg);
+    pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
+    return false;
   }
 
   memset(&addr, '\0', sizeof(addr));
@@ -188,7 +459,8 @@ void CoreThread::bind_iptux_port() {
         stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
                      bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
-    throw Exception(TCP_BIND_FAILED, errmsg);
+    pImpl->lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
+    return false;
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
@@ -201,42 +473,12 @@ void CoreThread::bind_iptux_port() {
         stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
                      bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
-    throw Exception(UDP_BIND_FAILED, errmsg);
+    pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
+    return false;
   } else {
     LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
   }
-}
-
-/**
- * 监听UDP服务端口.
- * @param pcthrd 核心类
- */
-void CoreThread::RecvUdpData(CoreThread* self) {
-  struct sockaddr_in addr;
-  socklen_t len;
-  char buf[MAX_UDPLEN];
-  ssize_t size;
-
-  while (self->started) {
-    struct pollfd pfd = {self->udpSock, POLLIN, 0};
-    int ret = poll(&pfd, 1, 10);
-    if (ret == -1) {
-      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
-      return;
-    }
-    if (ret == 0) {
-      continue;
-    }
-    g_assert(ret == 1);
-    len = sizeof(addr);
-    if ((size = recvfrom(self->udpSock, buf, MAX_UDPLEN, 0,
-                         (struct sockaddr*)&addr, &len)) == -1)
-      continue;
-    if (size != MAX_UDPLEN)
-      buf[size] = '\0';
-    auto port = ntohs(addr.sin_port);
-    self->pImpl->udp_data_service->process(addr.sin_addr, port, buf, size);
-  }
+  return true;
 }
 
 /**
@@ -251,7 +493,7 @@ void CoreThread::RecvTcpData(CoreThread* pcthrd) {
     struct pollfd pfd = {pcthrd->tcpSock, POLLIN, 0};
     int ret = poll(&pfd, 1, 10);
     if (ret == -1) {
-      LOG_ERROR("poll udp socket failed: %s", strerror(errno));
+      LOG_ERROR("poll tcp socket failed: %s", strerror(errno));
       return;
     }
     if (ret == 0) {
@@ -273,7 +515,9 @@ void CoreThread::stop() {
   }
   started = false;
   ClearSublayer();
-  pImpl->udpFuture.wait();
+  if (pImpl->udpThread) {
+    udpThreadStop(pImpl->udpThread);
+  }
   pImpl->tcpFuture.wait();
   pImpl->notifyToAllFuture.wait();
 }
@@ -757,6 +1001,10 @@ shared_ptr<const Event> CoreThread::PopEvent() {
   auto event = pImpl->waitingEvents.front();
   pImpl->waitingEvents.pop_front();
   return event;
+}
+
+enum CoreThreadErr CoreThread::getLastErr() const {
+  return pImpl->lastErr;
 }
 
 }  // namespace iptux
