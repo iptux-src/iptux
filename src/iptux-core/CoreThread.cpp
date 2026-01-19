@@ -16,7 +16,6 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <poll.h>
-#include <sys/stat.h>
 
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
@@ -545,6 +544,9 @@ void CoreThread::ClearSublayer() {
 }
 
 int CoreThread::getUdpSock() const {
+  if (!pImpl->udpSocket) {
+    return -1;
+  }
   // TODO: should no longer use it
   return g_socket_get_fd(pImpl->udpSocket);
 }
