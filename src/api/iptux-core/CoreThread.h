@@ -18,12 +18,23 @@ namespace iptux {
 
 class TransAbstract;
 
+enum CoreThreadErr {
+  CORE_THREAD_ERR_NONE = 0,
+  CORE_THREAD_ERR_STARTED_TWICE,
+  CORE_THREAD_ERR_SOCKET_CREATE_FAILED,
+  CORE_THREAD_ERR_UDP_BIND_FAILED,
+  CORE_THREAD_ERR_UDP_THREAD_START_FAILED,
+  CORE_THREAD_ERR_TCP_BIND_FAILED,
+};
+
+const char* coreThreadErrToStr(enum CoreThreadErr err);
+
 class CoreThread {
  public:
   explicit CoreThread(std::shared_ptr<ProgramData> data);
   virtual ~CoreThread();
 
-  virtual void start();
+  virtual bool start() noexcept;
   virtual void stop();
 
   CPPalInfo getMe() const;
@@ -170,6 +181,7 @@ class CoreThread {
 
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
+  enum CoreThreadErr getLastErr() const;
   bool supportEncryption() const;
 
  public:
@@ -196,12 +208,15 @@ class CoreThread {
   virtual void ClearSublayer();
 
  private:
-  void bind_iptux_port();
+  bool bind_iptux_port() noexcept;
 
  private:
-  static void RecvUdpData(CoreThread* pcthrd);
   static void RecvTcpData(CoreThread* pcthrd);
+
+ public:
   struct Impl;
+
+ private:
   std::unique_ptr<Impl> pImpl;
 };
 

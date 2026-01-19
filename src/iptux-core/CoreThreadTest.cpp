@@ -21,7 +21,7 @@ TEST(CoreThread, Constructor) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
-  thread->start();
+  EXPECT_TRUE(thread->start());
   thread->stop();
   delete thread;
 }

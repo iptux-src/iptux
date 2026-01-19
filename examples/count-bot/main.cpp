@@ -41,12 +41,16 @@ int runBot(const string& bindIp) {
   config->SetString("bind_ip", bindIp);
   auto progdt = make_shared<ProgramData>(config);
   auto thread = make_shared<CoreThread>(progdt);
-  thread->start();
+  if (!thread->start()) {
+    cerr << "Failed to start CoreThread" << endl;
+    return 1;
+  }
   thread->signalEvent.connect(
       [=](shared_ptr<const Event> event) { processEvent(thread, event); });
   while (true) {
     sleep(10);
   }
+  return 0;
 }
 
 int main(int argc, char* argv[]) {
