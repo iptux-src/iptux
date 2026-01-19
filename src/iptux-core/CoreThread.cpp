@@ -18,7 +18,6 @@
 #include <poll.h>
 #include <sys/stat.h>
 
-#include "iptux-core/Exception.h"
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
 #include "iptux-core/internal/SendFile.h"
@@ -465,8 +464,15 @@ bool CoreThread::bind_iptux_port() noexcept {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
 
-  GInetAddress* any = g_inet_address_new_from_string(bind_ip.c_str());
-  GSocketAddress* bind_addr = g_inet_socket_address_new(any, port);
+  GSocketAddress* bind_addr =
+      g_inet_socket_address_new_from_string(bind_ip.c_str(), port);
+  if (!bind_addr) {
+    close(tcpSock);
+    g_object_unref(pImpl->udpSocket);
+    LOG_ERROR("create bind address failed: %s:%d", bind_ip.c_str(), port);
+    pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
+    return false;
+  }
 
   if (!g_socket_bind(pImpl->udpSocket, bind_addr, TRUE, &error)) {
     close(tcpSock);
