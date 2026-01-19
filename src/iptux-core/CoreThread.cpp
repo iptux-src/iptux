@@ -33,6 +33,25 @@ using namespace std::placeholders;
 
 namespace iptux {
 
+// MARK: enum CoreThreadErr
+
+const char* coreThreadErrToStr(enum CoreThreadErr err) {
+  switch (err) {
+    case CORE_THREAD_ERR_NONE:
+      return "No error";
+    case CORE_THREAD_ERR_STARTED_TWICE:
+      return "Core thread started twice";
+    case CORE_THREAD_ERR_SOCKET_CREATE_FAILED:
+      return _("Socket create failed");
+    case CORE_THREAD_ERR_UDP_BIND_FAILED:
+      return _("UDP bind failed");
+    case CORE_THREAD_ERR_TCP_BIND_FAILED:
+      return _("TCP bind failed");
+    default:
+      return _("Unknown error");
+  }
+}
+
 // MARK: UDP Thread
 
 struct UdpThread;

@@ -26,6 +26,8 @@ enum CoreThreadErr {
   CORE_THREAD_ERR_TCP_BIND_FAILED,
 };
 
+const char* coreThreadErrToStr(enum CoreThreadErr err);
+
 class CoreThread {
  public:
   explicit CoreThread(std::shared_ptr<ProgramData> data);
