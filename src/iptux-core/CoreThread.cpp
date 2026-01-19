@@ -297,7 +297,16 @@ bool udpThreadOpsOnNewMsg(UdpThread* udpThread,
                           const char* msg,
                           size_t size) {
   CoreThread::Impl* self = static_cast<CoreThread::Impl*>(udpThread->data);
-  self->udp_data_service->process(ipv4, port, msg, size);
+
+  try {
+    self->udp_data_service->process(ipv4, port, msg, size);
+  } catch (const std::exception& e) {
+    LOG_ERROR("Exception in UDP message processing: %s", e.what());
+    return false;
+  } catch (...) {
+    LOG_ERROR("Unknown exception in UDP message processing");
+    return false;
+  }
   return true;
 }
 
