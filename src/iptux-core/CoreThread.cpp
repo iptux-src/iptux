@@ -250,7 +250,17 @@ struct CoreThread::Impl {
 
   UdpThread* udpThread{nullptr};
   enum CoreThreadErr lastErr;
+
+  Impl() = default;
+  ~Impl();
 };
+
+CoreThread::Impl::~Impl() {
+  if (udpThread) {
+    delete udpThread;
+    udpThread = nullptr;
+  }
+}
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
