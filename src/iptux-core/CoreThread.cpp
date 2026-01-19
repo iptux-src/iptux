@@ -46,8 +46,8 @@ const char* coreThreadErrToStr(enum CoreThreadErr err) {
       return _("Socket create failed");
     case CORE_THREAD_ERR_UDP_BIND_FAILED:
       return _("UDP bind failed");
-    case CORE_THREAD_ERR_UDP_THREAD_INIT_FAILED:
-      return _("UDP thread init failed");
+    case CORE_THREAD_ERR_UDP_THREAD_START_FAILED:
+      return _("UDP thread start failed");
     case CORE_THREAD_ERR_TCP_BIND_FAILED:
       return _("TCP bind failed");
     default:
@@ -390,7 +390,7 @@ bool udpThreadOpsOnNewMsg(UdpThread* udpThread,
 
 void udpThreadOpsOnInitFailed(UdpThread* udpThread) {
   CoreThread::Impl* self = static_cast<CoreThread::Impl*>(udpThread->data);
-  self->lastErr = CORE_THREAD_ERR_UDP_THREAD_INIT_FAILED;
+  self->lastErr = CORE_THREAD_ERR_UDP_THREAD_START_FAILED;
   // TODO: notify core thread
 }
 
@@ -417,7 +417,7 @@ bool CoreThread::start() noexcept {
   pImpl->udpThread->ops = &udpThreadOps;
   pImpl->udpThread->data = pImpl.get();
   if (!udpThreadStart(pImpl->udpThread)) {
-    pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
+    pImpl->lastErr = CORE_THREAD_ERR_UDP_THREAD_START_FAILED;
     LOG_ERROR("Failed to start UDP thread");
     return false;
   }
