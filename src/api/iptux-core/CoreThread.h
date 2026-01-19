@@ -197,7 +197,7 @@ class CoreThread {
   std::shared_ptr<ProgramData> programData;
   std::shared_ptr<IptuxConfig> config;
   int tcpSock;
-  int udpSock;
+  // int udpSock;
   mutable std::mutex mutex;  // 锁
 
  private:

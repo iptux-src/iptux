@@ -1,4 +1,5 @@
 glib_dep = dependency('glib-2.0', version: '>=2.35')
+gio_dep = dependency('gio-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 sigc_dep = dependency('sigc++-2.0')
 
@@ -34,14 +35,14 @@ thread_dep = dependency('threads')
 if get_option('static-link')
     libiptux_core = static_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
         link_with: [libiptux_utils],
         include_directories: inc,
     )
 else
     libiptux_core = shared_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
         link_with: [libiptux_utils],
         include_directories: inc,
         install: true,
@@ -53,7 +54,7 @@ else
         description: 'Communicate and Share File in LAN',
         name: 'iptux-core',
         version: meson.project_version(),
-        requires: [jsoncpp_dep, glib_dep, sigc_dep, thread_dep],
+        requires: [jsoncpp_dep, glib_dep, gio_dep, sigc_dep, thread_dep],
         libraries: [libiptux_core],
     )
 endif
@@ -64,7 +65,7 @@ core_test_helper_sources = files([
 ])
 libiptux_core_test_helper = static_library('iptux-test-helper',
     core_test_helper_sources,
-    dependencies: [glib_dep, jsoncpp_dep, sigc_dep],
+    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep],
     link_with: [libiptux_core, libiptux_utils_test_helper],
     include_directories: inc
 )
@@ -84,7 +85,7 @@ core_test_sources = files([
 ])
 libiptux_core_test = executable('libiptux_core_test',
     core_test_sources,
-    dependencies: [glib_dep, jsoncpp_dep, sigc_dep, thread_dep],
+    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )

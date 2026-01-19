@@ -2,6 +2,7 @@
 #include "iptux-core/CoreThread.h"
 
 #include "Const.h"
+#include "gio/gio.h"
 #include <cassert>
 #include <cstdio>
 #include <deque>
@@ -60,8 +61,7 @@ const char* coreThreadErrToStr(enum CoreThreadErr err) {
 struct UdpThread;
 struct UdpThreadOps {
   bool (*on_new_msg)(UdpThread* udpThread,
-                     in_addr ipv4,
-                     uint16_t port,
+                     GSocketAddress* peer,
                      const char* msg,
                      size_t size);
   void (*on_init_failed)(UdpThread* udpThread);
@@ -76,15 +76,14 @@ enum UdpThreadState {
 
 struct UdpThread {
   // config
+  GSocket* socket = nullptr;
   void* data = nullptr;
-  int fd = -1;
   const UdpThreadOps* ops = nullptr;
   // runtime
   atomic<enum UdpThreadState> state = UDP_THREAD_STATE_INIT;
   GMainLoop* loop = nullptr;
   GThread* thread = nullptr;
   GMainContext* ctx = nullptr;
-  GIOChannel* channel = nullptr;
   guint id = 0;
 
   UdpThread() = default;
@@ -106,10 +105,6 @@ UdpThread::~UdpThread() {
     g_main_context_unref(ctx);
     ctx = nullptr;
   }
-  if (channel) {
-    g_io_channel_unref(channel);
-    channel = nullptr;
-  }
 }
 
 gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
@@ -122,47 +117,44 @@ gboolean udpThreadCb(GIOChannel*, GIOCondition condition, gpointer data) {
 
   if (condition & G_IO_IN) {
     char buf[MAX_UDPLEN];
-    struct sockaddr_in peer;
-    socklen_t peer_len = sizeof(peer);
+    GSocketAddress* peer;
+    GError* error = nullptr;
 
-    ssize_t n = recvfrom(udpThread->fd, buf, sizeof(buf) - 1, 0,
-                         (struct sockaddr*)&peer, &peer_len);
-
-    if (n > 0) {
-      buf[n] = '\0';
-      LOG_INFO("Received %zd bytes: %s\n", n, buf);
-      if (!udpThread->ops->on_new_msg(udpThread, peer.sin_addr,
-                                      ntohs(peer.sin_port), buf, n)) {
-        LOG_WARN("udpThreadCb on_new_msg failed");
-      }
-    } else {
-      LOG_ERROR("recvfrom failed: [%d] %s", errno, strerror(errno));
+    gssize n = g_socket_receive_from(udpThread->socket, &peer, buf,
+                                     sizeof(buf) - 1, NULL, /* GCancellable */
+                                     &error);
+    if (n < 0) {
+      LOG_ERROR("g_socket_receive_from failed: %s", error->message);
+      g_error_free(error);
+      return TRUE;  // keep watching
     }
+
+    if (n == 0) {
+      g_object_unref(peer);
+      return TRUE;  // keep watching
+    }
+
+    buf[n] = '\0';
+    LOG_INFO("Received %zd bytes: %s\n", n, buf);
+    if (!udpThread->ops->on_new_msg(udpThread, peer, buf, n)) {
+      LOG_WARN("udpThreadCb on_new_msg failed");
+    }
+    g_object_unref(peer);
   }
 
   return TRUE;  // keep watching
 }
 
 gboolean udpThreadAttachUdp(UdpThread* udpThread) {
-  udpThread->channel = g_io_channel_unix_new(udpThread->fd);
-  if (!udpThread->channel) {
-    LOG_ERROR("Failed to create GIOChannel for UDP socket");
-    return FALSE;
-  }
-
-  g_io_channel_set_encoding(udpThread->channel, NULL, NULL);
-  g_io_channel_set_buffered(udpThread->channel, FALSE);
-
-  GSource* src = g_io_create_watch(
-      udpThread->channel, (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP));
+  GSource* src = g_socket_create_source(
+      udpThread->socket, (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP), NULL);
   g_source_set_callback(src, (GSourceFunc)udpThreadCb, udpThread, NULL);
   udpThread->id = g_source_attach(src, udpThread->ctx);
   g_source_unref(src);
 
   if (udpThread->id == 0) {
-    LOG_ERROR("g_io_add_watch failed, unable to attach UDP socket to main loop");
-    g_io_channel_unref(udpThread->channel);
-    udpThread->channel = nullptr;
+    LOG_ERROR(
+        "g_source_attach failed, unable to attach UDP socket to main loop");
     return FALSE;
   }
   return TRUE;
@@ -328,6 +320,7 @@ struct CoreThread::Impl {
 
   UdpThread* udpThread{nullptr};
   enum CoreThreadErr lastErr;
+  GSocket* udpSocket{nullptr};
 
   Impl() = default;
   ~Impl();
@@ -344,7 +337,6 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
       config(data->getConfig()),
       tcpSock(-1),
-      udpSock(-1),
       started(false),
       pImpl(std::make_unique<Impl>()) {
   if (config->GetBool("debug_dont_broadcast")) {
@@ -370,14 +362,13 @@ CoreThread::~CoreThread() {
 }
 
 bool udpThreadOpsOnNewMsg(UdpThread* udpThread,
-                          in_addr ipv4,
-                          uint16_t port,
+                          GSocketAddress* peer,
                           const char* msg,
                           size_t size) {
   CoreThread::Impl* self = static_cast<CoreThread::Impl*>(udpThread->data);
 
   try {
-    self->udp_data_service->process(ipv4, port, msg, size);
+    self->udp_data_service->process(peer, msg, size);
   } catch (const std::exception& e) {
     LOG_ERROR("Exception in UDP message processing: %s", e.what());
     return false;
@@ -413,7 +404,7 @@ bool CoreThread::start() noexcept {
     return false;
 
   pImpl->udpThread = new UdpThread();
-  pImpl->udpThread->fd = udpSock;
+  pImpl->udpThread->socket = pImpl->udpSocket;
   pImpl->udpThread->ops = &udpThreadOps;
   pImpl->udpThread->data = pImpl.get();
   if (!udpThreadStart(pImpl->udpThread)) {
@@ -429,14 +420,23 @@ bool CoreThread::start() noexcept {
 }
 
 bool CoreThread::bind_iptux_port() noexcept {
+  GError* error = nullptr;
+
   uint16_t port = programData->port();
   struct sockaddr_in addr;
   tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   socket_enable_reuse(tcpSock);
-  udpSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  socket_enable_reuse(udpSock);
-  socket_enable_broadcast(udpSock);
-  if ((tcpSock == -1) || (udpSock == -1)) {
+  pImpl->udpSocket = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_DATAGRAM,
+                                  G_SOCKET_PROTOCOL_UDP, &error);
+  if (error != nullptr) {
+    LOG_ERROR("g_socket_new failed: %s", error->message);
+    g_error_free(error);
+    pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
+    return false;
+  }
+  g_socket_set_broadcast(pImpl->udpSocket, TRUE);
+
+  if (tcpSock == -1) {
     int ec = errno;
     const char* errmsg = g_strdup_printf(
         _("Fatal Error!! Failed to create new socket!\n%s"), strerror(ec));
@@ -444,6 +444,9 @@ bool CoreThread::bind_iptux_port() noexcept {
     pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
     return false;
   }
+
+  GInetAddress* any = g_inet_address_new_any(G_SOCKET_FAMILY_IPV4);
+  GSocketAddress* bind_addr = g_inet_socket_address_new(any, port);
 
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
@@ -454,7 +457,7 @@ bool CoreThread::bind_iptux_port() noexcept {
   if (::bind(tcpSock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
     int ec = errno;
     close(tcpSock);
-    close(udpSock);
+    g_object_unref(pImpl->udpSocket);
     auto errmsg =
         stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
                      bind_ip.c_str(), port, strerror(ec));
@@ -465,13 +468,12 @@ bool CoreThread::bind_iptux_port() noexcept {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
 
-  if (::bind(udpSock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    int ec = errno;
+  if (!g_socket_bind(pImpl->udpSocket, bind_addr, TRUE, &error)) {
     close(tcpSock);
-    close(udpSock);
     auto errmsg =
         stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
-                     bind_ip.c_str(), port, strerror(ec));
+                     bind_ip.c_str(), port, error->message);
+    g_error_free(error);
     LOG_ERROR("%s", errmsg.c_str());
     pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
     return false;
@@ -534,11 +536,11 @@ void CoreThread::ClearSublayer() {
     SendBroadcastExit(palInfo);
   }
   shutdown(tcpSock, SHUT_RDWR);
-  shutdown(udpSock, SHUT_RDWR);
 }
 
 int CoreThread::getUdpSock() const {
-  return udpSock;
+  // TODO: should no longer use it
+  return g_socket_get_fd(pImpl->udpSocket);
 }
 
 shared_ptr<ProgramData> CoreThread::getProgramData() {
@@ -552,9 +554,9 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
 void CoreThread::SendNotifyToAll(CoreThread* pcthrd) {
   Command cmd(*pcthrd);
   if (!pcthrd->pImpl->debugDontBroadcast) {
-    cmd.BroadCast(pcthrd->udpSock, pcthrd->port());
+    cmd.BroadCast(pcthrd->getUdpSock(), pcthrd->port());
   }
-  cmd.DialUp(pcthrd->udpSock, pcthrd->port());
+  cmd.DialUp(pcthrd->getUdpSock(), pcthrd->port());
 }
 
 /**
@@ -690,14 +692,14 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
   int sock;
 
   if (!programData->sign.empty()) {
-    cmd.SendMySign(udpSock, pal);
+    cmd.SendMySign(getUdpSock(), pal);
   }
   env = g_get_user_config_dir();
   snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%s", env,
            programData->myicon.c_str());
   if (access(path, F_OK) == 0) {
     ifstream ifs(path);
-    cmd.SendMyIcon(udpSock, pal, ifs);
+    cmd.SendMyIcon(getUdpSock(), pal, ifs);
   }
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
@@ -712,7 +714,7 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
 }
 
 void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
-  Command(*this).SendMyIcon(udpSock, pal, iss);
+  Command(*this).SendMyIcon(getUdpSock(), pal, iss);
 }
 
 void CoreThread::AddBlockIp(in_addr ipv4) {
@@ -787,7 +789,7 @@ void CoreThread::UpdateMyInfo() {
   Lock();
   for (auto pal : pImpl->pallist) {
     if (pal->isOnline()) {
-      cmd.SendAbsence(udpSock, pal);
+      cmd.SendAbsence(getUdpSock(), pal);
     }
     if (pal->isOnline() and pal->isCompatible()) {
       thread t1(bind(&CoreThread::sendFeatureData, this, _1), pal);
@@ -804,7 +806,7 @@ void CoreThread::UpdateMyInfo() {
  */
 void CoreThread::SendBroadcastExit(PPalInfo pal) {
   Command cmd(*this);
-  cmd.SendExit(udpSock, pal);
+  cmd.SendExit(getUdpSock(), pal);
 }
 
 int CoreThread::GetOnlineCount() const {
@@ -822,7 +824,7 @@ void CoreThread::SendDetectPacket(const string& ipv4) {
 }
 
 void CoreThread::SendDetectPacket(in_addr ipv4) {
-  Command(*this).SendDetectPacket(udpSock, ipv4, port());
+  Command(*this).SendDetectPacket(getUdpSock(), ipv4, port());
 }
 
 void CoreThread::emitSomeoneExit(const PalKey& palKey) {
@@ -839,7 +841,7 @@ void CoreThread::EmitIconUpdate(const PalKey& palKey) {
 }
 
 void CoreThread::SendExit(PPalInfo palInfo) {
-  Command(*this).SendExit(udpSock, palInfo);
+  Command(*this).SendExit(getUdpSock(), palInfo);
 }
 
 const string& CoreThread::GetAccessPublicLimit() const {
@@ -943,7 +945,7 @@ bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey,
                                            const std::string& password) {
   auto epasswd =
       g_base64_encode((const guchar*)(password.c_str()), password.size());
-  Command(*this).SendAskShared(udpSock, palKey, IPTUX_PASSWDOPT, epasswd);
+  Command(*this).SendAskShared(getUdpSock(), palKey, IPTUX_PASSWDOPT, epasswd);
   g_free(epasswd);
   return true;
 }
@@ -951,12 +953,13 @@ bool CoreThread::SendAskSharedWithPassword(const PalKey& palKey,
 void CoreThread::SendUnitMessage(const PalKey& palKey,
                                  uint32_t opttype,
                                  const string& message) {
-  Command(*this).SendUnitMsg(udpSock, GetPal(palKey), opttype, message.c_str());
+  Command(*this).SendUnitMsg(getUdpSock(), GetPal(palKey), opttype,
+                             message.c_str());
 }
 
 void CoreThread::SendGroupMessage(const PalKey& palKey,
                                   const std::string& message) {
-  Command(*this).SendGroupMsg(udpSock, GetPal(palKey), message.c_str());
+  Command(*this).SendGroupMsg(getUdpSock(), GetPal(palKey), message.c_str());
 }
 
 void CoreThread::BcstFileInfoEntry(const vector<const PalInfo*>& pals,
