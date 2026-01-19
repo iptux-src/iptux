@@ -178,7 +178,7 @@ class CoreThread {
 
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
-  enum CoreThreadErr getLastErr() const { return lastErr; }
+  enum CoreThreadErr getLastErr() const;
 
  public:
   sigc::signal<void(std::shared_ptr<const Event>)> signalEvent;
@@ -199,7 +199,6 @@ class CoreThread {
 
  private:
   std::atomic_bool started;
-  enum CoreThreadErr lastErr;
 
  protected:
   virtual void ClearSublayer();

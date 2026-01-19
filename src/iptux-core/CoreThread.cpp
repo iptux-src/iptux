@@ -249,6 +249,7 @@ struct CoreThread::Impl {
   future<void> notifyToAllFuture;
 
   UdpThread* udpThread{nullptr};
+  enum CoreThreadErr lastErr;
 };
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -299,7 +300,7 @@ static const UdpThreadOps udpThreadOps = {
  */
 bool CoreThread::start() noexcept {
   if (started) {
-    lastErr = CORE_THREAD_ERR_STARTED_TWICE;
+    pImpl->lastErr = CORE_THREAD_ERR_STARTED_TWICE;
     return false;
   }
   started = true;
@@ -312,7 +313,7 @@ bool CoreThread::start() noexcept {
   pImpl->udpThread->ops = &udpThreadOps;
   pImpl->udpThread->data = pImpl.get();
   if (!udpThreadStart(pImpl->udpThread)) {
-    lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
+    pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
     LOG_ERROR("Failed to start UDP thread");
     return false;
   }
@@ -336,7 +337,7 @@ bool CoreThread::bind_iptux_port() noexcept {
     const char* errmsg = g_strdup_printf(
         _("Fatal Error!! Failed to create new socket!\n%s"), strerror(ec));
     LOG_WARN("%s", errmsg);
-    lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
+    pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
     return false;
   }
 
@@ -354,7 +355,7 @@ bool CoreThread::bind_iptux_port() noexcept {
         stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
                      bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
-    lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
+    pImpl->lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
     return false;
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
@@ -368,7 +369,7 @@ bool CoreThread::bind_iptux_port() noexcept {
         stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
                      bind_ip.c_str(), port, strerror(ec));
     LOG_ERROR("%s", errmsg.c_str());
-    lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
+    pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
     return false;
   } else {
     LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
@@ -897,6 +898,10 @@ shared_ptr<const Event> CoreThread::PopEvent() {
   auto event = pImpl->waitingEvents.front();
   pImpl->waitingEvents.pop_front();
   return event;
+}
+
+enum CoreThreadErr CoreThread::getLastErr() const {
+  return pImpl->lastErr;
 }
 
 }  // namespace iptux
