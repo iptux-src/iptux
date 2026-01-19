@@ -1,6 +1,6 @@
 project('iptux', 'cpp',
     license: 'GPL2+',
-    version: '0.9.4',
+    version: '0.10.0',
     meson_version: '>=0.53',
     default_options: ['warning_level=2', 'cpp_std=c++17', 'werror=true'])
 
@@ -21,7 +21,7 @@ if host_machine.system() == 'darwin' and get_option('werror')
   add_project_arguments('-U_LIBCPP_ENABLE_ASSERTIONS', language: 'cpp')
 endif
 
-so_version = 1
+so_version = 2
 subdir('src')
 subdir('share')
 subdir('po')
