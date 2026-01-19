@@ -2,6 +2,7 @@
 #include "iptux-core/CoreThread.h"
 
 #include "Const.h"
+#include <cassert>
 #include <cstdio>
 #include <deque>
 #include <fstream>
@@ -61,25 +62,48 @@ struct UdpThreadOps {
                      uint16_t port,
                      const char* msg,
                      size_t size);
+  void (*on_init_failed)(UdpThread* udpThread);
+};
+
+enum UdpThreadState {
+  UDP_THREAD_STATE_INIT = 0,
+  UDP_THREAD_STATE_RUNNING,
+  UDP_THREAD_STATE_CLOSING,
+  UDP_THREAD_STATE_CLOSED
 };
 
 struct UdpThread {
+  // config
   void* data = nullptr;
   int fd = -1;
   const UdpThreadOps* ops = nullptr;
-
+  // runtime
+  atomic<enum UdpThreadState> state = UDP_THREAD_STATE_INIT;
   GMainLoop* loop = nullptr;
   GThread* thread = nullptr;
   GMainContext* ctx = nullptr;
   GIOChannel* channel = nullptr;
   guint id = 0;
-  gboolean started = FALSE;
 
   UdpThread() = default;
   ~UdpThread();
 };
 
+void udpThreadStop(UdpThread* udpThread);
 UdpThread::~UdpThread() {
+  if (state != UDP_THREAD_STATE_CLOSED && state != UDP_THREAD_STATE_INIT) {
+    udpThreadStop(this);
+  }
+  assert(state == UDP_THREAD_STATE_CLOSED);
+  assert(thread == nullptr);
+  if (loop) {
+    g_main_loop_unref(loop);
+    loop = nullptr;
+  }
+  if (ctx) {
+    g_main_context_unref(ctx);
+    ctx = nullptr;
+  }
   if (channel) {
     g_io_channel_unref(channel);
     channel = nullptr;
@@ -142,7 +166,7 @@ gboolean udpThreadAttachUdp(UdpThread* udpThread) {
   return TRUE;
 }
 
-gboolean udpThreadClose0(gpointer data) {
+gboolean udpThreadStop0(gpointer data) {
   UdpThread* udpThread = static_cast<UdpThread*>(data);
 
   LOG_DEBUG("Quitting UDP thread loop");
@@ -150,24 +174,51 @@ gboolean udpThreadClose0(gpointer data) {
   return FALSE;
 }
 
-void udpThreadClose(UdpThread* udpThread) {
-  g_main_context_invoke(udpThread->ctx, udpThreadClose0, udpThread);
+void udpThreadStop(UdpThread* udpThread) {
+  if (udpThread->state == UDP_THREAD_STATE_CLOSED) {
+    LOG_WARN("UDP thread already closed");
+    return;
+  }
+  if (udpThread->state == UDP_THREAD_STATE_INIT) {
+    LOG_WARN("UDP thread not started");
+    return;
+  }
+  if (udpThread->state == UDP_THREAD_STATE_RUNNING) {
+    g_main_context_invoke(udpThread->ctx, udpThreadStop0, udpThread);
+  }
+  (void)g_thread_join(udpThread->thread);
+  udpThread->thread = nullptr;
+  udpThread->state = UDP_THREAD_STATE_CLOSED;
+  LOG_INFO("UDP thread stopped");
 }
 
-gpointer udpThreadRun(gpointer data) {
-  UdpThread* udpThread = static_cast<UdpThread*>(data);
-
+static bool udpThreadRun0(UdpThread* udpThread) {
   if (!g_main_context_acquire(udpThread->ctx)) {
     LOG_ERROR("g_main_context_acquire failed");
-    return nullptr;
+    return false;
   }
   g_main_context_push_thread_default(udpThread->ctx);
 
   udpThread->loop = g_main_loop_new(udpThread->ctx, FALSE);
   if (!udpThreadAttachUdp(udpThread)) {
     LOG_ERROR("udpThreadAttachUdp failed");
-    return nullptr;
+    return false;
   }
+  return true;
+}
+
+static gpointer udpThreadRun(gpointer data) {
+  UdpThread* udpThread = static_cast<UdpThread*>(data);
+
+  if (!udpThreadRun0(udpThread)) {
+    LOG_ERROR("Failed to init UDP thread");
+    udpThread->state = UDP_THREAD_STATE_CLOSING;
+    if (udpThread->ops->on_init_failed) {
+      udpThread->ops->on_init_failed(udpThread);
+    }
+    return NULL;
+  }
+
   LOG_INFO("UDP thread start");
   g_main_loop_run(udpThread->loop);
   g_main_context_pop_thread_default(udpThread->ctx);
@@ -175,18 +226,24 @@ gpointer udpThreadRun(gpointer data) {
   g_main_context_unref(udpThread->ctx);
   udpThread->loop = nullptr;
   udpThread->ctx = nullptr;
+  udpThread->state = UDP_THREAD_STATE_CLOSING;
   return NULL;
 }
 
 gboolean udpThreadStart(UdpThread* udpThread) {
-  if (udpThread->started) {
+  if (udpThread->state != UDP_THREAD_STATE_INIT) {
     LOG_WARN("UDP thread already started");
     return FALSE;
   }
 
   udpThread->ctx = g_main_context_new();
-  udpThread->started = TRUE;
   udpThread->thread = g_thread_new("udpThread", udpThreadRun, udpThread);
+  udpThread->state = UDP_THREAD_STATE_RUNNING;
+  if (!udpThread->thread) {
+    LOG_ERROR("Failed to create UDP thread");
+    udpThread->state = UDP_THREAD_STATE_CLOSED;
+    return FALSE;
+  }
   return TRUE;
 }
 
@@ -450,7 +507,7 @@ void CoreThread::stop() {
   started = false;
   ClearSublayer();
   if (pImpl->udpThread) {
-    udpThreadClose(pImpl->udpThread);
+    udpThreadStop(pImpl->udpThread);
     g_thread_join(pImpl->udpThread->thread);
   }
   pImpl->tcpFuture.wait();
