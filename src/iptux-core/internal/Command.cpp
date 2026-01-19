@@ -446,7 +446,7 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
  * @param opttype 命令额外选项
  * @param path 文件路径
  */
-void Command::SendSublayer(int sock,
+bool Command::SendSublayer(int sock,
                            CPPalInfo pal,
                            uint32_t opttype,
                            const char* path) {
@@ -454,6 +454,7 @@ void Command::SendSublayer(int sock,
             pal->GetKey().ToString().c_str(), int(opttype), path);
   struct sockaddr_in addr;
   int fd;
+  bool ret;
 
   CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
   ConvertEncode(pal->getEncode());
@@ -467,11 +468,12 @@ void Command::SendSublayer(int sock,
        (errno != EINTR)) ||
       (xsend(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1)) {
     LOG_WARN("send tcp message failed");
-    return;
+    return false;
   }
 
-  SendSublayerData(sock, fd);
+  ret = SendSublayerData(sock, fd);
   close(fd);
+  return ret;
 }
 
 /**
@@ -498,15 +500,19 @@ void Command::FeedbackError(CPPalInfo pal,
  * @param sock tcp socket
  * @param fd file descriptor
  */
-void Command::SendSublayerData(int sock, int fd) {
+bool Command::SendSublayerData(int sock, int fd) {
   ssize_t len;
+  bool ret = true;
 
   do {
     if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
       break;
-    if ((len = xsend(sock, buf, len)) <= 0)
+    if ((len = xsend(sock, buf, len)) <= 0) {
+      ret = false;
       break;
+    }
   } while (1);
+  return ret;
 }
 
 /**

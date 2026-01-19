@@ -101,7 +101,7 @@ class CoreThread {
   PFileInfo GetPrivateFileById(uint32_t id);
   PFileInfo GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime);
 
-  void sendFeatureData(PPalInfo pal);
+  bool sendFeatureData(PPalInfo pal) noexcept;
   void emitSomeoneExit(const PalKey& palKey);
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);

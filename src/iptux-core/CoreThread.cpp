@@ -685,7 +685,7 @@ void CoreThread::emitEvent(shared_ptr<const Event> event) {
  * 向好友发送iptux特有的数据.
  * @param pal class PalInfo
  */
-void CoreThread::sendFeatureData(PPalInfo pal) {
+bool CoreThread::sendFeatureData(PPalInfo pal) noexcept {
   Command cmd(*this);
   char path[MAX_PATHLEN];
   const gchar* env;
@@ -706,11 +706,14 @@ void CoreThread::sendFeatureData(PPalInfo pal) {
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
       LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
                 strerror(errno));
-      throw Exception(CREATE_TCP_SOCKET_FAILED);
+      pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
+      return false;
     }
-    cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
+    bool ret = cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
     close(sock);
+    return ret;
   }
+  return true;
 }
 
 void CoreThread::SendMyIcon(PPalInfo pal, istream& iss) {
@@ -730,6 +733,8 @@ bool CoreThread::SendMessage(CPPalInfo palInfo, const string& message) {
 
 bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
   auto ptr = chipData.data.c_str();
+  bool ret = true;
+
   switch (chipData.type) {
     case MessageContentType::STRING:
       /* 文本类型 */
@@ -742,9 +747,9 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
                   strerror(errno));
         return false;
       }
-      Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
+      ret = Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       close(sock);  // 关闭网络套接口
-      return true;
+      return ret;
     default:
       g_assert_not_reached();
   }

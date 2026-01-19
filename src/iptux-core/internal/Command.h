@@ -80,7 +80,7 @@ class Command {
                     const char* extra);
   void SendMyIcon(int sock, CPPalInfo pal, std::istream& iss);
   void SendMySign(int sock, CPPalInfo pal);
-  void SendSublayer(int sock,
+  bool SendSublayer(int sock,
                     CPPalInfo pal,
                     uint32_t opttype,
                     const char* path);
@@ -90,7 +90,7 @@ class Command {
 
  private:
   void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
-  void SendSublayerData(int sock, int fd);
+  bool SendSublayerData(int sock, int fd);
   void ConvertEncode(const std::string& encode);
   void CreateCommand(uint32_t command, const char* attach);
   void CreateIpmsgExtra(const char* extra, const char* encode);
