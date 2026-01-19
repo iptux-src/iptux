@@ -445,9 +445,6 @@ bool CoreThread::bind_iptux_port() noexcept {
     return false;
   }
 
-  GInetAddress* any = g_inet_address_new_any(G_SOCKET_FAMILY_IPV4);
-  GSocketAddress* bind_addr = g_inet_socket_address_new(any, port);
-
   memset(&addr, '\0', sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
@@ -467,6 +464,9 @@ bool CoreThread::bind_iptux_port() noexcept {
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
+
+  GInetAddress* any = g_inet_address_new_from_string(bind_ip.c_str());
+  GSocketAddress* bind_addr = g_inet_socket_address_new(any, port);
 
   if (!g_socket_bind(pImpl->udpSocket, bind_addr, TRUE, &error)) {
     close(tcpSock);

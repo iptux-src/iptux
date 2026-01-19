@@ -23,8 +23,7 @@ unique_ptr<UdpData> UdpDataService::process(GSocketAddress* peer,
   GInetSocketAddress* isa = G_INET_SOCKET_ADDRESS(peer);
   guint16 port = g_inet_socket_address_get_port(isa);
   GInetAddress* ia = g_inet_socket_address_get_address(isa);
-  char ip[INET_ADDRSTRLEN];
-  g_inet_address_to_string(ia);
+  char* ip = g_inet_address_to_string(ia);
 
   // TODO: too many conversions, optimize it
   in_addr ipv4 = inAddrFromString(ip);

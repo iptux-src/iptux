@@ -46,6 +46,8 @@ std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
 std::tuple<PCoreThread, PCoreThread> initAndConnnectThreadsFromConfig(
     PIptuxConfig c1,
     PIptuxConfig c2) {
+  int count;
+
   c1->SetBool("debug_dont_broadcast", true);
   c2->SetBool("debug_dont_broadcast", true);
   auto thread1 = make_shared<CoreThread>(make_shared<ProgramData>(c1));
@@ -57,17 +59,17 @@ std::tuple<PCoreThread, PCoreThread> initAndConnnectThreadsFromConfig(
     throw;
   }
   thread1->start();
-  while (thread2->GetOnlineCount() != 1) {
-    LOG_INFO("thread2 online count: %d", thread2->GetOnlineCount());
+  while ((count = thread2->GetOnlineCount()) != 1) {
+    LOG_INFO("thread2 online count: %d", count);
     thread1->SendDetectPacket(c2->GetString("bind_ip"));
     this_thread::yield();
-    this_thread::sleep_for(10ms);
+    this_thread::sleep_for(1000ms);
   }
-  while (thread1->GetOnlineCount() != 1) {
-    LOG_INFO("thread1 online count: %d", thread1->GetOnlineCount());
+  while ((count = thread1->GetOnlineCount()) != 1) {
+    LOG_INFO("thread1 online count: %d", count);
     thread2->SendDetectPacket(c1->GetString("bind_ip"));
     this_thread::yield();
-    this_thread::sleep_for(10ms);
+    this_thread::sleep_for(1000ms);
   }
   return make_tuple(thread1, thread2);
 }
