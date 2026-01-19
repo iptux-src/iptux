@@ -356,7 +356,6 @@ bool CoreThread::bind_iptux_port() noexcept {
     LOG_ERROR("%s", errmsg.c_str());
     lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
     return false;
-    throw Exception(TCP_BIND_FAILED, errmsg);
   } else {
     LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
   }
