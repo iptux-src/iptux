@@ -517,7 +517,6 @@ void CoreThread::stop() {
   ClearSublayer();
   if (pImpl->udpThread) {
     udpThreadStop(pImpl->udpThread);
-    g_thread_join(pImpl->udpThread->thread);
   }
   pImpl->tcpFuture.wait();
   pImpl->notifyToAllFuture.wait();
