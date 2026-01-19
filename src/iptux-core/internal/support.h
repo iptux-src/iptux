@@ -17,7 +17,6 @@
 
 namespace iptux {
 
-void socket_enable_broadcast(int sock);
 void socket_enable_reuse(int sock);
 std::vector<std::string> get_sys_broadcast_addr(int sock);
 

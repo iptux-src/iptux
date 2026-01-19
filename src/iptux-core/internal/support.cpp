@@ -27,21 +27,6 @@ using namespace std;
 namespace iptux {
 
 /**
- * 让套接口支持广播.
- * @param sock socket
- */
-void socket_enable_broadcast(int sock) {
-  socklen_t len;
-  int optval;
-
-  optval = 1;
-  len = sizeof(optval);
-  if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, len) != 0) {
-    LOG_WARN("setsockopt for SO_BROADCAST failed: %s", strerror(errno));
-  }
-}
-
-/**
  * 让套接口监听端口可重用.
  * @param sock socket
  */
