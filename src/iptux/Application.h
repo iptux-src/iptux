@@ -43,6 +43,9 @@ class Application {
   GtkWidget* getPreferenceDialog() { return preference_dialog_; }
   void setPreferenceDialog(GtkWidget* dialog) { preference_dialog_ = dialog; }
 
+  void setTestMode(bool test) { test_mode = test; }
+  bool isActivated() const { return activated; }
+
  private:
   std::shared_ptr<IptuxConfig> config;
   std::shared_ptr<ProgramData> data;
@@ -64,6 +67,8 @@ class Application {
   GtkWidget* preference_dialog_ = 0;
   bool use_header_bar_ = false;
   bool started{false};
+  bool test_mode{false};
+  bool activated{false};
   guint process_events_source_id{0};
 
  public:

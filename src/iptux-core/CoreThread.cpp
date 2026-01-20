@@ -319,6 +319,7 @@ struct CoreThread::Impl {
   UdpThread* udpThread{nullptr};
   enum CoreThreadErr lastErr;
   GSocket* udpSocket{nullptr};
+  GSocket* tcpSocket{nullptr};
 
   Impl() = default;
   ~Impl();
@@ -334,7 +335,6 @@ CoreThread::Impl::~Impl() {
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
       config(data->getConfig()),
-      tcpSock(-1),
       started(false),
       pImpl(std::make_unique<Impl>()) {
   if (config->GetBool("debug_dont_broadcast")) {
@@ -417,74 +417,86 @@ bool CoreThread::start() noexcept {
   return true;
 }
 
-bool CoreThread::bind_iptux_port() noexcept {
+static GSocket* bin_udp_port(const char* ip, uint16_t port) {
   GError* error = nullptr;
-
-  uint16_t port = programData->port();
-  struct sockaddr_in addr;
-  tcpSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-  socket_enable_reuse(tcpSock);
-  pImpl->udpSocket = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_DATAGRAM,
+  GSocket* udpSock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_DATAGRAM,
                                   G_SOCKET_PROTOCOL_UDP, &error);
   if (error != nullptr) {
     LOG_ERROR("g_socket_new failed: %s", error->message);
     g_error_free(error);
-    pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
-    return false;
+    return nullptr;
   }
-  g_socket_set_broadcast(pImpl->udpSocket, TRUE);
+  g_socket_set_broadcast(udpSock, TRUE);
 
-  if (tcpSock == -1) {
-    int ec = errno;
-    const char* errmsg = g_strdup_printf(
-        _("Fatal Error!! Failed to create new socket!\n%s"), strerror(ec));
-    LOG_WARN("%s", errmsg);
-    pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
-    return false;
-  }
-
-  memset(&addr, '\0', sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-
-  auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
-  addr.sin_addr = inAddrFromString(bind_ip);
-  if (::bind(tcpSock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    int ec = errno;
-    close(tcpSock);
-    g_object_unref(pImpl->udpSocket);
-    auto errmsg =
-        stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
-                     bind_ip.c_str(), port, strerror(ec));
-    LOG_ERROR("%s", errmsg.c_str());
-    pImpl->lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
-    return false;
-  } else {
-    LOG_INFO("bind TCP port(%s:%d) success.", bind_ip.c_str(), port);
-  }
-
-  GSocketAddress* bind_addr =
-      g_inet_socket_address_new_from_string(bind_ip.c_str(), port);
+  GSocketAddress* bind_addr = g_inet_socket_address_new_from_string(ip, port);
   if (!bind_addr) {
-    close(tcpSock);
-    g_object_unref(pImpl->udpSocket);
-    LOG_ERROR("create bind address failed: %s:%d", bind_ip.c_str(), port);
-    pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
-    return false;
+    g_object_unref(udpSock);
+    LOG_ERROR("create bind address failed: %s:%d", ip, port);
+    return nullptr;
   }
 
-  if (!g_socket_bind(pImpl->udpSocket, bind_addr, TRUE, &error)) {
-    close(tcpSock);
+  if (!g_socket_bind(udpSock, bind_addr, TRUE, &error)) {
     auto errmsg =
         stringFormat(_("Fatal Error!! Failed to bind the UDP port(%s:%d)!\n%s"),
-                     bind_ip.c_str(), port, error->message);
+                     ip, port, error->message);
     g_error_free(error);
     LOG_ERROR("%s", errmsg.c_str());
+    g_object_unref(udpSock);
+    return nullptr;
+  } else {
+    LOG_INFO("bind UDP port(%s:%d) success.", ip, port);
+  }
+  return udpSock;
+}
+
+static GSocket* bin_tcp_port(const char* ip, uint16_t port) {
+  GError* error = nullptr;
+  GSocket* tcpSock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                                  G_SOCKET_PROTOCOL_TCP, &error);
+  if (error != nullptr) {
+    LOG_ERROR("g_socket_new failed: %s", error->message);
+    g_error_free(error);
+    return nullptr;
+  }
+
+  GSocketAddress* bind_addr = g_inet_socket_address_new_from_string(ip, port);
+  if (!bind_addr) {
+    g_object_unref(tcpSock);
+    LOG_ERROR("create bind address failed: %s:%d", ip, port);
+    return nullptr;
+  }
+
+  if (!g_socket_bind(tcpSock, bind_addr, TRUE, &error)) {
+    auto errmsg =
+        stringFormat(_("Fatal Error!! Failed to bind the TCP port(%s:%d)!\n%s"),
+                     ip, port, error->message);
+    g_error_free(error);
+    LOG_ERROR("%s", errmsg.c_str());
+    g_object_unref(tcpSock);
+    return nullptr;
+  } else {
+    LOG_INFO("bind TCP port(%s:%d) success.", ip, port);
+  }
+  return tcpSock;
+}
+
+bool CoreThread::bind_iptux_port() noexcept {
+  auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
+  uint16_t port = programData->port();
+
+  pImpl->udpSocket = bin_udp_port(bind_ip.c_str(), port);
+  if (!pImpl->udpSocket) {
     pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
     return false;
-  } else {
-    LOG_INFO("bind UDP port(%s:%d) success.", bind_ip.c_str(), port);
   }
+
+  pImpl->tcpSocket = bin_tcp_port(bind_ip.c_str(), port);
+  if (!pImpl->tcpSocket) {
+    pImpl->lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
+    g_object_unref(pImpl->udpSocket);
+    return false;
+  }
+
   return true;
 }
 
@@ -495,9 +507,9 @@ bool CoreThread::bind_iptux_port() noexcept {
 void CoreThread::RecvTcpData(CoreThread* pcthrd) {
   int subsock;
 
-  listen(pcthrd->tcpSock, 5);
+  listen(pcthrd->getTcpSock(), 5);
   while (pcthrd->started) {
-    struct pollfd pfd = {pcthrd->tcpSock, POLLIN, 0};
+    struct pollfd pfd = {pcthrd->getTcpSock(), POLLIN, 0};
     int ret = poll(&pfd, 1, 10);
     if (ret == -1) {
       LOG_ERROR("poll tcp socket failed: %s", strerror(errno));
@@ -507,7 +519,7 @@ void CoreThread::RecvTcpData(CoreThread* pcthrd) {
       continue;
     }
     g_assert(ret == 1);
-    if ((subsock = accept(pcthrd->tcpSock, NULL, NULL)) == -1)
+    if ((subsock = accept(pcthrd->getTcpSock(), NULL, NULL)) == -1)
       continue;
     thread([](CoreThread* coreThread,
               int subsock) { TcpData::TcpDataEntry(coreThread, subsock); },
@@ -540,7 +552,7 @@ void CoreThread::ClearSublayer() {
   for (auto palInfo : pImpl->pallist) {
     SendBroadcastExit(palInfo);
   }
-  shutdown(tcpSock, SHUT_RDWR);
+  shutdown(getTcpSock(), SHUT_RDWR);
 }
 
 int CoreThread::getUdpSock() const {
@@ -549,6 +561,14 @@ int CoreThread::getUdpSock() const {
   }
   // TODO: should no longer use it
   return g_socket_get_fd(pImpl->udpSocket);
+}
+
+int CoreThread::getTcpSock() const {
+  if (!pImpl->tcpSocket) {
+    return -1;
+  }
+  // TODO: should no longer use it
+  return g_socket_get_fd(pImpl->tcpSocket);
 }
 
 shared_ptr<ProgramData> CoreThread::getProgramData() {
@@ -823,6 +843,10 @@ void CoreThread::SendBroadcastExit(PPalInfo pal) {
 }
 
 int CoreThread::GetOnlineCount() const {
+  if (this->started == false) {
+    return 0;
+  }
+
   int res = 0;
   for (auto pal : pImpl->pallist) {
     if (pal->isOnline()) {

@@ -162,6 +162,8 @@ int main(int argc, char** argv) {
   if (bindIp) {
     config->SetString("bind_ip", bindIp);
   }
-  Application app(config);
-  return app.run(argc, argv);
+
+  Application* app = new Application(config);
+  GtkApplication* gtkApp = GTK_APPLICATION(app->getApp());
+  return g_application_run(G_APPLICATION(gtkApp), argc, argv);
 }

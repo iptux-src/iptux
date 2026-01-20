@@ -103,6 +103,11 @@ void MainWindow::Show() {
   gtk_window_present(GTK_WINDOW(window));
 }
 
+static void mainWindowDestroy(gpointer data) {
+  MainWindow* self = (MainWindow*)data;
+  delete self;
+}
+
 /**
  * 创建程序主窗口入口.
  */
@@ -113,6 +118,8 @@ void MainWindow::CreateWindow() {
 
   /* 创建主窗口 */
   window = CreateMainWindow();
+  g_object_set_data_full(G_OBJECT(window), "main-window", (gpointer)this,
+                         mainWindowDestroy);
   CreateActions();
   CreateTitle();
   gtk_container_add(GTK_CONTAINER(window), CreateAllArea());

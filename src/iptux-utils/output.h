@@ -26,6 +26,7 @@ namespace iptux {
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_CRITICAL, __VA_ARGS__)
 #define LOG_ERROR(...) \
   DoLog(__FILE__, __LINE__, __func__, G_LOG_LEVEL_ERROR, __VA_ARGS__)
+#define LOG_TRACE() LOG_DEBUG("called")
 
 /* 警告信息输出 */
 #ifndef WARNING

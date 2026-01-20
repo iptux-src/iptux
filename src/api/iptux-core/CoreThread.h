@@ -40,6 +40,7 @@ class CoreThread {
   CPPalInfo getMe() const;
   PPalInfo getMe();
 
+  int getTcpSock() const;
   int getUdpSock() const;
   uint16_t port() const;
 
@@ -196,8 +197,6 @@ class CoreThread {
  protected:
   std::shared_ptr<ProgramData> programData;
   std::shared_ptr<IptuxConfig> config;
-  int tcpSock;
-  // int udpSock;
   mutable std::mutex mutex;  // 锁
 
  private:
