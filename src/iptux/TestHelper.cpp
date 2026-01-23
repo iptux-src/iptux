@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include "Application.h"
+#include "UiCoreThread.h"
 #include "gtest/gtest.h"
 #include "iptux-core/TestHelper.h"
 #include "iptux-utils/output.h"
@@ -18,6 +19,7 @@ Application* CreateApplication() {
   // g_application_register(G_APPLICATION(app->getApp()), nullptr, nullptr);
   // auto i = g_application_get_is_registered(G_APPLICATION(app->getApp()));
   // EXPECT_TRUE(i);
+  app->getCoreThread()->setIgnoreTcpBindFailed(true);
   app->activate();
   if (app->isActivated() == false) {
     LOG_ERROR("Application activate failed");

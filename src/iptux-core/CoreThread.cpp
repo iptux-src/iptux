@@ -16,6 +16,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <poll.h>
+#include <sys/socket.h>
 
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
@@ -320,6 +321,7 @@ struct CoreThread::Impl {
   enum CoreThreadErr lastErr;
   GSocket* udpSocket{nullptr};
   GSocket* tcpSocket{nullptr};
+  bool ignoreTcpBindFailed{false};
 
   Impl() = default;
   ~Impl();
@@ -329,6 +331,14 @@ CoreThread::Impl::~Impl() {
   if (udpThread) {
     delete udpThread;
     udpThread = nullptr;
+  }
+  if (udpSocket) {
+    g_object_unref(udpSocket);
+    udpSocket = nullptr;
+  }
+  if (tcpSocket) {
+    g_object_unref(tcpSocket);
+    tcpSocket = nullptr;
   }
 }
 
@@ -417,7 +427,7 @@ bool CoreThread::start() noexcept {
   return true;
 }
 
-static GSocket* bin_udp_port(const char* ip, uint16_t port) {
+static GSocket* bind_udp_port(const char* ip, uint16_t port) {
   GError* error = nullptr;
   GSocket* udpSock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_DATAGRAM,
                                   G_SOCKET_PROTOCOL_UDP, &error);
@@ -441,15 +451,16 @@ static GSocket* bin_udp_port(const char* ip, uint16_t port) {
                      ip, port, error->message);
     g_error_free(error);
     LOG_ERROR("%s", errmsg.c_str());
+    g_object_unref(bind_addr);
     g_object_unref(udpSock);
     return nullptr;
-  } else {
-    LOG_INFO("bind UDP port(%s:%d) success.", ip, port);
   }
+  g_object_unref(bind_addr);
+  LOG_INFO("bind UDP port(%s:%d) success.", ip, port);
   return udpSock;
 }
 
-static GSocket* bin_tcp_port(const char* ip, uint16_t port) {
+static GSocket* bind_tcp_port(const char* ip, uint16_t port) {
   GError* error = nullptr;
   GSocket* tcpSock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
                                   G_SOCKET_PROTOCOL_TCP, &error);
@@ -457,6 +468,13 @@ static GSocket* bin_tcp_port(const char* ip, uint16_t port) {
     LOG_ERROR("g_socket_new failed: %s", error->message);
     g_error_free(error);
     return nullptr;
+  }
+
+  // Enable SO_REUSEADDR
+  if (!g_socket_set_option(tcpSock, SOL_SOCKET, SO_REUSEADDR, 1, &error)) {
+    LOG_WARN("g_socket_set_option for SO_REUSEADDR failed: %s", error->message);
+    g_error_free(error);
+    error = nullptr;
   }
 
   GSocketAddress* bind_addr = g_inet_socket_address_new_from_string(ip, port);
@@ -472,29 +490,39 @@ static GSocket* bin_tcp_port(const char* ip, uint16_t port) {
                      ip, port, error->message);
     g_error_free(error);
     LOG_ERROR("%s", errmsg.c_str());
+    g_object_unref(bind_addr);
     g_object_unref(tcpSock);
     return nullptr;
-  } else {
-    LOG_INFO("bind TCP port(%s:%d) success.", ip, port);
   }
+  g_object_unref(bind_addr);
+  LOG_INFO("bind TCP port(%s:%d) success.", ip, port);
   return tcpSock;
+}
+
+void CoreThread::setIgnoreTcpBindFailed(bool ignore) {
+  pImpl->ignoreTcpBindFailed = ignore;
 }
 
 bool CoreThread::bind_iptux_port() noexcept {
   auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
   uint16_t port = programData->port();
 
-  pImpl->udpSocket = bin_udp_port(bind_ip.c_str(), port);
+  pImpl->udpSocket = bind_udp_port(bind_ip.c_str(), port);
   if (!pImpl->udpSocket) {
     pImpl->lastErr = CORE_THREAD_ERR_UDP_BIND_FAILED;
     return false;
   }
 
-  pImpl->tcpSocket = bin_tcp_port(bind_ip.c_str(), port);
+  pImpl->tcpSocket = bind_tcp_port(bind_ip.c_str(), port);
   if (!pImpl->tcpSocket) {
-    pImpl->lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
-    g_object_unref(pImpl->udpSocket);
-    return false;
+    if (pImpl->ignoreTcpBindFailed) {
+      LOG_WARN("TCP bind failed but ignored due to ignoreTcpBindFailed flag");
+    } else {
+      pImpl->lastErr = CORE_THREAD_ERR_TCP_BIND_FAILED;
+      g_object_unref(pImpl->udpSocket);
+      pImpl->udpSocket = nullptr;
+      return false;
+    }
   }
 
   return true;
@@ -553,6 +581,7 @@ void CoreThread::ClearSublayer() {
     SendBroadcastExit(palInfo);
   }
   shutdown(getTcpSock(), SHUT_RDWR);
+  shutdown(getUdpSock(), SHUT_RDWR);
 }
 
 int CoreThread::getUdpSock() const {

@@ -37,6 +37,9 @@ class CoreThread {
   virtual bool start() noexcept;
   virtual void stop();
 
+  // For testing only: ignore TCP bind failures
+  void setIgnoreTcpBindFailed(bool ignore);
+
   CPPalInfo getMe() const;
   PPalInfo getMe();
 

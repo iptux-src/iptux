@@ -27,6 +27,7 @@ unique_ptr<UdpData> UdpDataService::process(GSocketAddress* peer,
 
   // TODO: too many conversions, optimize it
   in_addr ipv4 = inAddrFromString(ip);
+  g_free(ip);
   return process(ipv4, port, buf, size, true);
 }
 

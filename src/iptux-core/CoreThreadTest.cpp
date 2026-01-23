@@ -21,6 +21,7 @@ TEST(CoreThread, Constructor) {
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
   CoreThread* thread = new CoreThread(core);
+  thread->setIgnoreTcpBindFailed(true);
   EXPECT_TRUE(thread->start());
   thread->stop();
   delete thread;
