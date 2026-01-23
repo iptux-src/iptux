@@ -40,6 +40,8 @@ class CoreThread {
 
   // For testing only: ignore TCP bind failures
   void setIgnoreTcpBindFailed(bool ignore);
+  // For testing only: get the count of active TCP handler threads
+  size_t getTcpHandlerThreadCount() const;
 
   CPPalInfo getMe() const;
   PPalInfo getMe();

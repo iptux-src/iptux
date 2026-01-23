@@ -274,3 +274,75 @@ TEST(CoreThread, clearFinishedTransTasks) {
   auto thread = newCoreThreadOnIp("127.0.0.1");
   thread->clearFinishedTransTasks();
 }
+
+TEST(CoreThread, TcpHandlerThreadCount) {
+  auto thread = newCoreThreadOnIp("127.0.0.1");
+  EXPECT_EQ(thread->getTcpHandlerThreadCount(), 0u);
+}
+
+TEST(CoreThread, TcpHandlerThreadCleanup) {
+  using namespace std::chrono_literals;
+  auto oldLogLevel = Log::getLogLevel();
+  Log::setLogLevel(LogLevel::INFO);
+
+  auto config1 = IptuxConfig::newFromString("{}");
+  config1->SetString("bind_ip", "127.0.0.1");
+  auto config2 = IptuxConfig::newFromString("{}");
+  config2->SetString("bind_ip", "127.0.0.2");
+
+  auto threads = initAndConnnectThreadsFromConfig(config1, config2);
+  auto thread1 = get<0>(threads);
+  auto thread2 = get<1>(threads);
+
+  auto pal2InThread1 = thread1->GetPal("127.0.0.2");
+  ASSERT_TRUE(pal2InThread1);
+
+  // Send a picture which creates a TCP connection
+  ChipData chipData(MessageContentType::PICTURE, testDataPath("iptux.png"));
+
+  // Initial thread count should be 0
+  EXPECT_EQ(thread2->getTcpHandlerThreadCount(), 0u);
+
+  // Send picture - this creates TCP connection to thread2
+  thread1->SendMessage(pal2InThread1, chipData);
+
+  // Wait for TCP handler to complete and clean up
+  // The handler should be created and then cleaned up after completion
+  this_thread::sleep_for(500ms);
+
+  // After completion, thread count should be back to 0
+  EXPECT_EQ(thread2->getTcpHandlerThreadCount(), 0u);
+
+  Log::setLogLevel(oldLogLevel);
+  thread1->stop();
+  thread2->stop();
+}
+
+TEST(CoreThread, TcpHandlerThreadStopWithActiveThreads) {
+  using namespace std::chrono_literals;
+  auto oldLogLevel = Log::getLogLevel();
+  Log::setLogLevel(LogLevel::INFO);
+
+  auto config1 = IptuxConfig::newFromString("{}");
+  config1->SetString("bind_ip", "127.0.0.3");
+  auto config2 = IptuxConfig::newFromString("{}");
+  config2->SetString("bind_ip", "127.0.0.4");
+
+  auto threads = initAndConnnectThreadsFromConfig(config1, config2);
+  auto thread1 = get<0>(threads);
+  auto thread2 = get<1>(threads);
+
+  auto pal2InThread1 = thread1->GetPal("127.0.0.4");
+  ASSERT_TRUE(pal2InThread1);
+
+  // Send a picture to create TCP connection
+  ChipData chipData(MessageContentType::PICTURE, testDataPath("iptux.png"));
+  thread1->SendMessage(pal2InThread1, chipData);
+
+  // Don't wait for completion - stop immediately
+  // This tests that stop() properly joins all handler threads
+  Log::setLogLevel(oldLogLevel);
+  thread1->stop();
+  thread2->stop();
+  // If we get here without hanging, the test passes
+}

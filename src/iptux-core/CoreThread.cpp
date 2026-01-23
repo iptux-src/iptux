@@ -9,6 +9,7 @@
 #include <fstream>
 #include <functional>
 #include <future>
+#include <list>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -474,6 +475,7 @@ void init_iptux_environment() {
 
 // MARK: CoreThread
 struct CoreThread::Impl {
+  CoreThread* owner{nullptr};  // Back-pointer to owner
   uint16_t port;
 
   PPalInfo me;
@@ -501,11 +503,22 @@ struct CoreThread::Impl {
   GSocket* tcpSocket{nullptr};
   bool ignoreTcpBindFailed{false};
 
+  // TCP handler threads for incoming connections
+  std::list<GThread*> tcpHandlerThreads;
+  std::mutex tcpHandlerThreadsMutex;
+
   Impl() = default;
   ~Impl();
+
+  std::list<GThread*>::iterator addTcpHandlerThread(GThread* thread);
+  void removeTcpHandlerThread(std::list<GThread*>::iterator it);
+  void joinAllTcpHandlerThreads();
 };
 
 CoreThread::Impl::~Impl() {
+  // Join any remaining TCP handler threads
+  joinAllTcpHandlerThreads();
+
   if (udpThread) {
     delete udpThread;
     udpThread = nullptr;
@@ -524,11 +537,35 @@ CoreThread::Impl::~Impl() {
   }
 }
 
+std::list<GThread*>::iterator CoreThread::Impl::addTcpHandlerThread(GThread* thread) {
+  std::lock_guard<std::mutex> lock(tcpHandlerThreadsMutex);
+  tcpHandlerThreads.push_back(thread);
+  return std::prev(tcpHandlerThreads.end());
+}
+
+void CoreThread::Impl::removeTcpHandlerThread(std::list<GThread*>::iterator it) {
+  std::lock_guard<std::mutex> lock(tcpHandlerThreadsMutex);
+  GThread* thread = *it;
+  tcpHandlerThreads.erase(it);
+  g_thread_join(thread);
+}
+
+void CoreThread::Impl::joinAllTcpHandlerThreads() {
+  std::lock_guard<std::mutex> lock(tcpHandlerThreadsMutex);
+  for (GThread* thread : tcpHandlerThreads) {
+    if (thread) {
+      g_thread_join(thread);
+    }
+  }
+  tcpHandlerThreads.clear();
+}
+
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
     : programData(data),
       config(data->getConfig()),
       started(false),
       pImpl(std::make_unique<Impl>()) {
+  pImpl->owner = this;
   if (config->GetBool("debug_dont_broadcast")) {
     pImpl->debugDontBroadcast = true;
   }
@@ -580,13 +617,67 @@ static const UdpThreadOps udpThreadOps = {
     .on_init_failed = udpThreadOpsOnInitFailed,
 };
 
-void tcpThreadOpsOnNewConnection(TcpThread* tcpThread, GSocket* clientSocket) {
-  CoreThread* coreThread = static_cast<CoreThread*>(tcpThread->data);
+// Data passed to TCP handler thread
+struct TcpHandlerData {
+  CoreThread* coreThread;
+  CoreThread::Impl* impl;
+  GSocket* clientSocket;
+  std::list<GThread*>::iterator threadIt;  // Set after thread creation
+  bool threadItValid{false};
+};
 
-  // Pass the GSocket to TcpData in a new thread (transfers ownership)
-  thread([](CoreThread* ct, GSocket* sock) { TcpData::TcpDataEntry(ct, sock); },
-         coreThread, clientSocket)
-      .detach();
+// Cleanup callback invoked on TCP thread's main context
+static gboolean tcpHandlerCleanupCb(gpointer data) {
+  TcpHandlerData* handlerData = static_cast<TcpHandlerData*>(data);
+  if (handlerData->threadItValid) {
+    handlerData->impl->removeTcpHandlerThread(handlerData->threadIt);
+  }
+  delete handlerData;
+  return FALSE;
+}
+
+static gpointer tcpHandlerThreadFunc(gpointer data) {
+  TcpHandlerData* handlerData = static_cast<TcpHandlerData*>(data);
+  try {
+    TcpData::TcpDataEntry(handlerData->coreThread, handlerData->clientSocket);
+  } catch (const std::exception& e) {
+    LOG_ERROR("Exception in TCP handler: %s", e.what());
+  } catch (...) {
+    LOG_ERROR("Unknown exception in TCP handler");
+  }
+
+  // Schedule cleanup on TCP thread's main context
+  if (handlerData->impl->tcpThread &&
+      handlerData->impl->tcpThread->ctx) {
+    g_main_context_invoke(handlerData->impl->tcpThread->ctx,
+                          tcpHandlerCleanupCb, handlerData);
+  } else {
+    // TCP thread already stopped, just delete
+    delete handlerData;
+  }
+  return nullptr;
+}
+
+void tcpThreadOpsOnNewConnection(TcpThread* tcpThread, GSocket* clientSocket) {
+  CoreThread::Impl* impl = static_cast<CoreThread::Impl*>(tcpThread->data);
+
+  // Create handler data (will be freed by cleanup callback)
+  TcpHandlerData* handlerData = new TcpHandlerData();
+  handlerData->coreThread = impl->owner;
+  handlerData->impl = impl;
+  handlerData->clientSocket = clientSocket;
+
+  // Create a GThread to handle the connection
+  GThread* thread =
+      g_thread_new("tcp-handler", tcpHandlerThreadFunc, handlerData);
+  if (thread) {
+    handlerData->threadIt = impl->addTcpHandlerThread(thread);
+    handlerData->threadItValid = true;
+  } else {
+    LOG_ERROR("Failed to create TCP handler thread");
+    delete handlerData;
+    g_object_unref(clientSocket);
+  }
 }
 
 static const TcpThreadOps tcpThreadOps = {
@@ -620,7 +711,7 @@ bool CoreThread::start() noexcept {
     pImpl->tcpThread = new TcpThread();
     pImpl->tcpThread->socket = pImpl->tcpSocket;
     pImpl->tcpThread->ops = &tcpThreadOps;
-    pImpl->tcpThread->data = this;
+    pImpl->tcpThread->data = pImpl.get();
     if (!tcpThreadStart(pImpl->tcpThread)) {
       pImpl->lastErr = CORE_THREAD_ERR_TCP_THREAD_START_FAILED;
       LOG_ERROR("Failed to start TCP thread");
@@ -709,6 +800,11 @@ void CoreThread::setIgnoreTcpBindFailed(bool ignore) {
   pImpl->ignoreTcpBindFailed = ignore;
 }
 
+size_t CoreThread::getTcpHandlerThreadCount() const {
+  std::lock_guard<std::mutex> lock(pImpl->tcpHandlerThreadsMutex);
+  return pImpl->tcpHandlerThreads.size();
+}
+
 bool CoreThread::bind_iptux_port() noexcept {
   auto bind_ip = config->GetString("bind_ip", "0.0.0.0");
   uint16_t port = programData->port();
@@ -746,6 +842,8 @@ void CoreThread::stop() {
   if (pImpl->udpThread) {
     udpThreadStop(pImpl->udpThread);
   }
+  // Join all TCP handler threads after stopping the accept thread
+  pImpl->joinAllTcpHandlerThreads();
   pImpl->notifyToAllFuture.wait();
 }
 
