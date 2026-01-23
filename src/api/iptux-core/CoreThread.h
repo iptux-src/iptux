@@ -25,6 +25,7 @@ enum CoreThreadErr {
   CORE_THREAD_ERR_UDP_BIND_FAILED,
   CORE_THREAD_ERR_UDP_THREAD_START_FAILED,
   CORE_THREAD_ERR_TCP_BIND_FAILED,
+  CORE_THREAD_ERR_TCP_THREAD_START_FAILED,
 };
 
 const char* coreThreadErrToStr(enum CoreThreadErr err);
@@ -210,9 +211,6 @@ class CoreThread {
 
  private:
   bool bind_iptux_port() noexcept;
-
- private:
-  static void RecvTcpData(CoreThread* pcthrd);
 
  public:
   struct Impl;

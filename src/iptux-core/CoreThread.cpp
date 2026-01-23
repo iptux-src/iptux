@@ -49,6 +49,8 @@ const char* coreThreadErrToStr(enum CoreThreadErr err) {
       return _("UDP thread start failed");
     case CORE_THREAD_ERR_TCP_BIND_FAILED:
       return _("TCP bind failed");
+    case CORE_THREAD_ERR_TCP_THREAD_START_FAILED:
+      return _("TCP thread start failed");
     default:
       return _("Unknown error");
   }
@@ -239,6 +241,183 @@ gboolean udpThreadStart(UdpThread* udpThread) {
   return TRUE;
 }
 
+// ============================================================================
+// TCP Thread Implementation
+// ============================================================================
+
+struct TcpThread;
+struct TcpThreadOps {
+  void (*on_new_connection)(TcpThread* tcpThread, GSocket* clientSocket);
+};
+
+enum TcpThreadState {
+  TCP_THREAD_STATE_INIT = 0,
+  TCP_THREAD_STATE_RUNNING,
+  TCP_THREAD_STATE_CLOSING,
+  TCP_THREAD_STATE_CLOSED
+};
+
+struct TcpThread {
+  // config
+  GSocket* socket = nullptr;
+  void* data = nullptr;
+  const TcpThreadOps* ops = nullptr;
+  // runtime
+  atomic<enum TcpThreadState> state = TCP_THREAD_STATE_INIT;
+  GMainLoop* loop = nullptr;
+  GThread* thread = nullptr;
+  GMainContext* ctx = nullptr;
+  guint id = 0;
+
+  TcpThread() = default;
+  ~TcpThread();
+};
+
+void tcpThreadStop(TcpThread* tcpThread);
+
+TcpThread::~TcpThread() {
+  if (state != TCP_THREAD_STATE_CLOSED && state != TCP_THREAD_STATE_INIT) {
+    tcpThreadStop(this);
+  }
+  assert(state == TCP_THREAD_STATE_CLOSED || state == TCP_THREAD_STATE_INIT);
+  assert(thread == nullptr);
+  if (loop) {
+    g_main_loop_unref(loop);
+    loop = nullptr;
+  }
+  if (ctx) {
+    g_main_context_unref(ctx);
+    ctx = nullptr;
+  }
+}
+
+gboolean tcpThreadCb(GSocket* socket, GIOCondition condition, gpointer data) {
+  TcpThread* tcpThread = static_cast<TcpThread*>(data);
+
+  if (condition & (G_IO_HUP | G_IO_ERR)) {
+    LOG_ERROR("TCP socket closed or error in tcpThreadCb (condition=0x%x)",
+              condition);
+    return FALSE;  // remove source
+  }
+
+  if (condition & G_IO_IN) {
+    GError* error = nullptr;
+    GSocket* clientSocket = g_socket_accept(socket, nullptr, &error);
+    if (!clientSocket) {
+      if (error) {
+        LOG_WARN("g_socket_accept failed: %s", error->message);
+        g_error_free(error);
+      }
+      return TRUE;  // keep watching
+    }
+
+    tcpThread->ops->on_new_connection(tcpThread, clientSocket);
+  }
+
+  return TRUE;  // keep watching
+}
+
+gboolean tcpThreadAttachTcp(TcpThread* tcpThread) {
+  GError* error = nullptr;
+  if (!g_socket_listen(tcpThread->socket, &error)) {
+    LOG_ERROR("g_socket_listen failed: %s", error->message);
+    g_error_free(error);
+    return FALSE;
+  }
+
+  GSource* src = g_socket_create_source(
+      tcpThread->socket, (GIOCondition)(G_IO_IN | G_IO_ERR | G_IO_HUP), NULL);
+  g_source_set_callback(src, (GSourceFunc)tcpThreadCb, tcpThread, NULL);
+  tcpThread->id = g_source_attach(src, tcpThread->ctx);
+  g_source_unref(src);
+
+  if (tcpThread->id == 0) {
+    LOG_ERROR(
+        "g_source_attach failed, unable to attach TCP socket to main loop");
+    return FALSE;
+  }
+  return TRUE;
+}
+
+gboolean tcpThreadStop0(gpointer data) {
+  TcpThread* tcpThread = static_cast<TcpThread*>(data);
+
+  LOG_DEBUG("Quitting TCP thread loop");
+  g_main_loop_quit(tcpThread->loop);
+  return FALSE;
+}
+
+void tcpThreadStop(TcpThread* tcpThread) {
+  if (tcpThread->state == TCP_THREAD_STATE_CLOSED) {
+    LOG_WARN("TCP thread already closed");
+    return;
+  }
+  if (tcpThread->state == TCP_THREAD_STATE_INIT) {
+    LOG_WARN("TCP thread not started");
+    tcpThread->state = TCP_THREAD_STATE_CLOSED;
+    return;
+  }
+  if (tcpThread->state == TCP_THREAD_STATE_RUNNING) {
+    g_main_context_invoke(tcpThread->ctx, tcpThreadStop0, tcpThread);
+  }
+  (void)g_thread_join(tcpThread->thread);
+  tcpThread->thread = nullptr;
+  tcpThread->state = TCP_THREAD_STATE_CLOSED;
+  LOG_INFO("TCP thread stopped");
+}
+
+static bool tcpThreadRun0(TcpThread* tcpThread) {
+  if (!g_main_context_acquire(tcpThread->ctx)) {
+    LOG_ERROR("g_main_context_acquire failed");
+    return false;
+  }
+  g_main_context_push_thread_default(tcpThread->ctx);
+
+  tcpThread->loop = g_main_loop_new(tcpThread->ctx, FALSE);
+  if (!tcpThreadAttachTcp(tcpThread)) {
+    LOG_ERROR("tcpThreadAttachTcp failed");
+    return false;
+  }
+  return true;
+}
+
+static gpointer tcpThreadRun(gpointer data) {
+  TcpThread* tcpThread = static_cast<TcpThread*>(data);
+
+  if (!tcpThreadRun0(tcpThread)) {
+    LOG_ERROR("Failed to init TCP thread");
+    tcpThread->state = TCP_THREAD_STATE_CLOSING;
+    return NULL;
+  }
+
+  LOG_INFO("TCP thread start");
+  g_main_loop_run(tcpThread->loop);
+  g_main_context_pop_thread_default(tcpThread->ctx);
+  g_main_loop_unref(tcpThread->loop);
+  g_main_context_unref(tcpThread->ctx);
+  tcpThread->loop = nullptr;
+  tcpThread->ctx = nullptr;
+  tcpThread->state = TCP_THREAD_STATE_CLOSING;
+  return NULL;
+}
+
+gboolean tcpThreadStart(TcpThread* tcpThread) {
+  if (tcpThread->state != TCP_THREAD_STATE_INIT) {
+    LOG_WARN("TCP thread already started");
+    return FALSE;
+  }
+
+  tcpThread->ctx = g_main_context_new();
+  tcpThread->thread = g_thread_new("tcpThread", tcpThreadRun, tcpThread);
+  tcpThread->state = TCP_THREAD_STATE_RUNNING;
+  if (!tcpThread->thread) {
+    LOG_ERROR("Failed to create TCP thread");
+    tcpThread->state = TCP_THREAD_STATE_CLOSED;
+    return FALSE;
+  }
+  return TRUE;
+}
+
 namespace {
 /**
  * 初始化程序iptux的运行环境.
@@ -313,10 +492,10 @@ struct CoreThread::Impl {
   deque<shared_ptr<const Event>> waitingEvents;
   std::mutex waitingEventsMutex;
 
-  future<void> tcpFuture;
   future<void> notifyToAllFuture;
 
   UdpThread* udpThread{nullptr};
+  TcpThread* tcpThread{nullptr};
   enum CoreThreadErr lastErr;
   GSocket* udpSocket{nullptr};
   GSocket* tcpSocket{nullptr};
@@ -330,6 +509,10 @@ CoreThread::Impl::~Impl() {
   if (udpThread) {
     delete udpThread;
     udpThread = nullptr;
+  }
+  if (tcpThread) {
+    delete tcpThread;
+    tcpThread = nullptr;
   }
   if (udpSocket) {
     g_object_unref(udpSocket);
@@ -397,6 +580,19 @@ static const UdpThreadOps udpThreadOps = {
     .on_init_failed = udpThreadOpsOnInitFailed,
 };
 
+void tcpThreadOpsOnNewConnection(TcpThread* tcpThread, GSocket* clientSocket) {
+  CoreThread* coreThread = static_cast<CoreThread*>(tcpThread->data);
+
+  // Pass the GSocket to TcpData in a new thread (transfers ownership)
+  thread([](CoreThread* ct, GSocket* sock) { TcpData::TcpDataEntry(ct, sock); },
+         coreThread, clientSocket)
+      .detach();
+}
+
+static const TcpThreadOps tcpThreadOps = {
+    .on_new_connection = tcpThreadOpsOnNewConnection,
+};
+
 /**
  * 程序核心入口，主要任务服务将在此开启.
  */
@@ -420,7 +616,18 @@ bool CoreThread::start() noexcept {
     return false;
   }
 
-  pImpl->tcpFuture = async([](CoreThread* ct) { RecvTcpData(ct); }, this);
+  if (pImpl->tcpSocket) {
+    pImpl->tcpThread = new TcpThread();
+    pImpl->tcpThread->socket = pImpl->tcpSocket;
+    pImpl->tcpThread->ops = &tcpThreadOps;
+    pImpl->tcpThread->data = this;
+    if (!tcpThreadStart(pImpl->tcpThread)) {
+      pImpl->lastErr = CORE_THREAD_ERR_TCP_THREAD_START_FAILED;
+      LOG_ERROR("Failed to start TCP thread");
+      return false;
+    }
+  }
+
   pImpl->notifyToAllFuture =
       async([](CoreThread* ct) { SendNotifyToAll(ct); }, this);
   return true;
@@ -527,73 +734,18 @@ bool CoreThread::bind_iptux_port() noexcept {
   return true;
 }
 
-/**
- * 监听TCP服务端口.
- * @param pcthrd 核心类
- */
-void CoreThread::RecvTcpData(CoreThread* pcthrd) {
-  GSocket* tcpSocket = pcthrd->pImpl->tcpSocket;
-  if (!tcpSocket) {
-    LOG_WARN("TCP socket not available, skipping TCP listener");
-    return;
-  }
-
-  GError* error = nullptr;
-  if (!g_socket_listen(tcpSocket, &error)) {
-    LOG_ERROR("g_socket_listen failed: %s", error->message);
-    g_error_free(error);
-    return;
-  }
-
-  while (pcthrd->started) {
-    // Wait for incoming connection with 10ms timeout
-    if (!g_socket_condition_timed_wait(tcpSocket, G_IO_IN, 10000,
-                                       nullptr, /* cancellable */
-                                       &error)) {
-      if (error) {
-        // Timeout is not an error, just continue
-        if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
-          g_error_free(error);
-          error = nullptr;
-          continue;
-        }
-        LOG_ERROR("g_socket_condition_timed_wait failed: %s", error->message);
-        g_error_free(error);
-        return;
-      }
-      // No error but returned false - just continue
-      continue;
-    }
-
-    GSocket* clientSocket = g_socket_accept(tcpSocket, nullptr, &error);
-    if (!clientSocket) {
-      if (error) {
-        LOG_WARN("g_socket_accept failed: %s", error->message);
-        g_error_free(error);
-        error = nullptr;
-      }
-      continue;
-    }
-
-    // Pass the GSocket to TcpData (transfers ownership)
-    thread([](CoreThread* coreThread, GSocket* clientSocket) {
-             TcpData::TcpDataEntry(coreThread, clientSocket);
-           },
-           pcthrd, clientSocket)
-        .detach();
-  }
-}
-
 void CoreThread::stop() {
   if (!started) {
     throw "CoreThread not started, or already stopped";
   }
   started = false;
   ClearSublayer();
+  if (pImpl->tcpThread) {
+    tcpThreadStop(pImpl->tcpThread);
+  }
   if (pImpl->udpThread) {
     udpThreadStop(pImpl->udpThread);
   }
-  pImpl->tcpFuture.wait();
   pImpl->notifyToAllFuture.wait();
 }
 
@@ -604,30 +756,10 @@ uint16_t CoreThread::port() const {
 void CoreThread::ClearSublayer() {
   /**
    * @note 必须在发送下线信息之后才能关闭套接口.
+   * Socket closing is handled by the thread destructors and Impl destructor.
    */
   for (auto palInfo : pImpl->pallist) {
     SendBroadcastExit(palInfo);
-  }
-
-  GError* error = nullptr;
-  if (pImpl->tcpSocket) {
-    if (!g_socket_close(pImpl->tcpSocket, &error)) {
-      LOG_WARN("g_socket_close(tcp) failed: %s",
-               error ? error->message : "unknown");
-      if (error) {
-        g_error_free(error);
-        error = nullptr;
-      }
-    }
-  }
-  if (pImpl->udpSocket) {
-    if (!g_socket_close(pImpl->udpSocket, &error)) {
-      LOG_WARN("g_socket_close(udp) failed: %s",
-               error ? error->message : "unknown");
-      if (error) {
-        g_error_free(error);
-      }
-    }
   }
 }
 
