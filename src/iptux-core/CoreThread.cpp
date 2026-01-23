@@ -15,7 +15,6 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <poll.h>
 #include <sys/socket.h>
 
 #include "iptux-core/internal/Command.h"
@@ -533,25 +532,54 @@ bool CoreThread::bind_iptux_port() noexcept {
  * @param pcthrd 核心类
  */
 void CoreThread::RecvTcpData(CoreThread* pcthrd) {
-  int subsock;
+  GSocket* tcpSocket = pcthrd->pImpl->tcpSocket;
+  if (!tcpSocket) {
+    LOG_WARN("TCP socket not available, skipping TCP listener");
+    return;
+  }
 
-  listen(pcthrd->getTcpSock(), 5);
+  GError* error = nullptr;
+  if (!g_socket_listen(tcpSocket, &error)) {
+    LOG_ERROR("g_socket_listen failed: %s", error->message);
+    g_error_free(error);
+    return;
+  }
+
   while (pcthrd->started) {
-    struct pollfd pfd = {pcthrd->getTcpSock(), POLLIN, 0};
-    int ret = poll(&pfd, 1, 10);
-    if (ret == -1) {
-      LOG_ERROR("poll tcp socket failed: %s", strerror(errno));
-      return;
-    }
-    if (ret == 0) {
+    // Wait for incoming connection with 10ms timeout
+    if (!g_socket_condition_timed_wait(tcpSocket, G_IO_IN, 10000,
+                                       nullptr, /* cancellable */
+                                       &error)) {
+      if (error) {
+        // Timeout is not an error, just continue
+        if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
+          g_error_free(error);
+          error = nullptr;
+          continue;
+        }
+        LOG_ERROR("g_socket_condition_timed_wait failed: %s", error->message);
+        g_error_free(error);
+        return;
+      }
+      // No error but returned false - just continue
       continue;
     }
-    g_assert(ret == 1);
-    if ((subsock = accept(pcthrd->getTcpSock(), NULL, NULL)) == -1)
+
+    GSocket* clientSocket = g_socket_accept(tcpSocket, nullptr, &error);
+    if (!clientSocket) {
+      if (error) {
+        LOG_WARN("g_socket_accept failed: %s", error->message);
+        g_error_free(error);
+        error = nullptr;
+      }
       continue;
-    thread([](CoreThread* coreThread,
-              int subsock) { TcpData::TcpDataEntry(coreThread, subsock); },
-           pcthrd, subsock)
+    }
+
+    // Pass the GSocket to TcpData (transfers ownership)
+    thread([](CoreThread* coreThread, GSocket* clientSocket) {
+             TcpData::TcpDataEntry(coreThread, clientSocket);
+           },
+           pcthrd, clientSocket)
         .detach();
   }
 }
@@ -580,8 +608,27 @@ void CoreThread::ClearSublayer() {
   for (auto palInfo : pImpl->pallist) {
     SendBroadcastExit(palInfo);
   }
-  shutdown(getTcpSock(), SHUT_RDWR);
-  shutdown(getUdpSock(), SHUT_RDWR);
+
+  GError* error = nullptr;
+  if (pImpl->tcpSocket) {
+    if (!g_socket_close(pImpl->tcpSocket, &error)) {
+      LOG_WARN("g_socket_close(tcp) failed: %s",
+               error ? error->message : "unknown");
+      if (error) {
+        g_error_free(error);
+        error = nullptr;
+      }
+    }
+  }
+  if (pImpl->udpSocket) {
+    if (!g_socket_close(pImpl->udpSocket, &error)) {
+      LOG_WARN("g_socket_close(udp) failed: %s",
+               error ? error->message : "unknown");
+      if (error) {
+        g_error_free(error);
+      }
+    }
+  }
 }
 
 int CoreThread::getUdpSock() const {

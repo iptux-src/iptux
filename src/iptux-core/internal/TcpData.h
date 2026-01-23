@@ -12,6 +12,8 @@
 #ifndef IPTUX_TCPDATA_H
 #define IPTUX_TCPDATA_H
 
+#include <gio/gio.h>
+
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Models.h"
 #include "iptux-core/internal/ipmsg.h"
@@ -23,7 +25,7 @@ class TcpData {
   TcpData();
   ~TcpData();
 
-  static void TcpDataEntry(CoreThread* coreThread, int sock);
+  static void TcpDataEntry(CoreThread* coreThread, GSocket* socket);
 
  private:
   void DispatchTcpData();
@@ -36,7 +38,8 @@ class TcpData {
   void RecvMsgPic(PalInfo* pal, const char* path);
 
   CoreThread* coreThread;
-  int sock;               //数据交流套接口
+  GSocket* socket;        // GIO socket for the connection
+  int sock;               // file descriptor (from socket, for legacy code)
   size_t size;            //缓冲区已使用长度
   char buf[MAX_SOCKLEN];  //缓冲区
 };

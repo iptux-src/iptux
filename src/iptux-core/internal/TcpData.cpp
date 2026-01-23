@@ -14,7 +14,6 @@
 
 #include <cinttypes>
 #include <fcntl.h>
-#include <sys/socket.h>
 #include <unistd.h>
 
 #include "iptux-core/internal/CommandMode.h"
@@ -29,24 +28,28 @@ namespace iptux {
 /**
  * 类构造函数.
  */
-TcpData::TcpData() : sock(-1), size(0) {}
+TcpData::TcpData() : socket(nullptr), sock(-1), size(0) {}
 
 /**
  * 类析构函数.
  */
 TcpData::~TcpData() {
-  close(sock);
+  if (socket) {
+    g_object_unref(socket);
+    socket = nullptr;
+  }
 }
 
 /**
  * TCP连接处理入口.
- * @param sock tcp socket
+ * @param socket GSocket for the connection (takes ownership)
  */
-void TcpData::TcpDataEntry(CoreThread* coreThread, int sock) {
+void TcpData::TcpDataEntry(CoreThread* coreThread, GSocket* socket) {
   TcpData tdata;
 
   tdata.coreThread = coreThread;
-  tdata.sock = sock;
+  tdata.socket = socket;
+  tdata.sock = g_socket_get_fd(socket);
   tdata.DispatchTcpData();
 }
 
@@ -54,27 +57,38 @@ void TcpData::TcpDataEntry(CoreThread* coreThread, int sock) {
  * 分派TCP数据处理方案.
  */
 void TcpData::DispatchTcpData() {
-  struct sockaddr_in addr;
-  socklen_t socklen;
-  socklen = sizeof(addr);
-  getpeername(sock, (struct sockaddr*)&addr, &socklen);
-  LOG_DEBUG("received tcp message from %s:%d",
-            inAddrToString(addr.sin_addr).c_str(), int(addr.sin_port));
+  GError* error = nullptr;
+  GSocketAddress* remoteAddr = g_socket_get_remote_address(socket, &error);
+  if (!remoteAddr) {
+    LOG_WARN("Failed to get remote address: %s",
+             error ? error->message : "unknown");
+    if (error)
+      g_error_free(error);
+    return;
+  }
+
+  GInetSocketAddress* inetAddr = G_INET_SOCKET_ADDRESS(remoteAddr);
+  GInetAddress* gaddr = g_inet_socket_address_get_address(inetAddr);
+  guint16 port = g_inet_socket_address_get_port(inetAddr);
+  char* addrStr = g_inet_address_to_string(gaddr);
+  LOG_DEBUG("received tcp message from %s:%d", addrStr, int(port));
+  g_object_unref(remoteAddr);
 
   uint32_t commandno;
   ssize_t len;
 
   /* 读取消息前缀 */
   if ((len = read_ipmsg_prefix(sock, buf, MAX_SOCKLEN)) <= 0) {
+    g_free(addrStr);
     return;
   }
 
   /* 分派消息 */
   size = len;  // 设置缓冲区数据的有效长度
   commandno = iptux_get_dec_number(buf, ':', 4);  // 获取命令字
-  LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s",
-           inAddrToString(addr.sin_addr).c_str(), commandno,
-           CommandMode(GET_MODE(commandno)).toString().c_str());
+  LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s", addrStr,
+           commandno, CommandMode(GET_MODE(commandno)).toString().c_str());
+  g_free(addrStr);
   switch (GET_MODE(commandno)) {
     case IPMSG_GETFILEDATA:
       RequestData(FileAttr::REGULAR);
@@ -124,15 +138,28 @@ void TcpData::RequestData(FileAttr fileattr) {
 void TcpData::RecvSublayer(uint32_t cmdopt) {
   static uint32_t count = 0;
   char path[MAX_PATHLEN];
-  struct sockaddr_in addr;
-  socklen_t len;
   PPalInfo pal;
   int fd;
 
   /* 检查好友是否存在 */
-  len = sizeof(addr);
-  getpeername(sock, (struct sockaddr*)&addr, &len);
-  if (!(pal = coreThread->GetPal(addr.sin_addr))) {
+  GError* error = nullptr;
+  GSocketAddress* remoteAddr = g_socket_get_remote_address(socket, &error);
+  if (!remoteAddr) {
+    LOG_WARN("Failed to get remote address: %s",
+             error ? error->message : "unknown");
+    if (error)
+      g_error_free(error);
+    return;
+  }
+
+  GInetSocketAddress* inetAddr = G_INET_SOCKET_ADDRESS(remoteAddr);
+  GInetAddress* gaddr = g_inet_socket_address_get_address(inetAddr);
+  char* addrStr = g_inet_address_to_string(gaddr);
+  in_addr ipv4 = inAddrFromString(addrStr);
+  g_free(addrStr);
+  g_object_unref(remoteAddr);
+
+  if (!(pal = coreThread->GetPal(ipv4))) {
     return;
   }
 
