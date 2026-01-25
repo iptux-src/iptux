@@ -32,8 +32,15 @@ class IptuxAppIndicatorPrivate {
 
 IptuxAppIndicator::IptuxAppIndicator(Application* app) {
   this->priv = std::make_shared<IptuxAppIndicatorPrivate>(app);
+
+  // app_indicator_new is deprecated since 0.5.94, and prefer
+  // libayatana-appindicator-glib-dev, but unfortunately it's still not stable
+  // enough.
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   priv->indicator = app_indicator_new("io.github.iptux_src.iptux", "iptux-icon",
                                       APP_INDICATOR_CATEGORY_COMMUNICATIONS);
+  G_GNUC_END_IGNORE_DEPRECATIONS
+
   app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
   app_indicator_set_attention_icon_full(priv->indicator, "iptux-attention",
                                         "iptux-attention");
