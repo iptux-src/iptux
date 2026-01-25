@@ -39,12 +39,9 @@ jobs:
       
       - name: Build
         run: meson compile -C build
-        continue-on-error: true
       
       - name: Install
         run: meson install -C build
-        continue-on-error: true
       
       - name: Test
         run: meson test -C build --verbose --no-stdsplit
-        continue-on-error: true
