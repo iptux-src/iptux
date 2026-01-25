@@ -5,7 +5,6 @@
 #include "gio/gio.h"
 #include "iptux-core/TestHelper.h"
 #include "iptux-core/internal/UdpDataService.h"
-#include "iptux-utils/utils.h"
 
 using namespace std;
 using namespace iptux;
