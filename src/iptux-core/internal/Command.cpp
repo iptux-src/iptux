@@ -309,56 +309,14 @@ void Command::SendUnitMsg(int sock,
 }
 
 /**
- * 向好友请求文件数据.
- * @param sock tcp socket
- * @param pal class PalInfo
- * @param packetno 好友消息的包编号
- * @param fileid 文件ID标识
- * @param offset 文件偏移量
- * @return 消息发送成功与否
+ * Request file data from peer.
+ * @param sock GSocket tcp socket
+ * @param palKey peer key
+ * @param packetno packet number
+ * @param fileid file ID
+ * @param offset file offset
+ * @return true on success
  */
-bool Command::SendAskData(int sock,
-                          CPPalInfo pal,
-                          uint32_t packetno,
-                          uint32_t fileid,
-                          int64_t offset) {
-  char attrstr[35];  // 8+1+8+1+16 +1 =35
-  struct sockaddr_in addr;
-  const char* iptuxstr = "iptux";
-
-  snprintf(attrstr, 35, "%" PRIx32 ":%" PRIx32 ":%" PRIx64, packetno, fileid,
-           offset);
-  // IPMSG和Feiq的命令字段都是只有IPMSG_GETFILEDATA,使用(IPMSG_FILEATTACHOPT |
-  // IPMSG_GETFILEDATA）
-  // 会产生一些潜在的不兼容问题,所以在发往非iptux时只使用IPMSG_GETFILEDATA
-  if (strstr(pal->getVersion().c_str(), iptuxstr))
-    CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
-  else
-    CreateCommand(IPMSG_GETFILEDATA, attrstr);
-  ConvertEncode(pal->getEncode());
-
-  memset(&addr, '\0', sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(pal->port());
-  addr.sin_addr = pal->ipv4();
-
-  if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
-       (errno != EINTR)) ||
-      (xsend(sock, buf, size) == -1))
-    return false;
-
-  return true;
-}
-
-bool Command::SendAskData(int sock,
-                          const PalKey& palKey,
-                          uint32_t packetno,
-                          uint32_t fileid,
-                          int64_t offset) {
-  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
-  return SendAskData(sock, palInfo, packetno, fileid, offset);
-}
-
 bool Command::SendAskData(GSocket* sock,
                           const PalKey& palKey,
                           uint32_t packetno,
@@ -402,42 +360,45 @@ bool Command::SendAskData(GSocket* sock,
 }
 
 /**
- * 向好友请求目录文件.
- * @param sock tcp socket
- * @param pal class PalInfo
- * @param packetno 好友消息的包编号
- * @param fileid 文件ID标识
- * @return 消息发送成功与否
+ * Request directory files from peer.
+ * @param sock GSocket tcp socket
+ * @param palKey peer key
+ * @param packetno packet number
+ * @param fileid file ID
+ * @return true on success
  */
-bool Command::SendAskFiles(int sock,
+bool Command::SendAskFiles(GSocket* sock,
                            const PalKey& palKey,
                            uint32_t packetno,
                            uint32_t fileid) {
-  auto palInfo = getAndCheckPalInfo(coreThread, palKey);
-  return SendAskFiles(sock, palInfo, packetno, fileid);
-}
-
-bool Command::SendAskFiles(int sock,
-                           CPPalInfo pal,
-                           uint32_t packetno,
-                           uint32_t fileid) {
+  auto pal = getAndCheckPalInfo(coreThread, palKey);
   char attrstr[20];  // 8+1+8+1+1 +1  =20
-  struct sockaddr_in addr;
 
-  snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno,
-           fileid);  // 兼容LanQQ软件
+  snprintf(attrstr, 20, "%" PRIx32 ":%" PRIx32 ":0", packetno, fileid);
   CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETDIRFILES, attrstr);
   ConvertEncode(pal->getEncode());
 
-  memset(&addr, '\0', sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(pal->port());
-  addr.sin_addr = pal->ipv4();
+  in_addr ipv4 = pal->ipv4();
+  GInetAddress* addr =
+      g_inet_address_new_from_bytes((const guint8*)&ipv4, G_SOCKET_FAMILY_IPV4);
+  GSocketAddress* sockAddr = g_inet_socket_address_new(addr, pal->port());
+  g_object_unref(addr);
 
-  if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
-       (errno != EINTR)) ||
-      (xsend(sock, buf, size) == -1))
+  GError* error = nullptr;
+  if (!g_socket_connect(sock, sockAddr, nullptr, &error)) {
+    LOG_WARN("g_socket_connect failed: %s", error->message);
+    g_error_free(error);
+    g_object_unref(sockAddr);
     return false;
+  }
+  g_object_unref(sockAddr);
+
+  gssize sent = g_socket_send(sock, buf, size, nullptr, &error);
+  if (sent == -1) {
+    LOG_WARN("g_socket_send failed: %s", error->message);
+    g_error_free(error);
+    return false;
+  }
 
   return true;
 }

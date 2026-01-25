@@ -45,26 +45,12 @@ class Command {
   void SendGroupMsg(int sock, CPPalInfo pal, const char* msg);
   void SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype, const char* msg);
 
-  bool SendAskData(int sock,
-                   CPPalInfo pal,
-                   uint32_t packetno,
-                   uint32_t fileid,
-                   int64_t offset);
-  bool SendAskData(int sock,
-                   const PalKey& pal,
-                   uint32_t packetno,
-                   uint32_t fileid,
-                   int64_t offset);
   bool SendAskData(GSocket* sock,
                    const PalKey& pal,
                    uint32_t packetno,
                    uint32_t fileid,
                    int64_t offset);
-  bool SendAskFiles(int sock,
-                    CPPalInfo pal,
-                    uint32_t packetno,
-                    uint32_t fileid);
-  bool SendAskFiles(int sock,
+  bool SendAskFiles(GSocket* sock,
                     const PalKey& pal,
                     uint32_t packetno,
                     uint32_t fileid);

@@ -837,6 +837,43 @@ ssize_t read_ipmsg_fileinfo(int fd, void* buf, size_t count, size_t offset) {
   return offset;
 }
 
+/**
+ * Read file info from GSocket.
+ * @param sock GSocket
+ * @param buf buffer
+ * @param count buffer size
+ * @param offset existing data offset
+ * @return total data length read, or -1 on error
+ */
+ssize_t read_ipmsg_fileinfo(GSocket* sock,
+                            void* buf,
+                            size_t count,
+                            size_t offset) {
+  gssize size;
+  uint32_t headsize;
+
+  if (offset < count)
+    ((char*)buf)[offset] = '\0';
+  while (!offset || !strchr((char*)buf, ':') ||
+         sscanf((char*)buf, "%" SCNx32, &headsize) != 1 || headsize > offset) {
+    GError* error = nullptr;
+    size = g_socket_receive(sock, (char*)buf + offset, count - offset, nullptr,
+                            &error);
+    if (size == -1) {
+      if (error) {
+        g_error_free(error);
+      }
+      return -1;
+    } else if (size == 0)
+      return -1;
+    if ((offset += size) == count)
+      break;
+    ((char*)buf)[offset] = '\0';
+  }
+
+  return offset;
+}
+
 int ipv4Compare(const in_addr& ip1, const in_addr& ip2) {
   uint32_t i1 = inAddrToUint32(ip1);
   uint32_t i2 = inAddrToUint32(ip2);

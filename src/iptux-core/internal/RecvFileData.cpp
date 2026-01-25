@@ -184,7 +184,7 @@ void RecvFileData::RecvRegularFile() {
 }
 
 /**
- * 接收目录文件.
+ * Receive directory files.
  */
 void RecvFileData::RecvDirFiles() {
   AnalogFS afs;
@@ -192,23 +192,26 @@ void RecvFileData::RecvDirFiles() {
   gchar *dirname, *pathname, *filename, *filectime, *filemtime;
   int64_t filesize, finishsize;
   uint32_t headsize, fileattr;
-  int sock, fd;
+  int fd;
   ssize_t size;
   size_t len;
   bool result;
   struct utimbuf timebuf;
 
-  /* 创建文件传输套接口 */
-  if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+  GError* error = nullptr;
+  GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                               G_SOCKET_PROTOCOL_TCP, &error);
+  if (error != nullptr) {
     LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-              strerror(errno));
+              error->message);
+    g_error_free(error);
     throw Exception(CREATE_TCP_SOCKET_FAILED);
   }
-  /* 请求目录文件 */
+
   if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn,
                         file->fileid)) {
-    close(sock);
-    terminate = true;  // 标记处理过程失败
+    g_object_unref(sock);
+    terminate = true;
     return;
   }
   /* 转到文件存档目录 */
@@ -322,8 +325,8 @@ end:
     LOG_INFO(_("Receive the directory \"%s\" from %s successfully!"),
              file->filepath, file->fileown->getName().c_str());
   }
-  /* 关闭文件传输套接口 */
-  close(sock);
+
+  g_object_unref(sock);
 }
 
 /**

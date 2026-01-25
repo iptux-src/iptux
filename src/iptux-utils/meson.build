@@ -1,4 +1,5 @@
 glib_dep = dependency('glib-2.0', version: '>=2.35')
+gio_dep = dependency('gio-2.0')
 thread_dep = dependency('threads')
 
 sources = files([
@@ -11,7 +12,7 @@ inc = include_directories('..', '../api')
 
 libiptux_utils = static_library('iptux-utils',
     sources,
-    dependencies: [glib_dep],
+    dependencies: [glib_dep, gio_dep],
     include_directories: inc,
 )
 
