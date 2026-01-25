@@ -86,6 +86,38 @@ static bool commandSendTo(int sockfd,
   return commandSendTo(sockfd, buf, len, flags, pal->ipv4(), pal->port());
 }
 
+static bool commandSendTo(GSocket* sock,
+                          const void* buf,
+                          size_t len,
+                          in_addr ipv4,
+                          uint16_t port) {
+  if (Log::IsDebugEnabled()) {
+    LOG_DEBUG("send udp message to %s:%d, size %d\n%s",
+              inAddrToString(ipv4).c_str(), port, int(len),
+              stringDump(string((const char*)buf, len)).c_str());
+  } else if (Log::IsInfoEnabled()) {
+    LOG_INFO("send udp message to %s:%d, size %d", inAddrToString(ipv4).c_str(),
+             port, int(len));
+  }
+
+  GInetAddress* addr = g_inet_address_new_from_bytes((const guint8*)&ipv4,
+                                                     G_SOCKET_FAMILY_IPV4);
+  GSocketAddress* sockAddr = g_inet_socket_address_new(addr, port);
+  g_object_unref(addr);
+
+  GError* error = nullptr;
+  gssize sent = g_socket_send_to(sock, sockAddr, (const char*)buf, len,
+                                 nullptr, &error);
+  g_object_unref(sockAddr);
+
+  if (sent == -1) {
+    LOG_WARN("g_socket_send_to failed: %s", error->message);
+    g_error_free(error);
+    return false;
+  }
+  return true;
+}
+
 /**
  * 类构造函数.
  */
@@ -98,10 +130,10 @@ Command::Command(CoreThread& coreThread)
 Command::~Command() {}
 
 /**
- * 向局域网所有计算机广播上线信息.
- * @param sock udp socket
+ * Broadcast online message to all computers in LAN.
+ * @param sock GSocket udp socket
  */
-void Command::BroadCast(int sock, uint16_t port) {
+void Command::BroadCast(GSocket* sock, uint16_t port) {
   auto programData = coreThread.getProgramData();
   CreateCommand(IPMSG_ABSENCEOPT | IPMSG_BR_ENTRY,
                 programData->nickname.c_str());
@@ -111,7 +143,7 @@ void Command::BroadCast(int sock, uint16_t port) {
   auto addrs = get_sys_broadcast_addr(sock);
   for (auto& addr : addrs) {
     in_addr ipv4 = inAddrFromString(addr);
-    commandSendTo(sock, buf, size, 0, ipv4, port);
+    commandSendTo(sock, buf, size, ipv4, port);
     g_usleep(9999);
   }
 }

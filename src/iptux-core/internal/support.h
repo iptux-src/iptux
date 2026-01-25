@@ -12,13 +12,14 @@
 #ifndef IPTUX_SUPPORT_H
 #define IPTUX_SUPPORT_H
 
+#include <gio/gio.h>
 #include <string>
 #include <vector>
 
 namespace iptux {
 
 void socket_enable_reuse(int sock);
-std::vector<std::string> get_sys_broadcast_addr(int sock);
+std::vector<std::string> get_sys_broadcast_addr(GSocket* sock);
 
 }  // namespace iptux
 

@@ -33,7 +33,7 @@ class Command {
   /// Const Pointer to PalInfo
   using CPPalInfo = std::shared_ptr<const PalInfo>;
 
-  void BroadCast(int sock, uint16_t port);
+  void BroadCast(GSocket* sock, uint16_t port);
   void DialUp(int sock, uint16_t port);
   void SendAnsentry(int sock, CPPalInfo pal);
   void SendExit(int sock, CPPalInfo pal);

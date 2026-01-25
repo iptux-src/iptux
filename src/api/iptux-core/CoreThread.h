@@ -1,6 +1,8 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
+#include <gio/gio.h>
+
 #include "iptux-core/Models.h"
 #include <atomic>
 #include <cstdint>
@@ -48,6 +50,7 @@ class CoreThread {
 
   int getTcpSock() const;
   int getUdpSock() const;
+  GSocket* getUdpSocket() const;
   uint16_t port() const;
 
   std::shared_ptr<ProgramData> getProgramData();

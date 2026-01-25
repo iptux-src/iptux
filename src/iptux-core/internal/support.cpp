@@ -48,12 +48,11 @@ void socket_enable_reuse(int sock) {
 }
 
 /**
- * 获取系统主机的广播地址.
+ * Get system broadcast addresses.
  * @param sock socket
- * @return 广播地址链表
- * @note 链表数据不是指针而是实际的IP
+ * @return list of broadcast addresses
  */
-vector<string> get_sys_broadcast_addr(int sock) {
+static vector<string> get_sys_broadcast_addr_by_fd(int sock) {
   const uint8_t amount = 5;  //支持5个IP地址
   uint8_t count, sum;
   struct ifconf ifc;
@@ -88,6 +87,10 @@ vector<string> get_sys_broadcast_addr(int sock) {
     res.push_back("127.0.0.1");
   }
   return res;
+}
+
+vector<string> get_sys_broadcast_addr(GSocket* sock) {
+  return get_sys_broadcast_addr_by_fd(g_socket_get_fd(sock));
 }
 
 }  // namespace iptux

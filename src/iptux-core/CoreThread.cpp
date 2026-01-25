@@ -869,6 +869,10 @@ int CoreThread::getUdpSock() const {
   return g_socket_get_fd(pImpl->udpSocket);
 }
 
+GSocket* CoreThread::getUdpSocket() const {
+  return pImpl->udpSocket;
+}
+
 int CoreThread::getTcpSock() const {
   if (!pImpl->tcpSocket) {
     return -1;
@@ -888,7 +892,7 @@ shared_ptr<ProgramData> CoreThread::getProgramData() {
 void CoreThread::SendNotifyToAll(CoreThread* pcthrd) {
   Command cmd(*pcthrd);
   if (!pcthrd->pImpl->debugDontBroadcast) {
-    cmd.BroadCast(pcthrd->getUdpSock(), pcthrd->port());
+    cmd.BroadCast(pcthrd->getUdpSocket(), pcthrd->port());
   }
   cmd.DialUp(pcthrd->getUdpSock(), pcthrd->port());
 }
