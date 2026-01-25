@@ -55,6 +55,11 @@ class Command {
                    uint32_t packetno,
                    uint32_t fileid,
                    int64_t offset);
+  bool SendAskData(GSocket* sock,
+                   const PalKey& pal,
+                   uint32_t packetno,
+                   uint32_t fileid,
+                   int64_t offset);
   bool SendAskFiles(int sock,
                     CPPalInfo pal,
                     uint32_t packetno,

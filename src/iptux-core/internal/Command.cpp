@@ -359,6 +359,48 @@ bool Command::SendAskData(int sock,
   return SendAskData(sock, palInfo, packetno, fileid, offset);
 }
 
+bool Command::SendAskData(GSocket* sock,
+                          const PalKey& palKey,
+                          uint32_t packetno,
+                          uint32_t fileid,
+                          int64_t offset) {
+  auto pal = getAndCheckPalInfo(coreThread, palKey);
+  char attrstr[35];  // 8+1+8+1+16 +1 =35
+  const char* iptuxstr = "iptux";
+
+  snprintf(attrstr, 35, "%" PRIx32 ":%" PRIx32 ":%" PRIx64, packetno, fileid,
+           offset);
+  if (strstr(pal->getVersion().c_str(), iptuxstr))
+    CreateCommand(IPMSG_FILEATTACHOPT | IPMSG_GETFILEDATA, attrstr);
+  else
+    CreateCommand(IPMSG_GETFILEDATA, attrstr);
+  ConvertEncode(pal->getEncode());
+
+  in_addr ipv4 = pal->ipv4();
+  GInetAddress* addr =
+      g_inet_address_new_from_bytes((const guint8*)&ipv4, G_SOCKET_FAMILY_IPV4);
+  GSocketAddress* sockAddr = g_inet_socket_address_new(addr, pal->port());
+  g_object_unref(addr);
+
+  GError* error = nullptr;
+  if (!g_socket_connect(sock, sockAddr, nullptr, &error)) {
+    LOG_WARN("g_socket_connect failed: %s", error->message);
+    g_error_free(error);
+    g_object_unref(sockAddr);
+    return false;
+  }
+  g_object_unref(sockAddr);
+
+  gssize sent = g_socket_send(sock, buf, size, nullptr, &error);
+  if (sent == -1) {
+    LOG_WARN("g_socket_send failed: %s", error->message);
+    g_error_free(error);
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * 向好友请求目录文件.
  * @param sock tcp socket
