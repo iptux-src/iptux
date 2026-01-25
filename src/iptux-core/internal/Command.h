@@ -12,6 +12,7 @@
 #ifndef IPTUX_COMMAND_H
 #define IPTUX_COMMAND_H
 
+#include <gio/gio.h>
 #include <istream>
 #include <string>
 
@@ -84,6 +85,10 @@ class Command {
                     CPPalInfo pal,
                     uint32_t opttype,
                     const char* path);
+  bool SendSublayer(GSocket* sock,
+                    CPPalInfo pal,
+                    uint32_t opttype,
+                    const char* path);
 
   static std::string encodeFileInfo(const FileInfo& fileInfo);
   static std::vector<FileInfo> decodeFileInfos(const std::string& s);
@@ -91,6 +96,7 @@ class Command {
  private:
   void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
   bool SendSublayerData(int sock, int fd);
+  bool SendSublayerData(GSocket* sock, int fd);
   void ConvertEncode(const std::string& encode);
   void CreateCommand(uint32_t command, const char* attach);
   void CreateIpmsgExtra(const char* extra, const char* encode);

@@ -516,6 +516,83 @@ bool Command::SendSublayerData(int sock, int fd) {
 }
 
 /**
+ * Send sublayer data (file data invisible to end users).
+ * @param sock GSocket tcp socket
+ * @param pal class PalInfo
+ * @param opttype command option type
+ * @param path file path
+ */
+bool Command::SendSublayer(GSocket* sock,
+                           CPPalInfo pal,
+                           uint32_t opttype,
+                           const char* path) {
+  LOG_DEBUG("send tcp message to %s, op %d, file %s",
+            pal->GetKey().ToString().c_str(), int(opttype), path);
+  GError* error = nullptr;
+  int fd;
+  bool ret;
+
+  CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
+  ConvertEncode(pal->getEncode());
+
+  in_addr ipv4 = pal->ipv4();
+  GInetAddress* addr =
+      g_inet_address_new_from_bytes((const guint8*)&ipv4, G_SOCKET_FAMILY_IPV4);
+  GSocketAddress* sockAddr = g_inet_socket_address_new(addr, pal->port());
+  g_object_unref(addr);
+
+  if (!g_socket_connect(sock, sockAddr, nullptr, &error)) {
+    LOG_WARN("g_socket_connect failed: %s", error->message);
+    g_error_free(error);
+    g_object_unref(sockAddr);
+    return false;
+  }
+  g_object_unref(sockAddr);
+
+  gssize sent = g_socket_send(sock, buf, size, nullptr, &error);
+  if (sent == -1) {
+    LOG_WARN("g_socket_send failed: %s", error->message);
+    g_error_free(error);
+    return false;
+  }
+
+  if ((fd = open(path, O_RDONLY)) == -1) {
+    LOG_WARN("open file failed: %s", path);
+    return false;
+  }
+
+  ret = SendSublayerData(sock, fd);
+  close(fd);
+  return ret;
+}
+
+/**
+ * Write file descriptor data to network socket.
+ * @param sock GSocket tcp socket
+ * @param fd file descriptor
+ */
+bool Command::SendSublayerData(GSocket* sock, int fd) {
+  ssize_t len;
+  bool ret = true;
+  GError* error = nullptr;
+
+  do {
+    if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
+      break;
+    gssize sent = g_socket_send(sock, buf, len, nullptr, &error);
+    if (sent <= 0) {
+      if (error) {
+        LOG_WARN("g_socket_send failed: %s", error->message);
+        g_error_free(error);
+      }
+      ret = false;
+      break;
+    }
+  } while (1);
+  return ret;
+}
+
+/**
  * 将缓冲区中的字符串转换为指定的编码.
  * @param encode 字符集编码
  */

@@ -1023,7 +1023,6 @@ bool CoreThread::sendFeatureData(PPalInfo pal) noexcept {
   Command cmd(*this);
   char path[MAX_PATHLEN];
   const gchar* env;
-  int sock;
 
   if (!programData->sign.empty()) {
     cmd.SendMySign(getUdpSock(), pal);
@@ -1037,14 +1036,19 @@ bool CoreThread::sendFeatureData(PPalInfo pal) noexcept {
   }
   snprintf(path, MAX_PATHLEN, "%s" PHOTO_PATH "/photo", env);
   if (access(path, F_OK) == 0) {
-    if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+    GError* error = nullptr;
+    GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                                 G_SOCKET_PROTOCOL_TCP, &error);
+    if (error != nullptr) {
       LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-                strerror(errno));
+                error->message);
+      g_error_free(error);
       pImpl->lastErr = CORE_THREAD_ERR_SOCKET_CREATE_FAILED;
       return false;
     }
+
     bool ret = cmd.SendSublayer(sock, pal, IPTUX_PHOTOPICOPT, path);
-    close(sock);
+    g_object_unref(sock);
     return ret;
   }
   return true;
