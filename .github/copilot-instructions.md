@@ -100,7 +100,7 @@ sudo meson install -C build
 
 - Use Google Test framework for unit tests
 - Test files are colocated with implementation (e.g., `IptuxConfig.cpp` and `IptuxConfigTest.cpp`)
-- Main test entry point: `TestMain.cpp`
+- Each module has its own `TestMain.cpp` entry point (e.g., `src/iptux-core/TestMain.cpp`, `src/iptux-utils/TestMain.cpp`)
 - Use `TestHelper.h` for common test utilities
 - Run tests with verbose output for debugging: `meson test -C build --verbose --no-stdsplit`
 
