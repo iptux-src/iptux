@@ -4,7 +4,6 @@
 #include <glib/gi18n.h>
 #include <sys/stat.h>
 
-#include "iptux-core/Exception.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/AboutDialog.h"
@@ -48,7 +47,7 @@ void onWhatsNew() {
   iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS");
 }
 
-void iptux_init(LogSystem* logSystem) {
+void iptux_init(LogSystemPtr logSystem) {
   signal(SIGPIPE, SIG_IGN);
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
@@ -63,6 +62,12 @@ void init_theme(Application* app) {
 }
 }  // namespace
 
+static void appDestroy(gpointer user_data) {
+  LOG_TRACE();
+  Application* app = (Application*)user_data;
+  delete app;
+}
+
 Application::Application(shared_ptr<IptuxConfig> config)
     : config(config), data(nullptr), window(nullptr), shareFile(nullptr) {
   auto application_id =
@@ -73,9 +78,10 @@ Application::Application(shared_ptr<IptuxConfig> config)
   logSystem = nullptr;
 
   app = gtk_application_new(application_id.c_str(), G_APPLICATION_FLAGS_NONE);
+  g_object_set_data_full(G_OBJECT(app), "application", this, appDestroy);
   g_signal_connect_swapped(app, "startup", G_CALLBACK(onStartup), this);
   g_signal_connect_swapped(app, "activate", G_CALLBACK(onActivate), this);
-
+  this->data = make_shared<ProgramData>(this->config);
 #if SYSTEM_DARWIN
   notificationService = new TerminalNotifierNoticationService();
 #else
@@ -91,15 +97,10 @@ Application::Application(shared_ptr<IptuxConfig> config)
 }
 
 Application::~Application() {
-  g_object_unref(app);
   if (menuBuilder) {
     g_object_unref(menuBuilder);
   }
   transModelDelete(transModel);
-  if (logSystem) {
-    delete logSystem;
-  }
-  delete window;
   delete notificationService;
   if (this->process_events_source_id)
     g_source_remove(this->process_events_source_id);
@@ -118,13 +119,12 @@ void Application::activate() {
 }
 
 void Application::onStartup(Application& self) {
-  self.data = make_shared<ProgramData>(self.config);
+  self.logSystem = std::make_shared<LogSystem>(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   init_theme(&self);
   iptux_register_resource();
   self.menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
-  self.logSystem = new LogSystem(self.data);
   if (self.enable_app_indicator_) {
     self.app_indicator = make_shared<IptuxAppIndicator>(&self);
   }
@@ -201,14 +201,21 @@ void Application::onActivate(Application& self) {
 
   if (!self.cthrd->start()) {
     enum CoreThreadErr err = self.cthrd->getLastErr();
-    pop_warning(self.window->getWindow(),
-                _("Start core thread failed: [%d] %s"), err,
+    if (self.test_mode) {
+      LOG_ERROR("Start core thread failed: [%d] %s", err,
                 coreThreadErrToStr(err));
-    exit(1);
+    } else {
+      pop_warning(self.window->getWindow(),
+                  _("Start core thread failed: [%d] %s"), err,
+                  coreThreadErrToStr(err));
+    }
+    g_application_quit(G_APPLICATION(self.app));
+    return;
   }
   iptux_init(self.logSystem);
   self.process_events_source_id =
       g_idle_add(G_SOURCE_FUNC(Application::ProcessEvents), &self);
+  self.activated = true;
 }
 
 void Application::onQuit(void*, void*, Application& self) {

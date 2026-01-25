@@ -12,6 +12,8 @@
 #ifndef IPTUX_RECVFILEDATA_H
 #define IPTUX_RECVFILEDATA_H
 
+#include <gio/gio.h>
+
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Models.h"
 #include "iptux-core/internal/TransAbstract.h"
@@ -34,6 +36,7 @@ class RecvFileData : public TransAbstract {
   void RecvDirFiles();
 
   int64_t RecvData(int sock, int fd, int64_t filesize, int64_t offset);
+  int64_t RecvData(GSocket* sock, int fd, int64_t filesize, int64_t offset);
   void UpdateUIParaToOver();
 
   CoreThread* coreThread;

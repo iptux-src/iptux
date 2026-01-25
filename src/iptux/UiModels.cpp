@@ -403,7 +403,7 @@ string GroupInfo::user_name() const {
   return "";
 }
 
-GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystem* logSystem)
+GroupInfo::GroupInfo(PPalInfo pal, CPPalInfo me, LogSystemPtr logSystem)
     : grpid(0),
       buffer(NULL),
       dialogBase(NULL),
@@ -420,7 +420,7 @@ GroupInfo::GroupInfo(iptux::GroupBelongType t,
                      const vector<PPalInfo>& pals,
                      CPPalInfo me,
                      const string& name,
-                     LogSystem* logSystem)
+                     LogSystemPtr logSystem)
     : grpid(0),
       buffer(NULL),
       dialogBase(NULL),

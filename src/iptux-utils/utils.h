@@ -12,6 +12,7 @@
 #ifndef IPTUX_UTILS_H
 #define IPTUX_UTILS_H
 
+#include <gio/gio.h>
 #include <glib.h>
 #include <memory>
 #include <netinet/in.h>
@@ -116,7 +117,10 @@ ssize_t xread(int fd, void* buf, size_t count);
 ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count);
 ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset);
 ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset);
-ssize_t read_ipmsg_fileinfo(int fd, void* buf, size_t count, size_t offset);
+ssize_t read_ipmsg_fileinfo(GSocket* sock,
+                            void* buf,
+                            size_t count,
+                            size_t offset);
 
 /**
  * @brief wrapper for g_utf8_make_valid

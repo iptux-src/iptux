@@ -12,6 +12,7 @@
 #ifndef IPTUX_COMMAND_H
 #define IPTUX_COMMAND_H
 
+#include <gio/gio.h>
 #include <istream>
 #include <string>
 
@@ -32,7 +33,7 @@ class Command {
   /// Const Pointer to PalInfo
   using CPPalInfo = std::shared_ptr<const PalInfo>;
 
-  void BroadCast(int sock, uint16_t port);
+  void BroadCast(GSocket* sock, uint16_t port);
   void DialUp(int sock, uint16_t port);
   void SendAnsentry(int sock, CPPalInfo pal);
   void SendExit(int sock, CPPalInfo pal);
@@ -44,21 +45,12 @@ class Command {
   void SendGroupMsg(int sock, CPPalInfo pal, const char* msg);
   void SendUnitMsg(int sock, CPPalInfo pal, uint32_t opttype, const char* msg);
 
-  bool SendAskData(int sock,
-                   CPPalInfo pal,
-                   uint32_t packetno,
-                   uint32_t fileid,
-                   int64_t offset);
-  bool SendAskData(int sock,
+  bool SendAskData(GSocket* sock,
                    const PalKey& pal,
                    uint32_t packetno,
                    uint32_t fileid,
                    int64_t offset);
-  bool SendAskFiles(int sock,
-                    CPPalInfo pal,
-                    uint32_t packetno,
-                    uint32_t fileid);
-  bool SendAskFiles(int sock,
+  bool SendAskFiles(GSocket* sock,
                     const PalKey& pal,
                     uint32_t packetno,
                     uint32_t fileid);
@@ -80,7 +72,7 @@ class Command {
                     const char* extra);
   void SendMyIcon(int sock, CPPalInfo pal, std::istream& iss);
   void SendMySign(int sock, CPPalInfo pal);
-  void SendSublayer(int sock,
+  bool SendSublayer(GSocket* sock,
                     CPPalInfo pal,
                     uint32_t opttype,
                     const char* path);
@@ -90,7 +82,7 @@ class Command {
 
  private:
   void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
-  void SendSublayerData(int sock, int fd);
+  bool SendSublayerData(GSocket* sock, int fd);
   void ConvertEncode(const std::string& encode);
   void CreateCommand(uint32_t command, const char* attach);
   void CreateIpmsgExtra(const char* extra, const char* encode);

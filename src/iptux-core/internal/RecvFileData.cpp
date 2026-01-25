@@ -127,37 +127,39 @@ void RecvFileData::CreateUIPara() {
 }
 
 /**
- * 接收常规文件.
+ * Receive regular file.
  */
 void RecvFileData::RecvRegularFile() {
   AnalogFS afs;
   Command cmd(*coreThread);
   int64_t finishsize;
-  int sock, fd;
+  int fd;
   struct utimbuf timebuf;
 
-  /* 创建文件传输套接口 */
-  if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+  GError* error = nullptr;
+  GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                               G_SOCKET_PROTOCOL_TCP, &error);
+  if (error != nullptr) {
     LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-              strerror(errno));
+              error->message);
+    g_error_free(error);
     throw Exception(CREATE_TCP_SOCKET_FAILED);
   }
-  /* 请求文件数据 */
+
   if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn,
                        file->fileid, 0)) {
-    close(sock);
-    terminate = true;  // 标记处理过程失败
-    return;
-  }
-  /* 打开文件 */
-  if ((fd = afs.open(file->filepath, O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE,
-                     00644)) == -1) {
-    close(sock);
+    g_object_unref(sock);
     terminate = true;
     return;
   }
 
-  /* 接收文件数据 */
+  if ((fd = afs.open(file->filepath, O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE,
+                     00644)) == -1) {
+    g_object_unref(sock);
+    terminate = true;
+    return;
+  }
+
   gettimeofday(&filetime, NULL);
   finishsize = RecvData(sock, fd, file->filesize, 0);
   close(fd);
@@ -166,9 +168,7 @@ void RecvFileData::RecvRegularFile() {
     timebuf.modtime = int(file->filectime);
     utime(file->filepath, &timebuf);
   }
-  //        sumsize += finishsize;
 
-  /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
     LOG_ERROR(_("Failed to receive the file \"%s\" from %s! expect length %jd, "
@@ -179,12 +179,12 @@ void RecvFileData::RecvRegularFile() {
     LOG_INFO(_("Receive the file \"%s\" from %s successfully!"), file->filepath,
              file->fileown->getName().c_str());
   }
-  /* 关闭文件传输套接口 */
-  close(sock);
+
+  g_object_unref(sock);
 }
 
 /**
- * 接收目录文件.
+ * Receive directory files.
  */
 void RecvFileData::RecvDirFiles() {
   AnalogFS afs;
@@ -192,23 +192,26 @@ void RecvFileData::RecvDirFiles() {
   gchar *dirname, *pathname, *filename, *filectime, *filemtime;
   int64_t filesize, finishsize;
   uint32_t headsize, fileattr;
-  int sock, fd;
+  int fd;
   ssize_t size;
   size_t len;
   bool result;
   struct utimbuf timebuf;
 
-  /* 创建文件传输套接口 */
-  if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+  GError* error = nullptr;
+  GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                               G_SOCKET_PROTOCOL_TCP, &error);
+  if (error != nullptr) {
     LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-              strerror(errno));
+              error->message);
+    g_error_free(error);
     throw Exception(CREATE_TCP_SOCKET_FAILED);
   }
-  /* 请求目录文件 */
+
   if (!cmd.SendAskFiles(sock, file->fileown->GetKey(), file->packetn,
                         file->fileid)) {
-    close(sock);
-    terminate = true;  // 标记处理过程失败
+    g_object_unref(sock);
+    terminate = true;
     return;
   }
   /* 转到文件存档目录 */
@@ -322,8 +325,8 @@ end:
     LOG_INFO(_("Receive the directory \"%s\" from %s successfully!"),
              file->filepath, file->fileown->getName().c_str());
   }
-  /* 关闭文件传输套接口 */
-  close(sock);
+
+  g_object_unref(sock);
 }
 
 /**
@@ -382,7 +385,65 @@ int64_t RecvFileData::RecvData(int sock,
 }
 
 /**
- * 更新UI参考数据到任务结束.
+ * Receive file data from network socket.
+ * @param sock GSocket tcp socket
+ * @param fd file descriptor
+ * @param filesize total file size
+ * @param offset starting offset
+ * @return received data size
+ */
+int64_t RecvFileData::RecvData(GSocket* sock,
+                               int fd,
+                               int64_t filesize,
+                               int64_t offset) {
+  int64_t tmpsize, finishsize;
+  struct timeval val1, val2;
+  float difftime;
+  uint32_t rate;
+  gssize size;
+
+  if (offset == filesize)
+    return filesize;
+
+  tmpsize = finishsize = offset;
+  gettimeofday(&val1, NULL);
+  do {
+    size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
+                                               : filesize - finishsize;
+    GError* error = nullptr;
+    size = g_socket_receive(sock, buf, size, nullptr, &error);
+    if (size == -1) {
+      if (error) {
+        LOG_WARN("g_socket_receive failed: %s", error->message);
+        g_error_free(error);
+      }
+      return finishsize;
+    }
+    if (size > 0 && xwrite(fd, buf, size) == -1)
+      return finishsize;
+    finishsize += size;
+    sumsize += size;
+    file->finishedsize = sumsize;
+
+    gettimeofday(&val2, NULL);
+    difftime = difftimeval(val2, val1);
+    if (difftime >= 1) {
+      rate = (uint32_t)((finishsize - tmpsize) / difftime);
+      para.setFinishedLength(finishsize)
+          .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
+          .setRemain(
+              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
+          .setRate(numeric_to_rate(rate));
+      val1 = val2;
+      tmpsize = finishsize;
+    }
+  } while (!terminate && size && finishsize < filesize);
+
+  return finishsize;
+}
+
+/**
+ * Update UI parameters when task is finished.
  */
 void RecvFileData::UpdateUIParaToOver() {
   struct timeval time;

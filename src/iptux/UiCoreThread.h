@@ -28,8 +28,6 @@
 
 namespace iptux {
 
-class LogSystem;
-
 /**
  * @note 请保证插入或更新某成员时，底层优先于UI；删除某成员时，UI优先于底层，
  * 否则你会把所有事情都搞砸. \n
@@ -61,7 +59,7 @@ class UiCoreThread : public CoreThread {
   void PushItemToEnclosureList(FileInfo* file);
   void PopItemFromEnclosureList(FileInfo* file);
 
-  LogSystem* getLogSystem() { return logSystem; }
+  LogSystemPtr getLogSystem() { return logSystem; }
 
   GtkTextTagTable* tag_table() { return tag_table_; }
 
@@ -88,7 +86,7 @@ class UiCoreThread : public CoreThread {
 
  private:
   std::shared_ptr<ProgramData> programData;
-  LogSystem* logSystem;
+  LogSystemPtr logSystem;
   std::queue<MsgPara> messages;
 
   GSList *groupInfos, *sgmlist, *grplist, *brdlist;  // 群组链表(成员不能被删除)

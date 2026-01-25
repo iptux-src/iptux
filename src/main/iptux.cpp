@@ -137,6 +137,8 @@ static void dealLog(const IptuxConfig& config) {
 }
 
 int main(int argc, char** argv) {
+  int ret;
+
   installCrashHandler();
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
@@ -162,6 +164,10 @@ int main(int argc, char** argv) {
   if (bindIp) {
     config->SetString("bind_ip", bindIp);
   }
-  Application app(config);
-  return app.run(argc, argv);
+
+  Application* app = new Application(config);
+  GtkApplication* gtkApp = GTK_APPLICATION(app->getApp());
+  ret = g_application_run(G_APPLICATION(gtkApp), argc, argv);
+  g_object_unref(gtkApp);
+  return ret;
 }

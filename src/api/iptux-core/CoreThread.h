@@ -1,6 +1,8 @@
 #ifndef IPTUX_CORETHREAD_H
 #define IPTUX_CORETHREAD_H
 
+#include <gio/gio.h>
+
 #include "iptux-core/Models.h"
 #include <atomic>
 #include <cstdint>
@@ -25,6 +27,7 @@ enum CoreThreadErr {
   CORE_THREAD_ERR_UDP_BIND_FAILED,
   CORE_THREAD_ERR_UDP_THREAD_START_FAILED,
   CORE_THREAD_ERR_TCP_BIND_FAILED,
+  CORE_THREAD_ERR_TCP_THREAD_START_FAILED,
 };
 
 const char* coreThreadErrToStr(enum CoreThreadErr err);
@@ -37,10 +40,17 @@ class CoreThread {
   virtual bool start() noexcept;
   virtual void stop();
 
+  // For testing only: ignore TCP bind failures
+  void setIgnoreTcpBindFailed(bool ignore);
+  // For testing only: get the count of active TCP handler threads
+  size_t getTcpHandlerThreadCount() const;
+
   CPPalInfo getMe() const;
   PPalInfo getMe();
 
+  int getTcpSock() const;
   int getUdpSock() const;
+  GSocket* getUdpSocket() const;
   uint16_t port() const;
 
   std::shared_ptr<ProgramData> getProgramData();
@@ -101,7 +111,7 @@ class CoreThread {
   PFileInfo GetPrivateFileById(uint32_t id);
   PFileInfo GetPrivateFileByPacketN(uint32_t packageNum, uint32_t filectime);
 
-  void sendFeatureData(PPalInfo pal);
+  bool sendFeatureData(PPalInfo pal) noexcept;
   void emitSomeoneExit(const PalKey& palKey);
   void emitNewPalOnline(PPalInfo palInfo);
   void emitNewPalOnline(const PalKey& palKey);
@@ -196,8 +206,6 @@ class CoreThread {
  protected:
   std::shared_ptr<ProgramData> programData;
   std::shared_ptr<IptuxConfig> config;
-  int tcpSock;
-  int udpSock;
   mutable std::mutex mutex;  // 锁
 
  private:
@@ -208,9 +216,6 @@ class CoreThread {
 
  private:
   bool bind_iptux_port() noexcept;
-
- private:
-  static void RecvTcpData(CoreThread* pcthrd);
 
  public:
   struct Impl;

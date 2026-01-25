@@ -34,22 +34,30 @@ shared_ptr<IptuxConfig> newTestIptuxConfigWithFile() {
 
 std::shared_ptr<CoreThread> newCoreThread() {
   auto config = newTestIptuxConfig();
-  return make_shared<CoreThread>(make_shared<ProgramData>(config));
+  auto thread = make_shared<CoreThread>(make_shared<ProgramData>(config));
+  thread->setIgnoreTcpBindFailed(true);
+  return thread;
 }
 
 std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
   auto config = newTestIptuxConfig();
   config->SetString("bind_ip", ip);
-  return make_shared<CoreThread>(make_shared<ProgramData>(config));
+  auto thread = make_shared<CoreThread>(make_shared<ProgramData>(config));
+  thread->setIgnoreTcpBindFailed(true);
+  return thread;
 }
 
 std::tuple<PCoreThread, PCoreThread> initAndConnnectThreadsFromConfig(
     PIptuxConfig c1,
     PIptuxConfig c2) {
+  int count;
+
   c1->SetBool("debug_dont_broadcast", true);
   c2->SetBool("debug_dont_broadcast", true);
   auto thread1 = make_shared<CoreThread>(make_shared<ProgramData>(c1));
   auto thread2 = make_shared<CoreThread>(make_shared<ProgramData>(c2));
+  thread1->setIgnoreTcpBindFailed(true);
+  thread2->setIgnoreTcpBindFailed(true);
   if (!thread2->start()) {
     cerr << "bind to " << c2->GetString("bind_ip") << " failed.\n"
          << "if you are using mac, please run `sudo ifconfig lo0 alias "
@@ -57,17 +65,17 @@ std::tuple<PCoreThread, PCoreThread> initAndConnnectThreadsFromConfig(
     throw;
   }
   thread1->start();
-  while (thread2->GetOnlineCount() != 1) {
-    LOG_INFO("thread2 online count: %d", thread2->GetOnlineCount());
+  while ((count = thread2->GetOnlineCount()) != 1) {
+    LOG_INFO("thread2 online count: %d", count);
     thread1->SendDetectPacket(c2->GetString("bind_ip"));
     this_thread::yield();
-    this_thread::sleep_for(10ms);
+    this_thread::sleep_for(100ms);
   }
-  while (thread1->GetOnlineCount() != 1) {
-    LOG_INFO("thread1 online count: %d", thread1->GetOnlineCount());
+  while ((count = thread1->GetOnlineCount()) != 1) {
+    LOG_INFO("thread1 online count: %d", count);
     thread2->SendDetectPacket(c1->GetString("bind_ip"));
     this_thread::yield();
-    this_thread::sleep_for(10ms);
+    this_thread::sleep_for(100ms);
   }
   return make_tuple(thread1, thread2);
 }
