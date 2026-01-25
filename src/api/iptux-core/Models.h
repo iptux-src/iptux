@@ -13,6 +13,7 @@
 #define IPTUX_MODELS_H
 
 #include <arpa/inet.h>
+#include <gio/gio.h>
 #include <memory>
 #include <netinet/in.h>
 #include <string>
@@ -56,17 +57,33 @@ typedef enum {
 class PalKey {
  public:
   PalKey(in_addr ipv4, int port);
+  explicit PalKey(GSocketAddress* address);
+  ~PalKey();
+  
+  // Copy constructor
+  PalKey(const PalKey& other);
+  
+  // Copy assignment operator
+  PalKey& operator=(const PalKey& other);
+  
+  // Move constructor
+  PalKey(PalKey&& other) noexcept;
+  
+  // Move assignment operator
+  PalKey& operator=(PalKey&& other) noexcept;
 
   bool operator==(const PalKey& rhs) const;
 
-  in_addr GetIpv4() const { return ipv4; }
+  in_addr GetIpv4() const;
   std::string GetIpv4String() const;
-  int GetPort() const { return port; }
+  int GetPort() const;
   std::string ToString() const;
+  
+  // Get the underlying GSocketAddress (increases reference count)
+  GSocketAddress* GetSocketAddress() const;
 
  private:
-  in_addr ipv4;
-  int port;
+  GSocketAddress* address_;
 };
 
 /**

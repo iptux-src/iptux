@@ -14,6 +14,7 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+#include <cstring>
 #include <netinet/in.h>
 #include <sstream>
 #include <unistd.h>
@@ -254,18 +255,103 @@ string ChipData::getSummary() const {
   return "";
 }
 
-PalKey::PalKey(in_addr ipv4, int port) : ipv4(ipv4), port(port) {}
+PalKey::PalKey(in_addr ipv4, int port) {
+  GInetAddress* inet_addr = g_inet_address_new_from_bytes(
+      reinterpret_cast<const guint8*>(&ipv4), G_SOCKET_FAMILY_IPV4);
+  address_ = g_inet_socket_address_new(inet_addr, port);
+  g_object_unref(inet_addr);
+}
+
+PalKey::PalKey(GSocketAddress* address) {
+  address_ = G_SOCKET_ADDRESS(g_object_ref(address));
+}
+
+PalKey::~PalKey() {
+  if (address_) {
+    g_object_unref(address_);
+  }
+}
+
+PalKey::PalKey(const PalKey& other) {
+  address_ = G_SOCKET_ADDRESS(g_object_ref(other.address_));
+}
+
+PalKey& PalKey::operator=(const PalKey& other) {
+  if (this != &other) {
+    if (address_) {
+      g_object_unref(address_);
+    }
+    address_ = G_SOCKET_ADDRESS(g_object_ref(other.address_));
+  }
+  return *this;
+}
+
+PalKey::PalKey(PalKey&& other) noexcept : address_(other.address_) {
+  other.address_ = nullptr;
+}
+
+PalKey& PalKey::operator=(PalKey&& other) noexcept {
+  if (this != &other) {
+    if (address_) {
+      g_object_unref(address_);
+    }
+    address_ = other.address_;
+    other.address_ = nullptr;
+  }
+  return *this;
+}
+
+in_addr PalKey::GetIpv4() const {
+  GInetAddress* inet_addr = g_inet_socket_address_get_address(
+      G_INET_SOCKET_ADDRESS(address_));
+  
+  in_addr result;
+  gsize size = g_inet_address_get_native_size(inet_addr);
+  if (size == sizeof(in_addr)) {
+    memcpy(&result, g_inet_address_to_bytes(inet_addr), sizeof(in_addr));
+  } else {
+    // Should not happen for IPv4
+    memset(&result, 0, sizeof(in_addr));
+  }
+  return result;
+}
 
 string PalKey::GetIpv4String() const {
-  return inAddrToString(ipv4);
+  GInetAddress* inet_addr = g_inet_socket_address_get_address(
+      G_INET_SOCKET_ADDRESS(address_));
+  gchar* str = g_inet_address_to_string(inet_addr);
+  string result(str);
+  g_free(str);
+  return result;
+}
+
+int PalKey::GetPort() const {
+  return g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address_));
 }
 
 bool PalKey::operator==(const PalKey& rhs) const {
-  return ipv4Equal(this->ipv4, rhs.ipv4) && this->port == rhs.port;
+  GInetSocketAddress* this_addr = G_INET_SOCKET_ADDRESS(this->address_);
+  GInetSocketAddress* other_addr = G_INET_SOCKET_ADDRESS(rhs.address_);
+  
+  // Compare ports
+  if (g_inet_socket_address_get_port(this_addr) != 
+      g_inet_socket_address_get_port(other_addr)) {
+    return false;
+  }
+  
+  // Compare addresses
+  GInetAddress* this_inet = g_inet_socket_address_get_address(this_addr);
+  GInetAddress* other_inet = g_inet_socket_address_get_address(other_addr);
+  
+  return g_inet_address_equal(this_inet, other_inet);
 }
 
 string PalKey::ToString() const {
-  return stringFormat("%s:%d", inAddrToString(ipv4).c_str(), port);
+  return stringFormat("%s:%d", GetIpv4String().c_str(), GetPort());
+}
+
+GSocketAddress* PalKey::GetSocketAddress() const {
+  return G_SOCKET_ADDRESS(g_object_ref(address_));
 }
 
 bool FileInfo::operator==(const FileInfo& rhs) const {
