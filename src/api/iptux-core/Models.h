@@ -96,7 +96,7 @@ class PalKey {
 class PalInfo {
  public:
   PalInfo(const std::string& ipv4, uint16_t port);
-  PalInfo(in_addr ipv4, uint16_t port);
+  explicit PalInfo(const PalKey& key);
   ~PalInfo();
 
   const PalKey& GetKey() const { return key_; }

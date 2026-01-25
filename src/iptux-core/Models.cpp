@@ -27,13 +27,13 @@ using namespace std;
 
 namespace iptux {
 
-PalInfo::PalInfo(in_addr ipv4, uint16_t port)
+PalInfo::PalInfo(const PalKey& key)
     : segdes(NULL),
       photo(NULL),
       sign(NULL),
       packetn(0),
       rpacketn(0),
-      key_(ipv4, port),
+      key_(key),
       compatible(0),
       online(0),
       changed(0),

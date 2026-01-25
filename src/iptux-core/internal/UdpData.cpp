@@ -76,7 +76,7 @@ void UdpData::SomeoneLost() {
   auto g_progdt = coreThread.getProgramData();
 
   /* 创建好友数据 */
-  pal = new PalInfo(getIpv4(), coreThread.port());
+  pal = new PalInfo(getPalKey());
   pal->segdes = g_strdup(g_progdt->FindNetSegDescription(getInetAddress()).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
@@ -426,7 +426,7 @@ void UdpData::SomeoneBcstmsg() {
  */
 shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto programData = coreThread.getProgramData();
-  auto pal = make_shared<PalInfo>(getIpv4(), coreThread.port());
+  auto pal = make_shared<PalInfo>(getPalKey());
   pal->segdes = g_strdup(programData->FindNetSegDescription(getInetAddress()).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
