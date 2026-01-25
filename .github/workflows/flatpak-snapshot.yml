@@ -25,6 +25,7 @@ jobs:
       # 3. Install GNOME SDK runtime
       - name: Install GNOME SDK
         run: |
+          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install --noninteractive flathub org.gnome.Sdk//46 org.gnome.Platform//46
 
       # 4. Determine snapshot version from Git
