@@ -24,11 +24,15 @@ namespace iptux {
 
 class UdpData {
  public:
-  UdpData(CoreThread& coreThread, in_addr ipv4, const char buf[], size_t size);
+  UdpData(CoreThread& coreThread,
+          GSocketAddress* addr,
+          const char buf[],
+          size_t size);
   ~UdpData();
 
-  in_addr getIpv4() const { return ipv4; }
+  in_addr getIpv4() const;
   std::string getIpv4String() const;
+  PalKey getPalKey() const;
 
   uint32_t getCommandNo() const;
   CommandMode getCommandMode() const;
@@ -64,10 +68,10 @@ class UdpData {
 
  private:
   CoreThread& coreThread;
-  in_addr ipv4;          // 数据来自
-  size_t size;           // 缓冲区数据有效长度
-  char buf[MAX_UDPLEN];  // 数据缓冲区
-  char* encode;          // 原数据编码(NULL意味着utf8)
+  GSocketAddress* addr_;  // 数据来自
+  size_t size;            // 缓冲区数据有效长度
+  char buf[MAX_UDPLEN];   // 数据缓冲区
+  char* encode;           // 原数据编码(NULL意味着utf8)
 
  private:
   static void ThreadAskSharedFile(CoreThread* coreThread, PPalInfo pal);

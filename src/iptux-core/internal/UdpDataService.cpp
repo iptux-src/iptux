@@ -10,41 +10,32 @@ namespace iptux {
 UdpDataService::UdpDataService(CoreThread& coreThread)
     : core_thread_(coreThread) {}
 
-unique_ptr<UdpData> UdpDataService::process(in_addr ipv4,
-                                            int port,
+unique_ptr<UdpData> UdpDataService::process(GSocketAddress* peer,
                                             const char buf[],
                                             size_t size) {
-  return process(ipv4, port, buf, size, true);
+  return process(peer, buf, size, true);
 }
 
 unique_ptr<UdpData> UdpDataService::process(GSocketAddress* peer,
                                             const char buf[],
-                                            size_t size) {
+                                            size_t size,
+                                            bool run) {
   GInetSocketAddress* isa = G_INET_SOCKET_ADDRESS(peer);
   guint16 port = g_inet_socket_address_get_port(isa);
   GInetAddress* ia = g_inet_socket_address_get_address(isa);
-  char* ip = g_inet_address_to_string(ia);
 
-  // TODO: too many conversions, optimize it
-  in_addr ipv4 = inAddrFromString(ip);
-  g_free(ip);
-  return process(ipv4, port, buf, size, true);
-}
-
-unique_ptr<UdpData> UdpDataService::process(in_addr ipv4,
-                                            int port,
-                                            const char buf[],
-                                            size_t size,
-                                            bool run) {
   if (Log::IsDebugEnabled()) {
-    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s",
-              inAddrToString(ipv4).c_str(), port, size,
+    gchar* ip = g_inet_address_to_string(ia);
+    LOG_DEBUG("received udp message from %s:%d, size %zu\n%s", ip, port, size,
               stringDumpAsCString(string(buf, size)).c_str());
+    g_free(ip);
   } else {
-    LOG_INFO("received udp message from %s:%d, size %zu",
-             inAddrToString(ipv4).c_str(), port, size);
+    gchar* ip = g_inet_address_to_string(ia);
+    LOG_INFO("received udp message from %s:%d, size %zu", ip, port, size);
+    g_free(ip);
   }
-  auto udata = make_unique<UdpData>(core_thread_, ipv4, buf, size);
+
+  auto udata = make_unique<UdpData>(core_thread_, peer, buf, size);
 
   if (run) {
     process(*udata);
