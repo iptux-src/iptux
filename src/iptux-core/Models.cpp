@@ -28,24 +28,28 @@ using namespace std;
 namespace iptux {
 
 PalInfo::PalInfo(in_addr ipv4, uint16_t port)
-    : segdes(NULL), photo(NULL), sign(NULL), packetn(0), rpacketn(0) {
-  this->ipv4_ = ipv4;
-  this->port_ = port;
-  compatible = 0;
-  online = 0;
-  changed = 0;
-  in_blacklist = 0;
-}
+    : segdes(NULL),
+      photo(NULL),
+      sign(NULL),
+      packetn(0),
+      rpacketn(0),
+      key_(ipv4, port),
+      compatible(0),
+      online(0),
+      changed(0),
+      in_blacklist(0) {}
 
 PalInfo::PalInfo(const string& ipv4, uint16_t port)
-    : segdes(NULL), photo(NULL), sign(NULL), packetn(0), rpacketn(0) {
-  this->ipv4_ = inAddrFromString(ipv4);
-  this->port_ = port;
-  compatible = 0;
-  online = 0;
-  changed = 0;
-  in_blacklist = 0;
-}
+    : segdes(NULL),
+      photo(NULL),
+      sign(NULL),
+      packetn(0),
+      rpacketn(0),
+      key_(inAddrFromString(ipv4), port),
+      compatible(0),
+      online(0),
+      changed(0),
+      in_blacklist(0) {}
 
 PalInfo::~PalInfo() {
   g_free(segdes);

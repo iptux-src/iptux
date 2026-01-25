@@ -99,7 +99,7 @@ class PalInfo {
   PalInfo(in_addr ipv4, uint16_t port);
   ~PalInfo();
 
-  PalKey GetKey() const { return PalKey(ipv4(), port_); }
+  const PalKey& GetKey() const { return key_; }
 
   PalInfo& setName(const std::string& name);
   const std::string& getName() const { return name; }
@@ -133,8 +133,8 @@ class PalInfo {
   }
 
   std::string toString() const;
-  in_addr ipv4() const { return ipv4_; }
-  uint16_t port() const { return port_; }
+  in_addr ipv4() const { return key_.GetIpv4(); }
+  uint16_t port() const { return key_.GetPort(); }
 
   char* segdes;       ///< 所在网段描述
   char* photo;        ///< 形象照片
@@ -153,8 +153,7 @@ class PalInfo {
   PalInfo& setInBlacklist(bool value);
 
  private:
-  in_addr ipv4_;           ///< 好友IP
-  uint16_t port_;          ///< 好友端口
+  PalKey key_;             ///< 好友IP和端口
   std::string icon_file_;  ///< 好友头像 *
   std::string user;
   std::string name;
