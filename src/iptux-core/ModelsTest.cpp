@@ -3,6 +3,7 @@
 #include "iptux-core/Models.h"
 #include "iptux-utils/TestHelper.h"
 #include "iptux-utils/utils.h"
+#include <arpa/inet.h>
 
 using namespace std;
 using namespace iptux;

@@ -12,6 +12,7 @@
 #include "config.h"
 #include "RecvFileData.h"
 
+#include <arpa/inet.h>
 #include <memory>
 
 #include <fcntl.h>

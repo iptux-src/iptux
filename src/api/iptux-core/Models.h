@@ -12,7 +12,6 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
-#include <arpa/inet.h>
 #include <gio/gio.h>
 #include <memory>
 #include <netinet/in.h>
