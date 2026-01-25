@@ -1,0 +1,58 @@
+name: Build Flatpak Snapshot
+
+on:
+  push:
+    branches:
+      - flatpak-snapshot
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # 1. Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Set up Flatpak
+      - name: Install Flatpak
+        run: |
+          sudo apt update
+          sudo apt install -y flatpak flatpak-builder git wget xz-utils
+
+      # 3. Install GNOME SDK runtime
+      - name: Install GNOME SDK
+        run: |
+          flatpak install --noninteractive flathub org.gnome.Sdk//46 org.gnome.Platform//46
+
+      # 4. Determine snapshot version from Git
+      - name: Set snapshot version
+        id: vars
+        run: |
+          SHORT_HASH=$(git rev-parse --short HEAD)
+          VERSION="0.9.3~git${SHORT_HASH}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "Snapshot version set to ${VERSION}"
+
+      # 5. Build Flatpak
+      - name: Build Flatpak
+        run: |
+          flatpak-builder --force-clean build-dir iptux.flatpak.yaml
+
+      # 6. Export repository to repo/
+      - name: Export Flatpak repo
+        run: |
+          flatpak build-export repo build-dir --collection-id=io.github.iptux
+
+      # 7. Commit & push to gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: repo
+          publish_branch: gh-pages
+          user_name: "GitHub Actions"
+          user_email: "actions@github.com"
+          commit_message: "Update Flatpak snapshot: ${{ env.VERSION }}"
