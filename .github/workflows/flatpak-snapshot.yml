@@ -26,21 +26,21 @@ jobs:
       - name: Install GNOME SDK
         run: |
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install --noninteractive flathub org.gnome.Sdk//46 org.gnome.Platform//46
+          sudo flatpak install --noninteractive flathub org.gnome.Sdk//48 org.gnome.Platform//48
 
       # 4. Determine snapshot version from Git
       - name: Set snapshot version
         id: vars
         run: |
           SHORT_HASH=$(git rev-parse --short HEAD)
-          VERSION="0.9.3~git${SHORT_HASH}"
+          VERSION="0.10.0~git${SHORT_HASH}"
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "Snapshot version set to ${VERSION}"
 
       # 5. Build Flatpak
       - name: Build Flatpak
         run: |
-          flatpak-builder --force-clean build-dir iptux.flatpak.yaml
+          flatpak-builder --force-clean build-dir scripts/flatpak/io.github.iptux_src.iptux.snapshot.yml
 
       # 6. Export repository to repo/
       - name: Export Flatpak repo
