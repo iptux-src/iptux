@@ -47,7 +47,7 @@ void onWhatsNew() {
   iptux_open_url("https://github.com/iptux-src/iptux/blob/master/NEWS");
 }
 
-void iptux_init(LogSystem* logSystem) {
+void iptux_init(LogSystemPtr logSystem) {
   signal(SIGPIPE, SIG_IGN);
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
@@ -101,9 +101,6 @@ Application::~Application() {
     g_object_unref(menuBuilder);
   }
   transModelDelete(transModel);
-  if (logSystem) {
-    delete logSystem;
-  }
   delete notificationService;
   if (this->process_events_source_id)
     g_source_remove(this->process_events_source_id);
@@ -122,7 +119,7 @@ void Application::activate() {
 }
 
 void Application::onStartup(Application& self) {
-  self.logSystem = new LogSystem(self.data);
+  self.logSystem = std::make_shared<LogSystem>(self.data);
   self.cthrd = make_shared<UiCoreThread>(&self, self.data);
   init_theme(&self);
   iptux_register_resource();

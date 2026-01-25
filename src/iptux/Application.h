@@ -32,7 +32,7 @@ class Application {
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
-  LogSystem* getLogSystem() { return logSystem; }
+  LogSystemPtr getLogSystem() { return logSystem; }
   std::shared_ptr<ProgramData> getProgramData() { return data; }
   std::shared_ptr<UiCoreThread> getCoreThread() { return cthrd; }
   bool use_header_bar() { return use_header_bar_; }
@@ -61,7 +61,7 @@ class Application {
   MainWindow* window = 0;
   ShareFile* shareFile = 0;
   TransWindow* transWindow = 0;
-  LogSystem* logSystem = 0;
+  LogSystemPtr logSystem;
   NotificationService* notificationService = 0;
   GMenuModel* menu_ = 0;
   GtkWidget* preference_dialog_ = 0;
