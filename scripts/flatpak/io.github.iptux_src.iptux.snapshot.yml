@@ -35,3 +35,5 @@ modules:
         branch: main
     config-opts:
       - --buildtype=release
+    build-environment:
+      PKG_CONFIG_PATH: "/app/lib/pkgconfig:/app/lib/x86_64-linux-gnu/pkgconfig"
