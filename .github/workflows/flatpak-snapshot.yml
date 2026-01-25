@@ -22,6 +22,12 @@ jobs:
           sudo apt update
           sudo apt install -y flatpak flatpak-builder git wget xz-utils
 
+      - name: Cache Flatpak SDK
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/flatpak
+          key: flatpak-sdk-48-${{ runner.os }}
+
       # 3. Install GNOME SDK runtime
       - name: Install GNOME SDK
         run: |
