@@ -39,39 +39,43 @@ TEST(UdpDataService, SomeoneEntry) {
 }
 
 TEST(UdpDataService, CreatePalInfo) {
-  auto core = newCoreThread();
-  {
-    const char* data =
-        "1_iptux "
-        "0.8.0-b1:6:lidaobing:LIs-MacBook-Pro.local:259:中\xe4\xb8\x00\x00icon-"
-        "tux.png\x00utf-8\x00";
-    auto service = make_unique<UdpDataService>(*core.get());
-    GSocketAddress* addr = makeTestAddress("127.0.0.1", 1234);
-    auto udp = service->process(addr, data, strlen(data), false);
-    g_object_unref(addr);
-    auto pal = udp->CreatePalInfo();
-    ASSERT_EQ(pal->toString(),
-              "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux "
-              "0.8.0-b1,user=lidaobing,host=LIs-MacBook-Pro.local,"
-              "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,"
-              "encode=utf-8,packetn=0,rpacketn=0,compatible=0,online=1,"
-              "changed=0,in_blacklist=0)");
-  }
-  {
-    const char* data =
-        "1_iptux "
-        "0.8.0-b1:6:中\xe4\xb8:LIs-MacBook-Pro.local:259:"
-        "中\xe4\xb8\x00\x00icon-tux.png\x00utf-8\x00";
-    auto service = make_unique<UdpDataService>(*core.get());
-    GSocketAddress* addr = makeTestAddress("127.0.0.1", 1234);
-    auto udp = service->process(addr, data, strlen(data), false);
-    g_object_unref(addr);
-    auto pal = udp->CreatePalInfo();
-    ASSERT_EQ(pal->toString(),
+  struct TestCase {
+    const char* data;
+    const char* expected;
+  };
+
+  TestCase testCases[] = {
+      {
+          .data = "1_iptux "
+                  "0.8.0-b1:6:lidaobing:LIs-MacBook-Pro.local:259:"
+                  "中\xe4\xb8\x00\x00"
+                  "icon-tux.png\x00utf-8\x00",
+          .expected = "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux "
+                      "0.8.0-b1,user=lidaobing,host=LIs-MacBook-Pro.local,"
+                      "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,"
+                      "encode=utf-8,packetn=0,rpacketn=0,compatible=0,online=1,"
+                      "changed=0,in_blacklist=0)",
+      },
+      {
+          .data = "1_iptux "
+                  "0.8.0-b1:6:中\xe4\xb8:LIs-MacBook-Pro.local:259:"
+                  "中\xe4\xb8\x00\x00icon-tux.png\x00utf-8\x00",
+          .expected =
               "PalInfo(IP=127.0.0.1,name=中��,segdes=,version=1_iptux "
               "0.8.0-b1,user=中��,host=LIs-MacBook-Pro.local,"
               "group=,photo=(NULL),sign=(NULL),iconfile=icon-qq.png,encode=utf-"
               "8,packetn=0,rpacketn=0,compatible=0,online=1,changed=0,in_"
-              "blacklist=0)");
+              "blacklist=0)",
+      },
+  };
+
+  auto core = newCoreThread();
+  for (const auto& tc : testCases) {
+    auto service = make_unique<UdpDataService>(*core.get());
+    GSocketAddress* addr = makeTestAddress("127.0.0.1", 1234);
+    auto udp = service->process(addr, tc.data, strlen(tc.data), false);
+    g_object_unref(addr);
+    auto pal = udp->CreatePalInfo();
+    ASSERT_EQ(pal->toString(), tc.expected);
   }
 }
