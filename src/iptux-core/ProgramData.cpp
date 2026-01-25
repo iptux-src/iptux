@@ -110,11 +110,15 @@ void ProgramData::set_port(uint16_t port, bool is_init) {
  * @return 描述串
  */
 string ProgramData::FindNetSegDescription(in_addr ipv4) const {
+  GInetAddress* addr = g_inet_address_new_from_bytes(
+      reinterpret_cast<const guint8*>(&ipv4), G_SOCKET_FAMILY_IPV4);
   for (size_t i = 0; i < netseg.size(); ++i) {
-    if (netseg[i].ContainIP(ipv4)) {
+    if (netseg[i].ContainIP(addr)) {
+      g_object_unref(addr);
       return netseg[i].description;
     }
   }
+  g_object_unref(addr);
   return "";
 }
 

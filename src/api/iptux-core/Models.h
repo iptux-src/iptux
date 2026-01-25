@@ -252,7 +252,7 @@ class NetSegment {
   NetSegment();
   ~NetSegment();
 
-  bool ContainIP(in_addr ipv4) const;
+  bool ContainIP(GInetAddress* ipv4) const;
   /**
    * @brief return the ip count in this segment
    *

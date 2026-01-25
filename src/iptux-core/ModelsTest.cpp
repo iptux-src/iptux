@@ -71,9 +71,9 @@ TEST(NetSegment, ContainIP) {
                         "1.2.4.0", "1.2.3.5", "1.2.4.4"};
 
   for (const string& ip : ips) {
-    in_addr ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1.s_addr), 1) << ip;
-    ASSERT_TRUE(netSegment.ContainIP(ip1));
+    GInetAddress* addr = g_inet_address_new_from_string(ip.c_str());
+    ASSERT_TRUE(netSegment.ContainIP(addr)) << ip;
+    g_object_unref(addr);
   }
 
   vector<string> ips2 = {
@@ -83,9 +83,9 @@ TEST(NetSegment, ContainIP) {
       "100.100.100.100",
   };
   for (const string& ip : ips2) {
-    in_addr ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1), 1) << ip;
-    ASSERT_FALSE(netSegment.ContainIP(ip1));
+    GInetAddress* addr = g_inet_address_new_from_string(ip.c_str());
+    ASSERT_FALSE(netSegment.ContainIP(addr)) << ip;
+    g_object_unref(addr);
   }
 }
 

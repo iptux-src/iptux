@@ -203,9 +203,22 @@ std::string NetSegment::NthIp(uint64_t i) const {
   return inAddrToString(inAddrFromUint32(res));
 }
 
-bool NetSegment::ContainIP(in_addr ipv4) const {
-  return ipv4Compare(inAddrFromString(startip), ipv4) <= 0 &&
-         ipv4Compare(ipv4, inAddrFromString(endip)) <= 0;
+bool NetSegment::ContainIP(GInetAddress* ipv4) const {
+  GInetAddress* start = g_inet_address_new_from_string(startip.c_str());
+  GInetAddress* end = g_inet_address_new_from_string(endip.c_str());
+
+  gsize size = g_inet_address_get_native_size(ipv4);
+  const guint8* ip_bytes = g_inet_address_to_bytes(ipv4);
+  const guint8* start_bytes = g_inet_address_to_bytes(start);
+  const guint8* end_bytes = g_inet_address_to_bytes(end);
+
+  int cmp_start = memcmp(ip_bytes, start_bytes, size);
+  int cmp_end = memcmp(ip_bytes, end_bytes, size);
+
+  g_object_unref(start);
+  g_object_unref(end);
+
+  return cmp_start >= 0 && cmp_end <= 0;
 }
 
 Json::Value NetSegment::ToJsonValue() const {
