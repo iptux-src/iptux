@@ -29,7 +29,8 @@ iptux is a LAN communication software (IP Messenger protocol implementation) wri
 ### C++ Standards
 
 - Use C++17 features appropriately
-- Enable warnings: `-Wall -Wextra -Werror`
+- Warning level 2 with warnings as errors (`warning_level=2`, `werror=true`)
+- Specific warnings disabled: `-Wno-cast-function-type-mismatch`, `-Wno-cast-function-type`, `-Wno-c99-designator`
 - Follow GLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_70
 - Prefer modern C++ idioms (smart pointers, RAII, etc.)
 
@@ -37,8 +38,8 @@ iptux is a LAN communication software (IP Messenger protocol implementation) wri
 
 According to `.clang-format`:
 1. `config.h` (if needed, priority -1)
-2. Main header for source file (priority 0)
-3. Other project headers (priority 1)
+2. Main header for source file (priority 0, automatic)
+3. All other headers (priority 1)
 4. System headers ending in `.h` (priority 2)
 
 ## Building and Testing
@@ -113,7 +114,8 @@ sudo meson install -C build
 
 ### Linux
 - Primary development platform
-- Supports Ubuntu 22.04, 24.04+
+- CI tests on Ubuntu 22.04, 24.04, and latest
+- Compilers tested: g++ and clang++
 - Uses libayatana-appindicator3 for system tray
 - Requires firewall configuration for TCP/UDP port 2425
 
