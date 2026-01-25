@@ -1077,17 +1077,20 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
     case MessageContentType::STRING:
       /* 文本类型 */
       return SendMessage(pal, chipData.data);
-    case MESSAGE_CONTENT_TYPE_PICTURE:
-      /* 图片类型 */
-      int sock;
-      if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+    case MESSAGE_CONTENT_TYPE_PICTURE: {
+      GError* error = nullptr;
+      GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
+                                   G_SOCKET_PROTOCOL_TCP, &error);
+      if (error != nullptr) {
         LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-                  strerror(errno));
+                  error->message);
+        g_error_free(error);
         return false;
       }
       ret = Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
-      close(sock);  // 关闭网络套接口
+      g_object_unref(sock);
       return ret;
+    }
     default:
       g_assert_not_reached();
   }

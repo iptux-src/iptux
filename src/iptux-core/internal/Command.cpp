@@ -440,43 +440,6 @@ void Command::SendMySign(int sock, CPPalInfo pal) {
 }
 
 /**
- * 发送底层数据(即发送为最终用户所不能察觉的文件数据).
- * @param sock tcp socket
- * @param pal class PalInfo
- * @param opttype 命令额外选项
- * @param path 文件路径
- */
-bool Command::SendSublayer(int sock,
-                           CPPalInfo pal,
-                           uint32_t opttype,
-                           const char* path) {
-  LOG_DEBUG("send tcp message to %s, op %d, file %s",
-            pal->GetKey().ToString().c_str(), int(opttype), path);
-  struct sockaddr_in addr;
-  int fd;
-  bool ret;
-
-  CreateCommand(opttype | IPTUX_SENDSUBLAYER, NULL);
-  ConvertEncode(pal->getEncode());
-
-  memset(&addr, '\0', sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(pal->port());
-  addr.sin_addr = pal->ipv4();
-
-  if (((connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) &&
-       (errno != EINTR)) ||
-      (xsend(sock, buf, size) == -1) || ((fd = open(path, O_RDONLY)) == -1)) {
-    LOG_WARN("send tcp message failed");
-    return false;
-  }
-
-  ret = SendSublayerData(sock, fd);
-  close(fd);
-  return ret;
-}
-
-/**
  * 回馈错误消息.
  * @param pal class PalInfo
  * @param btype 消息归属类型
@@ -493,26 +456,6 @@ void Command::FeedbackError(CPPalInfo pal,
   para.dtlist.push_back(std::move(chip));
   /* 交给某人处理吧 */
   coreThread.InsertMessage(std::move(para));
-}
-
-/**
- * 将文件描述符数据写入网络套接口.
- * @param sock tcp socket
- * @param fd file descriptor
- */
-bool Command::SendSublayerData(int sock, int fd) {
-  ssize_t len;
-  bool ret = true;
-
-  do {
-    if ((len = xread(fd, buf, MAX_UDPLEN)) <= 0)
-      break;
-    if ((len = xsend(sock, buf, len)) <= 0) {
-      ret = false;
-      break;
-    }
-  } while (1);
-  return ret;
 }
 
 /**

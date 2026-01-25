@@ -81,10 +81,6 @@ class Command {
                     const char* extra);
   void SendMyIcon(int sock, CPPalInfo pal, std::istream& iss);
   void SendMySign(int sock, CPPalInfo pal);
-  bool SendSublayer(int sock,
-                    CPPalInfo pal,
-                    uint32_t opttype,
-                    const char* path);
   bool SendSublayer(GSocket* sock,
                     CPPalInfo pal,
                     uint32_t opttype,
@@ -95,7 +91,6 @@ class Command {
 
  private:
   void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
-  bool SendSublayerData(int sock, int fd);
   bool SendSublayerData(GSocket* sock, int fd);
   void ConvertEncode(const std::string& encode);
   void CreateCommand(uint32_t command, const char* attach);
