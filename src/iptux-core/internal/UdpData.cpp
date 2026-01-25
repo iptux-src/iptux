@@ -77,7 +77,7 @@ void UdpData::SomeoneLost() {
 
   /* 创建好友数据 */
   pal = new PalInfo(getIpv4(), coreThread.port());
-  pal->segdes = g_strdup(g_progdt->FindNetSegDescription(getIpv4()).c_str());
+  pal->segdes = g_strdup(g_progdt->FindNetSegDescription(getInetAddress()).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
   auto host = iptux_get_section_string(buf, ':', 3);
@@ -427,7 +427,7 @@ void UdpData::SomeoneBcstmsg() {
 shared_ptr<PalInfo> UdpData::CreatePalInfo() {
   auto programData = coreThread.getProgramData();
   auto pal = make_shared<PalInfo>(getIpv4(), coreThread.port());
-  pal->segdes = g_strdup(programData->FindNetSegDescription(getIpv4()).c_str());
+  pal->segdes = g_strdup(programData->FindNetSegDescription(getInetAddress()).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
   auto host = iptux_get_section_string(buf, ':', 3);
@@ -467,7 +467,7 @@ void UdpData::UpdatePalInfo(PalInfo* pal) {
   auto g_progdt = coreThread.getProgramData();
 
   g_free(pal->segdes);
-  pal->segdes = g_strdup(g_progdt->FindNetSegDescription(getIpv4()).c_str());
+  pal->segdes = g_strdup(g_progdt->FindNetSegDescription(getInetAddress()).c_str());
   auto version = iptux_get_section_string(buf, ':', 0);
   auto user = iptux_get_section_string(buf, ':', 2);
   auto host = iptux_get_section_string(buf, ':', 3);
@@ -704,6 +704,10 @@ in_addr UdpData::getIpv4() const {
   in_addr result;
   memcpy(&result, g_inet_address_to_bytes(ia), sizeof(in_addr));
   return result;
+}
+
+GInetAddress* UdpData::getInetAddress() const {
+  return g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(addr_));
 }
 
 string UdpData::getIpv4String() const {

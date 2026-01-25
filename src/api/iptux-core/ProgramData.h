@@ -35,7 +35,7 @@ class ProgramData {
   FileInfo* GetShareFileInfo(uint32_t fileId);
   FileInfo* GetShareFileInfo(uint32_t packetn, uint32_t filenum);
 
-  std::string FindNetSegDescription(in_addr ipv4) const;
+  std::string FindNetSegDescription(GInetAddress* ipv4) const;
   void Lock();
   void Unlock();
 

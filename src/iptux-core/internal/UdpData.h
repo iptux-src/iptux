@@ -31,6 +31,7 @@ class UdpData {
   ~UdpData();
 
   in_addr getIpv4() const;
+  GInetAddress* getInetAddress() const;
   std::string getIpv4String() const;
   PalKey getPalKey() const;
 
