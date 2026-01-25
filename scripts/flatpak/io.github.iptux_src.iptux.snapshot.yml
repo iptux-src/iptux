@@ -1,4 +1,3 @@
-# snapcraft.yaml
 name: iptux
 version: 0.10.0
 app-id: io.github.iptux_src.iptux
@@ -20,26 +19,6 @@ modules:
       - type: archive
         url: https://download.gnome.org/sources/libsigc++/2.10/libsigc++-2.10.8.tar.xz
         sha256: 235a40bec7346c7b82b6a8caae0456353dc06e71f14bc414bcc858af1838719a
-
-  - name: gflags
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DBUILD_SHARED_LIBS=ON
-    sources:
-      - type: archive
-        url: https://github.com/gflags/gflags/archive/v2.2.2.tar.gz
-        sha256: 34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf
-
-  - name: glog
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DBUILD_SHARED_LIBS=ON
-    sources:
-      - type: archive
-        url: https://github.com/google/glog/archive/v0.6.0.tar.gz
-        sha256: 8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6
 
   - name: jsoncpp
     buildsystem: meson
