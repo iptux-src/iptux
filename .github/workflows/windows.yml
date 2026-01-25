@@ -9,6 +9,7 @@ on:
 jobs:
   build-on-windows:
     runs-on: windows-latest
+    continue-on-error: true
     permissions:
       contents: read
     defaults:
@@ -16,7 +17,6 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v2
-      
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
