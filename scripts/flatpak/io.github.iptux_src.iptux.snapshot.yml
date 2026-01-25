@@ -35,5 +35,6 @@ modules:
         branch: main
     config-opts:
       - --buildtype=release
+      - --pkg-config-path=/app/lib/pkgconfig:/app/lib64/pkgconfig
     build-environment:
       PKG_CONFIG_PATH: "/app/lib/pkgconfig:/app/lib64/pkgconfig"
