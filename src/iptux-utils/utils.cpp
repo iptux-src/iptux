@@ -802,42 +802,6 @@ ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset) {
 }
 
 /**
- * 读取ipmsg文件头信息.
- * 本函数的退出条件为: \n
- * 1.缓冲区内必须要有数据; \n
- * 2.文件头长度必须能够被获得; \n
- * 3.文件头长度必须小于或等于缓冲区内已有数据长度; \n
- * 4.读取数据出错(晕，这还值得怀疑吗？). \n
- * @param fd 文件描述符
- * @param buf 缓冲区
- * @param count 缓冲区长度
- * @param offset 缓冲区无效数据偏移量
- * @return 成功读取的信息长度
- */
-ssize_t read_ipmsg_fileinfo(int fd, void* buf, size_t count, size_t offset) {
-  ssize_t size;
-  uint32_t headsize;
-
-  if (offset < count)  // 注意不要写到缓冲区外了
-    ((char*)buf)[offset] = '\0';
-  while (!offset || !strchr((char*)buf, ':') ||
-         sscanf((char*)buf, "%" SCNx32, &headsize) != 1 || headsize > offset) {
-  mark:
-    if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
-      if (errno == EINTR)
-        goto mark;
-      return -1;
-    } else if (size == 0)
-      return -1;
-    if ((offset += size) == count)
-      break;
-    ((char*)buf)[offset] = '\0';
-  }
-
-  return offset;
-}
-
-/**
  * Read file info from GSocket.
  * @param sock GSocket
  * @param buf buffer
