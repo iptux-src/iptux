@@ -3,7 +3,7 @@ name: iptux
 version: 0.10.0
 app-id: io.github.iptux_src.iptux
 runtime: org.gnome.Platform
-runtime-version: '46'
+runtime-version: '48'
 sdk: org.gnome.Sdk
 command: iptux
 finish-args:
