@@ -27,12 +27,19 @@ modules:
         url: https://github.com/open-source-parsers/jsoncpp/archive/1.9.5.tar.gz
         sha256: f409856e5920c18d0c2fb85276e24ee607d2a09b5e7d5f0a371368903c275da2
 
+  - name: libayatana-appindicator
+    buildsystem: cmake
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-appindicator/archive/refs/tags/0.5.93.tar.gz
+        sha256: cbefed7a918a227bf71286246e237fcd3a9c8499b3eaac4897811a869409edf0
+
   - name: iptux
     buildsystem: meson
     sources:
       - type: git
         url: https://github.com/iptux-src/iptux.git
-        branch: main
+        branch: flatpak-snapshot
     config-opts:
       - --buildtype=release
       - --pkg-config-path=/app/lib/pkgconfig:/app/lib64/pkgconfig

@@ -84,7 +84,7 @@ void LogSystem::communicateLogv(const MsgPara* msgpara,
   msg = g_strdup_vprintf(fmt, ap);
   log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER, ptr, msg,
                         LOG_END_HEADER);
-  write(fdc, log, strlen(log));
+  (void)write(fdc, log, strlen(log));
   g_free(log);
   g_free(ptr);
   g_free(msg);
@@ -104,7 +104,7 @@ void LogSystem::systemLogv(const char* fmt, va_list ap) {
   g_free(ptr);
   g_free(msg);
 
-  write(fds, log, strlen(log));
+  (void)write(fds, log, strlen(log));
   g_free(log);
 }
 
