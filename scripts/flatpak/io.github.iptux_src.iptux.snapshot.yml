@@ -1,9 +1,7 @@
-name: iptux
-version: 0.10.0
 app-id: io.github.iptux_src.iptux
-runtime: org.gnome.Platform
-runtime-version: '48'
-sdk: org.gnome.Sdk
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
 command: iptux
 finish-args:
   - --share=network
@@ -27,12 +25,7 @@ modules:
         url: https://github.com/open-source-parsers/jsoncpp/archive/1.9.5.tar.gz
         sha256: f409856e5920c18d0c2fb85276e24ee607d2a09b5e7d5f0a371368903c275da2
 
-  # - name: libayatana-appindicator
-  #   buildsystem: cmake
-  #   sources:
-  #     - type: archive
-  #       url: https://github.com/AyatanaIndicators/libayatana-appindicator/archive/refs/tags/0.5.93.tar.gz
-  #       sha256: cbefed7a918a227bf71286246e237fcd3a9c8499b3eaac4897811a869409edf0
+  - "shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json"
 
   - name: iptux
     buildsystem: meson
@@ -42,6 +35,3 @@ modules:
         branch: flatpak-snapshot
     config-opts:
       - --buildtype=release
-      - --pkg-config-path=/app/lib/pkgconfig:/app/lib64/pkgconfig
-    build-environment:
-      PKG_CONFIG_PATH: "/app/lib/pkgconfig:/app/lib64/pkgconfig"
