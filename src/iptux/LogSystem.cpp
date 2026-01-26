@@ -12,6 +12,7 @@
 #include "config.h"
 #include "LogSystem.h"
 
+#include "iptux-utils/output.h"
 #include <fcntl.h>
 #include <glib/gi18n.h>
 
@@ -84,7 +85,9 @@ void LogSystem::communicateLogv(const MsgPara* msgpara,
   msg = g_strdup_vprintf(fmt, ap);
   log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER, ptr, msg,
                         LOG_END_HEADER);
-  (void)write(fdc, log, strlen(log));
+  if (write(fdc, log, strlen(log)) < 0) {
+    LOG_WARN("Write communicate log failed!");
+  }
   g_free(log);
   g_free(ptr);
   g_free(msg);
@@ -104,7 +107,9 @@ void LogSystem::systemLogv(const char* fmt, va_list ap) {
   g_free(ptr);
   g_free(msg);
 
-  (void)write(fds, log, strlen(log));
+  if (write(fds, log, strlen(log)) < 0) {
+    LOG_WARN("Write system log failed!");
+  }
   g_free(log);
 }
 
