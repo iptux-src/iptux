@@ -23,6 +23,7 @@ jobs:
           sudo apt install -y flatpak flatpak-builder git wget xz-utils
 
       - name: Cache Flatpak SDK
+        if: always()
         uses: actions/cache@v3
         with:
           path: ~/.local/share/flatpak
