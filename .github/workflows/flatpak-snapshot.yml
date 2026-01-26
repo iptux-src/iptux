@@ -33,7 +33,7 @@ jobs:
       - name: Install GNOME SDK
         run: |
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install --noninteractive flathub org.gnome.Sdk//48 org.gnome.Platform//48
+          sudo flatpak install --noninteractive flathub org.freedesktop.Sdk//25.08 org.freedesktop.Platform//25.08
 
       # 4. Determine snapshot version from Git
       - name: Set snapshot version
