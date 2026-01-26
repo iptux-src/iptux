@@ -16,26 +16,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Install Flatpak and dependencies
+      # 2. Set up Flatpak
       - name: Install Flatpak
         run: |
           sudo apt update
           sudo apt install -y flatpak flatpak-builder git wget xz-utils
 
-      # 3. Cache GNOME SDK/runtime
       - name: Cache Flatpak SDK
+        if: always()
         uses: actions/cache@v3
         with:
           path: ~/.local/share/flatpak
           key: flatpak-sdk-48-${{ runner.os }}
 
-      # 4. Install GNOME SDK 48 runtime
+      # 3. Install GNOME SDK runtime
       - name: Install GNOME SDK
         run: |
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install --noninteractive flathub org.gnome.Sdk//48 org.gnome.Platform//48 || true
+          sudo flatpak install --noninteractive flathub org.gnome.Sdk//48 org.gnome.Platform//48
 
-      # 5. Determine snapshot version from Git
+      # 4. Determine snapshot version from Git
       - name: Set snapshot version
         id: vars
         run: |
@@ -44,18 +44,17 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "Snapshot version set to ${VERSION}"
 
-      # 6. Build Flatpak
+      # 5. Build Flatpak
       - name: Build Flatpak
         run: |
           flatpak-builder --force-clean build-dir scripts/flatpak/io.github.iptux_src.iptux.snapshot.yml
 
-      # 7. Export repository to repo/ with summary
+      # 6. Export repository to repo/
       - name: Export Flatpak repo
         run: |
-          flatpak build-export repo build-dir
-          flatpak build-summary repo
+          flatpak build-export repo build-dir --collection-id=io.github.iptux
 
-      # 8. Commit & push to gh-pages
+      # 7. Commit & push to gh-pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
