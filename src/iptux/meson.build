@@ -26,7 +26,10 @@ sources = files([
 ])
 dependencies = [gtk_dep, jsoncpp_dep, sigc_dep]
 
-if appindicator_dep.found()
+if host_machine.system() == 'darwin'
+    sources += ['AppIndicatorMac.mm']
+    dependencies += [dependency('appleframeworks', modules: ['Cocoa'])]
+elif appindicator_dep.found()
     sources += ['AppIndicator.cpp']
     dependencies += [appindicator_dep]
 else
