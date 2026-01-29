@@ -1,3 +1,10 @@
+Version 0.10.0
+~~~~~~~~~~~~~
+Released: 2026-01-28
+
+Features:
+  * [#711] Add macOS menu bar status item (NSStatusItem) with system tray icon.
+
 Version 0.9.4
 ~~~~~~~~~~~~~
 Released: 2025-02-17
