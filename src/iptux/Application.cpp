@@ -126,7 +126,14 @@ void Application::onStartup(Application& self) {
   self.menuBuilder =
       gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/menus.ui");
   if (self.enable_app_indicator_) {
-    self.app_indicator = make_shared<IptuxAppIndicator>(&self);
+    self.app_indicator =
+        make_shared<IptuxAppIndicator>(G_ACTION_GROUP(self.app));
+    self.app_indicator->sigActivateMainWindow.connect([&self]() {
+      g_action_group_activate_action(G_ACTION_GROUP(self.app),
+                                     "open_main_window", NULL);
+    });
+    self.cthrd->sigUnreadMsgCountUpdated.connect(
+        sigc::mem_fun(*self.app_indicator, &IptuxAppIndicator::SetUnreadCount));
   }
 
   bool use_app_menu = true;
