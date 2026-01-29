@@ -1,7 +1,11 @@
 #include "AppIndicator.h"
 
 namespace iptux {
-IptuxAppIndicator::IptuxAppIndicator(Application*) {
+IptuxAppIndicator::IptuxAppIndicator(GActionGroup*) {
+  // Dummy implementation
+}
+
+void IptuxAppIndicator::SetUnreadCount(int) {
   // Dummy implementation
 }
 }  // namespace iptux
