@@ -10,6 +10,9 @@ class IptuxAppIndicatorPrivate {
  public:
   IptuxAppIndicatorPrivate(IptuxAppIndicator* owner) : owner(owner) {}
   ~IptuxAppIndicatorPrivate() {
+    if (blinkTimerId) {
+      g_source_remove(blinkTimerId);
+    }
     if (indicator) {
       g_object_unref(indicator);
     }
@@ -22,11 +25,39 @@ class IptuxAppIndicatorPrivate {
   GtkBuilder* menuBuilder;
   StatusIconMode mode = STATUS_ICON_MODE_NORMAL;
   int unreadCount = 0;
+  guint blinkTimerId = 0;
+  bool blinkState = false;
 
   static void onScrollEvent(IptuxAppIndicatorPrivate* self) {
     self->owner->sigActivateMainWindow.emit();
   }
 };
+
+static gboolean blinkTimerCallback(gpointer data) {
+  auto priv = static_cast<IptuxAppIndicatorPrivate*>(data);
+  priv->blinkState = !priv->blinkState;
+  if (priv->blinkState) {
+    app_indicator_set_icon_full(priv->indicator, "iptux-icon-reverse",
+                                "iptux-icon-reverse");
+  } else {
+    app_indicator_set_icon_full(priv->indicator, "iptux-icon", "iptux-icon");
+  }
+  return G_SOURCE_CONTINUE;
+}
+
+static void startBlinkTimer(IptuxAppIndicatorPrivate* priv) {
+  if (priv->blinkTimerId) return;
+  priv->blinkState = false;
+  priv->blinkTimerId = g_timeout_add(500, blinkTimerCallback, priv);
+}
+
+static void stopBlinkTimer(IptuxAppIndicatorPrivate* priv) {
+  if (priv->blinkTimerId) {
+    g_source_remove(priv->blinkTimerId);
+    priv->blinkTimerId = 0;
+  }
+  priv->blinkState = false;
+}
 
 IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
   this->priv = std::make_shared<IptuxAppIndicatorPrivate>(this);
@@ -61,6 +92,18 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
 void IptuxAppIndicator::SetUnreadCount(int i) {
   priv->unreadCount = i;
   if (priv->mode == STATUS_ICON_MODE_NONE) return;
+
+  if (priv->mode == STATUS_ICON_MODE_BLINKING) {
+    if (i > 0) {
+      startBlinkTimer(priv.get());
+    } else {
+      stopBlinkTimer(priv.get());
+      app_indicator_set_icon_full(priv->indicator, "iptux-icon", "iptux-icon");
+      app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
+    }
+    return;
+  }
+
   if (i > 0) {
     app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ATTENTION);
   } else {
@@ -69,12 +112,26 @@ void IptuxAppIndicator::SetUnreadCount(int i) {
 }
 
 void IptuxAppIndicator::SetMode(StatusIconMode mode) {
+  StatusIconMode oldMode = priv->mode;
   priv->mode = mode;
+
+  if (oldMode == STATUS_ICON_MODE_BLINKING) {
+    stopBlinkTimer(priv.get());
+    app_indicator_set_icon_full(priv->indicator, "iptux-icon", "iptux-icon");
+  }
+
   if (mode == STATUS_ICON_MODE_NONE) {
     app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_PASSIVE);
   } else {
     SetUnreadCount(priv->unreadCount);
   }
+}
+
+void IptuxAppIndicator::StopBlinking() {
+  stopBlinkTimer(priv.get());
+  app_indicator_set_icon_full(priv->indicator, "iptux-icon", "iptux-icon");
+  if (priv->mode == STATUS_ICON_MODE_NONE) return;
+  app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
 }
 
 }  // namespace iptux

@@ -14,6 +14,7 @@ class IptuxAppIndicator {
   IptuxAppIndicator(GActionGroup* action_group);
   void SetUnreadCount(int count);
   void SetMode(StatusIconMode mode);
+  void StopBlinking();
 
   sigc::signal<void> sigActivateMainWindow;
 

@@ -111,6 +111,9 @@ class IptuxAppIndicatorPrivate {
  public:
   IptuxAppIndicatorPrivate() {}
   ~IptuxAppIndicatorPrivate() {
+    if (blinkTimerId) {
+      g_source_remove(blinkTimerId);
+    }
     if (statusItem) {
       [[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
       [statusItem release];
@@ -124,14 +127,20 @@ class IptuxAppIndicatorPrivate {
     if (attentionIcon) {
       [attentionIcon release];
     }
+    if (reverseIcon) {
+      [reverseIcon release];
+    }
   }
 
   NSStatusItem* statusItem = nil;
   IptuxStatusItemHelper* helper = nil;
   NSImage* normalIcon = nil;
   NSImage* attentionIcon = nil;
+  NSImage* reverseIcon = nil;
   StatusIconMode mode = STATUS_ICON_MODE_NORMAL;
   int unreadCount = 0;
+  guint blinkTimerId = 0;
+  bool blinkState = false;
 };
 
 IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
@@ -143,6 +152,7 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
   // Load icons
   priv->normalIcon = loadIcon("iptux-icon", 64);
   priv->attentionIcon = loadIcon("iptux-attention", 64);
+  priv->reverseIcon = loadIcon("iptux-icon-reverse", 64);
 
   // Create status item
   priv->statusItem =
@@ -186,9 +196,47 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
   [menu release];
 }
 
+static gboolean blinkTimerCallback(gpointer data) {
+  auto priv = static_cast<IptuxAppIndicatorPrivate*>(data);
+  if (!priv->statusItem) return G_SOURCE_REMOVE;
+  priv->blinkState = !priv->blinkState;
+  if (priv->blinkState && priv->reverseIcon) {
+    priv->statusItem.button.image = priv->reverseIcon;
+  } else if (priv->normalIcon) {
+    priv->statusItem.button.image = priv->normalIcon;
+  }
+  return G_SOURCE_CONTINUE;
+}
+
+static void startBlinkTimer(IptuxAppIndicatorPrivate* priv) {
+  if (priv->blinkTimerId) return;
+  priv->blinkState = false;
+  priv->blinkTimerId = g_timeout_add(500, blinkTimerCallback, priv);
+}
+
+static void stopBlinkTimer(IptuxAppIndicatorPrivate* priv) {
+  if (priv->blinkTimerId) {
+    g_source_remove(priv->blinkTimerId);
+    priv->blinkTimerId = 0;
+  }
+  priv->blinkState = false;
+}
+
 void IptuxAppIndicator::SetUnreadCount(int count) {
   priv->unreadCount = count;
   if (!priv->statusItem || priv->mode == STATUS_ICON_MODE_NONE) return;
+
+  if (priv->mode == STATUS_ICON_MODE_BLINKING) {
+    if (count > 0) {
+      startBlinkTimer(priv.get());
+    } else {
+      stopBlinkTimer(priv.get());
+      if (priv->normalIcon) {
+        priv->statusItem.button.image = priv->normalIcon;
+      }
+    }
+    return;
+  }
 
   if (count > 0 && priv->attentionIcon) {
     priv->statusItem.button.image = priv->attentionIcon;
@@ -198,11 +246,28 @@ void IptuxAppIndicator::SetUnreadCount(int count) {
 }
 
 void IptuxAppIndicator::SetMode(StatusIconMode mode) {
+  StatusIconMode oldMode = priv->mode;
   priv->mode = mode;
   if (!priv->statusItem) return;
   priv->statusItem.visible = (mode != STATUS_ICON_MODE_NONE);
+
+  if (oldMode == STATUS_ICON_MODE_BLINKING) {
+    stopBlinkTimer(priv.get());
+    if (priv->normalIcon) {
+      priv->statusItem.button.image = priv->normalIcon;
+    }
+  }
+
   if (mode != STATUS_ICON_MODE_NONE) {
     SetUnreadCount(priv->unreadCount);
+  }
+}
+
+void IptuxAppIndicator::StopBlinking() {
+  stopBlinkTimer(priv.get());
+  if (!priv->statusItem || priv->mode == STATUS_ICON_MODE_NONE) return;
+  if (priv->normalIcon) {
+    priv->statusItem.button.image = priv->normalIcon;
   }
 }
 
