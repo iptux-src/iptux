@@ -4,6 +4,8 @@
 #include <glib/gi18n.h>
 #include <libayatana-appindicator/app-indicator.h>
 
+#include "iptux-utils/output.h"
+
 namespace iptux {
 
 class IptuxAppIndicatorPrivate {
@@ -37,24 +39,33 @@ static gboolean blinkTimerCallback(gpointer data) {
   auto priv = static_cast<IptuxAppIndicatorPrivate*>(data);
   priv->blinkState = !priv->blinkState;
   if (priv->blinkState) {
+    LOG_DEBUG("blinkTimerCallback: switching to reverse icon");
     app_indicator_set_icon_full(priv->indicator, "iptux-icon-reverse",
                                 "iptux-icon-reverse");
   } else {
+    LOG_DEBUG("blinkTimerCallback: switching to normal icon");
     app_indicator_set_icon_full(priv->indicator, "iptux-icon", "iptux-icon");
   }
   return G_SOURCE_CONTINUE;
 }
 
 static void startBlinkTimer(IptuxAppIndicatorPrivate* priv) {
-  if (priv->blinkTimerId) return;
+  if (priv->blinkTimerId) {
+    LOG_DEBUG("startBlinkTimer: timer already running (id=%u)", priv->blinkTimerId);
+    return;
+  }
   priv->blinkState = false;
   priv->blinkTimerId = g_timeout_add(500, blinkTimerCallback, priv);
+  LOG_DEBUG("startBlinkTimer: blinking started (timerId=%u)", priv->blinkTimerId);
 }
 
 static void stopBlinkTimer(IptuxAppIndicatorPrivate* priv) {
   if (priv->blinkTimerId) {
+    LOG_DEBUG("stopBlinkTimer: blinking stopped (timerId=%u)", priv->blinkTimerId);
     g_source_remove(priv->blinkTimerId);
     priv->blinkTimerId = 0;
+  } else {
+    LOG_DEBUG("stopBlinkTimer: no timer was running");
   }
   priv->blinkState = false;
 }
@@ -90,8 +101,12 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
 }
 
 void IptuxAppIndicator::SetUnreadCount(int i) {
+  LOG_DEBUG("SetUnreadCount: count=%d, mode=%d", i, priv->mode);
   priv->unreadCount = i;
-  if (priv->mode == STATUS_ICON_MODE_NONE) return;
+  if (priv->mode == STATUS_ICON_MODE_NONE) {
+    LOG_DEBUG("SetUnreadCount: early return (mode=NONE)");
+    return;
+  }
 
   if (priv->mode == STATUS_ICON_MODE_BLINKING) {
     if (i > 0) {
@@ -112,6 +127,7 @@ void IptuxAppIndicator::SetUnreadCount(int i) {
 }
 
 void IptuxAppIndicator::SetMode(StatusIconMode mode) {
+  LOG_DEBUG("SetMode: mode=%d (old=%d)", mode, priv->mode);
   StatusIconMode oldMode = priv->mode;
   priv->mode = mode;
 
@@ -128,6 +144,7 @@ void IptuxAppIndicator::SetMode(StatusIconMode mode) {
 }
 
 void IptuxAppIndicator::StopBlinking() {
+  LOG_DEBUG("StopBlinking called");
   stopBlinkTimer(priv.get());
   app_indicator_set_icon_full(priv->indicator, "iptux-icon", "iptux-icon");
   if (priv->mode == STATUS_ICON_MODE_NONE) return;
