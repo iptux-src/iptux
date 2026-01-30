@@ -8,4 +8,8 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup*) {
 void IptuxAppIndicator::SetUnreadCount(int) {
   // Dummy implementation
 }
+
+void IptuxAppIndicator::SetMode(StatusIconMode) {
+  // Dummy implementation
+}
 }  // namespace iptux

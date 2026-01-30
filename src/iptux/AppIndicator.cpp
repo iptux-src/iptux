@@ -20,6 +20,8 @@ class IptuxAppIndicatorPrivate {
   IptuxAppIndicator* owner;
   AppIndicator* indicator;
   GtkBuilder* menuBuilder;
+  StatusIconMode mode = STATUS_ICON_MODE_NORMAL;
+  int unreadCount = 0;
 
   static void onScrollEvent(IptuxAppIndicatorPrivate* self) {
     self->owner->sigActivateMainWindow.emit();
@@ -57,10 +59,21 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
 }
 
 void IptuxAppIndicator::SetUnreadCount(int i) {
+  priv->unreadCount = i;
+  if (priv->mode == STATUS_ICON_MODE_NONE) return;
   if (i > 0) {
     app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ATTENTION);
   } else {
     app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_ACTIVE);
+  }
+}
+
+void IptuxAppIndicator::SetMode(StatusIconMode mode) {
+  priv->mode = mode;
+  if (mode == STATUS_ICON_MODE_NONE) {
+    app_indicator_set_status(priv->indicator, APP_INDICATOR_STATUS_PASSIVE);
+  } else {
+    SetUnreadCount(priv->unreadCount);
   }
 }
 

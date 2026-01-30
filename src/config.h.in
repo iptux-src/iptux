@@ -22,6 +22,12 @@
 #mesondefine SYSTEM_DARWIN
 #mesondefine HAVE_APPINDICATOR
 
+#if SYSTEM_DARWIN || HAVE_APPINDICATOR
+#define HAVE_STATUS_ICON 1
+#else
+#define HAVE_STATUS_ICON 0
+#endif
+
 #if defined(__APPLE__) || defined(__CYGWIN__)
 #define O_LARGEFILE 0
 #endif
