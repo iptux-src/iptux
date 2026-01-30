@@ -5,12 +5,15 @@
 
 #include <memory>
 
+#include "iptux-core/StatusIconMode.h"
+
 namespace iptux {
 class IptuxAppIndicatorPrivate;
 class IptuxAppIndicator {
  public:
   IptuxAppIndicator(GActionGroup* action_group);
   void SetUnreadCount(int count);
+  void SetMode(StatusIconMode mode);
 
   sigc::signal<void> sigActivateMainWindow;
 

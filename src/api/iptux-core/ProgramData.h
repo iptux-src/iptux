@@ -7,6 +7,7 @@
 
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
+#include "iptux-core/StatusIconMode.h"
 
 namespace iptux {
 
@@ -53,6 +54,8 @@ class ProgramData {
   bool IsUsingBlacklist() const;
   bool IsFilterFileShareRequest() const;
   bool isHideTaskbarWhenMainWindowIconified() const;
+  int statusIconMode() const;
+  void setStatusIconMode(int value);
   void set_port(uint16_t port, bool is_init = false);
   void setOpenChat(bool value) { open_chat = value; }
   void setHideStartup(bool value) { hide_startup = value; }
@@ -108,6 +111,7 @@ class ProgramData {
   uint8_t proof_shared : 1;
   uint8_t hide_taskbar_when_main_window_iconified_ : 1;
   uint8_t need_restart_ : 1;
+  uint8_t status_icon_mode_ : 2;
 
  private:
   void InitSublayer();

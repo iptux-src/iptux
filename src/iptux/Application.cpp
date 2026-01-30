@@ -128,6 +128,7 @@ void Application::onStartup(Application& self) {
   if (self.enable_app_indicator_) {
     self.app_indicator =
         make_shared<IptuxAppIndicator>(G_ACTION_GROUP(self.app));
+    self.app_indicator->SetMode(StatusIconMode(self.data->statusIconMode()));
     self.app_indicator->sigActivateMainWindow.connect([&self]() {
       g_action_group_activate_action(G_ACTION_GROUP(self.app),
                                      "open_main_window", NULL);
@@ -391,6 +392,9 @@ void Application::onConfigChanged() {
     add_accelerator(app, "win.send_message", "Return");
   } else {
     add_accelerator(app, "win.send_message", "<Primary>Return");
+  }
+  if (app_indicator) {
+    app_indicator->SetMode(StatusIconMode(data->statusIconMode()));
   }
 }
 

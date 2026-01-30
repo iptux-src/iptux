@@ -130,6 +130,8 @@ class IptuxAppIndicatorPrivate {
   IptuxStatusItemHelper* helper = nil;
   NSImage* normalIcon = nil;
   NSImage* attentionIcon = nil;
+  StatusIconMode mode = STATUS_ICON_MODE_NORMAL;
+  int unreadCount = 0;
 };
 
 IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
@@ -185,12 +187,22 @@ IptuxAppIndicator::IptuxAppIndicator(GActionGroup* action_group) {
 }
 
 void IptuxAppIndicator::SetUnreadCount(int count) {
-  if (!priv->statusItem) return;
+  priv->unreadCount = count;
+  if (!priv->statusItem || priv->mode == STATUS_ICON_MODE_NONE) return;
 
   if (count > 0 && priv->attentionIcon) {
     priv->statusItem.button.image = priv->attentionIcon;
   } else if (priv->normalIcon) {
     priv->statusItem.button.image = priv->normalIcon;
+  }
+}
+
+void IptuxAppIndicator::SetMode(StatusIconMode mode) {
+  priv->mode = mode;
+  if (!priv->statusItem) return;
+  priv->statusItem.visible = (mode != STATUS_ICON_MODE_NONE);
+  if (mode != STATUS_ICON_MODE_NONE) {
+    SetUnreadCount(priv->unreadCount);
   }
 }
 
