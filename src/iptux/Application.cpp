@@ -136,23 +136,9 @@ void Application::onStartup(Application& self) {
     self.cthrd->sigUnreadMsgCountUpdated.connect(
         sigc::mem_fun(*self.app_indicator, &IptuxAppIndicator::SetUnreadCount));
 
-    g_signal_connect(self.app, "window-added",
-                     G_CALLBACK(+[](GtkApplication*, GtkWindow* window,
-                                    gpointer user_data) {
-                       g_signal_connect(
-                           window, "notify::is-active",
-                           G_CALLBACK(+[](GtkWindow* win, GParamSpec*,
-                                          gpointer ud) {
-                             if (gtk_window_is_active(win)) {
-                               auto a = static_cast<Application*>(ud);
-                               if (a->app_indicator) {
-                                 a->app_indicator->StopBlinking();
-                               }
-                             }
-                           }),
-                           user_data);
-                     }),
-                     &self);
+    // Removed notify::is-active StopBlinking handler.
+    // Blinking now stops only when the user interacts with the dialog
+    // (button-press-event or key-press-event via ClearNotify).
   }
 
   bool use_app_menu = true;

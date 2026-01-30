@@ -225,7 +225,8 @@ void DialogBase::MainWindowSignalSetup(GtkWindow* window) {
                            G_CALLBACK(DragDataReceived), this);
   g_signal_connect(window, "configure-event", G_CALLBACK(WindowConfigureEvent),
                    &dtset);
-  g_signal_connect(window, "focus-in-event", G_CALLBACK(ClearNotify), NULL);
+  g_signal_connect(window, "button-press-event", G_CALLBACK(ClearNotify), NULL);
+  g_signal_connect(window, "key-press-event", G_CALLBACK(ClearNotify), NULL);
 }
 
 /**
@@ -470,7 +471,8 @@ void DialogBase::DialogDestory(DialogBase* dialog) {
 /**
  * 清除提示,这个提示只是窗口闪动的提示
  */
-gboolean DialogBase::ClearNotify(GtkWidget* window, GdkEventConfigure*) {
+gboolean DialogBase::ClearNotify(GtkWidget* window, GdkEvent*) {
+  LOG_DEBUG("ClearNotify: user interaction on dialog window");
   if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
     gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
   DialogBase* self =

@@ -64,7 +64,7 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
   // 回调部分
   static void DialogDestory(DialogBase*);
-  static gboolean ClearNotify(GtkWidget* window, GdkEventConfigure* event);
+  static gboolean ClearNotify(GtkWidget* window, GdkEvent* event);
   static void DragDataReceived(DialogBase* dlgpr,
                                GdkDragContext* context,
                                gint x,
