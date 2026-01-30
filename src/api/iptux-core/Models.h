@@ -12,7 +12,7 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
-#include <arpa/inet.h>
+#include <gio/gio.h>
 #include <memory>
 #include <netinet/in.h>
 #include <string>
@@ -56,17 +56,33 @@ typedef enum {
 class PalKey {
  public:
   PalKey(in_addr ipv4, int port);
+  explicit PalKey(GSocketAddress* address);
+  ~PalKey();
+  
+  // Copy constructor
+  PalKey(const PalKey& other);
+  
+  // Copy assignment operator
+  PalKey& operator=(const PalKey& other);
+  
+  // Move constructor
+  PalKey(PalKey&& other) noexcept;
+  
+  // Move assignment operator
+  PalKey& operator=(PalKey&& other) noexcept;
 
   bool operator==(const PalKey& rhs) const;
 
-  in_addr GetIpv4() const { return ipv4; }
+  in_addr GetIpv4() const;
   std::string GetIpv4String() const;
-  int GetPort() const { return port; }
+  int GetPort() const;
   std::string ToString() const;
+  
+  // Get the underlying GSocketAddress (increases reference count)
+  GSocketAddress* GetSocketAddress() const;
 
  private:
-  in_addr ipv4;
-  int port;
+  GSocketAddress* address_;
 };
 
 /**
@@ -80,10 +96,10 @@ class PalKey {
 class PalInfo {
  public:
   PalInfo(const std::string& ipv4, uint16_t port);
-  PalInfo(in_addr ipv4, uint16_t port);
+  explicit PalInfo(const PalKey& key);
   ~PalInfo();
 
-  PalKey GetKey() const { return PalKey(ipv4(), port_); }
+  const PalKey& GetKey() const { return key_; }
 
   PalInfo& setName(const std::string& name);
   const std::string& getName() const { return name; }
@@ -117,8 +133,8 @@ class PalInfo {
   }
 
   std::string toString() const;
-  in_addr ipv4() const { return ipv4_; }
-  uint16_t port() const { return port_; }
+  in_addr ipv4() const { return key_.GetIpv4(); }
+  uint16_t port() const { return key_.GetPort(); }
 
   char* segdes;       ///< 所在网段描述
   char* photo;        ///< 形象照片
@@ -137,8 +153,7 @@ class PalInfo {
   PalInfo& setInBlacklist(bool value);
 
  private:
-  in_addr ipv4_;           ///< 好友IP
-  uint16_t port_;          ///< 好友端口
+  PalKey key_;             ///< 好友IP和端口
   std::string icon_file_;  ///< 好友头像 *
   std::string user;
   std::string name;
@@ -236,7 +251,7 @@ class NetSegment {
   NetSegment();
   ~NetSegment();
 
-  bool ContainIP(in_addr ipv4) const;
+  bool ContainIP(GInetAddress* ipv4) const;
   /**
    * @brief return the ip count in this segment
    *

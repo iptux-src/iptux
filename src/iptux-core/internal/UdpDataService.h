@@ -15,13 +15,7 @@ class UdpDataService {
                                    const char buf[],
                                    size_t size);
 
-  std::unique_ptr<UdpData> process(in_addr ipv4,
-                                   int port,
-                                   const char buf[],
-                                   size_t size);
-
-  std::unique_ptr<UdpData> process(in_addr ipv4,
-                                   int port,
+  std::unique_ptr<UdpData> process(GSocketAddress* peer,
                                    const char buf[],
                                    size_t size,
                                    bool run);
