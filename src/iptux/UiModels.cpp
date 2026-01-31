@@ -809,7 +809,9 @@ void GroupInfo::_addMsgPara(const MsgPara& para, time_t now) {
         break;
     }
   }
-  addMsgCount(1);
+  if (para.stype == MessageSourceType::PAL) {
+    addMsgCount(1);
+  }
 }
 
 bool transModelIsFinished(TransModel* model) {
