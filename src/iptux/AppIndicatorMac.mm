@@ -38,6 +38,7 @@
 
 - (void)openMainWindow:(id)sender {
   (void)sender;
+  g_debug("AppIndicatorMac: openMainWindow menu item clicked");
   g_action_group_activate_action(actionGroup_, "open_main_window", NULL);
 }
 
@@ -294,6 +295,10 @@ void IptuxAppIndicator::StopBlinking() {
   if (priv->normalIcon) {
     priv->statusItem.button.image = priv->normalIcon;
   }
+}
+
+void ActivateApplication() {
+  [NSApp activateIgnoringOtherApps:YES];
 }
 
 }  // namespace iptux

@@ -21,4 +21,8 @@ class IptuxAppIndicator {
  private:
   std::shared_ptr<IptuxAppIndicatorPrivate> priv;
 };
+#ifdef __APPLE__
+void ActivateApplication();
+#endif
+
 }  // namespace iptux

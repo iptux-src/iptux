@@ -11,6 +11,7 @@
 //
 #include "config.h"
 #include "MainWindow.h"
+#include "AppIndicator.h"
 #include "iptux-core/Const.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
@@ -100,7 +101,13 @@ GtkWidget* MainWindow::getWindow() {
 }
 
 void MainWindow::Show() {
+  LOG_DEBUG("MainWindow::Show: presenting window %p, visible=%d", window,
+            gtk_widget_get_visible(window));
   gtk_window_present(GTK_WINDOW(window));
+  gtk_window_deiconify(GTK_WINDOW(window));
+#ifdef __APPLE__
+  ActivateApplication();
+#endif
 }
 
 static void mainWindowDestroy(gpointer data) {
