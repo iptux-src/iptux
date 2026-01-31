@@ -14,10 +14,15 @@ class IptuxAppIndicator {
   IptuxAppIndicator(GActionGroup* action_group);
   void SetUnreadCount(int count);
   void SetMode(StatusIconMode mode);
+  void StopBlinking();
 
   sigc::signal<void> sigActivateMainWindow;
 
  private:
   std::shared_ptr<IptuxAppIndicatorPrivate> priv;
 };
+#ifdef __APPLE__
+void ActivateApplication();
+#endif
+
 }  // namespace iptux

@@ -11,6 +11,7 @@
 #define __LOCALE_PATH "@SHARE_DIR@/locale"
 #define __SOUND_PATH "@SHARE_IPTUX_DIR@/sound"
 #define __UI_PATH "@SHARE_IPTUX_DIR@/ui"
+#define __ICON_PATH "@SHARE_DIR@/icons/hicolor"
 
 #define IPTUX_PATH "/iptux"
 #define LOG_PATH "/iptux/log"

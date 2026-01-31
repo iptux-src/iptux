@@ -12,4 +12,8 @@ void IptuxAppIndicator::SetUnreadCount(int) {
 void IptuxAppIndicator::SetMode(StatusIconMode) {
   // Dummy implementation
 }
+
+void IptuxAppIndicator::StopBlinking() {
+  // Dummy implementation
+}
 }  // namespace iptux

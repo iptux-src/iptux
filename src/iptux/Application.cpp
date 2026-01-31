@@ -130,11 +130,16 @@ void Application::onStartup(Application& self) {
         make_shared<IptuxAppIndicator>(G_ACTION_GROUP(self.app));
     self.app_indicator->SetMode(StatusIconMode(self.data->statusIconMode()));
     self.app_indicator->sigActivateMainWindow.connect([&self]() {
+      LOG_DEBUG("sigActivateMainWindow: emitted, activating open_main_window action");
       g_action_group_activate_action(G_ACTION_GROUP(self.app),
                                      "open_main_window", NULL);
     });
     self.cthrd->sigUnreadMsgCountUpdated.connect(
         sigc::mem_fun(*self.app_indicator, &IptuxAppIndicator::SetUnreadCount));
+
+    // Removed notify::is-active StopBlinking handler.
+    // Blinking now stops only when the user interacts with the dialog
+    // (button-press-event or key-press-event via ClearNotify).
   }
 
   bool use_app_menu = true;
@@ -240,6 +245,7 @@ void Application::onPreferences(void*, void*, Application& self) {
 }
 
 void Application::onOpenMainWindow(void*, void*, Application& self) {
+  LOG_DEBUG("onOpenMainWindow: action triggered");
   self.getMainWindow()->Show();
 }
 
