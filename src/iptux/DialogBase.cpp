@@ -471,10 +471,14 @@ void DialogBase::DialogDestory(DialogBase* dialog) {
  * 清除提示,这个提示只是窗口闪动的提示
  */
 void DialogBase::ClearNotify(GtkWidget* window, GdkEvent* event) {
-  GdkEventType type = gdk_event_get_event_type(event);
-  if (type != GDK_BUTTON_PRESS && type != GDK_KEY_PRESS)
-    return;
-  LOG_DEBUG("ClearNotify: user interaction on dialog window (type=%d)", type);
+  if (event) {
+    GdkEventType type = gdk_event_get_event_type(event);
+    if (type != GDK_BUTTON_PRESS && type != GDK_KEY_PRESS)
+      return;
+    LOG_DEBUG("ClearNotify: user interaction on dialog window (type=%d)", type);
+  } else {
+    LOG_DEBUG("ClearNotify: called directly (window is active)");
+  }
   if (gtk_window_get_urgency_hint(GTK_WINDOW(window)))
     gtk_window_set_urgency_hint(GTK_WINDOW(window), FALSE);
   DialogBase* self =
