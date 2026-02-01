@@ -17,8 +17,13 @@ endif
 if (cc.has_argument('-Wno-c99-designator'))
   add_project_arguments('-Wno-c99-designator', language : 'cpp')
 endif
-if host_machine.system() == 'darwin' and get_option('werror')
-  add_project_arguments('-U_LIBCPP_ENABLE_ASSERTIONS', language: 'cpp')
+if host_machine.system() == 'darwin'
+  add_languages('objcpp')
+  add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_70', language : 'objcpp')
+  if get_option('werror')
+    add_project_arguments('-U_LIBCPP_ENABLE_ASSERTIONS', language: 'cpp')
+    add_project_arguments('-U_LIBCPP_ENABLE_ASSERTIONS', language: 'objcpp')
+  endif
 endif
 
 so_version = 2

@@ -532,11 +532,14 @@ void GroupInfo::clearInputBuffer() {
 void GroupInfo::addMsgCount(int i) {
   int oldCount = getUnreadMsgCount();
   allMsgCount += i;
+  LOG_DEBUG("addMsgCount: i=%d, oldCount=%d, newCount=%d", i, oldCount,
+            getUnreadMsgCount());
   signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
 }
 
 void GroupInfo::readAllMsg() {
   int oldCount = getUnreadMsgCount();
+  LOG_DEBUG("readAllMsg: oldCount=%d", oldCount);
   if (oldCount != 0) {
     readMsgCount = allMsgCount;
     signalUnreadMsgCountUpdated.emit(this, oldCount, getUnreadMsgCount());
@@ -806,7 +809,9 @@ void GroupInfo::_addMsgPara(const MsgPara& para, time_t now) {
         break;
     }
   }
-  addMsgCount(1);
+  if (para.stype == MessageSourceType::PAL) {
+    addMsgCount(1);
+  }
 }
 
 bool transModelIsFinished(TransModel* model) {

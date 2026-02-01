@@ -18,7 +18,7 @@ apps:
     extensions: [gnome]
     slots:
       - dbus-iptux
-    plugs: [home, network, gsettings, unity7]
+    plugs: [home, network, gsettings]
 
 parts:
   iptux:
@@ -35,13 +35,7 @@ parts:
         appstream,
       ]
     plugin: meson
-    meson-parameters: ["--prefix=/snap/iptux/current/usr"]
-    override-pull: |
-      craftctl default
-    override-build: |
-      craftctl default
-    organize:
-      snap/iptux/current/usr: usr
+    meson-parameters: ["--prefix=/usr"]
     stage-packages:
       - libjsoncpp25
       - libsigc++-2.0-0v5

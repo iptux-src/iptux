@@ -494,7 +494,9 @@ void UiCoreThread::PopItemFromEnclosureList(FileInfo* file) {
   delete file;
 }
 
-void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int, int) {
+void UiCoreThread::onGroupInfoMsgCountUpdate(GroupInfo* grpinf, int oldCount, int newCount) {
+  LOG_DEBUG("onGroupInfoMsgCountUpdate: oldCount=%d, newCount=%d, totalUnread=%d",
+            oldCount, newCount, unread_msg_count());
   sigGroupInfoUpdated.emit(grpinf);
   sigUnreadMsgCountUpdated.emit(unread_msg_count());
 }

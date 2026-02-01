@@ -1068,9 +1068,9 @@ void DialogPeer::onNewFileReceived(GroupInfo*) {
 void DialogPeer::onGroupInfoUpdated(GroupInfo* groupInfo) {
   if (groupInfo != this->grpinf)
     return;
-  if (gtk_window_is_active(GTK_WINDOW(this->window))) {
-    ClearNotify(GTK_WIDGET(this->window), nullptr);
-  }
+  // Don't auto-read messages just because the window is active.
+  // Messages are marked as read only on user interaction
+  // (button-press or key-press via ClearNotify).
 }
 
 void DialogPeer::refreshSendAction() {

@@ -69,6 +69,7 @@ void ProgramData::WriteProgData() {
   config->SetBool("proof_shared", proof_shared);
   config->SetBool("hide_taskbar_when_main_window_iconified",
                   hide_taskbar_when_main_window_iconified_);
+  config->SetInt("status_icon_mode", status_icon_mode_);
   config->SetString("access_shared_limit", passwd);
   config->SetInt("send_message_retry_in_us", send_message_retry_in_us);
   WriteNetSegment();
@@ -144,6 +145,7 @@ void ProgramData::ReadProgData() {
   proof_shared = config->GetBool("proof_shared");
   hide_taskbar_when_main_window_iconified_ =
       config->GetBool("hide_taskbar_when_main_window_iconified");
+  status_icon_mode_ = config->GetInt("status_icon_mode", STATUS_ICON_MODE_NORMAL);
 
   passwd = config->GetString("access_shared_limit");
   send_message_retry_in_us =
@@ -243,6 +245,14 @@ bool ProgramData::isHideTaskbarWhenMainWindowIconified() const {
 #else
   return false;
 #endif
+}
+
+int ProgramData::statusIconMode() const {
+  return status_icon_mode_;
+}
+
+void ProgramData::setStatusIconMode(int value) {
+  status_icon_mode_ = value;
 }
 
 ProgramData& ProgramData::SetUsingBlacklist(bool value) {
