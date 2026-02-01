@@ -232,6 +232,11 @@ void Application::onActivate(Application& self) {
 }
 
 void Application::onQuit(void*, void*, Application& self) {
+  // Close the preference dialog if it's open, so its modal loop doesn't block quit.
+  if (self.preference_dialog_) {
+    gtk_dialog_response(GTK_DIALOG(self.preference_dialog_),
+                        GTK_RESPONSE_DELETE_EVENT);
+  }
   if (!transModelIsFinished(self.transModel)) {
     if (!pop_request_quit(GTK_WINDOW(self.window->getWindow()))) {
       return;
