@@ -354,6 +354,35 @@ GtkWidget* DataSettings::CreateSystem() {
   g_datalist_set_data(&widset, "font-chooser-widget", widget);
   gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
 
+#if HAVE_STATUS_ICON
+  row++;
+  label = gtk_label_new(_("Status icon:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(box), label, 0, row, 1, 1);
+
+  {
+    auto store = gtk_list_store_new(STATUS_ICON_MODEL_N_COLS, G_TYPE_STRING,
+                                    G_TYPE_STRING);
+    for (const auto& entry : kStatusIconModes) {
+      GtkTreeIter iter;
+      gtk_list_store_append(store, &iter);
+      gtk_list_store_set(store, &iter, STATUS_ICON_MODEL_COL_ID,
+                         std::to_string(entry.mode).c_str(),
+                         STATUS_ICON_MODEL_COL_LABEL, _(entry.label), -1);
+    }
+    widget = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
+    g_object_unref(store);
+    gtk_combo_box_set_id_column(GTK_COMBO_BOX(widget),
+                                STATUS_ICON_MODEL_COL_ID);
+    auto cell = gtk_cell_renderer_text_new();
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widget), cell, TRUE);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(widget), cell, "text",
+                                   STATUS_ICON_MODEL_COL_LABEL, NULL);
+  }
+  gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
+  g_datalist_set_data(&widset, "status-icon-mode-combo-widget", widget);
+#endif
+
   row++;
 
   /* 有消息时直接弹出聊天窗口 */
@@ -423,35 +452,6 @@ GtkWidget* DataSettings::CreateSystem() {
       _("Hide the taskbar when the main window is minimized"));
   gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "taskbar-check-widget", widget);
-#endif
-
-#if HAVE_STATUS_ICON
-  row++;
-  label = gtk_label_new(_("Status icon:"));
-  gtk_widget_set_halign(label, GTK_ALIGN_END);
-  gtk_grid_attach(GTK_GRID(box), label, 0, row, 1, 1);
-
-  {
-    auto store = gtk_list_store_new(STATUS_ICON_MODEL_N_COLS, G_TYPE_STRING,
-                                    G_TYPE_STRING);
-    for (const auto& entry : kStatusIconModes) {
-      GtkTreeIter iter;
-      gtk_list_store_append(store, &iter);
-      gtk_list_store_set(store, &iter, STATUS_ICON_MODEL_COL_ID,
-                         std::to_string(entry.mode).c_str(),
-                         STATUS_ICON_MODEL_COL_LABEL, _(entry.label), -1);
-    }
-    widget = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
-    g_object_unref(store);
-    gtk_combo_box_set_id_column(GTK_COMBO_BOX(widget),
-                                STATUS_ICON_MODEL_COL_ID);
-    auto cell = gtk_cell_renderer_text_new();
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widget), cell, TRUE);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(widget), cell, "text",
-                                   STATUS_ICON_MODEL_COL_LABEL, NULL);
-  }
-  gtk_grid_attach(GTK_GRID(box), widget, 1, row, 1, 1);
-  g_datalist_set_data(&widset, "status-icon-mode-combo-widget", widget);
 #endif
 
   return GTK_WIDGET(box);
