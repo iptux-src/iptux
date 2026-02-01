@@ -1217,6 +1217,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget* treeview,
   /* 检查是否需要新建对话框 */
   if (grpinf->getDialog()) {
     gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
+    grpinf->readAllMsg();
     return;
   }
 
@@ -1232,6 +1233,7 @@ void MainWindow::onPaltreeItemActivated(GtkWidget* treeview,
     default:
       break;
   }
+  grpinf->readAllMsg();
 }
 
 /**
@@ -1562,6 +1564,7 @@ void MainWindow::PallistItemActivated(GtkWidget* treeview,
       DialogPeer::PeerDialogEntry(self->app, grpinf);
     else
       gtk_window_present(GTK_WINDOW(grpinf->getDialog()));
+    grpinf->readAllMsg();
   }
 }
 
