@@ -64,18 +64,30 @@ ShareFilePrivate* getPriv(ShareFile* window) {
 
 void shareFileRun(ShareFile* dialog, GtkWindow* parent) {
   gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_OK:
-      ApplySharedData(dialog);
-      break;
-    case GTK_RESPONSE_APPLY:
-      ApplySharedData(dialog);
-      shareFileRun(dialog, parent);
-      break;
-    default:
-      break;
-  }
-  gtk_widget_hide(GTK_WIDGET(dialog));
+  
+  g_signal_connect(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        ShareFile* self = IPTUX_SHARE_FILE(dialog);
+        GtkWindow* parent = GTK_WINDOW(user_data);
+        
+        switch (response_id) {
+          case GTK_RESPONSE_OK:
+            ApplySharedData(self);
+            gtk_widget_hide(GTK_WIDGET(dialog));
+            break;
+          case GTK_RESPONSE_APPLY:
+            ApplySharedData(self);
+            // Keep dialog open for another round
+            return;
+          default:
+            gtk_widget_hide(GTK_WIDGET(dialog));
+            break;
+        }
+      }),
+      parent);
+  
+  gtk_widget_show(GTK_WIDGET(dialog));
 }
 
 /**

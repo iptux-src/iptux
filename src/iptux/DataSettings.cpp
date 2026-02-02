@@ -88,38 +88,48 @@ void DataSettings::ResetDataEntry(Application* app, GtkWidget* parent) {
     return;
   }
 
-  DataSettings dset(app, parent);
-  GtkWidget* dialog = GTK_WIDGET(dset.dialog());
+  DataSettings* dset = new DataSettings(app, parent);
+  GtkWidget* dialog = GTK_WIDGET(dset->dialog());
   app->setPreferenceDialog(dialog);
 
+  g_signal_connect(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        DataSettings* dset = static_cast<DataSettings*>(user_data);
+        Application* app = dset->app;
+        
+        switch (response_id) {
+          case GTK_RESPONSE_OK:
+            if (dset->Save()) {
+              if (app->getProgramData()->need_restart()) {
+                pop_warning(GTK_WIDGET(dialog),
+                           _("The program needs to be restarted to take effect!"));
+              }
+              app->setPreferenceDialog(NULL);
+              gtk_widget_destroy(GTK_WIDGET(dialog));
+              delete dset;
+            }
+            break;
+          case GTK_RESPONSE_APPLY:
+            if (dset->Save()) {
+              if (app->getProgramData()->need_restart()) {
+                pop_warning(GTK_WIDGET(dialog),
+                           _("The program needs to be restarted to take effect!"));
+              }
+            }
+            // Keep dialog open
+            break;
+          default:
+            app->setPreferenceDialog(NULL);
+            gtk_widget_destroy(GTK_WIDGET(dialog));
+            delete dset;
+            break;
+        }
+      }),
+      dset);
+  
   /* 运行对话框 */
   gtk_widget_show_all(dialog);
-  bool done = false;
-  while (!done) {
-    switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-      case GTK_RESPONSE_OK:
-        if (dset.Save()) {
-          if (app->getProgramData()->need_restart()) {
-            pop_warning(dialog,
-                        _("The program needs to be restarted to take effect!"));
-          }
-          done = true;
-        }
-        break;
-      case GTK_RESPONSE_APPLY:
-        if (dset.Save()) {
-          if (app->getProgramData()->need_restart()) {
-            pop_warning(dialog,
-                        _("The program needs to be restarted to take effect!"));
-          }
-        }
-        break;
-      default:
-        done = true;
-        break;
-    }
-  }
-  app->setPreferenceDialog(NULL);
 }
 
 /**
@@ -1390,11 +1400,6 @@ void DataSettings::CellEditText(GtkCellRendererText* renderer,
  */
 void DataSettings::ImportNetSegment(DataSettings* dset) {
   GtkWidget *dialog, *parent;
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gchar* filename;
-  GSList *list, *tlist;
-  NetSegment* pns;
 
   parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
   dialog = gtk_file_chooser_dialog_new(
@@ -1405,31 +1410,37 @@ void DataSettings::ImportNetSegment(DataSettings* dset) {
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
 
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_ACCEPT:
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&dset->mdlset, "network-model"));
-      gtk_list_store_clear(GTK_LIST_STORE(model));
-      list = NULL;
-      filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      dset->ReadNetSegment(filename, &list);
-      g_free(filename);
-      tlist = list;
-      while (tlist) {
-        pns = (NetSegment*)tlist->data;
-        gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
-                           pns->startip.c_str(), 1, pns->endip.c_str(), 2,
-                           pns->description.c_str(), -1);
-        tlist = g_slist_next(tlist);
-      }
-      for (tlist = list; tlist; tlist = g_slist_next(tlist))
-        delete (NetSegment*)tlist->data;
-      g_slist_free(list);
-    default:
-      break;
-  }
-  gtk_widget_destroy(dialog);
+  g_signal_connect_data(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        DataSettings* dset = static_cast<DataSettings*>(user_data);
+        if (response_id == GTK_RESPONSE_ACCEPT) {
+          GtkTreeModel* model = GTK_TREE_MODEL(
+              g_datalist_get_data(&dset->mdlset, "network-model"));
+          gtk_list_store_clear(GTK_LIST_STORE(model));
+          GSList* list = NULL;
+          gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+          dset->ReadNetSegment(filename, &list);
+          g_free(filename);
+          GSList* tlist = list;
+          while (tlist) {
+            NetSegment* pns = (NetSegment*)tlist->data;
+            GtkTreeIter iter;
+            gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+            gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
+                              pns->startip.c_str(), 1, pns->endip.c_str(), 2,
+                              pns->description.c_str(), -1);
+            tlist = g_slist_next(tlist);
+          }
+          for (tlist = list; tlist; tlist = g_slist_next(tlist))
+            delete (NetSegment*)tlist->data;
+          g_slist_free(list);
+        }
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+      }),
+      dset, nullptr, G_CONNECT_AFTER);
+  
+  gtk_widget_show(dialog);
 }
 
 /**
@@ -1438,11 +1449,6 @@ void DataSettings::ImportNetSegment(DataSettings* dset) {
  */
 void DataSettings::ExportNetSegment(DataSettings* dset) {
   GtkWidget *dialog, *parent;
-  GtkTreeModel* model;
-  GtkTreeIter iter;
-  gchar* filename;
-  GSList *list, *tlist;
-  NetSegment* ns;
 
   parent = GTK_WIDGET(g_datalist_get_data(&dset->widset, "dialog-widget"));
   dialog = gtk_file_chooser_dialog_new(
@@ -1452,38 +1458,42 @@ void DataSettings::ExportNetSegment(DataSettings* dset) {
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
 
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_ACCEPT:
-      model =
-          GTK_TREE_MODEL(g_datalist_get_data(&dset->mdlset, "network-model"));
-      if (!gtk_tree_model_get_iter_first(model, &iter))
-        break;
-      list = NULL;
-      do {
-        char* startip;
-        char* endip;
-        char* description;
-        gtk_tree_model_get(model, &iter, 0, &startip, 1, &endip, 2,
-                           &description, -1);
-        ns = new NetSegment;
-        if (startip)
-          ns->startip = startip;
-        if (endip)
-          ns->endip = endip;
-        if (description)
-          ns->description = description;
-        list = g_slist_append(list, ns);
-      } while (gtk_tree_model_iter_next(model, &iter));
-      filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      dset->WriteNetSegment(filename, list);
-      g_free(filename);
-      for (tlist = list; tlist; tlist = g_slist_next(tlist))
-        delete (NetSegment*)tlist->data;
-      g_slist_free(list);
-    default:
-      break;
-  }
-  gtk_widget_destroy(dialog);
+  g_signal_connect_data(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        DataSettings* dset = static_cast<DataSettings*>(user_data);
+        if (response_id == GTK_RESPONSE_ACCEPT) {
+          GtkTreeModel* model = GTK_TREE_MODEL(
+              g_datalist_get_data(&dset->mdlset, "network-model"));
+          GtkTreeIter iter;
+          if (gtk_tree_model_get_iter_first(model, &iter)) {
+            GSList* list = NULL;
+            do {
+              char *startip, *endip, *description;
+              gtk_tree_model_get(model, &iter, 0, &startip, 1, &endip, 2,
+                                &description, -1);
+              NetSegment* ns = new NetSegment;
+              if (startip)
+                ns->startip = startip;
+              if (endip)
+                ns->endip = endip;
+              if (description)
+                ns->description = description;
+              list = g_slist_append(list, ns);
+            } while (gtk_tree_model_iter_next(model, &iter));
+            gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+            dset->WriteNetSegment(filename, list);
+            g_free(filename);
+            for (GSList* tlist = list; tlist; tlist = g_slist_next(tlist))
+              delete (NetSegment*)tlist->data;
+            g_slist_free(list);
+          }
+        }
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+      }),
+      dset, nullptr, G_CONNECT_AFTER);
+  
+  gtk_widget_show(dialog);
 }
 
 /**
