@@ -5,6 +5,10 @@ grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 base: core24
 
+layout:
+  /usr/share/iptux:
+    bind: $SNAP/usr/share/iptux
+
 slots:
   dbus-iptux:
     interface: dbus
@@ -35,9 +39,7 @@ parts:
         appstream,
       ]
     plugin: meson
-    meson-parameters: ["--prefix=/snap/iptux/current/usr"]
-    organize:
-      snap/iptux/current/usr: usr
+    meson-parameters: ["--prefix=/usr"]
     stage-packages:
       - glib-networking
       - libjsoncpp25
