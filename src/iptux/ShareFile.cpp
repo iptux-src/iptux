@@ -12,6 +12,7 @@
 #include "config.h"
 #include "ShareFile.h"
 
+#include <functional>
 #include <glib/gi18n.h>
 #include <sys/stat.h>
 
@@ -407,13 +408,13 @@ void AttachSharedFiles(ShareFile* self, GSList* list) {
 /**
  * 选择新的共享文件.
  * @param fileattr 文件类型
- * @return 文件链表
+ * @param callback callback function to handle the selected files
  */
-GSList* PickSharedFile(ShareFile* self, FileAttr fileattr) {
+void PickSharedFileAsync(ShareFile* self, FileAttr fileattr,
+                          std::function<void(GSList*)> callback) {
   GtkWidget* dialog;
   GtkFileChooserAction action;
   const char* title;
-  GSList* list;
 
   g_assert(FileAttrIsValid(fileattr));
 
@@ -434,18 +435,27 @@ GSList* PickSharedFile(ShareFile* self, FileAttr fileattr) {
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                       g_get_home_dir());
 
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_ACCEPT:
-      list = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
-      break;
-    case GTK_RESPONSE_CANCEL:
-    default:
-      list = NULL;
-      break;
-  }
-  gtk_widget_destroy(dialog);
+  struct CallbackData {
+    std::function<void(GSList*)> callback;
+  };
+  
+  auto* data = new CallbackData{callback};
+  
+  g_signal_connect_data(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        auto* data = static_cast<CallbackData*>(user_data);
+        GSList* list = nullptr;
+        if (response_id == GTK_RESPONSE_ACCEPT) {
+          list = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+        }
+        data->callback(list);
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+        delete data;
+      }),
+      data, nullptr, G_CONNECT_AFTER);
 
-  return list;
+  gtk_widget_show(dialog);
 }
 
 /**
@@ -453,12 +463,11 @@ GSList* PickSharedFile(ShareFile* self, FileAttr fileattr) {
  * @param sfile 共享文件类
  */
 void AddRegular(ShareFile* sfile) {
-  GSList* list;
-
-  list = PickSharedFile(sfile, FileAttr::REGULAR);
-  AttachSharedFiles(sfile, list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  PickSharedFileAsync(sfile, FileAttr::REGULAR, [sfile](GSList* list) {
+    AttachSharedFiles(sfile, list);
+    g_slist_foreach(list, GFunc(g_free), NULL);
+    g_slist_free(list);
+  });
 }
 
 /**
@@ -466,12 +475,11 @@ void AddRegular(ShareFile* sfile) {
  * @param sfile 共享文件类
  */
 void AddFolder(ShareFile* sfile) {
-  GSList* list;
-
-  list = PickSharedFile(sfile, FileAttr::DIRECTORY);
-  AttachSharedFiles(sfile, list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  PickSharedFileAsync(sfile, FileAttr::DIRECTORY, [sfile](GSList* list) {
+    AttachSharedFiles(sfile, list);
+    g_slist_foreach(list, GFunc(g_free), NULL);
+    g_slist_free(list);
+  });
 }
 
 /**
