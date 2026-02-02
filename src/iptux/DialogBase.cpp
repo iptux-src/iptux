@@ -427,13 +427,13 @@ void DialogBase::FeedbackMsg(const gchar* msg) {
  * @param dlgpr 对话框类
  */
 void DialogBase::AttachRegular(DialogBase* dlgpr) {
-  GSList* list;
-
-  if (!(list = dlgpr->PickEnclosure(FileAttr::REGULAR)))
-    return;
-  dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  dlgpr->PickEnclosureAsync(FileAttr::REGULAR, [dlgpr](GSList* list) {
+    if (!list)
+      return;
+    dlgpr->AttachEnclosure(list);
+    g_slist_foreach(list, GFunc(g_free), NULL);
+    g_slist_free(list);
+  });
 }
 
 /**
@@ -441,13 +441,13 @@ void DialogBase::AttachRegular(DialogBase* dlgpr) {
  * @param dlgpr 对话框类
  */
 void DialogBase::AttachFolder(DialogBase* dlgpr) {
-  GSList* list;
-
-  if (!(list = dlgpr->PickEnclosure(FileAttr::DIRECTORY)))
-    return;
-  dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  dlgpr->PickEnclosureAsync(FileAttr::DIRECTORY, [dlgpr](GSList* list) {
+    if (!list)
+      return;
+    dlgpr->AttachEnclosure(list);
+    g_slist_foreach(list, GFunc(g_free), NULL);
+    g_slist_free(list);
+  });
 }
 
 /**
@@ -929,25 +929,34 @@ void DialogBase::OnSaveImage(DialogBase* self) {
                                                  TRUE);
   gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
 
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-    char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+  gchar* source_path = g_strdup(path);
+  g_signal_connect_data(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        gchar* source_path = static_cast<gchar*>(user_data);
+        if (response_id == GTK_RESPONSE_ACCEPT) {
+          char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
-    GError* error = NULL;
-    GFile* source = g_file_new_for_path(path);
-    GFile* destination = g_file_new_for_path(save_path);
-    gboolean success = g_file_copy(source, destination, G_FILE_COPY_OVERWRITE,
-                                   NULL, NULL, NULL, &error);
-    if (!success) {
-      LOG_ERROR("Failed to save image: %s", error->message);
-      g_error_free(error);
-    }
+          GError* error = NULL;
+          GFile* source = g_file_new_for_path(source_path);
+          GFile* destination = g_file_new_for_path(save_path);
+          gboolean success = g_file_copy(source, destination, G_FILE_COPY_OVERWRITE,
+                                         NULL, NULL, NULL, &error);
+          if (!success) {
+            LOG_ERROR("Failed to save image: %s", error->message);
+            g_error_free(error);
+          }
 
-    g_object_unref(source);
-    g_object_unref(destination);
-    g_free(save_path);
-  }
+          g_object_unref(source);
+          g_object_unref(destination);
+          g_free(save_path);
+        }
+        g_free(source_path);
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+      }),
+      source_path, nullptr, G_CONNECT_AFTER);
 
-  gtk_widget_destroy(dialog);
+  gtk_widget_show(dialog);
 }
 
 void DialogBase::OnCopyImage(DialogBase* self) {
