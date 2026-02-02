@@ -35,8 +35,11 @@ parts:
         appstream,
       ]
     plugin: meson
-    meson-parameters: ["--prefix=/usr"]
+    meson-parameters: ["--prefix=/snap/iptux/current/usr"]
+    organize:
+      snap/iptux/current/usr: usr
     stage-packages:
+      - glib-networking
       - libjsoncpp25
       - libsigc++-2.0-0v5
       - libayatana-appindicator3-1
