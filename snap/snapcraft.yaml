@@ -39,9 +39,7 @@ parts:
         appstream,
       ]
     plugin: meson
-    meson-parameters: ["--prefix=/snap/iptux/current/usr"]
-    organize:
-      snap/iptux/current/usr: usr
+    meson-parameters: ["--prefix=/usr"]
     stage-packages:
       - glib-networking
       - libjsoncpp25
