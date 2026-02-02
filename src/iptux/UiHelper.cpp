@@ -186,8 +186,8 @@ void pop_info(GtkWidget* parent, const gchar* format, ...) {
   gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
   g_free(msg);
   gtk_window_set_title(GTK_WINDOW(dialog), _("Information"));
-  gtk_dialog_run(GTK_DIALOG(dialog));
-  gtk_widget_destroy(dialog);
+  g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+  gtk_widget_show(dialog);
 }
 
 /**
@@ -216,8 +216,8 @@ void pop_warning(GtkWidget* parent, const gchar* format, ...) {
   gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
   g_free(msg);
   gtk_window_set_title(GTK_WINDOW(dialog), _("Warning"));
-  gtk_dialog_run(GTK_DIALOG(dialog));
-  gtk_widget_destroy(dialog);
+  g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+  gtk_widget_show(dialog);
 }
 
 /**
