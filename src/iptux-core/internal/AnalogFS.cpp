@@ -26,7 +26,7 @@ using namespace std;
 
 namespace iptux {
 
-static int mergepath(char tpath[], const char* npath);
+static bool mergepath(char tpath[], int len, const char* npath);
 
 /**
  * 类构造函数.
@@ -86,7 +86,10 @@ int AnalogFS::open(const char* fn, int flags, mode_t mode) {
   int fd;
 
   strcpy(tpath, path);
-  mergepath(tpath, fn);
+  if (!mergepath(tpath, MAX_PATHLEN, fn)) {
+    LOG_WARN("Merge path failed, \"%s\" + \"%s\"", path, fn);
+    return -1;
+  }
   if ((flags & O_ACCMODE) == O_WRONLY) {
     auto tfn = assert_filename_inexist(tpath);
     if ((fd = ::open(tfn.c_str(), flags, mode)) == -1) {
@@ -112,7 +115,7 @@ int AnalogFS::stat(const char* fn, struct ::stat* st) {
   int result;
 
   strcpy(tpath, path);
-  mergepath(tpath, fn);
+  mergepath(tpath, MAX_PATHLEN, fn);
   if ((result = ::stat(tpath, st)) != 0) {
     pwarning(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
   }
@@ -131,7 +134,7 @@ int AnalogFS::makeDir(const char* dir, mode_t mode) {
   int result;
 
   strcpy(tpath, path);
-  mergepath(tpath, dir);
+  mergepath(tpath, MAX_PATHLEN, dir);
   if (::access(tpath, F_OK) == 0)
     return 0;
   if ((result = g_mkdir(tpath, mode)) != 0) {
@@ -159,7 +162,10 @@ DIR* AnalogFS::opendir(const char* dir) {
   DIR* dirs;
 
   strcpy(tpath, path);
-  mergepath(tpath, dir);
+  if (!mergepath(tpath, MAX_PATHLEN, dir)) {
+    LOG_WARN("Merge path failed, \"%s\" + \"%s\"", path, dir);
+    return nullptr;
+  }
   if (!(dirs = ::opendir(tpath))) {
     pwarning(_("Opendir() directory \"%s\" failed, %s"), tpath,
              strerror(errno));
@@ -173,27 +179,22 @@ DIR* AnalogFS::opendir(const char* dir) {
  * @param npath 需要被合并的路径
  * @return 成功与否
  */
-int mergepath(char tpath[], const char* npath) {
-  size_t len;
-  char* ptr;
+bool mergepath(char tpath[], int len, const char* npath) {
+  gchar* full_path;
 
-  if (strcmp(npath, ".") == 0)
-    return 0;
+  full_path = g_build_filename(tpath, npath, NULL);
+  if (!full_path) {
+    return false;
+  }
 
-  if (*npath != '/') {
-    if (strcmp(npath, "..") == 0) {
-      ptr = strrchr(tpath, '/');
-      if (ptr != tpath)
-        *ptr = '\0';
-    } else {
-      len = strlen(tpath);
-      ptr = (char*)(*(tpath + 1) != '\0' ? "/" : "");
-      snprintf(tpath + len, MAX_PATHLEN - len, "%s%s", ptr, npath);
-    }
-  } else
-    snprintf(tpath, MAX_PATHLEN, "%s", npath);
+  if ((int)strlen(full_path) >= len) {
+    g_free(full_path);
+    return false;
+  }
 
-  return 0;
+  strcpy(tpath, full_path);
+  g_free(full_path);
+  return true;
 }
 
 }  // namespace iptux
