@@ -13,6 +13,7 @@
 #define IPTUX_DATASETTINGS_H
 
 #include <gtk/gtk.h>
+#include <string>
 
 #include "iptux-core/Models.h"
 #include "iptux/Application.h"

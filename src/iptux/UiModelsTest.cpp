@@ -79,6 +79,7 @@ TEST(GroupInfo, GetHintAsMarkup) {
             "size=\"smaller\">hello</span>");
 }
 
+#if !defined(_WIN32) && !defined(_WIN64)
 static string igtk_text_get_all_text(GtkTextBuffer* buffer) {
   GtkTextIter start, end;
   gtk_text_buffer_get_start_iter(buffer, &start);
@@ -119,6 +120,7 @@ TEST(GroupInfo, addMsgPara) {
       igtk_text_get_all_text(gi.buffer),
       "(06:55:06) palname:\nhelloworld\n(06:55:07) palname:\n\xEF\xBF\xBC\n");
 }
+#endif
 
 TEST(GroupInfo, genMsgParaFromInput) {
   PalInfo pal("127.0.0.1", 2425);

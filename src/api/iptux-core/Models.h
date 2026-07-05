@@ -16,7 +16,10 @@
 #include <string>
 
 #include <json/json.h>
-#include "iptux-core/internal/iptux_network.h"
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+#endif
 
 namespace iptux {
 

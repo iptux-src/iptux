@@ -74,6 +74,7 @@ std::string inAddrToString(in_addr ipv4);
 in_addr inAddrFromString(const std::string& s);
 uint32_t inAddrToUint32(in_addr ipv4);
 in_addr inAddrFromUint32(uint32_t value);
+bool is_ipv4(const char* str);
 
 template <typename... Args>
 std::string stringFormat(const char* format, ...) G_GNUC_PRINTF(1, 2);

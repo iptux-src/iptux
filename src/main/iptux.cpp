@@ -69,7 +69,11 @@ static string nowAsString() {
   char buffer[80];
 
   time(&rawtime);
+#if defined(_WIN32) || defined(_WIN64)
+  localtime_s(&timeinfo, &rawtime);
+#else
   localtime_r(&rawtime, &timeinfo);
+#endif
 
   strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
   return buffer;
@@ -139,7 +143,9 @@ static void dealLog(const IptuxConfig& config) {
 int main(int argc, char** argv) {
   int ret;
 
+#if !defined(_WIN32) && !defined(_WIN64)
   installCrashHandler();
+#endif
   setlocale(LC_ALL, "");
   bindtextdomain(GETTEXT_PACKAGE, __LOCALE_PATH);
   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");

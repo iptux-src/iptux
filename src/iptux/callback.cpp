@@ -84,7 +84,7 @@ gchar* choose_file_with_preview(const gchar* title, GtkWidget* parent) {
 
   chooser = gtk_file_chooser_dialog_new(
       title, GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN, _("_Open"),
-      GTK_RESPONSE_ACCEPT, _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
+      GTK_RESPONSE_ACCEPT, _("_Cancel"), GTK_RESPONSE_CANCEL, nullptr);
   gtk_dialog_set_default_response(GTK_DIALOG(chooser), GTK_RESPONSE_ACCEPT);
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser), TRUE);
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), FALSE);

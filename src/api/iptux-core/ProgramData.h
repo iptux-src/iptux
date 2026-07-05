@@ -8,7 +8,6 @@
 #include "iptux-core/IptuxConfig.h"
 #include "iptux-core/Models.h"
 #include "iptux-core/StatusIconMode.h"
-#include "iptux-core/internal/iptux_network.h"
 
 namespace iptux {
 

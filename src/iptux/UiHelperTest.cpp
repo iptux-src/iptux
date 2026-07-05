@@ -15,6 +15,7 @@ TEST(UiHelper, markupEscapeText) {
   ASSERT_EQ(markupEscapeText("\"hello\""), "&quot;hello&quot;");
 }
 
+#if !defined(_WIN32) && !defined(_WIN64)
 TEST(UiHelper, TimeToStr) {
   setenv("TZ", "PST8PDT,M3.2.0/2,M11.1.0/2", 1);
   tzset();
@@ -32,6 +33,7 @@ TEST(UiHelper, TimeToStr) {
   ASSERT_EQ(TimeToStr_((1713583969 / 86400 + 1) * 86400, 1713583969),
             "2024-04-21");
 }
+#endif
 
 TEST(UiHelper, StrFirstNonEmptyLine) {
   ASSERT_EQ(StrFirstNonEmptyLine(""), "");

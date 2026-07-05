@@ -13,7 +13,6 @@
 #include "UiCoreThread.h"
 
 #include <cinttypes>
-#include <sys/socket.h>
 #include <sys/stat.h>
 
 #include <glib/gi18n.h>

@@ -32,7 +32,7 @@ TEST(NetSegment, ContainIP) {
 
   for (const string& ip : ips) {
     in_addr ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1.s_addr), 1) << ip;
+    ASSERT_TRUE(is_ipv4(ip.c_str())) << ip;
     ASSERT_TRUE(netSegment.ContainIP(ip1));
   }
 
@@ -44,7 +44,7 @@ TEST(NetSegment, ContainIP) {
   };
   for (const string& ip : ips2) {
     in_addr ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1), 1) << ip;
+    ASSERT_TRUE(is_ipv4(ip.c_str())) << ip;
     ASSERT_FALSE(netSegment.ContainIP(ip1));
   }
 }

@@ -17,7 +17,6 @@
 #include "iptux-core/Models.h"
 #include <cinttypes>
 
-#include <sys/socket.h>
 #include <unistd.h>
 
 #include <gdk/gdkkeysyms.h>

@@ -1,4 +1,9 @@
-iptux_sources = files(['iptux.cpp', 'iptux_crash_utils.cpp'])
+iptux_sources = files(['iptux.cpp'])
+
+if host_machine.system() != 'windows'
+    iptux_sources += files(['iptux_crash_utils.cpp'])
+endif
+
 executable('iptux',
     iptux_sources,
     include_directories: inc,
