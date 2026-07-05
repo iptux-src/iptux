@@ -15,13 +15,13 @@
 #include <cinttypes>
 #include <cstring>
 #include <memory>
-#include <sys/socket.h>
 #include <unistd.h>
 
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/SendFileData.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux-core/internal/iptux_network.h"
 
 using namespace std;
 
@@ -65,7 +65,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
                                 FileAttr fileattr,
                                 char* attach) {
   struct sockaddr_in addr;
-  socklen_t len;
+  int len;
   uint32_t fileid;
   uint32_t filectime;
   /* 检查文件属性是否匹配 */

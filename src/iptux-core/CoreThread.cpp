@@ -16,7 +16,6 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <sys/socket.h>
 
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"

@@ -19,14 +19,13 @@
 #include <cstring>
 #include <sstream>
 
-#include <arpa/inet.h>
+#include "iptux-core/internal/iptux_network.h"
 #include <glib/gi18n.h>
 #include <sys/param.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-#ifndef __APPLE__
+#if defined(__unix__)
 #include <sys/vfs.h>
 #endif
 
@@ -167,14 +166,18 @@ char* getformattime(gboolean date, const char* format, ...) {
   char buf[MAX_BUFLEN], *msg, *ptr;
   time_t tt;
   va_list ap;
+  struct tm tm;
 
   va_start(ap, format);
   msg = g_strdup_vprintf(format, ap);
   va_end(ap);
 
   time(&tt);
-  struct tm tm;
+#if defined(_WIN32)
+  tm = *localtime(&tt);
+#else
   localtime_r(&tt, &tm);
+#endif
   if (date)
     strftime(buf, MAX_BUFLEN, "%c", &tm);
   else
@@ -195,7 +198,11 @@ char* getformattime2(time_t tt, gboolean date, const char* format, ...) {
   va_end(ap);
 
   struct tm tm;
+#if defined(_WIN32)
+  tm = *localtime(&tt);
+#else
   localtime_r(&tt, &tm);
+#endif
   if (date)
     strftime(buf, MAX_BUFLEN, "%c", &tm);
   else
@@ -533,17 +540,37 @@ char* ipmsg_get_pathname_full(const char* path, const char* name) {
 }
 
 std::string inAddrToString(in_addr inAddr) {
-  char res[INET_ADDRSTRLEN];
-  inet_ntop(AF_INET, &inAddr.s_addr, res, INET_ADDRSTRLEN);
+  string res;
+
+  GInetAddress* addr = g_inet_address_new_from_bytes((guint8*)&inAddr.s_addr,
+                                                     G_SOCKET_FAMILY_IPV4);
+  gchar* addr_str = g_inet_address_to_string(addr);
+  res = addr_str;
+  g_object_unref(addr);
+  g_free(addr_str);
   return res;
 }
 
 in_addr inAddrFromString(const std::string& s) {
-  in_addr res;
-  if (inet_pton(AF_INET, s.c_str(), &res.s_addr) == 1) {
+  in_addr res = {0};
+
+  GInetAddress* addr = g_inet_address_new_from_string(s.c_str());
+  if (addr == NULL) {
+    g_error("Invalid IP");
     return res;
   }
-  throw Exception(INVALID_IP_ADDRESS);
+
+  GSocketFamily family = g_inet_address_get_family(addr);
+  const guint8* bytes = g_inet_address_to_bytes(addr);
+  if(family != G_SOCKET_FAMILY_IPV4) {
+    g_error("Invalid IP");
+    g_object_unref(addr);
+    return res;
+  }
+  memcpy(&res, bytes, 4);
+
+  g_object_unref(addr);
+  return res;
 }
 
 std::string stringDump(const std::string& str) {
@@ -703,7 +730,7 @@ ssize_t xread(int fd, void* buf, size_t count) {
  * @return 成功读取的消息长度，-1表示读取消息出错
  */
 ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
-  uint number;
+  unsigned int number;
   size_t offset;
   ssize_t size;
 
@@ -740,7 +767,7 @@ ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
  */
 ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset) {
   const char* curptr;
-  uint number;
+  unsigned int number;
   ssize_t size;
 
   size = -1;
@@ -776,7 +803,7 @@ ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset) {
  */
 ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset) {
   const char* curptr;
-  uint number;
+  unsigned int number;
   ssize_t size;
 
   size = -1;
@@ -891,23 +918,23 @@ int64_t fileOrDirectorySize(const string& fileOrDirName) {
     return 0;
   }
   // 到了这里就一定是目录了
-  DIR* dir = opendir(fileOrDirName.c_str());
+  GDir* dir = g_dir_open(fileOrDirName.c_str(), 0, NULL);
   if (dir == NULL) {
     LOG_WARN(_("opendir on \"%s\" failed: %s"), fileOrDirName.c_str(),
              strerror(errno));
     return 0;
   }
 
-  struct dirent* dirt;
+const char* dirt;
   int64_t sumsize = 0;
-  while ((dirt = readdir(dir))) {
-    if (strcmp(dirt->d_name, ".") == 0) {
+  while ((dirt = g_dir_read_name(dir))) {
+    if (strcmp(dirt, ".") == 0) {
       continue;
     }
-    if (strcmp(dirt->d_name, "..") == 0) {
+    if (strcmp(dirt, "..") == 0) {
       continue;
     }
-    string tpath = fileOrDirName + "/" + dirt->d_name;
+    string tpath = fileOrDirName + "/" + dirt;
     struct stat st;
     if (stat(tpath.c_str(), &st) == -1) {
       continue;

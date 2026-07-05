@@ -11,14 +11,13 @@
 //
 #include "config.h"
 #include "output.h"
-
+#include "iptux-utils/utils.h"
 #include <pthread.h>
 #include <sstream>
 #include <string>
 
 #include <sys/time.h>
 
-#include "iptux-utils/utils.h"
 #include <unistd.h>
 
 using namespace std;

@@ -7,7 +7,6 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
-#include <netinet/in.h>
 #include <vector>
 
 #include <sigc++/signal.h>

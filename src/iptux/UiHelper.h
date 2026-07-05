@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include <arpa/inet.h>
 #include <gtk/gtk.h>
+#include "iptux-core/internal/iptux_network.h"
 
 namespace iptux {
 

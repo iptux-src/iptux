@@ -16,6 +16,7 @@
 #include <glib.h>
 #include <memory>
 #include <string>
+#include "iptux-core/internal/iptux_network.h"
 
 namespace iptux {
 
@@ -159,6 +160,8 @@ std::string sha256(const std::string& s);
  * @return std::string
  */
 std::string sha256(const char* s, int length);
+
+
 
 }  // namespace iptux
 #endif

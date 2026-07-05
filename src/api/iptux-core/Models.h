@@ -12,12 +12,11 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
-#include <arpa/inet.h>
 #include <memory>
-#include <netinet/in.h>
 #include <string>
 
 #include <json/json.h>
+#include "iptux-core/internal/iptux_network.h"
 
 namespace iptux {
 
@@ -27,7 +26,7 @@ namespace iptux {
 enum class MessageSourceType {
   PAL,   ///< 好友
   SELF,  ///< 自身
-  ERROR  ///< 错误
+  MST_ERROR  ///< 错误
 };
 
 /**

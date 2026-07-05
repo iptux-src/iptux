@@ -48,7 +48,9 @@ void onWhatsNew() {
 }
 
 void iptux_init(LogSystemPtr logSystem) {
+#if !defined(_WIN32)
   signal(SIGPIPE, SIG_IGN);
+#endif
   logSystem->systemLog("%s", _("Loading the process successfully!"));
 }
 

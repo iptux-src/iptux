@@ -15,7 +15,6 @@
 #include <memory>
 
 #include <fcntl.h>
-#include <sys/socket.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <utime.h>
@@ -29,6 +28,10 @@
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
 
 using namespace std;
 

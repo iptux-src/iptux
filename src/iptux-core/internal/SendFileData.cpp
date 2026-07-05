@@ -15,10 +15,7 @@
 #include <cinttypes>
 #include <memory>
 
-#include <arpa/inet.h>
 #include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -30,6 +27,10 @@
 #include "iptux-core/Event.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
 
 using namespace std;
 

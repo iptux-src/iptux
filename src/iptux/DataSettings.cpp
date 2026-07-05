@@ -1092,8 +1092,9 @@ void DataSettings::WriteNetSegment(const char* filename, GSList* list) {
  */
 void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
   GtkWidget* parent;
-  char buf[3][MAX_BUFLEN], *lineptr;
-  in_addr_t ipv4;
+  char buffer[MAX_BUFLEN*3];
+  char buf[3][MAX_BUFLEN];
+  uint32_t ipv4;
   NetSegment* ns;
   FILE* stream;
   size_t n;
@@ -1106,11 +1107,10 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
   }
 
   n = 0;
-  lineptr = NULL;
-  while (getline(&lineptr, &n, stream) != -1) {
-    if (*(lineptr + strspn(lineptr, "\t\x20")) == '#')
+  while (fgets(buffer, sizeof(buffer), stream) != NULL) {
+    if (*(buffer + strspn(buffer, "\t\x20")) == '#')
       continue;
-    switch (sscanf(lineptr, "%s - %s //%s", buf[0], buf[1], buf[2])) {
+    switch (sscanf(buffer, "%s - %s //%s", buf[0], buf[1], buf[2])) {
       case 3:
         if (inet_pton(AF_INET, buf[0], &ipv4) <= 0 ||
             inet_pton(AF_INET, buf[1], &ipv4) <= 0)
@@ -1134,7 +1134,6 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
         break;
     }
   }
-  g_free(lineptr);
   fclose(stream);
 }
 

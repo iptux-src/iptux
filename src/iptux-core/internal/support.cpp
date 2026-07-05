@@ -12,8 +12,6 @@
 #include "config.h"
 #include "support.h"
 
-#include <sys/ioctl.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -31,12 +29,12 @@ namespace iptux {
  * @param sock socket
  */
 void socket_enable_reuse(int sock) {
-  socklen_t len;
-  int optval;
+  int len;
+  char optval;
 
   optval = 1;
   len = sizeof(optval);
-#ifndef __CYGWIN__
+#ifndef _WIN32
   if (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, len) != 0) {
     LOG_WARN("setsockopt for SO_REUSEPORT failed: %s", strerror(errno));
   }
@@ -53,15 +51,19 @@ void socket_enable_reuse(int sock) {
  * @return list of broadcast addresses
  */
 static vector<string> get_sys_broadcast_addr_by_fd(int sock) {
+#if !defined(_WIN32)
   const uint8_t amount = 5;  //支持5个IP地址
   uint8_t count, sum;
   struct ifconf ifc;
   struct ifreq* ifr;
   struct sockaddr_in* addr;
+#endif
   vector<string> res;
 
-  res.push_back("255.255.255.255");
+  (void)sock;
 
+  res.push_back("255.255.255.255");
+#if !defined(_WIN32)
   ifc.ifc_len = amount * sizeof(struct ifreq);
   ifc.ifc_buf = (caddr_t)g_malloc(ifc.ifc_len);
   if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
@@ -83,6 +85,7 @@ static vector<string> get_sys_broadcast_addr_by_fd(int sock) {
     res.push_back(inAddrToString(addr->sin_addr));
   }
   g_free(ifc.ifc_buf);
+#endif
   if (res.size() == 1) {
     res.push_back("127.0.0.1");
   }

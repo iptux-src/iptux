@@ -14,7 +14,6 @@
 
 #include <cinttypes>
 #include <fcntl.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -74,7 +73,7 @@ static bool commandSendTo(int sockfd,
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr = ipv4;
-  return sendto(sockfd, buf, len, flags, (struct sockaddr*)(&addr),
+  return sendto(sockfd, (const char*)buf, len, flags, (struct sockaddr*)(&addr),
                 sizeof(struct sockaddr_in)) != -1;
 }
 
@@ -484,7 +483,7 @@ void Command::FeedbackError(CPPalInfo pal,
                             GroupBelongType btype,
                             const char* error) {
   MsgPara para(coreThread.GetPal(pal->GetKey()));
-  para.stype = MessageSourceType::ERROR;
+  para.stype = MessageSourceType::MST_ERROR;
   para.btype = btype;
 
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
