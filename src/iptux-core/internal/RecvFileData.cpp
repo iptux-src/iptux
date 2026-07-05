@@ -33,6 +33,10 @@
 #define O_LARGEFILE 0
 #endif
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 using namespace std;
 
 namespace iptux {
@@ -138,6 +142,13 @@ void RecvFileData::RecvRegularFile() {
   int64_t finishsize;
   int fd;
   struct utimbuf timebuf;
+  mode_t mode;
+
+#if defined(_WIN32) || defined(_WIN64)
+  mode = S_IREAD | S_IWRITE;
+#else
+  mode = 0644;
+#endif
 
   GError* error = nullptr;
   GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
@@ -157,8 +168,9 @@ void RecvFileData::RecvRegularFile() {
     return;
   }
 
-  if ((fd = afs.open(file->filepath, O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE,
-                     00644)) == -1) {
+  if ((fd = afs.open(file->filepath,
+                     O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE | O_BINARY,
+                     mode)) == -1) {
     LOG_WARN("Failed to open file \"%s\" for writing", file->filepath);
     g_object_unref(sock);
     terminate = true;
