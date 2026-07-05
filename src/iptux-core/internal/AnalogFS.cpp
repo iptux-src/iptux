@@ -98,12 +98,11 @@ int AnalogFS::open(const char* fn, int flags, mode_t mode) {
   if ((flags & O_ACCMODE) == O_WRONLY) {
     auto tfn = assert_filename_inexist(tpath);
     if ((fd = ::open(tfn.c_str(), flags, mode)) == -1) {
-      pwarning(_("Open() file \"%s\" failed, %s"), tfn.c_str(),
-               strerror(errno));
+      LOG_WARN("Open() file \"%s\" failed, %s", tfn.c_str(), strerror(errno));
     }
   } else {
     if ((fd = ::open(tpath, flags, mode)) == -1) {
-      pwarning(_("Open() file \"%s\" failed, %s"), tpath, strerror(errno));
+      LOG_WARN("Open() file \"%s\" failed, %s", tpath, strerror(errno));
     }
   }
   return fd;
