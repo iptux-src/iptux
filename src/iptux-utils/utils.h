@@ -15,7 +15,6 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <memory>
-#include <netinet/in.h>
 #include <string>
 
 namespace iptux {

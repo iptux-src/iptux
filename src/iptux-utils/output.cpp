@@ -51,15 +51,13 @@ static char logLevelAsChar(GLogLevelFlags logLevel) {
 }
 
 static string nowAsString() {
-  struct timeval tv;
-  gettimeofday(&tv, nullptr);
-  struct tm timeinfo;
-  char buffer[80];
+  GDateTime* dt = g_date_time_new_now_local();
+  gint hour = g_date_time_get_hour(dt);
+  gint minute = g_date_time_get_minute(dt);
+  gdouble seconds = g_date_time_get_seconds(dt);
+  g_date_time_unref(dt);
 
-  localtime_r(&tv.tv_sec, &timeinfo);
-
-  strftime(buffer, sizeof(buffer), "%H:%M:%S", &timeinfo);
-  return stringFormat("%s.%03d", buffer, int(tv.tv_usec / 1000));
+  return stringFormat("%02d:%02d:%06.3f", hour, minute, seconds);
 }
 
 string pretty_fname(const string& fname) {

@@ -71,7 +71,7 @@ TEST(GroupInfo, GetHintAsMarkup) {
             "Version: 1_iptux\nNickname: palname\nUser: \nHost: \nAddress: "
             "127.0.0.1\nCompatibility: Microsoft\nSystem coding: ");
 
-  cpal->sign = strdup("hello");
+  cpal->sign = g_strdup("hello");
   ASSERT_EQ(gi.GetHintAsMarkup(),
             "Version: 1_iptux\nNickname: palname\nUser: \nHost: \nAddress: "
             "127.0.0.1\nCompatibility: Microsoft\nSystem coding: "

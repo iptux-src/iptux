@@ -12,12 +12,12 @@
 #include "config.h"
 #include "support.h"
 
-#include <net/if.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "iptux-core/internal/iptux_network.h"
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
