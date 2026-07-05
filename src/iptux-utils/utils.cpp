@@ -556,16 +556,16 @@ in_addr inAddrFromString(const std::string& s) {
 
   GInetAddress* addr = g_inet_address_new_from_string(s.c_str());
   if (addr == NULL) {
-    g_error("Invalid IP");
-    return res;
+    LOG_WARN("Invalid IP");
+    throw Exception(INVALID_IP_ADDRESS);
   }
 
   GSocketFamily family = g_inet_address_get_family(addr);
   const guint8* bytes = g_inet_address_to_bytes(addr);
   if(family != G_SOCKET_FAMILY_IPV4) {
-    g_error("Invalid IP");
+    LOG_WARN("Invalid IP");
     g_object_unref(addr);
-    return res;
+    throw Exception(INVALID_IP_ADDRESS);
   }
   memcpy(&res, bytes, 4);
 

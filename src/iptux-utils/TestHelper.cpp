@@ -15,7 +15,7 @@ using namespace std;
 namespace iptux {
 
 string readTestData(const string& fname) {
-  ifstream ifs(testDataPath(fname));
+  ifstream ifs(testDataPath(fname), ios::binary);
   if (!ifs) {
     throw runtime_error(stringFormat("Cannot open file %s", fname.c_str()));
   }
