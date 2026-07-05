@@ -31,9 +31,9 @@ TEST(NetSegment, ContainIP) {
                         "1.2.4.0", "1.2.3.5", "1.2.4.4"};
 
   for (const string& ip : ips) {
-    in_addr ip1;
+    in_addr ip1 = inAddrFromString(ip);
     ASSERT_TRUE(is_ipv4(ip.c_str())) << ip;
-    ASSERT_TRUE(netSegment.ContainIP(ip1));
+    ASSERT_TRUE(netSegment.ContainIP(ip1)) << ip;
   }
 
   vector<string> ips2 = {
