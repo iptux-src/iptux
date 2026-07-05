@@ -21,7 +21,7 @@ namespace iptux {
 
 class SendFileData : public TransAbstract {
  public:
-  SendFileData(CoreThread* coreThread, int sk, PFileInfo fl);
+  SendFileData(CoreThread* coreThread, GSocket* socket, PFileInfo fl);
   ~SendFileData();
 
   void SendFileDataEntry();
@@ -37,7 +37,7 @@ class SendFileData : public TransAbstract {
   void UpdateUIParaToOver();
 
   CoreThread* coreThread;
-  int sock;        //数据套接口
+  GSocket* socket;
   PFileInfo file;  //文件信息
   TransFileModel para;
   bool terminate;                     //终止标志(也作处理结果标识)

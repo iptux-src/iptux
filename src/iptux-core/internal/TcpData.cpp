@@ -133,7 +133,7 @@ void TcpData::RequestData(FileAttr fileattr) {
   }
 
   attach = ipmsg_get_attach(buf, ':', 5);
-  SendFile::RequestDataEntry(coreThread, sock, fileattr, attach);
+  SendFile::RequestDataEntry(coreThread, this->socket, fileattr, attach);
   g_free(attach);
 }
 

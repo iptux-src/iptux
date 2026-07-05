@@ -655,6 +655,25 @@ ssize_t xwrite(int fd, const void* buf, size_t count) {
   return offset;
 }
 
+ssize_t xwrite(GSocket* sock, const void* buf, size_t count) {
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  while (offset < count) {
+    if ((size = g_socket_send(sock, (gchar*)buf + offset, count - offset, NULL,
+                              NULL)) == -1) {
+      LOG_ERROR("write to %p failed on %zu/%zu: %s", sock, offset, count,
+                strerror(errno));
+      return -1;
+    }
+    offset += size;
+  }
+
+  return offset;
+}
+
 ssize_t xsend(int fd, const void* buf, size_t count) {
   size_t offset;
   ssize_t size;

@@ -36,13 +36,14 @@ using namespace std;
 
 namespace iptux {
 
-/**
- * 类构造函数.
- * @param sk tcp socket
- * @param fl 文件信息数据
- */
-SendFileData::SendFileData(CoreThread* coreThread, int sk, PFileInfo fl)
-    : coreThread(coreThread), sock(sk), file(fl), terminate(false), sumsize(0) {
+SendFileData::SendFileData(CoreThread* coreThread,
+                           GSocket* socket,
+                           PFileInfo fl)
+    : coreThread(coreThread),
+      socket(socket),
+      file(fl),
+      terminate(false),
+      sumsize(0) {
   buf[0] = '\0';
   gettimeofday(&tasktime, NULL);
 }
@@ -217,7 +218,7 @@ void SendFileData::SendDirFiles() {
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
-      if (xwrite(sock, buf, headsize) == -1)
+      if (xwrite(this->socket, buf, headsize) == -1)
         goto end;
       /* 选择处理方案 */
       gettimeofday(&filetime, NULL);
@@ -252,7 +253,7 @@ void SendFileData::SendDirFiles() {
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
-      if (xwrite(sock, buf, headsize) == -1)
+      if (xwrite(this->socket, buf, headsize) == -1)
         goto end;
       /* 本地端也须向上转一层 */
       afs.chdir("..");
@@ -306,7 +307,7 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
                                                : filesize - finishsize;
     if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1)
       return finishsize;
-    if (size > 0 && xwrite(sock, buf, size) == -1)
+    if (size > 0 && xwrite(this->socket, buf, size) == -1)
       return finishsize;
     finishsize += size;
     sumsize += size;

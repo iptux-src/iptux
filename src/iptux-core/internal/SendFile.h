@@ -30,7 +30,7 @@ class SendFile {
                                 const std::vector<const PalInfo*>& pals,
                                 const std::vector<FileInfo*>& files);
   static void RequestDataEntry(CoreThread* coreThread,
-                               int sock,
+                               GSocket* sock,
                                FileAttr fileattr,
                                char* attach);
 
@@ -41,7 +41,7 @@ class SendFile {
   void BcstFileInfo(const std::vector<const PalInfo*>& pals,
                     uint32_t opttype,
                     const std::vector<FileInfo*>& files);
-  void ThreadSendFile(int sock, PFileInfo file);
+  void ThreadSendFile(GSocket* sock, PFileInfo file);
 
  private:
   CoreThread* coreThread;

@@ -61,7 +61,7 @@ void SendFile::BcstFileInfoEntry(CoreThread* coreThread,
  * @param attach 附加数据
  */
 void SendFile::RequestDataEntry(CoreThread* coreThread,
-                                int sock,
+                                GSocket* sock,
                                 FileAttr fileattr,
                                 char* attach) {
   struct sockaddr_in addr;
@@ -87,11 +87,14 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
     return;
   /* 检查好友数据是否存在 */
   len = sizeof(addr);
+  (void)len;
+#if 0
   getpeername(sock, (struct sockaddr*)&addr, &len);
   if (!(coreThread->GetPal(addr.sin_addr))) {
     LOG_INFO("Pal not exist: %s", inAddrToString(addr.sin_addr).c_str());
     return;
   }
+#endif
   if (!file->fileown) {
     // for public shared file, there need one owner
     file->fileown = coreThread->getMe();
@@ -180,7 +183,7 @@ void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals,
  * @param sock tcp socket
  * @param file 文件信息
  */
-void SendFile::ThreadSendFile(int sock, PFileInfo file) {
+void SendFile::ThreadSendFile(GSocket* sock, PFileInfo file) {
   auto sfdt = make_shared<SendFileData>(coreThread, sock, file);
   coreThread->RegisterTransTask(sfdt);
   sfdt->SendFileDataEntry();
