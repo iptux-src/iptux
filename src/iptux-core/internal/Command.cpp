@@ -21,10 +21,13 @@
 
 #include "iptux-core/Exception.h"
 #include "iptux-core/Models.h"
-#include "iptux-core/internal/TransAbstract.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 using namespace std;
 
@@ -533,7 +536,7 @@ bool Command::SendSublayer(GSocket* sock,
     return false;
   }
 
-  if ((fd = open(path, O_RDONLY)) == -1) {
+  if ((fd = open(path, O_RDONLY | O_BINARY)) == -1) {
     LOG_WARN("open file failed: %s", path);
     return false;
   }

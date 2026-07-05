@@ -21,6 +21,10 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 using namespace std;
 
 namespace iptux {
