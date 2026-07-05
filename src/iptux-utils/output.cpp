@@ -51,12 +51,15 @@ static char logLevelAsChar(GLogLevelFlags logLevel) {
 
 static string nowAsString() {
   GDateTime* dt = g_date_time_new_now_local();
-  gint hour = g_date_time_get_hour(dt);
-  gint minute = g_date_time_get_minute(dt);
-  gdouble seconds = g_date_time_get_seconds(dt);
+  char* p =  g_date_time_format(dt, "%H:%M:%S.%f");
+  if(!p) {
+    g_date_time_unref(dt);
+    return "00:00:00.000000";
+  }
+  string res = p;
+  g_free(p);
   g_date_time_unref(dt);
-
-  return stringFormat("%02d:%02d:%06.3f", hour, minute, seconds);
+  return res;
 }
 
 string pretty_fname(const string& fname) {
