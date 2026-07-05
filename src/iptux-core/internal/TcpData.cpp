@@ -188,7 +188,7 @@ void TcpData::RecvSublayer(uint32_t cmdopt) {
            inAddrToString(pal->ipv4()).c_str(), path);
 
   /* 终于可以接收数据了^_^ */
-  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1) {
+  if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644)) == -1) {
     LOG_ERROR("open file %s failed: %s", path, strerror(errno));
     return;
   }
