@@ -44,4 +44,7 @@ jobs:
         run: meson install -C build
 
       - name: Test
+        run: meson test -C build --verbose --no-stdsplit
+
+      - name: Check iptux version
         run: iptux --version

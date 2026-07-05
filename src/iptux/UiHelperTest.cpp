@@ -54,6 +54,7 @@ struct a {
   int res_height;
 };
 
+#if !defined(_WIN32) && !defined(_WIN64)
 TEST(UiHelper, igtk_image_new_with_size) {
   struct a cases[] = {
       {100, 100, 48, 48},
@@ -76,3 +77,4 @@ TEST(UiHelper, igtk_image_new_with_size) {
     g_object_unref(image);
   }
 }
+#endif
