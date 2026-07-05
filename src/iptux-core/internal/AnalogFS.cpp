@@ -35,6 +35,7 @@ AnalogFS::AnalogFS() {
   if (!::getcwd(path, MAX_PATHLEN)) {
     strcpy(path, "/");
   }
+  LOG_INFO("AnalogFS initialized, cwd: %s", path);
 }
 
 /**
