@@ -32,7 +32,11 @@ static bool mergepath(char tpath[], int len, const char* npath);
  * 类构造函数.
  */
 AnalogFS::AnalogFS() {
-  if (!::getcwd(path, MAX_PATHLEN)) {
+  gchar* current_dir = g_get_current_dir();
+  if (current_dir) {
+    strncpy(path, current_dir, MAX_PATHLEN);
+    g_free(current_dir);
+  } else {
     strcpy(path, "/");
   }
   LOG_INFO("AnalogFS initialized, cwd: %s", path);
