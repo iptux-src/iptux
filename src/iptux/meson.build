@@ -26,6 +26,11 @@ sources = files([
 ])
 dependencies = [gtk_dep, jsoncpp_dep, sigc_dep]
 
+if host_machine.system() == 'windows'
+    ws2_32 = cc.find_library('ws2_32')
+    dependencies += [ws2_32]
+endif
+
 if host_machine.system() == 'darwin'
     sources += ['AppIndicatorMac.mm']
     dependencies += [dependency('appleframeworks', modules: ['Cocoa'])]

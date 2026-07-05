@@ -573,6 +573,16 @@ in_addr inAddrFromString(const std::string& s) {
   return res;
 }
 
+bool is_ipv4(const char* str) {
+  GInetAddress* addr = g_inet_address_new_from_string(str);
+  if (addr == NULL) {
+    return false;
+  }
+  GSocketFamily family = g_inet_address_get_family(addr);
+  g_object_unref(addr);
+  return family == G_SOCKET_FAMILY_IPV4;
+}
+
 std::string stringDump(const std::string& str) {
   if (str.empty()) {
     return "";
