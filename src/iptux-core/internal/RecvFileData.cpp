@@ -151,6 +151,7 @@ void RecvFileData::RecvRegularFile() {
 
   if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn,
                        file->fileid, 0)) {
+    LOG_WARN("Failed to send ask data command");
     g_object_unref(sock);
     terminate = true;
     return;
@@ -158,6 +159,7 @@ void RecvFileData::RecvRegularFile() {
 
   if ((fd = afs.open(file->filepath, O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE,
                      00644)) == -1) {
+    LOG_WARN("Failed to open file \"%s\" for writing", file->filepath);
     g_object_unref(sock);
     terminate = true;
     return;
