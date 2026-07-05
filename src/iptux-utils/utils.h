@@ -114,7 +114,9 @@ class Helper {
 ssize_t xwrite(int fd, const void* buf, size_t count);
 ssize_t xsend(int fd, const void* buf, size_t count);
 ssize_t xread(int fd, void* buf, size_t count);
+ssize_t xread(GSocket* sock, void* buf, size_t count);
 ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count);
+ssize_t read_ipmsg_prefix(GSocket* sock, void* buf, size_t count);
 ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset);
 ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset);
 ssize_t read_ipmsg_fileinfo(GSocket* sock,

@@ -731,6 +731,25 @@ ssize_t xread(int fd, void* buf, size_t count) {
   return offset;
 }
 
+ssize_t xread(GSocket* sock, void* buf, size_t count) {
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  while ((offset != count) && (size != 0)) {
+    if ((size = g_socket_receive(sock, (gchar*)buf + offset, count - offset,
+                                 NULL, NULL)) == -1) {
+      if (errno == EINTR)
+        continue;
+      return -1;
+    }
+    offset += size;
+  }
+
+  return offset;
+}
+
 /**
  * 读取ipmsg消息前缀.
  * Ver(1):PacketNo:SenderName:SenderHost:CommandNo:AdditionalSection.\n
@@ -749,6 +768,34 @@ ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
   number = 0;
   while ((offset != count) && (size != 0)) {
     if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
+      return -1;
+    }
+    offset += size;
+    const char* endptr = (const char*)buf + offset;
+    for (const char* curptr = endptr - size; curptr < endptr; ++curptr) {
+      if (*curptr == ':')
+        ++number;
+    }
+    if (number >= 5)
+      break;
+  }
+
+  return offset;
+}
+
+ssize_t read_ipmsg_prefix(GSocket* sock, void* buf, size_t count) {
+  unsigned int number;
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  number = 0;
+  while ((offset != count) && (size != 0)) {
+    if ((size = g_socket_receive(sock, (gchar*)buf + offset, count - offset,
+                                 NULL, NULL)) == -1) {
       if (errno == EINTR)
         continue;
       return -1;

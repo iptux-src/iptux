@@ -73,12 +73,14 @@ void TcpData::DispatchTcpData() {
   char* addrStr = g_inet_address_to_string(gaddr);
   LOG_DEBUG("received tcp message from %s:%d", addrStr, int(port));
   g_object_unref(remoteAddr);
+  remoteAddr = nullptr;
 
   uint32_t commandno;
   ssize_t len;
 
   /* 读取消息前缀 */
-  if ((len = read_ipmsg_prefix(sock, buf, MAX_SOCKLEN)) <= 0) {
+  if ((len = read_ipmsg_prefix(this->socket, buf, MAX_SOCKLEN)) <= 0) {
+    LOG_WARN("Failed to read message prefix from %s", addrStr);
     g_free(addrStr);
     return;
   }
@@ -217,7 +219,7 @@ void TcpData::RecvSublayerData(int fd, size_t len) {
   if (size != len)
     xwrite(fd, buf + len, size - len);
   do {
-    if ((ssize = xread(sock, buf, MAX_SOCKLEN)) <= 0)
+    if ((ssize = xread(this->socket, buf, MAX_SOCKLEN)) <= 0)
       break;
     if ((ssize = xwrite(fd, buf, ssize)) <= 0)
       break;
