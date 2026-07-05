@@ -118,7 +118,7 @@ void RecvFileData::CreateUIPara() {
   para.setStatus("tip-recv")
       .setTask(_("receive"))
       .setPeer(file->fileown->getName())
-      .setIp(inet_ntoa(addr))
+      .setIp(inAddrToString(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
       .setFinishedLength(0)

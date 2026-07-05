@@ -65,7 +65,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
                                 FileAttr fileattr,
                                 char* attach) {
   struct sockaddr_in addr;
-  int len;
+  socklen_t len;
   uint32_t fileid;
   uint32_t filectime;
   /* 检查文件属性是否匹配 */

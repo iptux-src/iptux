@@ -29,7 +29,7 @@ using namespace std;
 
 namespace iptux {
 
-#if 0
+#if HAVE_STATUS_ICON
 static const struct {
   StatusIconMode mode;
   const char* label;
