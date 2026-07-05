@@ -12,11 +12,10 @@
 #ifndef IPTUX_UTILS_H
 #define IPTUX_UTILS_H
 
+#include "iptux-core/internal/iptux_network.h"
 #include <gio/gio.h>
 #include <glib.h>
-#include <memory>
 #include <string>
-#include "iptux-core/internal/iptux_network.h"
 
 namespace iptux {
 
