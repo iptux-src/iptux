@@ -106,7 +106,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       palPopupMenu(0) {
   time_t now = time(nullptr);
 #if defined(_WIN32) || defined(_WIN64)
-  info_refresh_tm = *localtime(&now);
+  localtime_s(&info_refresh_tm, &now);
 #else
   localtime_r(&now, &info_refresh_tm);
 #endif

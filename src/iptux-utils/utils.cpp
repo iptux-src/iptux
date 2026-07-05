@@ -174,7 +174,7 @@ char* getformattime(gboolean date, const char* format, ...) {
 
   time(&tt);
 #if defined(_WIN32)
-  tm = *localtime(&tt);
+  localtime_s(&tm, &tt);
 #else
   localtime_r(&tt, &tm);
 #endif
@@ -199,7 +199,7 @@ char* getformattime2(time_t tt, gboolean date, const char* format, ...) {
 
   struct tm tm;
 #if defined(_WIN32)
-  tm = *localtime(&tt);
+  localtime_s(&tm, &tt);
 #else
   localtime_r(&tt, &tm);
 #endif
