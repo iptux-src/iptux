@@ -454,36 +454,6 @@ char* ipmsg_get_attach(const char* msg, char ch, uint8_t times) {
 }
 
 /**
- * 从文件路径中分离出文件名，并转化为(IPMsg)格式的文件名.
- * @param pathname 文件路径
- * @return 文件名 *
- * @note 文件名特殊格式请参考IPMsg协议
- */
-char* ipmsg_get_filename_pal(const char* pathname) {
-  char filename[512];  // 文件最大长度为255
-  const char* ptr;
-  size_t len;
-
-  ptr = strrchr(pathname, '/');
-  ptr = ptr ? ptr + 1 : pathname;
-
-  len = 0;
-  while (*ptr && len < 510) {
-    if (*ptr == ':') {
-      memcpy(filename + len, "::", 2);
-      len += 2;
-    } else {
-      filename[len] = *ptr;
-      len++;
-    }
-    ptr++;
-  }
-  filename[len] = '\0';
-
-  return g_strdup(filename);
-}
-
-/**
  * 从文件路径中分离出文件名以及路径.
  * @param pathname 文件路径
  * @retval path 路径由此返回

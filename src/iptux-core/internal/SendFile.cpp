@@ -125,7 +125,7 @@ void SendFile::SendFileInfo(PPalInfo pal,
       continue;
     }
     fileInfo.ensureFilesizeFilled();
-    name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
+    name = g_path_get_basename(file->filepath);
     file->packetn = cmd.Packetn();
     snprintf(ptr, MAX_UDPLEN - len,
              "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a", file->fileid, name,

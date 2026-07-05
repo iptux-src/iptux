@@ -203,10 +203,10 @@ void SendFileData::SendDirFiles() {
       if (strcasecmp(file->fileown->getEncode().c_str(), "utf-8") != 0 &&
           (filename = convert_encode(
                dirt->d_name, file->fileown->getEncode().c_str(), "utf-8"))) {
-        dirname = ipmsg_get_filename_pal(filename);
+        dirname = g_path_get_basename(filename);
         g_free(filename);
       } else
-        dirname = ipmsg_get_filename_pal(dirt->d_name);
+        dirname = g_path_get_basename(dirt->d_name);
       /* 构造数据头并发送 */
       snprintf(buf, MAX_SOCKLEN, "0000:%s:%.9jx:%lx:%lx=%jx:%lx=%jx:", dirname,
                (uintmax_t)(S_ISREG(st.st_mode) ? st.st_size : 0),
