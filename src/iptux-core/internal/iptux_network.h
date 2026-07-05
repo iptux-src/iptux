@@ -1,8 +1,8 @@
 #pragma once
 
 #ifdef _WIN32
-#include <iphlpapi.h>
 #include <winsock2.h>
+#include <iphlpapi.h>
 #else
 #include <ifaddrs.h>
 #include <net/if.h>
