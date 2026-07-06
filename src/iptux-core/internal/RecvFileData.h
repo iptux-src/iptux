@@ -36,6 +36,10 @@ class RecvFileData : public TransAbstract {
   void RecvDirFiles();
 
   int64_t RecvData(int sock, int fd, int64_t filesize, int64_t offset);
+  int64_t RecvData(GSocket* sock,
+                   GOutputStream* os,
+                   int64_t filesize,
+                   int64_t offset);
   int64_t RecvData(GSocket* sock, int fd, int64_t filesize, int64_t offset);
   void UpdateUIParaToOver();
 

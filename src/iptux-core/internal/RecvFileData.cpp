@@ -12,6 +12,7 @@
 #include "config.h"
 #include "RecvFileData.h"
 
+#include "gio/gio.h"
 #include <memory>
 
 #include <fcntl.h>
@@ -140,16 +141,10 @@ void RecvFileData::RecvRegularFile() {
   AnalogFS afs;
   Command cmd(*coreThread);
   int64_t finishsize;
-  int fd;
   struct utimbuf timebuf;
-  mode_t mode;
-
-#if defined(_WIN32) || defined(_WIN64)
-  mode = S_IREAD | S_IWRITE;
-#else
-  mode = 0644;
-#endif
-
+  string fullpath;
+  GFile* gfile = NULL;
+  GFileOutputStream* fos = NULL;
   GError* error = nullptr;
   GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
                                G_SOCKET_PROTOCOL_TCP, &error);
@@ -168,18 +163,27 @@ void RecvFileData::RecvRegularFile() {
     return;
   }
 
-  if ((fd = afs.open(file->filepath,
-                     O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE | O_BINARY,
-                     mode)) == -1) {
-    LOG_WARN("Failed to open file \"%s\" for writing", file->filepath);
-    g_object_unref(sock);
-    terminate = true;
-    return;
+  fullpath = assert_filename_inexist(file->filepath);
+  if (fullpath.empty()) {
+    LOG_ERROR("Failed to get full path for writing: %s", file->filepath);
+    goto fail;
+  }
+
+  gfile = g_file_new_for_path(fullpath.c_str());
+  if (!gfile) {
+    LOG_ERROR("Failed to create GFile for path: %s", fullpath.c_str());
+    goto fail;
+  }
+
+  fos = g_file_replace(gfile, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &error);
+  if (!fos) {
+    LOG_ERROR("Failed to create GFileOutputStream for path: %s, error: %s",
+              fullpath.c_str(), error->message);
+    goto fail;
   }
 
   gettimeofday(&filetime, NULL);
-  finishsize = RecvData(sock, fd, file->filesize, 0);
-  close(fd);
+  finishsize = RecvData(sock, G_OUTPUT_STREAM(fos), file->filesize, 0);
   if (file->filectime != 0) {
     timebuf.actime = int(file->filectime);
     timebuf.modtime = int(file->filectime);
@@ -196,8 +200,22 @@ void RecvFileData::RecvRegularFile() {
     LOG_INFO(_("Receive the file \"%s\" from %s successfully!"), file->filepath,
              file->fileown->getName().c_str());
   }
-
+  g_object_unref(fos);
+  g_object_unref(gfile);
   g_object_unref(sock);
+  return;
+fail:
+  if (error) {
+    g_error_free(error);
+  }
+  if (fos)
+    g_object_unref(fos);
+  if (gfile)
+    g_object_unref(gfile);
+  if (sock)
+    g_object_unref(sock);
+  this->terminate = true;
+  return;
 }
 
 /**
@@ -438,6 +456,66 @@ int64_t RecvFileData::RecvData(GSocket* sock,
     }
     if (size > 0 && xwrite(fd, buf, size) == -1)
       return finishsize;
+    finishsize += size;
+    sumsize += size;
+    file->finishedsize = sumsize;
+
+    gettimeofday(&val2, NULL);
+    difftime = difftimeval(val2, val1);
+    if (difftime >= 1) {
+      rate = (uint32_t)((finishsize - tmpsize) / difftime);
+      para.setFinishedLength(finishsize)
+          .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
+          .setRemain(
+              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
+          .setRate(numeric_to_rate(rate));
+      val1 = val2;
+      tmpsize = finishsize;
+    }
+  } while (!terminate && size && finishsize < filesize);
+
+  return finishsize;
+}
+
+int64_t RecvFileData::RecvData(GSocket* sock,
+                               GOutputStream* os,
+                               int64_t filesize,
+                               int64_t offset) {
+  int64_t tmpsize, finishsize;
+  struct timeval val1, val2;
+  float difftime;
+  uint32_t rate;
+  gssize size;
+
+  if (offset == filesize)
+    return filesize;
+
+  tmpsize = finishsize = offset;
+  gettimeofday(&val1, NULL);
+  do {
+    size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
+                                               : filesize - finishsize;
+    GError* error = nullptr;
+    size = g_socket_receive(sock, buf, size, nullptr, &error);
+    if (size == -1) {
+      if (error) {
+        LOG_WARN("g_socket_receive failed: %s", error->message);
+        g_error_free(error);
+      }
+      return finishsize;
+    }
+
+    if (size == 0) {
+      return finishsize;
+    }
+
+    gsize bytes_written = 0;
+    if (g_output_stream_write_all(os, buf, size, &bytes_written, nullptr,
+                                  &error) == -1) {
+      LOG_WARN("g_output_stream_write_all failed: %s", error->message);
+      g_error_free(error);
+      return finishsize + bytes_written;
+    }
     finishsize += size;
     sumsize += size;
     file->finishedsize = sumsize;
