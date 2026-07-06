@@ -43,7 +43,7 @@ TEST(NetSegment, ContainIP) {
       "100.100.100.100",
   };
   for (const string& ip : ips2) {
-    in_addr ip1;
+    in_addr ip1 = inAddrFromString(ip);
     ASSERT_TRUE(is_ipv4(ip.c_str())) << ip;
     ASSERT_FALSE(netSegment.ContainIP(ip1));
   }
