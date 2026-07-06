@@ -12,15 +12,15 @@
 #include "config.h"
 #include "AnalogFS.h"
 
-#include <cstring>
-#include <fcntl.h>
-#include <glib/gstdio.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include <cstring>
+#include <fcntl.h>
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -53,25 +53,27 @@ AnalogFS::~AnalogFS() {}
  * @return 成功与否
  */
 int AnalogFS::chdir(const char* dir) {
-  size_t len;
-  char* ptr;
+  char* new_path;
 
-  if (strcmp(dir, ".") == 0)
-    return 0;
+  if (g_path_is_absolute(dir)) {
+    new_path = g_strdup(dir);
+  } else {
+    new_path = g_build_filename(this->path, dir, NULL);
+  }
 
-  if (*dir != '/') {
-    if (strcmp(dir, "..") == 0) {
-      ptr = strrchr(path, '/');
-      if (ptr != path)
-        *ptr = '\0';
-    } else {
-      len = strlen(path);
-      ptr = (char*)(*(path + 1) != '\0' ? "/" : "");
-      snprintf(path + len, MAX_PATHLEN - len, "%s%s", ptr, dir);
-    }
-  } else
-    snprintf(path, MAX_PATHLEN, "%s", dir);
-
+  if (!new_path) {
+    LOG_WARN("Failed to build new path from \"%s\" and \"%s\"", this->path,
+             dir);
+    return -1;
+  }
+  if (strlen(new_path) >= MAX_PATHLEN) {
+    LOG_WARN("New path \"%s\" exceeds maximum length of %d", new_path,
+             MAX_PATHLEN);
+    g_free(new_path);
+    return -1;
+  }
+  strcpy(this->path, new_path);
+  g_free(new_path);
   return 0;
 }
 
@@ -121,7 +123,7 @@ int AnalogFS::stat(const char* fn, struct ::stat* st) {
   strcpy(tpath, path);
   mergepath(tpath, MAX_PATHLEN, fn);
   if ((result = ::stat(tpath, st)) != 0) {
-    pwarning(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
+    LOG_WARN(_("Stat64() file \"%s\" failed, %s"), tpath, strerror(errno));
   }
 
   return result;
@@ -186,7 +188,12 @@ DIR* AnalogFS::opendir(const char* dir) {
 bool mergepath(char tpath[], int len, const char* npath) {
   gchar* full_path;
 
-  full_path = g_build_filename(tpath, npath, NULL);
+  if (g_path_is_absolute(npath)) {
+    full_path = g_strdup(npath);
+  } else {
+    full_path = g_build_filename(tpath, npath, NULL);
+  }
+
   if (!full_path) {
     return false;
   }

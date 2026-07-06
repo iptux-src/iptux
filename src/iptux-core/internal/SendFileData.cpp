@@ -194,9 +194,16 @@ void SendFileData::SendDirFiles() {
 
       /* 检查文件是否可用 */
     start:
-      if (afs.stat(dirt->d_name, &st) == -1 ||
-          !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode)))
+      if (afs.stat(dirt->d_name, &st) == -1) {
+        LOG_WARN("stat failed for %s: %s", dirt->d_name, strerror(errno));
         continue;
+      }
+
+      if (!(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+        LOG_INFO("Skipping unsupported file type: %s, mode: %o", dirt->d_name,
+                 st.st_mode);
+        continue;
+      }
       /* 更新UI参考值 */
       para.setFilename(dirt->d_name)
           .setFileLength(st.st_size)
