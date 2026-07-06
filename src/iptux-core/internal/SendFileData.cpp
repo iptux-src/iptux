@@ -32,6 +32,10 @@
 #define O_LARGEFILE 0
 #endif
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 using namespace std;
 
 namespace iptux {
