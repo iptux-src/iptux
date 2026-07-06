@@ -45,6 +45,7 @@ class UiCoreThread : public CoreThread {
 
   void ClearAllPalFromList() override;
   void UpdatePalToList(PalKey palKey) override;
+  void UpdatePalToListInUI(PalKey palKey);
   void UpdatePalToList(in_addr ipv4) override {
     UpdatePalToList(PalKey(ipv4, port()));
   }
