@@ -119,7 +119,7 @@ void SendFileData::SendRegularFile() {
   int fd;
 
   /* 打开文件 */
-  if ((fd = open(file->filepath, O_RDONLY | O_LARGEFILE)) == -1) {
+  if ((fd = open(file->filepath, O_RDONLY | O_LARGEFILE | O_BINARY)) == -1) {
     terminate = true;  // 标记处理过程失败
     return;
   }
@@ -135,7 +135,7 @@ void SendFileData::SendRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    LOG_INFO(_("Failed to send the file \"%s\" to %s!"), file->filepath,
+    LOG_WARN(_("Failed to send the file \"%s\" to %s!"), file->filepath,
              file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
     //                    file->filepath, file->fileown->name);
@@ -305,10 +305,20 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
     /* 读取文件数据并发送 */
     size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
                                                : filesize - finishsize;
-    if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1)
+    if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1) {
+      LOG_WARN("Failed to read file data from %s: %s", file->filepath,
+               strerror(errno));
       return finishsize;
-    if (size > 0 && xwrite(this->socket, buf, size) == -1)
+    }
+    if (size == 0) {
+      LOG_WARN("Unexpected end of file while reading from %s", file->filepath);
       return finishsize;
+    }
+    if (xwrite(this->socket, buf, size) == -1) {
+      LOG_WARN("Failed to write file data to %s: %s", file->filepath,
+               strerror(errno));
+      return finishsize;
+    }
     finishsize += size;
     sumsize += size;
     file->finishedsize = sumsize;

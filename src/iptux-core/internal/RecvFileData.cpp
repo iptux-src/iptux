@@ -200,6 +200,11 @@ void RecvFileData::RecvRegularFile() {
     LOG_INFO(_("Receive the file \"%s\" from %s successfully!"), file->filepath,
              file->fileown->getName().c_str());
   }
+  if (!g_output_stream_close(G_OUTPUT_STREAM(fos), NULL, &error)) {
+    LOG_ERROR("Failed to close GFileOutputStream for path: %s, error: %s",
+              fullpath.c_str(), error->message);
+    goto fail;
+  }
   g_object_unref(fos);
   g_object_unref(gfile);
   g_object_unref(sock);
