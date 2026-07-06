@@ -3,6 +3,7 @@
 #include "iptux-core/Models.h"
 #include "iptux-utils/TestHelper.h"
 #include "iptux-utils/utils.h"
+#include <arpa/inet.h>
 
 using namespace std;
 using namespace iptux;
@@ -24,6 +25,45 @@ TEST(PalKey, GetIpv4String) {
   ASSERT_EQ(key1.GetIpv4String(), "1.2.3.4");
 }
 
+TEST(PalKey, GSocketAddressConstructor) {
+  // Test creating PalKey from GSocketAddress
+  GInetAddress* inet_addr = g_inet_address_new_from_string("192.168.1.100");
+  ASSERT_NE(inet_addr, nullptr);
+
+  GSocketAddress* socket_addr = g_inet_socket_address_new(inet_addr, 8080);
+  ASSERT_NE(socket_addr, nullptr);
+
+  PalKey key(socket_addr);
+
+  // Test that the values are correctly extracted
+  ASSERT_EQ(key.GetIpv4String(), "192.168.1.100");
+  ASSERT_EQ(key.GetPort(), 8080);
+  ASSERT_EQ(key.ToString(), "192.168.1.100:8080");
+
+  // Test GetSocketAddress method
+  GSocketAddress* retrieved_addr = key.GetSocketAddress();
+  ASSERT_NE(retrieved_addr, nullptr);
+
+  // Verify the retrieved address matches
+  GInetSocketAddress* inet_socket_addr = G_INET_SOCKET_ADDRESS(retrieved_addr);
+  ASSERT_EQ(g_inet_socket_address_get_port(inet_socket_addr), 8080);
+
+  GInetAddress* retrieved_inet =
+      g_inet_socket_address_get_address(inet_socket_addr);
+  gchar* ip_str = g_inet_address_to_string(retrieved_inet);
+  ASSERT_STREQ(ip_str, "192.168.1.100");
+  g_free(ip_str);
+
+  // Test equality with another PalKey created from in_addr
+  PalKey key2(inAddrFromString("192.168.1.100"), 8080);
+  ASSERT_EQ(key, key2);
+
+  // Cleanup
+  g_object_unref(retrieved_addr);
+  g_object_unref(socket_addr);
+  g_object_unref(inet_addr);
+}
+
 TEST(NetSegment, ContainIP) {
   NetSegment netSegment("1.2.3.4", "1.2.4.5", "");
 
@@ -31,9 +71,9 @@ TEST(NetSegment, ContainIP) {
                         "1.2.4.0", "1.2.3.5", "1.2.4.4"};
 
   for (const string& ip : ips) {
-    in_addr ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1.s_addr), 1) << ip;
-    ASSERT_TRUE(netSegment.ContainIP(ip1));
+    GInetAddress* addr = g_inet_address_new_from_string(ip.c_str());
+    ASSERT_TRUE(netSegment.ContainIP(addr)) << ip;
+    g_object_unref(addr);
   }
 
   vector<string> ips2 = {
@@ -43,9 +83,9 @@ TEST(NetSegment, ContainIP) {
       "100.100.100.100",
   };
   for (const string& ip : ips2) {
-    in_addr ip1;
-    ASSERT_EQ(inet_pton(AF_INET, ip.c_str(), &ip1), 1) << ip;
-    ASSERT_FALSE(netSegment.ContainIP(ip1));
+    GInetAddress* addr = g_inet_address_new_from_string(ip.c_str());
+    ASSERT_FALSE(netSegment.ContainIP(addr)) << ip;
+    g_object_unref(addr);
   }
 }
 

@@ -232,11 +232,15 @@ string ipv4_get_lan_name(in_addr ipv4) {
   static const char* localgroup[] = {
       "10.0.0.0",    "10.255.255.255",  "172.16.0.0", "172.31.255.255",
       "192.168.0.0", "192.168.255.255", NULL};
+  GInetAddress* addr = g_inet_address_new_from_bytes(
+      reinterpret_cast<const guint8*>(&ipv4), G_SOCKET_FAMILY_IPV4);
   for (int i = 0; i < 6; i += 2) {
-    if (NetSegment(localgroup[i], localgroup[i + 1], "").ContainIP(ipv4)) {
+    if (NetSegment(localgroup[i], localgroup[i + 1], "").ContainIP(addr)) {
+      g_object_unref(addr);
       return stringFormat("%s~%s", localgroup[i], localgroup[i + 1]);
     }
   }
+  g_object_unref(addr);
   return "";
 }
 
