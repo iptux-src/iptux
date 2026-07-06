@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "gtest/gtest.h"
 
+#include "iptux-utils/utils.h"
 #include "iptux/TestHelper.h"
 #include "iptux/UiCoreThread.h"
 
@@ -17,6 +18,7 @@ TEST(UiCoreThread, Constructor) {
   UiCoreThread* thread = new UiCoreThread(app, core);
   thread->setIgnoreTcpBindFailed(true);
   thread->start();
+  thread->UpdatePalToList(PalKey(inAddrFromString("127.0.0.1"), 2425));
   thread->stop();
   delete thread;
   DestroyApplication(app);
