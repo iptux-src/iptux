@@ -234,7 +234,8 @@ void SendFileData::SendDirFiles() {
       /* 选择处理方案 */
       gettimeofday(&filetime, NULL);
       if (S_ISREG(st.st_mode)) {  // 常规文件
-        if ((fd = afs.open(dirt->d_name, O_RDONLY | O_LARGEFILE)) == -1)
+        if ((fd = afs.open(dirt->d_name, O_RDONLY | O_LARGEFILE | O_BINARY)) ==
+            -1)
           goto end;
         finishsize = SendData(fd, st.st_size);
         close(fd);
