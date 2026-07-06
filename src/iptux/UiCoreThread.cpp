@@ -117,7 +117,9 @@ struct UiCoreThreadCtx {
 
 static gboolean iptux_uithread_update_pal_to_list(gpointer data) {
   auto* ctx = (UiCoreThreadCtx*)data;
+  ctx->self->Lock();
   ctx->self->UpdatePalToListInUI(ctx->key);
+  ctx->self->Unlock();
   delete ctx;
   return G_SOURCE_REMOVE;
 }
