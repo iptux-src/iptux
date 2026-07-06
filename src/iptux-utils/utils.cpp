@@ -461,21 +461,9 @@ char* ipmsg_get_attach(const char* msg, char ch, uint8_t times) {
  * @note 路径可能为NULL
  */
 char* ipmsg_get_filename_me(const char* pathname, char** path) {
-  const char* ptr;
-  char* file;
-
-  ptr = strrchr(pathname, '/');
-  if (ptr && ptr != pathname) {
-    file = g_strdup(ptr + 1);
-    if (path)
-      *path = g_strndup(pathname, ptr - pathname);
-  } else {
-    file = g_strdup(pathname);
-    if (path)
-      *path = NULL;
-  }
-
-  return file;
+  if (path)
+    *path = g_path_get_dirname(pathname);
+  return g_path_get_basename(pathname);
 }
 
 /**
