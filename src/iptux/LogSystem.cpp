@@ -15,7 +15,6 @@
 #include <fcntl.h>
 #include <glib/gi18n.h>
 
-#include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
 #include <unistd.h>
 
@@ -109,13 +108,25 @@ void LogSystem::systemLogv(const char* fmt, va_list ap) {
 }
 
 string LogSystem::getChatLogPath() const {
+  char* res1;
+  string res2;
   auto env = g_get_user_config_dir();
-  return stringFormat("%s" LOG_PATH "/communicate.log", env);
+
+  res1 = g_build_filename(env, "iptux", "log", "communicate.log", NULL);
+  res2 = res1;
+  g_free(res1);
+  return res2;
 }
 
 string LogSystem::getSystemLogPath() const {
+  char* res1;
+  string res2;
   auto env = g_get_user_config_dir();
-  return stringFormat("%s" LOG_PATH "/system.log", env);
+
+  res1 = g_build_filename(env, "iptux", "log", "system.log", NULL);
+  res2 = res1;
+  g_free(res1);
+  return res2;
 }
 
 }  // namespace iptux

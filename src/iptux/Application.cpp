@@ -269,12 +269,12 @@ void Application::onToolsSharedManagement(void*, void*, Application& self) {
 
 void Application::onOpenChatLog(void*, void*, Application& self) {
   auto path = self.getCoreThread()->getLogSystem()->getChatLogPath();
-  iptux_open_url(path.c_str());
+  iptux_open_path(path.c_str());
 }
 
 void Application::onOpenSystemLog(void*, void*, Application& self) {
   auto path = self.getCoreThread()->getLogSystem()->getSystemLogPath();
-  iptux_open_url(path.c_str());
+  iptux_open_path(path.c_str());
 }
 
 void Application::onTransModelClear(void*, void*, Application& self) {
