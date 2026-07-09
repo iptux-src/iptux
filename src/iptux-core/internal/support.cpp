@@ -15,8 +15,9 @@
 #include <algorithm>
 
 #ifdef G_OS_WIN32
-#include <iphlpapi.h>
 #include <winsock2.h>
+
+#include <iphlpapi.h>
 #include <ws2tcpip.h>
 #else
 #include <net/if.h>
@@ -62,7 +63,6 @@ void socket_enable_reuse(int sock) {
  * @return list of broadcast addresses
  */
 static vector<string> get_sys_broadcast_addr_by_fd(int sock) {
-  const uint8_t amount = 5;  //支持5个IP地址
   vector<string> res;
 
   res.push_back("255.255.255.255");
@@ -108,6 +108,7 @@ static vector<string> get_sys_broadcast_addr_by_fd(int sock) {
     g_free(adapters);
   }
 #else
+  const uint8_t amount = 5;
   uint8_t count, sum;
   struct ifconf ifc;
   struct ifreq* ifr;
