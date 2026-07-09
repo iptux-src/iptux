@@ -12,8 +12,19 @@
 #include "config.h"
 #include "support.h"
 
+#include <algorithm>
+
+#ifdef G_OS_WIN32
+#include <iphlpapi.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 
 #include "iptux-core/internal/iptux_network.h"
 #include "iptux-core/internal/ipmsg.h"
@@ -51,19 +62,56 @@ void socket_enable_reuse(int sock) {
  * @return list of broadcast addresses
  */
 static vector<string> get_sys_broadcast_addr_by_fd(int sock) {
-#if !defined(_WIN32)
   const uint8_t amount = 5;  //支持5个IP地址
+  vector<string> res;
+
+  res.push_back("255.255.255.255");
+
+#ifdef G_OS_WIN32
+  (void)sock;
+  ULONG size = 0;
+  constexpr ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST |
+                          GAA_FLAG_SKIP_DNS_SERVER;
+  DWORD ret = GetAdaptersAddresses(AF_INET, flags, nullptr, nullptr, &size);
+  if (ret == ERROR_BUFFER_OVERFLOW && size > 0) {
+    auto* adapters = reinterpret_cast<IP_ADAPTER_ADDRESSES*>(g_malloc0(size));
+    ret = GetAdaptersAddresses(AF_INET, flags, nullptr, adapters, &size);
+    if (ret == NO_ERROR) {
+      for (IP_ADAPTER_ADDRESSES* adapter = adapters; adapter != nullptr;
+           adapter = adapter->Next) {
+        if (adapter->OperStatus != IfOperStatusUp) {
+          continue;
+        }
+        for (IP_ADAPTER_UNICAST_ADDRESS* unicast = adapter->FirstUnicastAddress;
+             unicast != nullptr; unicast = unicast->Next) {
+          if (unicast->Address.lpSockaddr == nullptr ||
+              unicast->Address.lpSockaddr->sa_family != AF_INET) {
+            continue;
+          }
+          ULONG prefix = unicast->OnLinkPrefixLength;
+          if (prefix > 32) {
+            continue;
+          }
+          auto* addr =
+              reinterpret_cast<sockaddr_in*>(unicast->Address.lpSockaddr);
+          uint32_t ipv4 = ntohl(addr->sin_addr.s_addr);
+          uint32_t mask = prefix == 0 ? 0 : (0xFFFFFFFFu << (32 - prefix));
+          in_addr broadcast{};
+          broadcast.s_addr = htonl((ipv4 & mask) | ~mask);
+          auto broadcastAddr = inAddrToString(broadcast);
+          if (find(res.begin(), res.end(), broadcastAddr) == res.end()) {
+            res.push_back(broadcastAddr);
+          }
+        }
+      }
+    }
+    g_free(adapters);
+  }
+#else
   uint8_t count, sum;
   struct ifconf ifc;
   struct ifreq* ifr;
   struct sockaddr_in* addr;
-#endif
-  vector<string> res;
-
-  (void)sock;
-
-  res.push_back("255.255.255.255");
-#if !defined(_WIN32)
   ifc.ifc_len = amount * sizeof(struct ifreq);
   ifc.ifc_buf = (caddr_t)g_malloc(ifc.ifc_len);
   if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
