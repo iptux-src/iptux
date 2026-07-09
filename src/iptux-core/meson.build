@@ -31,18 +31,25 @@ core_sources += files([
 inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
+core_platform_deps = []
+if host_machine.system() == 'windows'
+    core_platform_deps += [
+        cc.find_library('iphlpapi'),
+        cc.find_library('ws2_32'),
+    ]
+endif
 
 if get_option('static-link')
     libiptux_core = static_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep] + core_platform_deps,
         link_with: [libiptux_utils],
         include_directories: inc,
     )
 else
     libiptux_core = shared_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep] + core_platform_deps,
         link_with: [libiptux_utils],
         include_directories: inc,
         install: true,
@@ -85,7 +92,7 @@ core_test_sources = files([
 ])
 libiptux_core_test = executable('libiptux_core_test',
     core_test_sources,
-    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
+    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep] + core_platform_deps,
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )
