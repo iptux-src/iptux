@@ -11,8 +11,6 @@
 //
 #include "config.h"
 #include "UiCoreThread.h"
-
-#include <cinttypes>
 #include <sys/stat.h>
 
 #include <glib/gi18n.h>
@@ -110,6 +108,20 @@ void UiCoreThread::ClearAllPalFromList() {
   }
 }
 
+struct UiCoreThreadCtx {
+  UiCoreThread* self;
+  PalKey key;
+};
+
+static gboolean iptux_uithread_update_pal_to_list(gpointer data) {
+  auto* ctx = (UiCoreThreadCtx*)data;
+  ctx->self->Lock();
+  ctx->self->UpdatePalToListInUI(ctx->key);
+  ctx->self->Unlock();
+  delete ctx;
+  return G_SOURCE_REMOVE;
+}
+
 /**
  * 通告指定的好友信息数据已经被更新(非UI线程安全).
  * @param ipv4 ipv4
@@ -120,7 +132,11 @@ void UiCoreThread::ClearAllPalFromList() {
  */
 void UiCoreThread::UpdatePalToList(PalKey palKey) {
   CoreThread::UpdatePalToList(palKey);
+  UiCoreThreadCtx* ctx = new UiCoreThreadCtx{this, palKey};
+  g_main_context_invoke(NULL, iptux_uithread_update_pal_to_list, ctx);
+}
 
+void UiCoreThread::UpdatePalToListInUI(PalKey palKey) {
   PPalInfo ppal;
   GroupInfo* grpinf;
   SessionAbstract* session;
