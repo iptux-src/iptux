@@ -41,16 +41,15 @@ namespace iptux {
  * @param sock socket
  */
 void socket_enable_reuse(int sock) {
-  int len;
-  char optval;
-
-  optval = 1;
-  len = sizeof(optval);
 #ifndef _WIN32
+  int optval = 1;
+  socklen_t len = sizeof(optval);
   if (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, len) != 0) {
     LOG_WARN("setsockopt for SO_REUSEPORT failed: %s", strerror(errno));
   }
 #else
+  char optval = 1;
+  socklen_t len = sizeof(optval);
   if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, len) != 0) {
     LOG_WARN("setsockopt for SO_REUSEADDR failed: %s", strerror(errno));
   }
