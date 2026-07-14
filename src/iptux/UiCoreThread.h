@@ -17,7 +17,6 @@
 #ifndef IPTUX_UICORETHREAD_H
 #define IPTUX_UICORETHREAD_H
 
-#include <netinet/in.h>
 #include <queue>
 #include <sigc++/signal.h>
 

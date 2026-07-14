@@ -2,6 +2,7 @@
 #define IPTUX_TRANSFILEMODEL_H
 
 #include <string>
+#include <cstdint>
 
 namespace iptux {
 

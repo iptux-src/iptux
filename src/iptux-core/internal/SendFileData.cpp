@@ -15,10 +15,7 @@
 #include <cinttypes>
 #include <memory>
 
-#include <arpa/inet.h>
 #include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -31,17 +28,26 @@
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 using namespace std;
 
 namespace iptux {
 
-/**
- * 类构造函数.
- * @param sk tcp socket
- * @param fl 文件信息数据
- */
-SendFileData::SendFileData(CoreThread* coreThread, int sk, PFileInfo fl)
-    : coreThread(coreThread), sock(sk), file(fl), terminate(false), sumsize(0) {
+SendFileData::SendFileData(CoreThread* coreThread,
+                           GSocket* socket,
+                           PFileInfo fl)
+    : coreThread(coreThread),
+      socket(socket),
+      file(fl),
+      terminate(false),
+      sumsize(0) {
   buf[0] = '\0';
   gettimeofday(&tasktime, NULL);
 }
@@ -99,7 +105,7 @@ void SendFileData::CreateUIPara() {
   para.setStatus("tip-send")
       .setTask(_("send"))
       .setPeer(file->fileown->getName())
-      .setIp(inet_ntoa(addr))
+      .setIp(inAddrToString(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
       .setFinishedLength(0)
@@ -117,7 +123,7 @@ void SendFileData::SendRegularFile() {
   int fd;
 
   /* 打开文件 */
-  if ((fd = open(file->filepath, O_RDONLY | O_LARGEFILE)) == -1) {
+  if ((fd = open(file->filepath, O_RDONLY | O_LARGEFILE | O_BINARY)) == -1) {
     terminate = true;  // 标记处理过程失败
     return;
   }
@@ -133,7 +139,7 @@ void SendFileData::SendRegularFile() {
   /* 考察处理结果 */
   if (finishsize < file->filesize) {
     terminate = true;
-    LOG_INFO(_("Failed to send the file \"%s\" to %s!"), file->filepath,
+    LOG_WARN(_("Failed to send the file \"%s\" to %s!"), file->filepath,
              file->fileown->getName().c_str());
     // g_cthrd->SystemLog(_("Failed to send the file \"%s\" to %s!"),
     //                    file->filepath, file->fileown->name);
@@ -188,9 +194,16 @@ void SendFileData::SendDirFiles() {
 
       /* 检查文件是否可用 */
     start:
-      if (afs.stat(dirt->d_name, &st) == -1 ||
-          !(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode)))
+      if (afs.stat(dirt->d_name, &st) == -1) {
+        LOG_WARN("stat failed for %s: %s", dirt->d_name, strerror(errno));
         continue;
+      }
+
+      if (!(S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+        LOG_INFO("Skipping unsupported file type: %s, mode: %o", dirt->d_name,
+                 st.st_mode);
+        continue;
+      }
       /* 更新UI参考值 */
       para.setFilename(dirt->d_name)
           .setFileLength(st.st_size)
@@ -202,10 +215,10 @@ void SendFileData::SendDirFiles() {
       if (strcasecmp(file->fileown->getEncode().c_str(), "utf-8") != 0 &&
           (filename = convert_encode(
                dirt->d_name, file->fileown->getEncode().c_str(), "utf-8"))) {
-        dirname = ipmsg_get_filename_pal(filename);
+        dirname = g_path_get_basename(filename);
         g_free(filename);
       } else
-        dirname = ipmsg_get_filename_pal(dirt->d_name);
+        dirname = g_path_get_basename(dirt->d_name);
       /* 构造数据头并发送 */
       snprintf(buf, MAX_SOCKLEN, "0000:%s:%.9jx:%lx:%lx=%jx:%lx=%jx:", dirname,
                (uintmax_t)(S_ISREG(st.st_mode) ? st.st_size : 0),
@@ -216,12 +229,13 @@ void SendFileData::SendDirFiles() {
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
-      if (xwrite(sock, buf, headsize) == -1)
+      if (xwrite(this->socket, buf, headsize) == -1)
         goto end;
       /* 选择处理方案 */
       gettimeofday(&filetime, NULL);
       if (S_ISREG(st.st_mode)) {  // 常规文件
-        if ((fd = afs.open(dirt->d_name, O_RDONLY | O_LARGEFILE)) == -1)
+        if ((fd = afs.open(dirt->d_name, O_RDONLY | O_LARGEFILE | O_BINARY)) ==
+            -1)
           goto end;
         finishsize = SendData(fd, st.st_size);
         close(fd);
@@ -251,7 +265,7 @@ void SendFileData::SendDirFiles() {
       headsize = strlen(buf);
       snprintf(buf, MAX_SOCKLEN, "%.4" PRIx32, headsize);
       *(buf + 4) = ':';
-      if (xwrite(sock, buf, headsize) == -1)
+      if (xwrite(this->socket, buf, headsize) == -1)
         goto end;
       /* 本地端也须向上转一层 */
       afs.chdir("..");
@@ -303,10 +317,20 @@ int64_t SendFileData::SendData(int fd, int64_t filesize) {
     /* 读取文件数据并发送 */
     size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
                                                : filesize - finishsize;
-    if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1)
+    if ((size = xread(fd, buf, MAX_SOCKLEN)) == -1) {
+      LOG_WARN("Failed to read file data from %s: %s", file->filepath,
+               strerror(errno));
       return finishsize;
-    if (size > 0 && xwrite(sock, buf, size) == -1)
+    }
+    if (size == 0) {
+      LOG_WARN("Unexpected end of file while reading from %s", file->filepath);
       return finishsize;
+    }
+    if (xwrite(this->socket, buf, size) == -1) {
+      LOG_WARN("Failed to write file data to %s: %s", file->filepath,
+               strerror(errno));
+      return finishsize;
+    }
     finishsize += size;
     sumsize += size;
     file->finishedsize = sumsize;

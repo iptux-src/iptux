@@ -1,6 +1,12 @@
 glib_dep = dependency('glib-2.0', version: '>=2.35')
 gio_dep = dependency('gio-2.0')
 thread_dep = dependency('threads')
+iptux_utils_dep = [glib_dep, gio_dep]
+
+if host_machine.system() == 'windows'
+  ws2_32 = cc.find_library('ws2_32')
+  iptux_utils_dep += [ws2_32]
+endif
 
 sources = files([
     'output.cpp',
@@ -12,7 +18,7 @@ inc = include_directories('..', '../api')
 
 libiptux_utils = static_library('iptux-utils',
     sources,
-    dependencies: [glib_dep, gio_dep],
+    dependencies: iptux_utils_dep,
     include_directories: inc,
 )
 
@@ -33,7 +39,7 @@ utils_test_sources = files([
 ])
 libiptux_utils_test = executable('libiptux_utils_test',
     utils_test_sources,
-    dependencies: [glib_dep, thread_dep],
+    dependencies: [glib_dep, thread_dep] + iptux_utils_dep,
     link_with: [libiptux_utils, libgtest, libiptux_utils_test_helper],
     include_directories: [inc, gtest_inc]
 )

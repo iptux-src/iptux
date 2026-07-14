@@ -21,6 +21,10 @@
 #include "iptux/UiModels.h"
 #include "iptux/WindowConfig.h"
 
+#if defined(CreateWindow)
+#undef CreateWindow
+#endif
+
 namespace iptux {
 
 class StatusIcon;

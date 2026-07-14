@@ -11,14 +11,13 @@
 //
 #include "config.h"
 #include "output.h"
-
+#include "iptux-utils/utils.h"
 #include <pthread.h>
 #include <sstream>
 #include <string>
 
 #include <sys/time.h>
 
-#include "iptux-utils/utils.h"
 #include <unistd.h>
 
 using namespace std;
@@ -51,15 +50,16 @@ static char logLevelAsChar(GLogLevelFlags logLevel) {
 }
 
 static string nowAsString() {
-  struct timeval tv;
-  gettimeofday(&tv, nullptr);
-  struct tm timeinfo;
-  char buffer[80];
-
-  localtime_r(&tv.tv_sec, &timeinfo);
-
-  strftime(buffer, sizeof(buffer), "%H:%M:%S", &timeinfo);
-  return stringFormat("%s.%03d", buffer, int(tv.tv_usec / 1000));
+  GDateTime* dt = g_date_time_new_now_local();
+  char* p =  g_date_time_format(dt, "%H:%M:%S.%f");
+  if(!p) {
+    g_date_time_unref(dt);
+    return "00:00:00.000000";
+  }
+  string res = p;
+  g_free(p);
+  g_date_time_unref(dt);
+  return res;
 }
 
 string pretty_fname(const string& fname) {

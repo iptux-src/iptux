@@ -12,12 +12,15 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
-#include <arpa/inet.h>
 #include <memory>
-#include <netinet/in.h>
 #include <string>
 
 #include <json/json.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+#include <netinet/in.h>
+#endif
 
 namespace iptux {
 
@@ -27,7 +30,7 @@ namespace iptux {
 enum class MessageSourceType {
   PAL,   ///< 好友
   SELF,  ///< 自身
-  ERROR  ///< 错误
+  MST_ERROR  ///< 错误
 };
 
 /**
@@ -78,6 +81,10 @@ class PalKey {
  * 兼容(:0);完全兼容iptux，程序将采用扩展协议与好友通信 \n
  */
 class PalInfo {
+ public:
+  typedef std::shared_ptr<PalInfo> Ptr;
+  typedef std::shared_ptr<const PalInfo> ConstPtr;
+
  public:
   PalInfo(const std::string& ipv4, uint16_t port);
   PalInfo(in_addr ipv4, uint16_t port);

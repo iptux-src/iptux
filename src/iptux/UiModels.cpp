@@ -10,7 +10,6 @@
 #include <cstring>
 #include <glib/gi18n.h>
 #include <inttypes.h>
-#include <netinet/in.h>
 #include <sstream>
 
 using namespace std;
@@ -744,7 +743,7 @@ static void InsertHeaderToBuffer(GtkTextBuffer* buffer,
                                                "me-color", NULL);
       g_free(header);
       break;
-    case MessageSourceType::ERROR:
+    case MessageSourceType::MST_ERROR:
       header = getformattime2(now, FALSE, "%s", _("<ERROR>"));
       gtk_text_buffer_get_end_iter(buffer, &iter);
       gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, header, -1,

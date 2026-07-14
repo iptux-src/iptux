@@ -19,14 +19,13 @@
 #include <cstring>
 #include <sstream>
 
-#include <arpa/inet.h>
+#include "iptux-core/internal/iptux_network.h"
 #include <glib/gi18n.h>
 #include <sys/param.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-#ifndef __APPLE__
+#if defined(__unix__)
 #include <sys/vfs.h>
 #endif
 
@@ -167,14 +166,18 @@ char* getformattime(gboolean date, const char* format, ...) {
   char buf[MAX_BUFLEN], *msg, *ptr;
   time_t tt;
   va_list ap;
+  struct tm tm;
 
   va_start(ap, format);
   msg = g_strdup_vprintf(format, ap);
   va_end(ap);
 
   time(&tt);
-  struct tm tm;
+#if defined(_WIN32)
+  localtime_s(&tm, &tt);
+#else
   localtime_r(&tt, &tm);
+#endif
   if (date)
     strftime(buf, MAX_BUFLEN, "%c", &tm);
   else
@@ -195,7 +198,11 @@ char* getformattime2(time_t tt, gboolean date, const char* format, ...) {
   va_end(ap);
 
   struct tm tm;
+#if defined(_WIN32)
+  localtime_s(&tm, &tt);
+#else
   localtime_r(&tt, &tm);
+#endif
   if (date)
     strftime(buf, MAX_BUFLEN, "%c", &tm);
   else
@@ -447,36 +454,6 @@ char* ipmsg_get_attach(const char* msg, char ch, uint8_t times) {
 }
 
 /**
- * 从文件路径中分离出文件名，并转化为(IPMsg)格式的文件名.
- * @param pathname 文件路径
- * @return 文件名 *
- * @note 文件名特殊格式请参考IPMsg协议
- */
-char* ipmsg_get_filename_pal(const char* pathname) {
-  char filename[512];  // 文件最大长度为255
-  const char* ptr;
-  size_t len;
-
-  ptr = strrchr(pathname, '/');
-  ptr = ptr ? ptr + 1 : pathname;
-
-  len = 0;
-  while (*ptr && len < 510) {
-    if (*ptr == ':') {
-      memcpy(filename + len, "::", 2);
-      len += 2;
-    } else {
-      filename[len] = *ptr;
-      len++;
-    }
-    ptr++;
-  }
-  filename[len] = '\0';
-
-  return g_strdup(filename);
-}
-
-/**
  * 从文件路径中分离出文件名以及路径.
  * @param pathname 文件路径
  * @retval path 路径由此返回
@@ -484,21 +461,9 @@ char* ipmsg_get_filename_pal(const char* pathname) {
  * @note 路径可能为NULL
  */
 char* ipmsg_get_filename_me(const char* pathname, char** path) {
-  const char* ptr;
-  char* file;
-
-  ptr = strrchr(pathname, '/');
-  if (ptr && ptr != pathname) {
-    file = g_strdup(ptr + 1);
-    if (path)
-      *path = g_strndup(pathname, ptr - pathname);
-  } else {
-    file = g_strdup(pathname);
-    if (path)
-      *path = NULL;
-  }
-
-  return file;
+  if (path)
+    *path = g_path_get_dirname(pathname);
+  return g_path_get_basename(pathname);
 }
 
 /**
@@ -533,17 +498,47 @@ char* ipmsg_get_pathname_full(const char* path, const char* name) {
 }
 
 std::string inAddrToString(in_addr inAddr) {
-  char res[INET_ADDRSTRLEN];
-  inet_ntop(AF_INET, &inAddr.s_addr, res, INET_ADDRSTRLEN);
+  string res;
+
+  GInetAddress* addr = g_inet_address_new_from_bytes((guint8*)&inAddr.s_addr,
+                                                     G_SOCKET_FAMILY_IPV4);
+  gchar* addr_str = g_inet_address_to_string(addr);
+  res = addr_str;
+  g_object_unref(addr);
+  g_free(addr_str);
   return res;
 }
 
 in_addr inAddrFromString(const std::string& s) {
-  in_addr res;
-  if (inet_pton(AF_INET, s.c_str(), &res.s_addr) == 1) {
-    return res;
+  in_addr res = {0};
+
+  GInetAddress* addr = g_inet_address_new_from_string(s.c_str());
+  if (addr == NULL) {
+    LOG_WARN("Invalid IP");
+    throw Exception(INVALID_IP_ADDRESS);
   }
-  throw Exception(INVALID_IP_ADDRESS);
+
+  GSocketFamily family = g_inet_address_get_family(addr);
+  const guint8* bytes = g_inet_address_to_bytes(addr);
+  if(family != G_SOCKET_FAMILY_IPV4) {
+    LOG_WARN("Invalid IP");
+    g_object_unref(addr);
+    throw Exception(INVALID_IP_ADDRESS);
+  }
+  memcpy(&res, bytes, 4);
+
+  g_object_unref(addr);
+  return res;
+}
+
+bool is_ipv4(const char* str) {
+  GInetAddress* addr = g_inet_address_new_from_string(str);
+  if (addr == NULL) {
+    return false;
+  }
+  GSocketFamily family = g_inet_address_get_family(addr);
+  g_object_unref(addr);
+  return family == G_SOCKET_FAMILY_IPV4;
 }
 
 std::string stringDump(const std::string& str) {
@@ -648,6 +643,25 @@ ssize_t xwrite(int fd, const void* buf, size_t count) {
   return offset;
 }
 
+ssize_t xwrite(GSocket* sock, const void* buf, size_t count) {
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  while (offset < count) {
+    if ((size = g_socket_send(sock, (gchar*)buf + offset, count - offset, NULL,
+                              NULL)) == -1) {
+      LOG_ERROR("write to %p failed on %zu/%zu: %s", sock, offset, count,
+                strerror(errno));
+      return -1;
+    }
+    offset += size;
+  }
+
+  return offset;
+}
+
 ssize_t xsend(int fd, const void* buf, size_t count) {
   size_t offset;
   ssize_t size;
@@ -694,6 +708,25 @@ ssize_t xread(int fd, void* buf, size_t count) {
   return offset;
 }
 
+ssize_t xread(GSocket* sock, void* buf, size_t count) {
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  while ((offset != count) && (size != 0)) {
+    if ((size = g_socket_receive(sock, (gchar*)buf + offset, count - offset,
+                                 NULL, NULL)) == -1) {
+      if (errno == EINTR)
+        continue;
+      return -1;
+    }
+    offset += size;
+  }
+
+  return offset;
+}
+
 /**
  * 读取ipmsg消息前缀.
  * Ver(1):PacketNo:SenderName:SenderHost:CommandNo:AdditionalSection.\n
@@ -703,7 +736,7 @@ ssize_t xread(int fd, void* buf, size_t count) {
  * @return 成功读取的消息长度，-1表示读取消息出错
  */
 ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
-  uint number;
+  unsigned int number;
   size_t offset;
   ssize_t size;
 
@@ -712,6 +745,34 @@ ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
   number = 0;
   while ((offset != count) && (size != 0)) {
     if ((size = read(fd, (char*)buf + offset, count - offset)) == -1) {
+      if (errno == EINTR)
+        continue;
+      return -1;
+    }
+    offset += size;
+    const char* endptr = (const char*)buf + offset;
+    for (const char* curptr = endptr - size; curptr < endptr; ++curptr) {
+      if (*curptr == ':')
+        ++number;
+    }
+    if (number >= 5)
+      break;
+  }
+
+  return offset;
+}
+
+ssize_t read_ipmsg_prefix(GSocket* sock, void* buf, size_t count) {
+  unsigned int number;
+  size_t offset;
+  ssize_t size;
+
+  size = -1;
+  offset = 0;
+  number = 0;
+  while ((offset != count) && (size != 0)) {
+    if ((size = g_socket_receive(sock, (gchar*)buf + offset, count - offset,
+                                 NULL, NULL)) == -1) {
       if (errno == EINTR)
         continue;
       return -1;
@@ -740,7 +801,7 @@ ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count) {
  */
 ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset) {
   const char* curptr;
-  uint number;
+  unsigned int number;
   ssize_t size;
 
   size = -1;
@@ -776,7 +837,7 @@ ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset) {
  */
 ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset) {
   const char* curptr;
-  uint number;
+  unsigned int number;
   ssize_t size;
 
   size = -1;
@@ -891,23 +952,23 @@ int64_t fileOrDirectorySize(const string& fileOrDirName) {
     return 0;
   }
   // 到了这里就一定是目录了
-  DIR* dir = opendir(fileOrDirName.c_str());
+  GDir* dir = g_dir_open(fileOrDirName.c_str(), 0, NULL);
   if (dir == NULL) {
     LOG_WARN(_("opendir on \"%s\" failed: %s"), fileOrDirName.c_str(),
              strerror(errno));
     return 0;
   }
 
-  struct dirent* dirt;
+const char* dirt;
   int64_t sumsize = 0;
-  while ((dirt = readdir(dir))) {
-    if (strcmp(dirt->d_name, ".") == 0) {
+  while ((dirt = g_dir_read_name(dir))) {
+    if (strcmp(dirt, ".") == 0) {
       continue;
     }
-    if (strcmp(dirt->d_name, "..") == 0) {
+    if (strcmp(dirt, "..") == 0) {
       continue;
     }
-    string tpath = fileOrDirName + "/" + dirt->d_name;
+    string tpath = fileOrDirName + "/" + dirt;
     struct stat st;
     if (stat(tpath.c_str(), &st) == -1) {
       continue;
@@ -933,3 +994,24 @@ std::string sha256(const char* s, int length) {
 }
 
 }  // namespace iptux
+
+gboolean iptux_inet_address_to_in_addr(GInetAddress* address,
+                                       struct in_addr* out_addr) {
+  g_return_val_if_fail(G_IS_INET_ADDRESS(address), FALSE);
+  g_return_val_if_fail(out_addr != NULL, FALSE);
+
+  if (g_inet_address_get_family(address) != G_SOCKET_FAMILY_IPV4) {
+    LOG_WARN("Address is not an IPv4 address.");
+    return FALSE;
+  }
+
+  // 2. 获取原始字节网络字节序（4字节）
+  const guint8* bytes = g_inet_address_to_bytes(address);
+
+  // 3. 将字节复制到 struct in_addr 中
+  // g_inet_address_to_bytes 返回的已经是网络字节序（Big Endian），与 struct
+  // in_addr 要求的字节序一致
+  memcpy(&(out_addr->s_addr), bytes, sizeof(out_addr->s_addr));
+
+  return TRUE;
+}

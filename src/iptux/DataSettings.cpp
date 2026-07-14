@@ -18,6 +18,7 @@
 #include <glib/gi18n.h>
 
 #include "iptux-core/Const.h"
+#include "iptux-core/internal/iptux_network.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/UiCoreThread.h"
@@ -28,6 +29,7 @@ using namespace std;
 
 namespace iptux {
 
+#if HAVE_STATUS_ICON
 static const struct {
   StatusIconMode mode;
   const char* label;
@@ -36,6 +38,7 @@ static const struct {
     {STATUS_ICON_MODE_NORMAL, N_("Normal status icon")},
     {STATUS_ICON_MODE_BLINKING, N_("Blinking status icon")},
 };
+#endif
 
 enum {
   STATUS_ICON_MODEL_COL_ID,
@@ -1092,11 +1095,10 @@ void DataSettings::WriteNetSegment(const char* filename, GSList* list) {
  */
 void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
   GtkWidget* parent;
-  char buf[3][MAX_BUFLEN], *lineptr;
-  in_addr_t ipv4;
+  char buffer[MAX_BUFLEN*3];
+  char buf[3][MAX_BUFLEN];
   NetSegment* ns;
   FILE* stream;
-  size_t n;
 
   if (!(stream = fopen(filename, "r"))) {
     parent = GTK_WIDGET(g_datalist_get_data(&widset, "dialog-widget"));
@@ -1105,16 +1107,19 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
     return;
   }
 
-  n = 0;
-  lineptr = NULL;
-  while (getline(&lineptr, &n, stream) != -1) {
-    if (*(lineptr + strspn(lineptr, "\t\x20")) == '#')
+  while (fgets(buffer, sizeof(buffer), stream) != NULL) {
+    if (*(buffer + strspn(buffer, "\t\x20")) == '#')
       continue;
-    switch (sscanf(lineptr, "%s - %s //%s", buf[0], buf[1], buf[2])) {
+    switch (sscanf(buffer, "%1023s - %1023s //%1023s", buf[0], buf[1], buf[2])) {
       case 3:
-        if (inet_pton(AF_INET, buf[0], &ipv4) <= 0 ||
-            inet_pton(AF_INET, buf[1], &ipv4) <= 0)
+        if (!is_ipv4(buf[0])) {
+          LOG_WARN("Invalid start IP address: %s", buf[0]);
           break;
+        }
+        if (!is_ipv4(buf[1])) {
+          LOG_WARN("Invalid end IP address: %s", buf[1]);
+          break;
+        }
         ns = new NetSegment;
         *list = g_slist_append(*list, ns);
         ns->startip = g_strdup(buf[0]);
@@ -1122,9 +1127,14 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
         ns->description = g_strdup(buf[2]);
         break;
       case 2:
-        if (inet_pton(AF_INET, buf[0], &ipv4) <= 0 ||
-            inet_pton(AF_INET, buf[1], &ipv4) <= 0)
+        if (!is_ipv4(buf[0])) {
+          LOG_WARN("Invalid start IP address: %s", buf[0]);
           break;
+        }
+        if (!is_ipv4(buf[1])) {
+          LOG_WARN("Invalid end IP address: %s", buf[1]);
+          break;
+        }
         ns = new NetSegment;
         *list = g_slist_append(*list, ns);
         ns->startip = g_strdup(buf[0]);
@@ -1134,7 +1144,6 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
         break;
     }
   }
-  g_free(lineptr);
   fclose(stream);
 }
 
@@ -1283,28 +1292,30 @@ void DataSettings::ClickAddIpseg(GData** widset) {
   GtkTreeModel* model;
   GtkTreeIter iter;
   const gchar *starttext, *endtext;
-  in_addr_t startip, endip;
+  uint32_t startip, endip;
 
   /* 合法性检查 */
   parent = GTK_WIDGET(g_datalist_get_data(widset, "dialog-widget"));
   startentry = GTK_WIDGET(g_datalist_get_data(widset, "startip-entry-widget"));
   starttext = gtk_entry_get_text(GTK_ENTRY(startentry));
-  if (inet_pton(AF_INET, starttext, &startip) <= 0) {
+  if (!is_ipv4(starttext)) {
     gtk_widget_grab_focus(startentry);
     pop_warning(parent, _("\nIllegal IP(v4) address: %s!"), starttext);
     return;
   }
+  in_addr start_addr = inAddrFromString(starttext);
   endentry = GTK_WIDGET(g_datalist_get_data(widset, "endip-entry-widget"));
   endtext = gtk_entry_get_text(GTK_ENTRY(endentry));
-  if (inet_pton(AF_INET, endtext, &endip) <= 0) {
+  if (!is_ipv4(endtext)) {
     gtk_widget_grab_focus(endentry);
     pop_warning(parent, _("\nIllegal IP(v4) address: %s!"), endtext);
     return;
   }
+  in_addr end_addr = inAddrFromString(endtext);
 
   /* 加入网段树 */
-  startip = ntohl(startip);
-  endip = ntohl(endip);
+  startip = ntohl(start_addr.s_addr);
+  endip = ntohl(end_addr.s_addr);
   treeview = GTK_WIDGET(g_datalist_get_data(widset, "network-treeview-widget"));
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   gtk_list_store_append(GTK_LIST_STORE(model), &iter);

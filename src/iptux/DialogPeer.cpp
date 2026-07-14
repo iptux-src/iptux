@@ -17,7 +17,6 @@
 #include "iptux-core/Models.h"
 #include <cinttypes>
 
-#include <sys/socket.h>
 #include <unistd.h>
 
 #include <gdk/gdkkeysyms.h>
@@ -962,8 +961,7 @@ void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
   do {
     gtk_tree_model_get(model, &iter, 2, &filename, 5, &file, -1);
     g_free(file->filepath);
-    file->filepath = g_strdup_printf(
-        "%s%s%s", filepath, *(filepath + 1) != '\0' ? "/" : "", filename);
+    file->filepath = g_build_filename(filepath, filename, NULL);
     self->app->getCoreThread()->RecvFileAsync(file);
     g_free(filename);
     self->torcvsize += file->filesize;

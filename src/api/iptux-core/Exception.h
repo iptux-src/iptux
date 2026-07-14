@@ -32,7 +32,7 @@ class Exception : public std::runtime_error {
             const std::string& reason,
             std::exception* causedBy);
 
-  const ErrorCode& getErrorCode() const;
+  const ErrorCode& getErrorCode() const { return ec; }
 
  private:
   const ErrorCode& ec;

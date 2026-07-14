@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include <arpa/inet.h>
 #include <gtk/gtk.h>
+#include "iptux-core/internal/iptux_network.h"
 
 namespace iptux {
 
@@ -48,6 +48,7 @@ void pop_info(GtkWidget* parent, const gchar* format, ...) G_GNUC_PRINTF(2, 3);
 void pop_warning(GtkWidget* parent, const gchar* format, ...)
     G_GNUC_PRINTF(2, 3);
 void iptux_open_url(const char* url);
+void iptux_open_path(const char* path);
 void _ForTestToggleOpenUrl(bool enable);
 
 std::string ipv4_get_lan_name(in_addr ipv4);

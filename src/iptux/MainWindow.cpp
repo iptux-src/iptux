@@ -30,6 +30,31 @@
 #include <thread>
 
 using namespace std;
+#if defined(_WIN32)
+#define strcasestr strcasestr_compat
+const char* strcasestr_compat(const char* haystack, const char* needle) {
+  if (!haystack || !needle)
+    return NULL;
+  if (*needle == '\0')
+    return haystack;
+
+  for (const char* h = haystack; *h; ++h) {
+    const char* h1 = h;
+    const char* n1 = needle;
+
+    while (*h1 && *n1 &&
+           tolower((unsigned char)*h1) == tolower((unsigned char)*n1)) {
+      ++h1;
+      ++n1;
+    }
+
+    if (*n1 == '\0')
+      return h;  // 全匹配
+  }
+
+  return NULL;
+}
+#endif
 
 namespace iptux {
 
@@ -80,7 +105,11 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       windowConfig(250, 510, "main_window"),
       palPopupMenu(0) {
   time_t now = time(nullptr);
+#if defined(_WIN32) || defined(_WIN64)
+  localtime_s(&info_refresh_tm, &now);
+#else
   localtime_r(&now, &info_refresh_tm);
+#endif
   windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/MainWindow.ui");
   gtk_builder_connect_signals(builder, nullptr);
@@ -956,7 +985,11 @@ gboolean MainWindow::UpdateUI(MainWindow* mwin) {
   if (mwin->info_style_ == GroupInfoStyle::LAST_ACTIVITY) {
     time_t now = time(nullptr);
     struct tm now_tm;
+#if defined(_WIN32) || defined(_WIN64)
+    localtime_s(&now_tm, &now);
+#else
     localtime_r(&now, &now_tm);
+#endif
     if (mwin->info_refresh_tm.tm_year != now_tm.tm_year ||
         mwin->info_refresh_tm.tm_mon != now_tm.tm_mon ||
         mwin->info_refresh_tm.tm_mday != now_tm.tm_mday) {

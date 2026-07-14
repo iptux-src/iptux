@@ -17,6 +17,16 @@ endif
 if (cc.has_argument('-Wno-c99-designator'))
   add_project_arguments('-Wno-c99-designator', language : 'cpp')
 endif
+if (cc.has_argument('-Wno-missing-field-initializers'))
+  add_project_arguments('-Wno-missing-field-initializers', language : 'cpp')
+endif
+if (cc.has_argument('-Wno-missing-braces'))
+  add_project_arguments('-Wno-missing-braces', language : 'cpp')
+endif
+# clang does not treat NULL as sentinel, only nullptr
+if (cc.has_argument('-Wno-sentinel'))
+  add_project_arguments('-Wno-sentinel', language : 'cpp')
+endif
 if host_machine.system() == 'darwin'
   add_languages('objcpp')
   add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_70', language : 'objcpp')

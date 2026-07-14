@@ -12,11 +12,15 @@
 #ifndef IPTUX_UTILS_H
 #define IPTUX_UTILS_H
 
+#include "iptux-core/internal/iptux_network.h"
 #include <gio/gio.h>
 #include <glib.h>
-#include <memory>
-#include <netinet/in.h>
 #include <string>
+
+G_BEGIN_DECLS
+gboolean iptux_inet_address_to_in_addr(GInetAddress* address,
+                                       struct in_addr* out_addr);
+G_END_DECLS
 
 namespace iptux {
 
@@ -62,7 +66,6 @@ uint32_t iptux_get_dec_number(const char* msg, char ch, uint8_t times);
 char* iptux_get_section_string(const char* msg, char ch, uint8_t times);
 char* ipmsg_get_filename(const char* msg, char ch, uint8_t times);
 char* ipmsg_get_attach(const char* msg, char ch, uint8_t times);
-char* ipmsg_get_filename_pal(const char* pathname);
 char* ipmsg_get_filename_me(const char* pathname, char** path);
 char* iptux_erase_filename_suffix(const char* filename);
 char* ipmsg_get_pathname_full(const char* path, const char* name);
@@ -74,6 +77,7 @@ std::string inAddrToString(in_addr ipv4);
 in_addr inAddrFromString(const std::string& s);
 uint32_t inAddrToUint32(in_addr ipv4);
 in_addr inAddrFromUint32(uint32_t value);
+bool is_ipv4(const char* str);
 
 template <typename... Args>
 std::string stringFormat(const char* format, ...) G_GNUC_PRINTF(1, 2);
@@ -112,9 +116,12 @@ class Helper {
 };
 
 ssize_t xwrite(int fd, const void* buf, size_t count);
+ssize_t xwrite(GSocket* sock, const void* buf, size_t count);
 ssize_t xsend(int fd, const void* buf, size_t count);
 ssize_t xread(int fd, void* buf, size_t count);
+ssize_t xread(GSocket* sock, void* buf, size_t count);
 ssize_t read_ipmsg_prefix(int fd, void* buf, size_t count);
+ssize_t read_ipmsg_prefix(GSocket* sock, void* buf, size_t count);
 ssize_t read_ipmsg_filedata(int fd, void* buf, size_t count, size_t offset);
 ssize_t read_ipmsg_dirfiles(int fd, void* buf, size_t count, size_t offset);
 ssize_t read_ipmsg_fileinfo(GSocket* sock,
@@ -160,6 +167,8 @@ std::string sha256(const std::string& s);
  * @return std::string
  */
 std::string sha256(const char* s, int length);
+
+
 
 }  // namespace iptux
 #endif

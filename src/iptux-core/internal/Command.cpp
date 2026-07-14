@@ -14,7 +14,6 @@
 
 #include <cinttypes>
 #include <fcntl.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -22,10 +21,13 @@
 
 #include "iptux-core/Exception.h"
 #include "iptux-core/Models.h"
-#include "iptux-core/internal/TransAbstract.h"
 #include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 using namespace std;
 
@@ -74,7 +76,7 @@ static bool commandSendTo(int sockfd,
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr = ipv4;
-  return sendto(sockfd, buf, len, flags, (struct sockaddr*)(&addr),
+  return sendto(sockfd, (const char*)buf, len, flags, (struct sockaddr*)(&addr),
                 sizeof(struct sockaddr_in)) != -1;
 }
 
@@ -484,7 +486,7 @@ void Command::FeedbackError(CPPalInfo pal,
                             GroupBelongType btype,
                             const char* error) {
   MsgPara para(coreThread.GetPal(pal->GetKey()));
-  para.stype = MessageSourceType::ERROR;
+  para.stype = MessageSourceType::MST_ERROR;
   para.btype = btype;
 
   ChipData chip(MESSAGE_CONTENT_TYPE_STRING, error);
@@ -534,7 +536,7 @@ bool Command::SendSublayer(GSocket* sock,
     return false;
   }
 
-  if ((fd = open(path, O_RDONLY)) == -1) {
+  if ((fd = open(path, O_RDONLY | O_BINARY)) == -1) {
     LOG_WARN("open file failed: %s", path);
     return false;
   }
@@ -731,8 +733,7 @@ vector<FileInfo> Command::decodeFileInfos(const string& s) {
 }
 
 string Command::encodeFileInfo(const FileInfo& fileInfo) {
-  auto name =
-      ipmsg_get_filename_pal(fileInfo.filepath);  // 获取面向好友的文件名
+  auto name = g_path_get_basename(fileInfo.filepath);
   auto res = stringFormat(
       "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a:", fileInfo.fileid, name,
       fileInfo.filesize, fileInfo.filectime, (unsigned int)fileInfo.fileattr);

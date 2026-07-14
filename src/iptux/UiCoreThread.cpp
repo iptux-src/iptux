@@ -11,8 +11,6 @@
 //
 #include "config.h"
 #include "UiCoreThread.h"
-
-#include <sys/socket.h>
 #include <sys/stat.h>
 
 #include <glib/gi18n.h>

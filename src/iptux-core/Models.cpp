@@ -14,7 +14,6 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <netinet/in.h>
 #include <sstream>
 #include <unistd.h>
 

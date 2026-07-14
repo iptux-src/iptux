@@ -1,12 +1,12 @@
 #include "config.h"
 #include "UiHelper.h"
 
+#include "UIHelperWindows.h"
 #include <atomic>
 #include <cerrno>
 #include <cstring>
 #include <ctime>
 #include <glib/gi18n.h>
-#include <sys/socket.h>
 
 #include "iptux-core/Models.h"
 #include "iptux-utils/output.h"
@@ -21,6 +21,11 @@ static bool pop_disabled = false;
 
 void iptux_open_path(const char* path) {
   g_return_if_fail(!!path);
+
+#if defined(_WIN32)
+  iptux_launch_file_windows(path);
+  return;
+#endif
 
   GError* error = nullptr;
   gchar* uri = g_filename_to_uri(path, nullptr, &error);
@@ -355,8 +360,13 @@ std::string TimeToStr(time_t t) {
 std::string TimeToStr_(time_t t, time_t now) {
   struct tm tm_t;
   struct tm tm_now;
+#if defined(_WIN32) || defined(_WIN64)
+  localtime_s(&tm_t, &t);
+  localtime_s(&tm_now, &now);
+#else
   localtime_r(&t, &tm_t);
   localtime_r(&now, &tm_now);
+#endif
   char res[11];
   if (tm_t.tm_year == tm_now.tm_year && tm_t.tm_yday == tm_now.tm_yday) {
     strftime(res, sizeof(res), "%H:%M", &tm_t);

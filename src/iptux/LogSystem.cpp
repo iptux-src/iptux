@@ -12,10 +12,10 @@
 #include "config.h"
 #include "LogSystem.h"
 
+#include "iptux-utils/output.h"
 #include <fcntl.h>
 #include <glib/gi18n.h>
 
-#include "iptux-core/Const.h"
 #include "iptux-utils/utils.h"
 #include <unistd.h>
 
@@ -38,8 +38,16 @@ LogSystem::~LogSystem() {
 }
 
 void LogSystem::InitSublayer() {
+  LOG_INFO("LogSystem initialized, chat log path: %s, system log path: %s",
+           getChatLogPath().c_str(), getSystemLogPath().c_str());
   fdc = open(getChatLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
+  if (fdc == -1) {
+    LOG_ERROR("Failed to open communicate log: %s", strerror(errno));
+  }
   fds = open(getSystemLogPath().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
+  if (fds == -1) {
+    LOG_ERROR("Failed to open system log: %s", strerror(errno));
+  }
 }
 
 void LogSystem::communicateLog(const MsgPara* msgpara, const char* fmt, ...) {
@@ -84,7 +92,9 @@ void LogSystem::communicateLogv(const MsgPara* msgpara,
   msg = g_strdup_vprintf(fmt, ap);
   log = g_strdup_printf("%s\n%s\n%s\n%s\n\n", LOG_START_HEADER, ptr, msg,
                         LOG_END_HEADER);
-  write(fdc, log, strlen(log));
+  if (write(fdc, log, strlen(log)) == -1) {
+    LOG_ERROR("Failed to write to communicate log: %s", strerror(errno));
+  }
   g_free(log);
   g_free(ptr);
   g_free(msg);
@@ -104,18 +114,32 @@ void LogSystem::systemLogv(const char* fmt, va_list ap) {
   g_free(ptr);
   g_free(msg);
 
-  write(fds, log, strlen(log));
+  if (write(fds, log, strlen(log)) == -1) {
+    LOG_ERROR("Failed to write to system log: %s", strerror(errno));
+  }
   g_free(log);
 }
 
 string LogSystem::getChatLogPath() const {
+  char* res1;
+  string res2;
   auto env = g_get_user_config_dir();
-  return stringFormat("%s" LOG_PATH "/communicate.log", env);
+
+  res1 = g_build_filename(env, "iptux", "log", "communicate.log", NULL);
+  res2 = res1;
+  g_free(res1);
+  return res2;
 }
 
 string LogSystem::getSystemLogPath() const {
+  char* res1;
+  string res2;
   auto env = g_get_user_config_dir();
-  return stringFormat("%s" LOG_PATH "/system.log", env);
+
+  res1 = g_build_filename(env, "iptux", "log", "system.log", NULL);
+  res2 = res1;
+  g_free(res1);
+  return res2;
 }
 
 }  // namespace iptux

@@ -12,10 +12,10 @@
 #include "config.h"
 #include "RecvFileData.h"
 
+#include "gio/gio.h"
 #include <memory>
 
 #include <fcntl.h>
-#include <sys/socket.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <utime.h>
@@ -29,6 +29,14 @@
 #include "iptux-core/internal/ipmsg.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 using namespace std;
 
@@ -115,7 +123,7 @@ void RecvFileData::CreateUIPara() {
   para.setStatus("tip-recv")
       .setTask(_("receive"))
       .setPeer(file->fileown->getName())
-      .setIp(inet_ntoa(addr))
+      .setIp(inAddrToString(addr))
       .setFilename(ipmsg_get_filename_me(file->filepath, NULL))
       .setFileLength(file->filesize)
       .setFinishedLength(0)
@@ -133,9 +141,10 @@ void RecvFileData::RecvRegularFile() {
   AnalogFS afs;
   Command cmd(*coreThread);
   int64_t finishsize;
-  int fd;
   struct utimbuf timebuf;
-
+  string fullpath;
+  GFile* gfile = NULL;
+  GFileOutputStream* fos = NULL;
   GError* error = nullptr;
   GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
                                G_SOCKET_PROTOCOL_TCP, &error);
@@ -148,21 +157,33 @@ void RecvFileData::RecvRegularFile() {
 
   if (!cmd.SendAskData(sock, file->fileown->GetKey(), file->packetn,
                        file->fileid, 0)) {
+    LOG_WARN("Failed to send ask data command");
     g_object_unref(sock);
     terminate = true;
     return;
   }
 
-  if ((fd = afs.open(file->filepath, O_WRONLY | O_CREAT | O_TRUNC | O_LARGEFILE,
-                     00644)) == -1) {
-    g_object_unref(sock);
-    terminate = true;
-    return;
+  fullpath = assert_filename_inexist(file->filepath);
+  if (fullpath.empty()) {
+    LOG_ERROR("Failed to get full path for writing: %s", file->filepath);
+    goto fail;
+  }
+
+  gfile = g_file_new_for_path(fullpath.c_str());
+  if (!gfile) {
+    LOG_ERROR("Failed to create GFile for path: %s", fullpath.c_str());
+    goto fail;
+  }
+
+  fos = g_file_replace(gfile, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &error);
+  if (!fos) {
+    LOG_ERROR("Failed to create GFileOutputStream for path: %s, error: %s",
+              fullpath.c_str(), error->message);
+    goto fail;
   }
 
   gettimeofday(&filetime, NULL);
-  finishsize = RecvData(sock, fd, file->filesize, 0);
-  close(fd);
+  finishsize = RecvData(sock, G_OUTPUT_STREAM(fos), file->filesize, 0);
   if (file->filectime != 0) {
     timebuf.actime = int(file->filectime);
     timebuf.modtime = int(file->filectime);
@@ -179,8 +200,27 @@ void RecvFileData::RecvRegularFile() {
     LOG_INFO(_("Receive the file \"%s\" from %s successfully!"), file->filepath,
              file->fileown->getName().c_str());
   }
-
+  if (!g_output_stream_close(G_OUTPUT_STREAM(fos), NULL, &error)) {
+    LOG_ERROR("Failed to close GFileOutputStream for path: %s, error: %s",
+              fullpath.c_str(), error->message);
+    goto fail;
+  }
+  g_object_unref(fos);
+  g_object_unref(gfile);
   g_object_unref(sock);
+  return;
+fail:
+  if (error) {
+    g_error_free(error);
+  }
+  if (fos)
+    g_object_unref(fos);
+  if (gfile)
+    g_object_unref(gfile);
+  if (sock)
+    g_object_unref(sock);
+  this->terminate = true;
+  return;
 }
 
 /**
@@ -330,61 +370,6 @@ end:
 }
 
 /**
- * 接收文件数据.
- * @param sock tcp socket
- * @param fd file descriptor
- * @param filesize 文件总长度
- * @param offset 已读取数据量
- * @return 完成数据量
- */
-int64_t RecvFileData::RecvData(int sock,
-                               int fd,
-                               int64_t filesize,
-                               int64_t offset) {
-  int64_t tmpsize, finishsize;
-  struct timeval val1, val2;
-  float difftime;
-  uint32_t rate;
-  ssize_t size;
-
-  /* 如果文件数据已经完全被接收，则直接返回 */
-  if (offset == filesize)
-    return filesize;
-
-  /* 接收数据 */
-  tmpsize = finishsize = offset;  // 初始化已读取数据量
-  gettimeofday(&val1, NULL);      // 初始化起始时间
-  do {
-    /* 接收数据并写入磁盘 */
-    size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
-                                               : filesize - finishsize;
-    if ((size = xread(sock, buf, size)) == -1)
-      return finishsize;
-    if (size > 0 && xwrite(fd, buf, size) == -1)
-      return finishsize;
-    finishsize += size;
-    sumsize += size;
-    file->finishedsize = sumsize;
-    /* 判断是否需要更新UI参考值 */
-    gettimeofday(&val2, NULL);
-    difftime = difftimeval(val2, val1);
-    if (difftime >= 1) {
-      /* 更新UI参考值 */
-      rate = (uint32_t)((finishsize - tmpsize) / difftime);
-      para.setFinishedLength(finishsize)
-          .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
-          .setRemain(
-              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
-          .setRate(numeric_to_rate(rate));
-      val1 = val2;           // 更新时间参考点
-      tmpsize = finishsize;  // 更新下载量
-    }
-  } while (!terminate && size && finishsize < filesize);
-
-  return finishsize;
-}
-
-/**
  * Receive file data from network socket.
  * @param sock GSocket tcp socket
  * @param fd file descriptor
@@ -421,6 +406,66 @@ int64_t RecvFileData::RecvData(GSocket* sock,
     }
     if (size > 0 && xwrite(fd, buf, size) == -1)
       return finishsize;
+    finishsize += size;
+    sumsize += size;
+    file->finishedsize = sumsize;
+
+    gettimeofday(&val2, NULL);
+    difftime = difftimeval(val2, val1);
+    if (difftime >= 1) {
+      rate = (uint32_t)((finishsize - tmpsize) / difftime);
+      para.setFinishedLength(finishsize)
+          .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
+          .setRemain(
+              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
+          .setRate(numeric_to_rate(rate));
+      val1 = val2;
+      tmpsize = finishsize;
+    }
+  } while (!terminate && size && finishsize < filesize);
+
+  return finishsize;
+}
+
+int64_t RecvFileData::RecvData(GSocket* sock,
+                               GOutputStream* os,
+                               int64_t filesize,
+                               int64_t offset) {
+  int64_t tmpsize, finishsize;
+  struct timeval val1, val2;
+  float difftime;
+  uint32_t rate;
+  gssize size;
+
+  if (offset == filesize)
+    return filesize;
+
+  tmpsize = finishsize = offset;
+  gettimeofday(&val1, NULL);
+  do {
+    size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
+                                               : filesize - finishsize;
+    GError* error = nullptr;
+    size = g_socket_receive(sock, buf, size, nullptr, &error);
+    if (size == -1) {
+      if (error) {
+        LOG_WARN("g_socket_receive failed: %s", error->message);
+        g_error_free(error);
+      }
+      return finishsize;
+    }
+
+    if (size == 0) {
+      return finishsize;
+    }
+
+    gsize bytes_written = 0;
+    if (g_output_stream_write_all(os, buf, size, &bytes_written, nullptr,
+                                  &error) == -1) {
+      LOG_WARN("g_output_stream_write_all failed: %s", error->message);
+      g_error_free(error);
+      return finishsize + bytes_written;
+    }
     finishsize += size;
     sumsize += size;
     file->finishedsize = sumsize;

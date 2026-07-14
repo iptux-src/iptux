@@ -1,0 +1,45 @@
+# Enforce Unix line endings for all files by default
+* text=auto eol=lf
+
+# Source code
+*.cpp text eol=lf
+*.cc text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+
+# Configuration and build files
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.toml text eol=lf
+meson.build text eol=lf
+meson_options.txt text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+*.po text eol=lf
+*.pot text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.py text eol=lf
+
+# Binary files - preserve as-is
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.bin binary
+*.o binary
+*.a binary
+*.so binary
+*.dylib binary
+
+# Test data - preserve exact bytes
+tests/testdata/** binary
+examples/testdata/** binary
+src/**/testdata/** binary
+*.dat binary

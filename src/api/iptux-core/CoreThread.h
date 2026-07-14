@@ -7,7 +7,6 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
-#include <netinet/in.h>
 #include <vector>
 
 #include <sigc++/signal.h>
@@ -78,12 +77,15 @@ class CoreThread {
   const std::vector<std::shared_ptr<PalInfo>>& GetPalList();
   virtual void ClearAllPalFromList();
 
-  CPPalInfo GetPal(PalKey palKey) const;
-  PPalInfo GetPal(PalKey palKey);
-  CPPalInfo GetPal(in_addr ipv4) const { return GetPal(PalKey(ipv4, port())); }
-  PPalInfo GetPal(in_addr ipv4) { return GetPal(PalKey(ipv4, port())); }
-  CPPalInfo GetPal(const std::string& ipv4) const;
-  PPalInfo GetPal(const std::string& ipv4);
+  PalInfo::ConstPtr GetPal(PalKey palKey) const;
+  PalInfo::Ptr GetPal(PalKey palKey);
+  PalInfo::ConstPtr GetPal(in_addr ipv4) const {
+    return GetPal(PalKey(ipv4, port()));
+  }
+  PalInfo::Ptr GetPal(in_addr ipv4) { return GetPal(PalKey(ipv4, port())); }
+  PalInfo::ConstPtr GetPal(const std::string& ipv4) const;
+  PalInfo::Ptr GetPal(const std::string& ipv4);
+  PalInfo::Ptr GetPal(GInetAddress* gaddr);
 
   virtual void DelPalFromList(PalKey palKey);
   virtual void DelPalFromList(in_addr palKey) {

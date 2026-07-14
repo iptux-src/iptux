@@ -15,13 +15,13 @@
 #include <cinttypes>
 #include <cstring>
 #include <memory>
-#include <sys/socket.h>
 #include <unistd.h>
 
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/SendFileData.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux-core/internal/iptux_network.h"
 
 using namespace std;
 
@@ -61,11 +61,9 @@ void SendFile::BcstFileInfoEntry(CoreThread* coreThread,
  * @param attach 附加数据
  */
 void SendFile::RequestDataEntry(CoreThread* coreThread,
-                                int sock,
+                                GSocket* sock,
                                 FileAttr fileattr,
                                 char* attach) {
-  struct sockaddr_in addr;
-  socklen_t len;
   uint32_t fileid;
   uint32_t filectime;
   /* 检查文件属性是否匹配 */
@@ -77,7 +75,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
     fileid = iptux_get_dec_number(attach, ':', 1);
     file = coreThread->GetPrivateFileById(fileid);
   }
-  /* 兼容adroid版信鸽(IPMSG) */
+  /* 兼容android版信鸽(IPMSG) */
   if (!file) {
     fileid = iptux_get_hex_number(attach, ':', 0);
     filectime = iptux_get_dec_number(attach, ':', 1);
@@ -85,13 +83,6 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
   }
   if (!file || file->fileattr != fileattr)
     return;
-  /* 检查好友数据是否存在 */
-  len = sizeof(addr);
-  getpeername(sock, (struct sockaddr*)&addr, &len);
-  if (!(coreThread->GetPal(addr.sin_addr))) {
-    LOG_INFO("Pal not exist: %s", inAddrToString(addr.sin_addr).c_str());
-    return;
-  }
   if (!file->fileown) {
     // for public shared file, there need one owner
     file->fileown = coreThread->getMe();
@@ -125,7 +116,7 @@ void SendFile::SendFileInfo(PPalInfo pal,
       continue;
     }
     fileInfo.ensureFilesizeFilled();
-    name = ipmsg_get_filename_pal(file->filepath);  //获取面向好友的文件名
+    name = g_path_get_basename(file->filepath);
     file->packetn = cmd.Packetn();
     snprintf(ptr, MAX_UDPLEN - len,
              "%" PRIu32 ":%s:%" PRIx64 ":%" PRIx32 ":%x:\a", file->fileid, name,
@@ -180,7 +171,7 @@ void SendFile::BcstFileInfo(const std::vector<const PalInfo*>& pals,
  * @param sock tcp socket
  * @param file 文件信息
  */
-void SendFile::ThreadSendFile(int sock, PFileInfo file) {
+void SendFile::ThreadSendFile(GSocket* sock, PFileInfo file) {
   auto sfdt = make_shared<SendFileData>(coreThread, sock, file);
   coreThread->RegisterTransTask(sfdt);
   sfdt->SendFileDataEntry();

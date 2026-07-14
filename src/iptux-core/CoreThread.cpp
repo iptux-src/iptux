@@ -16,7 +16,6 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <sys/socket.h>
 
 #include "iptux-core/internal/Command.h"
 #include "iptux-core/internal/RecvFileData.h"
@@ -638,12 +637,25 @@ static gboolean tcpHandlerCleanupCb(gpointer data) {
 
 static gpointer tcpHandlerThreadFunc(gpointer data) {
   TcpHandlerData* handlerData = static_cast<TcpHandlerData*>(data);
+  GError* error = nullptr;
+  bool res;
+
   try {
-    TcpData::TcpDataEntry(handlerData->coreThread, handlerData->clientSocket);
+    res = TcpData::TcpDataEntry(handlerData->coreThread,
+                                handlerData->clientSocket, &error);
   } catch (const std::exception& e) {
     LOG_ERROR("Exception in TCP handler: %s", e.what());
   } catch (...) {
     LOG_ERROR("Unknown exception in TCP handler");
+  }
+
+  if (!res) {
+    if (error) {
+      LOG_ERROR("TCP handler failed: %s", error->message);
+      g_clear_error(&error);
+    } else {
+      LOG_ERROR("TCP handler failed with unknown error");
+    }
   }
 
   // Schedule cleanup on TCP thread's main context
@@ -944,6 +956,20 @@ shared_ptr<PalInfo> CoreThread::GetPal(PalKey palKey) {
     }
   }
   return {};
+}
+
+PalInfo::Ptr CoreThread::GetPal(GInetAddress* gaddr) {
+  struct in_addr addr;
+
+  if (!gaddr) {
+    return {};
+  }
+
+  if (!iptux_inet_address_to_in_addr(gaddr, &addr)) {
+    LOG_ERROR("Failed to convert GInetAddress to in_addr");
+    return {};
+  }
+  return GetPal(addr);
 }
 
 shared_ptr<PalInfo> CoreThread::GetPal(const string& ipv4) {

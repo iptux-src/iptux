@@ -31,18 +31,25 @@ core_sources += files([
 inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
+iptux_core_dependency = [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep]
+
+if host_machine.system() == 'windows'
+  ws2_32 = cc.find_library('ws2_32')
+  iphlpapi = cc.find_library('iphlpapi')
+  iptux_core_dependency += [ws2_32, iphlpapi]
+endif
 
 if get_option('static-link')
     libiptux_core = static_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: iptux_core_dependency,
         link_with: [libiptux_utils],
         include_directories: inc,
     )
 else
     libiptux_core = shared_library('iptux-core',
         core_sources,
-        dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
+        dependencies: iptux_core_dependency,
         link_with: [libiptux_utils],
         include_directories: inc,
         install: true,

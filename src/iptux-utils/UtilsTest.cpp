@@ -116,6 +116,7 @@ TEST(Utils, utf8MakeValid) {
   ASSERT_EQ(utf8MakeValid("\xe4\xb8\xad\xe6"), "中�");
 }
 
+#if !defined(_WIN32)
 TEST(Utils, dupPath) {
   ASSERT_EQ(dupPath("/", 1), "/(1)");
   ASSERT_EQ(dupPath("/a.b", 1), "/a (1).b");
@@ -130,3 +131,4 @@ TEST(Utils, dupPath) {
   ASSERT_EQ(dupPath("a.b", 2), "a (2).b");
   ASSERT_EQ(dupPath("a.b", 10), "a (10).b");
 }
+#endif

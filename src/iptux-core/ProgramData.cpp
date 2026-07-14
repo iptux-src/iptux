@@ -174,7 +174,7 @@ void ProgramData::ReadProgData() {
     fileInfo.fileid = pbn++;
     fileInfo.fileattr =
         S_ISREG(st.st_mode) ? FileAttr::REGULAR : FileAttr::DIRECTORY;
-    fileInfo.filepath = strdup(sharedFileList[i].c_str());
+    fileInfo.filepath = g_strdup(sharedFileList[i].c_str());
     sharedFileInfos.emplace_back(fileInfo);
   }
 }
