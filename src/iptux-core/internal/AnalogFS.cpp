@@ -34,7 +34,7 @@ static bool mergepath(char tpath[], int len, const char* npath);
 AnalogFS::AnalogFS() {
   gchar* current_dir = g_get_current_dir();
   if (current_dir) {
-    strncpy(path, current_dir, MAX_PATHLEN);
+    g_strlcpy(path, current_dir, MAX_PATHLEN);
     g_free(current_dir);
   } else {
     strcpy(path, "/");
