@@ -83,6 +83,7 @@ void DialogPeer::init() {
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
   GActionEntry win_entries[] = {
+      makeActionEntry("accept", G_ACTION_CALLBACK(onAccept)),
       makeActionEntry("attach_file", G_ACTION_CALLBACK(onAttachFile)),
       makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
       makeActionEntry("clear_chat_history",
@@ -97,7 +98,8 @@ void DialogPeer::init() {
   };
   g_action_map_add_action_entries(G_ACTION_MAP(window), win_entries,
                                   G_N_ELEMENTS(win_entries), this);
-  g_action_map_disable_actions(G_ACTION_MAP(window), "refuse", nullptr);
+  g_action_map_disable_actions(G_ACTION_MAP(window), "accept", "refuse",
+                               nullptr);
 
   sigId = g_signal_connect(G_OBJECT(getInputBuffer()), "changed",
                            G_CALLBACK(onInputBufferChanged), this);
@@ -550,8 +552,7 @@ GtkWidget* DialogPeer::CreateFileToReceiveArea() {
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
   gtk_box_pack_start(GTK_BOX(hbox), pbar, TRUE, TRUE, 0);
   button = gtk_button_new_with_label(_("Accept"));
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(onAcceptButtonClicked),
-                           this);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.accept");
   g_datalist_set_data(&widset, "file-receive-accept-button", button);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 
@@ -665,9 +666,11 @@ void DialogPeer::onRecvTreeSelectionChanged(DialogPeer& self,
                                             GtkTreeSelection* selection) {
   gint count = gtk_tree_selection_count_selected_rows(selection);
   if (count > 0) {
-    g_action_map_enable_actions(G_ACTION_MAP(self.window), "refuse", nullptr);
+    g_action_map_enable_actions(G_ACTION_MAP(self.window), "accept", "refuse",
+                                nullptr);
   } else {
-    g_action_map_disable_actions(G_ACTION_MAP(self.window), "refuse", nullptr);
+    g_action_map_disable_actions(G_ACTION_MAP(self.window), "accept", "refuse",
+                                 nullptr);
   }
 }
 /**
@@ -843,7 +846,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer* dlgpr) {
   }
 
   if (receiving > 0)
-    dlgpr->onAcceptButtonClicked(dlgpr);
+    dlgpr->onAccept(nullptr, nullptr, dlgpr);
 }
 /**
  * 显示窗口事件响应函数.
@@ -929,12 +932,8 @@ void DialogPeer::ShowDialogPeer(DialogPeer* dlgpr) {
   // 这个事件有可能需要触发其它功能，暂没有直接用ShowInfoEnclosure来执行
   ShowInfoEnclosure(dlgpr);
 }
-/**
- * 接收文件函数.
- *@param dlgpr 对话框类
- *
- */
-void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
+
+void DialogPeer::onAccept(void*, void*, DialogPeer* self) {
   GtkWidget* widget;
   GtkTreeModel* model;
   GtkTreeIter iter;

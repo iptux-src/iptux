@@ -73,10 +73,10 @@ class DialogPeer : public DialogBase {
   // 回调处理部分
  private:
   static void onRecvTreeSelectionChanged(DialogPeer& self, GtkTreeSelection*);
-  static void onAcceptButtonClicked(DialogPeer* self);
   static void ShowInfoEnclosure(DialogPeer* dlgpr);
   static bool UpdataEnclosureRcvUI(DialogPeer* dlgpr);
   static gint RcvTreePopup(GtkWidget*, GdkEvent* event, DialogPeer* self);
+  static void onAccept(void*, void*, DialogPeer* self);
   static void onRefuse(void*, void*, DialogPeer& self);
   static void onRefuseAll(void*, void*, DialogPeer& self);
   void onNewFileReceived(GroupInfo*);

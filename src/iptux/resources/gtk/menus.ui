@@ -339,6 +339,10 @@
   <menu id="peer-recv-popup">
     <section>
       <item>
+        <attribute name="label" translatable="yes">Accept</attribute>
+        <attribute name="action">win.accept</attribute>
+      </item>
+      <item>
         <attribute name="label" translatable="yes">Refuse</attribute>
         <attribute name="action">win.refuse</attribute>
       </item>
