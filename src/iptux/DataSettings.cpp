@@ -1110,7 +1110,7 @@ void DataSettings::ReadNetSegment(const char* filename, GSList** list) {
   while (fgets(buffer, sizeof(buffer), stream) != NULL) {
     if (*(buffer + strspn(buffer, "\t\x20")) == '#')
       continue;
-    switch (sscanf(buffer, "%s - %s //%s", buf[0], buf[1], buf[2])) {
+    switch (sscanf(buffer, "%1023s - %1023s //%1023s", buf[0], buf[1], buf[2])) {
       case 3:
         if (!is_ipv4(buf[0])) {
           LOG_WARN("Invalid start IP address: %s", buf[0]);

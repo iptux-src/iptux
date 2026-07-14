@@ -370,61 +370,6 @@ end:
 }
 
 /**
- * 接收文件数据.
- * @param sock tcp socket
- * @param fd file descriptor
- * @param filesize 文件总长度
- * @param offset 已读取数据量
- * @return 完成数据量
- */
-int64_t RecvFileData::RecvData(int sock,
-                               int fd,
-                               int64_t filesize,
-                               int64_t offset) {
-  int64_t tmpsize, finishsize;
-  struct timeval val1, val2;
-  float difftime;
-  uint32_t rate;
-  ssize_t size;
-
-  /* 如果文件数据已经完全被接收，则直接返回 */
-  if (offset == filesize)
-    return filesize;
-
-  /* 接收数据 */
-  tmpsize = finishsize = offset;  // 初始化已读取数据量
-  gettimeofday(&val1, NULL);      // 初始化起始时间
-  do {
-    /* 接收数据并写入磁盘 */
-    size = MAX_SOCKLEN < filesize - finishsize ? MAX_SOCKLEN
-                                               : filesize - finishsize;
-    if ((size = xread(sock, buf, size)) == -1)
-      return finishsize;
-    if (size > 0 && xwrite(fd, buf, size) == -1)
-      return finishsize;
-    finishsize += size;
-    sumsize += size;
-    file->finishedsize = sumsize;
-    /* 判断是否需要更新UI参考值 */
-    gettimeofday(&val2, NULL);
-    difftime = difftimeval(val2, val1);
-    if (difftime >= 1) {
-      /* 更新UI参考值 */
-      rate = (uint32_t)((finishsize - tmpsize) / difftime);
-      para.setFinishedLength(finishsize)
-          .setCost(numeric_to_time((uint32_t)(difftimeval(val2, filetime))))
-          .setRemain(
-              numeric_to_time((uint32_t)((filesize - finishsize) / rate)))
-          .setRate(numeric_to_rate(rate));
-      val1 = val2;           // 更新时间参考点
-      tmpsize = finishsize;  // 更新下载量
-    }
-  } while (!terminate && size && finishsize < filesize);
-
-  return finishsize;
-}
-
-/**
  * Receive file data from network socket.
  * @param sock GSocket tcp socket
  * @param fd file descriptor
