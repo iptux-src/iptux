@@ -17,6 +17,11 @@
 #include <glib.h>
 #include <string>
 
+G_BEGIN_DECLS
+gboolean iptux_inet_address_to_in_addr(GInetAddress* address,
+                                       struct in_addr* out_addr);
+G_END_DECLS
+
 namespace iptux {
 
 #define difftimeval(val2, val1)                                  \

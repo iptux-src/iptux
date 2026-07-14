@@ -64,8 +64,6 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
                                 GSocket* sock,
                                 FileAttr fileattr,
                                 char* attach) {
-  struct sockaddr_in addr;
-  socklen_t len;
   uint32_t fileid;
   uint32_t filectime;
   /* 检查文件属性是否匹配 */
@@ -77,7 +75,7 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
     fileid = iptux_get_dec_number(attach, ':', 1);
     file = coreThread->GetPrivateFileById(fileid);
   }
-  /* 兼容adroid版信鸽(IPMSG) */
+  /* 兼容android版信鸽(IPMSG) */
   if (!file) {
     fileid = iptux_get_hex_number(attach, ':', 0);
     filectime = iptux_get_dec_number(attach, ':', 1);
@@ -85,16 +83,6 @@ void SendFile::RequestDataEntry(CoreThread* coreThread,
   }
   if (!file || file->fileattr != fileattr)
     return;
-  /* 检查好友数据是否存在 */
-  len = sizeof(addr);
-  (void)len;
-#if 0
-  getpeername(sock, (struct sockaddr*)&addr, &len);
-  if (!(coreThread->GetPal(addr.sin_addr))) {
-    LOG_INFO("Pal not exist: %s", inAddrToString(addr.sin_addr).c_str());
-    return;
-  }
-#endif
   if (!file->fileown) {
     // for public shared file, there need one owner
     file->fileown = coreThread->getMe();

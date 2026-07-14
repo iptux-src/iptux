@@ -20,6 +20,7 @@
 #include "iptux-core/internal/SendFile.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#include "iptux_error.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -48,36 +49,51 @@ TcpData::~TcpData() {
  * TCP连接处理入口.
  * @param socket GSocket for the connection (takes ownership)
  */
-void TcpData::TcpDataEntry(CoreThread* coreThread, GSocket* socket) {
+bool TcpData::TcpDataEntry(CoreThread* coreThread,
+                           GSocket* socket,
+                           GError** error) {
   TcpData tdata;
 
   tdata.coreThread = coreThread;
   tdata.socket = socket;
   tdata.sock = g_socket_get_fd(socket);
-  tdata.DispatchTcpData();
+  return tdata.DispatchTcpData(error);
 }
 
 /**
  * 分派TCP数据处理方案.
  */
-void TcpData::DispatchTcpData() {
-  GError* error = nullptr;
-  GSocketAddress* remoteAddr = g_socket_get_remote_address(socket, &error);
+bool TcpData::DispatchTcpData(GError** error) {
+  g_autoptr(GSocketAddress) remoteAddr =
+      g_socket_get_remote_address(socket, error);
+  GInetSocketAddress* inetAddr = nullptr;
+  g_autofree char* addrStr = nullptr;
+  GInetAddress* gaddr;
+  guint16 port;
+
   if (!remoteAddr) {
-    LOG_WARN("Failed to get remote address: %s",
-             error ? error->message : "unknown");
-    if (error)
-      g_error_free(error);
-    return;
+    return false;
   }
 
-  GInetSocketAddress* inetAddr = G_INET_SOCKET_ADDRESS(remoteAddr);
-  GInetAddress* gaddr = g_inet_socket_address_get_address(inetAddr);
-  guint16 port = g_inet_socket_address_get_port(inetAddr);
-  char* addrStr = g_inet_address_to_string(gaddr);
+  if (!G_IS_INET_SOCKET_ADDRESS(remoteAddr)) {
+    g_set_error_literal(error, IPTUX_CORE_ERROR, IPTUX_CORE_ERROR_SOCKET,
+                        "Remote address is not an IPv4 address");
+    return false;
+  }
+
+  inetAddr = G_INET_SOCKET_ADDRESS(remoteAddr);
+
+  gaddr = g_inet_socket_address_get_address(inetAddr);
+  port = g_inet_socket_address_get_port(inetAddr);
+  addrStr = g_inet_address_to_string(gaddr);
   LOG_DEBUG("received tcp message from %s:%d", addrStr, int(port));
-  g_object_unref(remoteAddr);
-  remoteAddr = nullptr;
+
+  if (!this->coreThread->GetPal(gaddr)) {
+    LOG_WARN("Pal not exist: %s", addrStr);
+    g_set_error(error, IPTUX_CORE_ERROR, IPTUX_CORE_ERROR_UNKNOWN_PEER,
+                "Pal not exist: %s", addrStr);
+    return false;
+  }
 
   uint32_t commandno;
   ssize_t len;
@@ -85,8 +101,9 @@ void TcpData::DispatchTcpData() {
   /* 读取消息前缀 */
   if ((len = read_ipmsg_prefix(this->socket, buf, MAX_SOCKLEN)) <= 0) {
     LOG_WARN("Failed to read message prefix from %s", addrStr);
-    g_free(addrStr);
-    return;
+    g_set_error(error, IPTUX_CORE_ERROR, IPTUX_CORE_ERROR_INVALID_MSG,
+                "Failed to read message prefix from %s", addrStr);
+    return false;
   }
 
   /* 分派消息 */
@@ -94,7 +111,6 @@ void TcpData::DispatchTcpData() {
   commandno = iptux_get_dec_number(buf, ':', 4);  // 获取命令字
   LOG_INFO("recv TCP request from %s, command NO.: [0x%x] %s", addrStr,
            commandno, CommandMode(GET_MODE(commandno)).toString().c_str());
-  g_free(addrStr);
   switch (GET_MODE(commandno)) {
     case IPMSG_GETFILEDATA:
       RequestData(FileAttr::REGULAR);
@@ -108,6 +124,7 @@ void TcpData::DispatchTcpData() {
     default:
       break;
   }
+  return true;
 }
 
 /**

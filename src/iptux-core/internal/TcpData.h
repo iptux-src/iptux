@@ -25,10 +25,12 @@ class TcpData {
   TcpData();
   ~TcpData();
 
-  static void TcpDataEntry(CoreThread* coreThread, GSocket* socket);
+  static bool TcpDataEntry(CoreThread* coreThread,
+                           GSocket* socket,
+                           GError** error);
 
  private:
-  void DispatchTcpData();
+  bool DispatchTcpData(GError** error);
 
   void RequestData(FileAttr fileattr);
   void RecvSublayer(uint32_t cmdopt);

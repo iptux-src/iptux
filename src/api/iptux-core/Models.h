@@ -82,6 +82,10 @@ class PalKey {
  */
 class PalInfo {
  public:
+  typedef std::shared_ptr<PalInfo> Ptr;
+  typedef std::shared_ptr<const PalInfo> ConstPtr;
+
+ public:
   PalInfo(const std::string& ipv4, uint16_t port);
   PalInfo(in_addr ipv4, uint16_t port);
   ~PalInfo();

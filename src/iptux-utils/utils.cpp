@@ -994,3 +994,24 @@ std::string sha256(const char* s, int length) {
 }
 
 }  // namespace iptux
+
+gboolean iptux_inet_address_to_in_addr(GInetAddress* address,
+                                       struct in_addr* out_addr) {
+  g_return_val_if_fail(G_IS_INET_ADDRESS(address), FALSE);
+  g_return_val_if_fail(out_addr != NULL, FALSE);
+
+  if (g_inet_address_get_family(address) != G_SOCKET_FAMILY_IPV4) {
+    LOG_WARN("Address is not an IPv4 address.");
+    return FALSE;
+  }
+
+  // 2. 获取原始字节网络字节序（4字节）
+  const guint8* bytes = g_inet_address_to_bytes(address);
+
+  // 3. 将字节复制到 struct in_addr 中
+  // g_inet_address_to_bytes 返回的已经是网络字节序（Big Endian），与 struct
+  // in_addr 要求的字节序一致
+  memcpy(&(out_addr->s_addr), bytes, sizeof(out_addr->s_addr));
+
+  return TRUE;
+}
