@@ -1,11 +1,11 @@
 #include "config.h"
 #include "TransWindow.h"
 
+#include "WindowConfig.h"
 #include <glib/gi18n.h>
 #include <memory>
 
 #include "iptux-core/IptuxConfig.h"
-#include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include "iptux/UiCoreThread.h"
 #include "iptux/UiHelper.h"
@@ -19,6 +19,11 @@ namespace iptux {
 
 class TransWindowPrivate {
  public:
+  TransWindowPrivate(IptuxConfig::Ptr config)
+      : windowConfig(config, 500, 350, "trans_window") {}
+
+ public:
+  WindowConfig windowConfig;
   Application* app;
   GtkWidget* transTreeviewWidget;
   GtkMenu* popupMenu;
@@ -56,9 +61,6 @@ class TransWindowPrivate {
   bool currentTaskFinished = false;
 };
 
-static gboolean TWinConfigureEvent(GtkWindow* window,
-                                   GdkEventConfigure* event,
-                                   gpointer);
 static GtkWidget* CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow* window);
 static gboolean UpdateTransUI(GtkWindow* window);
@@ -74,7 +76,7 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
   GtkWindow* window;
 
   window = GTK_WINDOW(gtk_application_window_new(app->getApp()));
-  TransWindowPrivate* priv = new TransWindowPrivate;
+  TransWindowPrivate* priv = new TransWindowPrivate(app->getConfig());
   priv->app = app;
   priv->window = GTK_APPLICATION_WINDOW(window);
   g_object_set_data_full(G_OBJECT(window), IPTUX_PRIVATE, priv,
@@ -86,16 +88,16 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
 
   auto config = trans_window_get_config(window);
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
-  gtk_window_set_default_size(GTK_WINDOW(window),
-                              config->GetInt("trans_window_width", 500),
-                              config->GetInt("trans_window_height", 350));
+  gtk_window_set_default_size(GTK_WINDOW(window), priv->windowConfig.GetWidth(),
+                              priv->windowConfig.GetHeight());
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_container_set_border_width(GTK_CONTAINER(window), 5);
   gtk_container_add(GTK_CONTAINER(window), CreateTransArea(window));
 
   g_signal_connect(window, "delete-event", G_CALLBACK(gtk_widget_hide), NULL);
-  g_signal_connect(window, "configure-event", G_CALLBACK(TWinConfigureEvent),
-                   NULL);
+  g_signal_connect(window, "configure-event",
+                   G_CALLBACK(WindowConfig::on_configure_event),
+                   &priv->windowConfig);
   auto signalHandler = g_signal_connect_swapped(
       g_action_map_lookup_action(G_ACTION_MAP(app->getApp()),
                                  "trans_model.changed"),
@@ -118,34 +120,6 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
       gtk_builder_get_object(app->getMenuBuilder(), "trans-popup"))));
   gtk_menu_attach_to_widget(priv->popupMenu, GTK_WIDGET(window), nullptr);
   return window;
-}
-
-/**
- * 文件传输窗口位置&大小改变的响应处理函数.
- * @param window 文件传输窗口
- * @param event the GdkEventConfigure which triggered this signal
- * @param dtset data set
- * @return Gtk+库所需
- */
-gboolean TWinConfigureEvent(GtkWindow* window,
-                            GdkEventConfigure* event,
-                            gpointer) {
-  GdkWindow* gdk_win = gtk_widget_get_window(GTK_WIDGET(window));
-
-  if (gdk_win != NULL) {
-    GdkWindowState state = gdk_window_get_state(gdk_win);
-
-    if (state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN |
-                 GDK_WINDOW_STATE_ICONIFIED)) {
-      return FALSE;
-    }
-  }
-
-  auto config = trans_window_get_config(window);
-  config->SetInt("trans_window_width", event->width);
-  config->SetInt("trans_window_height", event->height);
-  config->Save();
-  return FALSE;
 }
 
 shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow* window) {

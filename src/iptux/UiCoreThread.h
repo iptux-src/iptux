@@ -37,6 +37,9 @@ namespace iptux {
  */
 class UiCoreThread : public CoreThread {
  public:
+  typedef std::shared_ptr<UiCoreThread> Ptr;
+
+ public:
   UiCoreThread(Application* app, std::shared_ptr<ProgramData> data);
   ~UiCoreThread() override;
 

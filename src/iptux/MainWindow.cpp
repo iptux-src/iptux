@@ -102,7 +102,7 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
       mdlset(NULL),
       tmdllist(NULL),
       timerid(0),
-      windowConfig(250, 510, "main_window"),
+      windowConfig(config, 250, 510, "main_window"),
       palPopupMenu(0) {
   time_t now = time(nullptr);
 #if defined(_WIN32) || defined(_WIN64)
@@ -110,7 +110,6 @@ MainWindow::MainWindow(Application* app, UiCoreThread& coreThread)
 #else
   localtime_r(&now, &info_refresh_tm);
 #endif
-  windowConfig.LoadFromConfig(config);
   builder = gtk_builder_new_from_resource(IPTUX_RESOURCE "gtk/MainWindow.ui");
   gtk_builder_connect_signals(builder, nullptr);
   coreThread.sigGroupInfoUpdated.connect(
@@ -533,8 +532,8 @@ GtkWidget* MainWindow::CreateMainWindow() {
   gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry, hints);
   gtk_window_set_default_icon_name("iptux");
 
-  g_signal_connect(window, "configure-event", G_CALLBACK(MWinConfigureEvent),
-                   this);
+  g_signal_connect(window, "configure-event",
+                   G_CALLBACK(WindowConfig::on_configure_event), &windowConfig);
   g_signal_connect(window, "delete-event",
                    G_CALLBACK(gtk_window_iconify_on_delete), nullptr);
   g_signal_connect(window, "window-state-event",
@@ -1657,24 +1656,6 @@ void MainWindow::PallistDragDataReceived(GtkWidget* treeview,
   g_slist_foreach(list, GFunc(g_free), NULL);
   g_slist_free(list);
   //        session->ShowEnclosure();
-}
-
-/**
- * 主窗口位置&大小改变的响应处理函数.
- * @param window 主窗口
- * @param event the GdkEventConfigure which triggered this signal
- * @param dtset data set
- * @return Gtk+库所需
- */
-gboolean MainWindow::MWinConfigureEvent(GtkWidget* window,
-                                        GdkEventConfigure*,
-                                        MainWindow* self) {
-  int width, height;
-  gtk_window_get_size(GTK_WINDOW(window), &width, &height);
-  self->windowConfig.SetWidth(width)
-      .SetHeight(height)
-      .SaveToConfig(self->config);
-  return FALSE;
 }
 
 /**
