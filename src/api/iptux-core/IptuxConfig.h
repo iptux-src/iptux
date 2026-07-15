@@ -11,6 +11,10 @@ namespace iptux {
 
 class IptuxConfig {
  public:
+  typedef std::shared_ptr<IptuxConfig> Ptr;
+  typedef std::shared_ptr<const IptuxConfig> ConstPtr;
+
+ public:
   /**
    * @brief create a IptuxConfig from string
    *
