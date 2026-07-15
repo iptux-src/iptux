@@ -19,7 +19,7 @@ namespace iptux {
 
 class TransWindowPrivate {
  public:
-  TransWindowPrivate(IptuxConfig::Ptr config)
+  explicit TransWindowPrivate(IptuxConfig::Ptr config)
       : windowConfig(config, 500, 350, "trans_window") {}
 
  public:
