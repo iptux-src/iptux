@@ -1,11 +1,10 @@
 #ifndef IPTUX_WINDOW_CONFIG_H
 #define IPTUX_WINDOW_CONFIG_H
 
-#include "glib.h"
-#include "gtk/gtk.h"
-#include <string>
-
 #include "iptux-core/IptuxConfig.h"
+#include <glib.h>
+#include <gtk/gtk.h>
+#include <string>
 
 namespace iptux {
 
