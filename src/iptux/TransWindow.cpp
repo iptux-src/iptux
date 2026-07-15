@@ -56,7 +56,9 @@ class TransWindowPrivate {
   bool currentTaskFinished = false;
 };
 
-static gboolean TWinConfigureEvent(GtkWindow* window);
+static gboolean TWinConfigureEvent(GtkWindow* window,
+                                   GdkEventConfigure* event,
+                                   gpointer);
 static GtkWidget* CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow* window);
 static gboolean UpdateTransUI(GtkWindow* window);
@@ -125,13 +127,23 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
  * @param dtset data set
  * @return Gtk+库所需
  */
-gboolean TWinConfigureEvent(GtkWindow* window) {
-  int width, height;
-  gtk_window_get_size(window, &width, &height);
+gboolean TWinConfigureEvent(GtkWindow* window,
+                            GdkEventConfigure* event,
+                            gpointer) {
+  GdkWindow* gdk_win = gtk_widget_get_window(GTK_WIDGET(window));
+
+  if (gdk_win != NULL) {
+    GdkWindowState state = gdk_window_get_state(gdk_win);
+
+    if (state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN |
+                 GDK_WINDOW_STATE_ICONIFIED)) {
+      return FALSE;
+    }
+  }
 
   auto config = trans_window_get_config(window);
-  config->SetInt("trans_window_width", width);
-  config->SetInt("trans_window_height", height);
+  config->SetInt("trans_window_width", event->width);
+  config->SetInt("trans_window_height", event->height);
   config->Save();
   return FALSE;
 }
