@@ -65,7 +65,6 @@ static GtkWidget* CreateTransArea(GtkWindow* window);
 static GtkWidget* CreateTransTree(TransWindow* window);
 static gboolean UpdateTransUI(GtkWindow* window);
 static TransWindowPrivate& getPriv(TransWindow* window);
-static shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow* pWindow);
 static void onOpenFile(void*, void*, TransWindowPrivate* self);
 static void onOpenFolder(void*, void*, TransWindowPrivate* self);
 static void onTerminateTask(void*, void*, TransWindowPrivate* self);
@@ -86,7 +85,6 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
     gtk_window_set_destroy_with_parent(window, true);
   }
 
-  auto config = trans_window_get_config(window);
   gtk_window_set_title(GTK_WINDOW(window), _("Files Transmission Management"));
   gtk_window_set_default_size(GTK_WINDOW(window), priv->windowConfig.GetWidth(),
                               priv->windowConfig.GetHeight());
@@ -120,10 +118,6 @@ TransWindow* trans_window_new(Application* app, GtkWindow* parent) {
       gtk_builder_get_object(app->getMenuBuilder(), "trans-popup"))));
   gtk_menu_attach_to_widget(priv->popupMenu, GTK_WIDGET(window), nullptr);
   return window;
-}
-
-shared_ptr<IptuxConfig> trans_window_get_config(GtkWindow* window) {
-  return getPriv(window).app->getConfig();
 }
 
 TransModel* trans_window_get_trans_model(GtkWindow* window) {
