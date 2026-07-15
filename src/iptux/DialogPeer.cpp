@@ -83,6 +83,7 @@ void DialogPeer::init() {
   gtk_widget_show_all(window);
   gtk_widget_grab_focus(GTK_WIDGET(inputTextviewWidget));
   GActionEntry win_entries[] = {
+      makeActionEntry("accept_all", G_ACTION_CALLBACK(onAcceptAll)),
       makeActionEntry("attach_file", G_ACTION_CALLBACK(onAttachFile)),
       makeActionEntry("attach_folder", G_ACTION_CALLBACK(onAttachFolder)),
       makeActionEntry("clear_chat_history",
@@ -549,9 +550,8 @@ GtkWidget* DialogPeer::CreateFileToReceiveArea() {
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(pbar), _("Receiving progress."));
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
   gtk_box_pack_start(GTK_BOX(hbox), pbar, TRUE, TRUE, 0);
-  button = gtk_button_new_with_label(_("Accept"));
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(onAcceptButtonClicked),
-                           this);
+  button = gtk_button_new_with_label(_("Accept All"));
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.accept_all");
   g_datalist_set_data(&widset, "file-receive-accept-button", button);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 
@@ -843,7 +843,7 @@ void DialogPeer::ShowInfoEnclosure(DialogPeer* dlgpr) {
   }
 
   if (receiving > 0)
-    dlgpr->onAcceptButtonClicked(dlgpr);
+    dlgpr->onAcceptAll(nullptr, nullptr, dlgpr);
 }
 /**
  * 显示窗口事件响应函数.
@@ -929,12 +929,8 @@ void DialogPeer::ShowDialogPeer(DialogPeer* dlgpr) {
   // 这个事件有可能需要触发其它功能，暂没有直接用ShowInfoEnclosure来执行
   ShowInfoEnclosure(dlgpr);
 }
-/**
- * 接收文件函数.
- *@param dlgpr 对话框类
- *
- */
-void DialogPeer::onAcceptButtonClicked(DialogPeer* self) {
+
+void DialogPeer::onAcceptAll(void*, void*, DialogPeer* self) {
   GtkWidget* widget;
   GtkTreeModel* model;
   GtkTreeIter iter;
