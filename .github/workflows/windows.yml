@@ -50,3 +50,14 @@ jobs:
 
       - name: Check iptux version
         run: iptux --version
+
+      - name: Package portable build
+        run: ./scripts/package-windows-portable.sh --build-dir build
+
+      - name: Upload portable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iptux-portable-windows
+          path: |
+            dist/iptux-portable
+            dist/iptux-portable.zip
