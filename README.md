@@ -24,6 +24,11 @@ brew tap iptux-src/iptux
 brew install iptux
 ```
 
+### Windows
+
+- portable nightly build: https://nightly.link/iptux-src/iptux/workflows/windows/main/iptux-portable-windows.zip
+
+
 ## Build from source
 
 ### Linux (Debian and Ubuntu)
