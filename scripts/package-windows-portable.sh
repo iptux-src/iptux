@@ -190,6 +190,7 @@ EOF
 }
 
 prepare_build() {
+  rm -rf ${BUILD_DIR}
   if [[ ! -f "${BUILD_DIR}/build.ninja" ]]; then
     meson setup -Dmode=portable "${BUILD_DIR}" "${REPO_ROOT}"
   fi
