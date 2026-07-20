@@ -28,7 +28,9 @@
 
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
+#if !defined(_WIN32) && !defined(_WIN64)
 #include "iptux_crash_utils.h"
+#endif
 
 using namespace std;
 using namespace iptux;
@@ -42,10 +44,18 @@ static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 string getConfigPath() {
   const char* res1;
   if (bindIp == nullptr) {
+#if IPTUX_MODE_PORTABLE
+    res1 = g_strdup("config.json");
+#else
     res1 = g_build_path("/", g_getenv("HOME"), ".iptux", "config.json", NULL);
+#endif
   } else {
+#if IPTUX_MODE_PORTABLE
+    res1 = g_strdup(stringFormat("config.%s.json", bindIp).c_str());
+#else
     res1 = g_build_path("/", g_getenv("HOME"), ".iptux",
                         stringFormat("config.%s.json", bindIp).c_str(), NULL);
+#endif
   }
   string res2(res1);
   g_free(gpointer(res1));
@@ -158,6 +168,7 @@ int main(int argc, char** argv) {
   g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
   if (!g_option_context_parse(context, &argc, &argv, &error)) {
     g_print(_("option parsing failed: %s\n"), error->message);
+    g_error_free(error);
     exit(1);
   }
   if (version) {
