@@ -53,7 +53,7 @@ jobs:
         run: iptux --version
 
       - name: Package portable build
-        run: ./scripts/package-windows-portable.sh --build-dir build
+        run: ./scripts/package-windows-portable.sh --build-dir build2
 
       - name: Upload portable artifact
         uses: actions/upload-artifact@v4
