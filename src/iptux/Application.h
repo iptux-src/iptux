@@ -28,7 +28,7 @@ class Application {
   void openTransWindow();
 
   GtkApplication* getApp() { return app; }
-  std::shared_ptr<IptuxConfig> getConfig() { return config; }
+  IptuxConfig::Ptr getConfig() { return config; }
   TransModel* getTransModel() { return transModel; }
   MainWindow* getMainWindow() { return window; }
   GtkBuilder* getMenuBuilder() { return menuBuilder; }
@@ -47,7 +47,7 @@ class Application {
   bool isActivated() const { return activated; }
 
  private:
-  std::shared_ptr<IptuxConfig> config;
+  IptuxConfig::Ptr config;
   std::shared_ptr<ProgramData> data;
   std::shared_ptr<UiCoreThread> cthrd;
   std::shared_ptr<IptuxAppIndicator> app_indicator;

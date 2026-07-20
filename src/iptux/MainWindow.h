@@ -173,12 +173,6 @@ class MainWindow : public sigc::trackable {
                                       guint time,
                                       MainWindow* self);
 
-  static gboolean MWinConfigureEvent(GtkWidget* window,
-                                     GdkEventConfigure* event,
-                                     MainWindow* self);
-  static gboolean TWinConfigureEvent(GtkWidget* window,
-                                     GdkEventConfigure* event,
-                                     MainWindow* self);
   static void PanedDivideChanged(GtkWidget* paned,
                                  GParamSpec* pspec,
                                  MainWindow* self);

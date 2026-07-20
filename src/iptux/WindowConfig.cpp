@@ -23,4 +23,27 @@ void WindowConfig::SaveToConfig(shared_ptr<IptuxConfig> config) {
   config->Save();
 }
 
+void WindowConfig::Save() {
+  this->SaveToConfig(this->config);
+}
+
+gboolean WindowConfig::on_configure_event(GtkWidget* window,
+                                          GdkEventConfigure* event,
+                                          gpointer user_data) {
+  WindowConfig* self = (WindowConfig*)user_data;
+  GdkWindow* gdk_win = gtk_widget_get_window(GTK_WIDGET(window));
+
+  if (gdk_win != NULL) {
+    GdkWindowState state = gdk_window_get_state(gdk_win);
+
+    if (state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN |
+                 GDK_WINDOW_STATE_ICONIFIED)) {
+      return FALSE;
+    }
+  }
+
+  self->SetWidth(event->width).SetHeight(event->height).Save();
+  return FALSE;
+}
+
 }  // namespace iptux
