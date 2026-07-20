@@ -123,9 +123,15 @@ void LogSystem::systemLogv(const char* fmt, va_list ap) {
 string LogSystem::getChatLogPath() const {
   char* res1;
   string res2;
-  auto env = g_get_user_config_dir();
+  const char* env = NULL;
 
+#if IPTUX_MODE_PORTABLE
+  (void)env;
+  res1 = g_strdup("communicate.log");
+#else
+  env = g_get_user_config_dir();
   res1 = g_build_filename(env, "iptux", "log", "communicate.log", NULL);
+#endif
   res2 = res1;
   g_free(res1);
   return res2;
@@ -134,9 +140,15 @@ string LogSystem::getChatLogPath() const {
 string LogSystem::getSystemLogPath() const {
   char* res1;
   string res2;
-  auto env = g_get_user_config_dir();
+  const char* env;
 
+#if IPTUX_MODE_PORTABLE
+  (void)env;
+  res1 = g_strdup("system.log");
+#else
+  env = g_get_user_config_dir();
   res1 = g_build_filename(env, "iptux", "log", "system.log", NULL);
+#endif
   res2 = res1;
   g_free(res1);
   return res2;

@@ -5,12 +5,11 @@
 
 #mesondefine IPTUX_VERSION
 #mesondefine GETTEXT_PACKAGE
+#mesondefine IPTUX_MODE_PORTABLE
 #define IPTUX_RESOURCE "/io/github/iptux_src/iptux/"
 
 #define __PIXMAPS_PATH "@SHARE_IPTUX_DIR@/pixmaps"
 #define __LOCALE_PATH "@SHARE_DIR@/locale"
-#define __SOUND_PATH "@SHARE_IPTUX_DIR@/sound"
-#define __UI_PATH "@SHARE_IPTUX_DIR@/ui"
 #define __ICON_PATH "@SHARE_DIR@/icons/hicolor"
 
 #define IPTUX_PATH "/iptux"

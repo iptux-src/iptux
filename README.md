@@ -49,6 +49,20 @@ meson install -C build
 iptux
 ```
 
+### Windows (MSYS2 CLANG64)
+
+```sh
+git clone https://github.com/iptux-src/iptux.git
+cd iptux
+meson setup build
+./scripts/package-windows-portable.sh
+```
+
+The script stages the Meson install tree, copies the dependent runtime DLLs,
+bundles the GTK runtime files needed by the portable directory, generates an
+`iptux-portable.cmd` launcher that refreshes the pixbuf loader cache for the
+current extraction path, and writes `dist/iptux-portable.zip`.
+
 ## Usage
 
 * adjust firewall to allow use the TCP/UDP 2425 port.

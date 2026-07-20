@@ -1,15 +1,15 @@
 option(
-  'dev',
-  type: 'boolean',
-  value: false,
-  description: 'enable dev mode, iptux will read resource file from source dir.',
+  'mode',
+  type: 'combo',
+  choices: ['standard', 'dev', 'portable'],
+  description: 'package mode',
 )
 
 option(
   'static-link',
   type: 'boolean',
   value: false,
-  description: 'static link libiptux-core.',
+  description: 'static link libiptux-core',
 )
 
 option(

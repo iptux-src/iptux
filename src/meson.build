@@ -10,14 +10,20 @@ conf_data.set_quoted('VERSION', meson.project_version())
 # the 1_ prefix is used for compatible with FeiQ
 conf_data.set_quoted('IPTUX_VERSION', '1_iptux ' + meson.project_version())
 conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+conf_data.set('IPTUX_MODE_PORTABLE', get_option('mode') == 'portable' ? 1 : 0)
 conf_data.set(
   'SHARE_DIR',
   join_paths(get_option('prefix'), get_option('datadir')),
 )
-if get_option('dev')
+if get_option('mode') == 'dev'
   conf_data.set(
     'SHARE_IPTUX_DIR',
     join_paths(meson.current_source_dir(), '../share'),
+  )
+elif get_option('mode') == 'portable'
+  conf_data.set(
+    'SHARE_IPTUX_DIR',
+    join_paths('share', 'iptux'),
   )
 else
   conf_data.set(
