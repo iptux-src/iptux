@@ -75,8 +75,7 @@ if meson.version().version_compare('>=0.57')
   summary(summary_deps, section: 'Dependencies:')
 
   summary({
-
-    'dev': get_option('dev'),
+    'mode': get_option('mode'),
     'static-link': get_option('static-link'),
     'appindicator': appindicator_dep.found(),
     }, section: 'Options:')
