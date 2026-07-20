@@ -60,5 +60,4 @@ jobs:
         with:
           name: iptux-portable-windows
           path: |
-            dist/iptux-portable
             dist/iptux-portable.zip
