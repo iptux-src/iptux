@@ -2,13 +2,26 @@
 
 #include "iptux-core/TestHelper.h"
 #include "iptux/Application.h"
-#define private public
 #include "iptux/RevisePal.h"
-#undef private
 #include "iptux/TestHelper.h"
 
 using namespace std;
 using namespace iptux;
+
+namespace iptux {
+
+class RevisePalTestPeer {
+ public:
+  static GtkWidget* CreateAllArea(RevisePal& pal) {
+    return pal.CreateAllArea();
+  }
+  static void SetAllValue(RevisePal& pal) { pal.SetAllValue(); }
+  static GtkWidget* GetWidget(RevisePal& pal, const char* key) {
+    return GTK_WIDGET(g_datalist_get_data(&pal.widset, key));
+  }
+};
+
+}  // namespace iptux
 
 TEST(RevisePal, Constructor) {
   Application* app = CreateApplication();
@@ -34,11 +47,10 @@ TEST(RevisePal, CreateAllAreaUsesGridAndProtocolCombo) {
   PalInfo palInfo("127.0.0.1", 2425);
   RevisePal pal(app, nullptr, &palInfo);
 
-  auto area = pal.CreateAllArea();
+  auto area = RevisePalTestPeer::CreateAllArea(pal);
   EXPECT_TRUE(GTK_IS_GRID(area));
 
-  auto widget =
-      GTK_WIDGET(g_datalist_get_data(&pal.widset, "protocol-combo-widget"));
+  auto widget = RevisePalTestPeer::GetWidget(pal, "protocol-combo-widget");
   ASSERT_TRUE(GTK_IS_COMBO_BOX(widget));
   auto model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
   EXPECT_EQ(gtk_tree_model_iter_n_children(model, nullptr), 3);
@@ -54,15 +66,14 @@ TEST(RevisePal, ProtocolSelectionReflectsPalProtocol) {
   palInfo.setProtocol(PalProtocol::IPTUX);
   RevisePal pal(app, nullptr, &palInfo);
 
-  auto area = pal.CreateAllArea();
-  pal.SetAllValue();
+  auto area = RevisePalTestPeer::CreateAllArea(pal);
+  RevisePalTestPeer::SetAllValue(pal);
 
-  auto widget =
-      GTK_WIDGET(g_datalist_get_data(&pal.widset, "protocol-combo-widget"));
+  auto widget = RevisePalTestPeer::GetWidget(pal, "protocol-combo-widget");
   ASSERT_EQ(gtk_combo_box_get_active(GTK_COMBO_BOX(widget)), 2);
 
   palInfo.setProtocol(PalProtocol::AUTO);
-  pal.SetAllValue();
+  RevisePalTestPeer::SetAllValue(pal);
   EXPECT_EQ(gtk_combo_box_get_active(GTK_COMBO_BOX(widget)), 0);
 
   gtk_widget_destroy(area);

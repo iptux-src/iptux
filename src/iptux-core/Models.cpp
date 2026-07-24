@@ -62,7 +62,8 @@ bool PalInfo::isCompatible() const {
     case PalProtocol::IPTUX:
       return true;
   }
-  return compatible;
+  g_assert_not_reached();
+  return false;
 }
 
 bool PalInfo::isOnline() const {

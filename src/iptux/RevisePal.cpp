@@ -44,6 +44,7 @@ gint ProtocolToActive(PalProtocol protocol) {
     case PalProtocol::IPTUX:
       return 2;
   }
+  g_assert_not_reached();
   return 0;
 }
 
@@ -291,30 +292,28 @@ void RevisePal::ApplyReviseData() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
   active = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
-  if (active < 0) {
-    goto skip_icon_update;
-  }
-  snprintf(path, MAX_PATHLEN, "%d", active);
-  gtk_tree_model_get_iter_from_string(model, &iter, path);
-  gtk_tree_model_get(model, &iter, 1, &file, -1);
-  if (pal->icon_file() != file) {
-    snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
-    if (access(path, F_OK) != 0) {
-      g_free(file);
-      snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32 ".png",
-               g_get_user_cache_dir(), ntohl(pal->ipv4().s_addr));
-      pal->set_icon_file(
-          stringFormat("%" PRIx32, (uint32_t)ntohl(pal->ipv4().s_addr)));
-      gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
-      gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
-      g_object_unref(pixbuf);
+  if (active >= 0) {
+    snprintf(path, MAX_PATHLEN, "%d", active);
+    gtk_tree_model_get_iter_from_string(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 1, &file, -1);
+    if (pal->icon_file() != file) {
+      snprintf(path, MAX_PATHLEN, __PIXMAPS_PATH "/icon/%s", file);
+      if (access(path, F_OK) != 0) {
+        g_free(file);
+        snprintf(path, MAX_PATHLEN, "%s" ICON_PATH "/%" PRIx32 ".png",
+                 g_get_user_cache_dir(), ntohl(pal->ipv4().s_addr));
+        pal->set_icon_file(
+            stringFormat("%" PRIx32, (uint32_t)ntohl(pal->ipv4().s_addr)));
+        gtk_tree_model_get(model, &iter, 0, &pixbuf, -1);
+        gdk_pixbuf_save(pixbuf, path, "png", NULL, NULL);
+        g_object_unref(pixbuf);
+      } else {
+        pal->set_icon_file(file);
+      }
     } else {
-      pal->set_icon_file(file);
+      g_free(file);
     }
-  } else
-    g_free(file);
-
-skip_icon_update:
+  }
 
   /* 获取协议 */
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "protocol-combo-widget"));
