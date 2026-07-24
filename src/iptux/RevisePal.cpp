@@ -205,6 +205,7 @@ GtkWidget* RevisePal::CreateAllArea() {
   gtk_grid_attach(GTK_GRID(grid), widget, 1, 3, 1, 1);
   g_datalist_set_data(&widset, "icon-combo-widget", widget);
   button = gtk_button_new_with_label("...");
+  g_object_set_data(G_OBJECT(button), "icon-combo-widget", widget);
   gtk_grid_attach(GTK_GRID(grid), button, 2, 3, 1, 1);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
 
@@ -460,6 +461,8 @@ void RevisePal::AddNewIcon(GtkWidget* button, GData** widset) {
     return;
 
   combo = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "icon-combo-widget"));
+  if (!GTK_IS_COMBO_BOX(combo))
+    return;
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
   active = IconfileGetItemPos(model, filename);
   gtk_combo_box_set_active(GTK_COMBO_BOX(combo), active);
