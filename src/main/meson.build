@@ -10,6 +10,15 @@ else
     main_deps += [ws2_32]
 endif
 
+if host_machine.system() == 'windows'
+    rc_files = files([
+        'windows.rc',
+    ])
+    win = import('windows')
+    iptux_sources += win.compile_resources(rc_files, depend_files: files(['favicon.ico']))
+endif
+
+
 executable('iptux',
     iptux_sources,
     include_directories: inc,
