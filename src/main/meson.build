@@ -15,7 +15,7 @@ if host_machine.system() == 'windows'
         'windows.rc',
     ])
     win = import('windows')
-    iptux_sources += win.compile_resources(rc_files)
+    iptux_sources += win.compile_resources(rc_files, depend_files: files(['favicon.ico']))
 endif
 
 
