@@ -23,6 +23,43 @@
 
 namespace iptux {
 
+namespace {
+
+void AttachLabel(GtkGrid* grid, GtkWidget* label, gint row) {
+  gtk_label_set_xalign(GTK_LABEL(label), 1.0);
+  gtk_widget_set_halign(label, GTK_ALIGN_END);
+  gtk_grid_attach(grid, label, 0, row, 1, 1);
+}
+
+void AppendProtocolOption(GtkComboBoxText* combo, const char* option) {
+  gtk_combo_box_text_append_text(combo, option);
+}
+
+gint ProtocolToActive(PalProtocol protocol) {
+  switch (protocol) {
+    case PalProtocol::AUTO:
+      return 0;
+    case PalProtocol::IPMSG:
+      return 1;
+    case PalProtocol::IPTUX:
+      return 2;
+  }
+  return 0;
+}
+
+PalProtocol ActiveToProtocol(gint active) {
+  switch (active) {
+    case 1:
+      return PalProtocol::IPMSG;
+    case 2:
+      return PalProtocol::IPTUX;
+    default:
+      return PalProtocol::AUTO;
+  }
+}
+
+}  // namespace
+
 /**
  * 类构造函数.
  * @param pl
@@ -117,70 +154,70 @@ GtkWidget* RevisePal::CreateMainDialog() {
  * @return 主窗体
  */
 GtkWidget* RevisePal::CreateAllArea() {
-  GtkWidget *box, *hbox;
+  GtkWidget* grid;
   GtkWidget *label, *button, *widget;
   GtkTreeModel* model;
 
-  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  grid = gtk_grid_new();
+  gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
+  gtk_grid_set_column_spacing(GTK_GRID(grid), 6);
 
   /* 好友昵称 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's nickname:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  AttachLabel(GTK_GRID(grid), label, 0);
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  gtk_widget_set_hexpand(widget, TRUE);
+  gtk_grid_attach(GTK_GRID(grid), widget, 1, 0, 2, 1);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Please input pal's new nickname!"));
   g_datalist_set_data(&widset, "nickname-entry-widget", widget);
 
   /* 好友群组 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's group name:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  AttachLabel(GTK_GRID(grid), label, 1);
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  gtk_widget_set_hexpand(widget, TRUE);
+  gtk_grid_attach(GTK_GRID(grid), widget, 1, 1, 2, 1);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Please input pal's new group name!"));
   g_datalist_set_data(&widset, "group-entry-widget", widget);
 
   /* 好友系统编码 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("System coding:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  AttachLabel(GTK_GRID(grid), label, 2);
   widget = gtk_entry_new();
   g_object_set(widget, "has-tooltip", TRUE, NULL);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  gtk_widget_set_hexpand(widget, TRUE);
+  gtk_grid_attach(GTK_GRID(grid), widget, 1, 2, 2, 1);
   g_signal_connect(widget, "query-tooltip", G_CALLBACK(entry_query_tooltip),
                    _("Be SURE to know what you are doing!"));
   g_datalist_set_data(&widset, "encode-entry-widget", widget);
 
   /* 好友头像 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
   label = gtk_label_new(_("Pal's face picture:"));
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  AttachLabel(GTK_GRID(grid), label, 3);
   model = GTK_TREE_MODEL(g_datalist_get_data(&mdlset, "icon-model"));
   widget = CreateIconTree(model);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  gtk_widget_set_hexpand(widget, TRUE);
+  gtk_grid_attach(GTK_GRID(grid), widget, 1, 3, 1, 1);
   g_datalist_set_data(&widset, "icon-combo-widget", widget);
   button = gtk_button_new_with_label("...");
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(grid), button, 2, 3, 1, 1);
   g_signal_connect(button, "clicked", G_CALLBACK(AddNewIcon), &widset);
 
-  /* 协议兼容性 */
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-  widget = gtk_check_button_new_with_label(
-      _("Be compatible with iptux's protocol (DANGEROUS)"));
-  gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, FALSE, 0);
-  g_datalist_set_data(&widset, "compatible-check-widget", widget);
+  /* 协议 */
+  label = gtk_label_new(_("Protocol:"));
+  AttachLabel(GTK_GRID(grid), label, 4);
+  widget = gtk_combo_box_text_new();
+  AppendProtocolOption(GTK_COMBO_BOX_TEXT(widget), "AUTO");
+  AppendProtocolOption(GTK_COMBO_BOX_TEXT(widget), "IPMSG");
+  AppendProtocolOption(GTK_COMBO_BOX_TEXT(widget), "IPTUX");
+  gtk_grid_attach(GTK_GRID(grid), widget, 1, 4, 2, 1);
+  g_datalist_set_data(&widset, "protocol-combo-widget", widget);
 
-  return box;
+  return grid;
 }
 
 /**
@@ -206,10 +243,13 @@ void RevisePal::SetAllValue() {
   if (!pal->icon_file().empty()) {
     active = IconfileGetItemPos(model, pal->icon_file().c_str());
     gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
+  } else if (gtk_tree_model_iter_n_children(model, NULL) > 0) {
+    gtk_combo_box_set_active(GTK_COMBO_BOX(widget), 0);
   }
-  /* 预置兼容性 */
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), pal->isCompatible());
+  /* 预置协议 */
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "protocol-combo-widget"));
+  gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
+                           ProtocolToActive(pal->protocol()));
 }
 
 /**
@@ -251,6 +291,9 @@ void RevisePal::ApplyReviseData() {
   widget = GTK_WIDGET(g_datalist_get_data(&widset, "icon-combo-widget"));
   model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
   active = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
+  if (active < 0) {
+    goto skip_icon_update;
+  }
   snprintf(path, MAX_PATHLEN, "%d", active);
   gtk_tree_model_get_iter_from_string(model, &iter, path);
   gtk_tree_model_get(model, &iter, 1, &file, -1);
@@ -271,9 +314,12 @@ void RevisePal::ApplyReviseData() {
   } else
     g_free(file);
 
-  /* 获取兼容性 */
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "compatible-check-widget"));
-  pal->setCompatible(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+skip_icon_update:
+
+  /* 获取协议 */
+  widget = GTK_WIDGET(g_datalist_get_data(&widset, "protocol-combo-widget"));
+  pal->setProtocol(
+      ActiveToProtocol(gtk_combo_box_get_active(GTK_COMBO_BOX(widget))));
 
   /* 设置好友信息已被手工修改 */
   pal->setChanged(true);

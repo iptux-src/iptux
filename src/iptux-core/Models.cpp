@@ -33,6 +33,7 @@ PalInfo::PalInfo(in_addr ipv4, uint16_t port)
   online = 0;
   changed = 0;
   in_blacklist = 0;
+  protocol_ = static_cast<uint8_t>(PalProtocol::AUTO);
 }
 
 PalInfo::PalInfo(const string& ipv4, uint16_t port)
@@ -43,6 +44,7 @@ PalInfo::PalInfo(const string& ipv4, uint16_t port)
   online = 0;
   changed = 0;
   in_blacklist = 0;
+  protocol_ = static_cast<uint8_t>(PalProtocol::AUTO);
 }
 
 PalInfo::~PalInfo() {
@@ -52,6 +54,14 @@ PalInfo::~PalInfo() {
 }
 
 bool PalInfo::isCompatible() const {
+  switch (protocol()) {
+    case PalProtocol::AUTO:
+      return compatible;
+    case PalProtocol::IPMSG:
+      return false;
+    case PalProtocol::IPTUX:
+      return true;
+  }
   return compatible;
 }
 
@@ -61,6 +71,10 @@ bool PalInfo::isOnline() const {
 
 bool PalInfo::isChanged() const {
   return changed;
+}
+
+PalProtocol PalInfo::protocol() const {
+  return static_cast<PalProtocol>(protocol_);
 }
 
 PalInfo& PalInfo::setCompatible(bool value) {
@@ -75,6 +89,11 @@ PalInfo& PalInfo::setOnline(bool value) {
 
 PalInfo& PalInfo::setChanged(bool value) {
   this->changed = value;
+  return *this;
+}
+
+PalInfo& PalInfo::setProtocol(PalProtocol value) {
+  protocol_ = static_cast<uint8_t>(value);
   return *this;
 }
 

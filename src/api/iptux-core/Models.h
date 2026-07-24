@@ -12,6 +12,7 @@
 #ifndef IPTUX_MODELS_H
 #define IPTUX_MODELS_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -28,8 +29,8 @@ namespace iptux {
  * 消息来源类型.
  */
 enum class MessageSourceType {
-  PAL,   ///< 好友
-  SELF,  ///< 自身
+  PAL,       ///< 好友
+  SELF,      ///< 自身
   MST_ERROR  ///< 错误
 };
 
@@ -55,6 +56,8 @@ typedef enum {
   GROUP_BELONG_TYPE_GROUP,     ///< 分组
   GROUP_BELONG_TYPE_BROADCAST  ///< 广播
 } GroupBelongType;
+
+enum class PalProtocol : uint8_t { AUTO, IPMSG, IPTUX };
 
 class PalKey {
  public:
@@ -137,11 +140,13 @@ class PalInfo {
   bool isOnline() const;
   bool isChanged() const;
   bool isInBlacklist() const;
+  PalProtocol protocol() const;
 
   PalInfo& setCompatible(bool value);
   PalInfo& setOnline(bool value);
   PalInfo& setChanged(bool value);
   PalInfo& setInBlacklist(bool value);
+  PalInfo& setProtocol(PalProtocol value);
 
  private:
   in_addr ipv4_;           ///< 好友IP
@@ -157,6 +162,7 @@ class PalInfo {
   uint8_t online : 1;
   uint8_t changed : 1;
   uint8_t in_blacklist : 1;
+  uint8_t protocol_;
 };
 
 /// pointer to PalInfo
