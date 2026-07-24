@@ -12,6 +12,7 @@
 #ifndef IPTUX_CALLBACK_H
 #define IPTUX_CALLBACK_H
 
+#include <functional>
 #include <gtk/gtk.h>
 
 #include "iptux-core/Models.h"
@@ -28,7 +29,9 @@ gboolean entry_query_tooltip(GtkWidget* entry,
 void entry_insert_numeric(GtkWidget* entry, gchar* text, gint length);
 
 /* file-chooser */
-gchar* choose_file_with_preview(const gchar* title, GtkWidget* parent);
+void choose_file_with_preview_async(const gchar* title,
+                                     GtkWidget* parent,
+                                     std::function<void(gchar*)> callback);
 void chooser_update_preview(GtkFileChooser* chooser, GtkWidget* preview);
 
 /* model:0 G_TYPE_BOOLEAN */
