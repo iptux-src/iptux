@@ -18,7 +18,7 @@ conf_data.set(
 if get_option('mode') == 'dev'
   conf_data.set(
     'SHARE_IPTUX_DIR',
-    join_paths(meson.current_source_dir(), '../share'),
+    join_paths(meson.current_source_dir(), '../share/iptux'),
   )
 elif get_option('mode') == 'portable'
   conf_data.set(
