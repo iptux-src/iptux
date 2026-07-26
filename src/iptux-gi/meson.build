@@ -4,7 +4,7 @@ gobject_dep = dependency('gobject-2.0')
 sigc_dep = dependency('sigc++-2.0')
 dependencies = [gobject_dep, sigc_dep]
 
-libsources = files('iptux-service.cpp')
+libsources = files('iptux-service.cpp', 'iptux-config.cpp')
 libiptux_gi = shared_library('iptux-gi',
   sources: libsources,
   dependencies: dependencies,
@@ -13,7 +13,7 @@ libiptux_gi = shared_library('iptux-gi',
 )
 
 gir = gnome.generate_gir(libiptux_gi,
-  sources: ['iptux-service.h', 'iptux-service.cpp'],
+  sources: ['iptux-service.h', 'iptux-service.cpp', 'iptux-config.h', 'iptux-config.cpp'],
   nsversion: '1.0',
   namespace: 'Iptux',
   symbol_prefix: 'iptux',
