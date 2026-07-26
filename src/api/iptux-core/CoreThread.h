@@ -33,6 +33,9 @@ const char* coreThreadErrToStr(enum CoreThreadErr err);
 
 class CoreThread {
  public:
+  typedef std::shared_ptr<CoreThread> Ptr;
+
+ public:
   explicit CoreThread(std::shared_ptr<ProgramData> data);
   virtual ~CoreThread();
 

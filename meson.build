@@ -1,4 +1,4 @@
-project('iptux', 'cpp',
+project('iptux', ['c', 'cpp'],
     license: 'GPL2+',
     version: '0.10.0',
     meson_version: '>=0.53',
