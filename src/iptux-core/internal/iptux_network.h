@@ -3,6 +3,9 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <iphlpapi.h>
+#ifdef SendMessage
+#undef SendMessage
+#endif
 #else
 #include <ifaddrs.h>
 #include <net/if.h>

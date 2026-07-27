@@ -6,10 +6,10 @@
 
 struct _IptuxConfig {
   GObject parent_instance;
-  iptux::IptuxConfig::Ptr config;
+  iptux::IptuxConfig::Ptr* config;
 };
 
 struct _IptuxPal {
   GObject parent_instance;
-  iptux::PalInfo::Ptr pal_info;
+  iptux::PalInfo::Ptr* pal_info;
 };

@@ -15,6 +15,10 @@
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/TransFileModel.h"
 
+#ifdef SendMessage
+#undef SendMessage
+#endif
+
 namespace iptux {
 
 class TransAbstract;

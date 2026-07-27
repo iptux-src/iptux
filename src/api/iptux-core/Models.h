@@ -18,6 +18,9 @@
 #include <json/json.h>
 #ifdef _WIN32
 #include <winsock2.h>
+#ifdef SendMessage
+#undef SendMessage
+#endif
 #else
 #include <netinet/in.h>
 #endif

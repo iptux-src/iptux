@@ -4,6 +4,10 @@
 #include "iptux-priv.h"
 #include "iptux-utils/output.h"
 
+#ifdef SendMessage
+#undef SendMessage
+#endif
+
 using namespace iptux;
 
 G_BEGIN_DECLS
@@ -20,7 +24,7 @@ static GParamSpec* obj_properties[N_PROPERTIES] = {
 
 struct _IptuxService {
   GObject parent_instance;
-  CoreThread::Ptr core_thread;
+  CoreThread::Ptr* core_thread;
   ::IptuxConfig* config;
 };
 
@@ -35,6 +39,7 @@ static void iptux_service_set_property(GObject* object,
   switch (property_id) {
     case PROP_CONFIG:
       self->config = static_cast<::IptuxConfig*>(g_value_get_pointer(value));
+      g_object_ref(self->config);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
@@ -48,7 +53,8 @@ static void iptux_service_constructed(GObject* object) {
   G_OBJECT_CLASS(iptux_service_parent_class)->constructed(object);
 
   if (self->config) {
-    self->core_thread = std::make_shared<CoreThread>(self->config->config);
+    self->core_thread = new std::shared_ptr<CoreThread>(
+        std::make_shared<CoreThread>(*self->config->config));
   }
 }
 
@@ -57,6 +63,18 @@ static void iptux_service_class_init(IptuxServiceClass* klass) {
 
   gobject_class->set_property = iptux_service_set_property;
   gobject_class->constructed = iptux_service_constructed;
+  gobject_class->finalize = [](GObject* object) {
+    IptuxService* self = IPTUX_SERVICE(object);
+    if (self->core_thread) {
+      delete self->core_thread;
+      self->core_thread = nullptr;
+    }
+    if (self->config) {
+      g_object_unref(self->config);
+      self->config = nullptr;
+    }
+    G_OBJECT_CLASS(iptux_service_parent_class)->finalize(object);
+  };
 
   obj_properties[PROP_CONFIG] = g_param_spec_pointer(
       "config", "Config", "IptuxConfig instance",
@@ -81,7 +99,9 @@ bool iptux_service_start(IptuxService* self) {
     return false;
   }
 
-  return self->core_thread->start();
+  auto& core_thread = *(self->core_thread);
+
+  return core_thread->start();
 }
 
 bool iptux_service_stop(IptuxService* self) {
@@ -90,7 +110,9 @@ bool iptux_service_stop(IptuxService* self) {
     return false;
   }
 
-  self->core_thread->stop();
+  auto& core_thread = *(self->core_thread);
+
+  core_thread->stop();
   return true;
 }
 
@@ -100,11 +122,13 @@ GArray* iptux_service_get_pals(IptuxService* self) {
     return nullptr;
   }
 
+  auto& core_thread = *(self->core_thread);
+
   GArray* garray = g_array_new(FALSE, FALSE, sizeof(IptuxPal*));
 
-  self->core_thread->OnlineForEach([&](PPalInfo pal_info) {
+  core_thread->OnlineForEach([&](PalInfo::Ptr pal_info) {
     IptuxPal* pal = IPTUX_PAL(g_object_new(IPTUX_TYPE_PAL, nullptr));
-    pal->pal_info = pal_info;
+    pal->pal_info = new PalInfo::Ptr(pal_info);
     g_array_append_val(garray, pal);
     return true;  // Continue iteration
   });
@@ -119,8 +143,8 @@ gboolean iptux_service_send_message(IptuxService* self,
   g_return_val_if_fail(self != nullptr && self->core_thread != nullptr &&
                            pal != nullptr && message != nullptr,
                        FALSE);
-
-  self->core_thread->SendMessage(pal->pal_info, std::string(message));
+  auto& core_thread = *(self->core_thread);
+  core_thread->SendMessage(*pal->pal_info, std::string(message));
   return TRUE;
 }
 
@@ -130,13 +154,15 @@ void iptux_service_send_message_async(IptuxService* self,
                                       GCancellable*,
                                       GAsyncReadyCallback callback,
                                       gpointer user_data) {
-  MsgPara::Ptr msgPara = std::make_shared<MsgPara>(pal->pal_info);
+  MsgPara::Ptr msgPara = std::make_shared<MsgPara>(*pal->pal_info);
 
   g_return_if_fail(self != nullptr && self->core_thread != nullptr &&
                    pal != nullptr && message != nullptr);
 
+  auto core_thread = *(self->core_thread);
+
   msgPara->dtlist.emplace_back(ChipData(std::string(message)));
-  self->core_thread->AsyncSendMsgPara(msgPara);
+  core_thread->AsyncSendMsgPara(msgPara);
 
   callback(G_OBJECT(self), NULL,
            user_data);  // Notify that the operation is complete
