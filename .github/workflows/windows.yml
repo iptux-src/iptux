@@ -36,6 +36,7 @@ jobs:
             mingw-w64-clang-x86_64-gettext-tools
             mingw-w64-clang-x86_64-appstream
             mingw-w64-clang-x86_64-7zip
+            mingw-w64-clang-x86_64-gobject-introspection
 
       - name: Configure
         run: meson setup build
