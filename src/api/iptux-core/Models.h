@@ -18,6 +18,9 @@
 #include <json/json.h>
 #ifdef _WIN32
 #include <winsock2.h>
+#ifdef SendMessage
+#undef SendMessage
+#endif
 #else
 #include <netinet/in.h>
 #endif
@@ -219,6 +222,9 @@ class ChipData {
  * 消息参数.
  */
 class MsgPara {
+ public:
+  typedef std::shared_ptr<MsgPara> Ptr;
+
  public:
   explicit MsgPara(CPPalInfo pal);
   ~MsgPara();

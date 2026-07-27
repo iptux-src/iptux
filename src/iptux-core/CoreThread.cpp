@@ -580,6 +580,9 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       .setCompatible(true);
 }
 
+CoreThread::CoreThread(IptuxConfig::Ptr config)
+    : CoreThread(make_shared<ProgramData>(config)) {}
+
 CoreThread::~CoreThread() {
   if (started) {
     stop();
@@ -1197,6 +1200,19 @@ int CoreThread::GetOnlineCount() const {
     }
   }
   return res;
+}
+
+void CoreThread::OnlineForEach(
+    std::function<bool(PalInfo::Ptr)> callback) const {
+  Lock();
+  for (auto pal : pImpl->pallist) {
+    if (pal->isOnline()) {
+      if (!callback(pal)) {
+        break;
+      }
+    }
+  }
+  Unlock();
 }
 
 void CoreThread::SendDetectPacket(const string& ipv4) {

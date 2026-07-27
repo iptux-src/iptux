@@ -3,17 +3,20 @@
 
 #include <gio/gio.h>
 
-#include "iptux-core/Models.h"
-#include <atomic>
-#include <cstdint>
-#include <memory>
-#include <vector>
-
-#include <sigc++/signal.h>
-
 #include "iptux-core/Event.h"
+#include "iptux-core/Models.h"
 #include "iptux-core/ProgramData.h"
 #include "iptux-core/TransFileModel.h"
+#include <atomic>
+#include <cstdint>
+#include <functional>
+#include <memory>
+#include <sigc++/signal.h>
+#include <vector>
+
+#ifdef SendMessage
+#undef SendMessage
+#endif
 
 namespace iptux {
 
@@ -33,6 +36,10 @@ const char* coreThreadErrToStr(enum CoreThreadErr err);
 
 class CoreThread {
  public:
+  typedef std::shared_ptr<CoreThread> Ptr;
+
+ public:
+  explicit CoreThread(IptuxConfig::Ptr config);
   explicit CoreThread(std::shared_ptr<ProgramData> data);
   virtual ~CoreThread();
 
@@ -184,7 +191,9 @@ class CoreThread {
 
   void UpdateMyInfo();
   void SendBroadcastExit(PPalInfo pal);
+
   int GetOnlineCount() const;
+  void OnlineForEach(std::function<bool(PalInfo::Ptr)> callback) const;
 
   std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId) const;
   std::vector<std::unique_ptr<TransFileModel>> listTransTasks() const;

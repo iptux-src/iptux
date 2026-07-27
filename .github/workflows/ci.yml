@@ -10,9 +10,11 @@ env:
   DEB_PKGS: >-
     g++ meson appstream gettext libgtk-3-dev libglib2.0-dev
     libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
+    gobject-introspection libgirepository1.0-dev
   DEB_TEST_PKGS: xvfb
   MAC_PKGS: >-
     meson appstream gettext gtk+3 jsoncpp gtk-mac-integration libsigc++@2
+    gobject-introspection
 
 jobs:
   build-on-mac:
@@ -32,7 +34,7 @@ jobs:
         run: >-
           brew install --display-times ${{ env.MAC_PKGS }}
       - name: meson
-        run: meson setup -Db_sanitize=address,undefined -Db_ndebug=true build
+        run: meson setup build
       - name: build
         run: meson compile -C build
       - name: install
@@ -95,8 +97,12 @@ jobs:
       - name: install
         run: sudo meson install -C build
       - name: test
+        env:
+          LD_LIBRARY_PATH: /usr/local/lib/x86_64-linux-gnu
+          GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0
         run: |
           xvfb-run -a meson test -C build --verbose --no-stdsplit
+          python3 src/iptux-gi/gi-test.py
       - name: lcov
         run: |
           lcov --ignore-errors mismatch --directory . --capture --output-file coverage.info; # capture coverage info
