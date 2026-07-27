@@ -12,7 +12,7 @@ env:
     libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
   DEB_TEST_PKGS: xvfb
   MAC_PKGS: >-
-    meson appstream gettext gtk+3 jsoncpp gtk-mac-integration libsigc++@2
+    meson appstream gettext gtk+3 jsoncpp gtk-mac-integration libsigc++@2 gobject-introspection
 
 jobs:
   build-on-mac:
