@@ -1,5 +1,6 @@
 #include "iptux-service.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-pal.h"
 #include "iptux-priv.h"
 
 using namespace iptux;
@@ -68,9 +69,6 @@ static void iptux_service_init(IptuxService* self) {
   self->core_thread = 0;
 }
 
-
-extern "C" {
-
 IptuxService* iptux_service_new(::IptuxConfig* config) {
   return IPTUX_SERVICE(
       g_object_new(IPTUX_TYPE_SERVICE, "config", config, nullptr));
@@ -94,4 +92,21 @@ bool iptux_service_stop(IptuxService* self) {
   self->core_thread->stop();
   return true;
 }
+
+GArray* iptux_service_get_pals(IptuxService* self) {
+  if (!self || !self->core_thread) {
+    g_warning("IptuxService or core_thread is null");
+    return nullptr;
+  }
+
+  GArray* garray = g_array_new(FALSE, FALSE, sizeof(IptuxPal*));
+
+  self->core_thread->OnlineForEach([&](PPalInfo pal_info) {
+    IptuxPal* pal = IPTUX_PAL(g_object_new(IPTUX_TYPE_PAL, nullptr));
+    pal->pal_info = pal_info;
+    g_array_append_val(garray, pal);
+    return true;  // Continue iteration
+  });
+
+  return garray;
 }

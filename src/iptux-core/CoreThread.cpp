@@ -1202,6 +1202,19 @@ int CoreThread::GetOnlineCount() const {
   return res;
 }
 
+void CoreThread::OnlineForEach(
+    std::function<bool(PalInfo::Ptr)> callback) const {
+  Lock();
+  for (auto pal : pImpl->pallist) {
+    if (pal->isOnline()) {
+      if (!callback(pal)) {
+        break;
+      }
+    }
+  }
+  Unlock();
+}
+
 void CoreThread::SendDetectPacket(const string& ipv4) {
   SendDetectPacket(inAddrFromString(ipv4));
 }

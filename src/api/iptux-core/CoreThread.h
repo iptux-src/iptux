@@ -188,7 +188,9 @@ class CoreThread {
 
   void UpdateMyInfo();
   void SendBroadcastExit(PPalInfo pal);
+
   int GetOnlineCount() const;
+  void OnlineForEach(std::function<bool(PalInfo::Ptr)> callback) const;
 
   std::unique_ptr<TransFileModel> GetTransTaskStat(int taskId) const;
   std::vector<std::unique_ptr<TransFileModel>> listTransTasks() const;

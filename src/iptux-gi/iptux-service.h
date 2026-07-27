@@ -13,4 +13,14 @@ IptuxService* iptux_service_new(IptuxConfig* config);
 bool iptux_service_start(IptuxService* self);
 bool iptux_service_stop(IptuxService* self);
 
+/**
+ * iptux_service_get_pals:
+ * @self: An #IptuxService instance.
+ *
+ * Gets the list of pals.
+ *
+ * Returns: (element-type IptuxPal) (transfer container): A #GArray of pals.
+ */
+GArray* iptux_service_get_pals(IptuxService* self);
+
 G_END_DECLS
