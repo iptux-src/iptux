@@ -13,7 +13,10 @@ def main():
     print(dir(core_thread))  # List available methods and attributes
     pals = core_thread.get_pals()
     for x in pals:
-        print(f"Pal Info: {repr(x)}")
+        print(f"Pal Info: {x.to_string()}")  # Assuming to_string() method exists
+
+
+    core_thread.send_message(pals[0], "Hello from Python!")  # Send a message to the first pal
 
     core_thread.stop()
     print("CoreThread created successfully.")

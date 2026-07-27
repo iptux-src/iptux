@@ -110,3 +110,15 @@ GArray* iptux_service_get_pals(IptuxService* self) {
 
   return garray;
 }
+
+gboolean iptux_service_send_message(IptuxService* self,
+                                    IptuxPal* pal,
+                                    const gchar* message,
+                                    GError**) {
+  g_return_val_if_fail(self != nullptr && self->core_thread != nullptr &&
+                           pal != nullptr && message != nullptr,
+                       FALSE);
+
+  self->core_thread->SendMessage(pal->pal_info, std::string(message));
+  return TRUE;
+}

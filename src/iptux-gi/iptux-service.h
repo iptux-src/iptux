@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iptux-config.h"
+#include "iptux-pal.h"
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -22,5 +23,10 @@ bool iptux_service_stop(IptuxService* self);
  * Returns: (element-type IptuxPal) (transfer container): A #GArray of pals.
  */
 GArray* iptux_service_get_pals(IptuxService* self);
+
+gboolean iptux_service_send_message(IptuxService* self,
+                                    IptuxPal* pal,
+                                    const gchar* message,
+                                    GError** error);
 
 G_END_DECLS
