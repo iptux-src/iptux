@@ -155,10 +155,19 @@ class CoreThread {
    * @return true if send success
    * @return false if send failed
    */
-  bool SendMessage(CPPalInfo pal, const std::string& message);
-  bool SendMessage(CPPalInfo pal, const ChipData& chipData);
-  bool SendMsgPara(std::shared_ptr<MsgPara> msgPara);
-  void AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara);
+  bool SendMessage(CPPalInfo pal,
+                   const std::string& message,
+                   GError** error = nullptr);
+  bool SendMessage(CPPalInfo pal,
+                   const ChipData& chipData,
+                   GError** error = nullptr);
+  bool SendMsgPara(std::shared_ptr<MsgPara> msgPara, GError** error = nullptr);
+  void sendMsgParaAsync(std::shared_ptr<MsgPara> msgPara,
+                        GCancellable* cancellable,
+                        GAsyncReadyCallback callback,
+                        gpointer user_data);
+  gboolean sendMsgParaFinish(GAsyncResult* result, GError** error);
+
   void SendUnitMessage(const PalKey& palKey,
                        uint32_t opttype,
                        const std::string& message);
