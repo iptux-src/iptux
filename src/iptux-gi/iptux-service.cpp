@@ -2,6 +2,7 @@
 #include "iptux-core/CoreThread.h"
 #include "iptux-pal.h"
 #include "iptux-priv.h"
+#include "iptux-utils/output.h"
 
 using namespace iptux;
 
@@ -146,4 +147,10 @@ gboolean iptux_service_send_message_finish(IptuxService*,
                                            GAsyncResult*,
                                            GError**) {
   return TRUE;
+}
+
+void iptux_service_set_log_level(IptuxService* self, GLogLevelFlags level) {
+  g_return_if_fail(self != nullptr && self->core_thread != nullptr);
+
+  Log::setLogLevel(static_cast<LogLevel>(level));
 }

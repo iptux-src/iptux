@@ -63,4 +63,6 @@ gboolean iptux_service_send_message_finish(IptuxService* self,
                                            GAsyncResult* result,
                                            GError** error);
 
+void iptux_service_set_log_level(IptuxService* self, GLogLevelFlags level);
+
 G_END_DECLS
