@@ -97,6 +97,8 @@ jobs:
       - name: install
         run: sudo meson install -C build
       - name: test
+        env:
+          GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0
         run: |
           xvfb-run -a meson test -C build --verbose --no-stdsplit
           python3 src/iptux-gi/gi-test.py
