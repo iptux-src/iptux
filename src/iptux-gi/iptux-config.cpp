@@ -15,8 +15,9 @@ static void iptux_config_init(IptuxConfig* self) {
 
 extern "C" {
 
-IptuxConfig* iptux_config_new(void) {
-  return IPTUX_CONFIG(g_object_new(IPTUX_TYPE_CONFIG, nullptr));
+IptuxConfig* iptux_config_new_from_fname(const char* fname) {
+  IptuxConfig* self = IPTUX_CONFIG(g_object_new(IPTUX_TYPE_CONFIG, nullptr));
+  self->config = iptux::IptuxConfig::newFromString(fname);
+  return self;
 }
-
 }
