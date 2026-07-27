@@ -6,6 +6,8 @@
 
 using namespace iptux;
 
+G_BEGIN_DECLS
+
 enum {
   PROP_0,
   PROP_CONFIG,
@@ -43,10 +45,8 @@ static void iptux_service_set_property(GObject* object,
 static void iptux_service_constructed(GObject* object) {
   IptuxService* self = IPTUX_SERVICE(object);
 
-  // 必须先调用父类的 constructed
   G_OBJECT_CLASS(iptux_service_parent_class)->constructed(object);
 
-  // 💡 关键点：此时 self->config 已经被成功赋值，可以在这里使用它！
   if (self->config) {
     self->core_thread = std::make_shared<CoreThread>(self->config->config);
   }
@@ -154,3 +154,5 @@ void iptux_service_set_log_level(IptuxService* self, GLogLevelFlags level) {
 
   Log::setLogLevel(static_cast<LogLevel>(level));
 }
+
+G_END_DECLS
