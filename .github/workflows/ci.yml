@@ -10,7 +10,7 @@ env:
   DEB_PKGS: >-
     g++ meson appstream gettext libgtk-3-dev libglib2.0-dev
     libjsoncpp-dev libsigc++-2.0-dev libayatana-appindicator3-dev
-    gobject-introspection
+    gobject-introspection libgirepository1.0-dev
   DEB_TEST_PKGS: xvfb
   MAC_PKGS: >-
     meson appstream gettext gtk+3 jsoncpp gtk-mac-integration libsigc++@2
