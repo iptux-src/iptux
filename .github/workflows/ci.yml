@@ -99,6 +99,7 @@ jobs:
       - name: test
         run: |
           xvfb-run -a meson test -C build --verbose --no-stdsplit
+          python3 src/iptux-gi/gi-test.py
       - name: lcov
         run: |
           lcov --ignore-errors mismatch --directory . --capture --output-file coverage.info; # capture coverage info
