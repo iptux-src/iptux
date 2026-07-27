@@ -19,6 +19,6 @@ gir = gnome.generate_gir(libiptux_gi,
   namespace: 'Iptux',
   symbol_prefix: 'iptux',
   identifier_prefix: 'Iptux',
-  includes: ['GObject-2.0'],
+  includes: ['GObject-2.0', 'Gio-2.0'],
   install: true
 )

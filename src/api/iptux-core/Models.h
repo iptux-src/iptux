@@ -220,6 +220,9 @@ class ChipData {
  */
 class MsgPara {
  public:
+  typedef std::shared_ptr<MsgPara> Ptr;
+
+ public:
   explicit MsgPara(CPPalInfo pal);
   ~MsgPara();
 

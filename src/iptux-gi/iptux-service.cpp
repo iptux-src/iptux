@@ -122,3 +122,28 @@ gboolean iptux_service_send_message(IptuxService* self,
   self->core_thread->SendMessage(pal->pal_info, std::string(message));
   return TRUE;
 }
+
+void iptux_service_send_message_async(IptuxService* self,
+                                      IptuxPal* pal,
+                                      const gchar* message,
+                                      GCancellable*,
+                                      GAsyncReadyCallback callback,
+                                      gpointer user_data) {
+  MsgPara::Ptr msgPara = std::make_shared<MsgPara>(pal->pal_info);
+
+  g_return_if_fail(self != nullptr && self->core_thread != nullptr &&
+                   pal != nullptr && message != nullptr);
+
+  msgPara->dtlist.emplace_back(ChipData(std::string(message)));
+  self->core_thread->AsyncSendMsgPara(msgPara);
+
+  callback(G_OBJECT(self), NULL,
+           user_data);  // Notify that the operation is complete
+  return;
+}
+
+gboolean iptux_service_send_message_finish(IptuxService*,
+                                           GAsyncResult*,
+                                           GError**) {
+  return TRUE;
+}

@@ -18,6 +18,8 @@ def main():
 
     core_thread.send_message(pals[0], "Hello from Python!")  # Send a message to the first pal
 
+    core_thread.send_message_async(pals[0], "Hello from Python (async)!", callback=lambda *args: print("Async callback called with args:", args))
+
     core_thread.stop()
     print("CoreThread created successfully.")
 
