@@ -10,6 +10,7 @@ libiptux_gi = shared_library('iptux-gi',
   dependencies: dependencies,
   install: true,
   include_directories: include_directories('..', '../api'),
+  link_with: [libiptux_core],
 )
 
 gir = gnome.generate_gir(libiptux_gi,

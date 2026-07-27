@@ -580,6 +580,9 @@ CoreThread::CoreThread(shared_ptr<ProgramData> data)
       .setCompatible(true);
 }
 
+CoreThread::CoreThread(IptuxConfig::Ptr config)
+    : CoreThread(make_shared<ProgramData>(config)) {}
+
 CoreThread::~CoreThread() {
   if (started) {
     stop();

@@ -1,11 +1,6 @@
 #include "iptux-config.h"
 #include "iptux-core/IptuxConfig.h"
-
-
-struct _IptuxConfig {
-  GObject parent_instance;
-  iptux::IptuxConfig::Ptr config;
-};
+#include "iptux-priv.h"
 
 G_DEFINE_TYPE(IptuxConfig, iptux_config, G_TYPE_OBJECT)
 

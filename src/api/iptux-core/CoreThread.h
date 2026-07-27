@@ -36,6 +36,7 @@ class CoreThread {
   typedef std::shared_ptr<CoreThread> Ptr;
 
  public:
+  explicit CoreThread(IptuxConfig::Ptr config);
   explicit CoreThread(std::shared_ptr<ProgramData> data);
   virtual ~CoreThread();
 
