@@ -13,9 +13,12 @@ libiptux_gi = shared_library('iptux-gi',
   link_with: [libiptux_core],
 )
 
+version_parts = meson.project_version().split('.')
+nsversion = version_parts[0] + '.' + version_parts[1]
+
 gir = gnome.generate_gir(libiptux_gi,
   sources: ['iptux-service.h', 'iptux-service.cpp', 'iptux-config.h', 'iptux-config.cpp', 'iptux-pal.h', 'iptux-pal.cpp'],
-  nsversion: '1.0',
+  nsversion: nsversion,
   namespace: 'Iptux',
   symbol_prefix: 'iptux',
   identifier_prefix: 'Iptux',

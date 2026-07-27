@@ -1,5 +1,5 @@
 import gi
-gi.require_version('Iptux', '1.0')
+gi.require_version('Iptux', '0.10')
 gi.require_version('GLib', '2.0')
 from gi.repository import Iptux
 from gi.repository import GLib
