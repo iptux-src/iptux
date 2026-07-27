@@ -98,6 +98,7 @@ jobs:
         run: sudo meson install -C build
       - name: test
         env:
+          LD_LIBRARY_PATH: /usr/local/lib/x86_64-linux-gnu
           GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0
         run: |
           xvfb-run -a meson test -C build --verbose --no-stdsplit
