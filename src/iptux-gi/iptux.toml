@@ -1,0 +1,12 @@
+[library]
+name = "Iptux"
+version = "1.0"
+browse_url = ""
+repository_url = ""
+website_url = ""
+authors = "Your Name"
+license = "GPL-2.0-or-later"
+description = "C++ Library wrapped with GObject Introspection"
+
+[theme]
+name = "basic"
