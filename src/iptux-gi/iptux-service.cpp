@@ -75,4 +75,23 @@ IptuxService* iptux_service_new(::IptuxConfig* config) {
   return IPTUX_SERVICE(
       g_object_new(IPTUX_TYPE_SERVICE, "config", config, nullptr));
 }
+
+bool iptux_service_start(IptuxService* self) {
+  if (!self || !self->core_thread) {
+    g_warning("IptuxService or core_thread is null");
+    return false;
+  }
+
+  return self->core_thread->start();
+}
+
+bool iptux_service_stop(IptuxService* self) {
+  if (!self || !self->core_thread) {
+    g_warning("IptuxService or core_thread is null");
+    return false;
+  }
+
+  self->core_thread->stop();
+  return true;
+}
 }

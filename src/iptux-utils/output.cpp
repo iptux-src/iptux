@@ -24,7 +24,7 @@ using namespace std;
 
 namespace iptux {
 
-static LogLevel _level = LogLevel::WARN;
+static LogLevel _level = LogLevel::DEBUG;
 
 static string getThreadName() {
   ostringstream oss;
