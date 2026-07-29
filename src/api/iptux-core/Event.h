@@ -26,6 +26,9 @@ const char* EventTypeToStr(EventType type);
 
 class Event {
  public:
+  typedef std::shared_ptr<const Event> ConstPtr;
+
+ public:
   explicit Event(EventType type);
   virtual ~Event() = default;
 

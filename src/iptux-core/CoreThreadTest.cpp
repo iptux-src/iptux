@@ -129,6 +129,20 @@ TEST(CoreThread, SendAskShared) {
   delete thread;
 }
 
+struct CoreThreadCtx {
+  vector<shared_ptr<const Event>>* events;
+  mutex* eventsMutex;
+};
+
+static const struct CoreThreadCbs cbs = {
+    .onEvent =
+        [](Event::ConstPtr event, void* userData) {
+          auto ctx = static_cast<CoreThreadCtx*>(userData);
+          lock_guard<std::mutex> l(*ctx->eventsMutex);
+          ctx->events->emplace_back(event);
+        },
+};
+
 TEST(CoreThread, FullCase) {
   using namespace std::chrono_literals;
   auto oldLogLevel = Log::getLogLevel();
@@ -151,11 +165,11 @@ TEST(CoreThread, FullCase) {
 
   vector<shared_ptr<const Event>> thread2Events;
   mutex thread2EventsMutex;
-
-  thread2->signalEvent.connect([&](shared_ptr<const Event> event) {
-    lock_guard<std::mutex> l(thread2EventsMutex);
-    thread2Events.emplace_back(event);
-  });
+  struct CoreThreadCtx ctx = {
+      .eventsMutex = &thread2EventsMutex,
+      .events = &thread2Events,
+  };
+  thread2->setCallback(&cbs, &ctx);
 
   auto pal2InThread1 = thread1->GetPal("127.0.0.2");
   auto pal1InThread2 = thread2->GetPal("127.0.0.1");

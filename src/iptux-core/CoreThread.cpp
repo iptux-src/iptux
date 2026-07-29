@@ -23,7 +23,6 @@
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpDataService.h"
 #include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include <unistd.h>
@@ -512,6 +511,9 @@ struct CoreThread::Impl {
   std::list<GThread*>::iterator addTcpHandlerThread(GThread* thread);
   void removeTcpHandlerThread(std::list<GThread*>::iterator it);
   void joinAllTcpHandlerThreads();
+
+  const CoreThreadCbs* cbs{nullptr};
+  void* cbs_data{nullptr};
 };
 
 CoreThread::Impl::~Impl() {
@@ -1045,7 +1047,10 @@ void CoreThread::emitEvent(shared_ptr<const Event> event) {
   pImpl->waitingEvents.push_back(event);
   this->pImpl->eventCount++;
   this->pImpl->lastEvent = event;
-  signalEvent.emit(event);
+
+  if (this->pImpl->cbs && this->pImpl->cbs->onEvent) {
+    this->pImpl->cbs->onEvent(event, this->pImpl->cbs_data);
+  }
 }
 
 /**
@@ -1404,6 +1409,11 @@ shared_ptr<const Event> CoreThread::PopEvent() {
 
 enum CoreThreadErr CoreThread::getLastErr() const {
   return pImpl->lastErr;
+}
+
+void CoreThread::setCallback(const CoreThreadCbs* cbs, void* userData) {
+  this->pImpl->cbs = cbs;
+  this->pImpl->cbs_data = userData;
 }
 
 }  // namespace iptux

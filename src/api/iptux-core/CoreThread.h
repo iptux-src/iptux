@@ -11,7 +11,6 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
-#include <sigc++/signal.h>
 #include <vector>
 
 #ifdef SendMessage
@@ -34,6 +33,10 @@ enum CoreThreadErr {
 
 const char* coreThreadErrToStr(enum CoreThreadErr err);
 
+struct CoreThreadCbs {
+  void (*onEvent)(Event::ConstPtr event, void* userData);
+};
+
 class CoreThread {
  public:
   typedef std::shared_ptr<CoreThread> Ptr;
@@ -42,6 +45,8 @@ class CoreThread {
   explicit CoreThread(IptuxConfig::Ptr config);
   explicit CoreThread(std::shared_ptr<ProgramData> data);
   virtual ~CoreThread();
+
+  void setCallback(const CoreThreadCbs* cbs, void* userData);
 
   virtual bool start() noexcept;
   virtual void stop();
@@ -203,9 +208,6 @@ class CoreThread {
   void RecvFile(FileInfo* file);
   void RecvFileAsync(FileInfo* file);
   enum CoreThreadErr getLastErr() const;
-
- public:
-  sigc::signal<void(std::shared_ptr<const Event>)> signalEvent;
 
   // these functions should be move to CoreThreadImpl
  public:

@@ -36,6 +36,14 @@ void processEvent(shared_ptr<CoreThread> ct, shared_ptr<const Event> event) {
   }
 }
 
+static const struct CoreThreadCbs cbs = {
+    .onEvent =
+        [](Event::ConstPtr event, void* userData) {
+          auto ct = static_cast<CoreThread::Ptr*>(userData);
+          processEvent(*ct, event);
+        },
+};
+
 int runBot(const string& bindIp) {
   auto config = IptuxConfig::newFromString("{}");
   config->SetString("bind_ip", bindIp);
@@ -45,8 +53,9 @@ int runBot(const string& bindIp) {
     cerr << "Failed to start CoreThread" << endl;
     return 1;
   }
-  thread->signalEvent.connect(
-      [=](shared_ptr<const Event> event) { processEvent(thread, event); });
+
+  thread->setCallback(&cbs, &thread);
+
   while (true) {
     sleep(10);
   }
