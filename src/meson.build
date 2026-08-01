@@ -58,10 +58,7 @@ configure_file(
 )
 
 test_conf_data = configuration_data()
-test_conf_data.set(
-  'CURRENT_SOURCE_PATH',
-  'R"(' + meson.current_source_dir() + ')"',
-)
+test_conf_data.set_quoted('CURRENT_SOURCE_PATH', meson.current_source_dir())
 configure_file(
   input: 'TestConfig.h.in',
   output: 'TestConfig.h',
