@@ -28,11 +28,14 @@ dependencies = [gtk_dep, jsoncpp_dep, sigc_dep]
 
 if host_machine.system() == 'windows'
     ws2_32 = cc.find_library('ws2_32')
-    dependencies += [ws2_32]
+    shell32 = cc.find_library('shell32')
+    dependencies += [ws2_32, shell32]
     sources += ['UiHelperWindows.cpp']
 endif
 
-if host_machine.system() == 'darwin'
+if host_machine.system() == 'windows'
+    sources += ['AppIndicatorWindows.cpp']
+elif host_machine.system() == 'darwin'
     sources += ['AppIndicatorMac.mm']
     dependencies += [dependency('appleframeworks', modules: ['Cocoa'])]
 elif appindicator_dep.found()
@@ -102,6 +105,7 @@ libiptux = static_library('iptux',
 gtest_inc = include_directories('../googletest/include')
 thread_dep = dependency('threads')
 test_sources = files([
+    'AppIndicatorStateTest.cpp',
     'AboutDialogTest.cpp',
     'ApplicationTest.cpp',
     'DataSettingsTest.cpp',

@@ -38,6 +38,12 @@ else
   conf_data.set('SYSTEM_DARWIN', 0)
 endif
 
+if host_machine.system() == 'windows'
+  conf_data.set('SYSTEM_WINDOWS', 1)
+else
+  conf_data.set('SYSTEM_WINDOWS', 0)
+endif
+
 appindicator_dep = dependency('ayatana-appindicator3-0.1', required: get_option('appindicator'))
 if appindicator_dep.found()
   conf_data.set('HAVE_APPINDICATOR', 1)
@@ -52,7 +58,10 @@ configure_file(
 )
 
 test_conf_data = configuration_data()
-test_conf_data.set_quoted('CURRENT_SOURCE_PATH', meson.current_source_dir())
+test_conf_data.set(
+  'CURRENT_SOURCE_PATH',
+  'R"(' + meson.current_source_dir() + ')"',
+)
 configure_file(
   input: 'TestConfig.h.in',
   output: 'TestConfig.h',
