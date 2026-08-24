@@ -210,6 +210,7 @@ void Application::onStartup(Application& self) {
 
 void Application::onActivate(Application& self) {
   if (self.started) {
+    self.window->Show();
     return;
   }
   self.started = true;
