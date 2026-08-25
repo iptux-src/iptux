@@ -182,6 +182,8 @@ int main(int argc, char** argv) {
     config->SetString("bind_ip", bindIp);
   }
 
+  g_set_prgname("io.github.iptux_src.iptux");
+
   Application* app = new Application(config);
   GtkApplication* gtkApp = GTK_APPLICATION(app->getApp());
   ret = g_application_run(G_APPLICATION(gtkApp), argc, argv);
