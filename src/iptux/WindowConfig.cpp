@@ -28,10 +28,12 @@ void WindowConfig::Save() {
 }
 
 gboolean WindowConfig::on_configure_event(GtkWidget* window,
-                                          GdkEventConfigure* event,
+                                          GdkEventConfigure*,
                                           gpointer user_data) {
   WindowConfig* self = (WindowConfig*)user_data;
   GdkWindow* gdk_win = gtk_widget_get_window(GTK_WIDGET(window));
+  gint width;
+  gint height;
 
   if (gdk_win != NULL) {
     GdkWindowState state = gdk_window_get_state(gdk_win);
@@ -42,7 +44,8 @@ gboolean WindowConfig::on_configure_event(GtkWidget* window,
     }
   }
 
-  self->SetWidth(event->width).SetHeight(event->height).Save();
+  gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+  self->SetWidth(width).SetHeight(height).Save();
   return FALSE;
 }
 
