@@ -452,7 +452,7 @@ GtkWidget* DataSettings::CreateSystem() {
 #if HAVE_APPINDICATOR
   row++;
   widget = gtk_check_button_new_with_label(
-      _("Hide the taskbar when the main window is minimized"));
+      _("Hide the main window instead of quit on close"));
   gtk_grid_attach(GTK_GRID(box), widget, 0, row, 2, 1);
   g_datalist_set_data(&widset, "taskbar-check-widget", widget);
 #endif

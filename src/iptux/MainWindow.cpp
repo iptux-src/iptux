@@ -72,21 +72,22 @@ static const char* config_names[] = {
     [CFG_INFO_STYLE] = "mwin_info_style",
 };
 
-static void main_window_on_state_event(GtkWidget* self,
-                                       GdkEvent* event,
-                                       gpointer user_data) {
-  GdkWindowState event_state = event->window_state.new_window_state;
+static gboolean main_window_on_delete_event(GtkWidget* self,
+                                            GdkEvent*,
+                                            gpointer user_data) {
   MainWindow* mwin = (MainWindow*)user_data;
   auto progdt = mwin->getApp()->getProgramData();
 
+#if HAVE_APPINDICATOR
   if (!progdt->isHideTaskbarWhenMainWindowIconified())
-    return;
+    return FALSE;
 
-  if (event_state & GDK_WINDOW_STATE_ICONIFIED) {
-    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(self), TRUE);
-  } else {
-    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(self), FALSE);
-  }
+  gtk_widget_hide(self);
+
+  return TRUE;
+#else
+  return FALSE;
+#endif
 }
 
 /**
@@ -535,9 +536,7 @@ GtkWidget* MainWindow::CreateMainWindow() {
   g_signal_connect(window, "configure-event",
                    G_CALLBACK(WindowConfig::on_configure_event), &windowConfig);
   g_signal_connect(window, "delete-event",
-                   G_CALLBACK(gtk_window_iconify_on_delete), nullptr);
-  g_signal_connect(window, "window-state-event",
-                   G_CALLBACK(main_window_on_state_event), this);
+                   G_CALLBACK(main_window_on_delete_event), this);
   return window;
 }
 
