@@ -86,6 +86,7 @@ static gboolean main_window_on_delete_event(GtkWidget* self,
 
   return TRUE;
 #else
+  (void)self;
   return FALSE;
 #endif
 }
