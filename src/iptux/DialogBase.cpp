@@ -334,49 +334,6 @@ GtkWidget* DialogBase::CreateHistoryArea() {
 }
 
 /**
- * 选择附件.
- * @param fileattr 文件类型
- * @return 文件链表
- */
-GSList* DialogBase::PickEnclosure(FileAttr fileattr) {
-  GtkWidget* dialog;
-  GtkFileChooserAction action;
-  const char* title;
-  GSList* list;
-
-  if (fileattr == FileAttr::REGULAR) {
-    action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    title = _("Choose enclosure files");
-  } else if (fileattr == FileAttr::DIRECTORY) {
-    action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
-    title = _("Choose enclosure folders");
-  } else {
-    g_assert(false);
-  }
-  dialog = gtk_file_chooser_dialog_new(title, GTK_WINDOW(getWindow()), action,
-                                       _("_Open"), GTK_RESPONSE_ACCEPT,
-                                       _("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
-  gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
-  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);
-  gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);
-  gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
-                                      g_get_home_dir());
-
-  switch (gtk_dialog_run(GTK_DIALOG(dialog))) {
-    case GTK_RESPONSE_ACCEPT:
-      list = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
-      break;
-    case GTK_RESPONSE_CANCEL:
-    default:
-      list = NULL;
-      break;
-  }
-  gtk_widget_destroy(dialog);
-
-  return list;
-}
-
-/**
  * 发送附件消息.
  * @return 是否发送数据
  */
@@ -427,13 +384,13 @@ void DialogBase::FeedbackMsg(const gchar* msg) {
  * @param dlgpr 对话框类
  */
 void DialogBase::AttachRegular(DialogBase* dlgpr) {
-  GSList* list;
-
-  if (!(list = dlgpr->PickEnclosure(FileAttr::REGULAR)))
-    return;
-  dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  dlgpr->PickEnclosureAsync(FileAttr::REGULAR, [dlgpr](GSList* list) {
+    if (!list)
+      return;
+    dlgpr->AttachEnclosure(list);
+    g_slist_foreach(list, GFunc(g_free), NULL);
+    g_slist_free(list);
+  });
 }
 
 /**
@@ -441,13 +398,13 @@ void DialogBase::AttachRegular(DialogBase* dlgpr) {
  * @param dlgpr 对话框类
  */
 void DialogBase::AttachFolder(DialogBase* dlgpr) {
-  GSList* list;
-
-  if (!(list = dlgpr->PickEnclosure(FileAttr::DIRECTORY)))
-    return;
-  dlgpr->AttachEnclosure(list);
-  g_slist_foreach(list, GFunc(g_free), NULL);
-  g_slist_free(list);
+  dlgpr->PickEnclosureAsync(FileAttr::DIRECTORY, [dlgpr](GSList* list) {
+    if (!list)
+      return;
+    dlgpr->AttachEnclosure(list);
+    g_slist_foreach(list, GFunc(g_free), NULL);
+    g_slist_free(list);
+  });
 }
 
 /**
@@ -929,25 +886,34 @@ void DialogBase::OnSaveImage(DialogBase* self) {
                                                  TRUE);
   gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "image.png");
 
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-    char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+  gchar* source_path = g_strdup(path);
+  g_signal_connect_data(
+      dialog, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        gchar* source_path = static_cast<gchar*>(user_data);
+        if (response_id == GTK_RESPONSE_ACCEPT) {
+          char* save_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
-    GError* error = NULL;
-    GFile* source = g_file_new_for_path(path);
-    GFile* destination = g_file_new_for_path(save_path);
-    gboolean success = g_file_copy(source, destination, G_FILE_COPY_OVERWRITE,
-                                   NULL, NULL, NULL, &error);
-    if (!success) {
-      LOG_ERROR("Failed to save image: %s", error->message);
-      g_error_free(error);
-    }
+          GError* error = NULL;
+          GFile* source = g_file_new_for_path(source_path);
+          GFile* destination = g_file_new_for_path(save_path);
+          gboolean success = g_file_copy(source, destination, G_FILE_COPY_OVERWRITE,
+                                         NULL, NULL, NULL, &error);
+          if (!success) {
+            LOG_ERROR("Failed to save image: %s", error->message);
+            g_error_free(error);
+          }
 
-    g_object_unref(source);
-    g_object_unref(destination);
-    g_free(save_path);
-  }
+          g_object_unref(source);
+          g_object_unref(destination);
+          g_free(save_path);
+        }
+        g_free(source_path);
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+      }),
+      source_path, nullptr, G_CONNECT_AFTER);
 
-  gtk_widget_destroy(dialog);
+  gtk_widget_show(dialog);
 }
 
 void DialogBase::OnCopyImage(DialogBase* self) {

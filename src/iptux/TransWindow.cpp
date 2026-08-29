@@ -310,8 +310,8 @@ void onOpenFolder(void*, void*, TransWindowPrivate* self) {
           NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s",
           _("The path you want to open not exist!"));
       gtk_window_set_title(GTK_WINDOW(dialog), "Iptux Error");
-      gtk_dialog_run(GTK_DIALOG(dialog));
-      gtk_widget_destroy(dialog);
+      g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+      gtk_widget_show(dialog);
       return;
     }
     iptux_open_url(filepath);
@@ -384,8 +384,8 @@ void onOpenFile(void*, void*, TransWindowPrivate* self) {
           NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s",
           _("The file you want to open not exist!"));
       gtk_window_set_title(GTK_WINDOW(dialog), _("iptux Error"));
-      gtk_dialog_run(GTK_DIALOG(dialog));
-      gtk_widget_destroy(dialog);
+      g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+      gtk_widget_show(dialog);
       return;
     }
     iptux_open_url(filename);
