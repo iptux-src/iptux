@@ -1144,6 +1144,11 @@ void CoreThread::AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara) {
   t.detach();
 }
 
+ldb_async_task* CoreThread::AsyncSendMsgPara2(
+    std::shared_ptr<MsgPara> msgPara) {
+  return ldb_async_task_new([this, msgPara]() { return SendMsgPara(msgPara); });
+}
+
 void CoreThread::InsertMessage(const MsgPara& para) {
   MsgPara para2 = para;
   this->emitEvent(make_shared<NewMessageEvent>(std::move(para2)));
