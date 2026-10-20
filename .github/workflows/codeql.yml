@@ -78,7 +78,8 @@ jobs:
         sudo apt-get update -q -y &&
         sudo apt-get install -q -y git libgtk-3-dev
         libglib2.0-dev libjsoncpp-dev g++ meson xvfb libsigc++-2.0-dev
-        appstream gettext &&
+        appstream gettext libayatana-appindicator3-dev
+        gobject-introspection libgirepository1.0-dev &&
         meson --version &&
         meson setup build &&
         ninja -v -C build
