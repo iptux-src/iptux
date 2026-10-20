@@ -53,8 +53,8 @@ static void iptux_service_constructed(GObject* object) {
   G_OBJECT_CLASS(iptux_service_parent_class)->constructed(object);
 
   if (self->config) {
-    self->core_thread = new std::shared_ptr<CoreThread>(
-        std::make_shared<CoreThread>(*self->config->config));
+    self->core_thread =
+        new CoreThread::Ptr(CoreThread::create(*self->config->config));
   }
 }
 

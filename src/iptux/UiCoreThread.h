@@ -39,8 +39,13 @@ class UiCoreThread : public CoreThread {
  public:
   typedef std::shared_ptr<UiCoreThread> Ptr;
 
- public:
+ private:
   UiCoreThread(Application* app, std::shared_ptr<ProgramData> data);
+
+ public:
+  static Ptr create(Application* app, std::shared_ptr<ProgramData> data) {
+    return Ptr(new UiCoreThread(app, data));
+  }
   ~UiCoreThread() override;
 
   std::shared_ptr<ProgramData> getProgramData() { return programData; }
