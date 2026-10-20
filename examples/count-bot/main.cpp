@@ -40,7 +40,7 @@ int runBot(const string& bindIp) {
   auto config = IptuxConfig::newFromString("{}");
   config->SetString("bind_ip", bindIp);
   auto progdt = make_shared<ProgramData>(config);
-  auto thread = make_shared<CoreThread>(progdt);
+  auto thread = CoreThread::create(progdt);
   if (!thread->start()) {
     cerr << "Failed to start CoreThread" << endl;
     return 1;

@@ -1,17 +1,11 @@
 #include "config.h"
 #include "TestHelper.h"
-#include "TestConfig.h"
 
 #include "iptux-utils/output.h"
-#include <fstream>
 #include <iostream>
 #include <thread>
 
 #include <glib.h>
-
-#include "iptux-core/Exception.h"
-#include "iptux-core/internal/support.h"
-#include "iptux-utils/utils.h"
 
 using namespace std;
 
@@ -34,7 +28,7 @@ shared_ptr<IptuxConfig> newTestIptuxConfigWithFile() {
 
 std::shared_ptr<CoreThread> newCoreThread() {
   auto config = newTestIptuxConfig();
-  auto thread = make_shared<CoreThread>(make_shared<ProgramData>(config));
+  auto thread = CoreThread::create(make_shared<ProgramData>(config));
   thread->setIgnoreTcpBindFailed(true);
   return thread;
 }
@@ -42,7 +36,7 @@ std::shared_ptr<CoreThread> newCoreThread() {
 std::shared_ptr<CoreThread> newCoreThreadOnIp(const std::string& ip) {
   auto config = newTestIptuxConfig();
   config->SetString("bind_ip", ip);
-  auto thread = make_shared<CoreThread>(make_shared<ProgramData>(config));
+  auto thread = CoreThread::create(make_shared<ProgramData>(config));
   thread->setIgnoreTcpBindFailed(true);
   return thread;
 }
@@ -54,8 +48,8 @@ std::tuple<PCoreThread, PCoreThread> initAndConnnectThreadsFromConfig(
 
   c1->SetBool("debug_dont_broadcast", true);
   c2->SetBool("debug_dont_broadcast", true);
-  auto thread1 = make_shared<CoreThread>(make_shared<ProgramData>(c1));
-  auto thread2 = make_shared<CoreThread>(make_shared<ProgramData>(c2));
+  auto thread1 = CoreThread::create(make_shared<ProgramData>(c1));
+  auto thread2 = CoreThread::create(make_shared<ProgramData>(c2));
   thread1->setIgnoreTcpBindFailed(true);
   thread2->setIgnoreTcpBindFailed(true);
   if (!thread2->start()) {

@@ -1,3 +1,4 @@
+#include "Const.h"
 #include "gtest/gtest.h"
 
 #include "iptux-core/Models.h"
@@ -8,8 +9,6 @@
 #include "iptux-core/CoreThread.h"
 #include "iptux-core/Exception.h"
 #include "iptux-core/TestHelper.h"
-#include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 
@@ -20,18 +19,17 @@ TEST(CoreThread, Constructor) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   thread->setIgnoreTcpBindFailed(true);
   EXPECT_TRUE(thread->start());
   thread->stop();
-  delete thread;
 }
 
 TEST(CoreThread, IsBlocked) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   EXPECT_FALSE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
   thread->AddBlockIp(inAddrFromString("1.2.3.4"));
   EXPECT_FALSE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
@@ -39,14 +37,13 @@ TEST(CoreThread, IsBlocked) {
   EXPECT_TRUE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
   core->SetUsingBlacklist(false);
   EXPECT_FALSE(thread->IsBlocked(inAddrFromString("1.2.3.4")));
-  delete thread;
 }
 
 TEST(CoreThread, GetPalList) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   EXPECT_EQ(int(thread->GetPalList().size()), 0);
   PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   int eventCount = thread->getEventCount();
@@ -56,14 +53,13 @@ TEST(CoreThread, GetPalList) {
   EXPECT_EQ(thread->getLastEvent()->getType(), EventType::NEW_PAL_ONLINE);
   EXPECT_TRUE(thread->HasEvent());
   thread->PopEvent();
-  delete thread;
 }
 
 TEST(CoreThread, SendMessage) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   try {
     thread->SendMessage(pal, "hello world");
@@ -74,33 +70,30 @@ TEST(CoreThread, SendMessage) {
 
   thread->AttachPalToList(pal);
   EXPECT_TRUE(thread->SendMessage(pal, "hello world"));
-  delete thread;
 }
 
 TEST(CoreThread, SendMessage_ChipData) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->AttachPalToList(pal);
   ChipData chipData("hello world");
   EXPECT_TRUE(thread->SendMessage(pal, chipData));
-  delete thread;
 }
 
 TEST(CoreThread, SendMsgPara) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   PPalInfo pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->AttachPalToList(pal);
   ChipData chipData("hello world");
   auto para = make_shared<MsgPara>(pal);
   para->dtlist.push_back(std::move(chipData));
   EXPECT_TRUE(thread->SendMsgPara(para));
-  delete thread;
 }
 
 // TEST(CoreThread, AsyncSendMsgPara) {
@@ -123,10 +116,9 @@ TEST(CoreThread, SendAskShared) {
   auto config = newTestIptuxConfig();
   auto core = make_shared<ProgramData>(config);
   core->sign = "abc";
-  CoreThread* thread = new CoreThread(core);
+  CoreThread::Ptr thread = CoreThread::create(core);
   auto pal = make_shared<PalInfo>("127.0.0.1", 2425);
   thread->SendAskShared(pal);
-  delete thread;
 }
 
 TEST(CoreThread, FullCase) {
