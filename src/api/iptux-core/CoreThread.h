@@ -34,13 +34,23 @@ enum CoreThreadErr {
 
 const char* coreThreadErrToStr(enum CoreThreadErr err);
 
-class CoreThread {
+class CoreThread : public std::enable_shared_from_this<CoreThread> {
  public:
   typedef std::shared_ptr<CoreThread> Ptr;
 
- public:
+ protected:
   explicit CoreThread(IptuxConfig::Ptr config);
   explicit CoreThread(std::shared_ptr<ProgramData> data);
+
+ public:
+  static Ptr create(IptuxConfig::Ptr config) {
+    return Ptr(new CoreThread(config));
+  }
+  static Ptr create(std::shared_ptr<ProgramData> data) {
+    return Ptr(new CoreThread(data));
+  }
+
+ public:
   virtual ~CoreThread();
 
   virtual bool start() noexcept;
