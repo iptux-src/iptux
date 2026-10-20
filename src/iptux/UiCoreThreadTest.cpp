@@ -15,11 +15,10 @@ TEST(UiCoreThread, Constructor) {
   }
   auto core = make_shared<ProgramData>(app->getConfig());
   core->sign = "abc";
-  UiCoreThread* thread = new UiCoreThread(app, core);
+  UiCoreThread::Ptr thread = UiCoreThread::create(app, core);
   thread->setIgnoreTcpBindFailed(true);
   thread->start();
   thread->UpdatePalToList(PalKey(inAddrFromString("127.0.0.1"), 2425));
   thread->stop();
-  delete thread;
   DestroyApplication(app);
 }

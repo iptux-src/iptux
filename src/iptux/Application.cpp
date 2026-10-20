@@ -122,7 +122,7 @@ void Application::activate() {
 
 void Application::onStartup(Application& self) {
   self.logSystem = std::make_shared<LogSystem>(self.data);
-  self.cthrd = make_shared<UiCoreThread>(&self, self.data);
+  self.cthrd = UiCoreThread::create(&self, self.data);
   init_theme(&self);
   iptux_register_resource();
   self.menuBuilder =
