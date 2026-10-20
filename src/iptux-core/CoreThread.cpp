@@ -23,13 +23,17 @@
 #include "iptux-core/internal/TcpData.h"
 #include "iptux-core/internal/UdpDataService.h"
 #include "iptux-core/internal/ipmsg.h"
-#include "iptux-core/internal/support.h"
 #include "iptux-utils/output.h"
 #include "iptux-utils/utils.h"
 #include <unistd.h>
 
 using namespace std;
 using namespace std::placeholders;
+
+#ifndef container_of
+#define container_of(ptr, type, member) \
+  ((type*)((char*)(ptr) - offsetof(type, member)))
+#endif
 
 namespace iptux {
 
@@ -506,12 +510,17 @@ struct CoreThread::Impl {
   std::list<GThread*> tcpHandlerThreads;
   std::mutex tcpHandlerThreadsMutex;
 
+  GMainContext* mainContext{nullptr};
+  GMainLoop* mainLoop{nullptr};
+  GThread* mainLoopThread{nullptr};
+
   Impl() = default;
   ~Impl();
 
   std::list<GThread*>::iterator addTcpHandlerThread(GThread* thread);
   void removeTcpHandlerThread(std::list<GThread*>::iterator it);
   void joinAllTcpHandlerThreads();
+  bool addTask(GSourceFunc callback, gpointer data, GDestroyNotify destroy);
 };
 
 CoreThread::Impl::~Impl() {
@@ -533,6 +542,19 @@ CoreThread::Impl::~Impl() {
   if (tcpSocket) {
     g_object_unref(tcpSocket);
     tcpSocket = nullptr;
+  }
+  if (mainLoop) {
+    g_main_loop_quit(mainLoop);
+    if (mainLoopThread) {
+      g_thread_join(mainLoopThread);
+      mainLoopThread = nullptr;
+    }
+    g_main_loop_unref(mainLoop);
+    mainLoop = nullptr;
+  }
+  if (mainContext) {
+    g_main_context_unref(mainContext);
+    mainContext = nullptr;
   }
 }
 
@@ -557,6 +579,20 @@ void CoreThread::Impl::joinAllTcpHandlerThreads() {
     }
   }
   tcpHandlerThreads.clear();
+}
+
+bool CoreThread::Impl::addTask(GSourceFunc callback,
+                               gpointer data,
+                               GDestroyNotify destroy) {
+  if (!mainContext) {
+    return false;
+  }
+  GSource* source = g_idle_source_new();
+  g_source_set_priority(source, G_PRIORITY_DEFAULT);
+  g_source_set_callback(source, callback, data, destroy);
+  g_source_attach(source, mainContext);
+  g_source_unref(source); /* Context now holds a reference. */
+  return true;
 }
 
 CoreThread::CoreThread(shared_ptr<ProgramData> data)
@@ -712,6 +748,17 @@ bool CoreThread::start() noexcept {
   if (!bind_iptux_port())
     return false;
 
+  pImpl->mainContext = g_main_context_default();
+  pImpl->mainLoop = g_main_loop_new(pImpl->mainContext, FALSE);
+  pImpl->mainLoopThread = g_thread_new(
+      "corethread",
+      [](void* data) -> void* {
+        CoreThread::Impl* impl = static_cast<CoreThread::Impl*>(data);
+        g_main_loop_run(impl->mainLoop);
+        return nullptr;
+      },
+      pImpl.get());
+
   pImpl->udpThread = new UdpThread();
   pImpl->udpThread->socket = pImpl->udpSocket;
   pImpl->udpThread->ops = &udpThreadOps;
@@ -860,6 +907,22 @@ void CoreThread::stop() {
   // Join all TCP handler threads after stopping the accept thread
   pImpl->joinAllTcpHandlerThreads();
   pImpl->notifyToAllFuture.wait();
+
+  if (pImpl->mainLoop) {
+    g_main_loop_quit(pImpl->mainLoop);
+  }
+  if (pImpl->mainLoopThread) {
+    g_thread_join(pImpl->mainLoopThread);
+    pImpl->mainLoopThread = nullptr;
+  }
+  if (pImpl->mainLoop) {
+    g_main_loop_unref(pImpl->mainLoop);
+    pImpl->mainLoop = nullptr;
+  }
+  if (pImpl->mainContext) {
+    g_main_context_unref(pImpl->mainContext);
+    pImpl->mainContext = nullptr;
+  }
 }
 
 uint16_t CoreThread::port() const {
@@ -1142,6 +1205,74 @@ bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para) {
 void CoreThread::AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara) {
   thread t(&CoreThread::SendMsgPara, this, msgPara);
   t.detach();
+}
+
+struct AsyncSendMsgPara2Task {
+  struct ldb_async_task intf;
+  CoreThread::Ptr coreThread;
+  CoreThread::Impl* pImpl;
+  std::shared_ptr<MsgPara> msgPara;
+  int ref_cnt;
+
+  static AsyncSendMsgPara2Task* create(CoreThread::Ptr coreThread,
+                                       CoreThread::Impl* pImpl,
+                                       std::shared_ptr<MsgPara> msgPara);
+};
+
+static const struct ldb_async_task_ops async_send_msg_para2_task_ops = {
+    .ref =
+        [](struct ldb_async_task* task) {
+          AsyncSendMsgPara2Task* t =
+              container_of(task, AsyncSendMsgPara2Task, intf);
+          t->ref_cnt++;
+        },
+    .unref =
+        [](struct ldb_async_task* task) {
+          AsyncSendMsgPara2Task* t =
+              container_of(task, AsyncSendMsgPara2Task, intf);
+          t->ref_cnt--;
+          if (t->ref_cnt == 0) {
+            delete t;
+          }
+        },
+    .start =
+        [](struct ldb_async_task* task) {
+          AsyncSendMsgPara2Task* t =
+              container_of(task, AsyncSendMsgPara2Task, intf);
+          CoreThread::Impl* pImpl = t->pImpl;
+          pImpl->addTask(
+              [](gpointer data) -> gboolean {
+                AsyncSendMsgPara2Task* t =
+                    static_cast<AsyncSendMsgPara2Task*>(data);
+                t->coreThread->SendMsgPara(t->msgPara);
+                return G_SOURCE_REMOVE;
+              },
+              t, nullptr);
+          return true;
+        },
+};
+
+AsyncSendMsgPara2Task* AsyncSendMsgPara2Task::create(
+    CoreThread::Ptr coreThread,
+    CoreThread::Impl* pImpl,
+    std::shared_ptr<MsgPara> msgPara) {
+  return new AsyncSendMsgPara2Task{
+      .intf = {.ops = &async_send_msg_para2_task_ops},
+      .coreThread = coreThread,
+      .pImpl = pImpl,
+      .msgPara = msgPara,
+      .ref_cnt = 1,
+  };
+}
+
+ldb_async_task* CoreThread::AsyncSendMsgPara2(
+    std::shared_ptr<MsgPara> msgPara) {
+  struct AsyncSendMsgPara2Task* task =
+      AsyncSendMsgPara2Task::create(shared_from_this(), pImpl.get(), msgPara);
+  if (!task)
+    return nullptr;
+
+  return &task->intf;
 }
 
 void CoreThread::InsertMessage(const MsgPara& para) {
