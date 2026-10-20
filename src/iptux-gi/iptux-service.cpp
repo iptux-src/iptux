@@ -151,7 +151,7 @@ gboolean iptux_service_send_message(IptuxService* self,
 void iptux_service_send_message_async(IptuxService* self,
                                       IptuxPal* pal,
                                       const gchar* message,
-                                      GCancellable*,
+                                      GCancellable* cancellable,
                                       GAsyncReadyCallback callback,
                                       gpointer user_data) {
   MsgPara::Ptr msgPara = std::make_shared<MsgPara>(*pal->pal_info);
@@ -162,17 +162,18 @@ void iptux_service_send_message_async(IptuxService* self,
   auto core_thread = *(self->core_thread);
 
   msgPara->dtlist.emplace_back(ChipData(std::string(message)));
-  core_thread->AsyncSendMsgPara(msgPara);
-
-  callback(G_OBJECT(self), NULL,
-           user_data);  // Notify that the operation is complete
+  core_thread->sendMsgParaAsync(msgPara, cancellable, callback, user_data);
   return;
 }
 
-gboolean iptux_service_send_message_finish(IptuxService*,
-                                           GAsyncResult*,
-                                           GError**) {
-  return TRUE;
+gboolean iptux_service_send_message_finish(IptuxService* self,
+                                           GAsyncResult* result,
+                                           GError** error) {
+  g_return_val_if_fail(
+      self != nullptr && self->core_thread != nullptr && result != nullptr,
+      FALSE);
+  auto& core_thread = *(self->core_thread);
+  return core_thread->sendMsgParaFinish(result, error);
 }
 
 void iptux_service_set_log_level(IptuxService* self, GLogLevelFlags level) {
