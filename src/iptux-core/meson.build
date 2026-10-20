@@ -2,6 +2,8 @@ glib_dep = dependency('glib-2.0', version: '>=2.35')
 gio_dep = dependency('gio-2.0', version: '>=2.35')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
 sigc_dep = dependency('sigc++-2.0')
+ldb_asynctask_dep = dependency('ldb-asynctask',
+    fallback : ['ldb-asynctask', 'ldb_asynctask_dep'])
 
 core_sources = files([
     'CoreThread.cpp',
@@ -31,7 +33,7 @@ core_sources += files([
 inc = include_directories('..', '../api')
 
 thread_dep = dependency('threads')
-iptux_core_dependency = [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep]
+iptux_core_dependency = [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep, ldb_asynctask_dep]
 
 if host_machine.system() == 'windows'
   ws2_32 = cc.find_library('ws2_32')
@@ -72,7 +74,7 @@ core_test_helper_sources = files([
 ])
 libiptux_core_test_helper = static_library('iptux-test-helper',
     core_test_helper_sources,
-    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep],
+    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, ldb_asynctask_dep],
     link_with: [libiptux_core, libiptux_utils_test_helper],
     include_directories: inc
 )
@@ -92,7 +94,7 @@ core_test_sources = files([
 ])
 libiptux_core_test = executable('libiptux_core_test',
     core_test_sources,
-    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep],
+    dependencies: [glib_dep, gio_dep, jsoncpp_dep, sigc_dep, thread_dep, ldb_asynctask_dep],
     link_with: [libiptux_core, libgtest, libiptux_core_test_helper],
     include_directories: [inc, gtest_inc]
 )

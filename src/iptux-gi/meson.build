@@ -3,7 +3,7 @@ gnome = import('gnome')
 gobject_dep = dependency('gobject-2.0')
 sigc_dep = dependency('sigc++-2.0')
 jsoncpp_dep = dependency('jsoncpp', version: '>=1.0')
-dependencies = [gobject_dep, sigc_dep, jsoncpp_dep]
+dependencies = [gobject_dep, sigc_dep, jsoncpp_dep, ldb_asynctask_dep]
 
 libsources = files('iptux-service.cpp', 'iptux-config.cpp', 'iptux-pal.cpp')
 libiptux_gi = shared_library('iptux-gi',
