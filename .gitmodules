@@ -1,3 +1,6 @@
 [submodule "subprojects/ldb-asynctest"]
 	path = subprojects/ldb-asynctest
 	url = https://github.com/lidaobing/ldb-asynctest.git
+[submodule "subprojects/ldb-asynctask"]
+	path = subprojects/ldb-asynctask
+	url = https://github.com/lidaobing/ldb-asynctask.git
