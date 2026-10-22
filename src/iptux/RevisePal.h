@@ -19,6 +19,8 @@
 
 namespace iptux {
 
+class RevisePalTestPeer;
+
 class RevisePal {
  public:
   RevisePal(Application* app, GtkWindow* parent, PalInfo* pl);
@@ -53,8 +55,9 @@ class RevisePal {
 
  private:
   static gint IconfileGetItemPos(GtkTreeModel* model, const char* pathname);
-  //回调处理部分
+  // 回调处理部分
  private:
+  friend class RevisePalTestPeer;
   static void AddNewIcon(GtkWidget* button, GData** widset);
 };
 
