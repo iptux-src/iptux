@@ -404,21 +404,21 @@ gint RevisePal::IconfileGetItemPos(GtkTreeModel* model, const char* pathname) {
  * @param widset widget set
  */
 void RevisePal::AddNewIcon(GtkWidget* button, GData** widset) {
-  GtkWidget *parent, *combo;
-  GtkTreeModel* model;
-  gchar* filename;
-  gint active;
+  GtkWidget* parent = GTK_WIDGET(g_datalist_get_data(widset, "dialog-widget"));
+  
+  choose_file_with_preview_async(
+      _("Please select a face picture"), parent, [widset, button](gchar* filename) {
+        if (!filename) {
+          return;
+        }
 
-  parent = GTK_WIDGET(g_datalist_get_data(widset, "dialog-widget"));
-  if (!(filename = choose_file_with_preview(_("Please select a face picture"),
-                                            parent)))
-    return;
-
-  combo = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "icon-combo-widget"));
-  model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
-  active = IconfileGetItemPos(model, filename);
-  gtk_combo_box_set_active(GTK_COMBO_BOX(combo), active);
-  g_free(filename);
+        GtkWidget* combo =
+            GTK_WIDGET(g_object_get_data(G_OBJECT(button), "icon-combo-widget"));
+        GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
+        gint active = IconfileGetItemPos(model, filename);
+        gtk_combo_box_set_active(GTK_COMBO_BOX(combo), active);
+        g_free(filename);
+      });
 }
 
 }  // namespace iptux

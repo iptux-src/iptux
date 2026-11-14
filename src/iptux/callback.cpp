@@ -12,6 +12,7 @@
 #include "config.h"
 #include "callback.h"
 
+#include <functional>
 #include <string.h>
 
 #include <gdk/gdk.h>
@@ -76,11 +77,12 @@ void entry_insert_numeric(GtkWidget* entry, gchar* text, gint length) {
  * 以可预览的方式选择文件.
  * @param title file chooser dialog title
  * @param parent parent
- * @return 文件名
+ * @param callback callback function to handle the selected filename (or nullptr if cancelled)
  */
-gchar* choose_file_with_preview(const gchar* title, GtkWidget* parent) {
+void choose_file_with_preview_async(const gchar* title,
+                                     GtkWidget* parent,
+                                     std::function<void(gchar*)> callback) {
   GtkWidget *chooser, *preview;
-  gchar* filename;
 
   chooser = gtk_file_chooser_dialog_new(
       title, GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN, _("_Open"),
@@ -100,18 +102,27 @@ gchar* choose_file_with_preview(const gchar* title, GtkWidget* parent) {
   g_signal_connect(chooser, "update-preview",
                    G_CALLBACK(chooser_update_preview), preview);
 
-  gtk_widget_show_all(chooser);
-  filename = NULL;
-  switch (gtk_dialog_run(GTK_DIALOG(chooser))) {
-    case GTK_RESPONSE_ACCEPT:
-      filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
-      break;
-    default:
-      break;
-  }
-  gtk_widget_destroy(chooser);
+  struct CallbackData {
+    std::function<void(gchar*)> callback;
+  };
+  
+  auto* data = new CallbackData{callback};
+  
+  g_signal_connect_data(
+      chooser, "response",
+      G_CALLBACK(+[](GtkDialog* dialog, gint response_id, gpointer user_data) {
+        auto* data = static_cast<CallbackData*>(user_data);
+        gchar* filename = nullptr;
+        if (response_id == GTK_RESPONSE_ACCEPT) {
+          filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        }
+        data->callback(filename);
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+        delete data;
+      }),
+      data, nullptr, G_CONNECT_AFTER);
 
-  return filename;
+  gtk_widget_show_all(chooser);
 }
 
 /**

@@ -447,34 +447,34 @@ void DialogPeer::onPaste(void*, void*, DialogPeer* self) {
 }
 
 void DialogPeer::insertImage() {
-  GtkWidget* widget;
-  GtkTextBuffer* buffer;
-  GtkTextIter iter;
-  GdkPixbuf* pixbuf;
-  gchar* filename;
-  gint position;
-  GError* error = nullptr;
+  choose_file_with_preview_async(
+      _("Please select a picture to insert the buffer"),
+      GTK_WIDGET(window), [this](gchar* filename) {
+        if (!filename) {
+          return;
+        }
 
-  if (!(filename = choose_file_with_preview(
-            _("Please select a picture to insert the buffer"),
-            GTK_WIDGET(window))))
-    return;
+        GdkPixbuf* pixbuf;
+        GError* error = nullptr;
+        if (!(pixbuf = gdk_pixbuf_new_from_file(filename, &error))) {
+          LOG_WARN("failed to load image: %s", error->message);
+          g_error_free(error);
+          g_free(filename);
+          return;
+        }
+        g_free(filename);
 
-  if (!(pixbuf = gdk_pixbuf_new_from_file(filename, &error))) {
-    LOG_WARN("failed to load image: %s", error->message);
-    g_error_free(error);
-    error = nullptr;
-    g_free(filename);
-    return;
-  }
-  g_free(filename);
-
-  widget = GTK_WIDGET(g_datalist_get_data(&widset, "input-textview-widget"));
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-  g_object_get(buffer, "cursor-position", &position, NULL);
-  gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
-  gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
-  g_object_unref(pixbuf);
+        GtkWidget* widget = GTK_WIDGET(
+            g_datalist_get_data(&widset, "input-textview-widget"));
+        GtkTextBuffer* buffer =
+            gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+        gint position;
+        g_object_get(buffer, "cursor-position", &position, NULL);
+        GtkTextIter iter;
+        gtk_text_buffer_get_iter_at_offset(buffer, &iter, position);
+        gtk_text_buffer_insert_pixbuf(buffer, &iter, pixbuf);
+        g_object_unref(pixbuf);
+      });
 }
 
 void DialogPeer::populateInputPopup(GtkMenu* popup) {
