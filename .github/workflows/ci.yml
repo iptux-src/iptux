@@ -79,7 +79,7 @@ jobs:
           ASAN_OPTIONS=detect_leaks=0 xvfb-run -a meson test -C build --verbose --no-stdsplit
 
   codecov:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       checks: write
       pull-requests: write
