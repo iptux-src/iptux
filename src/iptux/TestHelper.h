@@ -9,8 +9,7 @@
 
 namespace iptux {
 
-Application* CreateApplication(
-    std::shared_ptr<IptuxConfig> config = nullptr);
+Application* CreateApplication(IptuxConfig::Ptr config = nullptr);
 void DestroyApplication(Application* app);
 
 }  // namespace iptux

@@ -11,7 +11,7 @@
 
 namespace iptux {
 
-Application* CreateApplication(std::shared_ptr<IptuxConfig> config) {
+Application* CreateApplication(IptuxConfig::Ptr config) {
   gtk_init(nullptr, nullptr);
   if (!config) {
     config = newTestIptuxConfig();
