@@ -27,6 +27,24 @@ meson test -C builddir
 - GUI tests must not require a display (they run under Xvfb in CI).
 - The build is warning-clean (`werror=true`) — fix warnings rather than suppressing them where possible.
 
+## Running two instances locally (for testing)
+
+To test messaging between two clients on one machine, run each instance with a
+distinct bind IP and a distinct application ID (`--application-id`; without
+distinct IDs, GApplication single-instance behavior makes the second GUI exit
+silently):
+
+```sh
+# macOS only: the 127/8 block is not implicitly local like on Linux
+sudo ifconfig lo0 alias 127.0.0.2 up
+
+builddir/src/main/iptux -b 127.0.0.1 -a io.github.iptux_src.iptux.a -l INFO
+builddir/src/main/iptux -b 127.0.0.2 -a io.github.iptux_src.iptux.b -l INFO
+```
+
+Mutual discovery and message delivery can be verified from each instance's
+stdout log (`NEW_PAL_ONLINE`, received-message lines).
+
 ## Conventions
 
 - User-visible strings must be wrapped in `_()` for gettext; the UI language is UTF-8.
