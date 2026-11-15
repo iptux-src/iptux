@@ -15,6 +15,7 @@
 #ifndef IPTUX_DIALOGBASE_H
 #define IPTUX_DIALOGBASE_H
 
+#include <functional>
 #include <memory>
 
 #include "iptux-core/Models.h"
@@ -52,7 +53,8 @@ class DialogBase : public SessionAbstract, public sigc::trackable {
 
   void MainWindowSignalSetup(GtkWindow* window);
   GtkTreeModel* CreateFileSendModel();
-  GSList* PickEnclosure(FileAttr fileattr);
+  void PickEnclosureAsync(FileAttr fileattr,
+                          std::function<void(GSList*)> callback);
   GtkTextBuffer* getInputBuffer();
 
   bool SendEnclosureMsg();
