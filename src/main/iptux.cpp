@@ -40,6 +40,7 @@ static gchar* configFilename = nullptr;
 static gchar* logger = nullptr;
 static gchar* bindIp = nullptr;
 static gchar* applicationId = nullptr;
+static int portNumber = 0;
 static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 
 string getConfigPath() {
@@ -72,6 +73,8 @@ static GOptionEntry entries[] = {
      "Specify log level: DEBUG, INFO, WARN, default is WARN", "LEVEL"},
     {"bind", 'b', 0, G_OPTION_ARG_STRING, &bindIp,
      "Specify bind IP, like 127.0.0.2", "IP"},
+    {"port", 'p', 0, G_OPTION_ARG_INT, &portNumber,
+     "Specify bind port, default is 2425", "PORT"},
     {"application-id", 'a', 0, G_OPTION_ARG_STRING, &applicationId,
      "Specify GApplication ID (default: io.github.iptux_src.iptux); set a "
      "distinct one per instance when running multiple instances, otherwise "
@@ -186,9 +189,15 @@ int main(int argc, char** argv) {
   dealLog(*config);
   if (bindIp) {
     config->SetString("bind_ip", bindIp);
+    config->MarkKeyVolatile("bind_ip");
+  }
+  if (portNumber) {
+    config->SetInt("port", portNumber);
+    config->MarkKeyVolatile("port");
   }
   if (applicationId) {
     config->SetString("debug_application_id", applicationId);
+    config->MarkKeyVolatile("debug_application_id");
   }
 
   g_set_prgname("io.github.iptux_src.iptux");

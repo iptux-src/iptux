@@ -18,6 +18,20 @@ TEST(ProgramData, Constructor) {
   g_unlink(config->getFileName().c_str());
 }
 
+TEST(ProgramData, PortFromConfig) {
+  auto config = newTestIptuxConfig();
+  config->SetInt("port", 3456);
+  ProgramData progdt(config);
+  ASSERT_EQ(int(progdt.port()), 3456);
+}
+
+TEST(ProgramData, PortTooSmall) {
+  auto config = newTestIptuxConfig();
+  config->SetInt("port", 80);
+  ProgramData progdt(config);
+  ASSERT_EQ(int(progdt.port()), 2425);
+}
+
 TEST(ProgramData, WriteAndRead) {
   auto config = newTestIptuxConfigWithFile();
   ProgramData* core = new ProgramData(config);

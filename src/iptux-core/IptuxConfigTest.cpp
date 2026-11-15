@@ -52,6 +52,19 @@ TEST(IptuxConfig, GetInt) {
   ASSERT_EQ(config->GetInt(intKey, 1234), 1234);
 }
 
+TEST(IptuxConfig, VolatileKey) {
+  auto config = newTestIptuxConfigWithFile();
+  config->SetString("normalKey", "hello");
+  config->SetString("volatileKey", "world");
+  config->MarkKeyVolatile("volatileKey");
+  config->Save();
+
+  auto config2 = make_shared<IptuxConfig>(config->getFileName());
+  EXPECT_EQ(config2->GetString("normalKey"), "hello");
+  EXPECT_EQ(config2->GetString("volatileKey"), "");
+  EXPECT_TRUE(config->GetString("volatileKey") == "world");
+}
+
 TEST(IptuxConfig, GetString) {
   auto config = newTestIptuxConfig();
   const char* stringKey = "stringKey";

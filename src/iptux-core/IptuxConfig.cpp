@@ -178,16 +178,25 @@ IptuxConfig& IptuxConfig::Save() {
 
   root["version"] = 1;
 
+  Json::Value outputRoot = root;
+  for (const string& key : volatileKeys) {
+    outputRoot.removeMember(key.c_str());
+  }
+
   ofstream ofs(fname.c_str());
   if (!ofs) {
     g_warning("open config file %s for write failed.", fname.c_str());
     return *this;
   }
-  ofs << root;
+  ofs << outputRoot;
   if (!ofs) {
     g_warning("write to config file %s failed.", fname.c_str());
   }
   return *this;
+}
+
+void IptuxConfig::MarkKeyVolatile(const string& key) {
+  volatileKeys.insert(key);
 }
 
 }  // namespace iptux

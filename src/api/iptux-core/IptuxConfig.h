@@ -2,6 +2,7 @@
 #define IPTUX_IPTUX_CONFIG_H
 
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -66,9 +67,21 @@ class IptuxConfig {
 
   IptuxConfig& Save();
 
+  /**
+   * @brief mark the key as volatile, the key (and its value) will not
+   * be written to the config file by Save()
+   *
+   * useful for command line overrides: the value is readable in the
+   * current process, but does not pollute the persisted config
+   *
+   * @param key
+   */
+  void MarkKeyVolatile(const std::string& key);
+
  private:
   std::string fname;
   Json::Value root;
+  std::set<std::string> volatileKeys;
 };
 
 }  // namespace iptux

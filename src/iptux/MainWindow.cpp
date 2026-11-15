@@ -545,8 +545,14 @@ string MainWindow::getTitle() const {
   if (config->GetString("bind_ip").empty()) {
     return _("Iptux");
   } else {
-    return stringFormat("%s - %s", _("Iptux"),
-                        config->GetString("bind_ip").c_str());
+    uint16_t port = coreThread.port();
+    if (port == 2425) {
+      return stringFormat("%s - %s", _("Iptux"),
+                          config->GetString("bind_ip").c_str());
+    } else {
+      return stringFormat("%s - %s:%d", _("Iptux"),
+                          config->GetString("bind_ip").c_str(), int(port));
+    }
   }
 }
 
