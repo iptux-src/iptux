@@ -180,7 +180,14 @@ IptuxConfig& IptuxConfig::Save() {
 
   Json::Value outputRoot = root;
   for (const string& key : volatileKeys) {
-    outputRoot.removeMember(key.c_str());
+    if (volatileOriginals[key].isNull()) {
+      // the key was absent when the config was loaded (e.g. command
+      // line override of a previously unset key): drop it
+      outputRoot.removeMember(key.c_str());
+    } else {
+      // restore the loaded value, dropping the override
+      outputRoot[key] = volatileOriginals[key];
+    }
   }
 
   ofstream ofs(fname.c_str());
@@ -196,7 +203,13 @@ IptuxConfig& IptuxConfig::Save() {
 }
 
 void IptuxConfig::MarkKeyVolatile(const string& key) {
-  volatileKeys.insert(key);
+  if (volatileKeys.insert(key).second) {
+    // remember the loaded value (null if the key was absent), so
+    // Save() can restore it
+    if (root.isMember(key)) {
+      volatileOriginals[key] = root[key];
+    }
+  }
 }
 
 }  // namespace iptux

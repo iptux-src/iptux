@@ -40,7 +40,7 @@ static gchar* configFilename = nullptr;
 static gchar* logger = nullptr;
 static gchar* bindIp = nullptr;
 static gchar* applicationId = nullptr;
-static int portNumber = 0;
+static int portNumber = -1;
 static GLogLevelFlags logLevel = G_LOG_LEVEL_WARNING;
 
 string getConfigPath() {
@@ -74,7 +74,7 @@ static GOptionEntry entries[] = {
     {"bind", 'b', 0, G_OPTION_ARG_STRING, &bindIp,
      "Specify bind IP, like 127.0.0.2", "IP"},
     {"port", 'p', 0, G_OPTION_ARG_INT, &portNumber,
-     "Specify bind port, default is 2425", "PORT"},
+     "Specify bind port, must be in [1024, 65535], default is 2425", "PORT"},
     {"application-id", 'a', 0, G_OPTION_ARG_STRING, &applicationId,
      "Specify GApplication ID (default: io.github.iptux_src.iptux); set a "
      "distinct one per instance when running multiple instances, otherwise "
@@ -187,17 +187,19 @@ int main(int argc, char** argv) {
   string configPath = configFilename ? configFilename : getConfigPath();
   auto config = make_shared<IptuxConfig>(configPath);
   dealLog(*config);
+  // mark keys volatile before overriding, so the loaded value is
+  // remembered and restored on Save()
   if (bindIp) {
-    config->SetString("bind_ip", bindIp);
     config->MarkKeyVolatile("bind_ip");
+    config->SetString("bind_ip", bindIp);
   }
-  if (portNumber) {
-    config->SetInt("port", portNumber);
+  if (portNumber >= 0) {
     config->MarkKeyVolatile("port");
+    config->SetInt("port", portNumber);
   }
   if (applicationId) {
-    config->SetString("debug_application_id", applicationId);
     config->MarkKeyVolatile("debug_application_id");
+    config->SetString("debug_application_id", applicationId);
   }
 
   g_set_prgname("io.github.iptux_src.iptux");

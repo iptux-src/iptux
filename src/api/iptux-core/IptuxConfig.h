@@ -1,6 +1,7 @@
 #ifndef IPTUX_IPTUX_CONFIG_H
 #define IPTUX_IPTUX_CONFIG_H
 
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
@@ -68,11 +69,13 @@ class IptuxConfig {
   IptuxConfig& Save();
 
   /**
-   * @brief mark the key as volatile, the key (and its value) will not
-   * be written to the config file by Save()
+   * @brief mark the key as volatile, the key is never written to the
+   * config file by Save(): Save() restores the value loaded from the
+   * config file (or drops the key if it was absent)
    *
-   * useful for command line overrides: the value is readable in the
-   * current process, but does not pollute the persisted config
+   * must be called BEFORE overriding the value, e.g. for command
+   * line options: the override is readable in the current process,
+   * but does not pollute the persisted config
    *
    * @param key
    */
@@ -82,6 +85,7 @@ class IptuxConfig {
   std::string fname;
   Json::Value root;
   std::set<std::string> volatileKeys;
+  std::map<std::string, Json::Value> volatileOriginals;
 };
 
 }  // namespace iptux

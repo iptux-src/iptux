@@ -32,6 +32,13 @@ TEST(ProgramData, PortTooSmall) {
   ASSERT_EQ(int(progdt.port()), 2425);
 }
 
+TEST(ProgramData, PortTooBig) {
+  auto config = newTestIptuxConfig();
+  config->SetInt("port", 70000);
+  ProgramData progdt(config);
+  ASSERT_EQ(int(progdt.port()), 2425);
+}
+
 TEST(ProgramData, WriteAndRead) {
   auto config = newTestIptuxConfigWithFile();
   ProgramData* core = new ProgramData(config);
