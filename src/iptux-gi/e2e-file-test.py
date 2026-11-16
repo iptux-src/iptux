@@ -62,8 +62,18 @@ def main():
         print(f'FAIL: sender did not announce the file\n{out_send}',
               file=sys.stderr)
         ok = False
+    if 'SEND-FILE-STARTED' not in out_send or \
+            'SEND-FILE-FINISHED' not in out_send:
+        print(f'FAIL: sender transfer did not start/finish\n{out_send}',
+              file=sys.stderr)
+        ok = False
     if f'FILE-RECEIVED 127.0.0.1 src {len(CONTENT)} 0' not in out_recv:
         print(f'FAIL: receiver did not receive the announcement\n{out_recv}',
+              file=sys.stderr)
+        ok = False
+    if 'RECV-FILE-STARTED' not in out_recv or \
+            'RECV-FILE-FINISHED' not in out_recv:
+        print(f'FAIL: receiver transfer did not start/finish\n{out_recv}',
               file=sys.stderr)
         ok = False
 

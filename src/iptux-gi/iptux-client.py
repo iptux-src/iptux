@@ -15,6 +15,10 @@ Events received from the network are printed to stdout as lines:
     FILE-RECEIVED <ipv4> <filename> <filesize> <index>
     FILE-SENT <ipv4> <path>
     FILE-ACCEPTED <index> <save-dir>
+    SEND-FILE-STARTED <taskid>
+    SEND-FILE-FINISHED <taskid>
+    RECV-FILE-STARTED <taskid>
+    RECV-FILE-FINISHED <taskid>
 """
 
 import argparse
@@ -78,9 +82,17 @@ def main():
                 print(f'FILE-ACCEPT-FAILED {index}', file=sys.stderr,
                       flush=True)
 
+    def on_transfer_signal(name):
+        def handler(_service, taskid):
+            print(f'{name.upper()} {taskid}', flush=True)
+        return handler
+
     service.connect('pal-online', on_pal_online)
     service.connect('message-received', on_message_received)
     service.connect('file-received', on_file_received)
+    for name in ('send-file-started', 'send-file-finished',
+                 'recv-file-started', 'recv-file-finished'):
+        service.connect(name, on_transfer_signal(name))
     service.set_log_level(GLib.LogLevelFlags.LEVEL_WARNING)
 
     loop = GLib.MainLoop()

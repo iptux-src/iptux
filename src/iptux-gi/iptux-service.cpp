@@ -42,6 +42,10 @@ enum {
   SIGNAL_PAL_ONLINE,
   SIGNAL_MESSAGE_RECEIVED,
   SIGNAL_FILE_RECEIVED,
+  SIGNAL_SEND_FILE_STARTED,
+  SIGNAL_SEND_FILE_FINISHED,
+  SIGNAL_RECV_FILE_STARTED,
+  SIGNAL_RECV_FILE_FINISHED,
   N_SIGNALS,
 };
 
@@ -123,6 +127,34 @@ static void emitCoreEvent(IptuxService* self,
                     ipv4.c_str(), name, (guint64)file->filesize,
                     (guint)(self->received_files->size() - 1));
       g_free(name);
+      break;
+    }
+    case iptux::EventType::SEND_FILE_STARTED:
+    case iptux::EventType::SEND_FILE_FINISHED:
+    case iptux::EventType::RECV_FILE_STARTED:
+    case iptux::EventType::RECV_FILE_FINISHED: {
+      auto taskEvent =
+          std::dynamic_pointer_cast<const iptux::AbstractTaskIdEvent>(event);
+      if (!taskEvent) {
+        return;
+      }
+      guint signal_id;
+      switch (event->getType()) {
+        case iptux::EventType::SEND_FILE_STARTED:
+          signal_id = SIGNAL_SEND_FILE_STARTED;
+          break;
+        case iptux::EventType::SEND_FILE_FINISHED:
+          signal_id = SIGNAL_SEND_FILE_FINISHED;
+          break;
+        case iptux::EventType::RECV_FILE_STARTED:
+          signal_id = SIGNAL_RECV_FILE_STARTED;
+          break;
+        default:
+          signal_id = SIGNAL_RECV_FILE_FINISHED;
+          break;
+      }
+      g_signal_emit(self, service_signals[signal_id], 0,
+                    (guint)taskEvent->GetTaskId());
       break;
     }
     default:
@@ -223,6 +255,32 @@ static void iptux_service_class_init(IptuxServiceClass* klass) {
                    G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
                    nullptr, G_TYPE_NONE, 4,
                    G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT64, G_TYPE_UINT);
+
+  /**
+   * IptuxService::send-file-started / send-file-finished /
+   * recv-file-started / recv-file-finished:
+   * @self: the #IptuxService running the transfer
+   * @taskid: the id of the transfer task
+   *
+   * Emitted when a file transfer task starts or finishes, on both the
+   * sending and the receiving side.
+   */
+  service_signals[SIGNAL_SEND_FILE_STARTED] =
+      g_signal_new("send-file-started", G_TYPE_FROM_CLASS(gobject_class),
+                   G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
+                   nullptr, G_TYPE_NONE, 1, G_TYPE_UINT);
+  service_signals[SIGNAL_SEND_FILE_FINISHED] =
+      g_signal_new("send-file-finished", G_TYPE_FROM_CLASS(gobject_class),
+                   G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
+                   nullptr, G_TYPE_NONE, 1, G_TYPE_UINT);
+  service_signals[SIGNAL_RECV_FILE_STARTED] =
+      g_signal_new("recv-file-started", G_TYPE_FROM_CLASS(gobject_class),
+                   G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
+                   nullptr, G_TYPE_NONE, 1, G_TYPE_UINT);
+  service_signals[SIGNAL_RECV_FILE_FINISHED] =
+      g_signal_new("recv-file-finished", G_TYPE_FROM_CLASS(gobject_class),
+                   G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
+                   nullptr, G_TYPE_NONE, 1, G_TYPE_UINT);
 }
 
 static void iptux_service_init(IptuxService* self) {
