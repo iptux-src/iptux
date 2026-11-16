@@ -69,6 +69,42 @@ gboolean iptux_service_send_message_to(IptuxService* self,
 void iptux_service_send_detect_packet(IptuxService* self, const gchar* ipv4);
 
 /**
+ * iptux_service_send_file_to:
+ * @self: An #IptuxService instance.
+ * @ipv4: The IPv4 address of the recipient.
+ * @path: The local path of the file (or directory) to send.
+ * @error: (nullable): a #GError location to store the error.
+ *
+ * Announces @path to the pal with IPv4 address @ipv4, like dragging a
+ * file into a chat window in the GUI. The pal must be known to this
+ * service. The actual transfer starts when the peer accepts the file.
+ *
+ * Returns: %TRUE on success, %FALSE on error.
+ */
+gboolean iptux_service_send_file_to(IptuxService* self,
+                                    const gchar* ipv4,
+                                    const gchar* path,
+                                    GError** error);
+
+/**
+ * iptux_service_recv_file:
+ * @self: An #IptuxService instance.
+ * @index: The index of the announced file, as delivered by the
+ *   #IptuxService::file-received signal.
+ * @save_dir: The directory to save the received file into.
+ * @error: (nullable): a #GError location to store the error.
+ *
+ * Accepts a file announced by a pal and starts receiving it into
+ * @save_dir asynchronously.
+ *
+ * Returns: %TRUE on success, %FALSE on error.
+ */
+gboolean iptux_service_recv_file(IptuxService* self,
+                                 guint index,
+                                 const gchar* save_dir,
+                                 GError** error);
+
+/**
  * iptux_service_send_message_async:
  * @self: An #IptuxService instance.
  * @pal: An #IptuxPal recipient.

@@ -12,6 +12,9 @@ Events received from the network are printed to stdout as lines:
 
     PAL-ONLINE <ipv4>
     MESSAGE <ipv4> <content>
+    FILE-RECEIVED <ipv4> <filename> <filesize> <index>
+    FILE-SENT <ipv4> <path>
+    FILE-ACCEPTED <index> <save-dir>
 """
 
 import argparse
@@ -46,6 +49,12 @@ def main():
     parser.add_argument('--send', action='append', default=[],
                         metavar='IP:MESSAGE',
                         help='send MESSAGE to IP (repeatable)')
+    parser.add_argument('--send-file', action='append', default=[],
+                        metavar='IP:PATH',
+                        help='announce the file PATH to IP (repeatable)')
+    parser.add_argument('--save-dir', default=None, metavar='DIR',
+                        help='automatically accept announced files and '
+                             'save them into DIR')
     parser.add_argument('--wait', type=float, default=5.0,
                         help='seconds to keep running, default: 5')
     args = parser.parse_args()
@@ -59,8 +68,19 @@ def main():
     def on_message_received(_service, ipv4, content):
         print(f'MESSAGE {ipv4} {content}', flush=True)
 
+    def on_file_received(_service, ipv4, filename, filesize, index):
+        print(f'FILE-RECEIVED {ipv4} {filename} {filesize} {index}',
+              flush=True)
+        if args.save_dir:
+            if service.recv_file(index, args.save_dir):
+                print(f'FILE-ACCEPTED {index} {args.save_dir}', flush=True)
+            else:
+                print(f'FILE-ACCEPT-FAILED {index}', file=sys.stderr,
+                      flush=True)
+
     service.connect('pal-online', on_pal_online)
     service.connect('message-received', on_message_received)
+    service.connect('file-received', on_file_received)
     service.set_log_level(GLib.LogLevelFlags.LEVEL_WARNING)
 
     loop = GLib.MainLoop()
@@ -83,6 +103,17 @@ def main():
             if not ok:
                 print(f'failed to send message to {ipv4}', file=sys.stderr,
                       flush=True)
+        for item in args.send_file:
+            ipv4, _, path = item.partition(':')
+            if not path:
+                print(f'bad --send-file value: {item!r}', file=sys.stderr)
+                continue
+            ok = service.send_file_to(ipv4, path)
+            if not ok:
+                print(f'failed to send file to {ipv4}', file=sys.stderr,
+                      flush=True)
+            else:
+                print(f'FILE-SENT {ipv4} {path}', flush=True)
         return GLib.SOURCE_REMOVE
 
     def quit():

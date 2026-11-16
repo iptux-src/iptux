@@ -103,6 +103,8 @@ jobs:
         run: |
           xvfb-run -a meson test -C build --verbose --no-stdsplit
           python3 src/iptux-gi/gi-test.py
+          python3 src/iptux-gi/e2e-test.py
+          python3 src/iptux-gi/e2e-file-test.py
       - name: lcov
         run: |
           IGNORE="--ignore-errors mismatch --ignore-errors inconsistent"
