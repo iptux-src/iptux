@@ -1,8 +1,11 @@
 #include "iptux-service.h"
 #include "iptux-core/CoreThread.h"
+#include "iptux-core/Event.h"
+#include <memory>
 #include "iptux-pal.h"
 #include "iptux-priv.h"
 #include "iptux-utils/output.h"
+#include "iptux-utils/utils.h"
 
 #ifdef SendMessage
 #undef SendMessage
@@ -28,6 +31,14 @@ struct _IptuxService {
   ::IptuxConfig* config;
 };
 
+enum {
+  SIGNAL_PAL_ONLINE,
+  SIGNAL_MESSAGE_RECEIVED,
+  N_SIGNALS,
+};
+
+static guint service_signals[N_SIGNALS] = {0, 0};
+
 G_DEFINE_TYPE(IptuxService, iptux_service, G_TYPE_OBJECT)
 
 static void iptux_service_set_property(GObject* object,
@@ -47,6 +58,51 @@ static void iptux_service_set_property(GObject* object,
   }
 }
 
+static std::string chipDataContent(const iptux::ChipData& chip) {
+  if (chip.type == iptux::MessageContentType::STRING) {
+    return chip.data;
+  }
+  return chip.getSummary();
+}
+
+static void emitCoreEvent(IptuxService* self,
+                          std::shared_ptr<const iptux::Event> event) {
+  switch (event->getType()) {
+    case iptux::EventType::NEW_PAL_ONLINE: {
+      auto palEvent =
+          std::dynamic_pointer_cast<const iptux::NewPalOnlineEvent>(event);
+      if (!palEvent) {
+        return;
+      }
+      std::string ipv4 = iptux::inAddrToString(palEvent->getPalInfo()->ipv4());
+      g_signal_emit(self, service_signals[SIGNAL_PAL_ONLINE], 0,
+                    ipv4.c_str());
+      break;
+    }
+    case iptux::EventType::NEW_MESSAGE: {
+      auto messageEvent =
+          std::dynamic_pointer_cast<const iptux::NewMessageEvent>(event);
+      if (!messageEvent) {
+        return;
+      }
+      const iptux::MsgPara& para = messageEvent->getMsgPara();
+      std::string ipv4 = iptux::inAddrToString(para.getPal()->ipv4());
+      std::string content;
+      for (const auto& chip : para.dtlist) {
+        if (!content.empty()) {
+          content += "\n";
+        }
+        content += chipDataContent(chip);
+      }
+      g_signal_emit(self, service_signals[SIGNAL_MESSAGE_RECEIVED], 0,
+                    ipv4.c_str(), content.c_str());
+      break;
+    }
+    default:
+      break;
+  }
+}
+
 static void iptux_service_constructed(GObject* object) {
   IptuxService* self = IPTUX_SERVICE(object);
 
@@ -55,6 +111,12 @@ static void iptux_service_constructed(GObject* object) {
   if (self->config) {
     self->core_thread =
         new CoreThread::Ptr(CoreThread::create(*self->config->config));
+
+    auto& core_thread = *(self->core_thread);
+    core_thread->signalEvent.connect(
+        [self](std::shared_ptr<const iptux::Event> event) {
+          emitCoreEvent(self, event);
+        });
   }
 }
 
@@ -65,6 +127,8 @@ static void iptux_service_class_init(IptuxServiceClass* klass) {
   gobject_class->constructed = iptux_service_constructed;
   gobject_class->finalize = [](GObject* object) {
     IptuxService* self = IPTUX_SERVICE(object);
+    // destroying the CoreThread stops and joins its threads, so no
+    // more events can be emitted on a finalized service
     if (self->core_thread) {
       delete self->core_thread;
       self->core_thread = nullptr;
@@ -82,6 +146,33 @@ static void iptux_service_class_init(IptuxServiceClass* klass) {
 
   g_object_class_install_properties(gobject_class, N_PROPERTIES,
                                     obj_properties);
+
+  /**
+   * IptuxService::pal-online:
+   * @self: the #IptuxService that received the event
+   * @ipv4: the IPv4 address of the pal that came online
+   *
+   * Emitted when a pal comes online.
+   */
+  service_signals[SIGNAL_PAL_ONLINE] =
+      g_signal_new("pal-online", G_TYPE_FROM_CLASS(gobject_class),
+                   G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
+                   g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
+                   G_TYPE_STRING);
+
+  /**
+   * IptuxService::message-received:
+   * @self: the #IptuxService that received the message
+   * @ipv4: the IPv4 address of the sender
+   * @content: the message content
+   *
+   * Emitted when a text message is received.
+   */
+  service_signals[SIGNAL_MESSAGE_RECEIVED] =
+      g_signal_new("message-received", G_TYPE_FROM_CLASS(gobject_class),
+                   G_SIGNAL_RUN_LAST, 0, nullptr, nullptr,
+                   nullptr, G_TYPE_NONE, 2,
+                   G_TYPE_STRING, G_TYPE_STRING);
 }
 
 static void iptux_service_init(IptuxService* self) {
@@ -146,6 +237,34 @@ gboolean iptux_service_send_message(IptuxService* self,
   auto& core_thread = *(self->core_thread);
   core_thread->SendMessage(*pal->pal_info, std::string(message));
   return TRUE;
+}
+
+gboolean iptux_service_send_message_to(IptuxService* self,
+                                       const gchar* ipv4,
+                                       const gchar* message,
+                                       GError** error) {
+  g_return_val_if_fail(self != nullptr && self->core_thread != nullptr &&
+                           ipv4 != nullptr && message != nullptr,
+                       FALSE);
+  auto& core_thread = *(self->core_thread);
+
+  auto pal = core_thread->GetPal(std::string(ipv4));
+  if (!pal) {
+    if (error) {
+      *error = g_error_new(g_quark_from_static_string("iptux-service"), 1,
+                           "pal %s not found (is it online?)", ipv4);
+    }
+    return FALSE;
+  }
+  core_thread->SendMessage(pal, std::string(message));
+  return TRUE;
+}
+
+void iptux_service_send_detect_packet(IptuxService* self, const gchar* ipv4) {
+  g_return_if_fail(self != nullptr && self->core_thread != nullptr &&
+                   ipv4 != nullptr);
+  auto& core_thread = *(self->core_thread);
+  core_thread->SendDetectPacket(std::string(ipv4));
 }
 
 void iptux_service_send_message_async(IptuxService* self,

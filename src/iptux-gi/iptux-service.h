@@ -25,10 +25,48 @@ bool iptux_service_stop(IptuxService* self);
  */
 GArray* iptux_service_get_pals(IptuxService* self);
 
+/**
+ * iptux_service_send_message:
+ * @self: An #IptuxService instance.
+ * @pal: An #IptuxPal recipient.
+ * @message: The message string to send.
+ * @error: (nullable): a #GError location to store the error.
+ *
+ * Sends a message to @pal.
+ *
+ * Returns: %TRUE on success, %FALSE on error.
+ */
 gboolean iptux_service_send_message(IptuxService* self,
                                     IptuxPal* pal,
                                     const gchar* message,
                                     GError** error);
+
+/**
+ * iptux_service_send_message_to:
+ * @self: An #IptuxService instance.
+ * @ipv4: The IPv4 address of the recipient.
+ * @message: The message string to send.
+ * @error: (nullable): a #GError location to store the error.
+ *
+ * Sends a message to the pal with IPv4 address @ipv4. The pal must be
+ * known to this service (e.g. after discovery or a detect packet).
+ *
+ * Returns: %TRUE on success, %FALSE if the pal is unknown or on error.
+ */
+gboolean iptux_service_send_message_to(IptuxService* self,
+                                       const gchar* ipv4,
+                                       const gchar* message,
+                                       GError** error);
+
+/**
+ * iptux_service_send_detect_packet:
+ * @self: An #IptuxService instance.
+ * @ipv4: The IPv4 address to probe.
+ *
+ * Sends a detect (entry probe) packet to @ipv4, so that the peer
+ * announces itself to this service.
+ */
+void iptux_service_send_detect_packet(IptuxService* self, const gchar* ipv4);
 
 /**
  * iptux_service_send_message_async:
