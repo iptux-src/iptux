@@ -56,7 +56,7 @@ class ProgramData {
   bool isHideTaskbarWhenMainWindowIconified() const;
   int statusIconMode() const;
   void setStatusIconMode(int value);
-  void set_port(uint16_t port, bool is_init = false);
+  void set_port(int port, bool is_init = false);
   void setOpenChat(bool value) { open_chat = value; }
   void setHideStartup(bool value) { hide_startup = value; }
   void setOpenTransmission(bool value) { open_transmission = value; }

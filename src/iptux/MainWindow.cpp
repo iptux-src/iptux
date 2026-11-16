@@ -542,11 +542,21 @@ GtkWidget* MainWindow::CreateMainWindow() {
 }
 
 string MainWindow::getTitle() const {
-  if (config->GetString("bind_ip").empty()) {
-    return _("Iptux");
+  bool showPort = coreThread.port() != 2425;
+  string ip = config->GetString("bind_ip");
+  if (ip.empty()) {
+    if (!showPort) {
+      return _("Iptux");
+    } else {
+      return stringFormat(_("%s - :%d"), _("Iptux"), int(coreThread.port()));
+    }
   } else {
-    return stringFormat("%s - %s", _("Iptux"),
-                        config->GetString("bind_ip").c_str());
+    if (!showPort) {
+      return stringFormat(_("%s - %s"), _("Iptux"), ip.c_str());
+    } else {
+      return stringFormat(_("%s - %s:%d"), _("Iptux"), ip.c_str(),
+                          int(coreThread.port()));
+    }
   }
 }
 

@@ -52,6 +52,50 @@ TEST(IptuxConfig, GetInt) {
   ASSERT_EQ(config->GetInt(intKey, 1234), 1234);
 }
 
+TEST(IptuxConfig, VolatileKey) {
+  auto config = newTestIptuxConfigWithFile();
+  config->SetString("normalKey", "hello");
+  config->MarkKeyVolatile("volatileKey");
+  config->SetString("volatileKey", "world");
+  config->Save();
+
+  auto config2 = make_shared<IptuxConfig>(config->getFileName());
+  EXPECT_EQ(config2->GetString("normalKey"), "hello");
+  EXPECT_EQ(config2->GetString("volatileKey"), "");
+  EXPECT_TRUE(config->GetString("volatileKey") == "world");
+}
+
+TEST(IptuxConfig, VolatileKeyRestoreLoadedValue) {
+  auto config = newTestIptuxConfigWithFile();
+  config->SetString("key", "loaded");
+  config->Save();
+
+  auto config2 = make_shared<IptuxConfig>(config->getFileName());
+  EXPECT_EQ(config2->GetString("key"), "loaded");
+  config2->MarkKeyVolatile("key");
+  config2->SetString("key", "override");
+  EXPECT_EQ(config2->GetString("key"), "override");
+  config2->Save();
+
+  auto config3 = make_shared<IptuxConfig>(config->getFileName());
+  EXPECT_EQ(config3->GetString("key"), "loaded");
+  EXPECT_EQ(config2->GetString("key"), "override");
+}
+
+TEST(IptuxConfig, VolatileKeyStaysVolatile) {
+  auto config = newTestIptuxConfigWithFile();
+  config->MarkKeyVolatile("key");
+  config->SetString("key", "override");
+  // even a later change (e.g. from the preferences dialog) is not
+  // persisted, the key was never loaded from the file
+  config->SetString("key", "user-changed");
+  config->Save();
+
+  auto config2 = make_shared<IptuxConfig>(config->getFileName());
+  EXPECT_EQ(config2->GetString("key"), "");
+  EXPECT_EQ(config->GetString("key"), "user-changed");
+}
+
 TEST(IptuxConfig, GetString) {
   auto config = newTestIptuxConfig();
   const char* stringKey = "stringKey";

@@ -57,6 +57,7 @@ class MainWindow : public sigc::trackable {
   PalTreeModelSortKey sort_key() const { return sort_key_; }
   GtkSortType sort_type() const { return sort_type_; }
   GroupInfoStyle info_style() const { return info_style_; }
+  std::string getTitle() const;
   void ProcessEvent(std::shared_ptr<const Event> event);
 
  private:
@@ -128,7 +129,6 @@ class MainWindow : public sigc::trackable {
   static void FillPalInfoToBuffer(GtkTextBuffer* buffer, PalInfo* pal);
 
  private:
-  std::string getTitle() const;
   static gboolean UpdateUI(MainWindow* mwin);
   static void GoPrevTreeModel(MainWindow* mwin);
   static void GoNextTreeModel(MainWindow* mwin);

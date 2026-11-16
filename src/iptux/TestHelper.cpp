@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include <memory>
+
 #include "Application.h"
 #include "UiCoreThread.h"
 #include "gtest/gtest.h"
@@ -9,9 +11,11 @@
 
 namespace iptux {
 
-Application* CreateApplication() {
+Application* CreateApplication(IptuxConfig::Ptr config) {
   gtk_init(nullptr, nullptr);
-  auto config = newTestIptuxConfig();
+  if (!config) {
+    config = newTestIptuxConfig();
+  }
   Application* app = new Application(config);
   app->setTestMode(true);
   app->set_enable_app_indicator(false);

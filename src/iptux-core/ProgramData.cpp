@@ -90,19 +90,21 @@ void ProgramData::setNetSegments(std::vector<NetSegment>&& netSegments) {
   netseg = netSegments;
 }
 
-void ProgramData::set_port(uint16_t port, bool is_init) {
-  if (port == port_)
+void ProgramData::set_port(int port, bool is_init) {
+  if (port < 1024 || port > 65535) {
+    LOG_WARN("Invalid port number: %d, use default port: %d", port,
+             IPTUX_DEFAULT_PORT);
+    port = IPTUX_DEFAULT_PORT;
+  }
+  if (port == port_) {
     return;
+  }
 
   uint16_t old_port = port_;
-  port_ = port;
-  if (port_ < 1024) {
-    LOG_WARN("Invalid port number: %d, use default port: %d", port_,
-             IPTUX_DEFAULT_PORT);
-    port_ = IPTUX_DEFAULT_PORT;
-  }
-  if (!is_init && old_port != port_)
+  port_ = static_cast<uint16_t>(port);
+  if (!is_init && old_port != port_) {
     need_restart_ = true;
+  }
 }
 
 /**

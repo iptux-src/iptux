@@ -178,16 +178,38 @@ IptuxConfig& IptuxConfig::Save() {
 
   root["version"] = 1;
 
+  Json::Value outputRoot = root;
+  for (const string& key : volatileKeys) {
+    if (volatileOriginals[key].isNull()) {
+      // the key was absent when the config was loaded (e.g. command
+      // line override of a previously unset key): drop it
+      outputRoot.removeMember(key.c_str());
+    } else {
+      // restore the loaded value, dropping the override
+      outputRoot[key] = volatileOriginals[key];
+    }
+  }
+
   ofstream ofs(fname.c_str());
   if (!ofs) {
     g_warning("open config file %s for write failed.", fname.c_str());
     return *this;
   }
-  ofs << root;
+  ofs << outputRoot;
   if (!ofs) {
     g_warning("write to config file %s failed.", fname.c_str());
   }
   return *this;
+}
+
+void IptuxConfig::MarkKeyVolatile(const string& key) {
+  if (volatileKeys.insert(key).second) {
+    // remember the loaded value (null if the key was absent), so
+    // Save() can restore it
+    if (root.isMember(key)) {
+      volatileOriginals[key] = root[key];
+    }
+  }
 }
 
 }  // namespace iptux
