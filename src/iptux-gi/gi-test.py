@@ -6,7 +6,7 @@ from gi.repository import GLib
 import time
 
 def main():
-    config = Iptux.Config.new_from_fname("")
+    config = Iptux.Config.new_from_string("{}")
     core_thread = Iptux.Service.new(config)
     #core_thread.set_log_level(GLib.LogLevelFlags.LEVEL_DEBUG)  # Set log level to DEBUG
 
