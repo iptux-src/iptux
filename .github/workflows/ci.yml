@@ -33,6 +33,8 @@ jobs:
           brew install --display-times ${{ env.MAC_PKGS }}
       - name: meson
         run: meson setup build
+        env:
+          CXXFLAGS: -DGLOG_USE_GLOG_EXPORT
       - name: build
         run: meson compile -C build
       - name: install
