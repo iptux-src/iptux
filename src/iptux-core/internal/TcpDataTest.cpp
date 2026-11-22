@@ -23,4 +23,8 @@ TEST(TcpData, tcpRequestDataShortHeader) {
   std::memcpy(tcpData.buf, nulHeader, sizeof(nulHeader));
   tcpData.size = sizeof(nulHeader);
   tcpData.RequestData(FileAttr::DIRECTORY);
+
+  std::memset(tcpData.buf, 'x', sizeof(tcpData.buf));
+  tcpData.size = sizeof(tcpData.buf);
+  tcpData.RequestData(FileAttr::REGULAR);
 }

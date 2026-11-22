@@ -98,8 +98,19 @@ void TcpData::RequestData(FileAttr fileattr) {
   const char* attachptr;
   char* attach;
 
-  attachptr = iptux_skip_section(buf, ':', 5);
-  if (!attachptr) {
+  attachptr = buf;
+  uint8_t separators = 0;
+  const char* end = buf + size;
+  while (attachptr < end && separators < 5) {
+    if (*attachptr == '\0') {
+      break;
+    }
+    if (*attachptr == ':') {
+      ++separators;
+    }
+    ++attachptr;
+  }
+  if (separators != 5) {
     LOG_WARN("Invalid TCP request: missing file attachment field");
     return;
   }
