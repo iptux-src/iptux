@@ -410,7 +410,7 @@ char* ipmsg_get_filename(const char* msg, char ch, uint8_t times) {
 
   if ((ptr = iptux_skip_section(msg, ch, times))) {
     size_t len = 0;
-    while (*ptr != ':' || strncmp(ptr, "::", 2) == 0) {
+    while (*ptr != '\0' && (*ptr != ':' || strncmp(ptr, "::", 2) == 0)) {
       if (len < 255) {  // 防止缓冲区溢出
         filename[len] = *ptr;
         len++;
