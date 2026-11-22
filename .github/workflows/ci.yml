@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [iptux-0-9]
   pull_request:
-    branches: [master]
+    branches: [iptux-0-9]
 
 env:
   DEB_PKGS: >-
