@@ -73,8 +73,12 @@ AboutDialog* aboutDialogNew() {
 
 void aboutDialogRun(AboutDialog* aboutDialog, GtkWindow* parent) {
   gtk_window_set_transient_for(GTK_WINDOW(aboutDialog), parent);
-  gtk_dialog_run(GTK_DIALOG(aboutDialog));
-  gtk_widget_hide(GTK_WIDGET(aboutDialog));
+  g_signal_connect(aboutDialog, "response",
+                   G_CALLBACK(+[](GtkDialog* dialog, gint, gpointer) {
+                     gtk_widget_hide(GTK_WIDGET(dialog));
+                   }),
+                   NULL);
+  gtk_widget_show(GTK_WIDGET(aboutDialog));
 }
 
 void aboutDialogEntry(GtkWindow* parent) {
