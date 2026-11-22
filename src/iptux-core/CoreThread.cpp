@@ -10,6 +10,7 @@
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <unistd.h>
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>

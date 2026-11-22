@@ -4,6 +4,12 @@ project('iptux', 'cpp',
     meson_version: '>=0.53',
     default_options: ['warning_level=3', 'cpp_std=c++14'])
 add_global_arguments('-Werror=format', language : 'cpp')
+
+glog_dep = dependency('libglog')
+if glog_dep.version().version_compare('>=0.7.0')
+  add_project_arguments('-DGLOG_USE_GLOG_EXPORT', language: 'cpp')
+endif
+
 if get_option('sanitize-address')
   add_project_arguments('-fsanitize=address', language: 'cpp')
   add_project_link_arguments('-fsanitize=address', language: 'cpp')
