@@ -4,6 +4,10 @@ glog_dep = dependency('libglog')
 gflags_dep = dependency('gflags')
 sigc_dep = dependency('sigc++-2.0')
 
+if glog_dep.version().version_compare('>=0.7.0')
+  add_project_arguments('-DGLOG_USE_GLOG_EXPORT', language: 'cpp')
+endif
+
 core_sources = files([
     'CoreThread.cpp',
     'Event.cpp',
