@@ -12,6 +12,24 @@ TEST(PalInfo, GetKey) {
   ASSERT_EQ(info.GetKey().ToString(), "127.0.0.1:2425");
 }
 
+TEST(PalInfo, ProtocolOverride) {
+  PalInfo info("127.0.0.1", 2425);
+
+  info.setCompatible(true);
+  EXPECT_EQ(info.protocol(), PalProtocol::AUTO);
+  EXPECT_TRUE(info.isCompatible());
+
+  info.setProtocol(PalProtocol::IPMSG);
+  EXPECT_FALSE(info.isCompatible());
+
+  info.setProtocol(PalProtocol::IPTUX);
+  info.setCompatible(false);
+  EXPECT_TRUE(info.isCompatible());
+
+  info.setProtocol(PalProtocol::AUTO);
+  EXPECT_FALSE(info.isCompatible());
+}
+
 TEST(PalKey, CopyConstructor) {
   PalKey key1(inAddrFromString("1.2.3.4"), 1234);
   PalKey key2 = key1;
