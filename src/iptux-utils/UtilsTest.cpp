@@ -132,3 +132,12 @@ TEST(Utils, dupPath) {
   ASSERT_EQ(dupPath("a.b", 10), "a (10).b");
 }
 #endif
+
+TEST(Utils, ipmsgGetFilenameWithoutTerminator) {
+  // fileid:filename — the filename field has no ':' terminator
+  char buf[] = "12345:evil-name";
+
+  char* filename = ipmsg_get_filename(buf, ':', 1);
+  EXPECT_STREQ(filename, "evil-name");
+  g_free(filename);
+}
