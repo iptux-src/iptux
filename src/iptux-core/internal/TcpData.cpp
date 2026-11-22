@@ -99,6 +99,10 @@ void TcpData::RequestData(FileAttr fileattr) {
   char* attach;
 
   attachptr = iptux_skip_section(buf, ':', 5);
+  if (!attachptr) {
+    LOG_WARN("Invalid TCP request: missing file attachment field");
+    return;
+  }
   switch (fileattr) {
     case FileAttr::REGULAR:
       read_ipmsg_filedata(sock, (void*)attachptr, buf + MAX_SOCKLEN - attachptr,
