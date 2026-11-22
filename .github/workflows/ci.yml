@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [iptux-0-9]
   pull_request:
-    branches: [master]
+    branches: [iptux-0-9]
 
 env:
   DEB_PKGS: >-
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Configure Homebrew cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/Library/Caches/Homebrew
@@ -47,7 +47,7 @@ jobs:
   build-on-linux:
     strategy:
       matrix:
-        runs-on: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
+        runs-on: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, ubuntu-latest]
         compiler: [g++, clang++]
     runs-on: ${{ matrix.runs-on }}
     steps:
@@ -94,7 +94,7 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
       - name: lcov
         run: |
-          lcov --ignore-errors mismatch --directory . --capture --output-file coverage.info; # capture coverage info
+          lcov --ignore-errors mismatch,inconsistent --directory . --capture --output-file coverage.info; # capture coverage info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info; # filter out system
           lcov --remove coverage.info '*Test*' --output-file coverage.info; # filter out system
           lcov --remove coverage.info '*gtest*' --output-file coverage.info; # filter out system
