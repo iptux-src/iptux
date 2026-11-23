@@ -10,6 +10,7 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
+#include <ldb-asynctask/async_task.h>
 #include <memory>
 #include <sigc++/signal.h>
 #include <vector>
@@ -169,6 +170,8 @@ class CoreThread : public std::enable_shared_from_this<CoreThread> {
   bool SendMessage(CPPalInfo pal, const ChipData& chipData);
   bool SendMsgPara(std::shared_ptr<MsgPara> msgPara);
   void AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara);
+  ldb_async_task* AsyncSendMsgPara2(std::shared_ptr<MsgPara> msgPara);
+
   void SendUnitMessage(const PalKey& palKey,
                        uint32_t opttype,
                        const std::string& message);

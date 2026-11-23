@@ -24,7 +24,7 @@ sources = files([
     'UiModels.cpp',
     'WindowConfig.cpp',
 ])
-dependencies = [gtk_dep, jsoncpp_dep, sigc_dep]
+dependencies = [gtk_dep, jsoncpp_dep, sigc_dep, ldb_asynctask_dep]
 
 if host_machine.system() == 'windows'
     ws2_32 = cc.find_library('ws2_32')
@@ -126,7 +126,7 @@ test_sources = files([
 test_sources += [iptux_resource_h]
 libiptux_test = executable('libiptux_test',
     test_sources,
-    dependencies: [gtk_dep, jsoncpp_dep, thread_dep, sigc_dep],
+    dependencies: [gtk_dep, jsoncpp_dep, thread_dep, sigc_dep, ldb_asynctask_dep],
     cpp_args: ['-fno-lto'], # https://github.com/iptux-src/iptux/issues/651
     link_with: [libiptux, libgtest,libiptux_core_test_helper],
     link_args: ['-fno-lto'],
