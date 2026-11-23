@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+## [0.8.6] (2026-11-22)
+
+### Fixed
+
+- [#751](https://github.com/iptux-src/iptux/pull/751) Fix crashes when processing malformed TCP file and directory requests or attached filenames.
+
+## [0.8.5] (2024-04-14)
+
+### Changed
+
 - [#516](https://github.com/iptux-src/iptux/issues/516) Fix typo in the Preferences dialog.
 - [#520](https://github.com/iptux-src/iptux/issues/520) Fix window resize behavior.
 - [#531](https://github.com/iptux-src/iptux/issues/531) [#533](https://github.com/iptux-src/iptux/issues/533) Improve crash handler.
@@ -197,7 +207,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 * 2008-12-04 新上传三个二进制包，由网友 mdjhu@sina.com 提供
 
-[unreleased]: https://github.com/iptux-src/iptux/compare/v0.8.4...HEAD
+[unreleased]: https://github.com/iptux-src/iptux/compare/v0.8.6...HEAD
+[0.8.6]: https://github.com/iptux-src/iptux/compare/v0.8.5...v0.8.6
+[0.8.5]: https://github.com/iptux-src/iptux/compare/v0.8.4...v0.8.5
 [0.8.4]: https://github.com/iptux-src/iptux/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/iptux-src/iptux/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/iptux-src/iptux/compare/v0.8.1...v0.8.2
