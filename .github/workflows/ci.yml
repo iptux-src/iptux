@@ -4,7 +4,7 @@ on:
   push:
     branches: ["**"]
   pull_request:
-    branches: [master]
+    branches: [iptux-0-8]
 
 jobs:
   build-on-mac:
