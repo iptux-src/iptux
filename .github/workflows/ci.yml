@@ -88,15 +88,15 @@ jobs:
 
   build_job:
     # The host should always be linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
-    # Run steps on a matrix of 3 Ubuntu 22.04 architecture combinations
+    # Run steps on a matrix of Ubuntu architecture combinations
     strategy:
       matrix:
         include:
           - arch: aarch64
-            distro: ubuntu22.04
+            distro: ubuntu24.04
           - arch: ppc64le
             distro: ubuntu22.04
           #- arch: s390x
@@ -106,7 +106,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.1.0
-      - uses: uraimo/run-on-arch-action@v2.0.5
+      - uses: uraimo/run-on-arch-action@v3
         name: Build artifact
         id: build
         with:
