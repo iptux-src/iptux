@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - [#751](https://github.com/iptux-src/iptux/pull/751) Fix crashes when processing malformed TCP file and directory requests or attached filenames.
 
+## [0.8.5] (2024-04-14)
+
 ### Changed
 
 - [#516](https://github.com/iptux-src/iptux/issues/516) Fix typo in the Preferences dialog.
