@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [iptux-0-8]
+    branches: ["**"]
   pull_request:
     branches: [iptux-0-8]
 
