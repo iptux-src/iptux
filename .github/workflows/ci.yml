@@ -76,15 +76,17 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
       - name: lcov
         run: |
-          lcov --directory . --capture --output-file coverage.info; # capture coverage info
+          lcov --ignore-errors mismatch,inconsistent --directory . --capture --output-file coverage.info; # capture coverage info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info; # filter out system
           lcov --remove coverage.info '*Test*' --output-file coverage.info; # filter out system
           lcov --remove coverage.info '*gtest*' --output-file coverage.info; # filter out system
           lcov --list coverage.info; #debug info
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build_job:
     # The host should always be linux
