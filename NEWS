@@ -1,3 +1,11 @@
+Version 0.9.5
+~~~~~~~~~~~~~
+Released: 2026-11-22
+
+Bugfixes:
+  * [#750] fix crashes when processing malformed TCP file and directory
+    requests or attached filenames.
+
 Version 0.9.4
 ~~~~~~~~~~~~~
 Released: 2025-02-17
