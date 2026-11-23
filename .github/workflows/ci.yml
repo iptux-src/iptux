@@ -38,7 +38,7 @@ jobs:
   build-on-linux:
     strategy:
       matrix:
-        runs-on: [ubuntu-20.04]
+        runs-on: [ubuntu-22.04, ubuntu-24.04]
         compiler: [g++, clang++]
     runs-on: ${{ matrix.runs-on }}
     steps:
@@ -60,7 +60,7 @@ jobs:
           xvfb-run -a meson test -C build --verbose --no-stdsplit
 
   codecov:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: apt install
@@ -88,7 +88,7 @@ jobs:
 
   build_job:
     # The host should always be linux
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     # Run steps on a matrix of 3 arch/distro combinations
