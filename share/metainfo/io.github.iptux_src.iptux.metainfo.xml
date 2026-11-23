@@ -4,13 +4,19 @@
 
   <name>iptux</name>
   <summary>LAN communication software</summary>
+  <url type="homepage">https://github.com/iptux-src/iptux</url>
+  <developer id="io.github.iptux_src">
+    <name>iptux developers</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
 
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0-or-later</project_license>
 
   <description>
     <p>
-      iptux is an “IP Messenger” client.
+      iptux is an “IP Messenger” client for communication and file sharing on a
+      local area network.
     </p>
     <p>
        It can:

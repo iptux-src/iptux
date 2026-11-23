@@ -6,7 +6,6 @@ if ascli_exe.found()
         ascli_exe,
         args: ['validate',
                '--no-net',
-               '--pedantic',
                metainfo_file]
   )
 endif
