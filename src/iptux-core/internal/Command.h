@@ -39,7 +39,10 @@ class Command {
   void SendExit(int sock, CPPalInfo pal);
   void SendAbsence(int sock, CPPalInfo pal);
   void SendDetectPacket(int sock, in_addr ipv4, uint16_t port);
-  void SendMessage(int sock, CPPalInfo pal, const char* msg);
+  bool SendMessage(int sock,
+                   CPPalInfo pal,
+                   const char* msg,
+                   GError** error = nullptr);
   void SendReply(int sock, CPPalInfo pal, uint32_t packetno);
   void SendReply(int sock, const PalKey& pal, uint32_t packetno);
   void SendGroupMsg(int sock, CPPalInfo pal, const char* msg);
@@ -75,14 +78,15 @@ class Command {
   bool SendSublayer(GSocket* sock,
                     CPPalInfo pal,
                     uint32_t opttype,
-                    const char* path);
+                    const char* path,
+                    GError** error = nullptr);
 
   static std::string encodeFileInfo(const FileInfo& fileInfo);
   static std::vector<FileInfo> decodeFileInfos(const std::string& s);
 
  private:
   void FeedbackError(CPPalInfo pal, GroupBelongType btype, const char* error);
-  bool SendSublayerData(GSocket* sock, int fd);
+  bool SendSublayerData(GSocket* sock, int fd, GError** error = nullptr);
   void ConvertEncode(const std::string& encode);
   void CreateCommand(uint32_t command, const char* attach);
   void CreateIpmsgExtra(const char* extra, const char* encode);

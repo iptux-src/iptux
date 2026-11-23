@@ -1096,30 +1096,28 @@ void CoreThread::AddBlockIp(in_addr ipv4) {
       g_slist_append(pImpl->blacklist, GUINT_TO_POINTER(ipv4.s_addr));
 }
 
-bool CoreThread::SendMessage(CPPalInfo palInfo, const string& message) {
+bool CoreThread::SendMessage(CPPalInfo palInfo,
+                             const string& message,
+                             GError** error) {
   Command cmd(*this);
-  cmd.SendMessage(getUdpSock(), palInfo, message.c_str());
-  return true;
+  return cmd.SendMessage(getUdpSock(), palInfo, message.c_str(), error);
 }
 
-bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
+bool CoreThread::SendMessage(CPPalInfo pal,
+                             const ChipData& chipData,
+                             GError** error) {
   auto ptr = chipData.data.c_str();
   bool ret = true;
 
   switch (chipData.type) {
     case MessageContentType::STRING:
       /* 文本类型 */
-      return SendMessage(pal, chipData.data);
+      return SendMessage(pal, chipData.data, error);
     case MESSAGE_CONTENT_TYPE_PICTURE: {
-      GError* error = nullptr;
       GSocket* sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
-                                   G_SOCKET_PROTOCOL_TCP, &error);
-      if (error != nullptr) {
-        LOG_ERROR(_("Fatal Error!!\nFailed to create new socket!\n%s"),
-                  error->message);
-        g_error_free(error);
+                                   G_SOCKET_PROTOCOL_TCP, error);
+      if (!sock)
         return false;
-      }
       ret = Command(*this).SendSublayer(sock, pal, IPTUX_MSGPICOPT, ptr);
       g_object_unref(sock);
       return ret;
@@ -1129,9 +1127,9 @@ bool CoreThread::SendMessage(CPPalInfo pal, const ChipData& chipData) {
   }
 }
 
-bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para) {
+bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para, GError** error) {
   for (int i = 0; i < int(para->dtlist.size()); ++i) {
-    if (!SendMessage(para->getPal(), para->dtlist[i])) {
+    if (!SendMessage(para->getPal(), para->dtlist[i], error)) {
       LOG_ERROR("send message failed: %s", para->dtlist[i].ToString().c_str());
       return false;
     }
@@ -1139,9 +1137,40 @@ bool CoreThread::SendMsgPara(shared_ptr<MsgPara> para) {
   return true;
 }
 
-void CoreThread::AsyncSendMsgPara(std::shared_ptr<MsgPara> msgPara) {
-  thread t(&CoreThread::SendMsgPara, this, msgPara);
-  t.detach();
+void CoreThread::sendMsgParaAsync(std::shared_ptr<MsgPara> msgPara,
+                                  GCancellable* cancellable,
+                                  GAsyncReadyCallback callback,
+                                  gpointer user_data) {
+  GTask* task = g_task_new(this, cancellable, callback, user_data);
+  g_task_set_task_data(task, new std::shared_ptr<MsgPara>(msgPara),
+                       [](gpointer data) {
+                         delete static_cast<std::shared_ptr<MsgPara>*>(data);
+                       });
+  g_task_run_in_thread(task, [](GTask* task, gpointer source_object,
+                                gpointer task_data, GCancellable*) {
+    if (g_task_return_error_if_cancelled(task)) {
+      return;
+    }
+    CoreThread* self = static_cast<CoreThread*>(source_object);
+    std::shared_ptr<MsgPara> msgPara =
+        *static_cast<std::shared_ptr<MsgPara>*>(task_data);
+    GError* error = nullptr;
+
+    bool success = self->SendMsgPara(msgPara, &error);
+    if (!success) {
+      if (!error) {
+        error =
+            g_error_new(G_IO_ERROR, G_IO_ERROR_FAILED, "SendMsgPara failed");
+      }
+      g_task_return_error(task, error);
+    } else {
+      g_task_return_boolean(task, success);
+    }
+  });
+}
+
+gboolean CoreThread::sendMsgParaFinish(GAsyncResult* result, GError** error) {
+  return g_task_propagate_boolean(G_TASK(result), error);
 }
 
 void CoreThread::InsertMessage(const MsgPara& para) {

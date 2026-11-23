@@ -396,7 +396,21 @@ bool DialogPeer::SendTextMsg() {
 
   /* 清空缓冲区并发送数据 */
   FeedbackMsg(para);
-  app->getCoreThread()->AsyncSendMsgPara(para);
+  app->getCoreThread()->sendMsgParaAsync(
+      para, nullptr,
+      [](GObject* source_object, GAsyncResult* res, gpointer user_data) {
+        CoreThread* coreThread =
+            static_cast<CoreThread*>(static_cast<void*>(source_object));
+        GError* error = nullptr;
+        DialogPeer* self = static_cast<DialogPeer*>(user_data);
+
+        if (!coreThread->sendMsgParaFinish(res, &error)) {
+          pop_warning(GTK_WIDGET(self->window), _("Failed to send message: %s"),
+                      error->message);
+          g_error_free(error);
+        }
+      },
+      this);
   return true;
 }
 
