@@ -1,5 +1,6 @@
 #include "iptux-pal.h"
 #include "iptux-priv.h"
+#include "iptux-utils/utils.h"
 
 G_BEGIN_DECLS
 
@@ -28,6 +29,22 @@ char* iptux_pal_to_string(IptuxPal* self) {
 
   std::string pal_str = pal_info->toString();
   return g_strdup(pal_str.c_str());
+}
+
+char* iptux_pal_get_ipv4(IptuxPal* self) {
+  g_return_val_if_fail(self && self->pal_info, nullptr);
+
+  auto& pal_info = *(self->pal_info);
+
+  return g_strdup(iptux::inAddrToString(pal_info->ipv4()).c_str());
+}
+
+guint16 iptux_pal_get_port(IptuxPal* self) {
+  g_return_val_if_fail(self && self->pal_info, 0);
+
+  auto& pal_info = *(self->pal_info);
+
+  return pal_info->port();
 }
 
 G_END_DECLS
