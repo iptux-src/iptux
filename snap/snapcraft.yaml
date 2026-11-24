@@ -24,7 +24,7 @@ parts:
   iptux:
     source-type: git
     source: https://github.com/iptux-src/iptux.git
-    source-branch: fix-snap-icon-0.9
+    source-branch: iptux-0-9
     build-packages:
       [
         gettext,
