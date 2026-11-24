@@ -5,6 +5,12 @@ grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 base: core24
 
+platforms:
+  amd64:
+    build-on: [amd64]
+  arm64:
+    build-on: [arm64]
+
 slots:
   dbus-iptux:
     interface: dbus
@@ -40,6 +46,7 @@ parts:
     meson-parameters: ["--prefix=/snap/iptux/current/usr"]
     override-pull: |
       craftctl default
+      craftctl set version=0.9.5
     override-build: |
       craftctl default
     organize:
